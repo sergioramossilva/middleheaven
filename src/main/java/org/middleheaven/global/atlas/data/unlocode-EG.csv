@@ -1,0 +1,55 @@
+EG;;.EGYPT;;;;;;;;
+EG;TRC;10th of Ramadan City;10th of Ramadan City;;--3--6--;RL;0401;;3018N 03145E;
+EG;SOC;6th October;6th October;;--3--6--;RL;0401;;2949N 03103E;
+EG;AGN;Abu Ghosoun;Abu Ghosoun;;--3-----;RL;9811;;;
+EG;AKI;Abu Kir;Abu Kir;;1-------;RQ;9506;;;
+EG;AUE;Abu Rudeis;Abu Rudeis;;1--4----;AI;9506;;;
+EG;ABS;Abu Simbel;Abu Simbel;;---4----;AI;9601;;;
+EG;AZA;Abu Zenimah;Abu Zenimah;;1-------;RL;0212;;2903N 03306E;
+EG;AIS;Ain Sukhna;Ain Sukhna;;1-------;RQ;9506;;;
+EG;ADA;Al Adabiyah;Al Adabiyah;;123-----;RL;0701;;2952N 03228E;@Fun@Sta@Coo
+EG;ALM;Al Mansurah;Al Mansurah;;-23-----;RL;0207;;3102N 03122E;
+EG;AQU;Al Qusayr;Al Qusayr;;1-3-----;RL;0401;;2606N 03417E;Also El Kosseir
+EG;;Alexandria = El Iskandariya (= Alexandria);Alexandria = El Iskandariya (= Alexandria);;;;;;;
+EG;ASW;Aswan;Aswan;;1--4----;AI;9601;;;
+EG;AST;Asyut;Asyut;;123-----;RL;0701;;2711N 03111E;
+EG;;Borg El Arab = Burj al Arab;Borg El Arab = Burj al Arab;;;;;;;
+EG;HBE;Burj al Arab;Burj al Arab;;--34-6--;RL;0401;;3054N 02933E;
+EG;;Cairo = El Qahira (= Cairo);Cairo = El Qahira (= Cairo);;;;;;;
+EG;DMN;Damanhour;Damanhour;;---4----;RQ;9506;;;
+EG;DAM;Dumyat;Dumyat;;1234----;RL;0701;QDX;3125N 03149E;@Fun@Sta@Coo
+EG;EDK;El Dekheila;El Dekheila;;1-------;RQ;9506;;;
+EG;ALY;El Iskandariya (= Alexandria);El Iskandariya (= Alexandria);;1--45---;AI;9601;;;
+EG;CAI;El Qahira (= Cairo);El Qahira (= Cairo);;1--45---;AI;9601;;;
+EG;SUZ;El Suweis (= Suez);El Suweis (= Suez);;1-------;QQ;8103;;;
+EG;AAC;El'Arish;El'Arish;;--34----;RL;9805;;;
+EG;FAD;Fa'id;Fa'id;;1-------;RL;0212;;3019N 03219E;
+EG;FAN;Fanara;Fanara;;1-------;RQ;9506;;;
+EG;GEI;Geisum Terminal;Geisum Terminal;;1-------;RQ;9506;;;
+EG;HAL;Halaib;Halaib;;1-------;QQ;8103;;;
+EG;HAM;Hamrawein;Hamrawein;;1-------;RQ;9506;;;
+EG;HRG;Hurghada;Hurghada;;1-------;AI;9601;;;
+EG;IKU;Idku;Idku;;-23-----;RL;0607;;3118N 03018E;
+EG;ISM;Ismailia;Ismailia;;1-------;QQ;8103;;;
+EG;LXR;Luxor;Luxor;;---4----;AI;9601;;;
+EG;MAH;Mersa El Hamra;Mersa El Hamra;;1-------;QQ;9506;;;
+EG;UVL;New Valley;New Valley;;---4----;AI;9601;;;
+EG;NUW;Nuwaiba;Nuwaiba;;1-------;AI;0212;;2858N 03439E;Also known as Nuweiba
+EG;PIB;Port Ibrahim;Port Ibrahim;;1-------;QQ;8103;;;
+EG;PRA;Port Rashid;Port Rashid;;1-3-----;RQ;9506;;;
+EG;PSD;Port Said;Port Said;;1--4----;AI;9601;;;
+EG;PTK;Port Tewfik;Port Tewfik;;1-------;QQ;8103;;;
+EG;RAG;Ras Gharib;Ras Gharib;;1-------;QQ;8103;;;
+EG;RSH;Ras Shukheir;Ras Shukheir;;1-------;QQ;8103;;;
+EG;PRA;Rashid;Rashid;;1-3-----;RQ;9506;;;
+EG;SAD;Sadat City;Sadat City;;--3--6--;RL;0401;;3022N 03030E;
+EG;SGA;Safaga;Safaga;;1-------;QQ;8103;;;
+EG;SAL;Sallum;Sallum;;-23-----;RL;0401;;3134N 02509E;
+EG;SSH;Sharm ash Shaykh;Sharm ash Shaykh;;1--4----;AI;0212;;2752N 03417E;
+EG;SBA;Sidi Barrani;Sidi Barrani;;1-------;QQ;8103;;;
+EG;SKT;Sidi Kerir Terminal;Sidi Kerir Terminal;;--3-----;RQ;9811;;;
+EG;SOK;Sokhna Port;Sokhna Port;;1-------;RQ;0212;;2939N 03221E;
+EG;SOS;Sosdi/6th October;Sosdi/6th October;;1-------;RQ;0407;;;
+EG;;Suez = El Suweis;Suez = El Suweis;;;;;;;
+EG;TAN;Tanta;Tanta;;-23-----;RL;0207;QTT;3046N 03059E;
+EG;WAF;Wadi Feiran;Wadi Feiran;;1-------;QQ;8103;;;
