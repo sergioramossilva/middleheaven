@@ -10,7 +10,7 @@ import org.middleheaven.global.atlas.AtlasContext;
 import org.middleheaven.global.atlas.AtlasLocale;
 import org.middleheaven.global.atlas.AtlasModule;
 import org.middleheaven.global.atlas.AtlasService;
-import org.middleheaven.global.atlas.City;
+import org.middleheaven.global.atlas.Town;
 import org.middleheaven.global.atlas.Country;
 import org.middleheaven.global.atlas.CountryNotFoundException;
 
@@ -55,12 +55,12 @@ public class ModularAtlasService implements AtlasService {
 	}
 
 	@Override
-	public City findCity(Country country, String name) {
+	public Town findCity(Country country, String name) {
 		
 		for (AtlasLocale division : country.getChildren()){
 			for (AtlasLocale city : division.getChildren()){
-				if (((City)city).getName().equals(name)){
-					return (City)city;
+				if (((Town)city).getName().equals(name)){
+					return (Town)city;
 				}
 			}
 			
@@ -69,7 +69,7 @@ public class ModularAtlasService implements AtlasService {
 	}
 
 	@Override
-	public City findCity(String isoCountryCode, String name) {
+	public Town findCity(String isoCountryCode, String name) {
 		return findCity(this.findCountry(isoCountryCode), name);
 	}
 	

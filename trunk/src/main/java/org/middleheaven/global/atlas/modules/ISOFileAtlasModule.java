@@ -18,11 +18,12 @@ import java.util.TreeMap;
 import org.middleheaven.global.atlas.AtlasContext;
 import org.middleheaven.global.atlas.AtlasLocale;
 import org.middleheaven.global.atlas.AtlasModule;
-import org.middleheaven.global.atlas.City;
+import org.middleheaven.global.atlas.Language;
+import org.middleheaven.global.atlas.Town;
 import org.middleheaven.global.atlas.Country;
 import org.middleheaven.global.atlas.CountryDivision;
 
-public class ISOFileAtlasModule implements AtlasModule {
+public class ISOFileAtlasModule extends AtlasModule {
 
 	String path = "data";
 
@@ -65,7 +66,7 @@ public class ISOFileAtlasModule implements AtlasModule {
 				while((line=reader.readLine())!=null){
 					if(line.trim().length()>0){
 						String[] nameCode = line.split(";");
-						context.addCountry(loadCountry(nameCode[1], nameCode[0]), date);
+						context.addCountry(loadCountry(nameCode[1], nameCode[0] , new Language( this.findLocaleForCountry(nameCode[1]).getLanguage()) ), date);
 					}
 				}
 				reader.close();
@@ -78,8 +79,8 @@ public class ISOFileAtlasModule implements AtlasModule {
 		}
 	}
 
-	private Country loadCountry(String isoCode, String name) throws IOException{
-		ISOCountry country = new ISOCountry(isoCode,name);
+	private Country loadCountry(String isoCode, String name, Language language) throws IOException{
+		ISOCountry country = new ISOCountry(isoCode,name,language);
 		// read countryDivisions
 		Map<String ,ISOCountryDivision > divisions = new TreeMap<String ,ISOCountryDivision>();
 		InputStream in = locate("iso3166-2-"  + isoCode + ".csv");
@@ -100,6 +101,8 @@ public class ISOFileAtlasModule implements AtlasModule {
 		
 	
 		// read cities
+		boolean hasDivisions = !divisions.isEmpty();
+		
 	    in = locate("unlocode-"  + isoCode + ".csv");
 		if (in!=null){
 
@@ -110,11 +113,16 @@ public class ISOFileAtlasModule implements AtlasModule {
 					String[] nameCode = line.split(";");
 					
 					if (nameCode.length>4 && !nameCode[4].isEmpty()){
-						ISOCountryDivision division = divisions.get(nameCode[4]);
-						if (division==null){
-							country.children.put( nameCode[1] , new UNCity (country, nameCode[1], nameCode[2]));
+						if (hasDivisions){
+							ISOCountryDivision division = divisions.get(nameCode[4]);
+							if (division!=null){
+								division.children.put (nameCode[1] , new UNTown (division, nameCode[1], nameCode[2]));
+							} else {
+								// TODO log
+								System.out.println("Division " + nameCode[4] + " for country " + isoCode + " was not found");
+							}
 						} else {
-							division.children.put (nameCode[1] , new UNCity (division, nameCode[1], nameCode[2]));
+							country.children.put( nameCode[1] , new UNTown (country, nameCode[1], nameCode[2]));
 						}
 					}
 				}
@@ -133,8 +141,8 @@ public class ISOFileAtlasModule implements AtlasModule {
 	private static class ISOCountry extends Country{
 
 		Map<String,AtlasLocale> children = new HashMap<String,AtlasLocale>();
-		ISOCountry(String isoCode, String name) {
-			super(isoCode, name);
+		ISOCountry(String isoCode, String name, Language language) {
+			super(isoCode, name,language);
 		}
 
 		@Override
@@ -171,10 +179,10 @@ public class ISOFileAtlasModule implements AtlasModule {
 		
 	}
 	
-	private static class UNCity extends City{
+	private static class UNTown extends Town{
 
 
-		UNCity(AtlasLocale parent, String isoCode, String name) {
+		UNTown(AtlasLocale parent, String isoCode, String name) {
 			super(parent, isoCode, name);
 		}
 

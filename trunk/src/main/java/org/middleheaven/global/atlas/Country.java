@@ -1,19 +1,55 @@
 package org.middleheaven.global.atlas;
 
 import java.io.Serializable;
+import java.util.Currency;
+import java.util.Locale;
+
+import org.middleheaven.global.address.AddressModel;
+import org.middleheaven.global.address.DefaultAddressModel;
 
 
 public abstract class Country implements AtlasLocale, Serializable {
 
-	
 	private String isoCode;
 	private String name;
+	private AddressModel addressModel;
+	private Language language;
 	
-    protected Country(String isoCode,String name){
+    protected Country(String isoCode,String name,Language language){
 		this.isoCode = isoCode;
 		this.name = name;
+		this.language = language;
+		try {
+			addressModel = (AddressModel)Class.forName("org.middleheaven.global.address.models.AddresModel" + isoCode.toUpperCase()).newInstance();
+		} catch (Exception e) {
+			addressModel = DefaultAddressModel.getInstance(); 
+		} 
+
 	}
+    
+    public Currency getCurrentCurrency (){
+    	return Currency.getInstance(new Locale(this.language.toString(),this.isoCode));
+    }
+    
+    public Language getLanguage(){
+    	return language;
+    }
 	
+    protected void setLanguage(Language language){
+    	this.language = language;
+    }
+    
+    public Locale toLocale(){
+    	return new Locale(language.toString(),isoCode);
+    }
+    public final AddressModel getAddressModel(){
+    	return addressModel;
+    }
+    
+    protected void setAddressModel(AddressModel addressModel){
+    	this.addressModel = addressModel;
+    }
+    
     public final String getName(){
     	return name;
     }

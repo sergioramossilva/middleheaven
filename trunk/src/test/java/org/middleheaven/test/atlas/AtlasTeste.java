@@ -61,16 +61,13 @@ public class AtlasTeste {
 		Country portugal = all.get("PT");
 		assertEquals(20, portugal.getChildren().size());
 		
-		assertEquals(26,portugal.getChild("01").getChildren().size());
+		assertEquals(39,portugal.getChild("01").getChildren().size());
 		
-		Country usa = all.get("US");
-		assertEquals(57, usa.getChildren().size());
+		assertTrue(portugal.getCurrentCurrency().toString().equals("EUR"));
+		assertTrue(brazil.getCurrentCurrency().toString().equals("BRL"));
 		
-		
-		
-		// No file present
-		Country spain = all.get("ES");
-		assertEquals(0, spain.getChildren().size());
+		assertTrue(portugal.getLanguage().equals("pt"));
+		assertTrue(brazil.getLanguage().equals("pt"));
 	}
 	
 	@Test
@@ -98,14 +95,10 @@ public class AtlasTeste {
 		Country brazil = all.get("BR");
 		assertEquals(27, brazil.getChildren().size());
 		
-		// No file present 
-		Country spain = all.get("ES");
-		assertEquals(0, spain.getChildren().size());
-		
 		// file present at filsystem location with a dummy state to make 58
 		// 57 means the data from the embeded version is being red witch is an error
 		Country usa = all.get("US");
-		assertEquals(58, usa.getChildren().size());
+		assertEquals(59, usa.getChildren().size());
 		
 	
 		
