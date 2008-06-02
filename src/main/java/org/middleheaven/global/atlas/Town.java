@@ -2,14 +2,14 @@ package org.middleheaven.global.atlas;
 
 import java.io.Serializable;
 
-public abstract class City  implements AtlasLocale, Serializable{
+public abstract class Town  implements AtlasLocale, Serializable{
 
 
 	private String isoCode;
 	private String name;
 	AtlasLocale parent;
 	
-	protected City(AtlasLocale parent , String isoCode,String name){
+	protected Town(AtlasLocale parent , String isoCode,String name){
 		this.isoCode = isoCode;
 		this.name = name;
 		this.parent = parent;
@@ -43,10 +43,10 @@ public abstract class City  implements AtlasLocale, Serializable{
 	}
 	
 	public boolean equals(Object other){
-		return other instanceof City && equals((City)other);
+		return other instanceof Town && equals((Town)other);
 	}
 	
-	public boolean equals(City other){
+	public boolean equals(Town other){
 		return this.isoCode.equals(other.getDesignation()); 
 	}
 	

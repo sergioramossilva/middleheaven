@@ -5,4 +5,5 @@ public interface Ephemeris {
 	
 	public String getName();
 	public String getDescription();
+	public boolean isWorkingDay();
 }
