@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" id="org.middleheaven.util.measure.money.service" metadata="uml2-1.0" tag="1000" key="32303037303533312D31303030206D6964646C6568656176656E2F53657267696F">
+  <diagramOptions xsi:type="options:ClassDiagramOptions" interactive="false" properties="libraryFilter=;ModelFrozen=true;ComputedContent=true;displayOptions=1;open=org.middleheaven.measure.time/CalendarDate,org.middleheaven.measure.money.service/MoneyCurrencyConvertionService;Product=eDepend;link=org.middleheaven.measure.money.service/MoneyCurrencyConvertionService-Soyatec::Import->org.middleheaven.measure.time/CalendarDate;dependencyFilter=Soyatec::Import,;shadowedElements=org.middleheaven.measure.time/CalendarDate;wireOptions=4"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" shortPackageNameFormat="true" showDependencyStereotype="true" showEnumerationStereotype="false" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+</editmodel:ClassDiagramEditModel>

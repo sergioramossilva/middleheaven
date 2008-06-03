@@ -2,7 +2,8 @@ package org.middleheaven.global.calendar;
 
 import java.util.Set;
 
-import org.middleheaven.utils.time.DateHolder;
+import org.middleheaven.util.measure.time.DateHolder;
+import org.middleheaven.util.measure.time.Month;
 import org.middleheaven.utils.time.MonthOfYear;
 
 public abstract class CalendarModel {
@@ -29,8 +30,8 @@ public abstract class CalendarModel {
 	public abstract boolean isWorkingDay(DateHolder date);
 	
 	
-	public DateHolder getOrdinalWorkingDayOfMonth(MonthOfYear month , int ordinal){
-		DateHolder current = month.firstDay();
+	public DateHolder getOrdinalWorkingDayOfMonth(Month month , int ordinal){
+		DateHolder current = month.start();
 		int remaining = ordinal-1; // convert ordinal to numeral
 		
 		while (remaining>0){
