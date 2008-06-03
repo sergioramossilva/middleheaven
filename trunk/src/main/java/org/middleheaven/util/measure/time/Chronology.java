@@ -31,5 +31,6 @@ public abstract class Chronology {
     public abstract Month monthOf(TimePoint point);
     
     public abstract Year yearOf(TimePoint point);
+
     
 }

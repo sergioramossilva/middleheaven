@@ -1,6 +1,6 @@
 package org.middleheaven.global.atlas;
 
-public class Language {
+public class Language implements Comparable<Language>{
 
 	
 	private String code;
@@ -33,5 +33,10 @@ public class Language {
 	 */
 	public boolean equals (String isoCode){
 		return code.equalsIgnoreCase(isoCode);
+	}
+
+	@Override
+	public int compareTo(Language other) {
+		return this.code.compareTo(other.code);
 	}
 }

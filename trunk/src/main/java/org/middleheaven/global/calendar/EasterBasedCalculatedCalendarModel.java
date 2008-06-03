@@ -1,39 +1,31 @@
 package org.middleheaven.global.calendar;
 
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.middleheaven.utils.time.XCalendarDate;
-import org.middleheaven.utils.time.DateHolder;
+import org.middleheaven.util.measure.time.CalendarDate;
+import org.middleheaven.util.measure.time.DateHolder;
+import org.middleheaven.util.measure.time.DayOfWeek;
+import org.middleheaven.util.measure.time.Duration;
+import org.middleheaven.util.measure.time.EphemeridModel;
 
 /**
  * Determines Easter ephemeris. 
  *
  * Days marked as Saturday, Sunday and Easter are considered non-working days 
  */
-public class EasterBasedCalculatedCalendarModel extends CalendarModel {
+public class EasterBasedCalculatedCalendarModel extends EphemeridModel {
 
-	
-	protected boolean isWorkingDay(Set<Ephemeris> ephemeris){
-		for (Ephemeris e : ephemeris){
-			if (!e.isWorkingDay()){
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	/**
-	 * 
 	 * @param year
-	 * @return
+	 * @return Easter date
 	 * @see http://www.tondering.dk/claus/cal/node3.html#SECTION003132000000000000000
 	 */
 	public static DateHolder calculaEaster(int year){
+		
+		// Use Gregorian Calendar
 		int G = year % 19;
 		int C = year / 100;
 		int H = (C-C/4 - (8*C+13)/25 + 19* G + 15) % 30;
@@ -44,7 +36,7 @@ public class EasterBasedCalculatedCalendarModel extends CalendarModel {
 		int month = 3 + (L + 40)/44;
 		int day = L + 28 - 31 *(month/4);
 		
-		return new XCalendarDate(year,month,day);
+		return CalendarDate.date(year,month,day);
 	}
 	
 	Map<DateHolder, Ephemeris> dateEphemeris = new HashMap<DateHolder, Ephemeris>();
@@ -54,31 +46,29 @@ public class EasterBasedCalculatedCalendarModel extends CalendarModel {
 		Ephemeris dayEphemeris = dateEphemeris.get(date);
 		
 		if (dayEphemeris==null){
-			DateHolder easterSunday =calculaEaster(date.year());
-			dateEphemeris.put(easterSunday, new DefaultEphemeris("Easter",false));
-		
-			// TODO use real Dateholder
-			
+			DateHolder easterSunday =calculaEaster(date.year().ordinal());
+			dateEphemeris.put(easterSunday, new DefaultEphemeris("Easter",false,easterSunday));
+
 			// 2 days before easter
-			DateHolder goodFriday = easterSunday.subtract(2);
-			dateEphemeris.put(goodFriday, new DefaultEphemeris("Good Friday",true));
+			DateHolder goodFriday = easterSunday.minus(Duration.days(2));
+			dateEphemeris.put(goodFriday, new DefaultEphemeris("Good Friday",true,goodFriday));
 			
 			// 42 days before easter
-			DateHolder ashWendnesday = easterSunday.subtract(42).reduceTo(Calendar.WEDNESDAY);
-
-			dateEphemeris.put(ashWendnesday, new DefaultEphemeris("Ash Wednesday",true));
+			DateHolder ashWendnesday = easterSunday.minus(Duration.days(42)).nearest(DayOfWeek.WEDNESDAY);
+			
+			dateEphemeris.put(ashWendnesday, new DefaultEphemeris("Ash Wednesday",true,ashWendnesday));
 			
 			// 7 weeks (49 days) after easter
-			DateHolder whitSunday = easterSunday.add(49);
-			dateEphemeris.put(whitSunday, new DefaultEphemeris("Pentecost",false));
+			DateHolder whitSunday = easterSunday.plus(Duration.days(49));
+			dateEphemeris.put(whitSunday, new DefaultEphemeris("Pentecost",false,whitSunday));
 			
 			// 39 days after easter
-			DateHolder ascensionDay = whitSunday.subtract(10);
-			dateEphemeris.put(ascensionDay, new DefaultEphemeris("Ascension Day",false));
+			DateHolder ascensionDay = whitSunday.minus(Duration.days(10));
+			dateEphemeris.put(ascensionDay, new DefaultEphemeris("Ascension Day",false,ascensionDay));
 			
 			// 43 days before easter , 1 day before Ash Wednesday
-			DateHolder carnival = ashWendnesday.subtract(1);
-			dateEphemeris.put(carnival, new DefaultEphemeris("Carnival",false));
+			DateHolder carnival = ashWendnesday.previousDate();
+			dateEphemeris.put(carnival, new DefaultEphemeris("Carnival",false,carnival));
 			
 		} 
 
@@ -91,14 +81,7 @@ public class EasterBasedCalculatedCalendarModel extends CalendarModel {
 
 	}
 
-	@Override
-	public boolean hasEphemeris(DateHolder date) {
-		return !getEphemeris(date).isEmpty();
-	}
 
-	@Override
-	public boolean isWorkingDay(DateHolder date) {
-		 return !date.isWeekDay(Calendar.SATURDAY) && !date.isWeekDay(Calendar.SUNDAY) && isWorkingDay(getEphemeris(date));
-	}
+
 
 }

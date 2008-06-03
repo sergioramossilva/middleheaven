@@ -1,66 +1,75 @@
 package org.middleheaven.global.atlas;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.global.address.AddressModel;
 import org.middleheaven.global.address.DefaultAddressModel;
 
+public abstract class Country extends AbstractAtlasLocale implements Serializable {
 
-public abstract class Country implements AtlasLocale, Serializable {
-
-	private String isoCode;
 	private String name;
-	private AddressModel addressModel;
-	private Language language;
-	
-    protected Country(String isoCode,String name,Language language){
-		this.isoCode = isoCode;
-		this.name = name;
-		this.language = language;
-		try {
-			addressModel = (AddressModel)Class.forName("org.middleheaven.global.address.models.AddresModel" + isoCode.toUpperCase()).newInstance();
-		} catch (Exception e) {
-			addressModel = DefaultAddressModel.getInstance(); 
-		} 
+	private List<Language> languages = Collections.emptyList();
+
+	protected Country(String isoCode){
+		super(null,isoCode);
+	}
+
+	public Currency getCurrentCurrency (){
+		return Currency.getInstance(new Locale(getLanguage().toString(),this.ISOCode()));
+	}
+
+	public Language getLanguage(){
+		return languages.get(0);
+	}
+
+	public List<Language> getLanguages(){
+		return languages;
+	}
+
+	protected void addLanguage(Language language){
+		if (languages.isEmpty()){
+			languages= new CopyOnWriteArrayList<Language>();
+		}
+		if (!this.languages.contains(language)){
+			this.languages.add(language);
+		}
 
 	}
-    
-    public Currency getCurrentCurrency (){
-    	return Currency.getInstance(new Locale(this.language.toString(),this.isoCode));
-    }
-    
-    public Language getLanguage(){
-    	return language;
-    }
-	
-    protected void setLanguage(Language language){
-    	this.language = language;
-    }
-    
-    public Locale toLocale(){
-    	return new Locale(language.toString(),isoCode);
-    }
-    public final AddressModel getAddressModel(){
-    	return addressModel;
-    }
-    
-    protected void setAddressModel(AddressModel addressModel){
-    	this.addressModel = addressModel;
-    }
-    
-    public final String getName(){
-    	return name;
-    }
-    
-    public final String ISOCode(){
-    	return isoCode;
-    }
-    
+
+	public Locale toLocale(){
+		return new Locale(getLanguage().toString(),this.ISOCode());
+	}
+
+	public final AddressModel getAddressModel(){
+		return DefaultAddressModel.getInstance();
+		/*
+		try {
+			AddressModelService service = ServiceRegistry.getService(AddressModel.class);
+			return service.getAddressModel(this);
+		} catch (ServiceNorFoundException e ){
+			return DefaultAddressModel.getInstance();
+		}
+		*/
+	}
+
+
+	public final String getName(){
+		return name;
+	}
+
+	protected final void setName(String name){
+		this.name = name;
+	}
+
+
 	@Override
 	public final String getDesignation() {
-		return isoCode;
+		return this.ISOCode();
 	}
 
 	@Override
@@ -70,22 +79,18 @@ public abstract class Country implements AtlasLocale, Serializable {
 
 	@Override
 	public final String getQualifiedDesignation() {
-		return Atlas.ATLAS.getQualifiedDesignation() + "." + isoCode;
+		return Atlas.ATLAS.getQualifiedDesignation() + "." + ISOCode();
 	}
 
-	public final String toString(){
-		return isoCode;
-	}
-	
 	public boolean equals(Object other){
 		return other instanceof Country && equals((Country)other);
 	}
-	
+
 	public boolean equals(Country other){
-		return this.isoCode.equals(other.getDesignation()); 
+		return this.ISOCode().equals(other.ISOCode()); 
 	}
-	
+
 	public int hashCode(){
-		return this.isoCode.hashCode();
+		return this.ISOCode().hashCode();
 	}
 }

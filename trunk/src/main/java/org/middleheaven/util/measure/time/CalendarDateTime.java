@@ -74,5 +74,49 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder  
     	return this.context.getChronology().add(this, (ElapsedTime)elapsed.negate());
     }
 
+	@Override
+	public boolean isBefore(DateHolder other) {
+		return this.compareTo((DateHolder)CalendarDate.date(other.year().ordinal(),other.month().ordinal(),other.dayOfMonth().getDay()))<0;
+	}
+
+	@Override
+	public boolean isAfter(DateHolder other) {
+		return this.compareTo((DateHolder)CalendarDate.date(other.year().ordinal(),other.month().ordinal(),other.dayOfMonth().getDay()))>0;
+	}
+
+	@Override
+	public DateHolder nearestBefore(DayOfWeek weekDay) {
+		DateHolder day = this;
+		
+		while (!day.dayOfWeek().equals(weekDay)){
+			day = day.previousDate();
+		}
+		
+		return day;
+	}
+	
+	@Override
+	public DateHolder nearestAfter(DayOfWeek weekDay) {
+		DateHolder day = this;
+		
+		while (!day.dayOfWeek().equals(weekDay)){
+			day = day.nextDate();
+		}
+		
+		return day;
+	}
+	
+	@Override
+	public DateHolder nearest(DayOfWeek weekDay) {
+		
+		int diff= weekDay.ordinal() -  this.dayOfWeek().ordinal();
+		
+		return diff==0? this : this.plus(Duration.days(diff));
+	}
+	
+	@Override
+	public int compareTo(DateHolder other) {
+		return this.compareTo((TimePoint)CalendarDate.date(other.year().ordinal(),other.month().ordinal(),other.dayOfMonth().getDay()));
+	}
 
 }

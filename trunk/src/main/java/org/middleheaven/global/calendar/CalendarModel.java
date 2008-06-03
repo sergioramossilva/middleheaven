@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.middleheaven.util.measure.time.DateHolder;
 import org.middleheaven.util.measure.time.Month;
-import org.middleheaven.utils.time.MonthOfYear;
 
 public abstract class CalendarModel {
 
@@ -38,7 +37,7 @@ public abstract class CalendarModel {
 			if (this.isWorkingDay(current)){
 				remaining--;
 			}
-			current = current.next();
+			current = current.nextDate();
 		}
 
 		return current;
@@ -52,7 +51,7 @@ public abstract class CalendarModel {
 			if (this.isWorkingDay(current)){
 				count++;
 			}
-			current = current.next();
+			current = current.nextDate();
 		}
 		
 		return count;
@@ -62,7 +61,7 @@ public abstract class CalendarModel {
 		int remaining = daysCount;
 		DateHolder current = start;
 		while (remaining>0){
-			current = current.next();
+			current = current.nextDate();
 			if (this.isWorkingDay(current)){
 				remaining--;
 			}
@@ -74,7 +73,7 @@ public abstract class CalendarModel {
 		int remaining = daysCount;
 		DateHolder current = start;
 		while (remaining>0){
-			current = current.previous();
+			current = current.previousDate();
 			if (this.isWorkingDay(current)){
 				remaining--;
 			}

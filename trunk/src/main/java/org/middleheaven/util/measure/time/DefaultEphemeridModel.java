@@ -1,5 +1,10 @@
 package org.middleheaven.util.measure.time;
 
+import java.util.Collections;
+import java.util.Set;
+
+import org.middleheaven.global.calendar.Ephemeris;
+
 public class DefaultEphemeridModel extends EphemeridModel {
 
 	@Override
@@ -8,15 +13,10 @@ public class DefaultEphemeridModel extends EphemeridModel {
 	}
 
 	@Override
-	public boolean isWeekend(DateHolder dateHolder) {
-	    DayOfWeek dw =  dateHolder.dayOfWeek();
-	    return dw.equals(DayOfWeek.SATURDAY) || dw.equals(DayOfWeek.SUNDAY);
+	public Set<Ephemeris> getEphemeris(DateHolder date) {
+		return Collections.emptySet();
 	}
 
-	@Override
-	public boolean isWorkingDay(DateHolder dateHolder) {
-		  return !isWeekend(dateHolder) && !isHoliday(dateHolder);
-	}
 
 
 }
