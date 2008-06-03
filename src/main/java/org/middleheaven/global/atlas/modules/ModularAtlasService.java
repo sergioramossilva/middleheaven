@@ -2,17 +2,16 @@ package org.middleheaven.global.atlas.modules;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.global.atlas.AtlasContext;
 import org.middleheaven.global.atlas.AtlasLocale;
 import org.middleheaven.global.atlas.AtlasModule;
 import org.middleheaven.global.atlas.AtlasService;
-import org.middleheaven.global.atlas.Town;
+import org.middleheaven.global.atlas.ChronologicalCountryBuilder;
 import org.middleheaven.global.atlas.Country;
 import org.middleheaven.global.atlas.CountryNotFoundException;
+import org.middleheaven.global.atlas.Town;
 
 
 public class ModularAtlasService implements AtlasService {
@@ -23,20 +22,14 @@ public class ModularAtlasService implements AtlasService {
 	
 	public ModularAtlasService(){
 		// TODO load modules
-		AtlasContext context = new AtlasContext(){
-
-			@Override
-			public void addCountry(Country country, Date definitionTimeStamp) {
-				
-				countries.put(country.getDesignation(), country);
-			}
-			
-		};
+		ChronologicalCountryBuilder context = new ChronologicalCountryBuilder();
 		
 		Collection<AtlasModule> modules = null;
 		for (AtlasModule module: modules){
 			module.loadAtlas(context);
 		}
+		
+		context.build();
 	}
 	
 	@Override

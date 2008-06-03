@@ -78,7 +78,7 @@ public class Month implements Iterable<DayOfMonth>{
 	}
 	
 	public DateHolder end(){
-		
+		return CalendarDate.date(year, ordinal, daysCount);
 	}
 
 
