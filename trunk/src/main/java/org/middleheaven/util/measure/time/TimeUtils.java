@@ -2,7 +2,7 @@ package org.middleheaven.util.measure.time;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.TimeZone;
+
 
 public final class TimeUtils {
 
@@ -16,9 +16,15 @@ public final class TimeUtils {
 		return localtime - a.getRawOffset() - a.getOffset(System.currentTimeMillis());
 	}
 	
-	public static long convertLocalTime (long localTime , TimeZone a , TimeZone b){
-		return localTime + b.getRawOffset() - a.getRawOffset() ;
-		
+	/**
+	 * Convert the time as displayed in a local time zone to the time it should be displayed at another time zone
+	 * @param localTime
+	 * @param localZone
+	 * @param remoteZone
+	 * @return
+	 */
+	public static long convertLocalTime (long localTime , TimeZone localZone , TimeZone remoteZone){
+		return localTime + remoteZone.getRawOffset() - localZone.getRawOffset() ;
 	}
 	
 	public static Date toDate(TimePoint date){

@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import org.middleheaven.util.measure.time.Clock;
+
 
 /**
  * NtpClient - an NTP client for Java.  This program connects to an NTP server
@@ -30,7 +32,7 @@ import java.net.InetAddress;
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
  * more details.
  *  
- * @author Adam Buckley , Sergio Taborda
+ * @author Adam Buckley
  */
 public class SNTPClient {
 
@@ -41,16 +43,19 @@ public class SNTPClient {
 	private double roundTripDelay;
 
 	private long localClockOffset;
+	private Clock reference;
 	
-	public SNTPClient(InetAddress serverAdress){
+	public SNTPClient(Clock reference ,InetAddress serverAdress){
 		this.serverAdress = serverAdress;
+		this.reference = reference;
 	}
 
 
 	public long now() throws IOException{
 		// Send request
 		DatagramSocket socket = new DatagramSocket();
-
+		socket.setSoTimeout(1000); // 1 second
+		
 		try {
 			byte[] buf = new NtpMessage().toByteArray();
 			DatagramPacket requestPacket = new DatagramPacket(buf, buf.length, serverAdress, 123);
@@ -60,14 +65,15 @@ public class SNTPClient {
 			//NtpMessage.encodeTimestamp(requestPacket.getData(), 40,
 			//	(System.currentTimeMillis()/1000.0) + OFFSET_FROM_JAVA_EPOC);
 
-			long before = System.currentTimeMillis();
+			long before = reference.getTime().milliseconds();
 			// Send Request
 			socket.send(requestPacket);
+	
 			// Get response
 			socket.receive(packet);
 
 			// Immediately record the incoming timestamp
-			long after =  System.currentTimeMillis();
+			long after =  reference.getTime().milliseconds();
 			double destinationTimestamp =(after + OFFSET_FROM_JAVA_EPOC)/1000.0;
 
 

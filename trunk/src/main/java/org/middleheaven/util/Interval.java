@@ -175,15 +175,15 @@ public class Interval<T> {
 	 * Determine if the value is contained in the Interval considering the start and the end 
 	 * of the Interval as belonging, or not , to the Interval according with openLeft and openRight arguments
 	 * @param value the value to test
-	 * @param openStart if <code>true<code> test assuming the start of the interval does not belongs to the Interval.
-	 * @param openEnd if <code>true<code> test assuming the end of the interval does not belongs to the Interval.
+	 * @param includeStart if <code>true<code> test assuming the start of the interval does belongs to the Interval.
+	 * @param includeEnd if <code>true<code> test assuming the end of the interval does belongs to the Interval.
 	 * @return
 	 */
-	public boolean contains(T value, boolean openStart , boolean openEnd){
-		//return !this.isEmpty() && (openStart?comparator.compare(value, start) >0: comparator.compare(value, start) >=0 ) && 
-		//(openEnd?comparator.compare(value, end) <0:comparator.compare(value, end) <=0);
-
-		return !this.isEmpty() && comparator.compare(value, start) >=0 && comparator.compare(value, end) <=0;
+	public boolean contains(T value, boolean includeStart , boolean includeEnd){
+		return !this.isEmpty() && 
+		(includeStart?comparator.compare(value, start) >=0: comparator.compare(value, start) >0 ) && 
+		(includeEnd?comparator.compare(value, end) <=0:comparator.compare(value, end) <0);
+	
 	}
 
 

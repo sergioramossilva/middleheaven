@@ -8,9 +8,6 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.middleheaven.core.wiring.BindingSpecification;
-import org.middleheaven.core.wiring.Wire;
-
 public final class ReflectionUtils {
 
 	public ReflectionUtils(){}
@@ -213,6 +210,22 @@ public final class ReflectionUtils {
 			}
 		}
 		return result;
+	}
+
+
+	public static <T> T invoke(Class<T> returnType,Method translatingMethod, Object translatingObject, Object ... params) {
+		try {
+			translatingMethod.setAccessible(true);
+			return returnType.cast(translatingMethod.invoke(translatingObject, params));
+		} catch (SecurityException e) {
+			throw new IllegalAccesReflectionException(e);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalAccesReflectionException(e);
+		} catch (InvocationTargetException e) {
+			throw new InvocationTargetReflectionException(e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalAccesReflectionException(e);
+		}
 	}
 
 

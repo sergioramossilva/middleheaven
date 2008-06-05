@@ -3,32 +3,31 @@ package org.middleheaven.test.atlas;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.middleheaven.global.calendar.CalendarModel;
 import org.middleheaven.global.calendar.EasterBasedCalculatedCalendarModel;
-import org.middleheaven.utils.time.MonthOfYear;
-import org.middleheaven.utils.time.XCalendarDate;
-import org.middleheaven.utils.time.DateHolder;
+import org.middleheaven.util.measure.time.CalendarDate;
+import org.middleheaven.util.measure.time.DateHolder;
+import org.middleheaven.util.measure.time.EphemeridModel;
 
 
 public class EasterTest {
 
 	@Test
 	public void testWorkingDays(){
-		CalendarModel model = new EasterBasedCalculatedCalendarModel();
+		EphemeridModel model = new EasterBasedCalculatedCalendarModel();
 		
-		DateHolder start = new XCalendarDate(2008,5,28);
-		DateHolder end = new XCalendarDate(2008,6,4);
-		
-		assertEquals(end, model.addWorkingDays(5, start));
-		assertEquals(start, model.subtractWorkingDays(5, end));
-		
-		start = new XCalendarDate(2008,6,2);
-		end = new XCalendarDate(2008,6,9);
+		DateHolder start = CalendarDate.date(2008,5,28);
+		DateHolder end = CalendarDate.date(2008,6,4);
 		
 		assertEquals(end, model.addWorkingDays(5, start));
 		assertEquals(start, model.subtractWorkingDays(5, end));
 		
-		assertEquals(new XCalendarDate(2008,6,6),model.getOrdinalWorkingDayOfMonth(new MonthOfYear(2008,6), 5));
+		start = CalendarDate.date(2008,6,2);
+		end = CalendarDate.date(2008,6,9);
+		
+		assertEquals(end, model.addWorkingDays(5, start));
+		assertEquals(start, model.subtractWorkingDays(5, end));
+		
+		assertEquals(CalendarDate.date(2008,6,6),model.getOrdinalWorkingDayOfMonth(new MonthOfYear(2008,6), 5));
 	}
 	
 	@Test

@@ -37,6 +37,9 @@ public class JavaCalendarCronology extends AbstractChronology{
 		calendar.add(Calendar.YEAR, duration.years());
 		calendar.add(Calendar.MONTH, duration.months());
 		calendar.add(Calendar.DATE, duration.days());
+		calendar.add(Calendar.HOUR, duration.hours());
+		calendar.add(Calendar.MINUTE, duration.minutes());
+		calendar.add(Calendar.MILLISECOND, (int)(duration.secounds()*1000));
 		return reduce(timePointFor(calendar.getTimeInMillis()), point.getClass());
 	}
 

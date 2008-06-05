@@ -41,5 +41,10 @@ public abstract class EphemeridModel {
 	}
 
 	public abstract Set<Ephemeris> getEphemeris(DateHolder date);
+
+	public Object addWorkingDays(int i, DateHolder start) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

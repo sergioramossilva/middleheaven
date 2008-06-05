@@ -16,7 +16,7 @@ public abstract class Chronology {
 		if (elapsed instanceof Duration){
 			return add(point , (Duration)elapsed);
 		} else {
-			return add(point , (Duration)elapsed);
+			return add(point , (Period)elapsed);
 		}	
     }
 

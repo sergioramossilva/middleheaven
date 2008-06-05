@@ -1,11 +1,10 @@
 package org.middleheaven.util.measure.time;
 
-import java.text.DateFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.TimeZone;
+
 
 public class LocalTimePoint implements TimePoint , Comparable<TimePoint>  {
 
@@ -50,7 +49,7 @@ public class LocalTimePoint implements TimePoint , Comparable<TimePoint>  {
 	public String toString(){
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTimeInMillis(this.milliseconds);
-		calendar.setTimeZone(this.timeZone);
+		calendar.setTimeZone(this.timeZone.toTimeZone());
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ").format(calendar.getTime());
 	}
 }

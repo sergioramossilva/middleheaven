@@ -1,15 +1,15 @@
 package org.middleheaven.util.measure.time.clocks;
 
-import java.util.TimeZone;
 
 import org.middleheaven.util.measure.time.Clock;
+import org.middleheaven.util.measure.time.TimeZone;
 
-public abstract class UniversalTimeClock implements Clock{
+public final class UniversalTimeClock extends TimeZoneClock{
 
-	@Override
-	public TimeZone getTimeZone() {
-		return TimeZone.getTimeZone("GMT+0");
+	public UniversalTimeClock(Clock referenceClock) {
+		super(TimeZone.getTimeZone("GMT+0"),referenceClock);
 	}
+
 
 	
 

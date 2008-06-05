@@ -2,19 +2,20 @@ package org.middleheaven.util.measure.time;
 
 import org.middleheaven.util.measure.IncompatibleUnitsException;
 import org.middleheaven.util.measure.Integer;
-import org.middleheaven.util.measure.Number;
-import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
 import org.middleheaven.util.measure.Unit;
 
 public class Period extends ElapsedTime{
 
 	
-	public static Period period (long miliseconds){
+	public static Period miliseconds (long miliseconds){
 		return new Period(miliseconds);
 	}
 	
-
+	public static Period seconds (long seconds){
+		return new Period(seconds*1000);
+	}
+	
     long miliseconds;
 	public Period(long miliseconds) {
 		this.miliseconds = miliseconds;
@@ -60,4 +61,7 @@ public class Period extends ElapsedTime{
 		return new Period ( (long)(this.miliseconds * other.asNumber().doubleValue()) );
 	}
 
+	public String toString(){
+		return Long.toString(this.miliseconds);
+	}
 }

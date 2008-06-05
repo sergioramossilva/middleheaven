@@ -1,7 +1,8 @@
 package org.middleheaven.util.measure;
 
+
 /**
- * Implements Unit as a pair
+ * Implements Unit as a pair Dimension , simbol
  * 
  * @author Sergio M.M. Taborda
  *

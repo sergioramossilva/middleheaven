@@ -1,13 +1,37 @@
 package org.middleheaven.util.measure.time;
 
-import java.util.TimeZone;
+import org.middleheaven.util.measure.time.clocks.ClockTicked;
+import org.middleheaven.work.scheduled.Chronogram;
+
 
 /**
- * @author  Sergio M.M. Taborda
+ * A clock. A centralized point to obtain elapsed time information.
  */
-public interface Clock {
+public abstract class Clock {
 
-	public TimePoint now();
+	/**
+	 * @return Number of seconds elapsed in the clock for each universal second  
+	 * Normal clock have cadence equal to 1s/s (second per second)
+	 */
+	public abstract double getCadence ();
+	
+	/**
+	 * 
+	 * @return the current time as dictated by this clock
+	 */
+	public abstract TimePoint getTime();
 
-	public TimeZone getTimeZone();
+	/**
+	 * 
+	 * @return the time zone this clock is in
+	 */
+	public abstract TimeZone getTimeZone();
+	
+	public String toString(){
+		return getTime().toString();
+	}
+	
+	protected abstract ClockTicked schedule( Chronogram chronogram , Clock clock );
+	
+   
 }

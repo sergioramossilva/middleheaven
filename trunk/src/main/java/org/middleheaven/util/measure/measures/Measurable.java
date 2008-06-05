@@ -4,12 +4,11 @@ package org.middleheaven.util.measure.measures;
  * 
  * Represents the measurable property of a phenomenon.
  * 
- * @author Sergio M.M. Taborda
  * 
  * 
 	ACCELERATION,
 	AMOUNT_OF_SUBSTANCE,
-	ANGLE,
+
 	ANGULAR_ACELERATION,
 	ANGULAR_VELOCITY,
 	ANGULAR_MOMENTUM,
@@ -46,7 +45,7 @@ package org.middleheaven.util.measure.measures;
 	RADIOACTIVE_ACTIVITY,
     SOLID_ANGLE,
 	TEMPERATURE,
-	VELOCITY,
+
 	VOLUME,
 	VOLUMETIC_DENSITY,
 	VOLUMETIC_FLOW_RATE;
