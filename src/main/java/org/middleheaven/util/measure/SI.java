@@ -29,7 +29,9 @@ public final class SI implements UnitSystem{
 	public static final Unit NEWTON = Unit.unit(Dimension.FORCE,"N");
 	public static final Unit AMPERE = Unit.unit(Dimension.CURRENT_INTENSITY,"A");
 	
-
+	public static final Unit RADIANS = Unit.unit(Dimension.ANGLE,"rad");
+	public static final Unit DEGREE = Unit.unit(Dimension.ANGLE,"º");
+	
 	private static final Map<String , Unit> allUnits = new HashMap<String , Unit> ();
 	
 	static {

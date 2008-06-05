@@ -11,15 +11,15 @@ import java.util.Map;
 public class ChronologicalCountryBuilder implements AtlasContext{
 
 	List<CountryInfo> infoCountries = new LinkedList<CountryInfo>();
-	List<Country> countries = new LinkedList<Country>();
+	Map<String,Country> countries = new HashMap<String,Country>();
 	
 	@Override
 	public void addCountryInfo(CountryInfo country) {
 		infoCountries.add(country);
 	}
 
-	public List<Country> countries (){
-		return Collections.unmodifiableList(countries);
+	public Collection<Country> countries (){
+		return Collections.unmodifiableCollection(countries.values());
 	}
 
 	public void build(){
@@ -43,7 +43,7 @@ public class ChronologicalCountryBuilder implements AtlasContext{
 				// new info;
 				// add the old to the list
 				if (currentCountry!=null) {
-					countries.add(currentCountry);
+					countries.put(currentCountry.ISOCode() , currentCountry);
 				}
 				currentCountry = new ChronologicalCountry(info.getIsoCode());
 			}
@@ -102,6 +102,9 @@ public class ChronologicalCountryBuilder implements AtlasContext{
 			return Collections.unmodifiableCollection(children.values());
 		}
 
-	
+	}
+
+	public Country get(String isoCode) {
+		return countries.get(isoCode);
 	}
 }

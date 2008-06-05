@@ -1,15 +1,17 @@
 package org.middleheaven.util.measure.time;
 
 import org.middleheaven.util.measure.time.chono.JavaCalendarCronology;
-import org.middleheaven.util.measure.time.clocks.LocalMachineClock;
+import org.middleheaven.util.measure.time.clocks.MachineClock;
+import org.middleheaven.util.measure.time.zones.JavaTimeZoneTable;
 
 public final class TimeContext {
 
 	
 	private static TimeContext current = new TimeContext(
-			new LocalMachineClock(),
+			new MachineClock(),
 			new DefaultEphemeridModel(),
-			new JavaCalendarCronology()
+			new JavaCalendarCronology(),
+			new JavaTimeZoneTable()
 			);
 	
 	public static void setTimeContext(TimeContext context){
@@ -22,15 +24,16 @@ public final class TimeContext {
 	
 
 	private Clock referenceClock;
-	
 	private EphemeridModel referenceWorkCalendar;
-
 	private Chronology chronology;
-	
+	private TimeZoneTable timezoneTable;
 	
 	public TimeContext(Clock referenceClock,
-			EphemeridModel referenceWorkCalendar, Chronology chronology) {
+			EphemeridModel referenceWorkCalendar, 
+			Chronology chronology,
+			TimeZoneTable timezoneTable) {
 		
+		this.timezoneTable = timezoneTable;
 		this.referenceClock = referenceClock;
 		this.chronology = chronology;
 		this.chronology.setClock(referenceClock);
@@ -39,8 +42,16 @@ public final class TimeContext {
 		
 	}
 
+	public TimeZoneTable getTimeZoneTable(){
+		return timezoneTable;
+	}
+	
+	public TimeZone getDefaultTimeZone(){
+		return timezoneTable.convertFromJavaTimeZone(java.util.TimeZone.getDefault());
+	}
+	
 	public TimePoint now (){
-		return new CalendarDateTime(this, referenceClock.now().milliseconds());
+		return new CalendarDateTime(this, referenceClock.getTime().milliseconds());
 	}
 	
 	/**

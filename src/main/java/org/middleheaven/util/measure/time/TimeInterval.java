@@ -8,7 +8,7 @@ import org.middleheaven.util.Interval;
 
 
 /**
- * @author Sergio M.M. Taborda
+ * An interval between <code>TimePoint</code>s 
  */
 public class TimeInterval extends Interval<TimePoint>{
 
@@ -33,6 +33,6 @@ public class TimeInterval extends Interval<TimePoint>{
     }
 
     public Period pediod(){
-    	return Period.period(end.milliseconds()-start.milliseconds());
+    	return Period.miliseconds(end.milliseconds()-start.milliseconds());
     }
 }

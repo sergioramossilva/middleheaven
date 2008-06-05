@@ -1,31 +1,26 @@
 package org.middleheaven.util.measure.time.clocks;
 
-import java.util.TimeZone;
 
 import org.middleheaven.util.measure.time.Clock;
-import org.middleheaven.util.measure.time.LocalTimePoint;
+import org.middleheaven.util.measure.time.EpocTimePoint;
 import org.middleheaven.util.measure.time.TimePoint;
 import org.middleheaven.util.measure.time.TimeUtils;
+import org.middleheaven.util.measure.time.TimeZone;
+import org.middleheaven.util.measure.time.WrappedClock;
 
-public class TimeZoneClock implements Clock {
+
+public class TimeZoneClock extends WrappedClock {
 
 
 	TimeZone timeZone;
-	Clock referenceClock;
-	
-	public TimeZoneClock(TimeZone timeZone){
-		this.timeZone = timeZone;
-		this.referenceClock = new LocalMachineClock();
-	}
 	
 	public TimeZoneClock(TimeZone timeZone, Clock referenceClock){
+		super(referenceClock);
 		this.timeZone = timeZone;
-		this.referenceClock = referenceClock;
 	}
-	
 
 	public void setReferenceClock (Clock referenceClock){
-		this.referenceClock = referenceClock;
+		super.setReferenceClock(referenceClock);
 	}
 	
 	@Override
@@ -34,11 +29,17 @@ public class TimeZoneClock implements Clock {
 	}
 
 	@Override
-	public TimePoint now() {
-		return LocalTimePoint.fromUniversalTime(
-				TimeUtils.localToUniversalTime(referenceClock.now().milliseconds(), referenceClock.getTimeZone()), 
-				timeZone
-				);
+	public TimePoint getTime() {
+		return calculateTimeFromReference(getReferenceClock().getTime());
 	}
 
+	@Override
+	protected TimePoint calculateTimeFromReference(TimePoint referenceTime) {
+		return new EpocTimePoint(TimeUtils.convertLocalTime(
+				referenceTime.milliseconds(),
+				getReferenceClock().getTimeZone(),
+				this.timeZone)
+		);
+	}
 }
+

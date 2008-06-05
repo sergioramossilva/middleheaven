@@ -50,7 +50,10 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 	}
 
 	
-
+	public static Duration weeks(int weeks){
+		return new Duration ( DurationType.DAYS, 7*weeks);
+	}
+	
 	public static Duration days(int days){
 		return new Duration ( DurationType.DAYS, days);
 	}

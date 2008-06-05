@@ -22,7 +22,7 @@ public abstract class AbstractChronology extends Chronology {
 	}
 	
 	protected TimePoint now(){
-		return this.referenceClock.now();
+		return this.referenceClock.getTime();
 	}
 	
 	protected CalendarDateTime timePointFor(long milliseconds){

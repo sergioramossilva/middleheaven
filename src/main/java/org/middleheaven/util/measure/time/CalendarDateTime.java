@@ -1,5 +1,7 @@
 package org.middleheaven.util.measure.time;
 
+import java.util.Date;
+
 
 public class CalendarDateTime extends AbstractTimePoint implements  DateHolder  {
 
@@ -119,4 +121,20 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder  
 		return this.compareTo((TimePoint)CalendarDate.date(other.year().ordinal(),other.month().ordinal(),other.dayOfMonth().getDay()));
 	}
 
+	public boolean equals(Object other) {
+		return other instanceof TimePoint
+				&& equals((TimePoint) other);
+	}
+
+	public boolean equals(TimePoint other) {
+		return other.milliseconds() == this.milliseconds;
+	}
+
+	public int hashCode() {
+		return (int)this.milliseconds();
+	}
+	
+	public String toString(){
+		return new Date(this.milliseconds).toString();
+	}
 }

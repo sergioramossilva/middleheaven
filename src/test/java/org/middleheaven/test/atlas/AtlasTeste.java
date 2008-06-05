@@ -12,6 +12,7 @@ import java.util.TreeMap;
 
 import org.junit.Test;
 import org.middleheaven.global.atlas.AtlasContext;
+import org.middleheaven.global.atlas.ChronologicalCountryBuilder;
 import org.middleheaven.global.atlas.Country;
 import org.middleheaven.global.atlas.modules.DefaultAtlasModule;
 import org.middleheaven.global.atlas.modules.ISOFileAtlasModule;
@@ -22,43 +23,32 @@ public class AtlasTeste {
 	@Test
 	public void testDefaultAtlasModule(){
 		
-		final List<Country> all = new LinkedList<Country>();
-		AtlasContext context = new AtlasContext(){
+		ChronologicalCountryBuilder context = new ChronologicalCountryBuilder();
 
-			@Override
-			public void addCountry(Country country, Date definitionTimeStamp) {
-				all.add(country);
-			}};
 		
 		DefaultAtlasModule m = new DefaultAtlasModule();
 		m.loadAtlas(context);
 		
-		assertEquals(Locale.getISOCountries().length,  all.size());
+		assertEquals(Locale.getISOCountries().length, context.countries().size());
 	}
 	
 	@Test
 	public void testISOFileAtlasModule(){
 		
-		final Map<String,Country> all = new TreeMap<String, Country>();
-		AtlasContext context = new AtlasContext(){
+		ChronologicalCountryBuilder context = new ChronologicalCountryBuilder();
 
-			@Override
-			public void addCountry(Country country, Date definitionTimeStamp) {
-				all.put(country.getDesignation(), country);
-			}};
-		
 		ISOFileAtlasModule m = new ISOFileAtlasModule();
 		m.loadAtlas(context);
 		
-		assertEquals(246,  all.size());
+		assertEquals(246,  context.countries().size());
 		
 	
-		Country brazil = all.get("BR");
+		Country brazil = context.get("BR");
 		assertEquals(27, brazil.getChildren().size());
 		
 		assertEquals(263,brazil.getChild("MG").getChildren().size());
 		
-		Country portugal = all.get("PT");
+		Country portugal = context.get("PT");
 		assertEquals(20, portugal.getChildren().size());
 		
 		assertEquals(39,portugal.getChild("01").getChildren().size());
@@ -75,29 +65,24 @@ public class AtlasTeste {
 		URL url = this.getClass().getResource(".");
 		System.setProperty("middleheaven.atlas.data.path" , new File("./src/test/java/org/middleheaven/test/atlas").getAbsolutePath());
 		
-		final Map<String,Country> all = new TreeMap<String, Country>();
-		AtlasContext context = new AtlasContext(){
+		ChronologicalCountryBuilder context = new ChronologicalCountryBuilder();
 
-			@Override
-			public void addCountry(Country country, Date definitionTimeStamp) {
-				all.put(country.getDesignation(), country);
-			}};
 		
 		ISOFileAtlasModule m = new ISOFileAtlasModule();
 		m.loadAtlas(context);
 		
-		assertEquals(246,  all.size());
+		assertEquals(246,  context.countries().size());
 		
 		// No file present but loads from embedded
-		Country portugal = all.get("PT");
+		Country portugal = context.get("PT");
 		assertEquals(20, portugal.getChildren().size());
 		
-		Country brazil = all.get("BR");
+		Country brazil = context.get("BR");
 		assertEquals(27, brazil.getChildren().size());
 		
 		// file present at filsystem location with a dummy state to make 58
 		// 57 means the data from the embeded version is being red witch is an error
-		Country usa = all.get("US");
+		Country usa = context.get("US");
 		assertEquals(59, usa.getChildren().size());
 		
 	

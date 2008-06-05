@@ -13,4 +13,14 @@ public class ReflectionException extends RuntimeException {
 
 	protected ReflectionException() {
 	}
+
+	public static RuntimeException manage(Throwable e) {
+		if (e instanceof SecurityException){
+			throw new IllegalAccesReflectionException(e);
+		} else if (e instanceof NoSuchMethodException){
+			throw new NoSuchMethodReflectionException(e);
+		}
+		
+		return new RuntimeException(e);
+	}
 }

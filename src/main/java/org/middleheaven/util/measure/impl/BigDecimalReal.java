@@ -37,7 +37,7 @@ public class BigDecimalReal extends Real{
 
 	@Override
 	public Real inverse() {
-		return new BigDecimalReal(BigDecimal.ONE.divide(value));
+		return new BigDecimalReal(BigDecimal.ONE.divide(value,19,RoundingMode.HALF_EVEN));
 	}
 
 	@Override

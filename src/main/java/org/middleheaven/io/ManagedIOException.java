@@ -6,6 +6,7 @@ package org.middleheaven.io;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import org.middleheaven.io.repository.FileNotFoundManagedException;
 
@@ -18,6 +19,8 @@ public class ManagedIOException extends RuntimeException {
 	public static ManagedIOException manage(IOException ioe) {
         if (ioe instanceof FileNotFoundException){
             return new FileNotFoundManagedException(ioe.getMessage());
+        } else if  (ioe instanceof SocketTimeoutException){
+            return new RemoteComunicationTimeoutException(ioe.getMessage());
         }
         return new ManagedIOException(ioe);
     }
