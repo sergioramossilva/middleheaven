@@ -20,7 +20,7 @@ public interface Series {
 	public int size();
 	
 	/**
-	 * Quantity of dimensions in the series, i.e. then number of axis in the series
+	 * Quantity of dimensions in the series, i.e. the number of axis in the series
 	 * A X-Y series will have dimension 2 as a Histogram series , but a X-Y-Z series will have 
 	 * dimension 3. 
 	 * The series must have at least two axis and the axis of index 0 is considered the main
