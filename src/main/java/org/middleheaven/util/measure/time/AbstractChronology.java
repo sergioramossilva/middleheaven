@@ -5,8 +5,6 @@ package org.middleheaven.util.measure.time;
 
 public abstract class AbstractChronology extends Chronology {
 
-
-	
 	@Override
 	public <T extends TimePoint> T add(T point, Period period) {
 		return reduce(timePointFor(point.milliseconds() + period.milliseconds()), point.getClass());
@@ -34,7 +32,7 @@ public abstract class AbstractChronology extends Chronology {
 	}
 	
 	protected Year year(int year,  int maxMonths){
-		 return new Year(year,maxMonths);
+		 return new Year(this,year,maxMonths);
 	}
 	
 	protected DayOfWeek weekDay(int ordinal){

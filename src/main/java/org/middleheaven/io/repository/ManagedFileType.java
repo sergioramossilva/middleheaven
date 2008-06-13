@@ -33,8 +33,13 @@ public enum ManagedFileType {
 	}
 	
 	public boolean isVirtual(){
-		return this == VIRTUAL;
+		return this.equals(VIRTUAL);
 	}
+	
+	public boolean isFolder(){
+		return this.equals(FOLDER);
+	}
+	
 	
 	public boolean hasContent(){
 		return this.hasContent;

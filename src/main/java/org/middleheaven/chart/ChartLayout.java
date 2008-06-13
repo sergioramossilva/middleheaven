@@ -12,6 +12,7 @@ public class ChartLayout {
 	private ChartOrientation orientation = ChartOrientation.VERTICAL; 
 	private boolean is3D = true;
 
+
 	public ChartOrientation getOrientation() {
 		return orientation;
 	}

@@ -1,5 +1,9 @@
 package org.middleheaven.chart;
 
+import java.util.Iterator;
+
+import org.middleheaven.util.CollectionUtils;
+
 public class DataSets {
 
 	public static Dataset singleSerie(Series data) {
@@ -27,6 +31,12 @@ public class DataSets {
 		@Override
 		public int size() {
 			return 1;
+		}
+
+
+		@Override
+		public Iterator<Series> iterator() {
+			return CollectionUtils.singleIterator(data);
 		}
 
 	

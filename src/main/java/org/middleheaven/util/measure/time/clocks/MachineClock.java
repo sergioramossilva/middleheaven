@@ -14,7 +14,7 @@ import org.middleheaven.util.measure.time.Clock;
 import org.middleheaven.util.measure.time.EpocTimePoint;
 import org.middleheaven.util.measure.time.TimePoint;
 import org.middleheaven.util.measure.time.TimeZone;
-import org.middleheaven.work.scheduled.Chronogram;
+import org.middleheaven.work.scheduled.Schedule;
 
 /**
  * The clock used by the machine. This is the standard system clock with
@@ -41,13 +41,13 @@ public class MachineClock extends Clock {
 		return 1;
 	}
 
-	Map<Chronogram, ClockTicked> timers = new  HashMap<Chronogram, ClockTicked>();
+	Map<Schedule, ClockTicked> timers = new  HashMap<Schedule, ClockTicked>();
 	
 	Timer timer = new Timer();
 	
 	
 	@Override
-	protected ClockTicked schedule(Chronogram chronogram,Clock clock) {
+	protected ClockTicked schedule(Schedule chronogram,Clock clock) {
 		ClockTicked ticked = timers.get(chronogram);
 		if (ticked==null){
 			ticked =new TimerClockTicked(chronogram,clock);
@@ -60,9 +60,9 @@ public class MachineClock extends Clock {
 	
 	private class TimerClockTicked extends ClockTicked{
 
-		Chronogram chronogram;
+		Schedule chronogram;
 	
-		public TimerClockTicked(Chronogram chronogram,Clock clock) {
+		public TimerClockTicked(Schedule chronogram,Clock clock) {
 			this.chronogram = chronogram;
 			Method translatingMethod=null;
 			Object translatingObject=null;
@@ -83,7 +83,11 @@ public class MachineClock extends Clock {
 			
 			}
 	
-			timer.schedule(new TickTimerTask(translatingMethod, translatingObject), new Date(chronogram.getStartTime().milliseconds()), chronogram.repetitionPeriod().milliseconds());
+			if (chronogram.getStartTime()==null){
+				timer.schedule(new TickTimerTask(translatingMethod, translatingObject), 0, chronogram.repetitionPeriod().milliseconds());
+			} else {
+				timer.schedule(new TickTimerTask(translatingMethod, translatingObject), new Date(chronogram.getStartTime().milliseconds()), chronogram.repetitionPeriod().milliseconds());
+			}
 		}
 		
 		protected TimePoint calculateTimeFromReference(TimePoint referenceTime) {

@@ -49,7 +49,7 @@ public class Interval<T> {
 		if (comparator == null){
 			throw new NullPointerException("A comparator is required.");
 		}
-		if (comparator.compare(start,end)>0){
+		if (start!=end && start!=null && end!=null && comparator.compare(start,end)>0){
 			throw new IllegalArgumentException("Interval`s start must preceed its end");
 		}
 
@@ -181,8 +181,10 @@ public class Interval<T> {
 	 */
 	public boolean contains(T value, boolean includeStart , boolean includeEnd){
 		return !this.isEmpty() && 
-		(includeStart?comparator.compare(value, start) >=0: comparator.compare(value, start) >0 ) && 
-		(includeEnd?comparator.compare(value, end) <=0:comparator.compare(value, end) <0);
+		
+		(start==null ? true : (includeStart?comparator.compare(value, start) >=0: comparator.compare(value, start) >0 )) && 
+		
+		(end == null ? true : (includeEnd?comparator.compare(value, end) <=0:comparator.compare(value, end) <0));
 	
 	}
 

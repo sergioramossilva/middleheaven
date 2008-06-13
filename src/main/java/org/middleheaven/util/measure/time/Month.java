@@ -3,12 +3,13 @@
  */
 package org.middleheaven.util.measure.time;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 /**
  * @author Sergio M.M. Taborda
  */
-public class Month implements Iterable<DayOfMonth>{
+public class Month implements Iterable<DayOfMonth>, Serializable{
 
  
     private int year;
@@ -17,22 +18,19 @@ public class Month implements Iterable<DayOfMonth>{
  
     private int daysCount;
     
+    public static Month ofYear(int year, int month){
+    	return CalendarDate.date(year, month, 1).year().month(month);
+    }
     
     /**
      * @param year
      * @param ordinal
      * @param daysCount
      */
-    Month(int year, int ordinal, int daysCount) {
+    public Month(int year, int ordinal, int daysCount) {
         this.year = year;
         this.ordinal = ordinal;
         this.daysCount = daysCount;
-    }
-    
-    Month(int year, int ordinal) {
-        this.year = year;
-        this.ordinal = ordinal;
-
     }
     
     /**

@@ -4,6 +4,13 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.middleheaven.core.services.ServiceRegistry;
+
+/**
+ * Represents an application user (human or otherwise)
+ * 
+ *
+ */
 public abstract class User implements Serializable {
 
 	private Map<String , Role> roles = new TreeMap<String,Role>();
@@ -21,7 +28,7 @@ public abstract class User implements Serializable {
 	}
 
 	public final boolean isSigned(){
-		SignatureService ss = null; // TODO
+		SignatureService ss = ServiceRegistry.getService(SignatureService.class); 
 		return ss.isSigned(this);
 	}
 	

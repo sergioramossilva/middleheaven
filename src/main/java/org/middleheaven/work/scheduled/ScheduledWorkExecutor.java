@@ -9,5 +9,5 @@ public interface ScheduledWorkExecutor {
 	 * @param work
 	 * @param cronogram
 	 */
-	public void scheduleWork(Work work, Chronogram cronogram);
+	public void scheduleWork(Work work, Schedule cronogram);
 }

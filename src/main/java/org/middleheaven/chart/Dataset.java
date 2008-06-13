@@ -5,7 +5,7 @@ package org.middleheaven.chart;
  * block for building a chart. Charts are based in a single <code>Dataset</code>.
  *
  */
-public interface Dataset extends SeriesListener{
+public interface Dataset extends SeriesListener, Iterable<Series>{
 
 	/**
 	 * 

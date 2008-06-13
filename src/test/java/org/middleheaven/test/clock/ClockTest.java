@@ -19,7 +19,7 @@ import org.middleheaven.util.measure.time.clocks.SNTPUniversalTimeClock;
 import org.middleheaven.util.measure.time.clocks.StaticClock;
 import org.middleheaven.util.measure.time.clocks.TimeZoneClock;
 import org.middleheaven.work.scheduled.AlarmClock;
-import org.middleheaven.work.scheduled.IntervalChronogram;
+import org.middleheaven.work.scheduled.IntervalSchedule;
 
 
 public class ClockTest {
@@ -103,7 +103,7 @@ public class ClockTest {
 		
 		TestClockTickListener listener = new TestClockTickListener();
 		
-		clock.addClockTickListener(listener, new IntervalChronogram(time, time.plus(Duration.seconds(5)) , Period.seconds(1)));
+		clock.addClockTickListener(listener, IntervalSchedule.schedule(time, time.plus(Duration.seconds(5)) , Period.seconds(1)));
 		
 		try {
 			Thread.sleep(10000);
@@ -119,7 +119,7 @@ public class ClockTest {
 		
 	    listener = new TestClockTickListener();
 		
-		clock.addClockTickListener(listener, new IntervalChronogram(time, time.plus(Duration.hours(5)) , Period.seconds(1)));
+		clock.addClockTickListener(listener, IntervalSchedule.schedule(time, time.plus(Duration.hours(5)) , Period.seconds(1)));
 		
 		try {
 			Thread.sleep(10000);

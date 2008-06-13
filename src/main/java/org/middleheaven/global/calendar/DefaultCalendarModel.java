@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.middleheaven.util.measure.time.DateHolder;
 import org.middleheaven.util.measure.time.DayOfWeek;
+import org.middleheaven.util.measure.time.ephemeris.Ephemeris;
 
 /**
  * Ephemeris unaware calendar model. No day is considered to have any ephemeris.

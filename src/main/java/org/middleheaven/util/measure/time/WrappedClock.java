@@ -1,7 +1,7 @@
 package org.middleheaven.util.measure.time;
 
 import org.middleheaven.util.measure.time.clocks.ClockTicked;
-import org.middleheaven.work.scheduled.Chronogram;
+import org.middleheaven.work.scheduled.Schedule;
 
 /**
  * Common abstract class for all clocks hat depend on other, reference, clock
@@ -40,8 +40,8 @@ public abstract class WrappedClock extends Clock {
 	}
 	
 	@Override
-	protected ClockTicked schedule(Chronogram chronogram, Clock clock) {
-		return referenceClock.schedule(chronogram, this);
+	protected ClockTicked schedule(Schedule schedule, Clock clock) {
+		return referenceClock.schedule(schedule, this);
 	}
 	
 	protected TimePoint calculateTimeFromReference(TimePoint referenceTime){

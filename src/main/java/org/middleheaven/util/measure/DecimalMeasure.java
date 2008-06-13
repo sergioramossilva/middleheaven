@@ -14,20 +14,20 @@ import org.middleheaven.util.measure.structure.Field;
  */
 public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implements Comparable<DecimalMeasure<E>> , Field<DecimalMeasure<E>> , Convertable<Real,DecimalMeasure<E>> {
 
-	public static <E extends Measurable> DecimalMeasure<E> measure(java.lang.Number value,java.lang.Number uncertainty, Unit unit){
+	public static <T extends Measurable> DecimalMeasure<T> measure(java.lang.Number value,java.lang.Number uncertainty, Unit unit){
 		return measure( Real.valueOf(value),Real.valueOf(uncertainty), unit);
 	}
 	
-	public static <E extends Measurable> DecimalMeasure<E> exact(java.lang.Number value, Unit unit){
+	public static <T extends Measurable> DecimalMeasure<T> exact(java.lang.Number value, Unit unit){
 		return measure( Real.valueOf(value),Real.ZERO(), unit);
 	}
 	
-	public static  <E extends Measurable> DecimalMeasure<E> measure(Real value, Real uncertainty,Unit unit){
-		return new DecimalMeasure<E>(value,uncertainty,unit);
+	public static  <T extends Measurable> DecimalMeasure<T> measure(Real value, Real uncertainty,Unit unit){
+		return new DecimalMeasure<T>(value,uncertainty,unit);
 	}
 
-	public static <E extends Measurable> DecimalMeasure<E> exact(Real value, Unit unit){
-		return new DecimalMeasure<E>(value,value.minus(value),unit);
+	public static <T extends Measurable> DecimalMeasure<T> exact(Real value, Unit unit){
+		return new DecimalMeasure<T>(value,value.minus(value),unit);
 	}
 	
 	

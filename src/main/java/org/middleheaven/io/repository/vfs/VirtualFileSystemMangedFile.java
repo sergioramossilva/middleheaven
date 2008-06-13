@@ -14,12 +14,14 @@ import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.VFS;
 import org.middleheaven.io.IOUtils;
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.FileChangeListener;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileType;
+import org.middleheaven.io.repository.WatchableRepository;
 
-public final class VirtualFileSystemMangedFile implements ManagedFile {
+public final class VirtualFileSystemMangedFile implements ManagedFile,WatchableRepository {
 
 	final FileObject file;
 	final String finalPath;
@@ -284,6 +286,29 @@ public final class VirtualFileSystemMangedFile implements ManagedFile {
 			}
 		}
 
+	}
+
+	@Override
+	public void addFileChangelistener(FileChangeListener listener,ManagedFile file) {
+		try {
+			this.file.getFileSystem().addListener( this.file.resolveFile(file.getName()),new FileListenerAdapter(listener));
+		} catch (FileSystemException e) {
+			throw new VirtualFileSystemException(e);
+		}
+	}
+
+	@Override
+	public void removeFileChangelistener(FileChangeListener listener,ManagedFile file) {
+		try {
+			this.file.getFileSystem().removeListener( this.file.resolveFile(file.getName()),new FileListenerAdapter(listener));
+		} catch (FileSystemException e) {
+			throw new VirtualFileSystemException(e);
+		}
+	}
+
+	@Override
+	public boolean isWatchable() {
+		return this.getType().isFolder();
 	}
 
 }

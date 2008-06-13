@@ -39,7 +39,7 @@ public class LicenceTeste {
 
 	}
 
-	/*
+	
 	@Test
 	public void teste(){
 		LicenceService ls = ServiceRegistry.getService(LicenceService.class);
@@ -49,5 +49,5 @@ public class LicenceTeste {
 
 		assertTrue(licence.isValid());
 	}
-	*/
+	
 }

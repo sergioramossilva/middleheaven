@@ -1,17 +1,12 @@
 package org.middleheaven.test.atlas;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.junit.Test;
-import org.middleheaven.global.atlas.AtlasContext;
 import org.middleheaven.global.atlas.ChronologicalCountryBuilder;
 import org.middleheaven.global.atlas.Country;
 import org.middleheaven.global.atlas.modules.DefaultAtlasModule;
