@@ -28,6 +28,9 @@ class AbstractTimePoint implements TimePoint, Serializable {
 	}
 
 	public int compareTo(TimePoint other) {
+		if (other==null){
+			throw new ClassCastException("Null is not an instance of " + this.getClass());
+		}
 		return (int)(this.milliseconds - other.milliseconds());
 	}
 

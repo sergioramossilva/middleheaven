@@ -1,7 +1,7 @@
 package org.middleheaven.util.measure.time;
 
 import org.middleheaven.util.measure.time.clocks.ClockTicked;
-import org.middleheaven.work.scheduled.Chronogram;
+import org.middleheaven.work.scheduled.Schedule;
 
 
 /**
@@ -31,7 +31,7 @@ public abstract class Clock {
 		return getTime().toString();
 	}
 	
-	protected abstract ClockTicked schedule( Chronogram chronogram , Clock clock );
+	protected abstract ClockTicked schedule( Schedule chronogram , Clock clock );
 	
    
 }

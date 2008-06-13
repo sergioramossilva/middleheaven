@@ -38,13 +38,25 @@ public class LocalFileRepositoryDiscoveryEngine implements ServiceDiscoveryEngin
 				activator.activate(context);
 			} catch (Exception e){
 				error = true;
-				log.logFatal("Impossible to iniciate activator " + activator.getClass().getName(), e);
+				log.logFatal("Impossible to activate " + activator.getClass().getName(), e);
 			}
 		}
 		if (error==true){
-			throw new ServiceDiscoveryException("Impossible to iniciate all activators");
+			throw new ServiceDiscoveryException("Impossible to iniciate all activators. Discovery fails");
 		}
 	}
+	
+	@Override
+	public void stop(ServiceContext context) {
+		for (ServiceActivator activator : activators){
+			try {
+				activator.inactivate(context);
+			} catch (Exception e){
+				log.logFatal("Impossible to  inactivate " + activator.getClass().getName(), e);
+			}
+		}
+	}
+
 	
 	protected void loadActivators(ServiceContext context){
 		FileRepositoryService frs = context.getService(FileRepositoryService.class, null);
@@ -113,9 +125,5 @@ public class LocalFileRepositoryDiscoveryEngine implements ServiceDiscoveryEngin
 		activators.add(activator);
 	}
 	
-	@Override
-	public void stop() {
-		// no-op
-	}
 
 }

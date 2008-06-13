@@ -3,14 +3,8 @@ package org.middleheaven.core.services.engine;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.core.Container;
-import org.middleheaven.core.ContainerActivator;
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.ServiceContextConfigurator;
-import org.middleheaven.core.services.ServiceContextEngineConfigurationService;
 import org.middleheaven.core.services.ServiceDiscoveryEngine;
-import org.middleheaven.io.repository.FileRepositoryActivator;
-import org.middleheaven.logging.LoggingActivator;
 
 public class ActivatorBagServiceDiscoveryEngine implements ServiceDiscoveryEngine {
 
@@ -39,8 +33,15 @@ public class ActivatorBagServiceDiscoveryEngine implements ServiceDiscoveryEngin
 	}
 
 	@Override
-	public void stop() {
+	public void stop(ServiceContext context) {
 		// no-op
+		for (ServiceActivator activator : activators){
+			try {
+				activator.inactivate(context);
+			} catch (Exception e){
+				// TODO log
+			}
+		}
 	}
 
 

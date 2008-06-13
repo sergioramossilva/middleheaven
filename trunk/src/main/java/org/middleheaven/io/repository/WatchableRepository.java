@@ -8,7 +8,8 @@ public interface WatchableRepository{
 
     /**
      * Registers a <code>FileChangeListener</code> on this repository.
-     * The <code>FileChangeListener</code> will be informed of changes in the file.
+     * The <code>FileChangeListener</code> will be informed of changes in the specified file.
+     * The specified file must belong to this repository.
      * 
      * @param listener the <code>FileChangeListener</code> instance
      * @param file the file to monitor for changes

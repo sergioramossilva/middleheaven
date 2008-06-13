@@ -32,9 +32,14 @@ public interface ManagedFile extends ManagedFileResolver{
 	 */
 	public boolean exists();
 	
+	/**
+	 * 
+	 * @return <code>true</code> if this implements <code>WatchableRepository</code> and a <code>FileChangeListener</code> can be attached to this in order to listen to
+	 * changes in the files container in this file.<code>false</code> otherwise.
+	 */
+	public boolean isWatchable();
 	
 	public ManagedFile getParent();
-	
 	
 	public ManagedFileType getType();
 	

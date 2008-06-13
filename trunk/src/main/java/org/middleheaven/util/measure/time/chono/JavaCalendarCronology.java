@@ -63,6 +63,10 @@ public class JavaCalendarCronology extends AbstractChronology{
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month-1);
 		calendar.set(Calendar.DATE, day);
+		calendar.clear(Calendar.HOUR_OF_DAY);
+		calendar.clear(Calendar.MINUTE);
+		calendar.clear(Calendar.SECOND);
+		calendar.clear(Calendar.MILLISECOND);
 		return calendar.getTimeInMillis();
 	}
 
@@ -103,6 +107,22 @@ public class JavaCalendarCronology extends AbstractChronology{
 				c.get(Calendar.YEAR),
 				c.getActualMaximum(Calendar.MONTH)
 		);
+	}
+
+	@Override
+	public Month monthOf(int year, int month) {
+		Calendar calendar = (Calendar)prototype.clone();
+		clearCalendar(calendar);
+		calendar.setLenient(false);
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month-1);
+		calendar.set(Calendar.DATE, 1);
+		calendar.clear(Calendar.HOUR_OF_DAY);
+		calendar.clear(Calendar.MINUTE);
+		calendar.clear(Calendar.SECOND);
+		calendar.clear(Calendar.MILLISECOND);
+		
+		return new Month(year, month, calendar.getGreatestMinimum(Calendar.DAY_OF_MONTH));
 	}
 
 }

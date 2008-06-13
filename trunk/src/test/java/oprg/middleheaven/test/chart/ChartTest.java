@@ -2,63 +2,142 @@ package oprg.middleheaven.test.chart;
 
 import static org.junit.Assert.*;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.JFrame;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.junit.Test;
+import org.middleheaven.chart.BidimensionalSeries;
 import org.middleheaven.chart.Chart;
 import org.middleheaven.chart.ChartEngine;
 import org.middleheaven.chart.ChartLayout;
 import org.middleheaven.chart.ChartType;
-import org.middleheaven.chart.HistogramSeries;
+import org.middleheaven.chart.jfreechart.JFreeChartEngine;
+import org.middleheaven.util.measure.time.CalendarDateTime;
+import org.middleheaven.util.measure.time.Period;
+import org.middleheaven.work.Work;
+import org.middleheaven.work.WorkContext;
+import org.middleheaven.work.scheduled.AlarmClockScheduleWorkExecutionService;
+import org.middleheaven.work.scheduled.IntervalSchedule;
+import org.middleheaven.work.scheduled.ScheduleWorkExecutorService;
 
 
 public class ChartTest {
 
-	
+
 	public static void main(String ... args){
 		ChartTest r = new ChartTest();
-		r.testHistogramChart();
+		//r.testBidimentionalChart();
+		r.testDynamicChart();
 	}
-	
+
 	@Test
-	public void testHistogramChart(){
-		
+	public void testDynamicChart(){
 		ChartEngine engine = new JFreeChartEngine();
-		
-		
-		HistogramSeries<String, Integer> hs = new HistogramSeries<String, Integer>("World Population (per year)");
-		hs.add("1990", 12345);
-		hs.add("1991", 12234);
-		hs.add("1992", 1254);
-		
-		ChartLayout layout = ChartLayout.layout(ChartType.PIE , "World Population (per year)");
-		
+
+		final BidimensionalSeries<Integer, Integer> hs = new BidimensionalSeries<Integer, Integer>("World Population (per year)");
+		hs.add(1900, 1650);
+		hs.add(1950, 2521);
+		hs.add(1999, 5978);
+
+		ChartLayout layout = ChartLayout.layout(ChartType.XY , "World Population (per year)");
+
 		Chart chart = engine.createChart(hs, layout);
-		
+
 		assertTrue (chart.getChartObject()!=null);
-		
+
 		// show
 		show(chart);
+
+		ScheduleWorkExecutorService service = new AlarmClockScheduleWorkExecutionService();
+
+		Work work = new Work(){
+			int year = 2000;
+			@Override
+			public void execute(WorkContext context) {
+				year+=50;
+				hs.add(year, (int)(5978 + (Math.random() * 1000 - 500)));
+
+			}
+
+		};
 		
+		service.execute( work , IntervalSchedule.schedule(CalendarDateTime.now(), Period.miliseconds(500)));
+
+		/*
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask(){
+
+			@Override
+			public void run() {
+				year+=50;
+				hs.add(year, (int)(5978 + (Math.random() * 1000 - 500)));
+
+			}
+
+		}, 1000, 500);
+		*/
+
+
 	}
-	
+	@Test
+	public void testBidimentionalChart(){
+
+		ChartEngine engine = new JFreeChartEngine();
+
+
+		BidimensionalSeries<Integer, Integer> hs = new BidimensionalSeries<Integer, Integer>("World Population (per year)");
+		hs.add(1900, 1650);
+		hs.add(1950, 2521);
+		hs.add(1999, 5978);
+
+		ChartLayout layout = ChartLayout.layout(ChartType.PIE , "World Population (per year)");
+
+		Chart chart = engine.createChart(hs, layout);
+
+		assertTrue (chart.getChartObject()!=null);
+
+		// show
+		show(chart);
+
+		layout = ChartLayout.layout(ChartType.BARS , "World Population (per year)");
+
+		chart = engine.createChart(hs, layout);
+
+		assertTrue (chart.getChartObject()!=null);
+
+		// show
+		show(chart);
+
+		layout = ChartLayout.layout(ChartType.XY , "World Population (per year)");
+
+		chart = engine.createChart(hs, layout);
+
+		assertTrue (chart.getChartObject()!=null);
+
+		// show
+		show(chart);
+	}
+
 	private static void show(final Chart chart){
 		ChartTestFrame.forChart(chart).setVisible(true);
 	}
-	
+
 	private static class ChartTestFrame extends JFrame{
-		
+
 		public static ChartTestFrame forChart(Chart chart){
 			return new ChartTestFrame(chart);
 		}
-		
+
 		public ChartTestFrame(Chart chart){
-			 final ChartPanel chartPanel = new ChartPanel((JFreeChart)chart.getChartObject());
-		     chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-		     setContentPane(chartPanel);
-		     this.pack();
+			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			final ChartPanel chartPanel = new ChartPanel((JFreeChart)chart.getChartObject());
+			chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+			setContentPane(chartPanel);
+			this.pack();
 		}
 	}
 }

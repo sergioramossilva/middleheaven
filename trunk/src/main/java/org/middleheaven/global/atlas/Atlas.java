@@ -10,7 +10,11 @@ public class Atlas implements AtlasLocale{
 	public static final Atlas ATLAS = new Atlas();
 
 	private Atlas(){}
-
+	
+	public static Country getCountry (String isoCode){
+		return (Country)ATLAS.getChild(isoCode);
+	}
+	
 	/**
 	 * Returns all current countries in the World
 	 */

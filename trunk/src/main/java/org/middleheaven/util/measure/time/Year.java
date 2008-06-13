@@ -3,21 +3,24 @@
  */
 package org.middleheaven.util.measure.time;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 /**
  * @author Sergio M.M. Taborda
  */
-public class Year {
-
+public class Year implements Serializable{
 
     private int ordinal;
    
     private int monthInYear;
+    Chronology chronology;
     
-    protected Year (int ordinal,int monthInYear){
+    
+    protected Year (Chronology chronology , int ordinal,int monthInYear){
         this.ordinal = ordinal;
         this.monthInYear =  monthInYear;
+        this.chronology = chronology;
     }
     
     public int ordinal(){
@@ -28,23 +31,40 @@ public class Year {
     	return monthInYear;
     }
     
-    public Iterator<DateHolder> dayIterator(){
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-    
     public Iterator<Month> monthIterator(){
-        throw new UnsupportedOperationException("Not implemented yet");
+        return new MonthIterator(); 
     }
     
     public Month endMonth(){
-        throw new UnsupportedOperationException("Not implemented yet");
+    	return Month.ofYear(ordinal, monthInYear);
     }
     
     public Month startMonth(){
-        throw new UnsupportedOperationException("Not implemented yet");
+    	return Month.ofYear(ordinal, 1);
     }
     
     public Month month(int month){
-        throw new UnsupportedOperationException("Not implemented yet");
+    	
+    	return chronology.monthOf(ordinal, month);
+    }
+    
+    private  class MonthIterator implements Iterator<Month>{
+
+    	private int index = -1;
+		@Override
+		public boolean hasNext() {
+			return index < monthInYear-1;
+		}
+
+		@Override
+		public Month next() {
+			return month(index);
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+    	
     }
 }

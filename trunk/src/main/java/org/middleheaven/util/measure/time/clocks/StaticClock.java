@@ -8,7 +8,7 @@ import org.middleheaven.util.measure.time.Clock;
 import org.middleheaven.util.measure.time.EpocTimePoint;
 import org.middleheaven.util.measure.time.TimePoint;
 import org.middleheaven.util.measure.time.TimeZone;
-import org.middleheaven.work.scheduled.Chronogram;
+import org.middleheaven.work.scheduled.Schedule;
 
 /**
  * A clock with fixed, immutable, time.
@@ -64,7 +64,7 @@ public class StaticClock extends Clock {
 	}
 	
 	private void tick(){
-		for (Chronogram c : timers.keySet()){
+		for (Schedule c : timers.keySet()){
 			if (c.include(this.point)){
 				ClockTicked ticked = timers.get(c);
 				if (ticked!=null){
@@ -80,10 +80,10 @@ public class StaticClock extends Clock {
 	public double getCadence() {
 		return 0;
 	}
-	Map<Chronogram, ClockTicked> timers = new  HashMap<Chronogram, ClockTicked>();
+	Map<Schedule, ClockTicked> timers = new  HashMap<Schedule, ClockTicked>();
 	
 	@Override
-	protected ClockTicked schedule(Chronogram chronogram, Clock clock) {
+	protected ClockTicked schedule(Schedule chronogram, Clock clock) {
 		ClockTicked ticked = timers.get(chronogram);
 		if (ticked==null){
 			ticked =new ClockTicked();

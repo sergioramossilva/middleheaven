@@ -20,7 +20,7 @@ public final class ServiceRegistry {
     
     protected static void removeEngine(ServiceDiscoveryEngine engine){
     	if (engines.contains(engine)){
-			engine.stop();
+			engine.stop(context);
 			engines.remove(engine);
 		}
     }

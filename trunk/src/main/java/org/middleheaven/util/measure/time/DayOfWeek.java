@@ -54,6 +54,31 @@ public final class DayOfWeek  {
         return other instanceof DayOfWeek && equals((DayOfWeek)other);
     }
     
+    public boolean isMonday(){
+    	return this.equals(MONDAY);
+    }
+    
+    public boolean isTuesday(){
+    	return this.equals(TUESDAY);
+    }
+    
+    public boolean isWednesday(){
+    	return this.equals(WEDNESDAY);
+    }
+    public boolean isThursday(){
+    	return this.equals(THURSDAY);
+    }
+    public boolean isFriday(){
+    	return this.equals(FRIDAY);
+    }
+    public boolean isSaturday(){
+    	return this.equals(SATURDAY);
+    }
+    
+    public boolean isSunday(){
+    	return this.equals(SUNDAY);
+    }
+    
     public int ordinal(){
         return ordinal;
     }

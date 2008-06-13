@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.middleheaven.util.measure.time.DateHolder;
 import org.middleheaven.util.measure.time.Month;
+import org.middleheaven.util.measure.time.ephemeris.Ephemeris;
 
 public abstract class CalendarModel {
 

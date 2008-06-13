@@ -17,12 +17,12 @@ public class AlarmClock extends WrappedClock {
 		super(referenceClock);
 	}
 
-	public void addClockTickListener (ClockTickListener listener, Chronogram chronogram){
-		schedule(chronogram,this).addClockTickListener(listener);
+	public void addClockTickListener (ClockTickListener listener, Schedule schedule){
+		schedule(schedule,this).addClockTickListener(listener);
 	}
 	
-	public void removeClockTickListener (ClockTickListener listener,Chronogram chronogram){
-		schedule(chronogram,this).removeClockTickListener(listener);
+	public void removeClockTickListener (ClockTickListener listener,Schedule schedule){
+		schedule(schedule,this).removeClockTickListener(listener);
 	}
 
 

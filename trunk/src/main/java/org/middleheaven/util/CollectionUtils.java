@@ -6,6 +6,41 @@ import java.util.Map;
 
 public class CollectionUtils {
 
+	
+	public static <T> Iterator <T> singleIterator(T object){
+		return new SingleIterator<T>(object);
+	}
+	
+	public static <T> Iterator <T> arrayIterator(T[] array){
+		return new ArrayIterator<T>(array);
+	}
+	
+	private static class SingleIterator<T> implements Iterator<T>{
+
+		T object;
+		boolean iterated = false;
+		public SingleIterator(T object) {
+			this.object = object;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !iterated;
+		}
+
+		@Override
+		public T next() {
+			iterated =true;
+			return object;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+	}
+	
 	public static <T> boolean equals(Collection<? extends T> a,Collection<? extends T> b) {
 
 		if (a==b){
