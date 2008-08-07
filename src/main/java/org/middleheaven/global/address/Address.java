@@ -20,6 +20,9 @@ public abstract class Address {
 	}
 	
 	public void setAddressPart(AddressPartType type, String part){
+		if (type.equals(AddressPartType.COUNTRY) || type.equals(AddressPartType.COUNTRY_CODE)|| type.equals(AddressPartType.POSTAL_CODE)){
+			throw new IllegalArgumentException( type + " cannot be changed");
+		}
 		parts.put(type, part);
 	}
 	
@@ -32,7 +35,15 @@ public abstract class Address {
 	}
 	
 	public String getAddressPart(AddressPartType type){
-		return parts.get(type);
+		if (type.equals(AddressPartType.COUNTRY)){
+			return country.getName();
+		} else if (type.equals(AddressPartType.POSTAL_CODE)){
+			return postalCode.toString();
+		} else if (type.equals(AddressPartType.COUNTRY_CODE)){
+			return country.getDesignation();
+		} else {
+			return parts.get(type);
+		}
 	}
 	
     public boolean equals(Object other){
