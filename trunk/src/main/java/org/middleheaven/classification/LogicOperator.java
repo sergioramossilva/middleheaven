@@ -12,6 +12,7 @@ public abstract class LogicOperator {
     static final LogicOperator AND = new AndOperator();
     static final LogicOperator OR = new OrOperator();
     static final LogicOperator XOR = new XorOperator();
+    static final LogicOperator NXOR = new NXorOperator();
     
     public static LogicOperator or(){
     	return OR;
@@ -36,6 +37,7 @@ public abstract class LogicOperator {
 		return name;
 	}
 
+    public abstract LogicOperator negate();
     public abstract boolean isBreakValue(boolean value);
     public abstract boolean operate(boolean a, boolean b);
 	
@@ -60,6 +62,11 @@ public abstract class LogicOperator {
         public boolean operate(boolean a, boolean b) {
             return a && b;
         }
+
+		@Override
+		public LogicOperator negate() {
+			return OR;
+		}
         
     }
     
@@ -80,6 +87,10 @@ public abstract class LogicOperator {
             return a || b;
         }
         
+    	@Override
+		public LogicOperator negate() {
+			return AND;
+		}
     }
     
 
@@ -100,9 +111,34 @@ public abstract class LogicOperator {
             return a ^ b;
         }
         
+    	@Override
+		public LogicOperator negate() {
+			return NXOR;
+		}
     }
 
+    /* NXOR Operator implementation*/
+    private static class NXorOperator extends LogicOperator {
 
+    	public NXorOperator(){
+    		super("NXOR");
+    	}
+    	
+        @Override
+        public boolean isBreakValue(boolean value) {
+            return false; // there is no break value for NXOR
+        }
+
+        @Override
+        public boolean operate(boolean a, boolean b) {
+            return !(a ^ b);
+        }
+        
+    	@Override
+		public LogicOperator negate() {
+			return XOR;
+		}
+    }
 
 
 

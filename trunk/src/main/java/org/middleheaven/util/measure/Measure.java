@@ -14,10 +14,10 @@ public abstract class Measure<E extends Measurable , F extends Field<F>> impleme
 
 	protected F uncertainty;
 	protected F amount;
-	protected Unit unit;
+	protected Unit<E> unit;
 
 
-	protected Measure(F amount, F uncertainty, Unit unit){
+	protected Measure(F amount, F uncertainty, Unit<E> unit){
 		
 		if (amount == null ){
 			throw new IllegalArgumentException("Amount is required");
@@ -41,7 +41,7 @@ public abstract class Measure<E extends Measurable , F extends Field<F>> impleme
 		return uncertainty.plus(uncertainty).equals(uncertainty); //.isZero();
 	}
 	
-	public final Unit  unit() {
+	public final Unit<E>  unit() {
 		return unit;
 	}
 	
@@ -65,12 +65,12 @@ public abstract class Measure<E extends Measurable , F extends Field<F>> impleme
 		}
 	}
 
-	protected F timesError (Measure<E,F> other){
+	protected F timesError (Measure<?,F> other){
 		// deltaZ = (deltaX/X + deltaY/Y)*Z = deltaX* Y + deltaY*X
 		return this.uncertainty.times(other.amount).plus(other.uncertainty.times(this.amount));
 	}
 	
-	protected F overError (Measure<E,F> other){
+	protected F overError (Measure<?,F> other){
 		// deltaZ = (deltaX/X + deltaY/Y)*Z = deltaX + deltaY.X/Y 
 		return this.uncertainty.plus(other.uncertainty.times(this.amount().over(other.amount())));
 	}

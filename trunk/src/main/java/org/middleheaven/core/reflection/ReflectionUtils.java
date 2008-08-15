@@ -5,7 +5,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class ReflectionUtils {
@@ -90,7 +93,31 @@ public final class ReflectionUtils {
 		}
 		return newInstance(loadClass(className));
 	}
+	
+	/**
+	 * 
+	 * @param <T>
+	 * @param type
+	 * @return constructors list order by the number of parameters 
+	 * @throws ReflectionException
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> List<Constructor<T>> constructors(Class<T> type)throws ReflectionException{
+		Constructor<T>[] constructors = (Constructor<T>[])type.getConstructors();
+		Arrays.sort(
+				constructors,
+				new Comparator<Constructor<T>>(){
 
+					@Override
+					public int compare(Constructor<T> a, Constructor<T> b) {
+						return a.getParameterTypes().length - b.getParameterTypes().length;
+					}
+					
+				}
+		);
+		return Arrays.asList(constructors);
+
+	}
 
 	public static <T> T newInstance(Class<T> klass, Object ... args) throws ReflectionException{
 		return newInstance(klass,klass,args);

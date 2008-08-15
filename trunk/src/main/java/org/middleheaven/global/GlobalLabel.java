@@ -6,7 +6,7 @@ package org.middleheaven.global;
 
 import java.io.Serializable;
 
-import org.middleheaven.service.ServiceRegistry;
+import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.util.StringUtils;
 
 /**

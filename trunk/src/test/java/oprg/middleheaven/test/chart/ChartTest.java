@@ -1,9 +1,6 @@
 package oprg.middleheaven.test.chart;
 
-import static org.junit.Assert.*;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import static org.junit.Assert.assertTrue;
 
 import javax.swing.JFrame;
 

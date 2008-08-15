@@ -1,7 +1,12 @@
 package org.middleheaven.global.location;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
+import org.middleheaven.util.measure.AngularPosition;
 
 public class LandmarkDataStorage extends LandmarkStorage {
 
@@ -45,8 +50,13 @@ public class LandmarkDataStorage extends LandmarkStorage {
 	}
 
 	@Override
-	public Iterable<LandmarkCategory> getCategories() {
-		return storage.createQuery(CriteriaBuilder.createCriteria(LandmarkCategory.class)).list();
+	public Iterable<String> getCategories() {
+		Collection<LandmarkCategory> all = storage.createQuery(CriteriaBuilder.createCriteria(LandmarkCategory.class)).list();
+		List<String> names = new ArrayList<String>(all.size());
+		for (LandmarkCategory category : all){
+			names.add(category.getName());
+		}
+		return names;
 	}
 
 	@Override
@@ -55,15 +65,21 @@ public class LandmarkDataStorage extends LandmarkStorage {
 	}
 
 	@Override
-	public Iterable<Landmark> getLandmarks(String category, Coordinates min,Coordinates max) {
-		// TODO Auto-generated method stub
-		return null;
+	public Iterable<Landmark> getLandmarks(String category, 
+				AngularPosition minLongitude,AngularPosition minLatitude, 
+				AngularPosition maxLongitude,AngularPosition maxLatitude) {
+		
+		return storage.createQuery(CriteriaBuilder.createCriteria(Landmark.class)
+				.and("coordinates.latitude").inInterval(minLatitude,maxLatitude)
+				.and("coordinates.longitude").inInterval(minLongitude, maxLongitude)
+				.and("category").eq(category)
+		).list();
 	}
 
 	@Override
 	public Iterable<Landmark> getLandmarks(String category, String name) {
 		return storage.createQuery(CriteriaBuilder.createCriteria(Landmark.class)
-				.where("category").eq(category).or("name").eq(name)
+				.and("category").eq(category).or("name").eq(name)
 		).list();
 	}
 

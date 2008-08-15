@@ -1,10 +1,7 @@
-/*
- * Created on 5/Ago/2006
- *
- */
+
 package org.middleheaven.core.exception;
 
-public interface ExceptionHandler<T extends Exception, R extends RuntimeException> {
+public interface ExceptionHandler<T extends Throwable, R extends Exception> {
 
-    public void handle(T exception) throws R;
+    public R handle(T exception);
 }

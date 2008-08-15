@@ -14,9 +14,17 @@ import org.middleheaven.util.measure.structure.Field;
  * 
  * 
  */
-public class AngularPosition extends Measure<Angle,Real> implements Field<AngularPosition> , Comparable<AngularPosition> , Convertable<Real,AngularPosition>{
+public class AngularPosition extends Measure<Real> implements Field<AngularPosition> , Comparable<AngularPosition> , Convertable<Real,AngularPosition>{
 
 
+	public static AngularPosition fullCircle(){
+		return radians(2*Math.PI);
+	}
+	
+	public static AngularPosition halfCircle(){
+		return radians(Math.PI);
+	}
+	
 	/**
 	 * @param amount angle in radians
 	 * @return <code>AngularPosition</code> with value equal to amount in radians
@@ -179,6 +187,7 @@ public class AngularPosition extends Measure<Angle,Real> implements Field<Angula
 
 
 	}
+
 
 
 }

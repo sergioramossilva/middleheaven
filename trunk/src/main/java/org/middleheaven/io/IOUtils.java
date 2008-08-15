@@ -17,7 +17,7 @@ import org.middleheaven.io.repository.FileNotFoundManagedException;
 
 public final class IOUtils {
 
-	IOUtils(){}
+	private IOUtils(){}
 
 	private static void doStreamCopy(InputStream in,OutputStream out) throws IOException{
 

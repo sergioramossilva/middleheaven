@@ -5,6 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.geom.Area;
+
 import org.junit.Test;
 import org.middleheaven.util.measure.AngularPosition;
 import org.middleheaven.util.measure.DecimalMeasure;
@@ -16,7 +18,9 @@ import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
 import org.middleheaven.util.measure.Unit;
 import org.middleheaven.util.measure.convertion.UnitConversion;
+import org.middleheaven.util.measure.measures.Area;
 import org.middleheaven.util.measure.measures.Distance;
+import org.middleheaven.util.measure.measures.Time;
 import org.middleheaven.util.measure.money.Money;
 import org.middleheaven.util.measure.structure.LUDecomposition;
 import org.middleheaven.util.measure.structure.Matrix;
@@ -219,7 +223,7 @@ public class MeasuresTestSuit {
 		assertEquals(tresentos,cem.times(tres));
 		
 		DecimalMeasure<Distance> l = DecimalMeasure.exact(200, SI.METER );
-		DecimalMeasure<Distance> t = DecimalMeasure.exact(10, SI.SECOND);
+		DecimalMeasure<Time> t = DecimalMeasure.exact(10, SI.SECOND);
 		DecimalMeasure<Distance> v = l.over(t);
 		
 		assertEquals(DecimalMeasure.exact(20,  SI.METER.over(SI.SECOND) ), v);

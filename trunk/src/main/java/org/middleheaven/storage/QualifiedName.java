@@ -1,11 +1,11 @@
 package org.middleheaven.storage;
 
-public class QualifiedName {
+import java.io.Serializable;
 
-	
+public class QualifiedName implements Serializable{
+
 	private String tableName;
 	private String columnName;
-	
 	
 	public QualifiedName(String tableName, String columnName) {
 		super();

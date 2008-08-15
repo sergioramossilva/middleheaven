@@ -205,6 +205,18 @@ public class LogicCriterion implements BooleanCriterion {
 		 return this.criteria.isEmpty();
 	 }
 
+	@Override
+	public Criterion negate() {
+		
+		LogicCriterion negation = new LogicCriterion(this.operator.negate());
+		
+		for ( Criterion c : criteria){
+			negation.criteria.add(c.negate());
+		}
+		
+		return negation;
+	}
+
 
 
 }
