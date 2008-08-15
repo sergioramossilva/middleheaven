@@ -1,5 +1,7 @@
 package org.middleheaven.util.measure;
 
+import org.middleheaven.util.measure.measures.Measurable;
+
 
 /**
  * Implements Unit as a pair Dimension , simbol
@@ -7,20 +9,19 @@ package org.middleheaven.util.measure;
  * @author Sergio M.M. Taborda
  *
  */
-class BaseUnit extends Unit {
+class BaseUnit<E extends Measurable> extends Unit<E> {
 
 
-	private Dimension dim;
-	
+	private Dimension<E> dim;
 	private String symbol;
 	
 	
-	protected BaseUnit(Dimension dim, String symbol){
+	protected BaseUnit(Dimension<E> dim, String symbol){
 		this.dim = dim;
 		this.symbol = symbol;
 	}
 	
-	public Dimension dimension() {
+	public Dimension<E> dimension() {
 		return dim;
 	}
 	
@@ -29,19 +30,19 @@ class BaseUnit extends Unit {
 	}
 
 
-	public Unit over(Unit other) {
+	public <T extends Measurable> Unit<T> over(Unit<?> other) {
 		return CompositeUnit.over(this, other);
 	}
 
-	public Unit times(Unit other) {
+	public <T extends Measurable> Unit<T> times(Unit<?> other) {
 		return CompositeUnit.times(this, other);
 	}
 	
-	public Unit minus(Unit other) throws IncompatibleUnitsException {
+	public Unit<E> minus(Unit<E> other) throws IncompatibleUnitsException {
 		return plus(other);
 	}
 
-	public Unit plus(Unit other) throws IncompatibleUnitsException {
+	public Unit<E> plus(Unit<E> other) throws IncompatibleUnitsException {
 		if (this.isCompatible(other)){
 			if (other.equals(this)){
 				return this;
@@ -53,8 +54,7 @@ class BaseUnit extends Unit {
 		throw new IncompatibleUnitsException(this,other);
 	}
 
-
-	public boolean equals(Unit other) {
+	public boolean equals(Unit<E> other) {
 		return  this.symbol.equals(other.symbol()) && this.dim.equals(other.dimension());
 	}
 	
@@ -62,7 +62,7 @@ class BaseUnit extends Unit {
 		return this.symbol.hashCode();
 	}
 
-	public boolean isCompatible(Unit other) {
+	public boolean isCompatible(Unit<?> other) {
 		return this.dim.equals(other.dimension());
 	}
 
@@ -72,7 +72,7 @@ class BaseUnit extends Unit {
 	}
 
 	@Override
-	public Unit raise(int value) {
+	public Unit<E> raise(int value) {
 		return CompositeUnit.raise (this, value);
 	}
 

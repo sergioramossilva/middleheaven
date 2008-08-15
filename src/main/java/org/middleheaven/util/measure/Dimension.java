@@ -2,24 +2,33 @@ package org.middleheaven.util.measure;
 
 import java.io.Serializable;
 
-public abstract class Dimension implements Serializable {
+import org.middleheaven.util.measure.measures.Area;
+import org.middleheaven.util.measure.measures.Currency;
+import org.middleheaven.util.measure.measures.Dimensionless;
+import org.middleheaven.util.measure.measures.Distance;
+import org.middleheaven.util.measure.measures.Measurable;
+import org.middleheaven.util.measure.measures.Time;
+import org.middleheaven.util.measure.measures.Volume;
+import org.middleheaven.util.measure.measures.Mass;
+
+public abstract class Dimension<E extends Measurable> implements Serializable {
 
 	// special 
-	public static final Dimension DIMENTIONLESS = new BaseDimention('1',0);
-	public static final Dimension CURRENCY = new BaseDimention('$');
+	public static final Dimension<Dimensionless> DIMENTIONLESS = BaseDimention.base('1',0);
+	public static final Dimension<Currency> CURRENCY = BaseDimention.base('$');
 	// fundamental
-	public static final Dimension ANGLE = new BaseDimention('\u0398');
+	public static final Dimension ANGLE = BaseDimention.base('\u0398');
 	
-	public static final Dimension LENGTH = new BaseDimention('L');
-	public static final Dimension TIME = new BaseDimention('T');
-	public static final Dimension MASS = new BaseDimention('M');
-	public static final Dimension TEMPERATURE = new BaseDimention('K');
-	public static final Dimension ELECTRIC_CARGE = new BaseDimention('C');
+	public static final Dimension<Distance> LENGTH = BaseDimention.base('L');
+	public static final Dimension<Time> TIME = BaseDimention.base('T');
+	public static final Dimension<Mass> MASS = BaseDimention.base('M');
+	public static final Dimension TEMPERATURE = BaseDimention.base('K');
+	public static final Dimension ELECTRIC_CARGE = BaseDimention.base('C');
 	
 	// derived
 	public static final Dimension CURRENT_INTENSITY = ELECTRIC_CARGE.over(TIME);
-	public static final Dimension AREA = new BaseDimention('L',2);
-	public static final Dimension VOLUME = new BaseDimention('L',3);
+	public static final Dimension<Area> AREA = BaseDimention.base('L',2);
+	public static final Dimension<Volume> VOLUME = BaseDimention.base('L',3);
 	public static final Dimension DENSITY = MASS.over(VOLUME);
 	public static final Dimension VELOCITY = LENGTH.over(TIME);
 	public static final Dimension ACELERATION = VELOCITY.over(TIME);

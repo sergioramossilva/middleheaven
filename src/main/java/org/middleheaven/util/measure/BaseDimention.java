@@ -3,18 +3,24 @@ package org.middleheaven.util.measure;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-class BaseDimention extends Dimension implements Comparable<BaseDimention>{
+import org.middleheaven.util.measure.measures.Measurable;
+
+class BaseDimention<E extends Measurable> extends Dimension<E> implements Comparable<BaseDimention<E>>{
 
 	
     private final char axis;
  
     private int exponent = 1;
 	
-    BaseDimention(Character axis){
-		this.axis = axis;
-	}
+    static <E extends Measurable> BaseDimention<E> base(Character axis){
+    	return new BaseDimention<E>(axis,1);
+    }
+    
+    static <E extends Measurable> BaseDimention<E> base(Character axis, int exponent){
+    	return new BaseDimention<E>(axis,exponent);
+    }
 	
-	BaseDimention(Character axis, int exponent){
+    private BaseDimention(Character axis, int exponent){
 		this.exponent = exponent;
 		this.axis =exponent==0? '1': axis;
 	}

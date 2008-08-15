@@ -1,6 +1,6 @@
 package org.middleheaven.global.location;
 
-public class LandmarkCategory {
+class LandmarkCategory {
 
 	private String name;
 

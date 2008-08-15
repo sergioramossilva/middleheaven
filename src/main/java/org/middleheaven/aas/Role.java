@@ -11,6 +11,6 @@ public interface Role extends Serializable{
 
 
 	public String getName();
-	public boolean hasPermission(Permission permission);
+
 	
 }

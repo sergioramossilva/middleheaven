@@ -8,42 +8,43 @@ import org.middleheaven.util.measure.measures.Measurable;
 
 
 
-public class CompositeUnit extends Unit{
+public class CompositeUnit<E extends Measurable> extends Unit<E>{
 
 	
-	public static Unit raise (Unit unit , int value){
+	public static <T extends Measurable> Unit<T> raise (Unit<?> unit , int value){
 		if (value==0){
-			return SI.DIMENTIONLESS;
+			return SI.DIMENTIONLESS.cast();
 		} else if (value>0){
-			 Unit a = unit;
+			 Unit<T> a = unit.cast();
 			 for (int i = 1 ; i < value ; i++){
 				 a = a.times(a);
 			 }
 			 return a;
 		} else {
-			Unit a = unit;
+			Unit<T> a = unit.cast();
 			 for (int i = 1 ; i < -value ; i++){
 				 a = a.over(a);
 			 }
 			 return a;
 		}
 	}
-	public static Unit times(Unit a , Unit b){
-		CompositeUnit c = new CompositeUnit();
+	
+	public static <T extends Measurable> Unit<T> times(Unit<?> a , Unit<?> b){
+		CompositeUnit<T> c = new CompositeUnit<T>();
 		c.add(a,1);
 		c.add(b,1);
 		return c.simplify();
 	}
 	
-	public static Unit over(Unit a , Unit b){
-		CompositeUnit c = new CompositeUnit();
+	public static <A extends Measurable, B extends Measurable, T extends Measurable> Unit<T>  over(Unit<A> a , Unit<B> b){
+		CompositeUnit<T> c = new CompositeUnit<T>();
 		c.add(a,1);
 		c.add(b,-1);
 		return c.simplify();
 	}
 	
-	public static Unit invert(Unit unit) {
-		CompositeUnit c = new CompositeUnit();
+	public static <T extends Measurable> Unit<T> invert(Unit<?> unit) {
+		CompositeUnit<T> c = new CompositeUnit<T>();
 		c.add(unit,-1);
 		return c.simplify();
 	}
@@ -51,7 +52,7 @@ public class CompositeUnit extends Unit{
 
 	private TreeMap<String,UnitPower> units = new TreeMap<String,UnitPower>();
 	
-	private Dimension currentDimention = Dimension.DIMENTIONLESS;
+	private Dimension<E> currentDimention = Dimension.DIMENTIONLESS.;
 	
 	CompositeUnit(){}
 	CompositeUnit(CompositeUnit other){
@@ -98,11 +99,11 @@ public class CompositeUnit extends Unit{
 		}
 	}
 	
-	public Dimension dimension() {
+	public Dimension<E> dimension() {
 		return currentDimention;
 	}
 
-	public boolean isCompatible(Unit other) {
+	public boolean isCompatible(Unit<?> other) {
 		return this.dimension().equals(other.dimension());
 	}
 	
@@ -144,8 +145,8 @@ public class CompositeUnit extends Unit{
 		return builder.toString();
 	}
 	
-	public Unit simplify(){
-//		 elimina todos os dimentionless
+	public Unit<E> simplify(){
+		//	elimina todos os dimentionless
 		for (Iterator<UnitPower> it = units.values().iterator(); it.hasNext();){
 			UnitPower d = it.next();
 			if (d.exponent==0){

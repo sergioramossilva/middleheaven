@@ -4,22 +4,22 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.middleheaven.core.exception.ExceptionHandler;
 
-public class ReflectionExceptionHandler implements ExceptionHandler {
+public class ReflectionExceptionHandler implements ExceptionHandler<Exception,RuntimeException> {
 
 	@Override
-	public void handle(Exception exception) throws RuntimeException {
+	public RuntimeException handle(Exception exception) {
 		try{
 			throw exception;
 		} catch (IllegalAccessException e) {
-			throw new IllegalAccesReflectionException(e);
+			return new IllegalAccesReflectionException(e);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalAccesReflectionException(e);
+			return new IllegalAccesReflectionException(e);
 		} catch (NoSuchMethodException e) {
-			throw new NoSuchMethodReflectionException();
+			return new NoSuchMethodReflectionException();
 		} catch (InvocationTargetException e) {
-			throw new InvocationTargetReflectionException(e);
+			return new InvocationTargetReflectionException(e);
 		} catch (Exception e){
-			throw new ReflectionException(e);
+			return new ReflectionException(e);
 		}
 	}
 

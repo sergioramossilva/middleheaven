@@ -2,9 +2,9 @@ package org.middleheaven.global.location;
 
 import org.middleheaven.util.measure.AngularPosition;
 import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.Measure;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
+import org.middleheaven.util.measure.measures.Distance;
 
 public class Coordinates {
 
@@ -17,18 +17,18 @@ public class Coordinates {
 	}
 	
 	public Coordinates(AngularPosition latitude, AngularPosition longitude,DecimalMeasure altitude) {
-		super();
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.altitude = altitude;
 	}
+	
 	public AngularPosition getLatitude() {
 		return latitude;
 	}
 	public AngularPosition getLongitude() {
 		return longitude;
 	}
-	public Measure getAltitude() {
+	public DecimalMeasure<Distance> getAltitude() {
 		return altitude;
 	}
 }

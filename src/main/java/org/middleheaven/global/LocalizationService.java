@@ -7,9 +7,7 @@ package org.middleheaven.global;
 import java.util.Locale;
 
 
-import org.middleheaven.service.Service;
 
-@Service
 public interface LocalizationService  {
 
     /**

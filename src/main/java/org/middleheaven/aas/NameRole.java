@@ -5,6 +5,10 @@ public class NameRole implements Role {
 	private String name;
 	
 	public NameRole(){}
+	
+	public NameRole(String name){
+		this.name =  name;
+	}
 
 	public String getName() {
 		return name;
@@ -14,8 +18,4 @@ public class NameRole implements Role {
 		this.name = name;
 	}
 
-	@Override
-	public boolean hasPermission(Permission permission) {
-		return NamedPermittion.forName(name).implies(permission);
-	}
 }

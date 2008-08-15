@@ -44,8 +44,7 @@ public final class ProxyUtils {
 		} catch (InstantiationException e) {
 			throw new InstantiationReflectionException(facadeClass.getName(), e.getMessage());
 		} catch (Exception e) {
-			new ReflectionExceptionHandler().handle(e);
-			return null;
+			throw new ReflectionExceptionHandler().handle(e);
 		}
 	}
 

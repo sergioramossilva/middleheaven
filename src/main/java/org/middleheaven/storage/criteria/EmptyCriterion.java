@@ -20,4 +20,9 @@ public final class EmptyCriterion implements Criterion{
 		return this;
 	}
 
+	@Override
+	public Criterion negate() {
+		return AllCriterion.all();
+	}
+
 }

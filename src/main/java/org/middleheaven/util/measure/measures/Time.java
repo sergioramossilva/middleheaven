@@ -7,6 +7,6 @@ package org.middleheaven.util.measure.measures;
  * @author Sergio M.M. Taborda
  *
  */
-public interface TimeInterval extends Measurable{
+public interface Time extends Measurable{
 
 }

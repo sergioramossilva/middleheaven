@@ -1,5 +1,6 @@
 package org.middleheaven.util.measure;
 
+import java.sql.Time;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.middleheaven.util.measure.measures.Dimensionless;
 import org.middleheaven.util.measure.measures.Distance;
+import org.middleheaven.util.measure.measures.Mass;
 
 /**
  * The International Standard Unit System
@@ -17,14 +19,14 @@ import org.middleheaven.util.measure.measures.Distance;
  */
 public final class SI implements UnitSystem{
 
-	public static final Unit DIMENTIONLESS = Unit.unit(Dimension.DIMENTIONLESS,"");
-	public static final Unit METER = Unit.unit(Dimension.LENGTH,"m");
-	public static final Unit SECOND = Unit.unit(Dimension.TIME,"s");
-	public static final Unit KILOGRAM = Unit.unit(Dimension.MASS,"kg");
+	public static final Unit<Dimensionless> DIMENTIONLESS = Unit.unit(Dimension.DIMENTIONLESS,"");
+	public static final Unit<Distance> METER = Unit.unit(Dimension.LENGTH,"m");
+	public static final Unit<Time> SECOND = Unit.unit(Dimension.TIME,"s");
+	public static final Unit<Mass> KILOGRAM = Unit.unit(Dimension.MASS,"kg");
 	
 	
-	public static final Unit HOUR = Unit.unit(Dimension.TIME,"h");
-	public static final Unit MILISECOND = Unit.unit(Dimension.TIME,"ms");
+	public static final Unit<Time> HOUR = Unit.unit(Dimension.TIME,"h");
+	public static final Unit<Time> MILISECOND = Unit.unit(Dimension.TIME,"ms");
 	
 	public static final Unit NEWTON = Unit.unit(Dimension.FORCE,"N");
 	public static final Unit AMPERE = Unit.unit(Dimension.CURRENT_INTENSITY,"A");
