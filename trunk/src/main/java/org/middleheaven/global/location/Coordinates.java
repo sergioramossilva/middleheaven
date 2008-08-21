@@ -10,7 +10,7 @@ public class Coordinates {
 
 	private AngularPosition latitude;
 	private AngularPosition longitude;
-	private DecimalMeasure altitude;
+	private DecimalMeasure<Distance> altitude;
 	
 	public Coordinates(AngularPosition latitude, AngularPosition longitude ){
 		this(latitude, longitude,DecimalMeasure.exact(Real.ZERO(), SI.METER) );

@@ -1,10 +1,10 @@
 package org.middleheaven.util.measure.convertion;
 
 import org.middleheaven.util.measure.Unit;
-import org.middleheaven.util.measure.structure.Field;
+import org.middleheaven.util.measure.measures.Measurable;
 
-public interface Convertable<F extends Field<F>, T> {
+public interface Convertable<E extends Measurable,  T> {
 
-	public T convert(UnitConverter<F> converter, Unit newUnit);
-	public Unit unit();	
+	public T convertTo(Unit<E> newUnit);
+	public Unit<E> unit();	
 }

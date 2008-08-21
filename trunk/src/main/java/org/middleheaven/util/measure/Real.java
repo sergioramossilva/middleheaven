@@ -7,6 +7,9 @@ import org.middleheaven.util.measure.structure.Field;
 public abstract class Real extends Number<Real> implements Field<Real> {
 
 
+	public static Real fraction (int num , int den){
+		return valueOf(num).over(valueOf(den));
+	}
 	
 	public static Real[] valueOf(java.lang.Number ... array){
 		NumberFactory factory = NumberFactory.getFactory();

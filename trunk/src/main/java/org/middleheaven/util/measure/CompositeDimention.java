@@ -40,9 +40,9 @@ public class CompositeDimention extends Dimension {
 		if (other instanceof BaseDimention){
     		BaseDimention c = dims.get(((BaseDimention)other).axis());
     		if (c!=null){
-    			dims.put(((BaseDimention)other).axis(), (BaseDimention)new BaseDimention(c.axis(),c.exponent()+sign*((BaseDimention)other).exponent()).simplify());
+    			dims.put(((BaseDimention)other).axis(), (BaseDimention)BaseDimention.base(c.axis(),c.exponent()+sign*((BaseDimention)other).exponent()).simplify());
     		} else {
-    			dims.put(((BaseDimention)other).axis(), new BaseDimention(((BaseDimention)other).axis(),sign*((BaseDimention)other).exponent()));
+    			dims.put(((BaseDimention)other).axis(), BaseDimention.base(((BaseDimention)other).axis(),sign*((BaseDimention)other).exponent()));
     		}
 
     	} else {

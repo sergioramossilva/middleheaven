@@ -239,11 +239,14 @@ public final class ReflectionUtils {
 		return result;
 	}
 
-
-	public static <T> T invoke(Class<T> returnType,Method translatingMethod, Object translatingObject, Object ... params) {
+	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Class<?> translatingObjectClass, Object ... params) {
+		return invoke(returnType, methodToInvoke, newInstance(translatingObjectClass), params);
+	}
+	
+	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Object translatingObject, Object ... params) {
 		try {
-			translatingMethod.setAccessible(true);
-			return returnType.cast(translatingMethod.invoke(translatingObject, params));
+			methodToInvoke.setAccessible(true);
+			return returnType.cast(methodToInvoke.invoke(translatingObject, params));
 		} catch (SecurityException e) {
 			throw new IllegalAccesReflectionException(e);
 		} catch (IllegalArgumentException e) {
@@ -253,6 +256,18 @@ public final class ReflectionUtils {
 		} catch (IllegalAccessException e) {
 			throw new IllegalAccesReflectionException(e);
 		}
+	}
+
+
+	public static Set<Field> allFields(Class<?> type) {
+		 Set<Field> fields = new HashSet<Field>();
+		 
+
+		 for (Field f : type.getDeclaredFields()){
+			 fields.add(f);
+		 }
+
+		 return fields;
 	}
 
 

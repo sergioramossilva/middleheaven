@@ -5,35 +5,40 @@ import org.middleheaven.util.measure.Scalable;
 import org.middleheaven.util.measure.Unit;
 import org.middleheaven.util.measure.measures.Measurable;
 
-public final class MultipltyConverter<E extends Measurable> extends AbstractUnitConverter<E>{
+public final class AditiveConverter<E extends Measurable> extends AbstractUnitConverter<E> {
 
-	private Real factor;
 	
-	public static <T,E extends Measurable> MultipltyConverter<E> convert(Unit<E> originalUnit, Unit<E> resultUnit,Real factor){
-		return new MultipltyConverter<E>(originalUnit, resultUnit, factor);
+	public static <E extends Measurable> AditiveConverter<E> convert(Unit<E> originalUnit,
+			Unit<E> resultUnit, Real shift) {
+		return new AditiveConverter<E>(shift,originalUnit, resultUnit );
 	}
-
-	private MultipltyConverter(Unit<E> originalUnit, Unit<E> resultUnit,Real factor) {
+	
+	private final Real shift;
+	private AditiveConverter(Real shift , Unit<E> originalUnit, Unit<E> resultUnit) {
 		super(originalUnit, resultUnit);
-		this.factor = factor;
+		this.shift = shift;
 	}
-	
+
+
 	@Override
 	public <T extends Scalable<E, T>> T convertFoward(T value) {
 		if (!value.unit().equals(this.originalUnit)){
 			throw new IllegalArgumentException("Expected unit " + this.originalUnit + " but was " + value.unit());
 		}
-		return value.times(factor,this.resultUnit);
+		final T diff =  value.one().times(shift, this.resultUnit);
+		return value.times(Real.ONE(),  this.resultUnit).minus(diff);
 	}
+
+
 
 	@Override
 	public <T extends Scalable<E, T>> T convertReverse(T value) {
 		if (!value.unit().equals(this.resultUnit)){
 			throw new IllegalArgumentException("Expected unit " + this.originalUnit + " but was " + value.unit());
 		}
-		return value.over(factor,this.originalUnit);
+		final T diff =  value.one().times(shift, this.originalUnit);
+		return value.times(Real.ONE(),  this.originalUnit).plus(diff);
 	}
-	
 
 
 
