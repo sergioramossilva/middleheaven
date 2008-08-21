@@ -1,14 +1,18 @@
 package org.middleheaven.util.measure;
 
-import java.sql.Time;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.middleheaven.util.measure.measures.Angle;
 import org.middleheaven.util.measure.measures.Dimensionless;
 import org.middleheaven.util.measure.measures.Distance;
+import org.middleheaven.util.measure.measures.ElectricCurrent;
+import org.middleheaven.util.measure.measures.Force;
 import org.middleheaven.util.measure.measures.Mass;
+import org.middleheaven.util.measure.measures.Temperature;
+import org.middleheaven.util.measure.measures.Time;
 
 /**
  * The International Standard Unit System
@@ -28,11 +32,13 @@ public final class SI implements UnitSystem{
 	public static final Unit<Time> HOUR = Unit.unit(Dimension.TIME,"h");
 	public static final Unit<Time> MILISECOND = Unit.unit(Dimension.TIME,"ms");
 	
-	public static final Unit NEWTON = Unit.unit(Dimension.FORCE,"N");
-	public static final Unit AMPERE = Unit.unit(Dimension.CURRENT_INTENSITY,"A");
+	public static final Unit<Force> NEWTON = Unit.unit(Dimension.FORCE,"N");
+	public static final Unit<ElectricCurrent> AMPERE = Unit.unit(Dimension.CURRENT_INTENSITY,"A");
 	
-	public static final Unit RADIANS = Unit.unit(Dimension.ANGLE,"rad");
-	public static final Unit DEGREE = Unit.unit(Dimension.ANGLE,"º");
+	public static final Unit<Angle> RADIANS = Unit.unit(Dimension.ANGLE,"rad");
+	public static final Unit<Angle> DEGREE = Unit.unit(Dimension.ANGLE,"º");
+	
+	public static final Unit<Temperature> KELVIN = Unit.unit(Dimension.TEMPERATURE,"K");
 	
 	private static final Map<String , Unit> allUnits = new HashMap<String , Unit> ();
 	

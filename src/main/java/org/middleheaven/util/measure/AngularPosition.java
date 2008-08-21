@@ -3,18 +3,14 @@ package org.middleheaven.util.measure;
 import java.math.BigDecimal;
 
 import org.middleheaven.util.Interval;
-import org.middleheaven.util.measure.convertion.Convertable;
-import org.middleheaven.util.measure.convertion.UnitConversion;
-import org.middleheaven.util.measure.convertion.UnitConverter;
 import org.middleheaven.util.measure.measures.Angle;
-import org.middleheaven.util.measure.structure.Field;
 
 /**
  * Angular position in radians
  * 
  * 
  */
-public class AngularPosition extends Measure<Real> implements Field<AngularPosition> , Comparable<AngularPosition> , Convertable<Real,AngularPosition>{
+public class AngularPosition extends DecimalMeasure<Angle>  {
 
 
 	public static AngularPosition fullCircle(){
@@ -71,12 +67,8 @@ public class AngularPosition extends Measure<Real> implements Field<AngularPosit
 		);
 	}
 
-	protected AngularPosition(Real amount, Real uncertainty, Unit unit) {
+	protected AngularPosition(Real amount, Real uncertainty, Unit<Angle> unit) {
 		super(amount, uncertainty, unit);
-	}
-
-	public AngularPosition convert(UnitConverter<Real> converter, Unit newUnit) {
-		return new AngularPosition(converter.convert(amount), converter.convert(uncertainty), newUnit);
 	}
 
 	public AngularPosition negate() {
@@ -100,19 +92,6 @@ public class AngularPosition extends Measure<Real> implements Field<AngularPosit
 		return new AngularPosition (this.amount.zero(), this.amount.zero(), this.unit);
 	}
 
-	public AngularPosition  times(AngularPosition  other) {
-		return new AngularPosition (this.amount().times(other.amount()),timesError(other),this.unit.times(other.unit()));
-	}
-
-	public AngularPosition  over(AngularPosition  other) {
-		return new AngularPosition (this.amount().over(other.amount()),overError(other),this.unit.over(other.unit()));
-	}
-
-	public AngularPosition   inverse() {
-		return new AngularPosition (this.amount.inverse(), this.uncertainty, SI.DIMENTIONLESS.over(this.unit));
-	}
-
-
 	public AngularPosition  plus(AngularPosition  other) throws IncompatibleUnitsException {
 		assertCompatible (other);
 		return new AngularPosition (other.amount().plus(this.amount), this.uncertainty.plus(other.uncertainty) , this.unit.plus(other.unit()));
@@ -124,11 +103,11 @@ public class AngularPosition extends Measure<Real> implements Field<AngularPosit
 	}
 
 	public AngularPosition toRadians(){
-		return UnitConversion.convert(this, SI.RADIANS);
+		return (AngularPosition)super.convertTo(SI.RADIANS);
 	}
 
 	public AngularPosition toDegrees(){
-		return UnitConversion.convert(this, SI.DEGREE);
+		return (AngularPosition)super.convertTo(SI.DEGREE);
 	}
 
 	public Real sin(){
@@ -143,7 +122,6 @@ public class AngularPosition extends Measure<Real> implements Field<AngularPosit
 		return Real.valueOf(Math.tan(this.amount.asNumber().doubleValue()));
 	}
 
-	@Override
 	public int compareTo(AngularPosition other) {
 		assertCompatible (other);
 		return this.amount.compareTo(other.amount);
@@ -157,17 +135,17 @@ public class AngularPosition extends Measure<Real> implements Field<AngularPosit
 	public AngularPosition reduce(){
 
 
-		Interval<AngularPosition> range ;
+		Interval<Real> range ;
 
 		if (this.unit.equals(SI.RADIANS)){
-			range = Interval.between(this.zero(), radians(Real.valueOf(Math.PI*2)));
+			range = Interval.between(Real.ZERO(), Real.valueOf(Math.PI*2));
 		} else { 
-			range = Interval.between(this.zero(), degrees(Real.valueOf(360)));
+			range = Interval.between(Real.ZERO(), Real.valueOf(360));
 		}
 
-		BigDecimal top = range.end().amount.asNumber();
+		BigDecimal top = range.end().asNumber();
 		
-		if (this.compareTo(range.start())<0){
+		if (this.amount.compareTo(range.start())<0){
 			// under range
 			BigDecimal cycles = this.amount.asNumber().abs().divideToIntegralValue(top);
 			
@@ -175,7 +153,7 @@ public class AngularPosition extends Measure<Real> implements Field<AngularPosit
 
 			return new AngularPosition(Real.valueOf(amount.plus(Real.valueOf(cycles.multiply(top)))) , this.uncertainty , this.unit);
 
-		} else if (this.compareTo(range.end())>=0){
+		} else if (this.amount.compareTo(range.end())>=0){
 			// out of range
 			BigDecimal cycles = this.amount.asNumber().divideToIntegralValue(top);
 
@@ -188,6 +166,14 @@ public class AngularPosition extends Measure<Real> implements Field<AngularPosit
 
 	}
 
+	@Override
+	public AngularPosition over(Real other, Unit<Angle> unit) {
+		return new AngularPosition(this.amount.over(other), this.uncertainty.over(other), unit);
+	}
 
+	@Override
+	public AngularPosition times(Real other, Unit<Angle> unit) {
+		return new AngularPosition(this.amount.times(other), this.uncertainty.times(other), unit);
+	}
 
 }

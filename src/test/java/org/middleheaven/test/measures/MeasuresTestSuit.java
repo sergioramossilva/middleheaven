@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.geom.Area;
-
 import org.junit.Test;
 import org.middleheaven.util.measure.AngularPosition;
 import org.middleheaven.util.measure.DecimalMeasure;
@@ -18,8 +16,9 @@ import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
 import org.middleheaven.util.measure.Unit;
 import org.middleheaven.util.measure.convertion.UnitConversion;
-import org.middleheaven.util.measure.measures.Area;
 import org.middleheaven.util.measure.measures.Distance;
+import org.middleheaven.util.measure.measures.Energy;
+import org.middleheaven.util.measure.measures.Mass;
 import org.middleheaven.util.measure.measures.Time;
 import org.middleheaven.util.measure.money.Money;
 import org.middleheaven.util.measure.structure.LUDecomposition;
@@ -230,10 +229,10 @@ public class MeasuresTestSuit {
 		assertEquals(Dimension.VELOCITY, v.unit().dimension());
 		
 		DecimalMeasure<Distance> v2 = v.times(v);
-		Dimension dim =  Dimension.VELOCITY.times(Dimension.VELOCITY);
+		Dimension<?> dim =  Dimension.VELOCITY.times(Dimension.VELOCITY);
 		assertEquals(dim,v2.unit().dimension());
-		DecimalMeasure<Distance> m = DecimalMeasure.exact(50, SI.KILOGRAM );
-		DecimalMeasure<Distance> y = m.times(v2);
+		DecimalMeasure<Mass> m = DecimalMeasure.exact(50, SI.KILOGRAM );
+		DecimalMeasure<Energy> y = m.times(v2);
 		DecimalMeasure<Distance> EC = y.times(Real.valueOf(0.5));
 		
 		assertEquals(Dimension.ENERGY, EC.unit().dimension());
