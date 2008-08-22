@@ -4,7 +4,7 @@ import org.middleheaven.util.measure.structure.Field;
 
 
 /**
- * Represents a integer number
+ * Represents an integer number
  * 
  * @author Sergio M.M. Taborda
  *

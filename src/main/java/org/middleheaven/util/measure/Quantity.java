@@ -1,5 +1,7 @@
 package org.middleheaven.util.measure;
 
+import org.middleheaven.util.measure.measures.Measurable;
+
 
 
 
@@ -9,13 +11,13 @@ package org.middleheaven.util.measure;
  * @author Sergio M.M. Taborda
  *
  */
-public interface Quantity{
+public interface Quantity<E extends Measurable>{
 
 	/**
 	 * 
 	 * @return this quantity unit
 	 */
-	public Unit unit();
+	public Unit<E> unit();
 	
 	
 }

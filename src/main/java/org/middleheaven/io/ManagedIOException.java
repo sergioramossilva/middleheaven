@@ -25,15 +25,15 @@ public class ManagedIOException extends RuntimeException {
         return new ManagedIOException(ioe);
     }
     
-    protected ManagedIOException (Throwable cause){
+    public ManagedIOException (Throwable cause){
         super(cause);
     }
     
-    protected ManagedIOException (String msg){
+    public ManagedIOException (String msg){
         super(msg);
     }
     
-    protected ManagedIOException (String msg,Throwable cause){
+    public ManagedIOException (String msg,Throwable cause){
         super(msg,cause);
     }
     

@@ -72,9 +72,17 @@ class BaseUnit<E extends Measurable> extends Unit<E> {
 	}
 
 	@Override
-	public Unit<E> raise(int value) {
-		return CompositeUnit.raise (this, value);
+	public  <C extends Measurable> Unit<C> raise(int exponent) {
+		return CompositeUnit.raise (this, exponent);
 	}
+	
+
+	@Override
+	public <C extends Measurable> Unit<C> cast() {
+		return (Unit<C>) this;
+	}
+
+
 
 	
 }

@@ -21,6 +21,15 @@ public class AngularPosition extends DecimalMeasure<Angle>  {
 		return radians(Math.PI);
 	}
 	
+	
+	public static AngularPosition arctan(Real value){
+		return radians(Math.atan(value.asNumber().doubleValue()));
+	}
+	
+	public static AngularPosition arctan(DecimalMeasure<?> value){
+		return arctan(value.amount);
+	}
+
 	/**
 	 * @param amount angle in radians
 	 * @return <code>AngularPosition</code> with value equal to amount in radians

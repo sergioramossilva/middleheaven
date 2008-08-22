@@ -1,12 +1,21 @@
 package org.middleheaven.global.location;
 
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan;
+import static java.lang.Math.atan2;
+import static java.lang.Math.ceil;
+import static java.lang.Math.cos;
+import static java.lang.Math.hypot;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
 
 import org.middleheaven.util.measure.AngularPosition;
 import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.Measure;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
+import org.middleheaven.util.measure.coordinate.GeoCoordinate;
+import org.middleheaven.util.measure.measures.Distance;
 
 
 public class WGM84 extends ElipsoideModel{
@@ -15,7 +24,7 @@ public class WGM84 extends ElipsoideModel{
 		super(//http://en.wikipedia.org/wiki/WGS84#A_new_World_Geodetic_System:_WGS_84
 				DecimalMeasure.exact(Real.valueOf("6378137.0"), SI.METER), 
 				DecimalMeasure.exact(Real.valueOf("6356752.3142"), SI.METER), 
-				DecimalMeasure.exact(Real.valueOf("298.257223563"), SI.DIMENTIONLESS).inverse() 
+				DecimalMeasure.exact(Real.valueOf("298.257223563").inverse() , SI.DIMENTIONLESS)
 		);
 	}
 
@@ -24,11 +33,11 @@ public class WGM84 extends ElipsoideModel{
 	}
 
 	@Override
-	public Measure<Real> distance(Coordinates c1, Coordinates c2) {
+	public DecimalMeasure<Distance> distance(GeoCoordinate c1, GeoCoordinate c2) {
 		return DecimalMeasure.exact(Real.valueOf(distance1(c1,c2)), this.getSemiMajorAxis().unit());
 	}
 
-	private double distance1(Coordinates c1, Coordinates c2){
+	private double distance1(GeoCoordinate c1, GeoCoordinate c2){
 		// http://www.movable-type.co.uk/scripts/latlong-vincenty.html
 
 		final double a = this.getSemiMajorAxis().amount().asNumber().doubleValue();

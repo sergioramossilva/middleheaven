@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.middleheaven.util.measure.Measure;
+import org.middleheaven.util.measure.DecimalMeasure;
+import org.middleheaven.util.measure.Unit;
 
 /**
  * The position that a point occupies in a given n-dimensional reference frame.
@@ -14,26 +15,26 @@ import org.middleheaven.util.measure.Measure;
 public class Coordinate   {
 
 	private CoordinateReferenceSystem refSystem; 
-	private List<Measure> coordinates;
-	private int dimention;
+	private List<DecimalMeasure<?>> coordinates;
 	
-	
-	
-	protected Coordinate(CoordinateReferenceSystem refSystem,Measure<?,?>[] coordinates){
+	protected Coordinate(CoordinateReferenceSystem refSystem,DecimalMeasure<?> ... coordinates){
 		
-		this.dimention = refSystem.getDimention();
-		if (coordinates.length != dimention){
-			throw new IllegalArgumentException(coordinates.length  + " coordinates are provided but " + this.dimention + " are needed");
+		if (coordinates.length !=  refSystem.getDimention()){
+			throw new IllegalArgumentException(coordinates.length  + " coordinate values where provided but " +  refSystem.getDimention() + " are needed");
 		}
-		this.coordinates = new ArrayList<Measure>(Arrays.asList(coordinates));
+		this.coordinates = new ArrayList<DecimalMeasure<?>>(Arrays.asList(coordinates));
 	}
 	
-	public Measure<?,?> getOrdinate(int index){
+	public DecimalMeasure<?> getOrdinate(int index){
 		return coordinates.get(index);
 	}
 
+	public Unit<?> getOrdinateUnit(int index){
+		return coordinates.get(index).unit();
+	}
+	
 	public int getDimention(){
-		return dimention;
+		return refSystem.getDimention();
 	}
 
 	public CoordinateReferenceSystem getCoordinateReferenceSystem() {

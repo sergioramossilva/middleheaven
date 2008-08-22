@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.io.repository.upload.UploadManagedFileRepository;
 
 public class WebFacadeServlet extends HttpServlet {
 
@@ -23,8 +24,11 @@ public class WebFacadeServlet extends HttpServlet {
 	
 	private void doService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
+		UploadManagedFileRepository rep = new UploadManagedFileRepository(request);
+		
 		WebContext context = new WebContext(request,response);
-
+		context.setAttribute(ContextScope.REQUEST, "uploads", rep);
+		
 		// resolve mapped WebCommand from url
 
 		WebCommandMappingService mapper = ServiceRegistry.getService(WebCommandMappingService.class);

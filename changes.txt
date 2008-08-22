@@ -6,3 +6,6 @@ angularpositions renamed to angularmeasure and extends decimalmeasure
 modified typeconverter
 changed CollectionUtils
 created CollectionUtilsTest in same package
+adicionar Mesaurable em Quantity
+Alterações em Currency e ISOCurrency
+Atualizado global.location com GeoCoordinate em vez de Coordinate

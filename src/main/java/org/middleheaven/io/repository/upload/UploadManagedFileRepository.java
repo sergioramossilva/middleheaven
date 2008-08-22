@@ -24,10 +24,9 @@ import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
-import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
 
-public class UploadManagedFileRepository extends AbstractManagedFile implements  ManagedFileRepository,QueryableRepository {
+public class UploadManagedFileRepository extends AbstractManagedFile implements  ManagedFileRepository {
 
 
 	private Map<String, UploadManagedFile> files;
@@ -216,6 +215,11 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	@Override
 	public ManagedFile resolveFile(String filepath) {
 		return this.retrive(filepath);
+	}
+
+	@Override
+	public boolean isWatchable() {
+		return false;
 	}
 
 }

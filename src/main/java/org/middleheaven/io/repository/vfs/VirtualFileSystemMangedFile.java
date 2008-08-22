@@ -1,6 +1,5 @@
 package org.middleheaven.io.repository.vfs;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -12,8 +11,8 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.VFS;
-import org.middleheaven.io.IOUtils;
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.AbstractManagedFile;
 import org.middleheaven.io.repository.FileChangeListener;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
@@ -21,7 +20,7 @@ import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.WatchableRepository;
 
-public final class VirtualFileSystemMangedFile implements ManagedFile,WatchableRepository {
+public final class VirtualFileSystemMangedFile extends AbstractManagedFile implements WatchableRepository {
 
 	final FileObject file;
 	final String finalPath;
@@ -174,21 +173,7 @@ public final class VirtualFileSystemMangedFile implements ManagedFile,WatchableR
 		}
 	}
 
-	@Override
-	public void copyTo(ManagedFile other) throws ManagedIOException {
-		try {
-			if (other.getType()==ManagedFileType.FILE){
-				IOUtils.copy(this.getContent().getInputStream(), other.getContent().getOutputStream());
-			} else {
-				ManagedFile newFile = other.resolveFile(this.getName());
-				newFile.createFile();
-				IOUtils.copy(this.getContent().getInputStream(), newFile.getContent().getOutputStream());
-			}
 
-		} catch (IOException ioe) {
-			throw ManagedIOException.manage(ioe);
-		}
-	}
 
 
 	@Override

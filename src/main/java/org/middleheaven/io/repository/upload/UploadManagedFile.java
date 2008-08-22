@@ -150,4 +150,9 @@ public class UploadManagedFile extends AbstractManagedFile  {
 		}
 
 	}
+
+	@Override
+	public boolean isWatchable() {
+		return false;
+	}
 }

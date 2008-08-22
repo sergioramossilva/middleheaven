@@ -11,18 +11,36 @@ import org.middleheaven.util.measure.measures.Measurable;
 public class CompositeUnit<E extends Measurable> extends Unit<E>{
 
 	
-	public static <T extends Measurable> Unit<T> raise (Unit<?> unit , int value){
-		if (value==0){
+	public static <T extends Measurable> Unit<T> raise (Unit<?> unit , int exponent){
+		if (exponent==0){
 			return SI.DIMENTIONLESS.cast();
-		} else if (value>0){
+		} else if (exponent>0){
 			 Unit<T> a = unit.cast();
-			 for (int i = 1 ; i < value ; i++){
+			 for (int i = 1 ; i < exponent ; i++){
 				 a = a.times(a);
 			 }
 			 return a;
 		} else {
 			Unit<T> a = unit.cast();
-			 for (int i = 1 ; i < -value ; i++){
+			 for (int i = 1 ; i < -exponent ; i++){
+				 a = a.over(a);
+			 }
+			 return a;
+		}
+	}
+	
+	public static <T extends Measurable> Unit<T> root (Unit<?> unit , int exponent){
+		if (exponent==0){
+			return SI.DIMENTIONLESS.cast();
+		} else if (exponent>0){
+			 Unit<T> a = unit.cast();
+			 for (int i = 1 ; i < exponent ; i++){
+				 a = a.times(a);
+			 }
+			 return a;
+		} else {
+			Unit<T> a = unit.cast();
+			 for (int i = 1 ; i < -exponent ; i++){
 				 a = a.over(a);
 			 }
 			 return a;
@@ -165,6 +183,84 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 	@Override
 	public Unit raise(int value) {
 		return raise (this, value);
+	}
+
+	@Override
+	public <C extends Measurable> Unit<C> cast() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean equals(Unit<E> other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Unit<E> minus(Unit<E> other) throws IncompatibleUnitsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Measurable> Unit<T> over(Unit<?> other) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Unit<E> plus(Unit<E> other) throws IncompatibleUnitsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Measurable> Unit<T> times(Unit<?> other) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean equals(Unit<E> other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Unit<E> minus(Unit<E> other) throws IncompatibleUnitsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Measurable> Unit<T> over(Unit<?> other) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Unit<E> plus(Unit<E> other) throws IncompatibleUnitsException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <C extends Measurable> Unit<C> raise(int exponent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <C extends Measurable> Unit<C> sqrt() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends Measurable> Unit<T> times(Unit<?> other) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

@@ -1,16 +1,18 @@
 package org.middleheaven.global.location;
 
 import org.middleheaven.util.measure.DecimalMeasure;
+import org.middleheaven.util.measure.measures.Dimensionless;
+import org.middleheaven.util.measure.measures.Distance;
 
 public abstract class ElipsoideModel extends WorldGeodeticModel{
 
-	private DecimalMeasure semiMajorAxis;
-	private DecimalMeasure semiMinorAxis;
-	private DecimalMeasure flatening;
+	private DecimalMeasure<Distance> semiMajorAxis;
+	private DecimalMeasure<Distance> semiMinorAxis;
+	private DecimalMeasure<Dimensionless> flatening;
 	
 
-	public ElipsoideModel(DecimalMeasure semiMajorAxis, DecimalMeasure semiMinorAxis,
-			DecimalMeasure flatening) {
+	public ElipsoideModel(DecimalMeasure<Distance> semiMajorAxis, DecimalMeasure<Distance> semiMinorAxis,
+			DecimalMeasure<Dimensionless> flatening) {
 		super();
 		this.semiMajorAxis = semiMajorAxis;
 		this.semiMinorAxis = semiMinorAxis;
@@ -18,17 +20,17 @@ public abstract class ElipsoideModel extends WorldGeodeticModel{
 	}
 
 
-	public DecimalMeasure getSemiMajorAxis() {
+	public DecimalMeasure<Distance> getSemiMajorAxis() {
 		return semiMajorAxis;
 	}
 
 
-	public DecimalMeasure getSemiMinorAxis() {
+	public DecimalMeasure<Distance> getSemiMinorAxis() {
 		return semiMinorAxis;
 	}
 
 
-	public DecimalMeasure getFlatening() {
+	public DecimalMeasure<Dimensionless> getFlatening() {
 		return flatening;
 	}
 	
