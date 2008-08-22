@@ -10,8 +10,7 @@ import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.Unit;
 import org.middleheaven.util.measure.structure.GroupAdditive;
 
-
-public class Money implements Quantity, Comparable<Money>, GroupAdditive<Money> {
+public class Money implements Quantity<org.middleheaven.util.measure.measures.Currency>, Comparable<Money>, GroupAdditive<Money> {
 
 	/**
 	 * Power of 10 has the value at position n in the arrays equals 10 to nth power. 
@@ -87,7 +86,7 @@ public class Money implements Quantity, Comparable<Money>, GroupAdditive<Money> 
 		return new Money (-amount,this.currency);
 	}
 
-	protected void assertCompatible(Quantity other) throws IncompatibleUnitsException {
+	protected void assertCompatible(Quantity<org.middleheaven.util.measure.measures.Currency> other) throws IncompatibleUnitsException {
 		if (other instanceof Money && !this.unit().isCompatible(other.unit())){
 			throw new IncompatibleUnitsException(this.unit(),other.unit());
 		}
@@ -116,7 +115,7 @@ public class Money implements Quantity, Comparable<Money>, GroupAdditive<Money> 
 		return Real.valueOf(BigDecimal.valueOf(amount, this.currency.getDefaultFractionDigits()));
 	}
 
-	public Unit unit() {
+	public Unit<org.middleheaven.util.measure.measures.Currency> unit() {
 		return currency;
 	}
 

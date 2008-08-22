@@ -7,6 +7,8 @@ import org.middleheaven.util.measure.AngularPosition;
 import org.middleheaven.util.measure.DecimalMeasure;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
+import org.middleheaven.util.measure.coordinate.GeoCoordinate;
+import org.middleheaven.util.measure.measures.Distance;
 
 
 public class CoordinateTest {
@@ -17,26 +19,26 @@ public class CoordinateTest {
 		
 		WorldGeodeticModel model = new WGM84();
 		
-		Coordinates c1 = new Coordinates(
+		GeoCoordinate c1 = new GeoCoordinate(
 				AngularPosition.degrees(53),
 				AngularPosition.degrees(2)
 		);
 				
-		Coordinates c2 = new Coordinates(
+		GeoCoordinate c2 = new GeoCoordinate(
 				AngularPosition.degrees(52),
 				AngularPosition.degrees(0)
 		);
 			
-		DecimalMeasure distance = DecimalMeasure.exact(Real.valueOf(175572.473), SI.METER); 
+		DecimalMeasure<Distance> distance = DecimalMeasure.exact(Real.valueOf(175572.473), SI.METER); 
 		assertEquals(distance, model.distance(c1, c2));
 		
 		
-		 c1 = new Coordinates(
+		 c1 = new GeoCoordinate(
 				AngularPosition.degrees(0),
 				AngularPosition.degrees(0)
 		);
 				
-		 c2 = new Coordinates(
+		 c2 = new GeoCoordinate(
 				AngularPosition.degrees(52),
 				AngularPosition.degrees(0)
 		);

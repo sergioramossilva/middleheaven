@@ -3,7 +3,11 @@ package org.middleheaven.util.measure;
 import org.middleheaven.util.measure.structure.Field;
 
 
-
+/**
+ * Represents an real number 
+ * 
+ * @author Sergio M.M. Taborda
+ */
 public abstract class Real extends Number<Real> implements Field<Real> {
 
 

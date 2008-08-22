@@ -11,6 +11,7 @@ import org.middleheaven.util.measure.measures.Force;
 import org.middleheaven.util.measure.measures.Measurable;
 import org.middleheaven.util.measure.measures.Temperature;
 import org.middleheaven.util.measure.measures.Time;
+import org.middleheaven.util.measure.measures.Velocity;
 import org.middleheaven.util.measure.measures.Volume;
 import org.middleheaven.util.measure.measures.Mass;
 
@@ -33,7 +34,7 @@ public abstract class Dimension<E extends Measurable> implements Serializable {
 	public static final Dimension<Area> AREA = BaseDimention.base('L',2);
 	public static final Dimension<Volume> VOLUME = BaseDimention.base('L',3);
 	public static final Dimension DENSITY = MASS.over(VOLUME);
-	public static final Dimension VELOCITY = LENGTH.over(TIME);
+	public static final Dimension<Velocity> VELOCITY = LENGTH.over(TIME);
 	public static final Dimension ACELERATION = VELOCITY.over(TIME);
 	public static final Dimension<Force> FORCE = ACELERATION.times(MASS);
 	public static final Dimension PRESSURE = FORCE.over(AREA);
@@ -42,23 +43,25 @@ public abstract class Dimension<E extends Measurable> implements Serializable {
 	public static final Dimension POWER = ENERGY.over(TIME);
 	public static final Dimension ENTROPY = ENERGY.over(TEMPERATURE);
 	
-	public Dimension plus(Dimension dimention) throws IncompatibleDimentionException{
+	public Dimension<E> plus(Dimension<E> dimention) throws IncompatibleDimentionException{
 		if (dimention.equals(this)){
 			return this;
 		}
 		throw new IncompatibleDimentionException();
 	}
-	public Dimension minus(Dimension dimention) throws IncompatibleDimentionException{
+	public Dimension<E> minus(Dimension<E> dimention) throws IncompatibleDimentionException{
 		if (dimention.equals(this)){
 			return this;
 		}
 		throw new IncompatibleDimentionException();
 	}
 	
-	public abstract Dimension times(Dimension dimention) ;
+	public abstract <T extends Measurable> Dimension<T> times(Dimension<?> dimention) ;
 	
-	public abstract Dimension over(Dimension dimention);
+	public abstract <T extends Measurable> Dimension<T> over(Dimension<?> dimention);
 
 	
-    protected abstract Dimension simplify();
+    protected abstract Dimension<E> simplify();
+    
+
 }

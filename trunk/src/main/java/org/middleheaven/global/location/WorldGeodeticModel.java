@@ -1,11 +1,11 @@
 package org.middleheaven.global.location;
 
-import org.middleheaven.util.measure.Measure;
+import org.middleheaven.util.measure.DecimalMeasure;
+import org.middleheaven.util.measure.coordinate.GeoCoordinate;
+import org.middleheaven.util.measure.measures.Distance;
 
 public abstract class WorldGeodeticModel {
 
-	
-	public abstract Measure distance ( Coordinates a , Coordinates b);
-	
+	public abstract DecimalMeasure<Distance> distance(GeoCoordinate c1, GeoCoordinate c2);
 	
 }

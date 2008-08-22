@@ -33,30 +33,6 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 		return exponent;
 	}
 	
-	public Dimension times(Dimension other){
-		if (exponent==0){
-			return other;
-		}
-		if (other instanceof BaseDimention){
-			BaseDimention b = (BaseDimention)other;
-			if (b.axis ==  this.axis){
-				return new BaseDimention(this.axis , this.exponent + b.exponent).simplify();
-			} 
-		}
-		return CompositeDimention.multiply(this, other);
-	}
-	
-	public Dimension over(Dimension other){
-		if (other instanceof BaseDimention){
-			if (exponent==0){
-				return new BaseDimention(((BaseDimention)other).axis ,  -((BaseDimention)other).exponent).simplify();
-			} else if (((BaseDimention)other).axis ==  this.axis){
-				return new BaseDimention(this.axis , this.exponent - ((BaseDimention)other).exponent).simplify();
-			} 
-		}
-		return CompositeDimention.over(this, other);
-	}
-	
 	public boolean equals (Object other){
 		return other instanceof BaseDimention && equals((BaseDimention)other);
 	}
@@ -100,8 +76,37 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 		}
 		return builder.toString();
 	}
-	
-	public int compareTo(BaseDimention other) {
+
+
+	@Override
+	public <T extends Measurable> Dimension<T> over(Dimension<?> other) {
+		if (other instanceof BaseDimention){
+			if (exponent==0){
+				return new BaseDimention(((BaseDimention)other).axis ,  -((BaseDimention)other).exponent).simplify();
+			} else if (((BaseDimention)other).axis ==  this.axis){
+				return new BaseDimention(this.axis , this.exponent - ((BaseDimention)other).exponent).simplify();
+			} 
+		}
+		return CompositeDimention.over(this, other);
+	}
+
+
+	@Override
+	public <T extends Measurable> Dimension<T> times(Dimension<?> other) {
+		if (exponent==0){
+			return (Dimension<T>) other;
+		}
+		if (other instanceof BaseDimention){
+			BaseDimention b = (BaseDimention)other;
+			if (b.axis ==  this.axis){
+				return new BaseDimention(this.axis , this.exponent + b.exponent).simplify();
+			} 
+		}
+		return CompositeDimention.multiply(this, other);
+	}
+
+	@Override
+	public int compareTo(BaseDimention<E> other) {
 		return this.axis==other.axis ?  this.exponent - other.exponent  : this.axis - other.axis;
 	}
 }

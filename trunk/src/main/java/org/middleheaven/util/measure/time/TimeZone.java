@@ -1,6 +1,5 @@
 package org.middleheaven.util.measure.time;
 
-import java.text.DecimalFormat;
 
 
 
@@ -9,6 +8,10 @@ public abstract class TimeZone {
 
 	public static TimeZone getDefault() {
 		return TimeContext.getTimeContext().getDefaultTimeZone();
+	}
+	
+	public static TimeZone getGMTTimeZone(int hours) {
+		return TimeContext.getTimeContext().getTimeZoneTable().getTimeZone("GMT" + hours + ":00");
 	}
 	
 	public static TimeZone getTimeZone(String reference) {

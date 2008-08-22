@@ -15,11 +15,12 @@ import org.middleheaven.util.measure.Integer;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
 import org.middleheaven.util.measure.Unit;
-import org.middleheaven.util.measure.convertion.UnitConversion;
 import org.middleheaven.util.measure.measures.Distance;
 import org.middleheaven.util.measure.measures.Energy;
+import org.middleheaven.util.measure.measures.Force;
 import org.middleheaven.util.measure.measures.Mass;
 import org.middleheaven.util.measure.measures.Time;
+import org.middleheaven.util.measure.measures.Velocity;
 import org.middleheaven.util.measure.money.Money;
 import org.middleheaven.util.measure.structure.LUDecomposition;
 import org.middleheaven.util.measure.structure.Matrix;
@@ -31,7 +32,7 @@ public class MeasuresTestSuit {
 	public void testAngularPosition(){
 		
 		AngularPosition ap = AngularPosition.degrees(180);
-		AngularPosition apc = UnitConversion.convert(ap, SI.RADIANS);
+		AngularPosition apc = ap.toRadians();
 		
 		assertEquals(AngularPosition.radians(Math.PI), apc );
 		
@@ -148,23 +149,23 @@ public class MeasuresTestSuit {
 		
 
 		// create speed
-		Dimension V = Dimension.LENGTH.over(Dimension.TIME) ;
+		Dimension<Velocity> V = Dimension.LENGTH.over(Dimension.TIME);
 		// assert right dimensions
 		assertEquals("LT^-1", V.toString());
 		assertEquals(Dimension.VELOCITY, V);
 		// create acceleration
-		Dimension A = V.over(Dimension.TIME) ;
+		Dimension<?> A = V.over(Dimension.TIME) ;
 		// assert right dimensions
 		assertEquals("LT^-2", A.toString());
 		
 		// create force
-		Dimension F = A.times(Dimension.MASS) ;
+		Dimension<Force> F = A.times(Dimension.MASS) ;
 		
 		assertTrue(F.equals(A.times(Dimension.MASS)));
 		assertFalse(F.equals(A));
 		
 		// get fundamental from calculus
-		Dimension L = V.times(Dimension.TIME);
+		Dimension<Distance> L = V.times(Dimension.TIME);
 		// assert is the same object
 		assertSame(L , Dimension.LENGTH);
 		
@@ -173,22 +174,18 @@ public class MeasuresTestSuit {
 		} catch (IncompatibleDimentionException e){
 			assertFalse (true);
 		}
-		try {
-			L = L.plus(Dimension.TIME);
-		} catch (IncompatibleDimentionException e){
-			assertTrue (true);
-		}
+
 	}	
 	
 	@Test
 	public void testUnits(){
-		Unit m = Unit.unit( Dimension.LENGTH, "m");
-		Unit s = Unit.unit( Dimension.TIME, "s");
+		Unit<Distance> m = Unit.unit( Dimension.LENGTH, "m");
+		Unit<Time> s = Unit.unit( Dimension.TIME, "s");
 		
 		m.plus(m);
 		s.minus(s);
 		
-		Unit v = m.over(s);
+		Unit<Velocity> v = m.over(s);
 		assertEquals("ms^-1" , v.symbol());
 		
 		
@@ -233,7 +230,7 @@ public class MeasuresTestSuit {
 		assertEquals(dim,v2.unit().dimension());
 		DecimalMeasure<Mass> m = DecimalMeasure.exact(50, SI.KILOGRAM );
 		DecimalMeasure<Energy> y = m.times(v2);
-		DecimalMeasure<Distance> EC = y.times(Real.valueOf(0.5));
+		DecimalMeasure<Energy> EC = y.times(Real.valueOf(0.5));
 		
 		assertEquals(Dimension.ENERGY, EC.unit().dimension());
 		
@@ -275,17 +272,6 @@ public class MeasuresTestSuit {
 		Money y = t.over(n);
 		assertEquals (Money.money(110, "USD"), y);
 		
-		/*
-		Scalar L = Scalar.scalar(20, SI.HOUR); 
-		Scalar q = a.over(L);
-		assertEquals ("5.00 USDh^-1" , q.toString());
-		
-		Duration h = Duration.hours(2); 
-		Scalar total = h.times(q);
-		Money ten = Money.money(10, "USD");
-		assertEquals ("10.00 USD" , total.toString());
-		assertEquals (ten , total);
-		*/
 		
 	}
 	

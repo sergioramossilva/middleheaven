@@ -104,6 +104,12 @@ public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implem
 	public DecimalMeasure<E> times(Real other, Unit<E> unit) {
 		return new DecimalMeasure<E>(this.amount.times(other), this.uncertainty.times(other), unit);
 	}
+
+	public <T extends Measurable> DecimalMeasure<T> sqrt(Unit<T> unit) {
+		Real r = Real.valueOf(Math.sqrt(this.amount.asNumber().doubleValue()));
+		Real u = Real.valueOf(Math.sqrt(this.uncertainty.asNumber().doubleValue()));
+		return new DecimalMeasure<T>(r, u, unit);  
+	}
 	
 
 

@@ -2,8 +2,6 @@ package org.middleheaven.util.measure;
 
 import org.middleheaven.util.measure.measures.Measurable;
 
-
-
 public abstract class Unit<E extends Measurable> {
 
 
@@ -23,7 +21,8 @@ public abstract class Unit<E extends Measurable> {
 	public abstract String toString();
 	
 	public abstract boolean isCompatible(Unit<?> other);
-	public abstract Unit<?> raise(int value);
+	public abstract <C extends Measurable> Unit<C>  raise(int exponent);
+
 	public abstract <C extends Measurable> Unit<C> cast();
-	
+
 }

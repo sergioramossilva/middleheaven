@@ -1,12 +1,13 @@
 package org.middleheaven.global.location;
 
 import org.middleheaven.global.address.Address;
+import org.middleheaven.util.measure.coordinate.GeoCoordinate;
 
 public class Landmark implements Locatable{
 
 	private String name;
 	private String description;
-	private Coordinates coordinates;
+	private GeoCoordinate geoCoordinate;
 	private Address address;
 	
 	public String getName() {
@@ -21,17 +22,20 @@ public class Landmark implements Locatable{
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Coordinates getCoordinates() {
-		return coordinates;
-	}
-	public void setCoordinates(Coordinates coordinates) {
-		this.coordinates = coordinates;
+
+	
+	public void setGeoCoordinate(GeoCoordinate GeoCoordinate) {
+		this.geoCoordinate = GeoCoordinate;
 	}
 	public Address getAddress() {
 		return address;
 	}
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+	@Override
+	public GeoCoordinate getCoordinates() {
+		return geoCoordinate;
 	}
 
 	

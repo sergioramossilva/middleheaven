@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.Range;
+import org.middleheaven.util.measure.measures.Dimensionless;
 import org.middleheaven.util.measure.structure.GroupAdditive;
 import org.middleheaven.util.measure.structure.Ring;
 
@@ -16,10 +17,10 @@ import org.middleheaven.util.measure.structure.Ring;
  * 
  *
  */
-public abstract class Number<T extends Number<T>> implements Quantity , Serializable, Comparable<T>, GroupAdditive<T>, Ring<T> , Incrementable<T> {
+public abstract class Number<T extends Number<T>> implements Quantity<Dimensionless> , Serializable, Comparable<T>, GroupAdditive<T>, Ring<T> , Incrementable<T> {
 
 	
-	public final Unit unit() {
+	public final Unit<Dimensionless> unit() {
 		return SI.DIMENTIONLESS;
 	}
 	
