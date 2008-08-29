@@ -102,6 +102,12 @@ public class BigDecimalReal extends Real{
 		return new BigDecimalReal(BigDecimal.ZERO);
 	}
 
+	@Override
+	public Real sqrt() {
+		return new BigDecimalReal(new BigDecimal(Math.sqrt(this.value.doubleValue())));
+	}
+
+
 
 
 

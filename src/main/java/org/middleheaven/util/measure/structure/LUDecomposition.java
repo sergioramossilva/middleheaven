@@ -73,13 +73,14 @@ public class LUDecomposition<F extends Field<F>> {
 
 		LU = new EditableMatrix<F>(M);
 		piv = new int[LU.rowsCount()];
-		EditableVector<F> LUcolj;
 		
 		for (int i = 0; i < LU.rowsCount(); i++) {
 			piv[i] = i;
 		}
 		
 		pivsign = ONE;
+		
+		EditableVector<F> LUcolj;
 		EditableVector<F> LUrowi;
 		
 

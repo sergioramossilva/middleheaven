@@ -1,5 +1,6 @@
 package org.middleheaven.util.measure.time;
 
+
 public interface DateHolder{
 
 	/**
@@ -53,5 +54,6 @@ public interface DateHolder{
 	public DateHolder nearest(DayOfWeek weekDay);
 
 	public int compareTo(DateHolder date);
+
 
 }

@@ -1,3 +1,8 @@
+Complex e BigComplex
+Modifications in Numberfactory
+Adicionado Amount. Conversão de Money, ElapsedTime e Measure
+adicionado DateTimeHolder
+---------
 changed ReflectionUtils
 created mh.web package 
 modified unitconverter

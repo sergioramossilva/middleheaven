@@ -28,7 +28,7 @@ public class DenseVector<F extends Field<F>> extends Vector<F> {
 
 	@Override
 	F get(int index) {
-		return this.elements.get(index);
+		return this.elements==null ? null : this.elements.get(index);
 	}
 
 

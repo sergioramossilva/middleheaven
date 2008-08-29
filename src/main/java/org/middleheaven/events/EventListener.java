@@ -1,9 +1,6 @@
 package org.middleheaven.events;
 
-public interface EventListener {
+public interface EventListener<E> {
 
-	
-	public boolean isListenable(Event event);
-	
-	public void onEvent(Event event);
+	public void onEvent(E event);
 }

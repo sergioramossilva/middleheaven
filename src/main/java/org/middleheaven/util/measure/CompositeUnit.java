@@ -70,7 +70,7 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 
 	private TreeMap<String,UnitPower> units = new TreeMap<String,UnitPower>();
 	
-	private Dimension<E> currentDimention = Dimension.DIMENTIONLESS.;
+	private Dimension<E> currentDimention = Dimension.DIMENTIONLESS.simplify();
 	
 	CompositeUnit(){}
 	CompositeUnit(CompositeUnit other){
@@ -80,10 +80,10 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 
 	}
 	
-	private void add(Unit other , int sign){
+	private void add(Unit<?> other , int sign){
 		if (other instanceof CompositeUnit){
 			//	 merge compositions
-    		CompositeUnit c = (CompositeUnit)other;
+    		CompositeUnit<?> c = (CompositeUnit<?>)other;
 
     		for (Map.Entry<String,UnitPower> entry : c.units.entrySet()){
     			UnitPower p = entry.getValue();
@@ -124,34 +124,15 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 	public boolean isCompatible(Unit<?> other) {
 		return this.dimension().equals(other.dimension());
 	}
-	
-	public Unit over(Unit other) {
-		CompositeUnit result = new CompositeUnit(this);
-    	result.add(other, -1);
-    	return result.simplify();
+
+	@Override
+	public boolean equals(Unit<E> other) {
+		return other instanceof CompositeUnit && equals((CompositeUnit<?>)other);
 	}
 	
-	public Unit times(Unit other) {
-		CompositeUnit result = new CompositeUnit(this);
-    	result.add(other, 1);
-    	return result.simplify();
-	}
 
-
-	public boolean equals(Unit other) {
-		return other instanceof CompositeUnit && equals((CompositeUnit)other);
-	}
-
-	public boolean equals(CompositeUnit other) {
+	public boolean equals(CompositeUnit<?> other) {
 		return this.currentDimention.equals(other.currentDimention);
-	}
-	
-	public Unit minus(Unit other) throws IncompatibleUnitsException {
-		return other;
-	}
-
-	public Unit plus(Unit other) throws IncompatibleUnitsException {
-		return other;
 	}
 
 
@@ -180,88 +161,47 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 		return symbol();
 	}
 
-	@Override
-	public Unit raise(int value) {
-		return raise (this, value);
-	}
 
 	@Override
 	public <C extends Measurable> Unit<C> cast() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean equals(Unit<E> other) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Unit<E> minus(Unit<E> other) throws IncompatibleUnitsException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends Measurable> Unit<T> over(Unit<?> other) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Unit<E> plus(Unit<E> other) throws IncompatibleUnitsException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Unit<C>) this;
 	}
 
 	@Override
 	public <T extends Measurable> Unit<T> times(Unit<?> other) {
-		// TODO Auto-generated method stub
-		return null;
+		CompositeUnit<T> result = new CompositeUnit<T>();
+		result.add(this, 1);
+    	result.add(other, 1);
+    	return result.simplify();
 	}
 
-	@Override
-	public boolean equals(Unit<E> other) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+
 
 	@Override
 	public Unit<E> minus(Unit<E> other) throws IncompatibleUnitsException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <T extends Measurable> Unit<T> over(Unit<?> other) {
-		// TODO Auto-generated method stub
-		return null;
+		return other;
 	}
 
 	@Override
 	public Unit<E> plus(Unit<E> other) throws IncompatibleUnitsException {
-		// TODO Auto-generated method stub
-		return null;
+		return other;
 	}
+
+	@Override
+	public <T extends Measurable> Unit<T> over(Unit<?> other) {
+		CompositeUnit<T> result = new CompositeUnit<T>();
+		result.add(this, 1);
+    	result.add(other, -1);
+    	return result.simplify();
+	}
+
 
 	@Override
 	public <C extends Measurable> Unit<C> raise(int exponent) {
-		// TODO Auto-generated method stub
-		return null;
+		return raise (this, exponent);
 	}
 
-	@Override
-	public <C extends Measurable> Unit<C> sqrt() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public <T extends Measurable> Unit<T> times(Unit<?> other) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 
 }

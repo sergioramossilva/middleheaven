@@ -11,6 +11,9 @@ public class LongInteger extends Integer {
 
 	private static final long serialVersionUID = 7891405602158515389L;
 	
+	private static final LongInteger ONE = new LongInteger(1);
+	private static final LongInteger ZERO = new LongInteger(0);
+	
     private long value = 0;
 	
 	
@@ -104,12 +107,12 @@ public class LongInteger extends Integer {
 
 	@Override
 	public Integer one() {
-	    return new LongInteger(1);
+	    return ONE;
 	}
 
 	@Override
 	public Integer zero() {
-		return new LongInteger(0);
+		return ZERO;
 	}
 
 	
