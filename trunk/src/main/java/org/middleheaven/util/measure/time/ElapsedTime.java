@@ -9,7 +9,6 @@ import org.middleheaven.util.measure.measures.Time;
  *
  */
 public abstract class ElapsedTime implements Quantity<Time>{
-
 	
 	public abstract ElapsedTime negate();
 }

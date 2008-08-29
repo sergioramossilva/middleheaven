@@ -61,7 +61,7 @@ public abstract class Dimension<E extends Measurable> implements Serializable {
 	public abstract <T extends Measurable> Dimension<T> over(Dimension<?> dimention);
 
 	
-    protected abstract Dimension<E> simplify();
+    protected abstract <T extends Measurable> Dimension<T> simplify();
     
 
 }

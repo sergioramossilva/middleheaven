@@ -16,11 +16,16 @@ public abstract class NumberFactory {
 	
 	protected NumberFactory(){};
 	
-	protected abstract <T extends Number<?>> T numberFor (String value, Class<T> superclass);
+	protected abstract <T extends Number<?>> T numberFor (Class<T> superclass,Object ... value);
 
-	protected abstract Number<?> one ();
-	
-	protected abstract Number<?> zero ();
-	
-	
+
+	public <T extends Number<T>>T promote(Number<?> other, Class<T> targetType) {
+		Class<?> originType = other.getClass();
+		if (originType.equals(targetType)){
+			return targetType.cast(other);
+		} else {
+			return numberFor(targetType, originType.toString());
+		}
+	}
+
 }

@@ -11,8 +11,14 @@ import org.middleheaven.util.measure.measures.Measurable;
  * @param <E>
  * @see {@link org.middleheaven.util.measure.AngularMeasure}
  */
-public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implements Comparable<DecimalMeasure<E>> , Convertable<E,DecimalMeasure<E>> , Scalable<E,DecimalMeasure<E>> {
+public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implements Comparable<DecimalMeasure<E>> , Convertable<E,DecimalMeasure<E>> ,  Amount<DecimalMeasure<E>,E>, Scalable<E,DecimalMeasure<E>> {
 
+
+	public static <T extends Measurable> DecimalMeasure<T> zero(Unit<T> unit) {
+		return exact(Real.ZERO(), unit);
+	}
+	
+	
 	public static <T extends Measurable> DecimalMeasure<T> measure(java.lang.Number value,java.lang.Number uncertainty, Unit<T> unit){
 		return measure( Real.valueOf(value),Real.valueOf(uncertainty), unit);
 	}
@@ -110,7 +116,7 @@ public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implem
 		Real u = Real.valueOf(Math.sqrt(this.uncertainty.asNumber().doubleValue()));
 		return new DecimalMeasure<T>(r, u, unit);  
 	}
-	
+
 
 
 }

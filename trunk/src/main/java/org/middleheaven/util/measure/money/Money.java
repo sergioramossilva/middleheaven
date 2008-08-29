@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 
+import org.middleheaven.util.measure.Amount;
 import org.middleheaven.util.measure.IncompatibleUnitsException;
 import org.middleheaven.util.measure.Quantity;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.Unit;
-import org.middleheaven.util.measure.structure.GroupAdditive;
 
-public class Money implements Quantity<org.middleheaven.util.measure.measures.Currency>, Comparable<Money>, GroupAdditive<Money> {
+public class Money implements Amount<Money, org.middleheaven.util.measure.measures.Currency>, Comparable<Money> {
 
 	/**
 	 * Power of 10 has the value at position n in the arrays equals 10 to nth power. 

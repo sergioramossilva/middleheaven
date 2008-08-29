@@ -171,11 +171,11 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		return d;
 	}
 
-	public org.middleheaven.util.measure.Number amount() {
+	public org.middleheaven.util.measure.Integer amount() {
 		return reduce();
 	}
 	
-	protected org.middleheaven.util.measure.Number reduce (){
+	protected org.middleheaven.util.measure.Integer reduce (){
 		int count =0;
 		DurationType field=null;
 		for (DurationType t : DurationType.values()){

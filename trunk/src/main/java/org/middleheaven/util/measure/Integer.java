@@ -1,5 +1,7 @@
 package org.middleheaven.util.measure;
 
+import org.middleheaven.util.Incrementable;
+import org.middleheaven.util.Range;
 import org.middleheaven.util.measure.structure.Field;
 
 
@@ -9,10 +11,10 @@ import org.middleheaven.util.measure.structure.Field;
  * @author Sergio M.M. Taborda
  *
  */
-public abstract class Integer extends Number<Integer> implements Field<Integer> ,  Numerable<Integer>{
+public abstract class Integer extends Number<Integer> implements Field<Integer> ,  Numerable<Integer> , Incrementable <Integer>{
 
 	public static Integer valueOf (String value) {
-		return NumberFactory.getFactory().numberFor(value, Integer.class);
+		return NumberFactory.getFactory().numberFor(Integer.class , value);
 	}
 	
 	public static Integer valueOf (Number<?> other) {
@@ -27,7 +29,7 @@ public abstract class Integer extends Number<Integer> implements Field<Integer> 
 	}
 	
 	public static Integer valueOf (long other) {
-		return (Integer)NumberFactory.getFactory().numberFor(Long.toString(other), Integer.class);
+		return (Integer)NumberFactory.getFactory().numberFor(Integer.class, Long.toString(other));
 	}
    
 	protected final int rank(){
@@ -43,5 +45,13 @@ public abstract class Integer extends Number<Integer> implements Field<Integer> 
 	@Override
 	public Number<Integer> promote(Number<?> other) {
 		return valueOf(other);
+	}
+	
+	public Range<Integer> upTo(Integer other){
+		return Range.over(this, other, other.over(other));
+	}
+	
+	public Range<Integer> upTo(Integer other, Integer increment){
+		return Range.over(this, other, increment);
 	}
 }
