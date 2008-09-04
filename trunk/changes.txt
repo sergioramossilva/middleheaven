@@ -2,6 +2,7 @@ Complex e BigComplex
 Modifications in Numberfactory
 Adicionado Amount. Conversão de Money, ElapsedTime e Measure
 adicionado DateTimeHolder
+pacote global.text para formatadores e afins PT, ES, EN, FR
 ---------
 changed ReflectionUtils
 created mh.web package 

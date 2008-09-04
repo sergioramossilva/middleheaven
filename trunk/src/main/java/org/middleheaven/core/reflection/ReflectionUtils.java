@@ -93,7 +93,7 @@ public final class ReflectionUtils {
 		}
 		return newInstance(loadClass(className));
 	}
-	
+
 	/**
 	 * 
 	 * @param <T>
@@ -112,7 +112,7 @@ public final class ReflectionUtils {
 					public int compare(Constructor<T> a, Constructor<T> b) {
 						return a.getParameterTypes().length - b.getParameterTypes().length;
 					}
-					
+
 				}
 		);
 		return Arrays.asList(constructors);
@@ -122,31 +122,29 @@ public final class ReflectionUtils {
 	public static <T> T newInstance(Class<T> klass, Object ... args) throws ReflectionException{
 		return newInstance(klass,klass,args);
 	}
-	public static <T> T newInstance(Class<T> castAs,Class<?> klass, Object ... args) throws ReflectionException{
+	public static <T> T newInstance(Class<T> castAs,Class<?> type, Object ... args) throws ReflectionException{
 		try {
-			if (args.length==0){
-				return castAs.cast(klass.newInstance());
-			} else {
-				// look for a Constructor with the correct arguments
-				Class<?> [] parameterTypes = new Class<?> [args.length];
-				for (int i=0;i<args.length;i++){
-					parameterTypes[i] = args[i].getClass();
-				}
 
-				try {
-
-					Constructor<?> c = klass.getConstructor(parameterTypes);
-					return castAs.cast(c.newInstance(args)); // Instantiate using the constructor
-				} catch (SecurityException e) {
-					throw new IllegalAccesReflectionException(e);
-				} catch (NoSuchMethodException e) {
-					throw new NoSuchMethodReflectionException(e);
-				} catch (IllegalArgumentException e) {
-					throw new IllegalAccesReflectionException(e);
-				} catch (InvocationTargetException e) {
-					throw new InvocationTargetReflectionException(e);
-				}
+			// look for a Constructor with the correct arguments
+			Class<?> [] parameterTypes = new Class<?> [args.length];
+			for (int i=0;i<args.length;i++){
+				parameterTypes[i] = args[i].getClass();
 			}
+
+			try {
+				Constructor<?> c = type.getConstructor(parameterTypes);
+				c.setAccessible(true);
+				return castAs.cast(c.newInstance(args)); // Instantiate using the constructor
+			} catch (SecurityException e) {
+				throw new IllegalAccesReflectionException(e);
+			} catch (NoSuchMethodException e) {
+				throw new NoSuchMethodReflectionException(e);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalAccesReflectionException(e);
+			} catch (InvocationTargetException e) {
+				throw new InvocationTargetReflectionException(e);
+			}
+
 		} catch (InstantiationException e){
 			throw new ReflectionException(e);
 		} catch (IllegalAccessException e) {
@@ -187,7 +185,7 @@ public final class ReflectionUtils {
 
 		return annotated;
 	}
-	
+
 	public static Set<Method> allAnnotatedMethods(Class<?> type, Class<? extends Annotation> annotation) {
 		Method[] methods = type.getDeclaredMethods();
 
@@ -202,9 +200,9 @@ public final class ReflectionUtils {
 		return annotated;
 	}
 
-	
 
-	
+
+
 	public static boolean isAnnotadedWith(Class<?> candidate,Class<? extends Annotation> annotationClass) {
 		return candidate.isAnnotationPresent(annotationClass);
 	}
@@ -227,9 +225,9 @@ public final class ReflectionUtils {
 
 
 	public static Set<Annotation> getAnnotations(Field f, Class<? extends Annotation> specificAnnotation) {
-		
+
 		Set<Annotation> result = new HashSet<Annotation>(); 
-		
+
 		Annotation[] all = f.getDeclaredAnnotations();
 		for (Annotation a : all){
 			if (a.annotationType().isAnnotationPresent(specificAnnotation)){
@@ -242,7 +240,7 @@ public final class ReflectionUtils {
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Class<?> translatingObjectClass, Object ... params) {
 		return invoke(returnType, methodToInvoke, newInstance(translatingObjectClass), params);
 	}
-	
+
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Object translatingObject, Object ... params) {
 		try {
 			methodToInvoke.setAccessible(true);
@@ -260,14 +258,14 @@ public final class ReflectionUtils {
 
 
 	public static Set<Field> allFields(Class<?> type) {
-		 Set<Field> fields = new HashSet<Field>();
-		 
+		Set<Field> fields = new HashSet<Field>();
 
-		 for (Field f : type.getDeclaredFields()){
-			 fields.add(f);
-		 }
 
-		 return fields;
+		for (Field f : type.getDeclaredFields()){
+			fields.add(f);
+		}
+
+		return fields;
 	}
 
 
