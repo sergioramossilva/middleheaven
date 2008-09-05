@@ -45,8 +45,6 @@ public class BigDecimalReal extends Real{
 		return new BigDecimalReal(value.negate());
 	}
 
-
-
 	@Override
 	public Real plus(Real other) {
 		if (other instanceof BigDecimalReal){
