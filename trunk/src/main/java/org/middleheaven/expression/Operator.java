@@ -1,6 +1,8 @@
 package org.middleheaven.expression;
 
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public abstract class Operator implements Term {
@@ -22,4 +24,5 @@ public abstract class Operator implements Term {
 	
 	public abstract  Term evaluate(Queue<Term> operands, EvaluationContext context);
 
+	
 }

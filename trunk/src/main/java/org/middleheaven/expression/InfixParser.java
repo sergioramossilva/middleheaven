@@ -67,7 +67,11 @@ public class InfixParser implements ExpressionParser{
 
 				if (pos==-1){
 					// Value
-					terms.add(new NumericTerm(expression));
+					try{
+						terms.add(new NumericTerm(expression));
+					} catch (NumberFormatException e){
+						terms.add(new LiteralTerm(expression));
+					}
 					return;
 				}
 			}
