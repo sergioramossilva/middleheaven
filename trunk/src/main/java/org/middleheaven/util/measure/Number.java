@@ -28,9 +28,18 @@ public abstract class Number<T extends Number<T>> implements Quantity<Dimensionl
 		return Real.valueOf(this).plus(Real.valueOf(other));
 	}
 
+
 	public Number<?> times (Number<?> other){
 		return Real.valueOf(this).times(Real.valueOf(other));
 	}
+	
+	public abstract T plus (java.lang.Number n);
+	
+	public abstract T minus (java.lang.Number n);
+	
+	public abstract T times (java.lang.Number n);
+	
+	public abstract T over (java.lang.Number n);
 	
 	public T minus (T other){
 		return this.plus(other.negate());
@@ -48,14 +57,26 @@ public abstract class Number<T extends Number<T>> implements Quantity<Dimensionl
 	
 	public abstract BigDecimal asNumber();
 	
+	/*
 	public boolean equals(T other){
 		return this.asNumber().compareTo(other.asNumber())==0;
 	}
+	*/
 
 	public boolean equals(Object other){
-		return other instanceof Number && equals((T)other);
+		return other instanceof Number && equals((Number<?>)other);
 	}
 	
+	private boolean equals(Number<?> other){
+		if (other.getClass().equals(this.getClass())){
+			return this.equalsSame((T) this.getClass().cast(other));
+		} else {
+			return this.asNumber().compareTo(other.asNumber())==0;
+		}
+	}
+	
+	protected abstract boolean equalsSame(T other);
+
 	public abstract boolean isZero();
 	
 	public abstract String toString();

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.measure.Integer;
-import org.middleheaven.util.measure.Number;
 
 public class LongInteger extends Integer {
 
@@ -115,7 +114,40 @@ public class LongInteger extends Integer {
 		return ZERO;
 	}
 
-	
+	@Override
+	public Integer minus(java.lang.Number n) {
+		return this.minus(new LongInteger(n.longValue()));
+	}
+
+	@Override
+	public Integer over(java.lang.Number n) {
+		return this.over(new LongInteger(n.longValue()));
+	}
+
+	@Override
+	public Integer plus(java.lang.Number n) {
+		return this.plus(new LongInteger(n.longValue()));
+	}
+
+	@Override
+	public Integer times(java.lang.Number n) {
+		return this.times(new LongInteger(n.longValue()));
+	}
+
+	/*
+	public boolean equals(Object other){
+		return other instanceof LongInteger && equals((LongInteger)other);
+	}
+	*/
+
+	public boolean equals(LongInteger other){
+		return  this.value == other.value;
+	}
+
+	@Override
+	protected boolean equalsSame(Integer other) {
+		return equals( (LongInteger) other);
+	}
 
 
 

@@ -2,10 +2,18 @@ package org.middleheaven.storage.criteria;
 
 
 
-public class CriteriaBuilder {
+public class CriteriaBuilder<T> {
 
-	public static <T> Criteria<T> createCriteria(Class<T> type) {
-		return new AbstractCriteria<T>(type){};
+	AbstractCriteria<T> criteria; 
+	public static <E> CriteriaBuilder<E> search(Class<E> type) {
+		
+		CriteriaBuilder<E> builder = new CriteriaBuilder<E>();
+		builder.criteria = new AbstractCriteria<E>(type){};
+		return builder;
 	}
 
+	
+	public Criteria<T> all(){
+		return this.criteria;
+	}
 }
