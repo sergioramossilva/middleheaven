@@ -94,10 +94,11 @@ public class BigComplex extends Complex {
 		if (magnitude2.isZero()){
 			throw new ArithmeticException("Inverse of " + this.toString() + " is not defined");
 		}
-		return  new BigComplex(
-				this.real.over(magnitude2), 
-				this.imaginary.over(magnitude2)
-		);
+		
+		final Real r = this.real.over(magnitude2);
+		final Real i = this.imaginary.over(magnitude2);
+		
+		return new BigComplex(r, i);
 	}
 
 	
@@ -136,7 +137,36 @@ public class BigComplex extends Complex {
 		return real;
 	}
 
-	
+	@Override
+	public Complex minus(Number n) {
+		return this.minus(new BigComplex(Real.valueOf(n), Real.ZERO()));
+	}
+
+	@Override
+	public Complex over(Number n) {
+		return this.over(new BigComplex(Real.valueOf(n), Real.ZERO()));
+	}
+
+	@Override
+	public Complex plus(Number n) {
+		return this.plus(new BigComplex(Real.valueOf(n), Real.ZERO()));
+	}
+
+	@Override
+	public Complex times(Number n) {
+		return this.times(new BigComplex(Real.valueOf(n), Real.ZERO()));
+	}
+
+
+
+	public boolean equals(BigComplex other){
+		return  this.real.equals(other.real) && this.imaginary.equals(other.imaginary);
+	}
+
+	@Override
+	protected boolean equalsSame(Complex other) {
+		return equals( (BigComplex) other);
+	}
 
 
 }

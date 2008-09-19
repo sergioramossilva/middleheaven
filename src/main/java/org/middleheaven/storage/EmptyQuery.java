@@ -20,4 +20,9 @@ public final class EmptyQuery<T> implements Query<T>{
 		return Collections.emptyList();
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return true;
+	}
+
 }

@@ -34,4 +34,9 @@ public class ListQuery<T> implements Query<T> , Serializable{
 		return Collections.unmodifiableList(list);
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return list.isEmpty();
+	}
+
 }

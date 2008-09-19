@@ -8,4 +8,5 @@ public interface Query<T> {
 	public T find();
 	public Collection<T> list();
 	public long count();
+	public boolean isEmpty();
 }

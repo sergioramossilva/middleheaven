@@ -30,4 +30,9 @@ public class NaiveCriteriaQuery<T> implements Query<T> {
 		return (Collection<T>)manager.getBulkData(criteria.getTargetClass().getName());
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return list().isEmpty();
+	}
+
 }

@@ -54,11 +54,13 @@ public class MeasuresTestSuit {
 		Complex c = Complex.valueOf(13,5);
 		Complex d = Complex.valueOf(30,30);
 		Complex g = Complex.valueOf(Real.valueOf(3).inverse(),Real.valueOf(3).inverse());
-		Complex v = Complex.valueOf(0.1,1/30d);
+		Complex v = Complex.valueOf(Real.valueOf(0.1),Real.valueOf(30).inverse());
+		
+		Complex x = b.inverse();
 		
 		assertEquals(c, a.plus(b));
 		assertEquals(d, a.times(b));
-		assertEquals(v, b.inverse());
+		assertEquals(v, x);
 		assertEquals(g, a.over(b));
 		
 		// conj(a+b) = conj(a) + conj(b)
@@ -189,7 +191,6 @@ public class MeasuresTestSuit {
 	@Test
 	public void testDimentions(){
 		
-
 		// create speed
 		Dimension<Velocity> V = Dimension.LENGTH.over(Dimension.TIME);
 		// assert right dimensions
@@ -331,6 +332,9 @@ public class MeasuresTestSuit {
 		
 		assertEquals(Real.valueOf(11.2), a.plus(i));
 		assertEquals(j, i.times(a));
+		
+		
+		assertEquals(Real.valueOf(1), Real.valueOf(1).over(3).times(3));
 	}
 	@Test
 	public void testDurationAndPeriod(){

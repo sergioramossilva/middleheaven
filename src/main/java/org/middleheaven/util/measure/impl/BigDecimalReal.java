@@ -10,78 +10,164 @@ public class BigDecimalReal extends Real{
 
 
 	private static final long serialVersionUID = 1L;
-	
-	private BigDecimal value;
-	
-    BigDecimalReal (String value){
+
+	private BigDecimal numerator;
+	private BigDecimal denominator;
+
+	BigDecimalReal (String value){
 		this(new BigDecimal(value));
 	}
-	
-    BigDecimalReal (long value){
+
+	BigDecimalReal (long value){
 		this(new BigDecimal(value));
 	}
-    
-    BigDecimalReal (BigDecimal value){
-		this.value = value;
+
+	BigDecimalReal (BigDecimal value){
+		this( value , BigDecimal.ONE);
 	}
-    
+
+	BigDecimalReal (BigDecimal numerator,BigDecimal denominator){
+		this.numerator = numerator;
+		this.denominator = denominator;
+	}
+
 	public BigDecimal asNumber() {
-		return value;
+		return numerator.signum()==0 
+					? BigDecimal.ZERO 
+					: denominator.intValue()==1 
+							? numerator 
+							: numerator.divide(denominator, 15, RoundingMode.HALF_EVEN);
 	}
 
 
 	@Override
 	public boolean isZero() {
-		return value.signum()==0;
+		return numerator.signum()==0;
 	}
 
 	@Override
 	public Real inverse() {
-		return new BigDecimalReal(BigDecimal.ONE.divide(value,19,RoundingMode.HALF_EVEN));
+		return new BigDecimalReal(denominator, numerator);
 	}
 
 	@Override
 	public Real negate() {
-		return new BigDecimalReal(value.negate());
+		if (denominator.signum()>0){
+			// negate numerator
+			return new BigDecimalReal(numerator.negate(), denominator);
+		} else {
+			// negate denominator
+			return new BigDecimalReal(numerator, denominator.negate());
+		}
 	}
 
 	@Override
 	public Real plus(Real other) {
 		if (other instanceof BigDecimalReal){
-			return new BigDecimalReal(this.value.add(((BigDecimalReal)other).value));
+			return plus (((BigDecimalReal)other).numerator , ((BigDecimalReal)other).denominator);
 		} else {
-			return new BigDecimalReal(this.value.add(new BigDecimal(other.toString())));
+			return plus (new BigDecimal(other.toString()), BigDecimal.ONE);
 		}
 	}
 
-	
+	private BigDecimalReal plus(BigDecimal otherNumerator, BigDecimal otherDenominator){
+		BigDecimal[] multipliers = this.multipliers(this.denominator,otherDenominator );
+
+		return new BigDecimalReal(
+				this.numerator.multiply(multipliers[0]).add(otherNumerator.multiply(multipliers[1])),
+				this.denominator.multiply(multipliers[0])
+		).simplify();
+	}
+
+	private BigDecimalReal simplify() {
+
+		if (denominator.equals(BigDecimal.ONE) || numerator.signum()==0){
+			return this; // is zero ou divided by 1
+		}
+		BigDecimal min = denominator.min(numerator);
+
+		while (numerator.remainder(min).signum()!=0 &&  denominator.remainder(min).signum()!=0){
+			min = min.subtract(BigDecimal.ONE);
+		}
+
+		if (min.equals(BigDecimal.ONE)){
+			// already simplified
+			return this;
+		} else {
+			try{
+				return new BigDecimalReal(
+						numerator.divide(min),
+						denominator.divide(min)
+				);
+			} catch (ArithmeticException e){
+				return this;
+			}
+		}
+	}
+
+	private BigDecimal[] multipliers (BigDecimal d1 , BigDecimal d2){
+		int compare = d1.compareTo(d2);
+		BigDecimal[] division;
+		if ( compare==0){
+			return new BigDecimal[]{BigDecimal.ONE,BigDecimal.ONE};
+		} else if ( compare <0 ){
+			division = d2.divideAndRemainder(d1);
+			if (division[1].signum()==0){
+				return new BigDecimal[]{division[0],BigDecimal.ONE};
+			} 
+		} else {
+			division = d1.divideAndRemainder(d2);
+			if (division[1].signum()==0){
+				return new BigDecimal[]{BigDecimal.ONE,division[0]};
+			} 
+		}
+		return new BigDecimal[]{d2,d1};
+	}
+
+
 	@Override
 	public Real times(Real other) {
 		if (other instanceof BigDecimalReal){
-			return new BigDecimalReal(this.value.multiply(((BigDecimalReal)other).value));
+			return times(((BigDecimalReal)other).numerator, ((BigDecimalReal)other).denominator);
 		} else {
-			return new BigDecimalReal(this.value.multiply(new BigDecimal(other.toString())));
+			return times(new BigDecimal(other.toString()) , BigDecimal.ONE);
 		}
+	}
+
+	private BigDecimalReal times(BigDecimal otherNumerator, BigDecimal otherDenominator){
+		return new BigDecimalReal(
+				this.numerator.multiply(otherNumerator),
+				this.denominator.multiply(otherDenominator)
+		).simplify();
 	}
 
 	@Override
 	public Real over(Real other) {
+		// times the inverse
 		if (other instanceof BigDecimalReal){
-			return new BigDecimalReal(this.value.divide(((BigDecimalReal)other).value , 19, RoundingMode.HALF_EVEN));
+			if (((BigDecimalReal)other).numerator.signum()==0){
+				throw new ArithmeticException("Division by zero");
+			}
+			return times( ((BigDecimalReal)other).denominator,((BigDecimalReal)other).numerator);
 		} else {
-			return new BigDecimalReal(this.value.divide(new BigDecimal(other.toString())));
+			BigDecimal value = new BigDecimal(other.toString());
+			if (value.signum()==0){
+				throw new ArithmeticException("Division by zero");
+			}
+			return times( BigDecimal.ONE , value);
 		}
 	}
-	
-	
+
+
 	@Override
 	public String toString() {
-		return value.toString();
+		return this.asNumber().toString();
 	}
 
 	@Override
 	public int compareTo(Real o) {
-		return this.value.compareTo(o.asNumber());
+		// TODO comparar caso especial
+		return this.asNumber().compareTo(o.asNumber());
 	}
 
 	@Override
@@ -102,12 +188,41 @@ public class BigDecimalReal extends Real{
 
 	@Override
 	public Real sqrt() {
-		return new BigDecimalReal(new BigDecimal(Math.sqrt(this.value.doubleValue())));
+		return new BigDecimalReal(new BigDecimal(Math.sqrt(this.numerator.doubleValue())), new BigDecimal(Math.sqrt(this.denominator.doubleValue()))).simplify();
 	}
 
+	@Override
+	public Real minus(Number n) {
+		return this.minus(Real.valueOf(n));
+	}
 
+	@Override
+	public Real over(Number n) {
+		return this.over(Real.valueOf(n));
+	}
 
+	@Override
+	public Real plus(Number n) {
+		return this.plus(Real.valueOf(n));
+	}
 
+	@Override
+	public Real times(Number n) {
+		return this.times(Real.valueOf(n));
+	}
+
+	public boolean equals(Object other){
+		return other instanceof BigDecimalReal && equals((BigDecimalReal)other);
+	}
+
+	public boolean equals(BigDecimalReal other){
+		return  this.minus(other).isZero();
+	}
+
+	@Override
+	protected boolean equalsSame(Real other) {
+		return equals((BigDecimalReal)other);
+	}
 
 
 }
