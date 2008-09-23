@@ -1,4 +1,4 @@
-package oprg.middleheaven.test.chart;
+package org.middleheaven.test.chart;
 
 import static org.junit.Assert.assertTrue;
 
