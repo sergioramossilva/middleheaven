@@ -1,4 +1,4 @@
-package oprg.middleheaven.test.utils;
+package org.middleheaven.test.utils;
 
 import static org.junit.Assert.*;
 
