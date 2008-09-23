@@ -10,7 +10,7 @@ import static java.lang.Math.hypot;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
-import org.middleheaven.util.measure.AngularPosition;
+import org.middleheaven.util.measure.AngularMeasure;
 import org.middleheaven.util.measure.DecimalMeasure;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
@@ -28,7 +28,7 @@ public class WGM84 extends ElipsoideModel{
 		);
 	}
 
-	private double reduceLatitude(AngularPosition latitude){
+	private double reduceLatitude(AngularMeasure latitude){
 		return atan((1- this.getFlatening().amount().asNumber().doubleValue()) * latitude.toRadians().tan().asNumber().doubleValue());
 	}
 

@@ -1,6 +1,6 @@
 package org.middleheaven.util.measure.coordinate;
 
-import org.middleheaven.util.measure.AngularPosition;
+import org.middleheaven.util.measure.AngularMeasure;
 import org.middleheaven.util.measure.DecimalMeasure;
 
 public class SphericCoordinateReferenceSystem implements CoordinateReferenceSystem<SphericCoordinate>{
@@ -14,8 +14,8 @@ public class SphericCoordinateReferenceSystem implements CoordinateReferenceSyst
 	public RetangularCoordinate toRetangular(SphericCoordinate c) {
 	
 		DecimalMeasure<?> r = c.radius();
-		AngularPosition teta = c.theta();
-		AngularPosition phi = c.phi();
+		AngularMeasure teta = c.theta();
+		AngularMeasure phi = c.phi();
 		
 		//x = r sen teta cos phi
 		//y = r sen teta sin phi
@@ -38,8 +38,8 @@ public class SphericCoordinateReferenceSystem implements CoordinateReferenceSyst
 		DecimalMeasure<?> z = cc.z();
 		
 		DecimalMeasure<?> r = x.times(x).plus(y.times(y)).plus(z.times(z)).sqrt(x.unit());
-		AngularPosition teta =  AngularPosition.arctan(x.times(x).plus(y.times(y)).sqrt(x.unit()).over(r));
-		AngularPosition phi = AngularPosition.arctan(x.over(y));
+		AngularMeasure teta =  AngularMeasure.arctan(x.times(x).plus(y.times(y)).sqrt(x.unit()).over(r));
+		AngularMeasure phi = AngularMeasure.arctan(x.over(y));
 		
 		return new SphericCoordinate(this, r, teta, phi);
 	}

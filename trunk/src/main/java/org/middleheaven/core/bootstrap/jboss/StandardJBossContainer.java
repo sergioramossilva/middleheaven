@@ -14,8 +14,4 @@ public class StandardJBossContainer extends JBossContainer {
         super(context);
     }
 
-	
-
-
-
 }

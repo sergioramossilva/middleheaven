@@ -57,5 +57,9 @@ public enum RenderType {
   // layout
   LAYOUT;
 
+public boolean isRoot() {
+	return this.equals(ROOT);
+}
+
     
 }

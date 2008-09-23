@@ -7,4 +7,6 @@ public interface Storable {
 	public Long getKey();
 	public void setKey(Long key);
 	public Class<?> getPersistableClass();
+	public Object getFieldValue(StorableFieldModel model);
+	public void setFieldValue(StorableFieldModel model, Object fieldValue);
 }

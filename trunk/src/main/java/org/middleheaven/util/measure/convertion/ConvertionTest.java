@@ -3,7 +3,7 @@ package org.middleheaven.util.measure.convertion;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.middleheaven.util.measure.AngularPosition;
+import org.middleheaven.util.measure.AngularMeasure;
 import org.middleheaven.util.measure.DecimalMeasure;
 import org.middleheaven.util.measure.NonSI;
 import org.middleheaven.util.measure.Real;
@@ -38,8 +38,8 @@ public class ConvertionTest {
 		assertEquals(radians,degrees.convertTo(SI.RADIANS));
 		assertEquals(degrees,radians.convertTo(SI.DEGREE));
 		
-		AngularPosition aradians = AngularPosition.radians(Math.PI);
-		AngularPosition adegrees = AngularPosition.degrees(180);
+		AngularMeasure aradians = AngularMeasure.radians(Math.PI);
+		AngularMeasure adegrees = AngularMeasure.degrees(180);
 	
 		assertEquals(aradians,adegrees.toRadians());
 		assertEquals(adegrees,aradians.toDegrees());

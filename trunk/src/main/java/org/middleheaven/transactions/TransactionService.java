@@ -5,6 +5,10 @@ import javax.transaction.xa.XAResource;
 
 public interface TransactionService {
 
-	void enlistResource(XAResource sv);
+	/**
+	 * Enlist the resource as part of the transaction
+	 * @param xaResource the resource
+	 */
+	void enlistResource(XAResource xaResource);
 
 }

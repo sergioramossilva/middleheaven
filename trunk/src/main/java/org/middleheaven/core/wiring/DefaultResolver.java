@@ -11,21 +11,21 @@ import org.middleheaven.core.reflection.InstantiationReflectionException;
 import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.core.reflection.ReflectionUtils;
 
-public class DefaultResolver<T> implements Resolver<T> {
+public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 
 	EditableBinder binder;
-	Class<? extends T> type;
+	Class<Base> type;
 
-	public DefaultResolver(Class<? extends T> type , EditableBinder binder){
+	public DefaultResolver(Class<Base> type , EditableBinder binder){
 		this.binder = binder;
 		this.type = type;
 	}
-
+	
 	@Override
 	public T resolve(Class<T> targetType, Set<Annotation> annotations) {
-		// determin witch constructor to invoque
+		// Determine witch constructor to invoke
 
-		Set<Constructor> constructors = ReflectionUtils.allAnnotatedConstructors(type, Wire.class);
+		Set<Constructor<Base>> constructors =  ReflectionUtils.allAnnotatedConstructors( type, Wire.class);
 
 		if (constructors.isEmpty()){
 			// use default
@@ -34,7 +34,7 @@ public class DefaultResolver<T> implements Resolver<T> {
 			throw new ConfigurationException("Only one constructor may be annotated with @Inject");
 		}
 		// search for it
-		Constructor c  = constructors.iterator().next();
+		Constructor<?> c  = constructors.iterator().next();
 		c.setAccessible(true);
 
 		Annotation[][] constructorAnnnnotations = c.getParameterAnnotations();
@@ -55,7 +55,7 @@ public class DefaultResolver<T> implements Resolver<T> {
 
 
 		try {
-			return (T)c.newInstance(objects);
+			return targetType.cast(c.newInstance(objects));
 		} catch (Exception e) {
 			throw handleExceptions(targetType,e);
 		} 

@@ -8,20 +8,43 @@ import org.middleheaven.classification.LogicOperator;
 import org.middleheaven.storage.QualifiedName;
 
 
-abstract class AbstractCriteria <T> implements Criteria<T>{
+public class AbstractCriteria <T> implements Criteria<T>{
 
 	private Class<T> targetClass;
 	private Class<T> fromClass;
 	
+	private boolean keyOnly = false;
 	private boolean distinct;
 	private int count = -1;
 	private int start = -1;
 	private LogicCriterion restrictions = new LogicCriterion(LogicOperator.and());
 	private List<OrderingCriterion> ordering = new LinkedList<OrderingCriterion>();
 	private Projection aggregation;
-	public List resultFields;
+	public List<QualifiedName> resultFields = new LinkedList<QualifiedName>();
 	
-
+	public Criteria<T> clone(){
+	
+		return new AbstractCriteria<T>(this);
+		
+	}
+	
+	protected AbstractCriteria(AbstractCriteria<T> other){
+		this.targetClass = other.targetClass;
+		this.keyOnly = other.keyOnly;
+		this.distinct = other.distinct;
+		this.count = other.count;
+		this.start = other.start;
+		
+		this.restrictions = (LogicCriterion)other.restrictions.clone();
+		this.ordering = new LinkedList<OrderingCriterion>(ordering);
+		this.resultFields = new LinkedList<QualifiedName>(resultFields);
+		
+	}
+	
+	protected void setRestrictions(LogicCriterion restrictions){
+		this.restrictions = restrictions;
+	}
+	
     AbstractCriteria(Class<T> targetClass){
 		this.targetClass = targetClass;
 	}
@@ -34,7 +57,6 @@ abstract class AbstractCriteria <T> implements Criteria<T>{
 		return restrictions;
 	}
 	
-	
 	public Class<T> getTargetClass(){
 		return targetClass; 
 	}
@@ -43,8 +65,9 @@ abstract class AbstractCriteria <T> implements Criteria<T>{
 		return fromClass; 
 	}
 	
-	public void add(Criterion criterion){
+	public Criteria<T> add(Criterion criterion){
 		this.restrictions.add(criterion);
+		return this;
 	}
 
 	public boolean isDistinct() {
@@ -55,7 +78,6 @@ abstract class AbstractCriteria <T> implements Criteria<T>{
 		this.distinct = distinct;
 		return this;
 	}
-
 
 	public int getCount() {
 		return count;
@@ -80,9 +102,12 @@ abstract class AbstractCriteria <T> implements Criteria<T>{
 		return this;
 	}
 
-	public void setKeyOnly(boolean b) {
-		// TODO Auto-generated method stub
-		
+	public void setKeyOnly(boolean keyOnly) {
+		this.keyOnly = keyOnly;
+	}
+	
+	public final boolean isKeyOnly(){
+		return this.keyOnly;
 	}
 
 	@Override
@@ -94,5 +119,10 @@ abstract class AbstractCriteria <T> implements Criteria<T>{
 	@Override
 	public Collection<QualifiedName> resultFields() {
 		// return not transient fields for result
-	};
+		return resultFields;
+	}
+
+	public void add(ProjectionOperator operator) {
+		this.aggregation.add(operator);
+	}
 }

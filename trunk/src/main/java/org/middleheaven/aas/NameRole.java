@@ -18,4 +18,8 @@ public class NameRole implements Role {
 		this.name = name;
 	}
 
+	@Override
+	public boolean hasPermission(Permission permission) {
+		return NamedPermission.forName(name).implies(permission);
+	}
 }

@@ -3,7 +3,7 @@ package org.middleheaven.global.location;
 import java.io.Serializable;
 
 import org.middleheaven.global.address.Address;
-import org.middleheaven.util.measure.AngularPosition;
+import org.middleheaven.util.measure.AngularMeasure;
 import org.middleheaven.util.measure.DecimalMeasure;
 import org.middleheaven.util.measure.coordinate.GeoCoordinate;
 import org.middleheaven.util.measure.measures.Velocity;
@@ -18,7 +18,7 @@ public class Location implements Serializable,Locatable{
 	private Address address;
 	private GeoCoordinate coordinates;
 	private DecimalMeasure<Velocity> speed;
-	private AngularPosition bearing;
+	private AngularMeasure bearing;
 	
 	public Address getAddress() {
 		return address;
@@ -38,10 +38,10 @@ public class Location implements Serializable,Locatable{
 	public void setSpeed(DecimalMeasure<Velocity> speed) {
 		this.speed = speed;
 	}
-	public AngularPosition getBearing() {
+	public AngularMeasure getBearing() {
 		return bearing;
 	}
-	public void setBearing(AngularPosition bearing) {
+	public void setBearing(AngularMeasure bearing) {
 		this.bearing = bearing;
 	}
 	

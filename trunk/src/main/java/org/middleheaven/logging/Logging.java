@@ -16,8 +16,13 @@ public class Logging {
 		return ServiceRegistry.getService(LoggingService.class).getLogBook(bookName);
 	}
 	
+	public static LogBook getBook(Class<?> type){
+		return getBook(type.getName().toString());
+	}
+	
 	private static void log(LoggingEvent loggingEvent) {
-		getBook(null).log(loggingEvent);
+		// null is the root
+		getBook((String)null).log(loggingEvent);
 	}
 
 	public static void logFatal(Object msg) {

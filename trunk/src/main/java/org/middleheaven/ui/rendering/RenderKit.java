@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import org.middleheaven.ui.UIComponent;
+import org.middleheaven.ui.components.UIWindow;
 
 
 /**
@@ -77,6 +78,15 @@ public abstract class RenderKit implements Serializable{
      * @return <code>UnitConverter</code> for the rendering tencology
      */
     public abstract UIUnitConverter getUnitConverted();
+
+	public abstract void show(UIComponent component);
+
+	/**
+	 * Dispose of the component if possible, i.e. remote it from memory
+	 * @param splash
+	 */
+	public abstract void dispose(UIComponent splash);
+
 
    
 }

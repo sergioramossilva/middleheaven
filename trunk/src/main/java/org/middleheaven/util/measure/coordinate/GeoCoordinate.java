@@ -1,6 +1,6 @@
 package org.middleheaven.util.measure.coordinate;
 
-import org.middleheaven.util.measure.AngularPosition;
+import org.middleheaven.util.measure.AngularMeasure;
 import org.middleheaven.util.measure.DecimalMeasure;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
@@ -9,13 +9,13 @@ import org.middleheaven.util.measure.time.TimeZone;
 
 public class GeoCoordinate extends Coordinate{
 
-	public GeoCoordinate(AngularPosition latitude, AngularPosition longitude ){
+	public GeoCoordinate(AngularMeasure latitude, AngularMeasure longitude ){
 		this(new GeographicReferenceSystem() ,  latitude, longitude,DecimalMeasure.exact(Real.ZERO(), SI.METER));
 	}
 	
 	public GeoCoordinate(CoordinateReferenceSystem<GeoCoordinate> refSystem, 
-			AngularPosition latitude,
-			AngularPosition longitude,
+			AngularMeasure latitude,
+			AngularMeasure longitude,
 			DecimalMeasure<Distance> height) {
 		super(refSystem, height ,latitude , longitude );
 	}
@@ -34,44 +34,44 @@ public class GeoCoordinate extends Coordinate{
 	 * Unsigned latitude position
 	 * @return
 	 */
-	public AngularPosition getLatitude(){
-		return (AngularPosition)this.getOrdinate(1);
+	public AngularMeasure getLatitude(){
+		return (AngularMeasure)this.getOrdinate(1);
 	}
 	
 	/**
 	 * Unsigned longitude position
 	 * @return
 	 */
-	public AngularPosition getLongitude(){
-		return (AngularPosition)this.getOrdinate(2);
+	public AngularMeasure getLongitude(){
+		return (AngularMeasure)this.getOrdinate(2);
 	}
 	
 	/**
 	 * Signed latitude position
 	 * @return
 	 */
-	public AngularPosition getRelativeLatitude(){
+	public AngularMeasure getRelativeLatitude(){
 		
 		double angle = this.getLatitude().toDegrees().amount().asNumber().doubleValue();
 		if (angle > 180){
 			angle = angle-360;
 		}
 		
-		return AngularPosition.degrees(angle);
+		return AngularMeasure.degrees(angle);
 	}
 	
 	/**
 	 * Signed longitude position
 	 * @return
 	 */
-	public AngularPosition getRelativeLongitude(){
+	public AngularMeasure getRelativeLongitude(){
 		
 		double angle = this.getLongitude().toDegrees().amount().asNumber().doubleValue();
 		if (angle > 180){
 			angle = angle-360;
 		}
 		
-		return AngularPosition.degrees(angle);
+		return AngularMeasure.degrees(angle);
 	}
 	
 	public TimeZone getGMTTimeZone(){

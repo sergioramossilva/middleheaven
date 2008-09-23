@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -15,14 +16,120 @@ public final class ReflectionUtils {
 
 	public ReflectionUtils(){}
 
+	public static void copyState(Object from, Object to){
+		Set<Field> fields = getAllFields(from.getClass());
+		for (Field f : fields){
+			if (!Modifier.isTransient(f.getModifiers())){
+				Object value = getFieldValue(from,f.getName());
+				setFieldValue(to,f.getName(),value);
+			}
+		}
+	}
+	
+	public static Object getFieldValue(Object target, String name) {
+		name = name.toLowerCase();
+		
+		Set<Field> fields = getAllFields(target.getClass());
+		Field f=null;
+		for (Field fd : fields){
+			if (fd.getName().toLowerCase().endsWith(name)){
+				f = fd;
+				break;
+			}
+		}
+		
+		if (f==null){
+			try {
+				Method[] ms = target.getClass().getMethods();
+				for (Method m : ms){
+					if (m.getName().toLowerCase().endsWith(name) && m.getName().toLowerCase().contains("get")){
+						m.setAccessible(true);
+						return m.invoke(target);
+					}
+				}
+				//throw  new NoSuchMethodReflectionException(name + " not found");
+				return null;
+			} catch (IllegalArgumentException e) {
+				throw new IllegalAccesReflectionException(e);
+			} catch (IllegalAccessException e) {
+				throw new IllegalAccesReflectionException(e);
+			}catch (InvocationTargetException e) {
+				throw new InvocationTargetReflectionException(e);
+			}
+			
+		} else {
+			return getFieldValue (target,f);
+		}
+		
+	}
+	
+	
+	public static Object getFieldValue( Object target,Field f) {
+		try {
+			try {
+				f.setAccessible(true);
+				String prefix="get";
+				if (f.getType().equals(Boolean.class)){
+					prefix="is";
+				}
+				Method m = target.getClass().getMethod(prefix + f.getName());
+				return m.invoke(target);
+			} catch (NoSuchMethodException e ){
+				return f.get(target); // read directly from attribute
+			} 
 
+		} catch (IllegalArgumentException e) {
+			throw new IllegalAccesReflectionException(e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalAccesReflectionException(e);
+		}catch (InvocationTargetException e) {
+			throw new InvocationTargetReflectionException(e);
+		}
+	}
+	
+	
+	public static void setFieldValue (Object target,String name,  Object value){
+		name = name.toLowerCase();
+		
+		Set<Field> fields = getAllFields(target.getClass());
+		Field f=null;
+		for (Field fd : fields){
+			if (fd.getName().toLowerCase().endsWith(name)){
+				f = fd;
+				break;
+			}
+		}
+		
+		if (f==null){
+			try {
+				Method[] ms = target.getClass().getMethods();
+				for (Method m : ms){
+					if (m.getName().toLowerCase().endsWith(name) && m.getName().toLowerCase().contains("set")){
+						m.setAccessible(true);
+						m.invoke(target,value);
+						return;
+					}
+				}
+				//throw  new NoSuchMethodReflectionException(name + " not found");
+			} catch (IllegalArgumentException e) {
+				throw new IllegalAccesReflectionException(e);
+			} catch (IllegalAccessException e) {
+				throw new IllegalAccesReflectionException(e);
+			}catch (InvocationTargetException e) {
+				throw new InvocationTargetReflectionException(e);
+			}
+			
+		} else {
+			setFieldValue(f,target,value);
+		}
+	}
 	/**
 	 * Set a field with a value. If there is a set<Field>() method , that method is invoked
 	 * otherwise the set is made directly.
 	 * @param f
 	 * @param value
 	 */
-	public static void setField (Field f, Object target, Object value){
+	public static void setFieldValue (Field f, Object target, Object value){
 		try {
 			try {
 				f.setAccessible(true);
@@ -70,7 +177,7 @@ public final class ReflectionUtils {
 			}
 		}
 
-		throw new NoSuchMethodReflectionException();
+		throw new NoSuchMethodReflectionException(fieldName);
 	}
 
 	/**
@@ -94,57 +201,35 @@ public final class ReflectionUtils {
 		return newInstance(loadClass(className));
 	}
 
-	/**
-	 * 
-	 * @param <T>
-	 * @param type
-	 * @return constructors list order by the number of parameters 
-	 * @throws ReflectionException
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> List<Constructor<T>> constructors(Class<T> type)throws ReflectionException{
-		Constructor<T>[] constructors = (Constructor<T>[])type.getConstructors();
-		Arrays.sort(
-				constructors,
-				new Comparator<Constructor<T>>(){
-
-					@Override
-					public int compare(Constructor<T> a, Constructor<T> b) {
-						return a.getParameterTypes().length - b.getParameterTypes().length;
-					}
-
-				}
-		);
-		return Arrays.asList(constructors);
-
-	}
 
 	public static <T> T newInstance(Class<T> klass, Object ... args) throws ReflectionException{
 		return newInstance(klass,klass,args);
 	}
-	public static <T> T newInstance(Class<T> castAs,Class<?> type, Object ... args) throws ReflectionException{
+	public static <T> T newInstance(Class<T> castAs,Class<?> klass, Object ... args) throws ReflectionException{
 		try {
+			if (args.length==0){
+				return castAs.cast(klass.newInstance());
+			} else {
+				// look for a Constructor with the correct arguments
+				Class<?> [] parameterTypes = new Class<?> [args.length];
+				for (int i=0;i<args.length;i++){
+					parameterTypes[i] = args[i].getClass();
+				}
 
-			// look for a Constructor with the correct arguments
-			Class<?> [] parameterTypes = new Class<?> [args.length];
-			for (int i=0;i<args.length;i++){
-				parameterTypes[i] = args[i].getClass();
+				try {
+
+					Constructor<?> c = klass.getConstructor(parameterTypes);
+					return castAs.cast(c.newInstance(args)); // Instantiate using the constructor
+				} catch (SecurityException e) {
+					throw new IllegalAccesReflectionException(e);
+				} catch (NoSuchMethodException e) {
+					throw new NoSuchMethodReflectionException(e);
+				} catch (IllegalArgumentException e) {
+					throw new IllegalAccesReflectionException(e);
+				} catch (InvocationTargetException e) {
+					throw new InvocationTargetReflectionException(e);
+				}
 			}
-
-			try {
-				Constructor<?> c = type.getConstructor(parameterTypes);
-				c.setAccessible(true);
-				return castAs.cast(c.newInstance(args)); // Instantiate using the constructor
-			} catch (SecurityException e) {
-				throw new IllegalAccesReflectionException(e);
-			} catch (NoSuchMethodException e) {
-				throw new NoSuchMethodReflectionException(e);
-			} catch (IllegalArgumentException e) {
-				throw new IllegalAccesReflectionException(e);
-			} catch (InvocationTargetException e) {
-				throw new InvocationTargetReflectionException(e);
-			}
-
 		} catch (InstantiationException e){
 			throw new ReflectionException(e);
 		} catch (IllegalAccessException e) {
@@ -172,12 +257,12 @@ public final class ReflectionUtils {
 		return annotated;
 	}
 
-	public static Set<Constructor> allAnnotatedConstructors( Class<?> type, Class<? extends Annotation> annotation) {
-		Constructor[] constructors = type.getDeclaredConstructors();
+	public static <T> Set<Constructor<T>> allAnnotatedConstructors( Class<T> type, Class<? extends Annotation> annotation) {
+		Constructor<T>[] constructors = (Constructor<T>[]) type.getDeclaredConstructors();
 
-		Set<Constructor> annotated = new HashSet<Constructor>();
+		Set<Constructor<T>> annotated = new HashSet<Constructor<T>>();
 
-		for (Constructor c : constructors){
+		for (Constructor<T> c : constructors){
 			if (c.isAnnotationPresent(annotation)){
 				annotated.add(c);
 			}
@@ -185,7 +270,7 @@ public final class ReflectionUtils {
 
 		return annotated;
 	}
-
+	
 	public static Set<Method> allAnnotatedMethods(Class<?> type, Class<? extends Annotation> annotation) {
 		Method[] methods = type.getDeclaredMethods();
 
@@ -200,9 +285,9 @@ public final class ReflectionUtils {
 		return annotated;
 	}
 
+	
 
-
-
+	
 	public static boolean isAnnotadedWith(Class<?> candidate,Class<? extends Annotation> annotationClass) {
 		return candidate.isAnnotationPresent(annotationClass);
 	}
@@ -215,6 +300,13 @@ public final class ReflectionUtils {
 		throw new IllegalArgumentException();
 	}
 
+	public static <A extends Annotation> A getAnnotation(Field field, Class<A> annotationClass) {
+		if (field.isAnnotationPresent(annotationClass)){
+			return field.getAnnotation(annotationClass);
+		}
+		return null;
+	}
+
 	public static Class<?>[] typesOf (Object[] objs ){
 		Class<?>[] classes = new Class<?>[objs.length];
 		for (int i =0;i < objs.length;i++){
@@ -222,12 +314,11 @@ public final class ReflectionUtils {
 		}
 		return classes;
 	}
-
-
+	
 	public static Set<Annotation> getAnnotations(Field f, Class<? extends Annotation> specificAnnotation) {
-
+		
 		Set<Annotation> result = new HashSet<Annotation>(); 
-
+		
 		Annotation[] all = f.getDeclaredAnnotations();
 		for (Annotation a : all){
 			if (a.annotationType().isAnnotationPresent(specificAnnotation)){
@@ -237,10 +328,21 @@ public final class ReflectionUtils {
 		return result;
 	}
 
+	public static Set<Field> getAllFields(Class<?> type) {
+		 Set<Field> fields = new HashSet<Field>();
+		 
+
+		 for (Field f : type.getDeclaredFields()){
+			 fields.add(f);
+		 }
+
+		 return fields;
+	}
+	
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Class<?> translatingObjectClass, Object ... params) {
 		return invoke(returnType, methodToInvoke, newInstance(translatingObjectClass), params);
 	}
-
+	
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Object translatingObject, Object ... params) {
 		try {
 			methodToInvoke.setAccessible(true);
@@ -256,17 +358,24 @@ public final class ReflectionUtils {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> List<Constructor<T>> constructors(Class<T> type){
+		Constructor<T>[] constructors = (Constructor<T>[])type.getConstructors();
+		
+		Arrays.sort(constructors, new Comparator<Constructor<T>>(){
 
-	public static Set<Field> allFields(Class<?> type) {
-		Set<Field> fields = new HashSet<Field>();
-
-
-		for (Field f : type.getDeclaredFields()){
-			fields.add(f);
-		}
-
-		return fields;
+			@Override
+			public int compare(Constructor<T> a, Constructor<T> b) {
+				return a.getParameterTypes().length - b.getParameterTypes().length;
+			}
+			
+		});
+		
+		return Arrays.asList(constructors);
 	}
+	
+
+
 
 
 

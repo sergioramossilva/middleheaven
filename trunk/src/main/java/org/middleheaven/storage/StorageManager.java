@@ -100,4 +100,10 @@ public class StorageManager implements DataStorage {
 		
 	}
 
+	@Override
+	public <T> void remove(Criteria<T> criteria) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

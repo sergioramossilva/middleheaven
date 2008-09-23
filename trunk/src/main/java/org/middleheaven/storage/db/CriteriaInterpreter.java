@@ -3,6 +3,7 @@ package org.middleheaven.storage.db;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.middleheaven.classification.LogicOperator;
@@ -17,6 +18,7 @@ import org.middleheaven.storage.criteria.Criterion;
 import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.criteria.EmptyCriterion;
 import org.middleheaven.storage.criteria.FieldCriterion;
+import org.middleheaven.storage.criteria.FieldInSetCriteria;
 import org.middleheaven.storage.criteria.FieldValueHolder;
 import org.middleheaven.storage.criteria.JuntionCriterion;
 import org.middleheaven.storage.criteria.LogicCriterion;
@@ -25,6 +27,7 @@ import org.middleheaven.storage.criteria.MinFieldOperator;
 import org.middleheaven.storage.criteria.OrderingCriterion;
 import org.middleheaven.storage.criteria.Projection;
 import org.middleheaven.storage.criteria.ProjectionOperator;
+import org.middleheaven.storage.criteria.SingleObjectValueHolder;
 import org.middleheaven.storage.criteria.SumFieldOperator;
 
 
@@ -52,9 +55,11 @@ public class CriteriaInterpreter {
 		return this.model;
 	}
 
-	public String translate(){
+	public RetriveDataBaseCommand translateRetrive(){
+		
 		StringBuilder sqlBuilder = new StringBuilder("SELECT ");
-
+		List<FieldValueHolder> params = new LinkedList<FieldValueHolder>();
+		
 		// LIMITS: distinct and  top n 
 		writeStartLimitClause(sqlBuilder);
 
@@ -65,7 +70,7 @@ public class CriteriaInterpreter {
 		writeFromClause(sqlBuilder);
 
 		// WHERE CLAUSE
-		writeWhereClause(sqlBuilder);
+		writeWhereClause(sqlBuilder,params,true);
 
 		// GROUP BY
 		writeGroupByClause(sqlBuilder);
@@ -77,7 +82,21 @@ public class CriteriaInterpreter {
 		// LIMITS: Limit and offset
 		writeEndLimitClause(sqlBuilder);
 
-		return sqlBuilder.toString();
+		return new SQLRetriveCommand(sqlBuilder.toString(),params);
+	}
+	
+
+
+	public DataBaseCommand translateDelete(){
+		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ")
+		.append(model.hardNameForEntity());
+
+		List<FieldValueHolder> params = new LinkedList<FieldValueHolder>();
+		
+		// WHERE CLAUSE
+		writeWhereClause(sqlBuilder,params,false);
+
+		return new SQLDeleteCommand(sqlBuilder.toString(),params);
 	}
 
 	protected void writeStartLimitClause(StringBuilder selectBuffer) {
@@ -89,7 +108,7 @@ public class CriteriaInterpreter {
 
 
 	protected void writeResultColumnsClause (StringBuilder queryBuffer){
-		
+
 		// if this is a projection criteria
 		if (this.criteria().projection() !=null){
 
@@ -97,9 +116,9 @@ public class CriteriaInterpreter {
 			Projection aggregation = this.criteria().projection();
 			for (Iterator<QualifiedName> it = aggregation.groups().iterator();it.hasNext();){
 				QualifiedName name = it.next();
-				
+
 				// get hardname
-				dialect().writeHardname(queryBuffer, model().fieldModel(name).getHardName());
+				dialect().writeQueryHardname(queryBuffer, model().fieldModel(name).getHardName());
 
 				if (it.hasNext()){
 					queryBuffer.append(' ').append(',').append(' ');
@@ -124,27 +143,31 @@ public class CriteriaInterpreter {
 
 			// run thought the fields. The transient cannot be read so do not use them
 			boolean first = true;
-			for (QualifiedName name : this.criteria().resultFields() ){
-				
-				StorableFieldModel fm = model().fieldModel(name);
-				if (fm.isTransient()){ // if field is not persistable
-					continue;
+			if (this.criteria().resultFields().isEmpty()){
+				queryBuffer.append(" * ");
+			} else {
+				for (QualifiedName name : this.criteria().resultFields() ){
+
+					StorableFieldModel fm = model().fieldModel(name);
+					if (fm.isTransient()){ // if field is not persistable
+						continue;
+					}
+
+					if (!first){
+						queryBuffer.append(' ').append(',').append(' ');
+					}
+					first = false;
+
+					dialect().writeQueryHardname(queryBuffer , fm.getHardName());
+
 				}
-
-				if (!first){
-					queryBuffer.append(' ').append(',').append(' ');
-				}
-				first = false;
-
-				dialect().writeHardname(queryBuffer , fm.getHardName());
-
 			}
 		}
 	}
 
 
 
-	protected void writeEndLimitClause(Appendable selectBuffer){
+	protected void writeEndLimitClause(StringBuilder selectBuffer){
 		// no-op
 	}
 
@@ -176,7 +199,7 @@ public class CriteriaInterpreter {
 				}
 				first=false;
 
-				dialect().writeHardname(queryBuffer, model.fieldModel(criterion.getFieldName()).getHardName());
+				dialect().writeQueryHardname(queryBuffer, model.fieldModel(criterion.getFieldName()).getHardName());
 
 
 				queryBuffer.append(criterion.isDescendant()?" desc":" asc");
@@ -195,7 +218,7 @@ public class CriteriaInterpreter {
 			for (Iterator<QualifiedName> it = aggregation.groups().iterator(); it.hasNext();){
 				QualifiedName name = it.next();
 
-				dialect().writeHardname(queryBuffer,  model().fieldModel(name).getHardName());
+				dialect().writeQueryHardname(queryBuffer,  model().fieldModel(name).getHardName());
 
 				if (it.hasNext()){
 					queryBuffer.append(" , ");
@@ -206,7 +229,7 @@ public class CriteriaInterpreter {
 		}
 	}
 
-	protected void writeWhereClause(StringBuilder queryBuffer ){
+	protected void writeWhereClause(StringBuilder queryBuffer, List<FieldValueHolder> params, boolean isQuery ){
 		// WHERE CLAUSE
 		// Cria primeiro a sentença. 
 		// Se não houver nenhum o where não é adicionado
@@ -216,7 +239,7 @@ public class CriteriaInterpreter {
 
 		StringBuilder whereClause =  new StringBuilder();
 		StringBuilder joinClause =  new StringBuilder();
-		translateCriteriaToWhereClause(whereClause,joinClause, criteria().restrictions().simplify());;
+		translateCriteriaToWhereClause(whereClause,params, joinClause, criteria().restrictions().simplify());;
 
 		queryBuffer.append(joinClause);
 
@@ -233,7 +256,7 @@ public class CriteriaInterpreter {
 		// [NOT] IN ( foo ) 
 		// where foo is return nothing select 
 		// made using range(0)
-		Criteria<?> emptyCriteria =  CriteriaBuilder.createCriteria(criteria.getTargetClass()).setRange(0);
+		Criteria<?> emptyCriteria =  CriteriaBuilder.search(criteria.getTargetClass()).limit(0).all();
 
 		emptyCriteria.setKeyOnly(true);
 
@@ -242,45 +265,48 @@ public class CriteriaInterpreter {
 		StringBuilder queryBuffer = new StringBuilder();
 
 		criteriaBuffer.append(' ');
-		dialect().writeHardname(criteriaBuffer, model.fieldModel(criterion.getFieldName()).getHardName());
+		dialect().writeQueryHardname(criteriaBuffer, model.fieldModel(criterion.getFieldName()).getHardName());
 
 		if (!criterion.isIncluded()){
 			queryBuffer.append(" NOT ");
 		}
 
 		queryBuffer.append(" IN (");
-		queryBuffer.append(ci.translate());
+		queryBuffer.append(ci.translateRetrive().toString());
 		queryBuffer.append(")");
 
 		criteriaBuffer.append(queryBuffer);
 	}
 
 	protected void translateFieldInQueryCriteriaToWhereClause(StringBuilder criteriaBuffer,FieldInSetCriteria criterion){
-	
+
 		// [NOT] IN ( Select field FROM table ... ) 
 		Criteria<?> c = (Criteria<?>)criterion.valueHolder().getValue();
 		c.setDistinct(true);
-		
+
 		CriteriaInterpreter ci = dialect().newCriteriaInterpreter(c, model);
-		
+
 		StringBuilder queryBuffer = new StringBuilder();
 
 		criteriaBuffer.append(' ');
-		dialect().writeHardname(criteriaBuffer, model.fieldModel(criterion.getFieldName()).getHardName());
+		dialect().writeQueryHardname(criteriaBuffer, model.fieldModel(criterion.getFieldName()).getHardName());
 
 
 		if (!criterion.isIncluded()){
 			queryBuffer.append(" NOT ");
 		}
+		
+		RetriveDataBaseCommand r = ci.translateRetrive();
+		
 		queryBuffer.append(" IN (")
-		.append(ci.translate())
+		.append(r.toString()) // TODO merge param values 
 		.append(")");
 
 		criteriaBuffer.append(queryBuffer);
 	}
 
 
-	protected void translateCriteriaToWhereClause(StringBuilder criteriaBuffer, StringBuilder joinClause ,Criterion criterion){
+	protected void translateCriteriaToWhereClause(StringBuilder criteriaBuffer, List<FieldValueHolder> params, StringBuilder joinClause ,Criterion criterion){
 		if (criterion instanceof EmptyCriterion){
 			criteriaBuffer.append("TRUE");
 		} else if (criterion instanceof JuntionCriterion ) {
@@ -313,8 +339,7 @@ public class CriteriaInterpreter {
 				.append(kfm.getColumnName())
 				.append(dialect().endDelimiter());
 
-				// não escreve no where porque isso será feito pelo processo normal
-				// já que , mesmos os campos de outras entidades estão no restrictions da base
+				// do not write WHERE claus because it will been writen in the normal process
 			}
 
 
@@ -332,20 +357,21 @@ public class CriteriaInterpreter {
 					translateFieldInQueryCriteriaToEmptySetInClause(criteriaBuffer , f );
 
 				} else {
-					dialect().writeHardname(criteriaBuffer, model().fieldModel(f.getFieldName()).getHardName());
+					dialect().writeQueryHardname(criteriaBuffer, model().fieldModel(f.getFieldName()).getHardName());
 
 					if (!f.isIncluded()){
 						criteriaBuffer.append(" NOT ");
 					}
 					criteriaBuffer.append(" IN (");
+					StorableFieldModel fm = model().fieldModel(f.getFieldName());
+					
 					Collection<Object> values = (Collection<Object>) f.valueHolder().getValue();
 					for (Iterator<Object> it = values.iterator(); it.hasNext();){
-						//fields.add(new DefaultFieldValueHolder((Value)it.next() , ComparisonOperator.IN));
-						criteriaBuffer.append(" ?");
-						if (it.hasNext()){
-							criteriaBuffer.append(", ");
-						}
+						params.add(new SingleObjectValueHolder(it.next(), fm.getDataType()));
+						criteriaBuffer.append("?,");
 					}
+
+					criteriaBuffer.delete(criteriaBuffer.length()-1, criteriaBuffer.length());
 					criteriaBuffer.append(")");
 				}
 			}
@@ -353,20 +379,24 @@ public class CriteriaInterpreter {
 			FieldCriterion f = (FieldCriterion)criterion;
 
 			StorableFieldModel fm = model().fieldModel(f.getFieldName());
+			if (fm==null){
+				throw new IllegalStateException(f.getFieldName() + " not found");
+			}
 			FieldValueHolder vholder = f.valueHolder();
 
 			if (!fm.isTransient() && !fm.isVersion()){
 				if (vholder.isEmpty()){
-					// valor vazio significa comparar com null
+					// empty value implies compare to NULL
 					criteriaBuffer.append(' ');
-					dialect().writeHardname(criteriaBuffer, fm.getHardName());
+					dialect().writeQueryHardname(criteriaBuffer, fm.getHardName());
 
 					if (CriterionOperator.EQUAL.equals(f.getOperator())){
-						criteriaBuffer.append(" IS NULL ");
-					} else if (CriterionOperator.NOT_EQUAL.equals(f.getOperator())){
-						criteriaBuffer.append(" IS NOT NULL ");
+						if (f.getOperator().isNegated()){
+							criteriaBuffer.append(" IS NOT NULL ");
+						} else {
+							criteriaBuffer.append(" IS NULL ");
+						}
 					} else {
-						// logWarn("Operator " + f.getOperator() + " is not supported for empty value. Using not null instead");
 						criteriaBuffer.append(" IS NOT NULL ");
 					}
 
@@ -374,28 +404,53 @@ public class CriteriaInterpreter {
 				} else if (!fm.getDataType().isVirtual()){
 
 					criteriaBuffer.append(' ');
-					dialect().writeHardname(criteriaBuffer, fm.getHardName());
+					dialect().writeQueryHardname(criteriaBuffer, fm.getHardName());
 
-					if (CriterionOperator.CONTAINS.equals(f.getOperator())){
-						criteriaBuffer.append(" LIKE ? ");
-					} else if (CriterionOperator.GREATER_THAN.equals(f.getOperator())){
-						criteriaBuffer.append(" > ? ");
-					} else if (CriterionOperator.GREATER_THAN_OR_EQUAL.equals(f.getOperator())){
-						criteriaBuffer.append(" >= ? ");
-					}  else if (CriterionOperator.LESS_THAN.equals(f.getOperator())){
-						criteriaBuffer.append(" < ? ");
-					}  else if (CriterionOperator.LESS_THAN_OR_EQUAL.equals(f.getOperator())){
-						criteriaBuffer.append(" <= ? ");
-					} else if (CriterionOperator.NOT_EQUAL.equals(f.getOperator())){
-						criteriaBuffer.append(" <> ? ");
-					} else if (CriterionOperator.UNKOWN.equals(f.getOperator())){
-						//logWarn("Criterion used an unkown match operator. Using equal instead");
-						criteriaBuffer.append(" = ? ");
-					} else if (CriterionOperator.EQUAL.equals(f.getOperator())){
-						criteriaBuffer.append(" = ? ");
+					if (f.getOperator().isNegated()){
+						if (CriterionOperator.CONTAINS.equals(f.getOperator()) || 
+								CriterionOperator.STARTS_WITH.equals(f.getOperator()) || 
+								CriterionOperator.ENDS_WITH.equals(f.getOperator())
+							){
+							criteriaBuffer.append(" NOT LIKE ? ");
+						} else if (CriterionOperator.GREATER_THAN.equals(f.getOperator())){
+							criteriaBuffer.append(" <= ? ");
+						} else if (CriterionOperator.GREATER_THAN_OR_EQUAL.equals(f.getOperator())){
+							criteriaBuffer.append(" < ? ");
+						}  else if (CriterionOperator.LESS_THAN.equals(f.getOperator())){
+							criteriaBuffer.append(" >= ? ");
+						}  else if (CriterionOperator.LESS_THAN_OR_EQUAL.equals(f.getOperator())){
+							criteriaBuffer.append(" > ? ");
+						} else if (CriterionOperator.EQUAL.equals(f.getOperator())){
+							criteriaBuffer.append(" <> ? ");
+						} else if (CriterionOperator.UNKOWN.equals(f.getOperator())){
+							//logWarn("Criterion used an unkown match operator. Using equal instead");
+							criteriaBuffer.append(" = ? ");
+						} 
+					} else { // positive operators
+						if (CriterionOperator.CONTAINS.equals(f.getOperator()) || 
+								CriterionOperator.STARTS_WITH.equals(f.getOperator()) || 
+								CriterionOperator.ENDS_WITH.equals(f.getOperator())
+							){
+							criteriaBuffer.append(" LIKE ? ");
+						} else if (CriterionOperator.GREATER_THAN.equals(f.getOperator())){
+							criteriaBuffer.append(" > ? ");
+						} else if (CriterionOperator.GREATER_THAN_OR_EQUAL.equals(f.getOperator())){
+							criteriaBuffer.append(" >= ? ");
+						}  else if (CriterionOperator.LESS_THAN.equals(f.getOperator())){
+							criteriaBuffer.append(" < ? ");
+						}  else if (CriterionOperator.LESS_THAN_OR_EQUAL.equals(f.getOperator())){
+							criteriaBuffer.append(" <= ? ");
+						} else if (CriterionOperator.UNKOWN.equals(f.getOperator())){
+							//logWarn("Criterion used an unkown match operator. Using equal instead");
+							criteriaBuffer.append(" = ? ");
+						} else if (CriterionOperator.EQUAL.equals(f.getOperator())){
+							criteriaBuffer.append(" = ? ");
+						}
 					}
+					
+				
 
-					//fields.add(f);
+					params.add(vholder);
 				}
 			}
 		}else if (criterion instanceof LogicCriterion){
@@ -407,7 +462,7 @@ public class CriteriaInterpreter {
 				for (Iterator<Criterion> it = criterias.iterator(); it.hasNext();){
 					Criterion c = (Criterion)it.next();
 					if (c instanceof JuntionCriterion){
-						translateCriteriaToWhereClause(criteriaBuffer,joinClause,c);
+						translateCriteriaToWhereClause(criteriaBuffer,params,joinClause,c);
 					} else {
 						others.add(c);
 					}
@@ -425,7 +480,7 @@ public class CriteriaInterpreter {
 							criteriaBuffer.append(' ');
 						}
 						int len = criteriaBuffer.length();
-						translateCriteriaToWhereClause(criteriaBuffer,joinClause,c);
+						translateCriteriaToWhereClause(criteriaBuffer,params,joinClause,c);
 						writeOperator = (criteriaBuffer.length()>len);
 					}
 					criteriaBuffer.append(')');
@@ -443,23 +498,23 @@ public class CriteriaInterpreter {
 			} else {
 				selectBuffer.append("COUNT(").append(this.model().fieldModel(name).getHardName()).append(") AS count");
 			}
-		
+
 		} else if (op instanceof SumFieldOperator){
 			selectBuffer.append("SUM(");
 			QualifiedName n = ((SumFieldOperator)op).getFieldName();
-			dialect().writeHardname(selectBuffer, this.model().fieldModel(n).getHardName());
+			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
 			selectBuffer.append(") AS ");
 			selectBuffer.append(n.getColumnName().toLowerCase());
 		} else if (op instanceof MaxFieldOperator){
 			selectBuffer.append("MAX(");
 			QualifiedName n = ((MaxFieldOperator)op).getFieldName();
-			dialect().writeHardname(selectBuffer, this.model().fieldModel(n).getHardName());
+			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
 			selectBuffer.append(") AS ");
 			selectBuffer.append(n.getColumnName().toLowerCase());
 		} else if (op instanceof MinFieldOperator){
 			selectBuffer.append("MIN(");
 			QualifiedName n = ((MinFieldOperator)op).getFieldName();
-			dialect().writeHardname(selectBuffer, this.model().fieldModel(n).getHardName());
+			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
 			selectBuffer.append(") AS ");
 			selectBuffer.append(n.getColumnName().toLowerCase());
 		} else {

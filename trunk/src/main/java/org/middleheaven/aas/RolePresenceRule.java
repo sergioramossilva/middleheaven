@@ -35,7 +35,13 @@ public class RolePresenceRule implements AccessRule {
 			set = new PermissionSet();
 			permissions.put(roleName,set);
 		}
-		set.add(permission);
+	   
+	    for (Permission p : permission){
+	    	set.add((ResourcePermission)p);  
+	    }
+	    
+	    
+		
 		
 		return this;
 	}

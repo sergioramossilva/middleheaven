@@ -13,10 +13,10 @@ public class SharedScope implements Scope {
 	@Override
 	public <T> T scope(Class<T> type, Set<Annotation> annotations,Resolver<T> resolver) {
 		
-		T obj = (T)OBJECTS.get(new Key(type,annotations));
+		T obj = (T)OBJECTS.get(Key.keyFor(type,annotations));
 		if (obj==null){
 			obj = resolver.resolve(type, annotations);
-			OBJECTS.put(new Key(type,annotations),obj);
+			OBJECTS.put(Key.keyFor(type,annotations),obj);
 		}
 		return obj;
 	}

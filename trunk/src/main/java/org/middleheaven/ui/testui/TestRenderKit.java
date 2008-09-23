@@ -9,6 +9,9 @@ import org.middleheaven.ui.rendering.UIUnitConverter;
 
 public class TestRenderKit extends AbstractRenderKit {
 
+
+	private static final long serialVersionUID = 925791236014175947L;
+	
 	final TestUIRender render = new TestUIRender();
 	final UIUnitConverter converter = new UIUnitConverter(){
 
@@ -32,6 +35,18 @@ public class TestRenderKit extends AbstractRenderKit {
 
 	public UIRender getRender(RenderType componentType, String familly) {
 		return render;
+	}
+
+
+	@Override
+	public void show(UIComponent component) {
+		component.setVisible(true);
+	}
+
+
+	@Override
+	public void dispose(UIComponent splash) {
+		//no-op
 	}
 	        
 }

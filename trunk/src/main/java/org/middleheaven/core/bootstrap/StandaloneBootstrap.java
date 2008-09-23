@@ -4,8 +4,11 @@
  */
 package org.middleheaven.core.bootstrap;
 
+import org.middleheaven.application.ApplicationLoadingCycle;
+import org.middleheaven.application.ApplicationLoadingCycleService;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.ContextIdentifier;
+import org.middleheaven.core.services.ServiceRegistry;
 
 
 /**
@@ -24,8 +27,21 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
         return ContextIdentifier.getInstance("app");
     }
     
-
+    ApplicationLoadingCycle appCycle;
+    
+    protected void doAfterStart(){
+    	
+    	ApplicationLoadingCycleService app = ServiceRegistry.getService(ApplicationLoadingCycleService.class);
+    	if (app!=null){
+    		appCycle = app.getApplicationLoadingCycle();
+    		appCycle.start();
+    	}
+    }
+    
     protected void doAfterStop(){
+    	if (appCycle!=null){
+    		appCycle.stop();
+    	}
         System.exit(0);
     }
 

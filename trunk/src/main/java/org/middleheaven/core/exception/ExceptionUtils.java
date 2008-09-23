@@ -2,12 +2,12 @@ package org.middleheaven.core.exception;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
 
-public final class ExceptionUtils {
+public abstract class ExceptionUtils {
 
 	
 	private ExceptionUtils(){}
 	
-	public static RuntimeException toRuntimeException(Throwable t){
+	public RuntimeException toRuntimeException(Throwable t){
 		if (t instanceof RuntimeException){
 			return (RuntimeException)t;
 		} else {
@@ -15,7 +15,7 @@ public final class ExceptionUtils {
 		}
 	}
 	
-	public static RuntimeException toRuntimeException(Class<? extends RuntimeException> runtimeClass,Throwable t){
+	public RuntimeException toRuntimeException(Class<? extends RuntimeException> runtimeClass,Throwable t){
 		if (t instanceof RuntimeException){
 			return (RuntimeException)t;
 		} else {

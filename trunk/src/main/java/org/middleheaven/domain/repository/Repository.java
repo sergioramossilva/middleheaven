@@ -3,6 +3,11 @@ package org.middleheaven.domain.repository;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.storage.DataStorage;
+import org.middleheaven.storage.DataStorageService;
+
 
 public class Repository {
 
@@ -19,7 +24,8 @@ public class Repository {
 	}
 	
 	public <E extends Entity> EntityRepository<E> newRepository(Class<E> entityType){
-		return new StandardEntityRepository<E>(entityType,Storages.getStorage());
+		final DataStorage defaultStorage = ServiceRegistry.getService(DataStorageService.class).getStorage();
+		return new StandardEntityRepository<E>(entityType, defaultStorage);
 	}
 
 	public  <R extends EntityRepository> R getRepository(Class<R> repositoryClass){

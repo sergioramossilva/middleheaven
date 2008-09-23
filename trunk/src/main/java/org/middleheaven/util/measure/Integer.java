@@ -13,6 +13,9 @@ import org.middleheaven.util.measure.structure.Field;
  */
 public abstract class Integer extends Number<Integer> implements Field<Integer> ,  Numerable<Integer> , Incrementable <Integer>{
 
+
+	private static final long serialVersionUID = 8636156681654308959L;
+
 	public static Integer valueOf (String value) {
 		return NumberFactory.getFactory().numberFor(Integer.class , value);
 	}

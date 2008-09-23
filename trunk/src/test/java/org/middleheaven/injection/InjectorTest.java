@@ -6,15 +6,15 @@ import static org.junit.Assert.assertTrue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.ServiceContextConfigurator;
+import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.DefaultWiringService;
-import org.middleheaven.core.wiring.WiringContext;
 import org.middleheaven.core.wiring.Shared;
+import org.middleheaven.core.wiring.WiringContext;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
 import org.middleheaven.injection.mock.CyclicDisplayer;
@@ -45,7 +45,7 @@ public class InjectorTest {
 	public void simpleTest(){
 		final MockDisplay md = new MockDisplay();
 		
-		service.getInjector()
+		service.getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -65,7 +65,7 @@ public class InjectorTest {
 	
 	@Test
 	public void serviceTest(){
-		WiringService inj = service.getInjector()
+		WiringService inj = service.getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -81,7 +81,7 @@ public class InjectorTest {
 		assertTrue(inj!=null);
 		assertTrue(inj instanceof WiringService);
 		
-		WiringContext i = inj.getInjector();
+		WiringContext i = inj.getWiringContext();
 
 	}
 	
@@ -89,7 +89,7 @@ public class InjectorTest {
 	public void sharedInstanceTest(){
 		final MockDisplay md = new MockDisplay();
 		
-		WiringContext inj = service.getInjector()
+		WiringContext inj = service.getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -112,7 +112,7 @@ public class InjectorTest {
 	@Test
 	public void cyclicTest(){
 
-		WiringContext inj = service.getInjector()
+		WiringContext inj = service.getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -133,7 +133,7 @@ public class InjectorTest {
 	@Test
 	public void cyclicSharedTest(){
 
-		WiringContext inj = service.getInjector()
+		WiringContext inj = service.getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override

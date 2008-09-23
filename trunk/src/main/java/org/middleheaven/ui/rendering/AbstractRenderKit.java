@@ -22,8 +22,10 @@ public abstract class AbstractRenderKit extends RenderKit {
         renders = new HashMap<RenderProperties, UIRender>();  
     }
     
-    protected abstract boolean isRendered(UIComponent component);
-
+	protected boolean isRendered(UIComponent component) {
+		return component.isRendered();
+	}
+	
     public UIComponent renderComponent(RenderingContext context,UIComponent parent, UIComponent component) {
         if (component==null){
             throw new IllegalArgumentException("Cannot render null");
@@ -79,10 +81,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         return renderedComponent;
     }
 
-    /**
-     *  
-     * @see br.com.gnk.fw.ui.rendering.RenderKit#getRender(RenderType, java.lang.String)
-     */
+
     public UIRender getRender(RenderType componentType, String familly) {
         
         RenderPropertiesKey key = new RenderPropertiesKey(familly, componentType);
@@ -105,9 +104,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         addRender(render,componentType,"");
     }
 
-    /** 
-     * @see br.com.gnk.fw.ui.rendering.RenderKit#addRender(br.com.gnk.fw.web.ui.Render, java.lang.String)
-     */
+
     public final void addRender(UIRender render, RenderType componentType, String familly) {
         
         RenderPropertiesKey key = new RenderPropertiesKey(familly, componentType);

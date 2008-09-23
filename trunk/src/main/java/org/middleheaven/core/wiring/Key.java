@@ -17,7 +17,11 @@ public class Key<T> {
 		return targetClass.getName() + "+" + specifications.toString();
 	}
 	
-	public Key(Class<T> targetClass, Set<Annotation> specificationsSet) {
+	public static <T> Key<T> keyFor(Class<T> targetClass, Set<Annotation> specificationsSet) {
+		return new Key<T>(targetClass,specificationsSet);
+	}
+	
+	private Key(Class<T> targetClass, Set<Annotation> specificationsSet) {
 		this.targetClass = targetClass;
 		for (Iterator it = specificationsSet.iterator();it.hasNext();){
 			Object a  = it.next();

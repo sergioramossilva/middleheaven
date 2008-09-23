@@ -2,6 +2,7 @@ package org.middleheaven.storage.db.dialects;
 
 import java.sql.SQLException;
 
+import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
@@ -10,10 +11,10 @@ import org.middleheaven.storage.db.DataBaseDialect;
 
 public class PostgressDialect extends DataBaseDialect{
 
-	protected PostgressDialect() {
+	public PostgressDialect() {
 		super("'", "'", ".");
 	}
-	
+
 	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,
 			StorableEntityModel model) {
 		return new PostgressCriteriaInterpreter(this, criteria, model);
@@ -23,9 +24,22 @@ public class PostgressDialect extends DataBaseDialect{
 	@Override
 	public StorageException handleSQLException(SQLException e) {
 		// TODO Auto-generated method stub
-		return null;
+		return new StorageException(e.getMessage());
 	}
 
+	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
+
+
+		buffer.append(hardname.getTableName().toLowerCase());
+		buffer.append(fieldSeparator());
+		buffer.append(hardname.getColumnName().toLowerCase());
+	}
+	
+	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
+
+		buffer.append(hardname.getColumnName().toLowerCase());
+
+	}
 
 	private static class PostgressCriteriaInterpreter extends CriteriaInterpreter{
 
@@ -33,8 +47,16 @@ public class PostgressDialect extends DataBaseDialect{
 				Criteria<?> criteria, StorableEntityModel model) {
 			super(dataBaseDialect, criteria, model);
 		}
+
+		protected void writeFromClause(StringBuilder queryBuffer){
+
+			// FROM ClAUSE
+			queryBuffer.append(" FROM ");
+			queryBuffer.append(model().hardNameForEntity().toLowerCase());
+
+		}
 		
-		protected void writeEndLimitClause(StringBuffer selectBuffer){
+		protected void writeEndLimitClause(StringBuilder selectBuffer){
 			if (criteria().getCount()>0){
 				selectBuffer.append(" LIMIT ").append(criteria().getCount());
 				if (criteria().getStart()>1){

@@ -1,11 +1,11 @@
-/*
- * Created on 2006/11/25
- *
- */
 package org.middleheaven.core.bootstrap.client;
 
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.ui.UIEnvironmentType;
+import org.middleheaven.ui.UIService;
+import org.middleheaven.ui.client.UIClient;
 
 
 public class DesktopUIContainer extends StandaloneContainer {
@@ -16,11 +16,14 @@ public class DesktopUIContainer extends StandaloneContainer {
 	}
 
 	public void init(ExecutionEnvironmentBootstrap bootstrap){
-        startUI();
-    }
-        
-    public void startUI(){
-        
+
+    	UIService uiService=ServiceRegistry.getService(UIService.class);
+    	
+    	UIClient client = uiService.getUIClient(UIEnvironmentType.DESKTOP, "main");
+    	
+    	client.execute(null); // TODO provide a context
+    	
+		
     }
 
 	@Override

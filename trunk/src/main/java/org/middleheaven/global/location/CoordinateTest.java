@@ -3,7 +3,7 @@ package org.middleheaven.global.location;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.middleheaven.util.measure.AngularPosition;
+import org.middleheaven.util.measure.AngularMeasure;
 import org.middleheaven.util.measure.DecimalMeasure;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
@@ -20,13 +20,13 @@ public class CoordinateTest {
 		WorldGeodeticModel model = new WGM84();
 		
 		GeoCoordinate c1 = new GeoCoordinate(
-				AngularPosition.degrees(53),
-				AngularPosition.degrees(2)
+				AngularMeasure.degrees(53),
+				AngularMeasure.degrees(2)
 		);
 				
 		GeoCoordinate c2 = new GeoCoordinate(
-				AngularPosition.degrees(52),
-				AngularPosition.degrees(0)
+				AngularMeasure.degrees(52),
+				AngularMeasure.degrees(0)
 		);
 			
 		DecimalMeasure<Distance> distance = DecimalMeasure.exact(Real.valueOf(175572.473), SI.METER); 
@@ -34,13 +34,13 @@ public class CoordinateTest {
 		
 		
 		 c1 = new GeoCoordinate(
-				AngularPosition.degrees(0),
-				AngularPosition.degrees(0)
+				AngularMeasure.degrees(0),
+				AngularMeasure.degrees(0)
 		);
 				
 		 c2 = new GeoCoordinate(
-				AngularPosition.degrees(52),
-				AngularPosition.degrees(0)
+				AngularMeasure.degrees(52),
+				AngularMeasure.degrees(0)
 		);
 		
 	    distance = DecimalMeasure.exact(Real.valueOf(5763343.550), SI.METER); 

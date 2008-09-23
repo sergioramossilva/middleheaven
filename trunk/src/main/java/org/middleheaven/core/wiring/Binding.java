@@ -8,7 +8,7 @@ public class Binding<T> {
 
 	
 	private Class<?> startType;
-	private Class<? extends Scope> scope;
+	private Class<?> scope;
 	private Resolver<T> resolver;
 	private Set specifications = new HashSet();
 	
@@ -32,7 +32,7 @@ public class Binding<T> {
 	}
 
 	public Key<T> getKey(){
-		return new Key(this.startType, specifications);
+		return (Key<T>)Key.keyFor(this.startType, specifications);
 	}
 
 
@@ -40,11 +40,11 @@ public class Binding<T> {
 		specifications.add(type);	
 	}
 
-	public void setTargetScope(Class<? extends Scope> scope) {
+	public void setTargetScope(Class<?> scope) {
 		this.scope = scope;
 	}
-
-	public Class<? extends Scope> getScope() {
+	
+	public Class<?> getScope() {
 		return scope;
 	}
 }

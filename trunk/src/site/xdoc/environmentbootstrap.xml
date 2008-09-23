@@ -1,0 +1,30 @@
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title>Bootstrapping</title>
+	</properties>
+	<body>
+
+		<section name="Bootstrapping">
+			<p>
+				MiddleHeaven is based on the dependency resolution and service lookup mecanism 
+				provided by the OSGi framework, namely Apache Felix.  
+			</p>
+			<p>
+				OSGi framework is based on concept of bundle. A bundle in an aggregation of code than
+				can provide services to be consumed by other bundles and/or consume services provided by other bundles.
+			</p>
+			<p>
+				Bootstrapping is the set of operations immediately done before the OSGi container is started.
+				This ensures the possibility of configuring the core services before they are activated.
+				At this point the Core Services are 3.
+				<ul>
+				<li>ContainerService provides acess to the Container object and is directly provided by the bootstrap and with no dependencies.</li>
+				<li>FileRepositoryService provides acess to functionality tagged ManagedFile. The service uses information provided by Container to setup it self </li>
+				<li>LoggingService provides functionally to support all required logging activities. This service relies on information profided the FileRepositoryService if persistence loggin is required </li>
+				</ul>
+			</p>
+			
+		</section>
+	</body>
+</document>

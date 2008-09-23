@@ -1,10 +1,12 @@
 package org.middleheaven.storage.db;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import org.middleheaven.storage.StorableEntityModel;
 
 public interface DataBaseCommand {
 
-	PreparedStatement getStatement(Connection con)  throws SQLException;
+	public void execute(Connection con,StorableEntityModel model)  throws SQLException;
+
 }

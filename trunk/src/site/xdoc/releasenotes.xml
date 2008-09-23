@@ -1,0 +1,15 @@
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title>Release Notes</title>
+	</properties>
+	<body>
+
+		<section name="Release Notes">
+			<p>
+				At this moment the first release is being prepared. Releases will be made on by toolbox basis.
+				The first candidate will be the <a href="toolboxes.html" >Measures Toolbox</a> already available via <a href="source-repository.html">CVS</a>.
+			</p>
+		</section>
+	</body>
+</document>

@@ -1,6 +1,4 @@
-/*
- * Created on 04/11/2005
- */
+
 package org.middleheaven.ui.rendering;
 
 import java.io.Serializable;
@@ -9,10 +7,6 @@ import org.apache.tools.ant.types.Parameterizable;
 import org.middleheaven.ui.UIComponent;
 
 
-
-/**
- * @author <a href="mailto:staborda@gnk.com">Sérgio M.M. Taborda</a>
- */
 public interface RenderTheme extends Serializable, Parameterizable{
     
     

@@ -1,6 +1,8 @@
 package org.middleheaven.aas;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.middleheaven.core.services.ServiceRegistry;
 
@@ -11,6 +13,7 @@ import org.middleheaven.core.services.ServiceRegistry;
  */
 public abstract class User implements Serializable {
 
+	private Map<String , Role> roles = new TreeMap<String,Role>();
 	private boolean autenticated;
 	private boolean identified;
 	
@@ -37,8 +40,17 @@ public abstract class User implements Serializable {
 		return this.autenticated;
 	}
 	
-	public final boolean isInRole(String roleName){
-		return AuthenticationContext.getAuthenticationContext().getUserRolesModel().isUserInRole(this, roleName);
+	public final boolean hasPermission(Permission permission){
+		for (Role r : roles.values()){
+			if (r.hasPermission(permission)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public final boolean isInRole(String name){
+		return roles.containsKey(name);
 	}
 	
 	final void setAutenticated (boolean autenticated){
@@ -49,4 +61,11 @@ public abstract class User implements Serializable {
 		this.identified = identified;
 	}
 	
+	final void addRole(Role role){
+		this.roles.put(role.getName(), role);
+	}
+	
+	final void removeRole(Role role){
+		this.roles.remove(role.getName());
+	}
 }

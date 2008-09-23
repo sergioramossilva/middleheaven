@@ -4,7 +4,8 @@
  */
 package org.middleheaven.global;
 
-import org.middleheaven.service.ServiceRegistry;
+import org.middleheaven.core.services.ServiceRegistry;
+
 
 /**
  * Formats a reference <code>String</code> by translating it into a global displayable <code>String</code>

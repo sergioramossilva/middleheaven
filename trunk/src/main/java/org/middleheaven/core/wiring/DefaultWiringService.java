@@ -9,25 +9,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.middleheaven.core.reflection.ProxyUtils;
 
 public class DefaultWiringService implements WiringService{
 
-	InjectorImpl injector = new InjectorImpl();
+	DefaultWiringContext wiringContext = new DefaultWiringContext();
 	BinderImpl binder = new BinderImpl();
 	List<Interceptor> interceptors = new ArrayList<Interceptor>();
 	PropertyResolver propertyResolver = new PropertyResolver();
-	Map scopes = new HashMap();
+	Map<String,Class<? extends Scope>> scopes = new TreeMap<String,Class<? extends Scope>>();
 	DefaultScope defaultScope = new DefaultScope();
 
 	public DefaultWiringService(){
-		scopes.put(Shared.class, SharedScope.class);
+		scopes.put(Shared.class.getName(), SharedScope.class);
 		binder.bind(SharedScope.class).toInstance(new SharedScope());
 	}
 	@Override
-	public WiringContext getInjector() {
-		return injector;
+	public WiringContext getWiringContext() {
+		return wiringContext;
 	}
 
 	Map<Key , Binding> bindings = new HashMap<Key , Binding>();
@@ -44,7 +45,7 @@ public class DefaultWiringService implements WiringService{
 
 		@Override
 		public <S extends Scope> void bindScope(Class<? extends Annotation> annotation, Class<S> scopeClass) {
-			scopes.put(annotation,scopeClass);
+			scopes.put(annotation.getName(),scopeClass);
 		}
 
 
@@ -67,8 +68,7 @@ public class DefaultWiringService implements WiringService{
 
 		@Override
 		public <T> T getInstance(Class<T> type,  Set<Annotation> specificationsSet){
-			Key key = new Key(type, specificationsSet);
-
+			Key<T> key = Key.keyFor(type, specificationsSet);
 
 			Binding<T> binding = bindings.get(key);
 			if (binding==null){
@@ -91,12 +91,16 @@ public class DefaultWiringService implements WiringService{
 
 			} else {
 				stack.offer(key);
-				Class<Scope> scopeClass = (Class<Scope>)scopes.get(binding.getScope());
 				Scope scope;
-				if (scopeClass==null){
-					scope = defaultScope;
+				if (binding.getScope()!=null){
+					Class<? extends Scope> scopeClass = scopes.get(binding.getScope().getName());
+					if (scopeClass==null){
+						scope = defaultScope;
+					} else {
+						scope = getInstance(scopeClass, new HashSet());
+					}
 				} else {
-					scope = getInstance(scopeClass, new HashSet());
+					scope = defaultScope;
 				}
 
 				final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(interceptors, binding.getResolver());
@@ -107,26 +111,22 @@ public class DefaultWiringService implements WiringService{
 					proxy.setRealObject(obj);
 				}
 				stack.remove(key);
-				return Utils.populate(binder,obj);
+				return WireUtils.populate(binder,obj);
 			}
 
 		}
-
-
-
-
+		
 		@Override
 		public void removeBinding(Binding binding) {
 			bindings.remove(binding.getKey());
+			
 		}
 
-
-
-
+	
 
 	}
 
-	private class InjectorImpl implements WiringContext{
+	private class DefaultWiringContext implements WiringContext{
 
 		@Override
 		public WiringContext addConfiguration(BindConfiguration... modules) {
@@ -145,8 +145,8 @@ public class DefaultWiringService implements WiringService{
 	}
 
 	@Override
-	public void addConnector(InjectionConnector... connectors) {
-		for (InjectionConnector c : connectors){
+	public void addConnector(WiringConnector... connectors) {
+		for (WiringConnector c : connectors){
 			c.connect(binder);
 		}
 	}

@@ -9,7 +9,7 @@ import org.middleheaven.util.measure.structure.Field;
  * @param <E> the associated <code>Measurable</code>
  * @param <F> the associated underlying <code>Field</code> , normally <code>Real</code>
  */
-public abstract class Measure<E extends Measurable , F extends Field<F>>  {
+public abstract class Measure<E extends Measurable , F extends Field<F>> implements Quantity<E>  {
 
 
 	protected F uncertainty;

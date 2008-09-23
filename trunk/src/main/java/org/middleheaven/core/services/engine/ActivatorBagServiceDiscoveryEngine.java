@@ -14,8 +14,9 @@ public class ActivatorBagServiceDiscoveryEngine implements ServiceDiscoveryEngin
 
 	}
 
-	public void addActivator(ServiceActivator activator){
+	public ActivatorBagServiceDiscoveryEngine addActivator(ServiceActivator activator){
 		activators.add(activator);
+		return this;
 	}
 
 	@Override
