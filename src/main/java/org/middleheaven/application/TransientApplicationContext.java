@@ -1,17 +1,25 @@
 package org.middleheaven.application;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.middleheaven.core.Container;
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.util.LiveCollection;
 import org.middleheaven.util.Version;
 
 public class TransientApplicationContext implements ApplicationContext {
 
 	Map<String, ApplicationModule> modules = new HashMap<String, ApplicationModule>();
+	Collection<ApplicationModule> all = new LiveCollection<ApplicationModule>();
 	
+	Container container;
 	
+	public TransientApplicationContext(Container configContext) {
+		this.container = configContext;
+	}
+
 	public ApplicationModule getOlderModulePresent(ModuleID moduleID) {
 		ApplicationModule currentModule = modules.get(moduleID.getIdentifier());
 		
@@ -23,14 +31,15 @@ public class TransientApplicationContext implements ApplicationContext {
 	}
 	
 	public Collection<ApplicationModule> modules(){
-		return Collections.unmodifiableCollection(modules.values());
-		
+		return all;
 	}
+	
 	@Override
 	public void addModule(ApplicationModule module) {
 		ApplicationModule currentModule = modules.get(module.getModuleID().getIdentifier());
 		if (currentModule==null){
 			modules.put(module.getModuleID().getIdentifier(),module);
+			all.add(module);
 		} else {
 			Version candidate = module.getModuleID().getVersion();
 			Version current = currentModule.getModuleID().getVersion();
@@ -38,6 +47,7 @@ public class TransientApplicationContext implements ApplicationContext {
 			// if it is a newer version
 			if (candidate.compareTo(current)>0){
 				modules.put(module.getModuleID().getIdentifier(),module);
+				all.add(module);
 			}
 		}
 	}
@@ -47,6 +57,24 @@ public class TransientApplicationContext implements ApplicationContext {
 		ApplicationModule currentModule = modules.get(identifier);
 		
 		return currentModule!=null && currentModule.getModuleID().getVersion().compareTo(version)>=0;
+	}
+
+	public ManagedFile getAppClasspathRepository() {
+		return container.getAppClasspathRepository();
+	}
+
+
+	public ManagedFile getAppConfigRepository() {
+		return container.getAppConfigRepository();
+	}
+
+	public ManagedFile getAppDataRepository() {
+		return container.getAppDataRepository();
+	}
+
+
+	public ManagedFile getAppLogRepository() {
+		return container.getAppLogRepository();
 	}
 
 }

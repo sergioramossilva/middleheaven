@@ -6,7 +6,7 @@ import org.middleheaven.validation.ValidationContext;
 import org.middleheaven.validation.Validator;
 
 
-public class NotDuplicatedValidator<T> implements Validator<T>{
+public class NotDuplicatedValidator<T extends Entity> implements Validator<T>{
 
 	private EntityRepository<T> repository;	
 

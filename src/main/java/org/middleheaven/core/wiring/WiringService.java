@@ -1,12 +1,12 @@
 package org.middleheaven.core.wiring;
 
 /**
- * Wire Service ?
- * 
+ * Wire Service 
+ * Provides access to the current <code>WiringContext</code>
  */
 public interface WiringService {
 
 	
-	public WiringContext getInjector();
-	public void addConnector(InjectionConnector ... connectors); 
+	public WiringContext getWiringContext();
+	public void addConnector(WiringConnector ... connectors); 
 }

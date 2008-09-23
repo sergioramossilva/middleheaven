@@ -12,7 +12,6 @@ import java.util.MissingResourceException;
 import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.FileChangeListener;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.WatchableRepository;
 
 /**
@@ -20,7 +19,7 @@ import org.middleheaven.io.repository.WatchableRepository;
  */
 public class RepositoryDomainBundle extends LocalizationDomainBundle implements FileChangeListener{
 
-    private ManagedFileRepository repository;
+    private ManagedFile repository;
     private LocalizedMessagesFormatHandler fileFormat;
 
     
@@ -34,7 +33,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
     }
     
 
-    public void setRepository (ManagedFileRepository repository){
+    public void setRepository (ManagedFile repository){
         this.repository = repository;
       
     }
@@ -53,9 +52,11 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
         }
         
         if (format==null){
+        	
+        	
             StringBuilder filename = new StringBuilder(key + ".properties");
             
-            while (!repository.exists(filename.toString() )){
+            while (!repository.resolveFile(filename.toString()).exists()){
                 int pos = filename.lastIndexOf("_");
                 if (pos<0){
                     throw new MissingResourceException(label.getLabel(), null ,label.getDomain());
@@ -63,9 +64,9 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
                 filename.delete(pos, filename.length());
                 filename.append(".properties");
             }
-            ManagedFile file = repository.retrive(filename.toString());
+            ManagedFile file = repository.resolveFile(filename.toString());
             createWatcher(file);
-            format = fileFormat.newFormatHandler(file.getInputStream());
+            format = fileFormat.newFormatHandler(file.getContent().getInputStream());
             
             
             files.put(key, format);
@@ -89,7 +90,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
 
 	@Override
 	public void onChange(FileChangeEvent event) {
-		 LocalizedMessagesFormatHandler format = fileFormat.newFormatHandler(event.getFile().getInputStream());
+		 LocalizedMessagesFormatHandler format = fileFormat.newFormatHandler(event.getFile().getContent().getInputStream());
 	        synchronized(files){
 	            files.put(filesMapping.get(event.getFile().getName()), format);
 	        }

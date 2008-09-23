@@ -1,6 +1,7 @@
 package org.middleheaven.storage.criteria;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +13,7 @@ import org.middleheaven.util.CollectionUtils;
 import org.middleheaven.util.HashCodeUtils;
 
 
-public class LogicCriterion implements BooleanCriterion {
+public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 
 
 	private static final long serialVersionUID = 6060765610996634126L;
@@ -206,15 +207,8 @@ public class LogicCriterion implements BooleanCriterion {
 	 }
 
 	@Override
-	public Criterion negate() {
-		
-		LogicCriterion negation = new LogicCriterion(this.operator.negate());
-		
-		for ( Criterion c : criteria){
-			negation.criteria.add(c.negate());
-		}
-		
-		return negation;
+	public Iterator<Criterion> iterator() {
+		return criteria.iterator();
 	}
 
 

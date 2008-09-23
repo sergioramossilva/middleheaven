@@ -25,11 +25,6 @@ class FastlaneQuery<T> implements Query<T> {
 	}
 
 	@Override
-	public boolean isEmpty() {
-		throw new ReadStrategyRestrictionException();
-	}
-	
-	@Override
 	public Collection<T> list() {
 		// TODO Auto-generated method stub
 		return null;
@@ -45,7 +40,11 @@ class FastlaneQuery<T> implements Query<T> {
 		}
 	}
 
-
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 
 }

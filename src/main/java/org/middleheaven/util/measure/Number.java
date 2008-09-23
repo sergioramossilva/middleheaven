@@ -17,7 +17,9 @@ import org.middleheaven.util.measure.structure.Ring;
  */
 public abstract class Number<T extends Number<T>> implements Quantity<Dimensionless> , Serializable, Comparable<T>, GroupAdditive<T>, Ring<T>  {
 
-	
+
+	private static final long serialVersionUID = -3007304512447112381L;
+
 	public final Unit<Dimensionless> unit() {
 		return SI.DIMENTIONLESS;
 	}

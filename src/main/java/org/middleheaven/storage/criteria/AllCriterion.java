@@ -15,11 +15,6 @@ public class AllCriterion implements Criterion {
 	}
 
 	@Override
-	public Criterion negate() {
-		return EmptyCriterion.empty();
-	}
-
-	@Override
 	public Criterion simplify() {
 		return this;
 	}

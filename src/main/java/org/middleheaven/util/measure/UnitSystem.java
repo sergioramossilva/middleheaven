@@ -1,6 +1,9 @@
 package org.middleheaven.util.measure;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.middleheaven.util.measure.measures.Measurable;
 
@@ -10,19 +13,25 @@ import org.middleheaven.util.measure.measures.Measurable;
  * @author Sergio M.M. Taborda
  *
  */
-public interface UnitSystem {
+public abstract class UnitSystem {
 
+	protected static final Map<String , Unit<?>> allUnits = new HashMap<String , Unit<?>> ();
 	
+
 	/**
 	 * Obtains the correct unit, in this system, for a given measurable.
 	 * @param measurable 
 	 * @return the correct unit, in this system,for a given measurable.
 	 */
-	public  Unit getMeasuableUnit(Class<Measurable> measurable);
-
+	@SuppressWarnings("unchecked")
+	public final <E extends Measurable> Unit<E> getMeasuableUnit(Class<E> measurable) {
+		return (Unit<E>) allUnits.get(measurable);
+	}
 	/**
 	 * 
 	 * @return A set of all units endorsed by this units system.
 	 */
-	public  Collection<Unit> units();
+	public final Collection<Unit<?>> units() {
+		return Collections.unmodifiableCollection(allUnits.values());
+	}
 }

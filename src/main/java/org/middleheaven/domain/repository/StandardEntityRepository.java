@@ -16,28 +16,28 @@ public final class StandardEntityRepository<E extends Entity> implements EntityR
 	}
 	
 	@Override
-	public void delete(E entity) {
-	    Storages.getStorage().delete(entity);
+	public void remove(E entity) {
+	    storage.remove(entity);
 	}
 
 	@Override
-	public E save(E entity) {
-		return storage.save(entity);
+	public E store(E entity) {
+		return storage.store(entity);
 	}
 
 	@Override
 	public Query<E> retriveAll() {
-		return storage.query(CriteriaBuilder.search(entityType).all(),null);
+		return storage.createQuery(CriteriaBuilder.search(entityType).all());
 	}
 
 	@Override
 	public Query<E> retriveEquals(E instance) {
-		return storage.query(CriteriaBuilder.search(entityType).isEqual(instance).all(),null);
+		return storage.createQuery(CriteriaBuilder.search(entityType).isEqual(instance).all());
 	}
 
 	@Override
 	public Query<E> retriveSame(E instance) {
-		return storage.query(CriteriaBuilder.search(entityType).isSame(instance).all(),null);
+		return storage.createQuery(CriteriaBuilder.search(entityType).isSame(instance).all());
 	}
 	
 }

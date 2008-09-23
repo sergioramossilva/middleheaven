@@ -5,19 +5,16 @@
 package org.middleheaven.io.xml;
 
 import java.text.ParseException;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-import org.dom4j.Element;
 import org.middleheaven.global.ISO8601Format;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 public class XMLUtils {
 
+	/*
     public static final Map<String,String> getParams(Element parentElement, String elementName){
         List list = parentElement.elements(elementName);
         Map<String,String> params;
@@ -27,17 +24,18 @@ public class XMLUtils {
             params = new HashMap<String,String>();
             for (Iterator it = list.iterator(); it.hasNext();){
                 Element el = (Element)it.next();
-                params.put(el.attributeValue("name"), el.getText());
+                params.put(el.getAttribute("name"), el.getTextContent());
             }
         }
         return params;
     }
+    */
     
     public static final boolean booleanAttribute(String attribName , Element el, boolean required, boolean defaultValue) throws XMLAttributemissingException{
-        String val = el.attributeValue(attribName);
+        String val = el.getAttribute(attribName);
         if (val==null || val.length()==0){
             if (required){
-                throw new XMLAttributemissingException( attribName , el.getName() );
+                throw new XMLAttributemissingException( attribName , el.getLocalName() );
             }else{
                 return defaultValue;
             }
@@ -56,7 +54,7 @@ public class XMLUtils {
 
     
     public static final Boolean getBooleanAttribute(String attribName,Element el){
-        String val = el.attributeValue(attribName);
+        String val = el.getAttribute(attribName);
         if (val==null || val.length()==0){
             return null;
         }else {
@@ -66,10 +64,10 @@ public class XMLUtils {
 
 
     public static final Date getDate(String attribName , Element el, Date defaultValue) throws XMLException, XMLAttributemissingException{
-        String val = el.attributeValue(attribName);
+        String val = el.getAttribute(attribName);
         if (val==null || val.length()==0){
             if (defaultValue == null){
-                throw new XMLAttributemissingException( attribName ,  el.getName());
+                throw new XMLAttributemissingException( attribName ,  el.getLocalName());
             }else{
                 return defaultValue;
             }
@@ -78,7 +76,7 @@ public class XMLUtils {
             try {
                 return (Date)dateFormat.parseObject(val);
             } catch (ParseException e){
-                throw new XMLException("Format for attribute " + attribName + " in element " + el.getName() + " is illegal. Correct format is: yyyy-MM-ddThh:mm:ss");
+                throw new XMLException("Format for attribute " + attribName + " in element " + el.getLocalName() + " is illegal. Correct format is: yyyy-MM-ddThh:mm:ss");
             }
 
         }
@@ -87,7 +85,6 @@ public class XMLUtils {
     public static final Date getDateAttrbute(String attribName , Element el) throws XMLAttributemissingException{
         return getDate(attribName,el,null);
     }
-
 
     
     /**
@@ -98,20 +95,20 @@ public class XMLUtils {
      * @return
      * @throws XMLAttributemissingException
      */
-    public static final String getStringAttribute(String attribName , Element el, String defaultValue) throws XMLAttributemissingException{
-        String val = el.attributeValue(attribName);
-        if (val==null || val.length()==0 ){
+    public static final String getStringAttribute(String attribName , Node el, String defaultValue) throws XMLAttributemissingException{
+        Node val = el.getAttributes().getNamedItem(attribName);
+        if (val==null || val.getTextContent().isEmpty()){
             if (defaultValue == null){
-                throw new XMLAttributemissingException(attribName ,  el.getName());
+                throw new XMLAttributemissingException(attribName ,  el.getLocalName());
             }else{
                 return defaultValue;
             }
         }else {
-            return val;
+            return val.getTextContent();
         }
     }
 
-    public static final String getStringAttribute(String attribName , Element el) throws XMLAttributemissingException{
+    public static final String getStringAttribute(String attribName , Node el) throws XMLAttributemissingException{
         return getStringAttribute(attribName,el,null);
     }
 
@@ -125,10 +122,10 @@ public class XMLUtils {
      */
     public final int intAttribute(String attribName , Element el, Integer defaultValue) throws XMLAttributemissingException{
 
-        String val = el.attributeValue(attribName);
+        String val = el.getAttribute(attribName);
         if (val==null){
             if (defaultValue== null){
-                throw new XMLAttributemissingException(attribName , el.getName());
+                throw new XMLAttributemissingException(attribName , el.getLocalName());
             }else{
                 return defaultValue;
             }

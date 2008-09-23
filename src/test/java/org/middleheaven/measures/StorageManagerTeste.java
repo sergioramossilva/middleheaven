@@ -11,7 +11,7 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.StorageManager;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.naive.NaiveStoreManager;
+import org.middleheaven.storage.inmemory.NaiveStoreManager;
 
 
 public class StorageManagerTeste {
@@ -30,7 +30,7 @@ public class StorageManagerTeste {
 	@Test
 	public void testInsert(){
 		
-		Query<TestSubject> q = manager.createQuery(CriteriaBuilder.createCriteria(TestSubject.class));
+		Query<TestSubject> q = manager.createQuery(CriteriaBuilder.search(TestSubject.class).all());
 		
 		subj = manager.store(subj);
 		// verify correct types

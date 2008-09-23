@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.ui.ContextScope;
 
 public class PresenterWebCommandMapping implements WebCommandMapping {
 

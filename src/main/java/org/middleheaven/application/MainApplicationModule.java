@@ -1,21 +1,21 @@
 package org.middleheaven.application;
 
-public abstract class MainApplicationModule implements ApplicationModule {
+import org.middleheaven.util.Version;
 
-	private ApplicationID applicationID;
+public abstract class MainApplicationModule extends AbstractApplicationModule {
+
+
+	public MainApplicationModule(String applicationName, Version applicationVersion){
+		super(applicationName,applicationVersion);
+	}
 	
 	public MainApplicationModule(ApplicationID applicationID){
-		this.applicationID = applicationID;
+		super(applicationID);
 	}
 	
 	@Override
-	public final ApplicationID getApplicationID() {
-		return applicationID;
-	}
-
-	@Override
 	public ModuleID getModuleID() {
-		return new ModuleID(this.applicationID.getIdentifier(), this.applicationID.getVersion());
+		return new ModuleID(this.getApplicationID().getIdentifier(), this.getApplicationID().getVersion());
 	}
 
 	@Override

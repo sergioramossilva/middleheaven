@@ -6,10 +6,11 @@ package org.middleheaven.logging.config;
 
 import java.net.URL;
 
-import org.dom4j.Document;
+import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.xml.XMLException;
 import org.middleheaven.io.xml.XMLObjectContructor;
 import org.middleheaven.logging.LoggingService;
+import org.w3c.dom.Document;
 
 /**
  * TODO implement
@@ -37,8 +38,5 @@ public class XMLLoggingConfigurator extends XMLObjectContructor implements Loggi
 	public void config(LoggingService configurator, LoggingConfiguration configuration) {
 		this.constructFrom(url);
 	}
-
-	
-
 
 }

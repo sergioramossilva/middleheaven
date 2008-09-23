@@ -1,17 +1,13 @@
 package org.middleheaven.web;
 
-import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
+import org.middleheaven.ui.Context;
+import org.middleheaven.ui.ContextScope;
 import org.middleheaven.util.conversion.TypeConvertions;
-
 
 public class WebContext implements Context {
 

@@ -12,12 +12,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.io.SAXReader;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileNotFoundManagedException;
 import org.middleheaven.io.repository.ManagedFile;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public abstract class XMLObjectContructor<T> {
 
@@ -62,14 +64,24 @@ public abstract class XMLObjectContructor<T> {
     }
     
     protected void constructFrom(InputStream sourceStream) throws ManagedIOException , XMLException{
-        SAXReader reader = new SAXReader();
+        
+    	// Create a builder factory
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setValidating(false);
+		factory.setNamespaceAware(false);
+		factory.setExpandEntityReferences(false);
 
-        try {
-            Document doc = reader.read(sourceStream);
-            constructFrom(doc);
-        } catch (DocumentException e) {
-            throw new XMLException(e);
-        }
+		// Create the builder and parse the file
+		try {
+			constructFrom(factory.newDocumentBuilder().parse(sourceStream));
+		} catch (SAXException e) {
+			throw new XMLException(e);
+		} catch (IOException e) {
+			throw ManagedIOException.manage(e);
+		} catch (ParserConfigurationException e) {
+			throw new XMLException(e);
+		}
+
     }
     
     protected abstract void constructFrom(Document document) throws ManagedIOException , XMLException;

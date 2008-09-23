@@ -6,8 +6,10 @@ import java.util.List;
 import org.middleheaven.storage.QualifiedName;
 
 
-public interface Criteria<T> {
+public interface Criteria<T> extends Cloneable{
 
+	
+	public Criteria<T> clone();
 	
     /**
      * If set to <code>true</code> limits the search to distinct instances.
@@ -47,7 +49,7 @@ public interface Criteria<T> {
 	 * Adds restrictions criterion
 	 * @param criterion
 	 */
-	public void add(Criterion criterion);
+	public Criteria<T> add(Criterion criterion);
 
 	/**
 	 * quantity of instances to retrieve. negative numbers or zero means all

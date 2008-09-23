@@ -1,42 +1,46 @@
 package org.middleheaven.storage.db;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.storage.EmptyQuery;
-import org.middleheaven.storage.ListQuery;
+import org.middleheaven.storage.AbstractStoreManager;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
-import org.middleheaven.storage.StoreManager;
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.util.sequence.Sequence;
 import org.middleheaven.util.sequence.persistent.AutoIncrementSequence;
 
-public final class DataBaseStoreManager implements StoreManager {
+public final class DataBaseStoreManager extends AbstractStoreManager {
 
 	public DataBaseDialect dialect;
 	public DataSource datasource;
 	public AutoIncrementSequence sequence;
 
-	public DataBaseStoreManager(){
-
-	}
-
-	public void setDialect(DataBaseDialect dialect){
-		this.dialect = dialect;
-	}
-
-	public void setDataSource(DataSource datasource){
+	public DataBaseStoreManager(DataSource datasource){
 		this.datasource = datasource;
+		this.dialect = DatabaseDialectFactory.getDialect(datasource);
+	}
+
+	public DataBaseStoreManager setDialect(DataBaseDialect dialect){
+		this.dialect = dialect;
+		return this;
+	}
+
+	public DataBaseStoreManager setDataSource(DataSource datasource){
+		this.datasource = datasource;
+		this.dialect = DatabaseDialectFactory.getDialect(datasource);
+		return this;
 	}
 
 	@Override
@@ -44,39 +48,64 @@ public final class DataBaseStoreManager implements StoreManager {
 		return AutoIncrementSequence.getSequence(name);
 	}
 
-	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
+
+	class DBStorageQuery<T> implements Query<T>{
+		Criteria<T> criteria;
+		StorableEntityModel model;
+
+		public DBStorageQuery(Criteria<T> criteria, StorableEntityModel model) {
+			super();
+			this.criteria = criteria;
+			this.model = model;
+		}
+
+		@Override
+		public long count() {
+			return list().size();
+		}
+
+		@Override
+		public T find() {
+			List<T> list = findByCriteria(criteria,model);
+			return list.isEmpty() ? null : list.get(0);
+		}
+
+		@Override
+		public Collection<T> list() {
+			return findByCriteria(criteria,model);
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return list().isEmpty();
+		}
+
+	} 
+
+	<T> List<T> findByCriteria(Criteria<T> criteria,StorableEntityModel model){
 
 		Connection con =null;
 		try {
 			con = this.datasource.getConnection();
-			DataBaseCommand command = dialect.createSelectCommand(criteria, model);
-			PreparedStatement ps = command.getStatement(con);
+			RetriveDataBaseCommand command = dialect.createSelectCommand(criteria, model);
+			command.execute(con,model);
+			ResultSet rs = command.getResult();
+			
+			try{
+				// convert to List<T>
+				List<T> list = new LinkedList<T>();
+				ResultSetStorable s = new ResultSetStorable(rs,model);
+				while (rs.next()){
+					T t = merge(model.instanceFor(criteria.getTargetClass()));
+					this.copy(s, (Storable)t, model);
 
-			ResultSet rs = ps.executeQuery();
-			if (rs.isLast()){
-				try{
-					return new EmptyQuery<T>();
-				} finally {
-					rs.close();
+					list.add(t);
 				}
-			} else if (strategy.isFowardOnly() && strategy.isReadOnly()){
-				rs.beforeFirst();
-				return new FastlaneQuery<T>(rs);
-			} else {
-				try{
-					rs.beforeFirst();
-					// convert to List<T>
-					List<T> list = new LinkedList<T>();
-					ResultSetStorable s = new ResultSetStorable(rs);
-					while (rs.next()){
-						list.add(model.instanceFor(criteria.getTargetClass(), s));
-					}
-					return new ListQuery<T>(list);
-				} finally {
-					rs.close();
-				}
+				return list;
+			} finally {
+				rs.close();
 			}
+
 		} catch (SQLException e){
 			throw dialect.handleSQLException(e);
 		} finally {
@@ -87,14 +116,24 @@ public final class DataBaseStoreManager implements StoreManager {
 			}
 		}
 	}
+	@Override
+	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
+
+		return new DBStorageQuery<T>(dialect.merge(criteria,model),model);
+
+	}
+
+
+
+
 
 	@Override
 	public void insert(Collection<Storable> collection, StorableEntityModel model) {
 		if (collection.isEmpty()){
 			return;
 		}
-		executeCommand(collection , dialect.createInsertCommand(model) );
-		
+		executeCommand(dialect.createInsertCommand(collection,model), model );
+
 	}
 
 	@Override
@@ -102,33 +141,45 @@ public final class DataBaseStoreManager implements StoreManager {
 		if (collection.isEmpty()){
 			return;
 		}
-		executeCommand(collection , dialect.createDeleteCommand(model) );
+		List<Long> keys = new ArrayList<Long>(collection.size());
+		Storable s=null;
+		for (Iterator<Storable> it = collection.iterator();it.hasNext();){
+			s = it.next();
+			keys.add(s.getKey());
+		}
 		
-	}
+		Criteria<?> c = CriteriaBuilder.search(s.getPersistableClass())
+		.and(model.keyFieldModel().getHardName().toString()).in(keys)
+		.all();
+		
+		executeCommand(dialect.createDeleteCommand(c , model), model );
 
+	}
+	
+	@Override
+	public void remove(Criteria<?> criteria, StorableEntityModel model) {
+		executeCommand(dialect.createDeleteCommand(criteria, model), model );
+
+	}
+	
 	@Override
 	public void update(Collection<Storable> collection, StorableEntityModel model) {
 		if (collection.isEmpty()){
 			return;
 		}
 
-		executeCommand(collection , dialect.createUpdateCommand(model) );
-		
+		executeCommand(dialect.createUpdateCommand(collection , model), model );
+
 	}
 	
-	private void executeCommand (Collection<Storable> collection, DataBaseCommand command){
+	private void executeCommand (DataBaseCommand command,StorableEntityModel model){
 		Connection con =null;
 		try {
 			con = this.datasource.getConnection();
+
+			command.execute(con,model);
 			
-			PreparedStatement ps = command.getStatement(con);
-			PreparedStatementStorable pss = new PreparedStatementStorable(ps);
-			for (Storable s : collection){
-				pss.copy(s);
-				ps.addBatch();
-			}
-			ps.executeBatch();
-			
+
 		} catch (SQLException e){
 			throw dialect.handleSQLException(e);
 		} finally {
@@ -139,5 +190,9 @@ public final class DataBaseStoreManager implements StoreManager {
 			}
 		}
 	}
+
+
+
+
 
 }

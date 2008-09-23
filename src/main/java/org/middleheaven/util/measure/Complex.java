@@ -5,6 +5,8 @@ import org.middleheaven.util.measure.structure.Field;
 
 public abstract class Complex extends Number<Complex> implements Field<Complex> ,Conjugatable<Complex> {
 
+	private static final long serialVersionUID = 5580549238295872790L;
+
 	public static Complex valueOf(Real real, Real imaginary) {
 		return (Complex)NumberFactory.getFactory().numberFor(Complex.class , real ,  imaginary);
 	}

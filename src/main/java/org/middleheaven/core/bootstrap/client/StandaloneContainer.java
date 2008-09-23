@@ -14,7 +14,7 @@ public abstract class StandaloneContainer implements Container {
 
 	private ManagedFile repository;
 
-	public StandaloneContainer( ManagedFile repository){
+	protected StandaloneContainer( ManagedFile repository){
 		this.repository = repository;
 	}
 	

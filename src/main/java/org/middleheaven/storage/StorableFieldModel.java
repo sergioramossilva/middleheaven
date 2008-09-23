@@ -10,5 +10,6 @@ public interface StorableFieldModel {
 	public DataType getDataType();
 	public boolean isTransient();
 	public boolean isVersion();
+	public boolean isKey();
 
 }

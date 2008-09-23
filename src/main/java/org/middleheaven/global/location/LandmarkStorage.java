@@ -1,6 +1,6 @@
 package org.middleheaven.global.location;
 
-import org.middleheaven.util.measure.AngularPosition;
+import org.middleheaven.util.measure.AngularMeasure;
 
 
 public abstract class LandmarkStorage {
@@ -14,6 +14,6 @@ public abstract class LandmarkStorage {
 	public abstract void deleteCategory(String category);
 	public abstract Iterable<String> getCategories();
 	public abstract Iterable<Landmark> getLandmarks();
-	public abstract Iterable<Landmark> getLandmarks(String category, AngularPosition minLongitude,AngularPosition minLatitude, AngularPosition maxLongitude,AngularPosition maxLatitude);
+	public abstract Iterable<Landmark> getLandmarks(String category, AngularMeasure minLongitude,AngularMeasure minLatitude, AngularMeasure maxLongitude,AngularMeasure maxLatitude);
 	public abstract Iterable<Landmark> getLandmarks(String category,String name);
 }

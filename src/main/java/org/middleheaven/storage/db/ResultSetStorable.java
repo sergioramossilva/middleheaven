@@ -1,15 +1,22 @@
 package org.middleheaven.storage.db;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.middleheaven.storage.PersistableState;
 import org.middleheaven.storage.Storable;
+import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.storage.StorageException;
 
 public class ResultSetStorable implements Storable {
 
 	private ResultSet rs;
-	public ResultSetStorable(ResultSet rs) {
+	private StorableEntityModel model;
+	
+	public ResultSetStorable(ResultSet rs, StorableEntityModel model) {
 		this.rs = rs;
+		this.model = model;
 	}
 
 	@Override
@@ -19,27 +26,38 @@ public class ResultSetStorable implements Storable {
 	}
 
 	@Override
+	public void setKey(Long key) {
+		throw new UnsupportedOperationException();
+	}
+	
+
+	@Override
+	public void setPersistableState(PersistableState state) {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
 	public Class<?> getPersistableClass() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public PersistableState getPersistableState() {
-		// TODO Auto-generated method stub
-		return null;
+		return PersistableState.RETRIVED;
 	}
 
 	@Override
-	public void setKey(Long key) {
-		// TODO Auto-generated method stub
-
+	public Object getFieldValue(StorableFieldModel model) {
+		try {
+			return rs.getObject(model.getHardName().getColumnName());
+		} catch (SQLException e) {
+			throw new StorageException(e); 
+		}
 	}
 
 	@Override
-	public void setPersistableState(PersistableState state) {
-		// TODO Auto-generated method stub
-
+	public void setFieldValue(StorableFieldModel model, Object fieldValue) {
+		throw new UnsupportedOperationException();
 	}
 
 }

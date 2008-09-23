@@ -11,7 +11,7 @@ public interface EntityRepository<E extends Entity> {
 
 	public Query<E> retriveEquals(E instance);
 	
-	public E save(E entity);
+	public E store(E entity);
 	
-	public void delete(E entity);
+	public void remove(E entity);
 }

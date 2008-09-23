@@ -10,9 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.io.repository.upload.UploadManagedFileRepository;
+import org.middleheaven.ui.ContextScope;
 
 public class WebFacadeServlet extends HttpServlet {
 
+	private static final long serialVersionUID = -8162774606122448839L;
 
 	public void doPost(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
 		doService(request,response);

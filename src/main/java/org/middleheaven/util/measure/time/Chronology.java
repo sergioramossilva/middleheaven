@@ -34,5 +34,11 @@ public abstract class Chronology {
 
 	public abstract Month monthOf(int ordinal, int month);
 
+	public CalendarDate convertTo(CalendarDate date, Chronology chronology){
+		
+		// TODO 
+		throw new UnsupportedOperationException("Conversion between chonolies are not yet supported");
+	}
+
     
 }

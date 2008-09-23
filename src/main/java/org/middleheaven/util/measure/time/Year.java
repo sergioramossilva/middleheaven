@@ -23,6 +23,22 @@ public class Year implements Serializable{
         this.chronology = chronology;
     }
     
+    
+    public Chronology getChronology(){
+    	return chronology;
+    }
+    
+    /**
+     * Convert this year to the equivalent year in the other Chronology
+     * @param chronology for each to obtain the equivalent year. 
+     * @return equivalent year in the other Chronology
+     */
+    public Year toChronology(Chronology chronology){
+    	CalendarDate date = CalendarDate.date(ordinal, 1, 1);
+    	
+    	return this.chronology.convertTo(date, chronology).year();
+    }
+    
     public int ordinal(){
         return this.ordinal;
     }

@@ -12,19 +12,43 @@ public class DriverDataSource implements DataSource {
 	private String URL;
 	private String login;
 	private String pass;
+	  
 	private int timeOut = 30; // seconds
 	private PrintWriter logWriter = null;
 	 
+	private boolean autoCommit = true;
 	public DriverDataSource(){}
 
+    public DriverDataSource(String driver,String url,String username,String password){
+
+    	this.URL = url;
+        this.login = username;
+        this.pass = password;
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            throw new DriverNotFoundException("Driver " + driver + " was not found.");
+        }
+        
+    }
+    
+    public void setAutoCommit(boolean autoCommit){
+    	this.autoCommit = autoCommit;
+    }
+    
 	@Override
 	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(URL, login, pass);
+		Connection con = DriverManager.getConnection(URL, login, pass);
+		con.setAutoCommit(autoCommit);
+		return con;
 	}
 
 	@Override
 	public Connection getConnection(String nlogin, String npass) throws SQLException {
-		return DriverManager.getConnection(URL, nlogin, npass);
+		
+		Connection con = DriverManager.getConnection(URL, nlogin, npass);
+		con.setAutoCommit(autoCommit);
+		return con;
 	}
 
 	@Override

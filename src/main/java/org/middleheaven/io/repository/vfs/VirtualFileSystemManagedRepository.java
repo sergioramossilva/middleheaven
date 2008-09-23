@@ -13,12 +13,13 @@ import org.middleheaven.io.repository.FileChangeListener;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotQueriableException;
 import org.middleheaven.io.repository.RepositoryNotRedableException;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
 import org.middleheaven.io.repository.WatchableRepository;
 
-public class VirtualFileSystemManagedRepository implements ManagedFileRepository,WatchableRepository{
+public class VirtualFileSystemManagedRepository implements ManagedFileRepository,QueryableRepository,WatchableRepository{
 
 	private FileObject root;
 	

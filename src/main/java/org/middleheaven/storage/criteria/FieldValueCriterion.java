@@ -5,6 +5,8 @@ import org.middleheaven.storage.QualifiedName;
 
 class FieldValueCriterion implements FieldCriterion {
 	
+	private static final long serialVersionUID = 7204559851317644625L;
+	
 	private QualifiedName fieldName;
 	private DataType dataType;
 	private CriterionOperator operator;
@@ -44,11 +46,6 @@ class FieldValueCriterion implements FieldCriterion {
 	@Override
 	public boolean isEmpty() {
 		return false;
-	}
-
-	@Override
-	public Criterion negate() {
-		return new FieldValueCriterion(fieldName, dataType,operator.negate(), valueHolder);
 	}
 
 	@Override

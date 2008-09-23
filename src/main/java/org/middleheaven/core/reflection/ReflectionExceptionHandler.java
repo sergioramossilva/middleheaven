@@ -15,7 +15,7 @@ public class ReflectionExceptionHandler implements ExceptionHandler<Exception,Ru
 		} catch (IllegalArgumentException e) {
 			return new IllegalAccesReflectionException(e);
 		} catch (NoSuchMethodException e) {
-			return new NoSuchMethodReflectionException();
+			return new NoSuchMethodReflectionException(e);
 		} catch (InvocationTargetException e) {
 			return new InvocationTargetReflectionException(e);
 		} catch (Exception e){

@@ -33,7 +33,7 @@ public class Interval<T> {
 	 * @throws ClassCastException if the values are not <code>Comparable</code>.
 	 * @return a <code>Interval</code> from <code>start</code> to <code>end</code>
 	 */
-	public final static <V extends Comparable<V>> Interval<V> between(V start, V end){
+	public final static <V extends Comparable<? super V>> Interval<V> between(V start, V end){
 		return between(start,end,new ComparableComparator<V>());
 	} 
 

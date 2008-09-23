@@ -16,4 +16,9 @@ public class Projection {
 		return null;
 	}
 
+	public void add(ProjectionOperator operator) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

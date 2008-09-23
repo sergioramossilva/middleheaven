@@ -1,14 +1,15 @@
 package org.middleheaven.storage.criteria;
 
-public interface FieldValueHolder {
+import java.io.Serializable;
 
-	boolean isEmpty();
+import org.middleheaven.data.DataType;
+
+public interface FieldValueHolder extends Serializable{
+
+	public boolean isEmpty();
 	public Object getValue();
-	
-	/**
-	 * Compares the value holden by this with the value holden by other
-	 * @param valueHolder
-	 * @return
-	 */
-	boolean equalsValue(FieldValueHolder valueHolder);
+	public DataType getDataType();
+	public void setDataType(DataType type);
+	public boolean equalsValue(FieldValueHolder valueHolder);
+
 }

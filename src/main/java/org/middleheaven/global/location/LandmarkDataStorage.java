@@ -6,26 +6,26 @@ import java.util.List;
 
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.util.measure.AngularPosition;
+import org.middleheaven.util.measure.AngularMeasure;
 
 public class LandmarkDataStorage extends LandmarkStorage {
 
-	
+
 	private DataStorage storage;
 
 
 	private class CategorizedLandmark {
 		private Landmark landmark;
 		private LandmarkCategory category;
-		
+
 		public CategorizedLandmark() {}
-		
+
 		public CategorizedLandmark(Landmark landmark, String category) {
 			super();
 			this.landmark = landmark;
 			this.category = new LandmarkCategory(category);
 		}
-		
+
 	}
 	@Override
 	public void addLandmark(Landmark landmark, String category) {
@@ -38,7 +38,7 @@ public class LandmarkDataStorage extends LandmarkStorage {
 		CategorizedLandmark cl = new CategorizedLandmark(landmark, category);
 		storage.store(cl);
 	}
-	
+
 	@Override
 	public void deleteCategory(String category) {
 		storage.remove(new LandmarkCategory(category));
@@ -51,7 +51,9 @@ public class LandmarkDataStorage extends LandmarkStorage {
 
 	@Override
 	public Iterable<String> getCategories() {
-		Collection<LandmarkCategory> all = storage.createQuery(CriteriaBuilder.createCriteria(LandmarkCategory.class)).list();
+		Collection<LandmarkCategory> all = storage.createQuery(
+				CriteriaBuilder.search(LandmarkCategory.class).all()
+		).list();
 		List<String> names = new ArrayList<String>(all.size());
 		for (LandmarkCategory category : all){
 			names.add(category.getName());
@@ -61,29 +63,32 @@ public class LandmarkDataStorage extends LandmarkStorage {
 
 	@Override
 	public Iterable<Landmark> getLandmarks() {
-		return storage.createQuery(CriteriaBuilder.createCriteria(Landmark.class)).list();
+		return storage.createQuery(CriteriaBuilder.search(Landmark.class).all()).list();
 	}
 
 	@Override
 	public Iterable<Landmark> getLandmarks(String category, 
-				AngularPosition minLongitude,AngularPosition minLatitude, 
-				AngularPosition maxLongitude,AngularPosition maxLatitude) {
-		
-		return storage.createQuery(CriteriaBuilder.createCriteria(Landmark.class)
-				.and("coordinates.latitude").inInterval(minLatitude,maxLatitude)
-				.and("coordinates.longitude").inInterval(minLongitude, maxLongitude)
+			AngularMeasure minLongitude,AngularMeasure minLatitude, 
+			AngularMeasure maxLongitude,AngularMeasure maxLatitude) {
+
+		return storage.createQuery(CriteriaBuilder.search(Landmark.class)
+				.and("coordinates.latitude").bewteen(minLatitude,maxLatitude)
+				.and("coordinates.longitude").bewteen(minLongitude, maxLongitude)
 				.and("category").eq(category)
+				.all()
 		).list();
 	}
 
 	@Override
 	public Iterable<Landmark> getLandmarks(String category, String name) {
-		return storage.createQuery(CriteriaBuilder.createCriteria(Landmark.class)
-				.and("category").eq(category).or("name").eq(name)
+		return storage.createQuery(CriteriaBuilder.search(Landmark.class)
+				.and("category").eq(category)
+				.or("name").eq(name)
+				.all()
 		).list();
 	}
 
 
 
-	
+
 }

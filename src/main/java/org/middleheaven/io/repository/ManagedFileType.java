@@ -37,7 +37,7 @@ public enum ManagedFileType {
 	}
 	
 	public boolean isFolder(){
-		return this.equals(FOLDER) || this.equals(FILEFOLDER);
+		return this.equals(FOLDER) || this.equals(FILEFOLDER) ;
 	}
 	
 	

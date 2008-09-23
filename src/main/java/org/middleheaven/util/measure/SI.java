@@ -1,10 +1,5 @@
 package org.middleheaven.util.measure;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.middleheaven.util.measure.measures.Angle;
 import org.middleheaven.util.measure.measures.Dimensionless;
 import org.middleheaven.util.measure.measures.Distance;
@@ -21,7 +16,7 @@ import org.middleheaven.util.measure.measures.Time;
  *
  * {@link http://physics.nist.gov/cuu/Units/}
  */
-public final class SI implements UnitSystem{
+public final class SI extends UnitSystem{
 
 	public static final Unit<Dimensionless> DIMENTIONLESS = Unit.unit(Dimension.DIMENTIONLESS,"");
 	public static final Unit<Distance> METER = Unit.unit(Dimension.LENGTH,"m");
@@ -40,7 +35,6 @@ public final class SI implements UnitSystem{
 	
 	public static final Unit<Temperature> KELVIN = Unit.unit(Dimension.TEMPERATURE,"K");
 	
-	private static final Map<String , Unit> allUnits = new HashMap<String , Unit> ();
 	
 	static {
 		
@@ -56,16 +50,7 @@ public final class SI implements UnitSystem{
 	
 	private SI(){}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Unit getMeasuableUnit(Class measurable) {
-		return (Unit)allUnits.get(measurable);
-	}
 
-	@Override
-	public  Collection<Unit> units() {
-		return Collections.unmodifiableCollection(allUnits.values());
-	}
 
 
 }

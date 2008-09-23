@@ -6,8 +6,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.util.measure.AngularPosition;
-import org.middleheaven.util.measure.Complex;
+import org.middleheaven.util.measure.AngularMeasure;
 import org.middleheaven.util.measure.DecimalMeasure;
 import org.middleheaven.util.measure.Dimension;
 import org.middleheaven.util.measure.IncompatibleDimentionException;
@@ -16,79 +15,40 @@ import org.middleheaven.util.measure.Integer;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
 import org.middleheaven.util.measure.Unit;
-import org.middleheaven.util.measure.measures.Distance;
+import org.middleheaven.util.measure.convertion.UnitConversion;
+import org.middleheaven.util.measure.measures.Aceleration;
+import org.middleheaven.util.measure.measures.Area;
 import org.middleheaven.util.measure.measures.Energy;
 import org.middleheaven.util.measure.measures.Force;
+import org.middleheaven.util.measure.measures.Distance;
 import org.middleheaven.util.measure.measures.Mass;
 import org.middleheaven.util.measure.measures.Time;
 import org.middleheaven.util.measure.measures.Velocity;
 import org.middleheaven.util.measure.money.Money;
+import org.middleheaven.util.measure.structure.LUDecomposition;
 import org.middleheaven.util.measure.structure.Matrix;
 import org.middleheaven.util.measure.structure.Vector;
 
 public class MeasuresTestSuit {
 
 	@Test
-	public void testComplex(){
-		
-		Real r = Real.valueOf(-9);
-		Complex rr = r.csqrt();
-		assertEquals(Complex.valueOf(0,3),rr);
-		
-		r = Real.valueOf(9);
-		rr = r.csqrt();
-		assertEquals(Complex.valueOf(3,0),rr);
-		
-		Complex one = Complex.valueOf(1,0);
-		
-		assertEquals(Complex.ONE(),one);
-		
-		Complex i = Complex.valueOf(0,1);
-		
-		assertEquals(Complex.I(),i);
-		
-		assertEquals(one.negate(),i.times(i));
-		
-		Complex a = Complex.valueOf(4,2);
-		Complex b = Complex.valueOf(9,3);
-		Complex c = Complex.valueOf(13,5);
-		Complex d = Complex.valueOf(30,30);
-		Complex g = Complex.valueOf(Real.valueOf(3).inverse(),Real.valueOf(3).inverse());
-		Complex v = Complex.valueOf(Real.valueOf(0.1),Real.valueOf(30).inverse());
-		
-		Complex x = b.inverse();
-		
-		assertEquals(c, a.plus(b));
-		assertEquals(d, a.times(b));
-		assertEquals(v, x);
-		assertEquals(g, a.over(b));
-		
-		// conj(a+b) = conj(a) + conj(b)
-		assertEquals(c.conjugate(), a.conjugate().plus(b.conjugate()));
-		// conj(a*b) = conj(a) * conj(b)
-		assertEquals(a.times(b).conjugate(), a.conjugate().times(b.conjugate()));
-	}
-	
-	@Test
 	public void testAngularPosition(){
 		
-		AngularPosition ap = AngularPosition.degrees(180);
-		AngularPosition apc = ap.toRadians();
+		AngularMeasure ap = AngularMeasure.degrees(180);
+		AngularMeasure apc = ap.toRadians();
 		
-		assertEquals(AngularPosition.radians(Math.PI), apc );
+		assertEquals(AngularMeasure.radians(Math.PI), apc );
 		
 		
-		AngularPosition diff = AngularPosition.degrees(360*2.25);
+		AngularMeasure diff = AngularMeasure.degrees(360*2.25);
 		
-		assertEquals(AngularPosition.degrees(270), ap.plus(diff).reduce());
+		assertEquals(AngularMeasure.degrees(270), ap.plus(diff).reduce());
 		
-		assertEquals(AngularPosition.degrees(90), ap.plus(diff.negate()).reduce());
+		assertEquals(AngularMeasure.degrees(90), ap.plus(diff.negate()).reduce());
 	}
 	
-    @Test 
+    //@Test 
     public void matrixLU(){
-    	
-    	/*
     	Matrix<Real> A = Matrix.matrix(3,3, Real.valueOf(
     			6 , -2 , 0, 
     			9 ,-1 ,1, 
@@ -110,8 +70,8 @@ public class MeasuresTestSuit {
 		
     	LUDecomposition<Real> lud = new LUDecomposition<Real>(A);
     	
-    	//assertEquals(L , lud.getL());
-    	//assertEquals(U , lud.getU());
+    	assertEquals(L , lud.getL());
+    	assertEquals(U , lud.getU());
     	
     	
     	Matrix<Real> N = Matrix.matrix(3,3, Real.valueOf(1 , 1 , 2, 1 ,2 ,1,2, 1, 1));
@@ -119,21 +79,25 @@ public class MeasuresTestSuit {
     	lud = new LUDecomposition<Real>(N);
     	
     	assertEquals(N , lud.getL().times(lud.getU()));
-    	*/
     }
     
+
 	@Test
 	public void matrix(){
 
 		Vector<Real> v1 = Vector.vector(1,1,2);
-
-		Matrix<Real> M = Matrix.matrix(3,3, Real.valueOf(1 , 1 , 2, 1 ,2 ,1, 2, 1, 1));
-
+		Vector<Real> v2 = Vector.vector(1,2,1);
+		Vector<Real> v3 = Vector.vector(2,1,1);
+		
+		Matrix<Real> M = Matrix.matrix(v1,v2,v3);
+		
+		Vector<Real> v4 = Vector.vector(2,2,4);
+		Vector<Real> v5 = Vector.vector(2,4,2);
+		Vector<Real> v6 = Vector.vector(4,2,2);
+		
 		Matrix<Real> N = Matrix.matrix(3,3, Real.valueOf(2 , 2 , 4, 2 ,4 ,2,4, 2, 2));
 		
 	
-		Matrix<Real> Mi= Matrix.matrix(3,3, Real.valueOf(-0.25 , -0.25, -3*0.25 ,-0.25 ,  -3*0.25 ,-0.25, -3*0.25 , -0.25 , -0.25));
-			
 		Real det = M.determinant();
 		
 		assertEquals(Real.valueOf(-4),det);
@@ -146,10 +110,8 @@ public class MeasuresTestSuit {
 		
 		assertEquals(N , M.plus(M));
 		
-		assertEquals(Mi , M.inverse());
-		
 		Vector<Real> v7 = Vector.vector(12,10,10);
-		assertEquals(v7, M.times(v1));
+		assertEquals(v7, M.times(v4));
 		
 		Matrix<Real> P = Matrix.matrix(3,3, Real.valueOf(1 , 1 , 2, 1 ,2 ,1, 2, 1, 1));
 		assertEquals(M, P);
@@ -162,7 +124,6 @@ public class MeasuresTestSuit {
 		
 		Matrix<Real> I = Matrix.identity(3);
 		assertEquals(I, I.times(I));
-		assertEquals(I, I.inverse());
 		
 		assertEquals(I.getRow(1), I.getColumn(1));
 		assertEquals(I, M.times(M.inverse()));
@@ -180,24 +141,24 @@ public class MeasuresTestSuit {
 		
 		// the matrix is invertible
 		assertTrue(R.hasInverse());
-		assertEquals(Matrix.identity(3), R.times(R.inverse()));
 		
 		//big matrix
 		Matrix<Real> P = Matrix.random(10,10,2);
 		Matrix<Real> I = Matrix.identity(10);
-		assertEquals(I, P.times(P.inverse()));
+//		assertEquals(I, P.times(P.inverse()));
 	}
 	
 	@Test
 	public void testDimentions(){
 		
+
 		// create speed
-		Dimension<Velocity> V = Dimension.LENGTH.over(Dimension.TIME);
+		Dimension<Velocity> V = Dimension.LENGTH.over(Dimension.TIME) ;
 		// assert right dimensions
 		assertEquals("LT^-1", V.toString());
 		assertEquals(Dimension.VELOCITY, V);
 		// create acceleration
-		Dimension<?> A = V.over(Dimension.TIME) ;
+		Dimension<Aceleration> A = V.over(Dimension.TIME) ;
 		// assert right dimensions
 		assertEquals("LT^-2", A.toString());
 		
@@ -248,7 +209,7 @@ public class MeasuresTestSuit {
 		DecimalMeasure<Distance> S = F.plus(L);
 		assertEquals (DecimalMeasure.measure(8, 0.3, SI.METER) , S);
 		
-		DecimalMeasure<Distance> D = F.times(L);
+		DecimalMeasure<Area> D = F.times(L);
 		assertEquals (DecimalMeasure.measure(15, 1.30, SI.METER.raise(2)) , D);
 		
 		
@@ -263,12 +224,12 @@ public class MeasuresTestSuit {
 		
 		DecimalMeasure<Distance> l = DecimalMeasure.exact(200, SI.METER );
 		DecimalMeasure<Time> t = DecimalMeasure.exact(10, SI.SECOND);
-		DecimalMeasure<Distance> v = l.over(t);
+		DecimalMeasure<Velocity> v = l.over(t);
 		
 		assertEquals(DecimalMeasure.exact(20,  SI.METER.over(SI.SECOND) ), v);
 		assertEquals(Dimension.VELOCITY, v.unit().dimension());
 		
-		DecimalMeasure<Distance> v2 = v.times(v);
+		DecimalMeasure<?> v2 = v.times(v);
 		Dimension<?> dim =  Dimension.VELOCITY.times(Dimension.VELOCITY);
 		assertEquals(dim,v2.unit().dimension());
 		DecimalMeasure<Mass> m = DecimalMeasure.exact(50, SI.KILOGRAM );
@@ -315,6 +276,17 @@ public class MeasuresTestSuit {
 		Money y = t.over(n);
 		assertEquals (Money.money(110, "USD"), y);
 		
+		/*
+		Scalar L = Scalar.scalar(20, SI.HOUR); 
+		Scalar q = a.over(L);
+		assertEquals ("5.00 USDh^-1" , q.toString());
+		
+		Duration h = Duration.hours(2); 
+		Scalar total = h.times(q);
+		Money ten = Money.money(10, "USD");
+		assertEquals ("10.00 USD" , total.toString());
+		assertEquals (ten , total);
+		*/
 		
 	}
 	
@@ -332,9 +304,6 @@ public class MeasuresTestSuit {
 		
 		assertEquals(Real.valueOf(11.2), a.plus(i));
 		assertEquals(j, i.times(a));
-		
-		
-		assertEquals(Real.valueOf(1), Real.valueOf(1).over(3).times(3));
 	}
 	@Test
 	public void testDurationAndPeriod(){

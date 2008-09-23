@@ -27,7 +27,7 @@ public abstract class JBossContainer extends ServletBoundContainer {
     
     @Override
     public String getEnvironmentName() {
-        // TODO adicionar mais detalhes usando System: versao , OS , etc 
+        // TODO add more details like System: versao , OS , etc 
         return "JBoss";
     }
 

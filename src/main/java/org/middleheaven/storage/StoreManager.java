@@ -25,6 +25,11 @@ public interface StoreManager {
 	public void remove(Collection<Storable> obj,StorableEntityModel model);
 	
 	/**
+	 * Removes all object that match the criteria from the store
+	 */
+	public void remove(Criteria<?> criteria,StorableEntityModel model);
+	
+	/**
 	 * Creates a store-specific <code>Query</code> object using a <code>Criteria</code>
 	 * The store is not immediately consult for results. The consult only occurs when one the Query 
 	 * methods is invoked. Repeated invocations of the same query method may return different results as

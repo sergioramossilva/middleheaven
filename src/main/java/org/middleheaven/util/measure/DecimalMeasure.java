@@ -11,7 +11,7 @@ import org.middleheaven.util.measure.measures.Measurable;
  * @param <E>
  * @see {@link org.middleheaven.util.measure.AngularMeasure}
  */
-public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implements Comparable<DecimalMeasure<E>> , Convertable<E,DecimalMeasure<E>> ,  Amount<DecimalMeasure<E>,E>, Scalable<E,DecimalMeasure<E>> {
+public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implements Comparable<DecimalMeasure<E>>, Convertable<E,DecimalMeasure<E>> ,  Amount<DecimalMeasure<E>,E>, Scalable<E,DecimalMeasure<E>> {
 
 
 	public static <T extends Measurable> DecimalMeasure<T> zero(Unit<T> unit) {
@@ -86,7 +86,7 @@ public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implem
 	}
 
 	@Override
-	public int compareTo(DecimalMeasure<E> other) {
+	public  int compareTo(DecimalMeasure<E> other) {
 		assertCompatible (other);
 		return this.amount.compareTo(other.amount);
 	}

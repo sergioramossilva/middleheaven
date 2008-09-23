@@ -1,50 +1,59 @@
 package org.middleheaven.storage.criteria;
 
-public enum CriterionOperator {
+import java.io.Serializable;
 
-	EQUAL, 
-	NOT_EQUAL, 
-	MATCH,
-	NOT_MATCH,
-	IN,
-	NOT_IN,
-	GREATER_THAN, 
-	GREATER_THAN_OR_EQUAL,
-	LESS_THAN, 
-	LESS_THAN_OR_EQUAL, 
-	IS_NULL,
-	IS_NOT_NULL,
-	UNKOWN;
+public final class CriterionOperator implements Serializable{
+	
+	public static final CriterionOperator UNKOWN = new CriterionOperator("unkown"); 
+	public static final CriterionOperator EQUAL = new CriterionOperator("equals"); 
+	public static final CriterionOperator GREATER_THAN = new CriterionOperator("greaterThan"); 
+	public static final CriterionOperator GREATER_THAN_OR_EQUAL = new CriterionOperator("greaterThanOrEqual"); 
+	public static final CriterionOperator LESS_THAN = new CriterionOperator("lessThan"); 
+	public static final CriterionOperator LESS_THAN_OR_EQUAL = new CriterionOperator("lessThanOrEqual"); 
+	public static final CriterionOperator IN = new CriterionOperator("in"); 
+	public static final CriterionOperator CONTAINS = new CriterionOperator("contains"); 
+	public static final CriterionOperator STARTS_WITH = new CriterionOperator("startsWith"); 
+	public static final CriterionOperator ENDS_WITH = new CriterionOperator("endsWith"); 
+	
+	private static final long serialVersionUID = -909911263154033813L;
 
-	public CriterionOperator negate(){
-		switch (this){
-		case EQUAL:
-			return NOT_EQUAL;
-		case NOT_EQUAL:
-			return EQUAL;
-		case MATCH:
-			return NOT_MATCH;
-		case NOT_MATCH:
-			return MATCH;
-		case IN:
-			return NOT_IN;
-		case NOT_IN:
-			return IN;
-		case GREATER_THAN:
-			return LESS_THAN_OR_EQUAL;
-		case LESS_THAN_OR_EQUAL:
-			return GREATER_THAN;
-		case GREATER_THAN_OR_EQUAL:
-			return LESS_THAN;
-		case LESS_THAN:
-			return GREATER_THAN_OR_EQUAL;
-		case IS_NULL:
-			return IS_NOT_NULL;
-		case IS_NOT_NULL:
-			return IS_NULL;
-		default:
-			return UNKOWN;
-		}
+	private String name;
+	private boolean negated;
+	
+	private CriterionOperator(String name){
+		this(name,false);
 	}
 
+	public CriterionOperator(String name, boolean negated) {
+		super();
+		this.name = name;
+		this.negated = negated;
+	}
+
+
+	public CriterionOperator negate() {
+		return new CriterionOperator(this.name,!this.negated);
+	}
+
+	public boolean equals(Object other) {
+		return other instanceof CriterionOperator
+				&& equals((CriterionOperator) other);
+	}
+
+	public boolean equals(CriterionOperator other) {
+		return this.name.equals(other.name);
+	}
+
+	public int hashCode() {
+		return name.hashCode();
+	}	
+	
+	public String toString(){
+		return name;
+	}
+
+	public boolean isNegated() {
+		return this.negated;
+	}
+	
 }
