@@ -5,70 +5,58 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.brisa.j4b.util.convertions.TypeConvertions;
 
-public class PropertyAccessor {
+public class PropertyAccessor extends FieldAccessor {
 
-	private static String capitalizeFirst(String fieldName){
-		return fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
-	}
-	private static String unCapitalizeFirst(String fieldName){
-		return fieldName.substring(0,1).toLowerCase() + fieldName.substring(1);
-	}
-	Class<?> type;
-	String name;
 
 	Method acessor;
 	Method modifier;
-	Field field;
 	boolean modifyByField = false;
-	
-	public PropertyAccessor(Class<?> type, String fieldName) {
-		super();
-		this.type = type;
-		this.name = capitalizeFirst(fieldName);
 
-	
+	public PropertyAccessor(Class<?> type, String fieldName) {
+		super(type,fieldName);
+
+	}
+
+	protected void load(){
 
 		try {
 			// find corresponding field
-			
-			try {
-				field = type.getDeclaredField(unCapitalizeFirst(name));
-			} catch (NoSuchFieldException e1) {
-				// property does not have a field witth the same name
-				// no-op
-			} 
-			
-			// find assessor method
-			try {
-				acessor = type.getMethod("get" + name, new Class<?>[0]);
-			}catch (NoSuchMethodException e) {
-				// try is for boolean
-				try{
-					acessor = type.getMethod("is" + name, new Class<?>[0]);
-				}catch (NoSuchMethodException e1) {
-					// try direct access to field
-					if (field==null){
-						 // no field and no get. the property does not exist 
-						throw new PropertyNotFoundException(name + " is not a property of " + type.getName());
-					}
-				}
-			}
 
-			// find modifier method
 
-			// try iterate and match 
-			modifier = null;
-			for (Method method : type.getMethods()){
-				if (method.getName().equals("set" + name)){
-					modifier = method;
+			Field[] fields = type.getDeclaredFields();
+			for (Field f : fields){
+				if(f.getName().equalsIgnoreCase(name)){
+					field = f;
 					break;
 				}
 			}
 
+
+			// find assessor and modifier method
+			
+			
+			for (Method method : type.getMethods()){
+				if (method.getName().equalsIgnoreCase("set" + name)){
+					modifier = method;
+				} else if (method.getName().equalsIgnoreCase("get" + name) || 
+						method.getName().equalsIgnoreCase("is" + name) ){
+					acessor = method;
+				}
+				if (modifier !=null && acessor != null){
+					break;
+				}
+			}
+			
+			
+			if (acessor ==null && field==null){
+				// no field and no get. the property does not exist 
+				throw new PropertyNotFoundException(name + " is not a property of " + type.getName());
+			}
+			
 			if (modifier==null && field!=null){
-				// try access by field
+				// use modification  by field
 				modifyByField = true;
 			}
 
@@ -79,18 +67,10 @@ public class PropertyAccessor {
 		} 
 	}
 
-	public String toString(){
-		return this.name;
-	}
-	
-	public Class<?> getParentClass(){
-		return type;
-	}
-	
 	public Class<?> getValueType(){
 		return acessor!=null ? acessor.getReturnType() : field.getType();
 	}
-	
+
 	public Object getValue(Object target) throws ReflectionException{
 		try {
 			if (acessor!=null){
@@ -112,12 +92,12 @@ public class PropertyAccessor {
 
 	public void  setValue(Object target, Object value ){
 		try {
-			
+
 			if (modifier != null){
 				modifier.invoke(target, TypeConvertions.convert(value,modifier.getParameterTypes()[0]));
 			} else if (modifyByField && field!=null){
 				field.setAccessible(true);
-				field.set(target,TypeConvertions.convert(value,(Class<?>)field.getGenericType()));
+				field.set(target,TypeConvertions.convert(value,(Class)field.getGenericType()));
 			} // else is read only. not an exception
 		}catch (IllegalArgumentException e) {
 			throw new ReflectionException(e);
@@ -128,22 +108,21 @@ public class PropertyAccessor {
 		}
 	}
 
-	public String getName() {
-		return name;
-	}
-	
+
+
 	public <A extends Annotation> boolean isAnnotatedWith(Class<A> annotationClass) {
 		return (field!=null && field.isAnnotationPresent(annotationClass)) || 
-					acessor.isAnnotationPresent(annotationClass) || 
-					(modifier!=null && modifier.isAnnotationPresent(annotationClass));
+		(acessor!=null && acessor.isAnnotationPresent(annotationClass)) || 
+		(modifier!=null && modifier.isAnnotationPresent(annotationClass));
 	}
+
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		if (field!=null){
 			return ReflectionUtils.getAnnotation(field,annotationClass);
 		} else {
 			return ReflectionUtils.getAnnotation(acessor,annotationClass);
 		}
-		
+
 	}
 }
 
