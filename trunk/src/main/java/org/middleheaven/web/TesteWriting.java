@@ -1,6 +1,5 @@
 package org.middleheaven.web;
 
-import org.middleheaven.ui.Context;
 
 
 public class TesteWriting {
@@ -32,14 +31,8 @@ public class TesteWriting {
 	private static class ProjectInterceptor implements Interceptor{
 
 		@Override
-		public void interceptForward(Context context) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void interceptReverse(Context context) {
-			// TODO Auto-generated method stub
+		public void intercept(WebContext context, InterceptorChain chain) {
+			// TODO implement ProjectInterceptor.intercept
 			
 		}
 		

@@ -44,6 +44,7 @@ public class CollectionUtils {
 
 	}
 
+
 	public static <T> boolean equals(Collection<? extends T> a,Collection<? extends T> b) {
 
 		if (a==b){

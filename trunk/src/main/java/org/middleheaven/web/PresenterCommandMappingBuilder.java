@@ -11,9 +11,28 @@ public class PresenterCommandMappingBuilder {
 	private PresenterWebCommandMapping mapping;
 	private PresenterCommandMappingBuilder (Class<?> presenterClass){
 		this.mapping = new PresenterWebCommandMapping(presenterClass);
+		
 	}
 	
+	public WebCommandMapping getMapping(){
+		return mapping;
+	}
 	
+	public OutcomeBuilder onSuccess (){
+		return on(OutcomeStatus.SUCCESS);
+	}
+	
+	public OutcomeBuilder onFailure (){
+		return on(OutcomeStatus.FAILURE);
+	}
+	
+	public OutcomeBuilder onInvalid (){
+		return on(OutcomeStatus.INVALID);
+	}
+	
+	public OutcomeBuilder onError (){
+		return on(OutcomeStatus.ERROR);
+	}
 	public OutcomeBuilder on (OutcomeStatus status){
 		return new MyOutcomeBuilder(status);
 	}
@@ -42,7 +61,7 @@ public class PresenterCommandMappingBuilder {
 		
 		@Override
 		public PresenterCommandMappingBuilder forwardTo(String url) {
-			Outcome outcome = new Outcome(status, false, url);
+			Outcome outcome = new Outcome(status, false, GlobalMappings.getViewBase().concat("/").concat(url));
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(outcome);
 			return PresenterCommandMappingBuilder.this;
 		}
@@ -57,7 +76,7 @@ public class PresenterCommandMappingBuilder {
 
 		@Override
 		public PresenterCommandMappingBuilder redirectTo(String url) {
-			Outcome outcome = new Outcome(status, true, url);
+			Outcome outcome = new Outcome(status, true, GlobalMappings.getViewBase().concat("/").concat(url));
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(outcome);
 			return PresenterCommandMappingBuilder.this;
 		}
