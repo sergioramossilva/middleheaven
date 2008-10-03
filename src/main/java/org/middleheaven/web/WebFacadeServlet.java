@@ -1,7 +1,6 @@
 package org.middleheaven.web;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,53 +8,92 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.io.repository.upload.UploadManagedFileRepository;
-import org.middleheaven.ui.ContextScope;
+import org.middleheaven.logging.Logging;
 
-public class WebFacadeServlet extends HttpServlet {
+public final class WebFacadeServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -8162774606122448839L;
-
-	public void doPost(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
-		doService(request,response);
+	public final void doPut(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
+		doService(HttpServices.PUT,request,response);
 	}
-	
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
-		doService(request,response);
+
+	public final void doDelete(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
+		doService(HttpServices.DELETE,request,response);
 	}
-	
-	private void doService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
-		UploadManagedFileRepository rep = new UploadManagedFileRepository(request);
-		
-		WebContext context = new WebContext(request,response);
-		context.setAttribute(ContextScope.REQUEST, "uploads", rep);
-		
-		// resolve mapped WebCommand from url
+	public final void doPost(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
+		doService(HttpServices.POST,request,response);
+	}
 
-		WebCommandMappingService mapper = ServiceRegistry.getService(WebCommandMappingService.class);
+	public final void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+		doService(HttpServices.GET,request,response);
+	}
 
-		WebCommandMapping webCommandMapping = mapper.resolve(request.getRequestURL());
+	private void doService(HttpServices service, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
-		List<Interceptor> interceptors = webCommandMapping.interceptors();
+		try {
+			final String suffix = getServletConfig().getInitParameter("suffix");
 
-		for (Interceptor interceptor : interceptors){
-			interceptor.interceptForward(context);
+			StringBuffer requestURL = request.getRequestURL();
+
+			if (suffix!=null && requestURL.indexOf(suffix) != requestURL.length() - suffix.length()){
+				response.sendError(501); // service not implemented
+				return;
+			} 
+
+			WebContext context = new WebContext(service,request,response);
+
+			// resolve request location
+			context.setAttribute(ContextScope.REQUEST, "locale", request.getLocale());
+
+			WebApplication webApplication = context.getAttribute(ContextScope.APPLICATION , "_webApplication", WebApplication.class);
+
+
+			// resolve mapped WebCommand from url
+
+			WebCommandMappingService mapper = ServiceRegistry.getService(WebCommandMappingService.class);
+
+			WebCommandMapping webCommandMapping = mapper.resolve(stripedRequestPath(request, suffix));
+
+			if (webCommandMapping==null){
+				// 404 resource not found
+				response.sendError(404);
+				return;
+			}
+
+
+			Outcome outcome = webCommandMapping.execute(context);
+
+			if (outcome.isTerminal()){
+				return; // do nothing. The response is already done
+			} else if (outcome.isError){
+				response.sendError(Integer.parseInt(outcome.url));
+			}else if (outcome.isDoRedirect()){
+				response.sendRedirect(outcome.url);
+			} else {
+				request.getRequestDispatcher(outcome.url).include(request, response);
+			}
+
+
+		} catch ( ActionHandlerNotFoundException e ){
+			response.sendError(501); // not implemented
+		} catch (RuntimeException e){
+			Logging.getBook("web").logError("Unexpected error" , e);
+			response.sendError(500); // serve error
 		}
+	}
 
-		Outcome outcome = webCommandMapping.execute(context);
-
-		for (Interceptor interceptor : interceptors){
-			interceptor.interceptReverse(context);
+	private CharSequence stripedRequestPath(HttpServletRequest request , String suffix ) {
+		StringBuilder requestURL = new StringBuilder(request.getRequestURL());
+		String end = ".";
+		if ( suffix != null){
+			end = end.concat(suffix);
 		}
-
-		if (outcome.isError){
-			response.sendError(Integer.parseInt(outcome.url));
-		}else if (outcome.isDoRedirect()){
-			response.sendRedirect(outcome.url);
-		} else {
-			request.getRequestDispatcher(outcome.url).forward(request, response);
-		}
+		// remove context from the start and suffix from end
+		String[] url = requestURL.substring( requestURL.indexOf(request.getContextPath()) + request.getContextPath().length(), requestURL.length() - end.length()).split("\\.") ;
 		
+		if ( url.length>1){
+			request.setAttribute("action", url[1]);
+		}
+		return url[0];
 	}
 }

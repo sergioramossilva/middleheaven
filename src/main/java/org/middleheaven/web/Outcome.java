@@ -36,4 +36,8 @@ public class Outcome {
 	public boolean isError() {
 		return isError;
 	}
+
+	public boolean isTerminal() {
+		return OutcomeStatus.TERMINATE.equals(status);
+	}
 }
