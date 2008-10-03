@@ -1,12 +1,14 @@
 package org.middleheaven.core.reflection;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -16,16 +18,36 @@ public final class ReflectionUtils {
 
 	public ReflectionUtils(){}
 
-	public static void copyState(Object from, Object to){
-		Set<Field> fields = getAllFields(from.getClass());
-		for (Field f : fields){
-			if (!Modifier.isTransient(f.getModifiers())){
-				Object value = getFieldValue(from,f.getName());
-				setFieldValue(to,f.getName(),value);
-			}
+
+	
+	public static <T> T copy(T original , T copy ){
+		Collection<PropertyAccessor> assessors = getPropertyAccessors(original.getClass());
+
+		for (PropertyAccessor fa : assessors){
+			fa.setValue(copy, fa.getValue(original));
 		}
+		return copy;
 	}
 	
+	public static PropertyAccessor getPropertyAccessor(Class<?> type, String fieldName){
+		return new PropertyAccessor(type,fieldName);
+	}
+	
+	public static Collection<PropertyAccessor> getPropertyAccessors(Class<?> type)
+	throws ReflectionException{
+
+		Collection<PropertyAccessor> result = new ArrayList<PropertyAccessor> ();
+		for (Method m : type.getMethods()){
+			if (m.getName().startsWith("set")){
+				//result.add(new PropertyAccessor(type, m.getName().substring(3)));
+				result.add(getPropertyAccessor(type, m.getName().substring(3)));
+			}
+
+		}
+		return result;
+	}
+	
+	/*
 	public static Object getFieldValue(Object target, String name) {
 		name = name.toLowerCase();
 		
@@ -123,12 +145,15 @@ public final class ReflectionUtils {
 			setFieldValue(f,target,value);
 		}
 	}
+	*/
+	
 	/**
 	 * Set a field with a value. If there is a set<Field>() method , that method is invoked
 	 * otherwise the set is made directly.
 	 * @param f
 	 * @param value
 	 */
+	/*
 	public static void setFieldValue (Field f, Object target, Object value){
 		try {
 			try {
@@ -147,6 +172,8 @@ public final class ReflectionUtils {
 			throw new InvocationTargetReflectionException(e);
 		}
 	}
+	*/
+	
 	/**
 	 * Determines if class <code>match</code> is a superclass or supper-interface
 	 * of class <code>test</code> 
@@ -154,7 +181,6 @@ public final class ReflectionUtils {
 	 * @param match
 	 * @return
 	 */
-
 	public static boolean isAssignableFrom (Class<?> test , Class<?> match){
 		return match.isAssignableFrom(test);
 	}
@@ -292,14 +318,14 @@ public final class ReflectionUtils {
 		return candidate.isAnnotationPresent(annotationClass);
 	}
 
-
-	public static <A extends Annotation> A getAnnotation(Class<?> candidate, Class<A> annotationClass) {
-		if ( candidate.isAnnotationPresent(annotationClass)){
-			return candidate.getAnnotation(annotationClass);
-		}
-		throw new IllegalArgumentException();
+	public static <A extends Annotation> A getAnnotation(Class<?> annotated, Class<A> annotationClass){
+		return annotated.getAnnotation(annotationClass);
 	}
 
+	public static <A extends Annotation> A getAnnotation(AccessibleObject obj, Class<A> annotationClass){
+		return obj.getAnnotation(annotationClass);
+	}
+	
 	public static <A extends Annotation> A getAnnotation(Field field, Class<A> annotationClass) {
 		if (field.isAnnotationPresent(annotationClass)){
 			return field.getAnnotation(annotationClass);
