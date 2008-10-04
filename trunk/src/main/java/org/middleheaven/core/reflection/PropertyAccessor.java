@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.brisa.j4b.util.convertions.TypeConvertions;
+import org.middleheaven.util.conversion.TypeConvertions;
 
 public class PropertyAccessor extends FieldAccessor {
 
