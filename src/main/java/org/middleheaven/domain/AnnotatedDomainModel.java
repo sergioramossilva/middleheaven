@@ -52,7 +52,7 @@ public class AnnotatedDomainModel implements DomainModel{
 
 	@Override
 	public <E extends Entity> Repository<E> repositoryOf(Class<E> entityType) {
-		Repository<E> rep = repositoryRegistry.of(entityType);
+		RepositoryRegister<E> rep = repositoryRegistry.of(entityType);
 		rep.setDomainModel(this);
 		return rep;
 	}
@@ -71,7 +71,7 @@ public class AnnotatedDomainModel implements DomainModel{
 	}
 
 	@Override
-	public <E extends Entity> void addEntity(Class<E> entityType,Repository<? extends E> repository) {
+	public <E extends Entity> void addEntity(Class<E> entityType,RepositoryRegister<? extends E> repository) {
 		this.repositoryRegistry.setRepository(entityType, repository);
 		// add annotaded storemodel
 		if (!Entity.class.isAssignableFrom(entityType)  && !entityType.isAnnotationPresent(org.brisa.j4b.domain.annotations.Entity.class)){
@@ -96,7 +96,7 @@ public class AnnotatedDomainModel implements DomainModel{
 		for (int i=0;i < searchPaths.length;i++){
 			String path =  searchPaths[i] + "." +  entityType.getSimpleName() + "Repository";
 			try{
-				Repository<E> rep = ReflectionUtils.newInstance(path, Repository.class);
+				RepositoryRegister<E> rep = ReflectionUtils.newInstance(path, RepositoryRegister.class);
 				this.addEntity(entityType, rep);
 				return;
 			} catch (ClassCastException e){
@@ -120,7 +120,7 @@ public class AnnotatedDomainModel implements DomainModel{
 		Set<Class> entities = ReflectionUtils.getPackageClasses(entitiesPackage);
 
 		for (Class c : entities){
-			if (!Repository.class.isAssignableFrom(c) && !c.isAnnotationPresent(ValueObject.class)){
+			if (!RepositoryRegister.class.isAssignableFrom(c) && !c.isAnnotationPresent(ValueObject.class)){
 				addEntity(c);
 			}
 		}

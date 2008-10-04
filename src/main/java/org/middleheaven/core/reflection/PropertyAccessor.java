@@ -79,7 +79,7 @@ public class PropertyAccessor extends FieldAccessor {
 				field.setAccessible(true);
 				return field.get(target);
 			} else {
-				throw new ReflectionException("Property does not exist");
+				throw new PropertyNotFoundException("Property does not exist");
 			}
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionException(e);

@@ -10,7 +10,7 @@ import java.util.TreeMap;
 
 import org.middleheaven.classification.BooleanClassifier;
 import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.storage.AbstractStoreManager;
+import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.PersistableState;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
@@ -20,6 +20,7 @@ import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaFilter;
+import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.sequence.CannotCreateSequenceException;
 import org.middleheaven.util.sequence.DefaultToken;
 import org.middleheaven.util.sequence.Sequence;
@@ -36,7 +37,7 @@ import org.space4j.command.PutCmd;
 import org.space4j.command.RemoveCmd;
 import org.space4j.indexing.IndexManager;
 
-public class SpaceStoreManager extends AbstractStoreManager {
+public class SpaceStoreKeeper extends AbstractStoreKeeper {
 
 	protected Space4J space4j = null;
 	protected Space space;
@@ -44,7 +45,7 @@ public class SpaceStoreManager extends AbstractStoreManager {
 
 	final Map<String, Sequence<Long>> sequences = new HashMap<String,Sequence<Long>>();
 
-	public SpaceStoreManager(Space4J space4j){
+	public SpaceStoreKeeper(Space4J space4j){
 
 		this.space4j = space4j;
 
@@ -60,7 +61,7 @@ public class SpaceStoreManager extends AbstractStoreManager {
 	}
 
 	@Override
-	public Sequence<Long> getSequence(String name) {
+	public Sequence<Identity> getSequence(String name) {
 		/*
 		 * Create the sequence for the unique ids
 		 * using the Space4J CreateSequenceCmd.
@@ -85,7 +86,7 @@ public class SpaceStoreManager extends AbstractStoreManager {
 
 		// Grab the space where all data resides...
 	
-		final String entityRef = model.hardNameForEntity(); 
+		final String entityRef = model.getEntityHardName(); 
 
 		try {
 
@@ -104,7 +105,7 @@ public class SpaceStoreManager extends AbstractStoreManager {
 			}
 
 			for (Storable s : list){
-				space4j.exec(new PutCmd(entityRef, s.getKey(), serialize(s,model)));
+				space4j.exec(new PutCmd(entityRef, s.getIdentity(), serialize(s,model)));
 
 			}
 
@@ -118,7 +119,7 @@ public class SpaceStoreManager extends AbstractStoreManager {
 	public Storable serialize(Storable other,StorableEntityModel model){
 		SpaceStorable ss = new SpaceStorable();
 
-		ss.key = other.getKey();
+		ss.key = other.getIdentity();
 		ss.state = other.getPersistableState();
 		ss.persistableClassName = other.getPersistableClass().getName();
 		for (StorableFieldModel fm : model.fields()){
@@ -130,11 +131,11 @@ public class SpaceStoreManager extends AbstractStoreManager {
 
 	@Override
 	public void remove(Collection<Storable> obj, StorableEntityModel model) {
-		final String entityRef = model.hardNameForEntity(); 
+		final String entityRef = model.getEntityHardName(); 
 
 		try{
 			for (Storable s : obj){
-				space4j.exec(new RemoveCmd(entityRef, s.getKey()));
+				space4j.exec(new RemoveCmd(entityRef, s.getIdentity()));
 			}
 
 		} catch (CommandException e) {
@@ -172,13 +173,13 @@ public class SpaceStoreManager extends AbstractStoreManager {
 		}
 
 		@Override
-		public Long getKey() {
+		public Identity getIdentity() {
 			return key;
 		}
 
 		@Override
-		public void setKey(Long key) {
-			this.key = key;
+		public void setIdentity(Identity id) {
+			this.key = id;
 		}
 
 		@Override
@@ -253,7 +254,7 @@ public class SpaceStoreManager extends AbstractStoreManager {
 
 			BooleanClassifier<T> filter = new CriteriaFilter<T> (criteria);
 			
-			Iterator<Object> iter = space.getIterator(model.hardNameForEntity());
+			Iterator<Object> iter = space.getIterator(model.getEntityHardName());
 
 			while (iter.hasNext()) {
 				T elem = (T)iter.next();

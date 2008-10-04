@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-public abstract class InputStreamConfigurator implements Configurator{
+public abstract class InputStreamConfigurator<T extends Configuration> implements Configurator<T>{
 
 
     

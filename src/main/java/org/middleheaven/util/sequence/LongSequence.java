@@ -1,6 +1,6 @@
 package org.middleheaven.util.sequence;
 
-public class LongSequence implements Sequence<Long>{
+public class LongSequence implements StateEditableSequence<Long>{
 
 	long current;
 	public LongSequence(){
@@ -13,8 +13,19 @@ public class LongSequence implements Sequence<Long>{
 	
 	
 	@Override
-	public SequenceToken<Long> next() {
+	public synchronized SequenceToken<Long> next() {
 		return new DefaultToken<Long>(current++);
 	}
+
+	@Override
+	public synchronized void setSequenceState(SequenceState state) {
+		this.current = ((Long)state.getLastUsedValue()).longValue();
+	}
+
+	@Override
+	public SequenceState getSequenceState() {
+		return new SequenceState(this.current);
+	}
+
 
 }

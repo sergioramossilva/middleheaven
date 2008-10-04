@@ -10,12 +10,13 @@ import java.util.Set;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.data.DataType;
+import org.middleheaven.domain.EntityModel;
 import org.middleheaven.storage.DefaultStorableFieldModel;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 
-public class AnnotationsStorableEntityModel implements StorableEntityModel {
+public class AnnotationsStorableEntityModel implements EntityModel {
 
 	Class<?> type;
 
@@ -35,9 +36,8 @@ public class AnnotationsStorableEntityModel implements StorableEntityModel {
 		String key = annot.key();
 		QualifiedName keyName = QualifiedName.of(hardname , key);
 		
-		keyModel = new DefaultStorableFieldModel(keyName, DataType.INTEGER).setKey(true);
-
-		fields.put(keyName, keyModel);
+		keyModel= new DefaultStorableFieldModel(keyName,DataType.INTEGER,Integer.class);
+		
 		
 		Set<Field> typeFields = ReflectionUtils.getAllFields(type);
 
@@ -57,8 +57,14 @@ public class AnnotationsStorableEntityModel implements StorableEntityModel {
 				continue;
 			}
 			QualifiedName name = QualifiedName.of(hardname , fieldName);
-			 
-			DefaultStorableFieldModel d = new DefaultStorableFieldModel(name,dataType);
+			
+			DefaultStorableFieldModel d = new DefaultStorableFieldModel(name,dataType,(Class)f.getGenericType());
+			
+			if (name.equals(keyName)){
+				d.setKey(true);
+				keyModel = d;
+			}
+			
 			fields.put(name, d);
 
 		}
@@ -71,7 +77,7 @@ public class AnnotationsStorableEntityModel implements StorableEntityModel {
 	}
 
 	@Override
-	public String hardNameForEntity() {
+	public String getEntityHardName() {
 		return hardname;
 	}
 

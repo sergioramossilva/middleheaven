@@ -14,23 +14,16 @@ package org.middleheaven.util.sequence;
  * @author Sergio M. M. Taborda 
  *
  */
-public interface StatePersistentSequence<T> extends Sequence<T>, NamedSequence<T>{
+public interface StatePersistentSequence<T> extends StateEditableSequence<T> , NamedSequence<T> {
 
-    
-    /**
-     * Persists the state.
-     * This method is implementation specific, 
-     * but normally involves a call to the Sequence Storage Service
-     *
-     */
-    public abstract void persist();
-    
-    /**
-     * Obtains and returns the last used value for the sequence
-     * 
-     * @return the last used value for the sequence
-     */ 
-    public abstract T lastUsedValue();
+
+	/**
+	 * Allows other objects to listener to this sequence state change.
+	 * Sequence storage 
+	 * @param listener
+	 */
+	public void addSequenceStateListener (SequenceStateListener listener);
+
     
     
     

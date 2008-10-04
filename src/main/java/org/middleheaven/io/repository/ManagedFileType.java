@@ -52,4 +52,8 @@ public enum ManagedFileType {
 	public boolean isOnlyFolder() {
 		return this.equals(FOLDER);
 	}
+
+	public boolean isFile() {
+		return this.equals(FILE);
+	}
 }

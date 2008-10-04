@@ -4,11 +4,14 @@
  */
 package org.middleheaven.util.sequence.service;
 
+import org.middleheaven.util.sequence.SequenceState;
+import org.middleheaven.util.sequence.SequenceStateListener;
 import org.middleheaven.util.sequence.StatePersistentSequence;
 
 
-public interface SequenceStorageService {
+public interface SequenceStorageService extends SequenceStateListener{
 
-    public void store(StatePersistentSequence<?> sequence);
-    public String retriveLastValue(StatePersistentSequence<?> sequence);
+    public void store(SequenceState state);
+    public void restore(StatePersistentSequence<?> sequence);
+
 }

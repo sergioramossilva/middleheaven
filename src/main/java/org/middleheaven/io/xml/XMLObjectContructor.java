@@ -26,7 +26,7 @@ public abstract class XMLObjectContructor<T> {
     private T object;
     protected URL url;
     
-    protected T getConstructedObject(){
+    public T getConstructedObject(){
         return object;
     }
     

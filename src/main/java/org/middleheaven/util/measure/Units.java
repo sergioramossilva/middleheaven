@@ -3,6 +3,8 @@ package org.middleheaven.util.measure;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.middleheaven.util.measure.measures.Measurable;
+
 
 public class Units {
 
@@ -10,17 +12,17 @@ public class Units {
 	private static Map<String,Unit> units= new HashMap<String,Unit>(); 
 	
 	static {
-		addUnit(new BaseUnit(Dimension.TEMPERATURE , "ºC")); // Celcius
-		addUnit(new BaseUnit(Dimension.TEMPERATURE , "K")); // Kelvin
-		addUnit(new BaseUnit(Dimension.TEMPERATURE , "R")); // Rankine
-		addUnit(new BaseUnit(Dimension.TEMPERATURE , "ºF")); // Fareihight
+		addUnit(Unit.unit(Dimension.TEMPERATURE , "ºC")); // Celcius
+		addUnit(Unit.unit(Dimension.TEMPERATURE , "K")); // Kelvin
+		addUnit(Unit.unit(Dimension.TEMPERATURE , "R")); // Rankine
+		addUnit(Unit.unit(Dimension.TEMPERATURE , "ºF")); // Fareihight
 	}
 
-	private static void addUnit(Unit unit){
+	private static <E extends Measurable> void addUnit(Unit<E> unit){
 		units.put(unit.symbol(), unit);
 	}
 	
-	public static  Unit getUnit(String unitSymbol){
+	public static <E extends Measurable> Unit<E> getUnit(String unitSymbol){
 		return units.get(unitSymbol.trim());
 	}
 }

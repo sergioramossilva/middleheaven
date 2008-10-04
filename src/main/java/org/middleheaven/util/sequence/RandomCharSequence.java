@@ -6,11 +6,12 @@ package org.middleheaven.util.sequence;
 
 import java.util.Random;
 
+/**
+ * @author  Sergio M. M. Taborda 
+ */
 public class RandomCharSequence implements RandomSequence<CharSequence>{
 
-    /**
-     * @author  Sergio M. M. Taborda 
-     */
+  
     public enum TemplateType {
         NUMERIC_ONLY, ALFA_NUMERIC , ALFA_ONLY
     }

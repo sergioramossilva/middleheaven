@@ -4,7 +4,11 @@ public class IntegerIdentity extends Identity {
 
 	
 	private int value;
-
+	
+	public static Identity valueOf(String value) {
+		return new IntegerIdentity(Integer.parseInt(value));
+	}
+	
 	public IntegerIdentity(int value) {
 		this.value = value;
 	}
@@ -40,4 +44,6 @@ public class IntegerIdentity extends Identity {
 	public IntegerIdentity next(){
 		return new IntegerIdentity(++this.value);
 	}
+
+
 }

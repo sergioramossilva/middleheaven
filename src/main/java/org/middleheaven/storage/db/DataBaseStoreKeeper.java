@@ -8,46 +8,60 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.storage.AbstractStoreManager;
+import org.middleheaven.logging.Logging;
+import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IdentitySequence;
+import org.middleheaven.util.identity.IntegerIdentitySequence;
 import org.middleheaven.util.sequence.Sequence;
-import org.middleheaven.util.sequence.persistent.AutoIncrementSequence;
 
-public final class DataBaseStoreManager extends AbstractStoreManager {
+public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 
-	public DataBaseDialect dialect;
-	public DataSource datasource;
-	public AutoIncrementSequence sequence;
+	private DataBaseDialect dialect;
+	private DataSource datasource;
 
-	public DataBaseStoreManager(DataSource datasource){
+	public DataBaseStoreKeeper(DataSource datasource){
 		this.datasource = datasource;
 		this.dialect = DatabaseDialectFactory.getDialect(datasource);
 	}
 
-	public DataBaseStoreManager setDialect(DataBaseDialect dialect){
+	public DataBaseStoreKeeper setDialect(DataBaseDialect dialect){
 		this.dialect = dialect;
 		return this;
 	}
 
-	public DataBaseStoreManager setDataSource(DataSource datasource){
+	public DataBaseStoreKeeper setDataSource(DataSource datasource){
 		this.datasource = datasource;
 		this.dialect = DatabaseDialectFactory.getDialect(datasource);
 		return this;
 	}
 
+	
+	Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
+	
 	@Override
-	public Sequence<Long> getSequence(String name) {
-		return AutoIncrementSequence.getSequence(name);
+	public <I extends Identity> Sequence<I> getSequence(String name) {
+		
+		IdentitySequence iseq = sequences.get(name);
+		if (iseq==null){
+			Sequence<Long> seq = dialect.getSequence(datasource, name);
+			isep = new IntegerIdentitySequence();
+			
+		}
+		return iseq;
+		
 	}
-
 
 	class DBStorageQuery<T> implements Query<T>{
 		Criteria<T> criteria;
@@ -96,7 +110,7 @@ public final class DataBaseStoreManager extends AbstractStoreManager {
 				List<T> list = new LinkedList<T>();
 				ResultSetStorable s = new ResultSetStorable(rs,model);
 				while (rs.next()){
-					T t = merge(model.instanceFor(criteria.getTargetClass()));
+					T t = merge(criteria.getTargetClass().cast(model.newInstance()));
 					this.copy(s, (Storable)t, model);
 
 					list.add(t);
@@ -141,11 +155,11 @@ public final class DataBaseStoreManager extends AbstractStoreManager {
 		if (collection.isEmpty()){
 			return;
 		}
-		List<Long> keys = new ArrayList<Long>(collection.size());
+		List<Identity> keys = new ArrayList<Identity>(collection.size());
 		Storable s=null;
 		for (Iterator<Storable> it = collection.iterator();it.hasNext();){
 			s = it.next();
-			keys.add(s.getKey());
+			keys.add(s.getIdentity());
 		}
 		
 		Criteria<?> c = CriteriaBuilder.search(s.getPersistableClass())
@@ -190,6 +204,28 @@ public final class DataBaseStoreManager extends AbstractStoreManager {
 			}
 		}
 	}
+
+	public void finish(){
+		// last command
+		Connection con =null;
+		try {
+			con = this.datasource.getConnection();
+
+			dialect.lastCommand(con);
+
+		} catch (SQLException e){
+			// cannot rethrow as this is the finish method
+			Logging.getBook(this.getClass()).logError(e.getMessage());
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				throw dialect.handleSQLException(e);
+			}
+		}
+	
+	}
+
 
 
 

@@ -2,10 +2,10 @@ package org.middleheaven.storage;
 
 import org.middleheaven.core.reflection.ProxyUtils;
 
-public abstract class AbstractStoreManager implements StoreManager {
+public abstract class AbstractStoreKeeper implements StoreKeeper {
 
 	protected final void copy(Storable from, Storable to,StorableEntityModel model) {
-		to.setKey(from.getKey());
+		to.setIdentity(from.getIdentity());
 		to.setPersistableState(from.getPersistableState());
 		
 		for (StorableFieldModel fm : model.fields()){
@@ -24,4 +24,5 @@ public abstract class AbstractStoreManager implements StoreManager {
 		return (T)p;
 	}
 
+	
 }

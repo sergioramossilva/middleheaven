@@ -1,10 +1,14 @@
 package org.middleheaven.storage.db;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.sql.DataSource;
 
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
@@ -13,11 +17,15 @@ import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.AbstractCriteria;
 import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.criteria.Criterion;
 import org.middleheaven.storage.criteria.FieldCriterion;
-import org.middleheaven.storage.criteria.FieldValueHolder;
 import org.middleheaven.storage.criteria.LogicCriterion;
+import org.middleheaven.util.sequence.NamedSequenceAdapter;
+import org.middleheaven.util.sequence.Sequence;
+import org.middleheaven.util.sequence.SequenceStateListener;
+import org.middleheaven.util.sequence.Sequences;
+import org.middleheaven.util.sequence.StateChangedEvent;
+import org.middleheaven.util.sequence.StatePersistentSequence;
 
 public abstract class DataBaseDialect {
 
@@ -33,6 +41,10 @@ public abstract class DataBaseDialect {
 		this.fieldSeparator = fieldSeparator;
 	}
 
+	public StorageException handleSQLException(SQLException e) {
+		return new StorageException(e);
+	}
+	
 	public String startDelimiter() {
 		return startDelimiter;
 	}
@@ -65,8 +77,6 @@ public abstract class DataBaseDialect {
 		buffer.append(endDelimiter);
 	}
 
-	public abstract StorageException handleSQLException(SQLException e);
-
 	public final <T> RetriveDataBaseCommand createSelectCommand (Criteria<T> criteria, StorableEntityModel model ){
 
 		return newCriteriaInterpreter(merge(criteria,model),model).translateRetrive();
@@ -98,7 +108,7 @@ public abstract class DataBaseDialect {
 		values.delete(values.length()-1, values.length());
 
 		StringBuilder sql = new StringBuilder("INSERT INTO ")
-		.append(model.hardNameForEntity())
+		.append(model.getEntityHardName())
 		.append(" (")
 		.append(names)
 		.append(") VALUES (")
@@ -110,9 +120,9 @@ public abstract class DataBaseDialect {
 	
 	public <T> Criteria<T> merge(Criteria<T> criteria, StorableEntityModel model){
 		if (criteria instanceof DBCriteria){
-			return (DBCriteria)criteria;
+			return (DBCriteria<T>)criteria;
 		}
-		DBCriteria<T> merged = new DBCriteria<T>((AbstractCriteria)criteria);
+		DBCriteria<T> merged = new DBCriteria<T>((AbstractCriteria<T>)criteria);
 		merged.restrictAll(model);
 		return merged;
 		
@@ -160,7 +170,7 @@ public abstract class DataBaseDialect {
 	
 	public DataBaseCommand createUpdateCommand(Collection<Storable> data,StorableEntityModel model){
 		StringBuilder sql = new StringBuilder("UPDATE ")
-		.append(model.hardNameForEntity())
+		.append(model.getEntityHardName())
 		.append(" SET ");
 
 		List<StorableFieldModel> fields = new ArrayList<StorableFieldModel>();
@@ -187,5 +197,11 @@ public abstract class DataBaseDialect {
 
 	}
 
+	public void lastCommand(Connection con) throws SQLException{
+		//no-op by default
+	}
+
+	public abstract Sequence<Long> getSequence(DataSource datasource, String name);
+	
 
 }

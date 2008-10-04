@@ -26,6 +26,6 @@ class ArrayInterceptorChain  implements InterceptorChain {
 	}
 
 	public void doFinal(Notification notification) {
-		listeners.broadcast().handleNotification(notification);
+		listeners.broadcastEvent().handleNotification(notification);
 	}
 }

@@ -3,9 +3,9 @@ package org.middleheaven.storage.db.dialects;
 import java.sql.SQLException;
 
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.db.DataBaseDialect;
+import org.middleheaven.storage.db.SequenceNotSupportedDialect;
 
-public class SQLServerDialect extends DataBaseDialect{
+public class SQLServerDialect extends SequenceNotSupportedDialect{
 
 	public SQLServerDialect() {
 		super("[", "]", ".");

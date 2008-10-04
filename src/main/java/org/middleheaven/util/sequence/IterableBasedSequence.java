@@ -28,10 +28,34 @@ public class IterableBasedSequence<T> implements LimitedSequence<T> {
 	}
 
 	@Override
-	public Iterator<T> iterator() {
-		return it;
+	public Iterator<SequenceToken<T>> iterator() {
+		return new SequenceTokenIterator<T>(it);
 	}
 
-	
+	private static  class SequenceTokenIterator<K> implements Iterator<SequenceToken<K>>{
+
+		Iterator<K> it;
+		
+		public SequenceTokenIterator(Iterator<K> it) {
+			super();
+			this.it = it;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return it.hasNext();
+		}
+
+		@Override
+		public SequenceToken<K> next() {
+			return new DefaultToken<K>(it.next()); 
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+	}
 
 }

@@ -8,6 +8,7 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
+import org.middleheaven.util.identity.Identity;
 
 public class ResultSetStorable implements Storable {
 
@@ -20,13 +21,13 @@ public class ResultSetStorable implements Storable {
 	}
 
 	@Override
-	public Long getKey() {
+	public Identity getIdentity() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setKey(Long key) {
+	public void setIdentity(Identity id) {
 		throw new UnsupportedOperationException();
 	}
 	

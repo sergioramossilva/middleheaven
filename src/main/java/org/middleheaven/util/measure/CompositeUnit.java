@@ -73,7 +73,7 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 	private Dimension<E> currentDimention = Dimension.DIMENTIONLESS.simplify();
 	
 	CompositeUnit(){}
-	CompositeUnit(CompositeUnit other){
+	CompositeUnit(CompositeUnit<E> other){
 		//	clone 
 		this.units = (TreeMap) other.units.clone();
 		this.currentDimention = other.currentDimention;

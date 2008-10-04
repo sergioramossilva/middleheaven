@@ -3,9 +3,10 @@ package org.middleheaven.storage;
 import java.util.Collection;
 
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.sequence.Sequence;
 
-public interface StoreManager {
+public interface StoreKeeper {
 
 	/**
 	 * Included a new objects in the store
@@ -47,7 +48,7 @@ public interface StoreManager {
 	 * storage unique key generation in a store dependent manner.
 	 * DatabaseStorages can use native sequence support where available. 
 	 * @param name sequence name
-	 * @return <code>Long</code> sequence
+	 * @return Sequence of <code>Identity</code> sequence
 	 */
-	public Sequence<Long> getSequence(String name);
+	public <I extends Identity> Sequence<I> getSequence(String name);
 }

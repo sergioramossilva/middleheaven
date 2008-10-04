@@ -8,8 +8,8 @@ import org.middleheaven.storage.criteria.Criteria;
 public class NaiveCriteriaQuery<T> implements Query<T> {
 
 	Criteria<T> criteria;
-	NaiveStoreManager manager;
-	public NaiveCriteriaQuery(Criteria<T> criteria, NaiveStoreManager manager){
+	NaiveStoreKeeper manager;
+	public NaiveCriteriaQuery(Criteria<T> criteria, NaiveStoreKeeper manager){
 		this.criteria = criteria;
 		this.manager = manager;
 	}

@@ -1,15 +1,16 @@
 package org.middleheaven.test.storage;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-import static org.middleheaven.storage.criteria.CriteriaBuilder.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.middleheaven.storage.criteria.CriteriaBuilder.search;
 
 import java.io.File;
 import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
@@ -27,7 +28,7 @@ import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.datasource.DataSourceService;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.datasource.DriverDataSource;
-import org.middleheaven.storage.db.DataBaseStoreManager;
+import org.middleheaven.storage.db.DataBaseStoreKeeper;
 import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
 import org.middleheaven.util.sequence.service.FileSequenceStorageActivator;
 
@@ -37,8 +38,8 @@ public class DataStorageTest {
 	static DataStorage ds;
 	static boolean runTest=true;
 
-	@BeforeClass
-	public static void setUp(){
+	@Before
+	public void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
 		bootstrap.start();
@@ -52,10 +53,20 @@ public class DataStorageTest {
 		// Configured
 
 		DataSourceService srv = ServiceRegistry.getService(DataSourceService.class);
-		srv.addDataSource("test", new DriverDataSource("org.postgresql.Driver" , "jdbc:postgresql:test" , "pguser","pguser"));
-
+//		srv.addDataSource("test", new DriverDataSource(
+//				"org.postgresql.Driver" ,
+//				"jdbc:postgresql:test" ,
+//				"pguser",
+//				"pguser"
+//		));
+		srv.addDataSource("test", new DriverDataSource(
+				"org.hsqldb.jdbcDriver" ,
+				"jdbc:hsqldb:F:\\Workspace\\MiddleHeaven_Google\\XTest;shutdown=true" ,
+				"sa",
+				""
+		));
 		DataSource datasource = ServiceRegistry.getService(DataSourceService.class).getDataSource("test");
-		ds = new DomainDataStorage(new DataBaseStoreManager(datasource) , new StoreMetadataManager(){
+		ds = new DomainDataStorage(new DataBaseStoreKeeper(datasource) , new StoreMetadataManager(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
@@ -91,14 +102,14 @@ public class DataStorageTest {
 	@Test
 	public void testCriteriaDelete(){
 		if(runTest){
-		Criteria<Subject> all = search(Subject.class).all();
+			Criteria<Subject> all = search(Subject.class).all();
 
-		// remove them
-		ds.remove(all);
+			// remove them
+			ds.remove(all);
 
-		Query<Subject> q = ds.createQuery(all);
+			Query<Subject> q = ds.createQuery(all);
 
-		assertEquals(0L,q.count());
+			assertEquals(0L,q.count());
 		}
 	}
 
@@ -167,10 +178,10 @@ public class DataStorageTest {
 		.orderBy("name").asc()
 		.all();
 
-	    q = ds.createQuery(some);
+		q = ds.createQuery(some);
 
 		assertEquals(1L, q.count());
-		
+
 		ds.remove(toA);
 		ds.remove(toB);
 	}
@@ -244,5 +255,5 @@ public class DataStorageTest {
 		assertEquals(count-1L, q.count());
 
 	}
-	
+
 }

@@ -11,7 +11,7 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StoreMetadataManager;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.inmemory.SpaceStoreManager;
+import org.middleheaven.storage.inmemory.SpaceStoreKeeper;
 import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
 import org.space4j.Space4J;
 import org.space4j.implementation.SimpleSpace4J;
@@ -37,7 +37,7 @@ public class SpaceStorageTest {
 	public void test(){
 
 
-		DataStorage ds = new DomainDataStorage(new SpaceStoreManager(space4j) , new StoreMetadataManager(){
+		DataStorage ds = new DomainDataStorage(new SpaceStoreKeeper(space4j) , new StoreMetadataManager(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
