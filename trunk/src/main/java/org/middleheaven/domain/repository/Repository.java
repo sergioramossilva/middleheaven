@@ -1,41 +1,22 @@
 package org.middleheaven.domain.repository;
 
-import java.util.Map;
-import java.util.TreeMap;
+import org.middleheaven.storage.Query;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.storage.DataStorage;
-import org.middleheaven.storage.DataStorageService;
+/**
+ * 
+ * @author Sérgio Taborda
+ *
+ * @param <E> Repository's entity
+ */
+public interface Repository<E> {
 
-
-public class Repository {
-
-	private  Map<String, EntityRepository<?>> repositories = new TreeMap<String, EntityRepository<?>>();
+	public Query<E> retriveAll();
 	
-	public  <E extends Entity> EntityRepository<E> of(Class<E> entityType){
-		EntityRepository<E> rep = (EntityRepository<E>) repositories.get(entityType.getName());
+	public Query<E> retriveSame(E instance);
 
-		if (rep==null){
-			rep = newRepository(entityType);
-			
-		}
-		return rep;
-	}
+	public Query<E> retriveEquals(E instance);
 	
-	public <E extends Entity> EntityRepository<E> newRepository(Class<E> entityType){
-		final DataStorage defaultStorage = ServiceRegistry.getService(DataStorageService.class).getStorage();
-		return new StandardEntityRepository<E>(entityType, defaultStorage);
-	}
-
-	public  <R extends EntityRepository> R getRepository(Class<R> repositoryClass){
-
-		return (R) ReflectionUtils.newInstance(repositoryClass);
-
-	}
-
-
-	public  <E extends Entity>  void setRepository(Class<E> entityType ,  EntityRepository<E> repository){
-		repositories.put(entityType.getName(), repository);
-	}
+	public E store(E entity);
+	
+	public void remove(E entity);
 }

@@ -33,7 +33,7 @@ public class EventListenersSet<L> {
 		listeners.remove(listener);
 	}
 	
-	public L broadcast(){
+	public L broadcastEvent(){
 		return listener;
 	}
 

@@ -8,8 +8,9 @@ import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.db.CriteriaInterpreter;
 import org.middleheaven.storage.db.DataBaseDialect;
+import org.middleheaven.storage.db.SequenceSupportedDialect;
 
-public class PostgressDialect extends DataBaseDialect{
+public class PostgressDialect extends SequenceSupportedDialect{
 
 	public PostgressDialect() {
 		super("'", "'", ".");
@@ -52,7 +53,7 @@ public class PostgressDialect extends DataBaseDialect{
 
 			// FROM ClAUSE
 			queryBuffer.append(" FROM ");
-			queryBuffer.append(model().hardNameForEntity().toLowerCase());
+			queryBuffer.append(model().getEntityHardName().toLowerCase());
 
 		}
 		

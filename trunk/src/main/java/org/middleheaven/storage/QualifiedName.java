@@ -23,4 +23,16 @@ public class QualifiedName implements Serializable{
 	public String getColumnName() {
 		return columnName;
 	}
+	
+	public boolean equals(Object other) {
+		return other instanceof QualifiedName && equals((QualifiedName) other);
+	}
+
+	public boolean equals(QualifiedName other) {
+		return this.columnName.equals(other.columnName) && this.tableName.equals(other.tableName);
+	}
+
+	public int hashCode() {
+		return columnName.hashCode() ^ tableName.hashCode();
+	}
 }

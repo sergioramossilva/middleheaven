@@ -3,6 +3,8 @@ package org.middleheaven.util.conversion;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.middleheaven.core.reflection.ReflectionUtils;
+
 public class TypeConvertions {
 
 	private final static Map<Key, TypeConverter> converters = new HashMap<Key, TypeConverter>();
@@ -10,9 +12,13 @@ public class TypeConvertions {
 	static {
 
 		addConverter(CharSequence.class, Number.class , new CharSequenceNumberConverter());
-
+		addConverter(CharSequence.class, Boolean.class , new CharSequenceBooleanConverter());
+	
 	}
 	public static <O,T> T convert (O value , Class<T> type ){
+		if (value==null){
+			return null;
+		}
 		if (type.isAssignableFrom(value.getClass())){
 			return type.cast(value);
 		}
@@ -26,9 +32,20 @@ public class TypeConvertions {
 	}
 
 	public static <O,R> TypeConverter<O,R> getConverter(Class<O> from , Class<R> to){
+		if (to.isPrimitive()){
+			String wrapper = to.getSimpleName().substring(0,1).toUpperCase() + to.getSimpleName().substring(1);
+			if (to.getSimpleName().equals("int")){
+				wrapper = "Integer";
+			}
+			to = (Class<R>) ReflectionUtils.loadClass("java.lang."+wrapper);
+			
+		}
 		Key key = new Key(from,to);
 		TypeConverter<O,R> converter = converters.get(key);
 
+		if (converter==null){
+			throw new RuntimeException("Converter from " + from + " to " + to + " has not found");
+		}
 		return converter;
 	}
 

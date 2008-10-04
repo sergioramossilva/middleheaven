@@ -11,14 +11,14 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.inmemory.NaiveStoreManager;
+import org.middleheaven.storage.inmemory.NaiveStoreKeeper;
 
 
 public class NaiveStorageManagerTeste {
 
 	DomainDataStorage manager;
 	TestSubject subj = new TestSubject();
-	NaiveStoreManager store = new NaiveStoreManager();
+	NaiveStoreKeeper store = new NaiveStoreKeeper();
 	
 	@Before
 	public void setUp(){
@@ -40,13 +40,13 @@ public class NaiveStorageManagerTeste {
 		// very key is set
 		Storable p = (Storable)subj;
 		
-		assertTrue(p.getKey()!=null);
-		assertEquals( new Long(0), p.getKey());
+		assertTrue(p.getIdentity()!=null);
+		assertEquals( new Long(0), p.getIdentity());
 		assertEquals(new Long(1) , new Long(q.count()));
 		
 		// verify re-insert does nothing
 		subj = manager.store(subj);
-		assertEquals( new Long(0), p.getKey());
+		assertEquals( new Long(0), p.getIdentity());
 
 		assertEquals(new Long(1) , new Long(q.count()));
 		

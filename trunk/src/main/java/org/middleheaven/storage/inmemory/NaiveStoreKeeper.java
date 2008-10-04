@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.middleheaven.storage.AbstractStoreManager;
+import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
@@ -15,7 +15,7 @@ import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.sequence.LongSequence;
 import org.middleheaven.util.sequence.Sequence;
 
-public class NaiveStoreManager extends AbstractStoreManager {
+public class NaiveStoreKeeper extends AbstractStoreKeeper {
 
 	final Map<String, Collection<Storable> > data = new HashMap<String, Collection<Storable> >();
 	final Map<String, Sequence<Long>> sequences = new HashMap<String,Sequence<Long>>();
@@ -47,7 +47,7 @@ public class NaiveStoreManager extends AbstractStoreManager {
 	}
 
 	@Override
-	public Sequence<Long> getSequence(String name) {
+	public Sequence<Identity> getSequence(String name) {
 		Sequence<Long> seq= sequences.get(name);
 		if (seq ==null){
 			seq = new LongSequence();

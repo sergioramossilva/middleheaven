@@ -89,7 +89,7 @@ public class CriteriaInterpreter {
 
 	public DataBaseCommand translateDelete(){
 		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ")
-		.append(model.hardNameForEntity());
+		.append(model.getEntityHardName());
 
 		List<FieldValueHolder> params = new LinkedList<FieldValueHolder>();
 		
@@ -176,7 +176,7 @@ public class CriteriaInterpreter {
 		// FROM ClAUSE
 		queryBuffer.append(" FROM ");
 		queryBuffer.append(dialect().startDelimiter());
-		queryBuffer.append(model.hardNameForEntity().toLowerCase());
+		queryBuffer.append(model.getEntityHardName().toLowerCase());
 		queryBuffer.append(dialect().endDelimiter());
 
 	}
@@ -320,7 +320,7 @@ public class CriteriaInterpreter {
 
 				joinClause.append(" INNER JOIN ")
 				.append(dialect().startDelimiter())
-				.append(model.hardNameForEntity())
+				.append(model.getEntityHardName())
 				.append(dialect().endDelimiter())
 				.append(" ON ")
 				.append(dialect().startDelimiter())

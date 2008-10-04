@@ -26,7 +26,7 @@ public class NotificationTest {
 			
 		});
 		
-		listeners.broadcast().handleNotification(new Notification("teste"));
+		listeners.broadcastEvent().handleNotification(new Notification("teste"));
 		assertEquals(1, integer.get());
 	}
 	

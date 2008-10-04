@@ -7,32 +7,45 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.middleheaven.storage.DataStorage;
+import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.Query;
-import org.middleheaven.storage.StorageManager;
+import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.StoreMetadataManager;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.inmemory.NaiveStoreManager;
+import org.middleheaven.storage.db.DataBaseStoreKeeper;
+import org.middleheaven.storage.inmemory.NaiveStoreKeeper;
+import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
 
 
 public class StorageManagerTeste {
 
-	StorageManager manager;
-	TestSubject subj = new TestSubject();
-	NaiveStoreManager store = new NaiveStoreManager();
+	DataStorage storage;
+	
+	NaiveStoreKeeper store = new NaiveStoreKeeper();
 	
 	@Before
 	public void setUp(){
-		manager = new StorageManager(store);
-		subj.setNacimento(new Date());
-		subj.setName("Alberto");
+		storage = new DomainDataStorage(store , new StoreMetadataManager(){
+
+			@Override
+			public StorableEntityModel getStorageModel(Class<?> type) {
+				return new AnnotationsStorableEntityModel(type);
+			}
+
+		});
+		
 	}
 	
 	@Test
 	public void testInsert(){
 		
-		Query<TestSubject> q = manager.createQuery(CriteriaBuilder.search(TestSubject.class).all());
-		
-		subj = manager.store(subj);
+		Query<TestSubject> q = storage.createQuery(CriteriaBuilder.search(TestSubject.class).all());
+		TestSubject subj = new TestSubject();
+		subj.setNacimento(new Date());
+		subj.setName("Alberto");
+		subj = storage.store(subj);
 		// verify correct types
 		assertTrue (subj instanceof TestSubject);
 		assertTrue (subj instanceof Storable);
@@ -40,13 +53,13 @@ public class StorageManagerTeste {
 		// very key is set
 		Storable p = (Storable)subj;
 		
-		assertTrue(p.getKey()!=null);
-		assertEquals( new Long(0), p.getKey());
+		assertTrue(p.getIdentity()!=null);
+		assertEquals( new Long(0), p.getIdentity());
 		assertEquals(new Long(1) , new Long(q.count()));
 		
 		// verify re-insert does nothing
-		subj = manager.store(subj);
-		assertEquals( new Long(0), p.getKey());
+		subj = storage.store(subj);
+		assertEquals( new Long(0), p.getIdentity());
 
 		assertEquals(new Long(1) , new Long(q.count()));
 		

@@ -6,7 +6,7 @@ import org.middleheaven.core.reflection.ReflectionUtils;
 
 import javassist.util.proxy.MethodHandler;
 
-public class PersistableMethodHandler implements MethodHandler {
+public class PersistableMethodHandler implements MethodHandler  {
 
 	
 	private Long key;
@@ -20,12 +20,27 @@ public class PersistableMethodHandler implements MethodHandler {
 	@Override
 	public Object invoke(Object self, Method invoked, Method original,Object[] args) throws Throwable {
 		if (original == null){
-			return this.getClass().getMethod(invoked.getName(), ReflectionUtils.typesOf(args)).invoke(this, args);
+			if (invoked.getName().equals("getFieldValue")){
+				StorableFieldModel model = (StorableFieldModel)args[0];
+				String name = model.getHardName().getColumnName();
+				
+				return ReflectionUtils.getPropertyAccessor(self.getClass(),name).getValue(self);
+			} else if (invoked.getName().equals("setFieldValue")){
+				StorableFieldModel model = (StorableFieldModel)args[0];
+				String name = model.getHardName().getColumnName();
+				
+				ReflectionUtils.getPropertyAccessor(self.getClass(),name).setValue(self,args[1]);
+				return null;
+			} else {
+				return this.getClass().getMethod(invoked.getName(), invoked.getParameterTypes()).invoke(this, args);
+			}
 		} else {
+			if (invoked.getName().startsWith("set")){
+				state = state.edit();
+			}
 			return original.invoke(self, args);  // execute the original method.
 		}
 	}
-	
 
 	public Long getKey() {
 		return key;

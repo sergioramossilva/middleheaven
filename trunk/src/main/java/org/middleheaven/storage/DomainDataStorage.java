@@ -7,10 +7,10 @@ import org.middleheaven.storage.criteria.Criteria;
 
 public class DomainDataStorage implements DataStorage {
 
-	StoreManager storeManager;
+	StoreKeeper storeManager;
 	StoreMetadataManager metadataService;
 	
-	public DomainDataStorage(StoreManager storeManager,StoreMetadataManager metadataService) {
+	public DomainDataStorage(StoreKeeper storeManager,StoreMetadataManager metadataService) {
 		this.storeManager = storeManager;
 		this.metadataService = metadataService;
 	}
@@ -59,12 +59,12 @@ public class DomainDataStorage implements DataStorage {
 	}
 
 	private void doInsert(Storable p) {
-		if (p.getKey()!=null){
+		if (p.getIdentity()!=null){
 			doUpdate(p);
 		}
 		
 		// assign key
-		p.setKey(this.storeManager.getSequence(p.getPersistableClass().getName()).next().getValue());
+		p.setIdentity(this.storeManager.getSequence(p.getPersistableClass().getName()).next().getValue());
 		
 		this.storeManager.insert(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
 		
@@ -72,7 +72,7 @@ public class DomainDataStorage implements DataStorage {
 	}
 
 	private void doUpdate(Storable p) {
-		if (p.getKey()==null){
+		if (p.getIdentity()==null){
 			doInsert(p);
 		}
 		
@@ -82,7 +82,7 @@ public class DomainDataStorage implements DataStorage {
 	}
 
 	private void doDelete(Storable p) {
-		if (p.getKey()==null){
+		if (p.getIdentity()==null){
 			return;
 		}
 		

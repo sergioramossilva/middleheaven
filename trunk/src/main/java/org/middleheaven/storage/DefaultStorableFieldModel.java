@@ -9,11 +9,13 @@ public class DefaultStorableFieldModel implements StorableFieldModel {
 	private boolean isTransient;
 	private boolean isVersion;
 	private boolean isKey;
+	private Class<?> valueType;
 	
-	public DefaultStorableFieldModel(QualifiedName hardname, DataType type) {
+	public DefaultStorableFieldModel(QualifiedName hardname, DataType type, Class<?> valueType) {
 		super();
 		this.hardname = hardname;
 		this.type = type;
+		this.valueType = valueType;
 	}
 
 	@Override
@@ -58,6 +60,17 @@ public class DefaultStorableFieldModel implements StorableFieldModel {
 	@Override
 	public boolean isVersion() {
 		return isVersion;
+	}
+
+	@Override
+	public Class<?> getValueClass() {
+		return this.valueType;
+	}
+
+	@Override
+	public QualifiedName getLogicName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

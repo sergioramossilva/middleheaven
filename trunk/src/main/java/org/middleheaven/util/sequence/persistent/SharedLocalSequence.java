@@ -14,42 +14,50 @@ import javax.transaction.xa.Xid;
 
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.transactions.TransactionService;
+import org.middleheaven.util.sequence.AbstractStatePersistanteSequence;
+import org.middleheaven.util.sequence.SequenceState;
+import org.middleheaven.util.sequence.SequenceStateListener;
 import org.middleheaven.util.sequence.SequenceToken;
+import org.middleheaven.util.sequence.SequenceAdapter;
+import org.middleheaven.util.sequence.StateEditableSequence;
+import org.middleheaven.util.sequence.StatePersistentSequence;
 
 
 /**
  * @author  Sergio M. M. Taborda 
  */
-public class SharedLocalLongSequence extends StorageServiceStatePersistentSequence<Long>  {
+public class SharedLocalSequence<T extends Comparable<? super T>> extends AbstractStatePersistanteSequence<T>  {
 
-    long lastUsed=0;
-    long current=0;
+	private Object lastUsed;
+	private StateEditableSequence<T> baseSequence;
+	
+	ReentrantLock lock = new ReentrantLock();
     BlockingQueue<SharedLocalSequenceValue> queue = new PriorityBlockingQueue<SharedLocalSequenceValue>();
-    ReentrantLock lock = new ReentrantLock();
     SharedLocalSequenceValue sv;
 
-    public static SharedLocalLongSequence getSequence(String name){
-        return new SharedLocalLongSequence(name);
+    public static <K extends Comparable<? super K>> SharedLocalSequence<K> getSequence(String name,StatePersistentSequence<K> baseSequence){
+        return new SharedLocalSequence<K>(name,baseSequence);
     }
     
-    private SharedLocalLongSequence (String name){
-        super(name);
-    }
+	private SharedLocalSequence(String name,StateEditableSequence<T> sequence) {
+		super(name);
+		this.baseSequence = sequence;
+	}
     
-    @Override
-    protected void inicializeLast(String lastUsed) {
-        this.lastUsed = lastUsed== null? 0: Long.parseLong(lastUsed);
-        this.current = this.lastUsed+1;
-    }
-    
-    public Long lastUsedValue() {
-        return lastUsed;
-    }
-    
+	@Override
+	public SequenceState getSequenceState() {
+		return new SequenceState(this.getName(),lastUsed);
+	}
+
+	@Override
+	public void setSequenceState(SequenceState state) {
+		this.lastUsed =  state.getLastUsedValue();
+		this.baseSequence.setSequenceState(state);
+	}
  
-    public SequenceToken<Long> next() {
+    public SequenceToken<T> next() {
         
-        SharedLocalSequenceValue sv = new SharedLocalSequenceValue(current++);
+        SharedLocalSequenceValue<T> sv = new SharedLocalSequenceValue<T>(baseSequence.next().getValue());
         queue.add(sv);
         
         // enlist as XAResource 
@@ -60,19 +68,24 @@ public class SharedLocalLongSequence extends StorageServiceStatePersistentSequen
         return sv;
     }
 
-    private class SharedLocalSequenceValue implements SequenceToken<Long>,Comparable<SharedLocalSequenceValue>, XAResource {
+    private class SharedLocalSequenceValue<T> implements SequenceToken<T>,Comparable<SharedLocalSequenceValue<T>>, XAResource {
 
-        private long actualValue;
+        private Object actualValue;
         private Xid xid;
-        SharedLocalSequenceValue(long actualValue){
+        
+        SharedLocalSequenceValue(T actualValue){
             this.actualValue = actualValue;
         }
 
-        public String toString(){
-            return Long.toString(actualValue);
+        public int compareTo(SharedLocalSequenceValue other) {
+            return (((Comparable)this.actualValue).compareTo(((Comparable)other.actualValue)));
         }
         
-        public Long getValue() {
+        public String toString(){
+            return actualValue.toString();
+        }
+        
+        public T getValue() {
 
             while (queue.peek()!=this){
                 try {
@@ -82,7 +95,7 @@ public class SharedLocalLongSequence extends StorageServiceStatePersistentSequen
                 }
             }
             
-            return actualValue;
+            return (T)actualValue;
  
         }
 
@@ -105,7 +118,9 @@ public class SharedLocalLongSequence extends StorageServiceStatePersistentSequen
             // do nothing
             lastUsed = this.actualValue;
             queue.remove(this);
-            persist();
+            
+            fireStateChange(new SequenceState(getName(),lastUsed));
+
         }
 
         public synchronized void rollback(Xid xid) throws XAException {
@@ -141,13 +156,12 @@ public class SharedLocalLongSequence extends StorageServiceStatePersistentSequen
             return new Xid[]{xid};
         }
 
-        public int compareTo(SharedLocalSequenceValue other) {
-            return (int)(this.actualValue - other.actualValue);
-        }
+       
 
  
 
     }
+
 
 
 

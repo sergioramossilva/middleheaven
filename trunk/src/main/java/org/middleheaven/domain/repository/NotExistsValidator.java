@@ -6,11 +6,11 @@ import org.middleheaven.validation.MessageInvalidationReason;
 import org.middleheaven.validation.ValidationContext;
 
 
-public class NotExistsValidator<T extends Entity> implements org.middleheaven.validation.Validator<T> {
+public class NotExistsValidator<T> implements org.middleheaven.validation.Validator<T> {
 
-	private EntityRepository<T> repository;	
+	private Repository<T> repository;	
 
-	public NotExistsValidator(EntityRepository<T> repositorio){
+	public NotExistsValidator(Repository<T> repositorio){
 		this.repository = repositorio;
 	}
 

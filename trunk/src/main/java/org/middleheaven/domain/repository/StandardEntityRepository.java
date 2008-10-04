@@ -5,7 +5,7 @@ import org.middleheaven.storage.Query;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 
 
-public final class StandardEntityRepository<E extends Entity> implements EntityRepository<E> {
+public final class StandardEntityRepository<E> implements Repository<E> {
 
 	private Class<E> entityType;
 	private DataStorage storage;

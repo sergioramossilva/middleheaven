@@ -11,6 +11,9 @@ import org.middleheaven.core.services.engine.ServiceActivator;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.util.ParamsMap;
+import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.sequence.SequenceState;
+import org.middleheaven.util.sequence.StateChangedEvent;
 import org.middleheaven.util.sequence.StatePersistentSequence;
 
 /**
@@ -45,8 +48,8 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 				SequenceStorageService.class, 
 				new FileSequenceStorageService(), 
 				new ParamsMap()
-					.setParam("type", "file")
-					.setParam("remote", "no")
+				.setParam("type", "file")
+				.setParam("remote", "no")
 		);
 	}
 
@@ -56,17 +59,33 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 	}
 
 	private class FileSequenceStorageService implements SequenceStorageService {
-		public String retriveLastValue(StatePersistentSequence<?> sequence) {
-			return properties.getProperty(sequence.getName());
-		}
 
-		public synchronized void store(StatePersistentSequence<?> sequence) {
-			properties.setProperty(sequence.getName(), sequence.lastUsedValue().toString());
+
+		public synchronized void store(SequenceState state) {
+		
+			properties.setProperty(state.getName(), state.getLastUsedValue().toString());
 			try {
 				properties.store(file.getContent().getOutputStream(), "");
 			} catch (IOException e) {
 				throw ManagedIOException.manage(e);
 			}
+		}
+
+		@Override
+		public void restore(StatePersistentSequence<?> sequence) {
+			Class<?> valueType = sequence.getSequenceState().getLastUsedValue().getClass();
+			Object value = TypeConvertions.convert(
+					properties.getProperty(sequence.getName()), 
+					valueType
+			);
+			SequenceState state = new SequenceState(sequence.getName(),value);
+
+			sequence.setSequenceState(state);
+		}
+
+		@Override
+		public void onStateChanged(StateChangedEvent event) {
+			 this.store(event.getSequenceState());
 		}
 
 	}

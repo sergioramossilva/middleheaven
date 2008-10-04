@@ -60,7 +60,7 @@ public final class DatabaseDialectFactory {
 			}
 		} else if (product.equalsIgnoreCase("PostgreSQL")){
 			return new PostgressDialect(); // 8.1.3 any driver
-		} else if (product.toLowerCase().startsWith("HSQL")){
+		} else if (product.toUpperCase().startsWith("HSQL")){
 			return new HSQLDialect(); // 1.8.0 any driver
 		} else {
 			throw new StorageException("Dialect not found for product " + product + "  " + version);

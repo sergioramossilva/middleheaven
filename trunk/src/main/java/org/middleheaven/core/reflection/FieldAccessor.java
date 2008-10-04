@@ -5,17 +5,6 @@ import java.lang.reflect.Field;
 
 public class FieldAccessor {
 
-	/*
-	static String capitalizeFirst(String fieldName){
-		return fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
-	}
-
-	static String unCapitalizeFirst(String fieldName){
-		return fieldName.substring(0,1).toLowerCase() + fieldName.substring(1);
-	}
-	 */
-
-
 	protected Class<?> type;
 	protected String name;
 	protected Field field;
