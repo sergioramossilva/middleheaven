@@ -1,16 +1,23 @@
 package org.middleheaven.storage.db.dialects;
 
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
+
 
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.storage.criteria.FieldValueHolder;
+import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.CriteriaInterpreter;
 import org.middleheaven.storage.db.DataBaseDialect;
-import org.middleheaven.storage.db.SequenceSupportedDialect;
+import org.middleheaven.storage.db.RetriveDataBaseCommand;
+import org.middleheaven.storage.db.SQLRetriveCommand;
+import org.middleheaven.storage.db.SequenceSupportedDBDialect;
 
-public class PostgressDialect extends SequenceSupportedDialect{
+public class PostgressDialect extends SequenceSupportedDBDialect{
 
 	public PostgressDialect() {
 		super("'", "'", ".");
@@ -53,7 +60,7 @@ public class PostgressDialect extends SequenceSupportedDialect{
 
 			// FROM ClAUSE
 			queryBuffer.append(" FROM ");
-			queryBuffer.append(model().getEntityHardName().toLowerCase());
+			queryBuffer.append(model().hardNameForEntity().toLowerCase());
 
 		}
 		
@@ -66,4 +73,34 @@ public class PostgressDialect extends SequenceSupportedDialect{
 			}
 		}
 	}
+	
+
+	@Override
+	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
+		final Collection<FieldValueHolder> none = Collections.emptySet();
+		return new SQLRetriveCommand(
+				new StringBuilder("SELECT nextval('")
+				.append(sequenceName)
+				.append("') as sequenceValue")
+				.toString() ,
+				none
+		);
+	}
+
+	@Override
+	protected void appendNativeTypeFor(StringBuilder sql, ColumnModel type) {
+		// TODO implement PostgressDialect.appendNativeTypeFor
+		
+	}
+	
+	@Override
+	public boolean supportsCountLimit() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsOffSet() {
+		return true;
+	}
+
 }
