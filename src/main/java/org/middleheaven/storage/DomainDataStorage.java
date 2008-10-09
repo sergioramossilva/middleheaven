@@ -1,16 +1,26 @@
 package org.middleheaven.storage;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.middleheaven.core.reflection.ProxyUtils;
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IdentitySequence;
+import org.middleheaven.util.identity.IntegerIdentity;
+import org.middleheaven.util.identity.UUIDIdentity;
+import org.middleheaven.util.identity.UUIDIdentitySequence;
+import org.middleheaven.util.sequence.DefaultToken;
+import org.middleheaven.util.sequence.Sequence;
+import org.middleheaven.util.sequence.SequenceToken;
 
 public class DomainDataStorage implements DataStorage {
 
-	StoreKeeper storeManager;
+	StoreManager storeManager;
 	StoreMetadataManager metadataService;
 	
-	public DomainDataStorage(StoreKeeper storeManager,StoreMetadataManager metadataService) {
+	public DomainDataStorage(StoreManager storeManager,StoreMetadataManager metadataService) {
 		this.storeManager = storeManager;
 		this.metadataService = metadataService;
 	}
@@ -57,14 +67,61 @@ public class DomainDataStorage implements DataStorage {
 			throw new IllegalStateException(p.getPersistableState() + " is unkown");
 		}
 	}
+	
+	private Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
+	
+	protected Identity nextID(Class<?> entityType) {
+		Class<? extends Identity> identityType = metadataService.indentityTypeFor(entityType);
+		if (UUIDIdentity.class.isAssignableFrom(identityType)){
+			return new UUIDIdentitySequence().next().value();
+		} else {
+			
+		}
+		return nextID(identityType , metadataService.getStorageModel(entityType).logicNameForEntity());
+	}
 
+	protected <I extends Identity> I nextID(Class<I> identityType,String identifiableName) {
+		if (identityType.equals(IntegerIdentity.class)){
+			
+			IdentitySequence<IntegerIdentity> idSequence = sequences.get(identifiableName);
+			if (idSequence == null){
+				Sequence<Long> dialectSequence = this.storeManager.getSequence(identifiableName); 
+				idSequence = new DataBaseIntegerIdentitySequence(dialectSequence);
+				sequences.put(identifiableName,idSequence);
+			} 
+			
+			return identityType.cast(idSequence.next().value());
+
+		} else {
+			throw new StorageException("Identity of type " + identityType.getName() + " is not supported by " + this.getClass().getName());
+		}
+	}
+
+	private static class DataBaseIntegerIdentitySequence implements IdentitySequence<IntegerIdentity> {
+
+		Sequence<Long> baseSequence;
+		
+		public DataBaseIntegerIdentitySequence(Sequence<Long> baseSequence) {
+			super();
+			this.baseSequence = baseSequence;
+		}
+
+		@Override
+		public SequenceToken<IntegerIdentity> next() {
+			// TODO define LongIdentity
+			return new DefaultToken<IntegerIdentity>(new IntegerIdentity(baseSequence.next().value().intValue()));
+		}
+		
+		
+	}
+	
 	private void doInsert(Storable p) {
-		if (p.getIdentity()!=null){
+		if (p.getKey()!=null){
 			doUpdate(p);
 		}
 		
 		// assign key
-		p.setIdentity(this.storeManager.getSequence(p.getPersistableClass().getName()).next().getValue());
+		p.setIdentity(this.storeManager.getSequence(p.getPersistableClass().getName()).next().value());
 		
 		this.storeManager.insert(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
 		
