@@ -5,5 +5,5 @@ import javax.sql.DataSource;
 public interface DataSourceService {
 
 	public DataSource getDataSource(String name); 
-	public void addDataSource(String name  , DataSource dataSource);
+	public void addDataSourceProvider(String name  , DataSourceProvider provider);
 }

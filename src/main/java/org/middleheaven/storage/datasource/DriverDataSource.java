@@ -19,7 +19,7 @@ public class DriverDataSource implements DataSource {
 	private boolean autoCommit = true;
 	public DriverDataSource(){}
 
-    public DriverDataSource(String driver,String url,String username,String password){
+    protected DriverDataSource(String driver,String url,String username,String password){
 
     	this.URL = url;
         this.login = username;
