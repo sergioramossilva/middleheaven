@@ -13,5 +13,5 @@ package org.middleheaven.util.sequence;
  */
 public interface SequenceToken <T> {
 
-    public T getValue();
+    public T value();
 }

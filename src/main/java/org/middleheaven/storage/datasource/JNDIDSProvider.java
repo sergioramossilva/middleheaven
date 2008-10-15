@@ -15,7 +15,8 @@ public class JNDIDSProvider implements DataSourceProvider{
 	public static JNDIDSProvider provider(Properties properties){
 
 		String  url = properties.getProperty("datasource.url");
-		return provider( url);
+		url = url.substring(url.indexOf(':')+1);
+		return provider(url);
 	}
 	
 	public static JNDIDSProvider provider(String url){
