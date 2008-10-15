@@ -14,9 +14,9 @@ public class SQLDeleteCommand extends SQLConditionableCommand {
 	}
 
 	@Override
-	public void execute(Connection con,StorableEntityModel model) throws SQLException {
+	public boolean execute(Connection con,StorableEntityModel model) throws SQLException {
 
-		prepareStatement(con).execute();
+		return prepareStatement(con).execute();
 
 
 	}

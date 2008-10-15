@@ -17,7 +17,7 @@ public class SQLStoreCollectionCommand implements DataBaseCommand {
 	final private Collection<StorableFieldModel> fields;
 	final private Collection<Storable> data;
 	
-	protected SQLStoreCollectionCommand(Collection<Storable> data, String sql,Collection<StorableFieldModel> fields){
+	public SQLStoreCollectionCommand(Collection<Storable> data, String sql,Collection<StorableFieldModel> fields){
 		this.data = data;
 		this.sql = sql;
 		this.fields = fields;
@@ -30,7 +30,7 @@ public class SQLStoreCollectionCommand implements DataBaseCommand {
 	}
 	
 	@Override
-	public void execute(Connection con,StorableEntityModel model) throws SQLException {
+	public boolean execute(Connection con,StorableEntityModel model) throws SQLException {
 		
 		PreparedStatement ps = con.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
 		
@@ -39,7 +39,7 @@ public class SQLStoreCollectionCommand implements DataBaseCommand {
 			pss.copy(s, fields);
 			ps.addBatch();
 		}
-		ps.executeBatch();
+		return ps.executeBatch().length>0;
 
 	}
 

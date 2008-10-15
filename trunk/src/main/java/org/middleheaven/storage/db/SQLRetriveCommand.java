@@ -14,7 +14,7 @@ public class SQLRetriveCommand extends SQLConditionableCommand implements Retriv
 
     private PreparedStatement ps;
 	
-	protected SQLRetriveCommand(String sql,Collection<FieldValueHolder> data){
+	public SQLRetriveCommand(String sql,Collection<FieldValueHolder> data){
 		super(sql,data);
 	}
 
@@ -24,10 +24,11 @@ public class SQLRetriveCommand extends SQLConditionableCommand implements Retriv
 	}
 
 	@Override
-	public void execute(Connection con,StorableEntityModel model) throws SQLException {
+	public boolean execute(Connection con,StorableEntityModel model) throws SQLException {
 
 	    ps = super.prepareStatement(con);
 	   
+	    return true;
 	}
 
 	

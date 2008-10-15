@@ -25,17 +25,16 @@ import org.middleheaven.logging.LoggingService;
  * 
  * Searches for files with name end in -ds.properties and loads then.
  * This files have a structure like this:
- * 
+ * datasource.provider = jdbc | jndi
  * datasource.name=nameOfDatasource 
  * datasource.url=jdbc:postgresql:database
  * datasource.driver=org.postgresql.Driver 
  * datasource.username=username
  * datasource.password=password
- * datasource.url=jdbc:postgresql:database
  */
 public class DataSourceServiceActivator extends ServiceActivator {
 
-	Map <String , DataSource> sources = new TreeMap <String , DataSource>();
+	Map <String , DataSourceProvider> sources = new TreeMap <String , DataSourceProvider>();
 	LogBook book;
 	public void activate(ServiceContext context){
 
@@ -62,22 +61,23 @@ public class DataSourceServiceActivator extends ServiceActivator {
 				Properties connectionParams =new Properties();
 				try {
 					connectionParams.load(file.getContent().getInputStream());
-
-					String driver = connectionParams.getProperty("datasource.driver");
-					String  url = connectionParams.getProperty("datasource.url");
-					String login = connectionParams.getProperty("datasource.username");
-					String pass = connectionParams.getProperty("datasource.password");
-
-					DriverDataSource dds =  new DriverDataSource(driver,url,login,pass);
-					dds.setAutoCommit(true);
+					String providerType = connectionParams.getProperty("datasource.provider");
+					DataSourceProvider provider=null;
 					
-					sources.put(connectionParams.getProperty("datasource.name"), dds );
+					if ("jdbc".equals(providerType.trim())){
+						provider = DriverManagerDSProvider.provider(connectionParams);
+					} else if ("jndi".equals(providerType.trim())){
+						provider = JNDIDSProvider.provider(connectionParams);
+					} else {
+						book.logError("Error loading datasource file. Provider type not recognized");
+					}
+					sources.put(connectionParams.getProperty("datasource.name"), provider );
 
 
 				} catch (ManagedIOException e) {
-					book.logWarn("Error loading datasource file", e);
+					book.logError("Error loading datasource file", e);
 				} catch (IOException e) {
-					book.logWarn("Error loading datasource file", e);
+					book.logError("Error loading datasource file", e);
 				} 
 			}
 
@@ -86,37 +86,21 @@ public class DataSourceServiceActivator extends ServiceActivator {
 		context.register(DataSourceService.class, new HashDataSourceService(), null);
 
 	}
-
-	private <T> T lookup(String jndiName, Class<T> objectClass) throws NamingException {
-
-		InitialContext context = new InitialContext();
-
-		if (objectClass !=null){
-			return objectClass.cast(PortableRemoteObject.narrow(context.lookup(jndiName), objectClass));
-		} else {
-			return objectClass.cast(context.lookup(jndiName));
-		}
-	}
-
+	
 	private class HashDataSourceService implements DataSourceService{
 
 		@Override
 		public DataSource getDataSource(String name) {
-			// lookup locally
-			DataSource ds = sources.get(name);
-			if (ds==null){
-				// lookup in JNDI
-				try {
-					ds = (DataSource) new InitialContext().lookup("java:/" + name);
-				} catch (NamingException e) {
-					book.logWarn("Fault looking for datasource " + name , e);
-				}
+			
+			DataSourceProvider dsp = sources.get(name);
+			if (dsp==null){
+				throw new DataSourceProviderNotFoundException(name);
 			}
-			return ds;
+			return dsp.getDataSource();
 		}
 
-		public void addDataSource(String name  , DataSource dataSource) {
-			sources.put(name, dataSource);
+		public void addDataSourceProvider(String name  , DataSourceProvider provider) {
+			sources.put(name, provider);
 		}
 	}
 
