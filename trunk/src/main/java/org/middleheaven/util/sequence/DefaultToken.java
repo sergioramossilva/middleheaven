@@ -16,7 +16,7 @@ public class DefaultToken<T> implements SequenceToken<T> {
 	}
 	
 	@Override
-	public T getValue() {
+	public T value() {
 		return value;
 	}
 

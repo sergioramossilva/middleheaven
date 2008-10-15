@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.rmi.PortableRemoteObject;
 import javax.sql.DataSource;
 
 import org.middleheaven.core.Container;
@@ -25,12 +22,14 @@ import org.middleheaven.logging.LoggingService;
  * 
  * Searches for files with name end in -ds.properties and loads then.
  * This files have a structure like this:
- * datasource.provider = jdbc | jndi
- * datasource.name=nameOfDatasource 
+ * (for jdbc)
+ * datasource.name=dataSourceName 
  * datasource.url=jdbc:postgresql:database
  * datasource.driver=org.postgresql.Driver 
  * datasource.username=username
  * datasource.password=password
+ * (for jndi)
+ * datasource.url=jndi:java:/comp/env/jdbc/dsname
  */
 public class DataSourceServiceActivator extends ServiceActivator {
 
@@ -39,7 +38,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 	public void activate(ServiceContext context){
 
 		Container container =  context.getService(ContainerService.class, null).getContainer();
-		book = context.getService(LoggingService.class, null).getLogBook("middleheaven");
+		book = context.getService(LoggingService.class, null).getLogBook(null);
 
 		// look for the datasource mapping file
 
@@ -61,12 +60,14 @@ public class DataSourceServiceActivator extends ServiceActivator {
 				Properties connectionParams =new Properties();
 				try {
 					connectionParams.load(file.getContent().getInputStream());
-					String providerType = connectionParams.getProperty("datasource.provider");
+					final String url = connectionParams.getProperty("datasource.url");
+					final String protocol = url.substring(0,url.indexOf(':'));
+					
 					DataSourceProvider provider=null;
 					
-					if ("jdbc".equals(providerType.trim())){
+					if ("jdbc".equals(protocol)){
 						provider = DriverManagerDSProvider.provider(connectionParams);
-					} else if ("jndi".equals(providerType.trim())){
+					} else if ("jndi".equals(protocol)){
 						provider = JNDIDSProvider.provider(connectionParams);
 					} else {
 						book.logError("Error loading datasource file. Provider type not recognized");

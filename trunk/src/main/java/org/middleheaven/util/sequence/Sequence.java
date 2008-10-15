@@ -9,7 +9,7 @@ package org.middleheaven.util.sequence;
  * Interface for all sequences. 
  * Sequences generate the next token in a series.
  * 
- * Sequences are unlimited. Limied sequences must implement <code>LimitedSequence</code>
+ * Sequences are unlimited. Limited sequences must implement <code>LimitedSequence</code>
  * that acts like a iterator.
  * @author Sergio M. M. Taborda 
  *

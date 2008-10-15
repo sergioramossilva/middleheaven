@@ -8,6 +8,7 @@ public enum DataType {
 	UNKWON,
 	LOGIC,
 	TEXT,
+	MEMO,
 	INTEGER,
 	DECIMAL,
 	DATETIME,
@@ -48,5 +49,17 @@ public enum DataType {
 	
 	public boolean isVirtual() {
 		return this.equals(ONE2ONE) || this.equals(MANY2ONE) || this.equals(ONE2MANY);
+	}
+
+	public boolean isReference() {
+		return isToOneReference() || isToManyReference() ;
+	}
+
+	public boolean isDecimal() {
+		return this.equals(DECIMAL);
+	}
+
+	public boolean isTextual() {
+		return this.equals(TEXT);
 	}
 }

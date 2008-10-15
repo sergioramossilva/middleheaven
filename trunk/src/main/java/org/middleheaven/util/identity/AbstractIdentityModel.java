@@ -15,7 +15,7 @@ public abstract class AbstractIdentityModel implements IdentityModel {
 			sequence =  newSequenceInstance(type); 
 			sequences.put(type.getName(), sequence);
 		}
-		return sequence.next().getValue();
+		return sequence.next().value();
 	}
 	
 	protected abstract IdentitySequence<?> newSequenceInstance(Class<?> type);

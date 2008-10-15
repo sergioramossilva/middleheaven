@@ -38,7 +38,7 @@ public class SequenceTestSuit {
 	private static <T> void testSequence(Sequence<T> seq, Collection<T> collection){
 		SequenceToken<T> token;
 		while ( (token=seq.next())!=null){
-			assertTrue(collection.contains(token.getValue()));
+			assertTrue(collection.contains(token.value()));
 		}
 	}
 }

@@ -58,6 +58,10 @@ public class FieldAccessor {
 		}
 	}
 
+	public String toString(){
+		return this.getName();
+	}
+	
 	public String getName() {
 		return name;
 	}
