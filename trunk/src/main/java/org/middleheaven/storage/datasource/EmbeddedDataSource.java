@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.middleheaven.logging.Logging;
+import org.middleheaven.storage.StorageException;
 
 
 /**
@@ -20,7 +21,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 	private String url;
 	private URL location;
 	
-	public EmbeddedDataSource(URL location, String catalog, String login, String pass) throws ClassNotFoundException{
+	public EmbeddedDataSource(URL location, String catalog, String login, String pass) {
 		
 		this.location = location;
 		this.catalog = catalog;
@@ -30,6 +31,8 @@ public class EmbeddedDataSource extends AbstractDataSource {
 		
 		try {
 			Class.forName("org.hsqldb.jdbcDriver" ).newInstance();
+		} catch (ClassNotFoundException e) {
+            throw new DriverNotFoundException("Driver org.hsqldb.jdbcDriver was not found.");
 		} catch (InstantiationException e) {
 			throw new RuntimeException(e);
 		} catch (IllegalAccessException e) {
@@ -52,11 +55,12 @@ public class EmbeddedDataSource extends AbstractDataSource {
 		org.hsqldb.Server.main(params);
 	}
 	
-	public void stop() throws SQLException{
+	public void stop(){
 		
 		Logging.getBook(this.getClass()).logInfo("Stopping :" + url);
 		
 		Connection con=null;
+		try{
 		try {
 			con = this.getConnection();
 			
@@ -68,16 +72,23 @@ public class EmbeddedDataSource extends AbstractDataSource {
 				con.close();
 			}
 		}
+		} catch (SQLException e){
+			throw new StorageException(e);
+		}
 	}
 	
 	@Override
 	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(url, login, pass);
+		Connection con = DriverManager.getConnection(url, login, pass);
+		con.setAutoCommit(isAutoCommit());
+		return con;
 	}
 
 	@Override
 	public Connection getConnection(String nlogin, String npass) throws SQLException {
-		return DriverManager.getConnection(url, nlogin,npass);
+		Connection con = DriverManager.getConnection(url, nlogin,npass);
+		con.setAutoCommit(isAutoCommit());
+		return con;
 	}
 
 }

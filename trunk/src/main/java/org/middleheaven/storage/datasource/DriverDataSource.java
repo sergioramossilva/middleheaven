@@ -10,7 +10,7 @@ public class DriverDataSource extends AbstractDataSource{
 	private String login;
 	private String pass;
 	  
-	private boolean autoCommit = true;
+
 	public DriverDataSource(){}
 
     protected DriverDataSource(String driver,String url,String username,String password){
@@ -25,15 +25,12 @@ public class DriverDataSource extends AbstractDataSource{
         }
         
     }
-    
-    public void setAutoCommit(boolean autoCommit){
-    	this.autoCommit = autoCommit;
-    }
+
     
 	@Override
 	public Connection getConnection() throws SQLException {
 		Connection con = DriverManager.getConnection(URL, login, pass);
-		con.setAutoCommit(autoCommit);
+		con.setAutoCommit(isAutoCommit());
 		return con;
 	}
 
@@ -41,7 +38,7 @@ public class DriverDataSource extends AbstractDataSource{
 	public Connection getConnection(String nlogin, String npass) throws SQLException {
 		
 		Connection con = DriverManager.getConnection(URL, nlogin, npass);
-		con.setAutoCommit(autoCommit);
+		con.setAutoCommit(isAutoCommit());
 		return con;
 	}
 

@@ -9,7 +9,16 @@ public abstract class AbstractDataSource  implements DataSource{
 
 	private PrintWriter logWriter;
 	private int timeOut = 30; // secounds
-
+	private boolean autoCommit = true;
+	
+    public void setAutoCommit(boolean autoCommit){
+    	this.autoCommit = autoCommit;
+    }
+    
+    protected boolean isAutoCommit(){
+    	return this.autoCommit;
+    }
+    
 	@Override
 	public PrintWriter getLogWriter() throws SQLException {
 		return logWriter;
