@@ -56,7 +56,7 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 		IdentitySequence iseq = sequences.get(name);
 		if (iseq==null){
 			Sequence<Long> seq = dialect.getSequence(datasource, name);
-			isep = new IntegerIdentitySequence();
+			iseq = new IntegerIdentitySequence();
 			
 		}
 		return iseq;

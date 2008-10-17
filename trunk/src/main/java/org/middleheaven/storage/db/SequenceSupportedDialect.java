@@ -11,7 +11,7 @@ import org.middleheaven.util.sequence.Sequences;
 import org.middleheaven.util.sequence.StateChangedEvent;
 import org.middleheaven.util.sequence.StatePersistentSequence;
 
-public class SequenceSupportedDialect extends DataBaseDialect {
+public abstract class SequenceSupportedDialect extends DataBaseDialect {
 
 	protected SequenceSupportedDialect(String startDelimiter,
 			String endDelimiter, String fieldSeparator) {

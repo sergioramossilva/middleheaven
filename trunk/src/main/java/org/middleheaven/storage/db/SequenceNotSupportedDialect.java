@@ -1,7 +1,5 @@
 package org.middleheaven.storage.db;
 
-import static org.middleheaven.storage.db.DataBaseDialect.sequences;
-
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -13,7 +11,7 @@ import org.middleheaven.util.sequence.Sequences;
 import org.middleheaven.util.sequence.StateChangedEvent;
 import org.middleheaven.util.sequence.StatePersistentSequence;
 
-public class SequenceNotSupportedDialect extends DataBaseDialect {
+public abstract class SequenceNotSupportedDialect extends DataBaseDialect {
 
 	protected SequenceNotSupportedDialect(String startDelimiter,
 			String endDelimiter, String fieldSeparator) {

@@ -17,11 +17,11 @@ import org.middleheaven.util.sequence.SequenceToken;
 
 public class DomainDataStorage implements DataStorage {
 
-	StoreManager storeManager;
+	StoreKeeper storeKeeper;
 	StoreMetadataManager metadataService;
 	
-	public DomainDataStorage(StoreManager storeManager,StoreMetadataManager metadataService) {
-		this.storeManager = storeManager;
+	public DomainDataStorage(StoreKeeper storeManager,StoreMetadataManager metadataService) {
+		this.storeKeeper = storeManager;
 		this.metadataService = metadataService;
 	}
 
@@ -32,7 +32,7 @@ public class DomainDataStorage implements DataStorage {
 
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
-		return storeManager.createQuery(criteria, metadataService.getStorageModel(criteria.getTargetClass()) ,strategy);
+		return storeKeeper.createQuery(criteria, metadataService.getStorageModel(criteria.getTargetClass()) ,strategy);
 	}
 	
 	@Override
@@ -83,9 +83,9 @@ public class DomainDataStorage implements DataStorage {
 	protected <I extends Identity> I nextID(Class<I> identityType,String identifiableName) {
 		if (identityType.equals(IntegerIdentity.class)){
 			
-			IdentitySequence<IntegerIdentity> idSequence = sequences.get(identifiableName);
+			IdentitySequence<Identity> idSequence = sequences.get(identifiableName);
 			if (idSequence == null){
-				Sequence<Long> dialectSequence = this.storeManager.getSequence(identifiableName); 
+				Sequence<Identity> dialectSequence = this.storeKeeper.getSequence(identifiableName); 
 				idSequence = new DataBaseIntegerIdentitySequence(dialectSequence);
 				sequences.put(identifiableName,idSequence);
 			} 
@@ -97,33 +97,33 @@ public class DomainDataStorage implements DataStorage {
 		}
 	}
 
-	private static class DataBaseIntegerIdentitySequence implements IdentitySequence<IntegerIdentity> {
+	private static class DataBaseIntegerIdentitySequence implements IdentitySequence<Identity> {
 
-		Sequence<Long> baseSequence;
+		Sequence<Identity> baseSequence;
 		
-		public DataBaseIntegerIdentitySequence(Sequence<Long> baseSequence) {
+		public DataBaseIntegerIdentitySequence(Sequence<Identity> baseSequence) {
 			super();
 			this.baseSequence = baseSequence;
 		}
 
 		@Override
-		public SequenceToken<IntegerIdentity> next() {
+		public SequenceToken<Identity> next() {
 			// TODO define LongIdentity
-			return new DefaultToken<IntegerIdentity>(new IntegerIdentity(baseSequence.next().value().intValue()));
+			return new DefaultToken<Identity>(baseSequence.next().value());
 		}
 		
 		
 	}
 	
 	private void doInsert(Storable p) {
-		if (p.getKey()!=null){
+		if (p.getIdentity()!=null){
 			doUpdate(p);
 		}
 		
 		// assign key
-		p.setIdentity(this.storeManager.getSequence(p.getPersistableClass().getName()).next().value());
+		p.setIdentity(this.storeKeeper.getSequence(p.getPersistableClass().getName()).next().value());
 		
-		this.storeManager.insert(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
+		this.storeKeeper.insert(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.RETRIVED);
 	}
@@ -133,7 +133,7 @@ public class DomainDataStorage implements DataStorage {
 			doInsert(p);
 		}
 		
-		this.storeManager.update(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
+		this.storeKeeper.update(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.RETRIVED);
 	}
@@ -143,7 +143,7 @@ public class DomainDataStorage implements DataStorage {
 			return;
 		}
 		
-		this.storeManager.remove(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
+		this.storeKeeper.remove(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.DELETED);
 	}
@@ -165,7 +165,7 @@ public class DomainDataStorage implements DataStorage {
 
 	@Override
 	public <T> void remove(Criteria<T> criteria) {
-		this.storeManager.remove(criteria, metadataService.getStorageModel(criteria.getTargetClass()));
+		this.storeKeeper.remove(criteria, metadataService.getStorageModel(criteria.getTargetClass()));
 	}
 
 }
