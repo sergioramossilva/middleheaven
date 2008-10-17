@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.middleheaven.domain.repository.Repository;
+import org.middleheaven.domain.repository.RepositoryRegister;
+import org.middleheaven.util.identity.Identity;
+
 
 
 /**
@@ -18,7 +22,7 @@ import java.util.TreeMap;
  */
 public class AnnotatedDomainModel implements DomainModel{
 
-	private Repositories repositoryRegistry = new Repositories();
+	private RepositoryRegister repositoryRegistry = new RepositoryRegister();
 	private Map<String, StorableEntityModel> storableEntityModels = new TreeMap<String, StorableEntityModel> ();
 	private Map<String, Class> identitities= new TreeMap<String, Class>();
 
@@ -384,6 +388,43 @@ public class AnnotatedDomainModel implements DomainModel{
 	@Override
 	public Collection<StorableEntityModel> storableEntitiesModels() {
 		return Collections.unmodifiableCollection(this.storableEntityModels.values());
+	}
+
+	@Override
+	public <E> void addEntity(Class<E> entityType,
+			Repository<? extends E> repository) {
+		// TODO implement AnnotatedDomainModel.addEntity
+		
+	}
+
+	@Override
+	public Collection<EntityModel> entitiesModels() {
+		// TODO implement AnnotatedDomainModel.entitiesModels
+		return null;
+	}
+
+	@Override
+	public EntityModel getEntityModelFor(Class<?> entityType) {
+		// TODO implement AnnotatedDomainModel.getEntityModelFor
+		return null;
+	}
+
+	@Override
+	public <I extends Identity> Class<I> indentityTypeFor(Class<?> entityType) {
+		// TODO implement AnnotatedDomainModel.indentityTypeFor
+		return null;
+	}
+
+	@Override
+	public <E, R extends Repository<E>> R repository(Class<R> repositoryType) {
+		// TODO implement AnnotatedDomainModel.repository
+		return null;
+	}
+
+	@Override
+	public <E> Repository<E> repositoryOf(Class<E> entityType) {
+		// TODO implement AnnotatedDomainModel.repositoryOf
+		return null;
 	}
 
 

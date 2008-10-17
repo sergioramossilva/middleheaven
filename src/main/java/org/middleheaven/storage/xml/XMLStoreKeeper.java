@@ -21,6 +21,8 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.sequence.Sequence;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -149,6 +151,11 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 	public void update(Collection<Storable> obj, StorableEntityModel model) {
 		// TODO Auto-generated method stub
 
+	}
+	@Override
+	public <I extends Identity> Sequence<I> getSequence(String name) {
+		// TODO implement XMLStoreKeeper.getSequence
+		return null;
 	}
 
 }
