@@ -12,13 +12,15 @@ import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentitySequence;
 import org.middleheaven.util.sequence.LongSequence;
 import org.middleheaven.util.sequence.Sequence;
 
 public class NaiveStoreKeeper extends AbstractStoreKeeper {
 
 	final Map<String, Collection<Storable> > data = new HashMap<String, Collection<Storable> >();
-	final Map<String, Sequence<Long>> sequences = new HashMap<String,Sequence<Long>>();
+	final Map<String, Sequence<Identity>> sequences = new HashMap<String,Sequence<Identity>>();
 
     Collection<Storable> getBulkData(String name){
 		Collection<Storable> col = data.get(name);
@@ -47,10 +49,10 @@ public class NaiveStoreKeeper extends AbstractStoreKeeper {
 	}
 
 	@Override
-	public Sequence<Identity> getSequence(String name) {
-		Sequence<Long> seq= sequences.get(name);
+	public <I extends Identity> Sequence<I>  getSequence(String name) {
+		Sequence<I> seq= (Sequence<I>) sequences.get(name);
 		if (seq ==null){
-			seq = new LongSequence();
+			seq = (Sequence<I>) new IntegerIdentitySequence();
 		}
 		return seq;
 	}

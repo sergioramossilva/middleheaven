@@ -17,6 +17,8 @@ import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.DataBaseStoreKeeper;
 import org.middleheaven.storage.inmemory.NaiveStoreKeeper;
 import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentity;
 
 
 public class StorageManagerTeste {
@@ -32,6 +34,12 @@ public class StorageManagerTeste {
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
 				return new AnnotationsStorableEntityModel(type);
+			}
+
+			@Override
+			public Class<? extends Identity> indentityTypeFor(
+					Class<?> entityType) {
+				return IntegerIdentity.class;
 			}
 
 		});

@@ -104,7 +104,8 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 			List<T> list = new ArrayList<T>(nodes.getLength());
 			
 			for (int i = 0; i < nodes.getLength(); i++) {
-				T t = merge(model.instanceFor(criteria.getTargetClass()));
+				T n = model.newInstance();
+				T t = merge(n);
 				NodeStorable s = new NodeStorable(nodes.item(i),model.keyFieldModel());
 				this.copy(s, (Storable)t, model);
 				
@@ -122,11 +123,6 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
 		return new XPathStorageQuery<T>(criteria,model);
 
-	}
-	@Override
-	public Sequence<Identity> getSequence(String name) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -152,9 +148,10 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 		// TODO Auto-generated method stub
 
 	}
+
 	@Override
 	public <I extends Identity> Sequence<I> getSequence(String name) {
-		// TODO implement XMLStoreKeeper.getSequence
+		// TODO Auto-generated method stub
 		return null;
 	}
 

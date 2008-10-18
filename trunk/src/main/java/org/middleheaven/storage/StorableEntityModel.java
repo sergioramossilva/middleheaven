@@ -5,15 +5,16 @@ import java.util.Collection;
 
 public interface StorableEntityModel{
 
-	public <T> T instanceFor(Class<T> type);
-
-	public String hardNameForEntity();
+	public String getEntityHardName();
 	public String logicNameForEntity();
 	
 	public StorableFieldModel fieldModel(QualifiedName logicName);
 	public StorableFieldModel keyFieldModel();
 
 	public Collection<StorableFieldModel> fields();
+
+	public <T> T newInstance();
+
 
 	
 }

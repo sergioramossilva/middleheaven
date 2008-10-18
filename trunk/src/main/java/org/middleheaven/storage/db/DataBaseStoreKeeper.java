@@ -13,7 +13,6 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.logging.Logging;
 import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
@@ -204,28 +203,6 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 			}
 		}
 	}
-
-	public void finish(){
-		// last command
-		Connection con =null;
-		try {
-			con = this.datasource.getConnection();
-
-			dialect.lastCommand(con);
-
-		} catch (SQLException e){
-			// cannot rethrow as this is the finish method
-			Logging.getBook(this.getClass()).logError(e.getMessage());
-		} finally {
-			try {
-				con.close();
-			} catch (SQLException e) {
-				throw dialect.handleSQLException(e);
-			}
-		}
-	
-	}
-
 
 
 
