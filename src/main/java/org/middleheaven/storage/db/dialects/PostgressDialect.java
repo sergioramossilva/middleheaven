@@ -60,7 +60,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 
 			// FROM ClAUSE
 			queryBuffer.append(" FROM ");
-			queryBuffer.append(model().hardNameForEntity().toLowerCase());
+			queryBuffer.append(model().getEntityHardName().toLowerCase());
 
 		}
 		

@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.data.DataType;
+import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.storage.DefaultStorableFieldModel;
 import org.middleheaven.storage.QualifiedName;
@@ -76,10 +77,6 @@ public class AnnotationsStorableEntityModel implements EntityModel {
 		return fields.get(logicName);
 	}
 
-	@Override
-	public String getEntityHardName() {
-		return hardname;
-	}
 
 
 	@Override
@@ -94,8 +91,26 @@ public class AnnotationsStorableEntityModel implements EntityModel {
 	}
 
 	@Override
-	public <T> T instanceFor(Class<T> type) {
+	public Object newInstance() {
 		return ReflectionUtils.newInstance(type);
 	}
+
+	@Override
+	public Class<?> getEntityClass() {
+		return type;
+	}
+
+	@Override
+	public String getEntityName() {
+		return type.getSimpleName();
+	}
+
+	@Override
+	public EntityFieldModel identityFieldModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 
 }

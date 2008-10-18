@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.db.dialects.HSQLDialect;
+import org.middleheaven.storage.db.dialects.MSDriverSQLServerDialect;
 import org.middleheaven.storage.db.dialects.PostgressDialect;
 import org.middleheaven.storage.db.dialects.SQLServerDialect;
 

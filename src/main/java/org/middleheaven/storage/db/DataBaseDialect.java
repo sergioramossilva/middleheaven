@@ -126,7 +126,7 @@ public abstract class DataBaseDialect {
 		values.delete(values.length()-1, values.length());
 
 		StringBuilder sql = new StringBuilder("INSERT INTO ")
-		.append(model.hardNameForEntity())
+		.append(model.getEntityHardName())
 		.append(" (")
 		.append(names)
 		.append(") VALUES (")
@@ -188,7 +188,7 @@ public abstract class DataBaseDialect {
 	
 	public DataBaseCommand createUpdateCommand(Collection<Storable> data,StorableEntityModel model){
 		StringBuilder sql = new StringBuilder("UPDATE ")
-		.append(model.hardNameForEntity())
+		.append(model.getEntityHardName())
 		.append(" SET ");
 
 		List<StorableFieldModel> fields = new ArrayList<StorableFieldModel>();
@@ -343,6 +343,8 @@ public abstract class DataBaseDialect {
 
 		return new SQLEditCommand(sql.toString());
 	}
+
+
 
 
 
