@@ -11,11 +11,33 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.middleheaven.core.reflection.ClassNotFoundReflectionException;
+import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.data.DataType;
+import org.middleheaven.domain.annotations.Column;
+import org.middleheaven.domain.annotations.Key;
+import org.middleheaven.domain.annotations.ManyToMany;
+import org.middleheaven.domain.annotations.ManyToOne;
+import org.middleheaven.domain.annotations.OneToMany;
+import org.middleheaven.domain.annotations.OneToOne;
+import org.middleheaven.domain.annotations.Temporal;
+import org.middleheaven.domain.annotations.Transient;
+import org.middleheaven.domain.annotations.Unique;
+import org.middleheaven.domain.annotations.ValueObject;
+import org.middleheaven.domain.annotations.Version;
 import org.middleheaven.domain.repository.Repository;
 import org.middleheaven.domain.repository.RepositoryRegister;
+import org.middleheaven.domain.repository.StandardEntityRepository;
+import org.middleheaven.storage.DataStorage;
+import org.middleheaven.storage.DataStorageService;
+import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.identity.Identity;
-
-
+import org.middleheaven.util.measure.time.CalendarDate;
+import org.middleheaven.util.measure.time.CalendarDateTime;
 
 /**
  * <code>DomainModel</code> builded by reading annotations in the entity classes.
@@ -50,19 +72,15 @@ public class AnnotatedDomainModel implements DomainModel{
 	}
 
 	@Override
-	public <E extends Entity> StorableEntityModel<E> getStorableEntityModelFor(Class<?> entityType) {
-		return storableEntityModels.get(entityType.getName());
-	}
-
-	@Override
-	public <E extends Entity> Repository<E> repositoryOf(Class<E> entityType) {
-		RepositoryRegister<E> rep = repositoryRegistry.of(entityType);
+	public <E> Repository<E> repositoryOf(Class<E> entityType) {
+		Repository<E> rep = repositoryRegistry.of(entityType);
 		rep.setDomainModel(this);
 		return rep;
 	}
+	
 
 	@Override
-	public <E extends Entity, R extends Repository<E>> R repository(Class<R> repositoryType) {
+	public <E, R extends Repository<E>> R repository(Class<R> repositoryType) {
 
 		R rep = repositoryRegistry.getRepository(repositoryType);
 		rep.setDomainModel(this);
@@ -70,27 +88,25 @@ public class AnnotatedDomainModel implements DomainModel{
 	}
 
 	@Override
-	public DataStorage storageOf(Class<?> entityType) {
-		return DataStorageManager.getStorage();
+	public <E> DataStorage storageOf(Class<E> entityType) {
+		DataStorageService service = ServiceRegistry.getService(DataStorageService.class);
+		return service.getStorage();
 	}
 
 	@Override
-	public <E extends Entity> void addEntity(Class<E> entityType,RepositoryRegister<? extends E> repository) {
+	public <E> void addEntity(Class<E> entityType,Repository<? extends E> repository) {
 		this.repositoryRegistry.setRepository(entityType, repository);
 		// add annotaded storemodel
-		if (!Entity.class.isAssignableFrom(entityType)  && !entityType.isAnnotationPresent(org.brisa.j4b.domain.annotations.Entity.class)){
-			Logger.getLogger().warn(entityType + " is not annotated with @Entity nither extends Entity");
-		} else {
+	
 			this.addStorableModel(entityType);
-		}
-
+		
 	}
 
 	private void addStorableModel(Class<?> entityType){
 		this.storableEntityModels.put(entityType.getName(), new AnnotatedStorableEntityModel(entityType));
 	}
 
-	public <E extends Entity> void addEntity(Class<E> entityType) throws ClassNotFoundReflectionException {
+	public <E> void addEntity(Class<E> entityType) {
 
 		// look for a class with name [EntityType]Repository in the same package
 		Package pack = entityType.getPackage();
@@ -100,7 +116,7 @@ public class AnnotatedDomainModel implements DomainModel{
 		for (int i=0;i < searchPaths.length;i++){
 			String path =  searchPaths[i] + "." +  entityType.getSimpleName() + "Repository";
 			try{
-				RepositoryRegister<E> rep = ReflectionUtils.newInstance(path, RepositoryRegister.class);
+				Repository<E> rep = ReflectionUtils.newInstance(path, Repository.class);
 				this.addEntity(entityType, rep);
 				return;
 			} catch (ClassCastException e){
@@ -132,9 +148,9 @@ public class AnnotatedDomainModel implements DomainModel{
 	}
 
 
-	private class AnnotatedStorableEntityModel<E extends Entity> implements StorableEntityModel<E>{
+	private class AnnotatedStorableEntityModel implements StorableEntityModel{
 
-		private Class<E> entityType;
+		private Class entityType;
 		private String logicEntityName;
 		private Map<QualifiedName ,StorableFieldModel > fields = new HashMap<QualifiedName ,StorableFieldModel >();
 		private StorableFieldModel keyFieldModel;
@@ -145,7 +161,7 @@ public class AnnotatedDomainModel implements DomainModel{
 		}
 
 
-		public AnnotatedStorableEntityModel(Class<E> entityType){
+		public AnnotatedStorableEntityModel(Class entityType){
 			this.entityType = entityType;
 
 			logicEntityName = entityType.getSimpleName().toLowerCase();
@@ -183,22 +199,48 @@ public class AnnotatedDomainModel implements DomainModel{
 		}
 
 		@Override
-		public Class<E> getEntityClass() {
-			return entityType;
+		public String logicNameForEntity() {
+			return logicEntityName;
 		}
 
 		@Override
-		public String hardNameForEntity() {
+		public Collection<StorableFieldModel> uniqueFields() {
+			Collection<StorableFieldModel> uniques = new LinkedList<StorableFieldModel>();
+			for (StorableFieldModel f :fields.values()) {
+				if (f.isUnique()){
+					uniques.add(f);
+				}
+			}
+			return null;
+		}
+
+
+		@Override
+		public String getEntityHardName() {
 			return hardEntityName;
 		}
 
-		@Override
-		public E instanceFor() {
-			return ReflectionUtils.newInstance(entityType);
-		}
 
 		@Override
-		public StorableFieldModel keyFieldModel() {
+		public Object newInstance() {
+			return ReflectionUtils.newInstance(entityType);
+		}
+		
+		
+		@Override
+		public Class<?> getEntityClass() {
+			return entityType;
+		}
+
+
+		@Override
+		public String getEntityName() {
+			return logicEntityName;
+		}
+
+
+		@Override
+		public StorableFieldModel identityFieldModel() {
 			return keyFieldModel;
 		}
 
@@ -213,7 +255,7 @@ public class AnnotatedDomainModel implements DomainModel{
 			boolean isUnique;
 			private QualifiedName hardName;
 			private Map<String, String> params = new TreeMap<String,String>();
-
+			private Class valueType;
 
 
 			public AnnotatedStorableFieldModel(PropertyAccessor pa , QualifiedName logicName) {
@@ -221,7 +263,8 @@ public class AnnotatedDomainModel implements DomainModel{
 				this.isTransient = pa.isAnnotatedWith(Transient.class);
 				this.isVersion = pa.isAnnotatedWith(Version.class);
 				this.isUnique = pa.isAnnotatedWith(Unique.class);
-
+				this.valueType = pa.getValueType();
+				
 				if(pa.isAnnotatedWith(Key.class)){
 					this.isKey = true;
 					Key key = pa.getAnnotation(Key.class);
@@ -235,7 +278,7 @@ public class AnnotatedDomainModel implements DomainModel{
 					ManyToOne ref = pa.getAnnotation(ManyToOne.class);
 					String fieldName = ref.targetIdentityField();
 					if (fieldName.isEmpty()){
-						fieldName = logicName.getFieldName();
+						fieldName = logicName.getColumnName();
 					}
 					params.put("targetField", fieldName);
 					params.put("targetFieldHardName", hardnameMapper.getFieldHardname(pa.getParentClass(), fieldName));
@@ -244,7 +287,7 @@ public class AnnotatedDomainModel implements DomainModel{
 					OneToOne ref = pa.getAnnotation(OneToOne.class);
 					String fieldName = ref.targetIdentityField();
 					if (fieldName.isEmpty()){
-						fieldName = logicName.getFieldName();
+						fieldName = logicName.getColumnName();
 					}
 					params.put("targetField", fieldName);
 					params.put("targetFieldHardName", hardnameMapper.getFieldHardname(pa.getParentClass(), fieldName));
@@ -271,7 +314,7 @@ public class AnnotatedDomainModel implements DomainModel{
 
 				hardName = QualifiedName.qualify(
 						AnnotatedStorableEntityModel.this.hardEntityName, 
-						hardnameMapper.getFieldHardname(pa.getParentClass(), logicName.getFieldName())
+						hardnameMapper.getFieldHardname(pa.getParentClass(), logicName.getColumnName())
 				);
 
 				Class<?> valueType = pa.getValueType();
@@ -314,7 +357,7 @@ public class AnnotatedDomainModel implements DomainModel{
 			}
 
 			@Override
-			public StorableEntityModel<?> getEntityModel() {
+			public StorableEntityModel getEntityModel() {
 				return AnnotatedStorableEntityModel.this;
 			}
 
@@ -357,25 +400,15 @@ public class AnnotatedDomainModel implements DomainModel{
 				return isUnique;
 			}
 
-
-
-		}
-
-		@Override
-		public String logicNameForEntity() {
-			return logicEntityName;
-		}
-
-		@Override
-		public Collection<StorableFieldModel> uniqueFields() {
-			Collection<StorableFieldModel> uniques = new LinkedList<StorableFieldModel>();
-			for (StorableFieldModel f :fields.values()) {
-				if (f.isUnique()){
-					uniques.add(f);
-				}
+			@Override
+			public Class<?> getValueClass() {
+				return valueType;
 			}
-			return null;
+
 		}
+
+
+
 
 	}
 
@@ -386,45 +419,13 @@ public class AnnotatedDomainModel implements DomainModel{
 	}
 
 	@Override
-	public Collection<StorableEntityModel> storableEntitiesModels() {
-		return Collections.unmodifiableCollection(this.storableEntityModels.values());
-	}
-
-	@Override
-	public <E> void addEntity(Class<E> entityType,
-			Repository<? extends E> repository) {
-		// TODO implement AnnotatedDomainModel.addEntity
-		
-	}
-
-	@Override
-	public Collection<EntityModel> entitiesModels() {
-		// TODO implement AnnotatedDomainModel.entitiesModels
-		return null;
+	public <T extends EntityModel> Collection<T> entitiesModels() {
+		return (Collection<T>) Collections.unmodifiableCollection(this.storableEntityModels.values());
 	}
 
 	@Override
 	public EntityModel getEntityModelFor(Class<?> entityType) {
-		// TODO implement AnnotatedDomainModel.getEntityModelFor
-		return null;
-	}
-
-	@Override
-	public <I extends Identity> Class<I> indentityTypeFor(Class<?> entityType) {
-		// TODO implement AnnotatedDomainModel.indentityTypeFor
-		return null;
-	}
-
-	@Override
-	public <E, R extends Repository<E>> R repository(Class<R> repositoryType) {
-		// TODO implement AnnotatedDomainModel.repository
-		return null;
-	}
-
-	@Override
-	public <E> Repository<E> repositoryOf(Class<E> entityType) {
-		// TODO implement AnnotatedDomainModel.repositoryOf
-		return null;
+		return storableEntityModels.get(entityType.getName());
 	}
 
 

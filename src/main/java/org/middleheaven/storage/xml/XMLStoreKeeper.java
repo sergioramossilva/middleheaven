@@ -104,9 +104,8 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 			List<T> list = new ArrayList<T>(nodes.getLength());
 			
 			for (int i = 0; i < nodes.getLength(); i++) {
-				T n = model.newInstance();
-				T t = merge(n);
-				NodeStorable s = new NodeStorable(nodes.item(i),model.keyFieldModel());
+				T t = merge((T)model.newInstance());
+				NodeStorable s = new NodeStorable(nodes.item(i),model.identityFieldModel());
 				this.copy(s, (Storable)t, model);
 				
 				list.add(t);

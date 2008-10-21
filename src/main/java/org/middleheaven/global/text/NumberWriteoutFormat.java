@@ -23,7 +23,7 @@ public abstract class NumberWriteoutFormat {
 			country = lang.toUpperCase();
 		}
 		try{
-			return (NumberWriteoutFormat) ReflectionUtils.newInstance("org.middleheaven.global.text." + country + lang + NumberWriteoutFormat.class.getSimpleName());
+			return ReflectionUtils.newInstance("org.middleheaven.global.text." + country + lang + NumberWriteoutFormat.class.getSimpleName(),NumberWriteoutFormat.class);
 		} catch (Exception e){
 			throw new FormatNotFoundException("Cannot find format class for locale " + locale);
 		}

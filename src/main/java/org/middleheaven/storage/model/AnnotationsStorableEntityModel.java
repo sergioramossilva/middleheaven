@@ -17,7 +17,7 @@ import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 
-public class AnnotationsStorableEntityModel implements EntityModel {
+public class AnnotationsStorableEntityModel implements EntityModel ,StorableEntityModel {
 
 	Class<?> type;
 
@@ -28,14 +28,17 @@ public class AnnotationsStorableEntityModel implements EntityModel {
 	public AnnotationsStorableEntityModel(Class<?> type){
 		this.type = type;
 
+		
 		Table annot = ReflectionUtils.getAnnotation(type, Table.class);
 		if (annot==null){
-			throw new IllegalArgumentException("Annotation @Table missing");
+			hardname = type.getSimpleName();
+		} else {
+			hardname = annot.name();
 		}
 
-		hardname = annot.name();
+		
 		String key = annot.key();
-		QualifiedName keyName = QualifiedName.of(hardname , key);
+		QualifiedName keyName = QualifiedName.qualify(hardname , key);
 		
 		keyModel= new DefaultStorableFieldModel(keyName,DataType.INTEGER,Integer.class);
 		
@@ -57,7 +60,7 @@ public class AnnotationsStorableEntityModel implements EntityModel {
 			if (!persistable){
 				continue;
 			}
-			QualifiedName name = QualifiedName.of(hardname , fieldName);
+			QualifiedName name = QualifiedName.qualify(hardname , fieldName);
 			
 			DefaultStorableFieldModel d = new DefaultStorableFieldModel(name,dataType,(Class)f.getGenericType());
 			
@@ -110,6 +113,31 @@ public class AnnotationsStorableEntityModel implements EntityModel {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String getEntityHardName() {
+		return hardname;
+	}
+
+	@Override
+	public String logicNameForEntity() {
+		// TODO implement AnnotationsStorableEntityModel.logicNameForEntity
+		return null;
+	}
+
+	@Override
+	public <E> Class<E> getEntityClass() {
+		// TODO implement AnnotationsStorableEntityModel.getEntityClass
+		return null;
+	}
+
+	@Override
+	public Collection<StorableFieldModel> uniqueFields() {
+		// TODO implement AnnotationsStorableEntityModel.uniqueFields
+		return null;
+	}
+
+
 
 
 

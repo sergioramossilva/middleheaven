@@ -162,7 +162,7 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 		}
 		
 		Criteria<?> c = CriteriaBuilder.search(s.getPersistableClass())
-		.and(model.keyFieldModel().getHardName().toString()).in(keys)
+		.and(model.identityFieldModel().getHardName().toString()).in(keys)
 		.all();
 		
 		executeCommand(dialect.createDeleteCommand(c , model), model );

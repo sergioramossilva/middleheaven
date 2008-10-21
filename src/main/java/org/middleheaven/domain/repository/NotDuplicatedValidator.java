@@ -17,7 +17,7 @@ public class NotDuplicatedValidator<T> implements Validator<T>{
 	@Override
 	public void validate(ValidationContext context, T object) {
 		
-		Query<T> query = repository.retriveEquals(object);
+		Query<T> query = repository.findEquals(object);
 
 		if (!query.isEmpty()) {
 			context.add(MessageInvalidationReason.error("invalid.instance.duplicated"));

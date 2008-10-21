@@ -14,9 +14,10 @@ public enum DataType {
 	DATETIME,
 	TIME,
 	DATE,
-	ONE2ONE,
-	ONE2MANY,
-	MANY2ONE;
+	ONE_TO_ONE,
+	ONE_TO_MANY,
+	MANY_TO_ONE, 
+	MANY_TO_MANY, IDENTITY;
 	
 	public static DataType fromClass(Class<?> type){
 		if (Date.class.isAssignableFrom(type)){
@@ -35,12 +36,12 @@ public enum DataType {
 	}
 	
 	public boolean isToOneReference() {
-		return this.equals(ONE2ONE) || this.equals(MANY2ONE);
+		return this.equals(ONE_TO_ONE) || this.equals(MANY_TO_ONE);
 	}
 
 	
 	public boolean isToManyReference() {
-		return this.equals(ONE2MANY);
+		return this.equals(ONE_TO_MANY) || this.equals(MANY_TO_MANY);
 	}
 
 	public boolean isTemporal(){
@@ -48,7 +49,7 @@ public enum DataType {
 	}
 	
 	public boolean isVirtual() {
-		return this.equals(ONE2ONE) || this.equals(MANY2ONE) || this.equals(ONE2MANY);
+		return this.equals(ONE_TO_ONE) || this.equals(MANY_TO_ONE) || this.equals(ONE_TO_MANY);
 	}
 
 	public boolean isReference() {

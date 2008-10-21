@@ -13,5 +13,5 @@ public interface EntityModel {
 	public EntityFieldModel fieldModel(QualifiedName logicName);
 	public EntityFieldModel identityFieldModel();
 
-	public Collection<EntityFieldModel> fields();
+	public Collection<? extends EntityFieldModel> fields();
 }
