@@ -1,15 +1,21 @@
 package org.middleheaven.core.reflection;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +25,52 @@ public final class ReflectionUtils {
 	public ReflectionUtils(){}
 
 
+	public static Set<Class> getPackageClasses(Package classPackage) {
+
+		Set<Class> classes = new HashSet<Class>();
+		try {
+			ClassLoader cl = classPackage.getClass().getClassLoader();
+			if (cl == null) {
+				// no class loader specified -> use thread context class loader
+				cl = Thread.currentThread().getContextClassLoader();
+			}
+			String packageUrl = classPackage.getName().replaceAll("\\.", "/");
+			Enumeration<URL> packageLocations = cl.getResources(packageUrl);
+
+			while (packageLocations.hasMoreElements()){
+				URL url = packageLocations.nextElement();
+				process(classes,url,classPackage.getName());
+			}
+
+			return classes;
+		} catch (IOException e) {
+			throw new ReflectionException(e);
+		}
+	}
+	
+	private static void process(Set<Class> classes , URL url , String base) throws IOException{
+		if (url.getProtocol().equals("file")){
+			try {
+				File folder = new File(url.toURI());
+
+				File[] files = folder.listFiles(new FilenameFilter(){
+
+					@Override
+					public boolean accept(File file, String name) {
+						return name.indexOf("$")<0 && name.endsWith(".class");
+					}
+
+				});
+
+				for (File f : files){
+					String name = base + "." + f.getName().substring(0, f.getName().indexOf('.'));  
+					classes.add(loadClass(name));
+				}
+			} catch (URISyntaxException e) {
+				throw new IOException(e);
+			} 
+		}
+	}
 	
 	public static <T> T copy(T original , T copy ){
 		Collection<PropertyAccessor> assessors = getPropertyAccessors(original.getClass());
@@ -220,17 +272,19 @@ public final class ReflectionUtils {
 		}
 	}
 
-	public static Object newInstance(String className) throws InstantiationReflectionException{
-		if (className == null) {
-			throw new IllegalArgumentException (className + " is not a valid value for argument className");
-		}
-		return newInstance(loadClass(className));
-	}
+	public static <T> T newInstance(String className, Class<T> type) throws ClassNotFoundReflectionException {
 
+		try {
+			return  type.cast(newInstance(Class.forName(className)));
+		} catch (ClassNotFoundException e) {
+			throw new ClassNotFoundReflectionException("Class " + className  + " has not found");
+		}
+	}
 
 	public static <T> T newInstance(Class<T> klass, Object ... args) throws ReflectionException{
 		return newInstance(klass,klass,args);
 	}
+	
 	public static <T> T newInstance(Class<T> castAs,Class<?> klass, Object ... args) throws ReflectionException{
 		try {
 			if (args.length==0){

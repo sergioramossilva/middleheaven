@@ -20,7 +20,9 @@ import org.middleheaven.data.DataType;
 @Documented
 public @interface Column {
 	
-	String name() default ""; 
+	String value();
+	int length () default 100;
+	
 	/**
 	 * Idicates whether the field is to be persisted
 	 * @return
@@ -28,4 +30,5 @@ public @interface Column {
 	boolean persistable () default true;
 	
 	DataType type() default DataType.UNKWON;
+
 }

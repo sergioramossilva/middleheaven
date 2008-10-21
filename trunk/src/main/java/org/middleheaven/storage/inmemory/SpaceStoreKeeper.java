@@ -21,6 +21,7 @@ import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaFilter;
 import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.sequence.CannotCreateSequenceException;
 import org.middleheaven.util.sequence.DefaultToken;
 import org.middleheaven.util.sequence.Sequence;
@@ -154,7 +155,7 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 
 	private static class SpaceStorable implements Storable, Serializable{
 
-		Long key;
+		Identity key;
 		String persistableClassName;
 		PersistableState state;
 		Map<String, Object> values = new TreeMap<String, Object>();
@@ -203,7 +204,7 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 
 	}
 	
-	private class SpaceSequence implements Sequence<Long> {
+	private class SpaceSequence implements Sequence<Identity> {
 
 		public String seqName;
 
@@ -212,13 +213,13 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 		}
 
 		@Override
-		public SequenceToken<Long> next() {
+		public SequenceToken<Identity> next() {
 			/*
 			 * Increment the sequence and return it,
 			 * by using the IncrementSeqCmd command.
 			 */
 			try {
-				return new DefaultToken<Long>(new Long(space4j.exec(new IncrementSeqCmd(seqName))));
+				return new DefaultToken<Identity>(new IntegerIdentity(new Long(space4j.exec(new IncrementSeqCmd(seqName))).intValue()));
 			} catch (CommandException e) {
 				throw new SequenceException(e);
 			} catch (LoggerException e) {

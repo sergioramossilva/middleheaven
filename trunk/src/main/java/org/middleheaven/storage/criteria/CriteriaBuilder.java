@@ -69,24 +69,24 @@ public final class CriteriaBuilder<T> {
 	 */
 
 	public CriteriaBuilder<T> isEqual(T instance){
-		new BuildingConstraint<T>(this,QualifiedName.of(this.criteria.getTargetClass().getSimpleName().toLowerCase(), "identity"))
+		new BuildingConstraint<T>(this,QualifiedName.qualify(this.criteria.getTargetClass().getSimpleName().toLowerCase(), "identity"))
 		.eq(instance);
 		return this;
 	}
 
 	public CriteriaBuilder<T> isSame(T instance){
 		// TODO read and set unique identifiers
-		new BuildingConstraint<T>(this,QualifiedName.of(this.criteria.getTargetClass().getSimpleName().toLowerCase(), "identity"))
+		new BuildingConstraint<T>(this,QualifiedName.qualify(this.criteria.getTargetClass().getSimpleName().toLowerCase(), "identity"))
 		.eq(instance);
 		return this;
 	}
 
 	public Constraint<T> and(String name) {
-		return new BuildingConstraint<T>(this,QualifiedName.of(this.criteria.getTargetClass().getSimpleName().toLowerCase(), name));
+		return new BuildingConstraint<T>(this,QualifiedName.qualify(this.criteria.getTargetClass().getSimpleName().toLowerCase(), name));
 	}
 
 	public Constraint<T> or(String name) {
-		return new BuildingConstraint<T>(this,QualifiedName.of(this.criteria.getTargetClass().getSimpleName().toLowerCase(), name));
+		return new BuildingConstraint<T>(this,QualifiedName.qualify(this.criteria.getTargetClass().getSimpleName().toLowerCase(), name));
 	}
 
 	public CriteriaBuilder<T> limit(int count) {
@@ -100,7 +100,7 @@ public final class CriteriaBuilder<T> {
 	}
 
 	public OrderingConstrain<T> orderBy(String name) {
-		return new BuildingOrdering<T>(this,QualifiedName.of(this.criteria.getTargetClass().getSimpleName().toLowerCase(), name));
+		return new BuildingOrdering<T>(this,QualifiedName.qualify(this.criteria.getTargetClass().getSimpleName().toLowerCase(), name));
 	}
 
 

@@ -21,7 +21,7 @@ public class Sequences {
 		if (sequenceType==null){
 			throw new RuntimeException("Sequence not found for type " + elementType);
 		}
-		return (Sequence<T>) ReflectionUtils.newInstance(sequenceType);
+		return (Sequence<T>) ReflectionUtils.newInstance(sequenceType,Sequence.class);
 	}
 	
 	public static <T, S extends Sequence<T>> void setSequence(Class<T> elementType,Class<S> sequenceType){

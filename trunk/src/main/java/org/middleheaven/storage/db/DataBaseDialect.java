@@ -106,10 +106,10 @@ public abstract class DataBaseDialect {
 		StringBuilder values = new StringBuilder();
 		List<StorableFieldModel> fields = new ArrayList<StorableFieldModel>();
 
-		this.writeEditionHardname(names, model.keyFieldModel().getHardName());
+		this.writeEditionHardname(names, model.identityFieldModel().getHardName());
 		names.append(",");
 		values.append("?,");
-		fields.add(model.keyFieldModel());
+		fields.add(model.identityFieldModel());
 
 
 		for ( StorableFieldModel fm : model.fields()){
@@ -202,10 +202,10 @@ public abstract class DataBaseDialect {
 		sql.delete(sql.length()-1, sql.length());
 		sql.append(" WHERE ");
 
-		this.writeEditionHardname(sql, model.keyFieldModel().getHardName());
+		this.writeEditionHardname(sql, model.identityFieldModel().getHardName());
 
 		sql.append("=?");
-		fields.add(model.keyFieldModel());
+		fields.add(model.identityFieldModel());
 		
 		return new SQLStoreCollectionCommand(data,sql.toString(),fields);
 	}

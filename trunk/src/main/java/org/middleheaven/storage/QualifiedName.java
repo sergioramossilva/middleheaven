@@ -7,7 +7,8 @@ public class QualifiedName implements Serializable{
 	private String tableName;
 	private String columnName;
 	
-	public static QualifiedName of(String tableName, String columnName){
+
+	public static QualifiedName qualify(String tableName, String columnName){
 		return new QualifiedName(tableName,columnName);
 	}
 	
@@ -35,4 +36,6 @@ public class QualifiedName implements Serializable{
 	public int hashCode() {
 		return columnName.hashCode() ^ tableName.hashCode();
 	}
+
+
 }

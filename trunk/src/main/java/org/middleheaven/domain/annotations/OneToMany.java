@@ -1,4 +1,4 @@
-package org.middleheaven.storage.model;
+package org.middleheaven.domain.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,12 +7,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({
-	ElementType.TYPE
-	})
+@Target(ElementType.METHOD)
 @Documented
-public @interface Table {
+public @interface OneToMany {
 
-	public String value();
-	public String key();
+	/**
+	 * 
+	 * @return end point entity class
+	 */
+	Class target();
+	
 }

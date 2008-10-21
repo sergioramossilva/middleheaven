@@ -316,7 +316,7 @@ public class CriteriaInterpreter {
 
 			if (fm.getDataType().isToOneReference()){
 				// join
-				QualifiedName kfm = model().keyFieldModel().getHardName();
+				QualifiedName kfm = model().identityFieldModel().getHardName();
 
 				joinClause.append(" INNER JOIN ")
 				.append(dialect().startDelimiter())

@@ -7,11 +7,12 @@ import javax.sql.DataSource;
 
 import org.middleheaven.util.sequence.NamedSequenceAdapter;
 import org.middleheaven.util.sequence.Sequence;
+import org.middleheaven.util.sequence.SequenceStateListener;
 import org.middleheaven.util.sequence.Sequences;
 import org.middleheaven.util.sequence.StateChangedEvent;
 import org.middleheaven.util.sequence.StatePersistentSequence;
 
-public abstract class SequenceNotSupportedDialect extends DataBaseDialect {
+public abstract class SequenceNotSupportedDialect extends DataBaseDialect implements SequenceStateListener {
 
 	protected SequenceNotSupportedDialect(String startDelimiter,
 			String endDelimiter, String fieldSeparator) {

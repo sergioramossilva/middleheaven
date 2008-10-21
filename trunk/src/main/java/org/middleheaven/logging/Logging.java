@@ -1,5 +1,6 @@
 package org.middleheaven.logging;
 
+import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
 
 
@@ -13,7 +14,12 @@ public class Logging {
 	 * @return
 	 */
 	public static LogBook getBook(String bookName){
-		return ServiceRegistry.getService(LoggingService.class).getLogBook(bookName);
+		try{
+			return ServiceRegistry.getService(LoggingService.class).getLogBook(bookName);
+		} catch (ServiceNotFoundException e){
+			System.err.println("Inicialize the logging service properly");
+			return VoidLogBook.getInstance();
+		}
 	}
 	
 	public static LogBook getBook(Class<?> type){

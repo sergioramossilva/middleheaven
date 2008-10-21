@@ -1,43 +1,54 @@
 package org.middleheaven.domain.repository;
 
+import org.middleheaven.domain.DomainModel;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 
 
-public final class StandardEntityRepository<E> implements Repository<E> {
+public class StandardEntityRepository<E> implements Repository<E> {
 
 	private Class<E> entityType;
-	private DataStorage storage;
+	private DomainModel domainModel;
 	
-	public StandardEntityRepository(Class<E> entityType , DataStorage storage){
+	public StandardEntityRepository(Class<E> entityType){
 		this.entityType = entityType;
-		this.storage = storage;
+		
+	}
+
+	@Override
+	public void setDomainModel(DomainModel domainModel) {
+		this.domainModel = domainModel;
 	}
 	
+	protected DataStorage getDataStorage(){
+		return domainModel.storageOf(entityType);
+	}
 	@Override
 	public void remove(E entity) {
-	    storage.remove(entity);
+		getDataStorage().remove(entity);
 	}
 
 	@Override
 	public E store(E entity) {
-		return storage.store(entity);
+		return getDataStorage().store(entity);
 	}
 
 	@Override
-	public Query<E> retriveAll() {
-		return storage.createQuery(CriteriaBuilder.search(entityType).all());
+	public Query<E> findAll() {
+		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).all());
 	}
 
 	@Override
-	public Query<E> retriveEquals(E instance) {
-		return storage.createQuery(CriteriaBuilder.search(entityType).isEqual(instance).all());
+	public Query<E> findEquals(E instance) {
+		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).isEqual(instance).all());
 	}
 
 	@Override
-	public Query<E> retriveSame(E instance) {
-		return storage.createQuery(CriteriaBuilder.search(entityType).isSame(instance).all());
+	public Query<E> findSame(E instance) {
+		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).isSame(instance).all());
 	}
+
+	
 	
 }

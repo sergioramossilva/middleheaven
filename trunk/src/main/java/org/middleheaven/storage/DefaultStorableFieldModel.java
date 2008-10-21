@@ -73,4 +73,16 @@ public class DefaultStorableFieldModel implements StorableFieldModel {
 		return null;
 	}
 
+	@Override
+	public StorableEntityModel getEntityModel() {
+		// TODO implement DefaultStorableFieldModel.getEntityModel
+		return null;
+	}
+
+	@Override
+	public boolean isUnique() {
+		// TODO implement DefaultStorableFieldModel.isUnique
+		return false;
+	}
+
 }
