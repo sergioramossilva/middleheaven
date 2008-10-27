@@ -7,4 +7,5 @@ public interface DataStorageService {
 	public DataStorage getStorage();
 	
 	public void addDataStorage(String storageID , DataStorage storage);
+	public void removeDataStorage(String storageID);
 }
