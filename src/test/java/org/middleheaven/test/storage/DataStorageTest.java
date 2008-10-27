@@ -22,14 +22,17 @@ import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
+import org.middleheaven.storage.StorableDomainModel;
 import org.middleheaven.storage.StorableEntityModel;
-import org.middleheaven.storage.StoreMetadataManager;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.datasource.DataSourceService;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.datasource.DriverDataSource;
+import org.middleheaven.storage.datasource.DriverManagerDSProvider;
 import org.middleheaven.storage.db.DataBaseStoreKeeper;
 import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.sequence.service.FileSequenceStorageActivator;
 
 
@@ -59,18 +62,23 @@ public class DataStorageTest {
 //				"pguser",
 //				"pguser"
 //		));
-		srv.addDataSource("test", new DriverDataSource(
+		srv.addDataSourceProvider("test", DriverManagerDSProvider.provider(
 				"org.hsqldb.jdbcDriver" ,
 				"jdbc:hsqldb:F:\\Workspace\\MiddleHeaven_Google\\XTest;shutdown=true" ,
 				"sa",
 				""
 		));
 		DataSource datasource = ServiceRegistry.getService(DataSourceService.class).getDataSource("test");
-		ds = new DomainDataStorage(new DataBaseStoreKeeper(datasource) , new StoreMetadataManager(){
+		ds = new DomainDataStorage(new DataBaseStoreKeeper(datasource) , new StorableDomainModel(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
 				return new AnnotationsStorableEntityModel(type);
+			}
+
+			@Override
+			public Class<? extends Identity> indentityTypeFor(Class<?> entityType) {
+				return IntegerIdentity.class;
 			}
 
 		});
