@@ -11,10 +11,10 @@ public class PersistableMethodHandler implements MethodHandler  {
 	
 	private Long key;
 	private PersistableState state = PersistableState.FILLED;
-	Class<?> original;
+	Class<?> originalType;
 	
 	PersistableMethodHandler(Class<?> original){
-		this.original = original;
+		this.originalType = original;
 	}
 	
 	@Override
@@ -29,7 +29,7 @@ public class PersistableMethodHandler implements MethodHandler  {
 				StorableFieldModel model = (StorableFieldModel)args[0];
 				String name = model.getHardName().getColumnName();
 				
-				ReflectionUtils.getPropertyAccessor(self.getClass(),name).setValue(self,args[1]);
+				ReflectionUtils.getPropertyAccessor(this.originalType,name).setValue(self,args[1]);
 				return null;
 			} else {
 				return this.getClass().getMethod(invoked.getName(), invoked.getParameterTypes()).invoke(this, args);
@@ -47,11 +47,11 @@ public class PersistableMethodHandler implements MethodHandler  {
 	}
 
 	public String getName() {
-		return original.getSimpleName();
+		return originalType.getSimpleName();
 	}
 
 	public Class<?> getPersistableClass() {
-		return original;
+		return originalType;
 	}
 
 

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.middleheaven.core.reflection.ProxyUtils;
+import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IdentitySequence;
@@ -18,9 +19,9 @@ import org.middleheaven.util.sequence.SequenceToken;
 public class DomainDataStorage implements DataStorage {
 
 	StoreKeeper storeKeeper;
-	StoreMetadataManager metadataService;
+	StorableDomainModel metadataService;
 	
-	public DomainDataStorage(StoreKeeper storeManager,StoreMetadataManager metadataService) {
+	public DomainDataStorage(StoreKeeper storeManager,StorableDomainModel metadataService) {
 		this.storeKeeper = storeManager;
 		this.metadataService = metadataService;
 	}
@@ -42,7 +43,7 @@ public class DomainDataStorage implements DataStorage {
 			p = (Storable)obj;
 		} else {
 			// not managed yet
-		    p = ProxyUtils.decorate(obj, Storable.class, new PersistableMethodHandler(obj.getClass()));
+			p = ReflectionUtils.proxy(obj, Storable.class, new PersistableMethodHandler(obj.getClass()));
 		}
 		doStore(p);
 		return (T)p;
