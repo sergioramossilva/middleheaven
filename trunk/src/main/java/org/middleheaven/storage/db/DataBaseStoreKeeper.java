@@ -13,11 +13,16 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
+import org.middleheaven.data.DataType;
+import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.domain.DomainModel;
+import org.middleheaven.logging.Logging;
 import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
@@ -56,7 +61,7 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 		if (iseq==null){
 			Sequence<Long> seq = dialect.getSequence(datasource, name);
 			iseq = new IntegerIdentitySequence();
-			
+			sequences.put(name,iseq);
 		}
 		return iseq;
 		
@@ -136,10 +141,6 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 
 	}
 
-
-
-
-
 	@Override
 	public void insert(Collection<Storable> collection, StorableEntityModel model) {
 		if (collection.isEmpty()){
@@ -204,6 +205,79 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 		}
 	}
 
+	/**
+	 * Used the DomainModel to create Tables and Indexes in the DataBase.
+	 */
+	public void updateMetadata(DomainModel model , String catalog){
+
+		Collection<StorableEntityModel> allEntities = model.entitiesModels();
+		DataBaseModel dbModel = new DataBaseModel();
+
+		for (StorableEntityModel em : allEntities ){
+			dbModel.addTable(tableModelFor(em));
+		}
+
+		dialect.updateDatabaseModel(dbModel);
+
+		updateDataBaseModel(catalog,dbModel);
+
+	}
+
+	private TableModel tableModelFor(StorableEntityModel em) {
+		TableModel model = new TableModel(em.getEntityHardName());
+
+		for (StorableFieldModel fm : em.fields()){
+			if (fm.getDataType().isToManyReference()){
+				continue;
+			}
+			model.addColumn( columnModelFor(fm));
+		}
+		return model;
+	}
+
+	private ColumnModel columnModelFor(StorableFieldModel fm) {
+		ColumnModel column = new ColumnModel(fm.getHardName().getColumnName(), fm.getDataType());
+		if(column.getType().equals(DataType.IDENTITY)){
+			column.setType(DataType.INTEGER); // TODO resolve correct field type
+		} else if (column.getType().equals(DataType.MANY_TO_ONE)){
+			column.setType(DataType.INTEGER);
+			column.setName(fm.getParam("targetFieldHardName"));
+		}
+		if (column.getSize()==0){
+			if (column.getType().equals(DataType.TEXT)){
+				column.setSize(Integer.parseInt(fm.getParam("size")));
+			} 
+		}
+		return column;
+	}
+
+	private void updateDataBaseModel(String catalog, DataBaseModel dbModel)  {
+
+		DataBaseModel existingDBModel = dialect.readDataBaseModel(catalog,this.datasource);
+		for (TableModel tm : dbModel){
+			TableModel existingModel = existingDBModel.getTableModel(tm.getName());
+			if ( existingModel !=null){
+				// alter TODO
+
+			} else {
+				// create 
+				try {
+					DataBaseCommand command = dialect.createCreateTableCommand(tm);
+					executeCommand(command, null);
+
+					for (ColumnModel cm : tm){
+						if (cm.isIndexed()){
+							DataBaseCommand idxCommand = dialect.createCreateIndexCommand(cm);
+							executeCommand(idxCommand, null);
+
+						}
+					}
+				} catch (TableAlreadyExistsException e){
+					Logging.getBook(this.getClass()).logInfo("Table " + tm.getName() + " already exists");
+				}
+			}
+		}
+	}
 
 
 

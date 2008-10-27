@@ -2,6 +2,7 @@ package org.middleheaven.domain.repository;
 
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.storage.Query;
+import org.middleheaven.util.identity.Identity;
 
 /**
  * 
@@ -12,6 +13,8 @@ import org.middleheaven.storage.Query;
 public interface Repository<E> {
 
 	public Query<E> findAll();
+	
+	public Query<E> findByIdentity(Identity id );
 	
 	public Query<E> findSame(E instance);
 

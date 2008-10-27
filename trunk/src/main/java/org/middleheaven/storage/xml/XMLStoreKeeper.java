@@ -55,6 +55,7 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 
 	}
 
+	
 	XMLCriteriaInterpreter interpreter = new XMLCriteriaInterpreter();
 
 	class XPathStorageQuery<T> implements Query<T>{
@@ -92,7 +93,7 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 
 	<T> List<T> findByCriteria(Criteria<T> criteria,StorableEntityModel model){
 
-		String xpathStr = interpreter.Interpreter(criteria);
+		String xpathStr = interpreter.Interpreter(model,criteria);
 
 		try {
 			XPathFactory factory = XPathFactory.newInstance();

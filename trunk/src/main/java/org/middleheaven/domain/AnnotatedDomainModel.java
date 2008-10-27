@@ -17,6 +17,7 @@ import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.data.DataType;
 import org.middleheaven.domain.annotations.Column;
+import org.middleheaven.domain.annotations.Entity;
 import org.middleheaven.domain.annotations.Key;
 import org.middleheaven.domain.annotations.ManyToMany;
 import org.middleheaven.domain.annotations.ManyToOne;
@@ -140,7 +141,7 @@ public class AnnotatedDomainModel implements DomainModel{
 		Set<Class> entities = ReflectionUtils.getPackageClasses(entitiesPackage);
 
 		for (Class c : entities){
-			if (!RepositoryRegister.class.isAssignableFrom(c) && !c.isAnnotationPresent(ValueObject.class)){
+			if (c.isAnnotationPresent(Entity.class)){
 				addEntity(c);
 			}
 		}

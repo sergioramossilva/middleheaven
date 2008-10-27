@@ -4,17 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentityConverter;
+import org.middleheaven.util.identity.StringIdentityConverter;
 
 public class TypeConvertions {
 
 	private final static Map<Key, TypeConverter> converters = new HashMap<Key, TypeConverter>();
 
 	static {
-
 		addConverter(CharSequence.class, Number.class , new CharSequenceNumberConverter());
 		addConverter(CharSequence.class, Boolean.class , new CharSequenceBooleanConverter());
-	
+		addConverter(String.class, Identity.class , new StringIdentityConverter());
+		addConverter(Integer.class, Identity.class , new IntegerIdentityConverter());
+		
 	}
+	
+	
 	public static <O,T> T convert (O value , Class<T> type ){
 		if (value==null){
 			return null;
@@ -69,7 +75,7 @@ public class TypeConvertions {
 
 		@Override
 		public int hashCode() {
-			return 0;
+			return 0 ;
 		}
 
 		@Override
@@ -78,7 +84,7 @@ public class TypeConvertions {
 		}
 		
 		private static boolean isCompatible(Key a , Key b ){
-			return a.from.isAssignableFrom(a.from) && a.to.isAssignableFrom(b.to) ||
+			return a.from.isAssignableFrom(b.from) && a.to.isAssignableFrom(b.to) ||
 			b.from.isAssignableFrom(a.from) && b.to.isAssignableFrom(a.to);
 		}
 	}  
