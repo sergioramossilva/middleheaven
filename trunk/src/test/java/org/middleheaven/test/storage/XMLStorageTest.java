@@ -1,6 +1,6 @@
 package org.middleheaven.test.storage;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -17,12 +17,14 @@ import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
+import org.middleheaven.storage.StorableDomainModel;
 import org.middleheaven.storage.StorableEntityModel;
-import org.middleheaven.storage.StoreMetadataManager;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
 import org.middleheaven.storage.xml.XMLStoreKeeper;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.sequence.service.FileSequenceStorageActivator;
 
 
@@ -44,11 +46,16 @@ public class XMLStorageTest {
 
 		// Configured
 		ManagedFile source = ManagedFileRepositories.resolveFile(this.getClass().getResource("data.xml"));
-		ds = new DomainDataStorage(XMLStoreKeeper.manage(source) , new StoreMetadataManager(){
+		ds = new DomainDataStorage(XMLStoreKeeper.manage(source) , new StorableDomainModel(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
 				return new AnnotationsStorableEntityModel(type);
+			}
+
+			@Override
+			public Class<? extends Identity> indentityTypeFor(Class<?> entityType) {
+				return IntegerIdentity.class;
 			}
 
 		});

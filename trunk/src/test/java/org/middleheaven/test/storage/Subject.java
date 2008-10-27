@@ -8,17 +8,17 @@ import java.util.Date;
 import org.middleheaven.storage.model.Column;
 import org.middleheaven.storage.model.Table;
 
-@Table(name="tablec", key="key")
+@Table("tablec")
 public class Subject {
 	
 	@Column(persistable=false)
 	private String transientField;
 	
-	@Column(name="ativo")
+	@Column("ativo")
 	private boolean active;
 	private String name;
 	
-	@Column(name="aniversario")
+	@Column("aniversario")
 	private Date birthdate;
 	
 	protected Date getBirthdate() {
