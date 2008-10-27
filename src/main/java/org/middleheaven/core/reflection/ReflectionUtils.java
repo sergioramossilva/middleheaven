@@ -20,11 +20,46 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javassist.util.proxy.MethodFilter;
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
+import javassist.util.proxy.ProxyObject;
+
 public final class ReflectionUtils {
 
 	public ReflectionUtils(){}
 
 
+	public static <I> I proxy (Object delegationTarget , Class<I> proxyInterface , MethodHandler delegator ){
+		if (!proxyInterface.isInterface()){
+			throw new IllegalArgumentException("Proxy must be applied with an interface");
+		}
+		ProxyFactory f = new ProxyFactory();
+		f.setSuperclass(delegationTarget.getClass());
+		f.setInterfaces(new Class[]{proxyInterface});
+		f.setFilter(new MethodFilter() {
+			public boolean isHandled(Method m) {
+				// ignore finalize()
+				return !m.getName().equals("finalize");
+			}
+		});
+
+		I foo;
+		try {
+			Class c = f.createClass();
+			foo = (I)c.newInstance();
+
+			((ProxyObject)foo).setHandler(delegator);
+
+			copy(delegationTarget, foo);
+			return foo;
+		} catch (InstantiationException e) {
+			throw new ReflectionException(e);
+		} catch (IllegalAccessException e) {
+			throw new ReflectionException(e);
+		}
+	}
+	
 	public static Set<Class> getPackageClasses(Package classPackage) {
 
 		Set<Class> classes = new HashSet<Class>();
@@ -90,7 +125,7 @@ public final class ReflectionUtils {
 
 		Collection<PropertyAccessor> result = new ArrayList<PropertyAccessor> ();
 		for (Method m : type.getMethods()){
-			if (m.getName().startsWith("set")){
+			if ((m.getName().startsWith("get") || m.getName().startsWith("is")) && !m.getName().startsWith("getClass") ){
 				//result.add(new PropertyAccessor(type, m.getName().substring(3)));
 				result.add(getPropertyAccessor(type, m.getName().substring(3)));
 			}

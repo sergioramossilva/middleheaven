@@ -63,6 +63,7 @@ public class PreparedStatementStorable {
 				ps.setString(i, value.toString());
 				break;
 			case INTEGER:
+			case IDENTITY:
 				ps.setLong(i, Long.parseLong(value.toString()));
 				break;
 			case LOGIC:

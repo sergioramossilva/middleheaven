@@ -1,5 +1,6 @@
 package org.middleheaven.storage.xml;
 
+import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.Criterion;
 import org.middleheaven.storage.criteria.CriterionOperator;
@@ -10,12 +11,14 @@ import org.middleheaven.storage.criteria.LogicCriterion;
 public class XMLCriteriaInterpreter {
 
 	
-	public String Interpreter(Criteria<?> criteria){
+	public String Interpreter(StorableEntityModel model, Criteria<?> criteria){
+		
+		String hardname = model.getEntityHardName();
+		
 		StringBuilder predicate = new StringBuilder();
 		addPredicate(predicate, criteria.restrictions());
 		
-		StringBuilder builder = new StringBuilder("//")
-		.append( criteria.getTargetClass().getSimpleName().toLowerCase());
+		StringBuilder builder = new StringBuilder("//").append( hardname.toLowerCase());
 		if (predicate.length()>0){
 			builder
 			.append("[")

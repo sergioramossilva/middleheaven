@@ -16,7 +16,7 @@ public class PropertyAccessor extends FieldAccessor {
 
 	public PropertyAccessor(Class<?> type, String fieldName) {
 		super(type,fieldName);
-
+		load();
 	}
 
 	protected void load(){
@@ -117,11 +117,15 @@ public class PropertyAccessor extends FieldAccessor {
 	}
 
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+		A a=null;
 		if (field!=null){
-			return ReflectionUtils.getAnnotation(field,annotationClass);
-		} else {
-			return ReflectionUtils.getAnnotation(acessor,annotationClass);
+			a =  ReflectionUtils.getAnnotation(field,annotationClass);
+		} 
+		
+		if (a==null){
+			a = ReflectionUtils.getAnnotation(acessor,annotationClass);
 		}
+		return a;
 
 	}
 }

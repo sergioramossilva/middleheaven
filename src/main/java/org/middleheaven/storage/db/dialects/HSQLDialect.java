@@ -10,6 +10,7 @@ import java.util.Collections;
 import javax.sql.DataSource;
 
 import org.middleheaven.data.DataType;
+import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
@@ -46,12 +47,34 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		return new StorageException(e);
 	}
 
+	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
+
+		if (!hardname.getColumnName().isEmpty()){
+			buffer.append(hardname.getColumnName().toLowerCase());
+		}
+	}
+
+	
+
+	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
+		buffer.append(hardname.getColumnName().toLowerCase());
+	}
+
 
 	private static class HSQLCriteriaInterpreter extends CriteriaInterpreter{
 
 		public HSQLCriteriaInterpreter(DataBaseDialect dataBaseDialect,
 				Criteria<?> criteria, StorableEntityModel model) {
 			super(dataBaseDialect, criteria, model);
+		}
+		
+		protected void writeFromClause(StringBuilder queryBuffer){
+
+			// FROM ClAUSE
+			queryBuffer.append(" FROM ");
+			queryBuffer.append(model().getEntityHardName().toLowerCase());
+
+
 		}
 		
 		protected void writeEndLimitClause(StringBuffer selectBuffer){

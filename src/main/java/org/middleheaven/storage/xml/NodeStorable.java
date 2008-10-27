@@ -26,8 +26,9 @@ public class NodeStorable implements Storable{
 			Node field = fields.item(i);
 			data.put(field.getNodeName(), field.getTextContent());
 		}
-		
-		key = IntegerIdentity.valueOf(data.get(keyModel.getHardName().getColumnName()));
+		String val = data.get(keyModel.getHardName().getColumnName());
+
+		key = val ==null ? null : IntegerIdentity.valueOf(val);
 	}
 
 	@Override

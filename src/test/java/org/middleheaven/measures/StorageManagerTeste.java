@@ -12,7 +12,7 @@ import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.StorableEntityModel;
-import org.middleheaven.storage.StoreMetadataManager;
+import org.middleheaven.storage.StorableDomainModel;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.DataBaseStoreKeeper;
 import org.middleheaven.storage.inmemory.NaiveStoreKeeper;
@@ -29,7 +29,7 @@ public class StorageManagerTeste {
 	
 	@Before
 	public void setUp(){
-		storage = new DomainDataStorage(store , new StoreMetadataManager(){
+		storage = new DomainDataStorage(store , new StorableDomainModel(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
