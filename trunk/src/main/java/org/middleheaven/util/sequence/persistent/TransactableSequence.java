@@ -26,20 +26,20 @@ import org.middleheaven.util.sequence.StatePersistentSequence;
 /**
  * @author  Sergio M. M. Taborda 
  */
-public class SharedLocalSequence<T extends Comparable<? super T>> extends AbstractStatePersistanteSequence<T>  {
+public class TransactableSequence<T extends Comparable<? super T>> extends AbstractStatePersistanteSequence<T>  {
 
 	private Object lastUsed;
 	private StateEditableSequence<T> baseSequence;
 	
 	ReentrantLock lock = new ReentrantLock();
-    BlockingQueue<SharedLocalSequenceValue> queue = new PriorityBlockingQueue<SharedLocalSequenceValue>();
-    SharedLocalSequenceValue sv;
+    BlockingQueue<TransactableSequenceValue> queue = new PriorityBlockingQueue<TransactableSequenceValue>();
+    TransactableSequenceValue sv;
 
-    public static <K extends Comparable<? super K>> SharedLocalSequence<K> getSequence(String name,StatePersistentSequence<K> baseSequence){
-        return new SharedLocalSequence<K>(name,baseSequence);
+    public static <K extends Comparable<? super K>> TransactableSequence<K> getSequence(String name,StatePersistentSequence<K> baseSequence){
+        return new TransactableSequence<K>(name,baseSequence);
     }
     
-	private SharedLocalSequence(String name,StateEditableSequence<T> sequence) {
+	private TransactableSequence(String name,StateEditableSequence<T> sequence) {
 		super(name);
 		this.baseSequence = sequence;
 	}
@@ -57,7 +57,7 @@ public class SharedLocalSequence<T extends Comparable<? super T>> extends Abstra
  
     public SequenceToken<T> next() {
         
-        SharedLocalSequenceValue<T> sv = new SharedLocalSequenceValue<T>(baseSequence.next().getValue());
+        TransactableSequenceValue<T> sv = new TransactableSequenceValue<T>(baseSequence.next().value());
         queue.add(sv);
         
         // enlist as XAResource 
@@ -68,16 +68,16 @@ public class SharedLocalSequence<T extends Comparable<? super T>> extends Abstra
         return sv;
     }
 
-    private class SharedLocalSequenceValue<T> implements SequenceToken<T>,Comparable<SharedLocalSequenceValue<T>>, XAResource {
+    private class TransactableSequenceValue<T> implements SequenceToken<T>,Comparable<TransactableSequenceValue<T>>, XAResource {
 
         private Object actualValue;
         private Xid xid;
         
-        SharedLocalSequenceValue(T actualValue){
+        TransactableSequenceValue(T actualValue){
             this.actualValue = actualValue;
         }
 
-        public int compareTo(SharedLocalSequenceValue other) {
+        public int compareTo(TransactableSequenceValue other) {
             return (((Comparable)this.actualValue).compareTo(((Comparable)other.actualValue)));
         }
         
@@ -85,7 +85,7 @@ public class SharedLocalSequence<T extends Comparable<? super T>> extends Abstra
             return actualValue.toString();
         }
         
-        public T getValue() {
+        public T value() {
 
             while (queue.peek()!=this){
                 try {
@@ -128,7 +128,7 @@ public class SharedLocalSequence<T extends Comparable<? super T>> extends Abstra
                 queue.remove(this);
                 current= lastUsed+1;
                 
-                for (SharedLocalSequenceValue s : queue){
+                for (TransactableSequenceValue s : queue){
                     s.actualValue = current;
                     current++;
                 }

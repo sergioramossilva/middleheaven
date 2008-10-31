@@ -20,7 +20,7 @@ import org.middleheaven.data.DataType;
 @Documented
 public @interface Column {
 	
-	String value();
+	String value() default ""; // use the fields name
 	int length () default 100;
 	
 	/**
