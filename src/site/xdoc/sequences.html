@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<body>
+<body>
+	<h2>Sequence Toolbox</h2>
+		<p align="justify">
+			Let's start with a simple toolbox: the sequence toolbox. A Sequence represents a generator of tokens with 
+			and inherent order. Normally we will use a sequence to generate numeric tokens 
+			but it can be use to generate almost anything you need.  
+		</p>
+	
+	<h2>Properties of a Sequence</h2>
+		<p align="justify">
+			A sequence is characterized mainly by three properties:
+			<ul>
+				<li>Order - the sequence produces tokens in a specific order (normally ins ascendant order). As a 
+				consequence the token must contain an object with a natural order.</li>
+				<li>Gap Resiliance - the sequence may accept gaps or not. Accept gaps means not all token values must be used.
+				Example: an integer sequence car run like : 1, 2, 3 , 6, 7,8 ... not using the 4 or the 5 for the token value.</li>
+				<li>Limit - the sequence may stop because no more tokens are possible. Ideally wil may have an infinite sequence, in practice no sequence is infinite. 
+				Has so, all sequences in MiddleHeavewn are considered "potentially infinite" , i.e. they would be infinite if there was no computational/environmental limit.
+				thus, limited sequence are those that we know would never be infinite (e.g. a sequence based on the items of an array) 
+				</li>
+			</ul>
+		</p>
+		<p align="justify">
+		All sequences in MiddleHevaen are considerer ordered, unlimited and allow gaps. 
+		Sequences that are not ordered must inherit from <font face="courier">RandomSequence</font>. This is mainly a marker interface as no method is added to the interface.<br/>
+		Sequence that are intended to be limited must implement <font face="courier">LimitedSequence</font>. <font face="courier">LimitedSequence</font> adds an <font face="courier">hasNext</font> 
+		method to check if there are more tokens in the sequence.<br/>
+		Gap resiliance is a more difficult feature to implement has it must be defined over a transaction context. It two transactions <b>A</b> and <b>B</b>
+		acquire tokens from the same sequence and <b>A</b> rollback, the dumped tokens must be reused by <b>B</b>, has there can't be gaps.
+		<font face="courier">TransactableSequence</font> tries to address this by locking the sequence to a specific transaction until it ends (committing or rolling back)
+		</p>
+	
+	<h2>Model</h2>
+		<p align="justify">
+			The figure below illustrates the basic set of sequence types in MiddleHeaven and who the relate to each other.
+			<table align="center" class="figure">
+<tr>
+<td align="center">
+<img src="sequencesuml.png"/>
+</td>
+</tr>
+<tr>
+<td class="legend">Ilustração 1: </td>
+</tr>
+</table>
+			Not all sequences are presente has some are implement inside other toolboxes. I'll talk about them later.<br/>
+			Following the Separation of Concerns principle all basic types are modeled as interfaces. 
+			All sequences are type-generic and have a  <font face="courier">next()</font> method that return the next token in the sequence.
+		    <font face="courier">StateEditableSequence</font> allows for manipulation of the sequence state (read/write). This is usefull mainlly 
+			for defining <font face="courier">StatePersistableSequence</font>, a sequence whose state can be persisted so it never resets. 
+			This will be most usefull for identity generation has we will see when we discuss the Storage Toolbox.
+		</p>	
+		<p align="justify">
+			<font face="courier">RandomCharSequence</font> can be used to generate random sequence of characters (that may be further converted into String) 
+			and <font face="courier">RandomNumberSequence</font> can be used to generate random sequences of numbers. For both instances of <font face="courier">Random</font> can be specified 
+			for better control.
+		</p>
+	
+	<h2>Use</h2>
+		<p align="justify">
+		Using a sequence is very simple:
+		<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">      </font>
+<font color="#000000">Sequence&lt;Long&gt; sequence = </font>
+<font color="#0000c0">
+<b>new </b>
+</font>
+<font color="#000000">LongSequence</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">      </font>
+<br/>
+<font color="#808080">4</font> <font color="#ffffff">      </font>
+<font color="#000000">Long value = sequence.next</font>
+<font color="#000000">()</font>
+<font color="#000000">.value</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">5</font> <font color="#ffffff">    </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 1: </td>
+</tr>
+</table> 
+		</p>
+		<p align="justify">
+			Sequences can be used <i class="estrang">per se</i> or in conjunction or within other toolboxes. The Storage Toolbox uses sequences
+			to create different identification tokens for storable objects. For database supported storage MiddleHeaven abstracts the native sequence mechanism present in some 
+			databases as a Sequence of Long.
+		</p>
+	
+	</body>
+<h2>Licença</h2>
+<table align="center" width="70%">
+<tr>
+<td align="center" valign="center">
+<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/" rel="license">
+<img alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png" style="border-width:0"/>
+</a>
+</td>
+<td align="left" valign="top">  Sérgio Taborda<br/>
+				      Este trabalho é licenciado sob a <br/>
+<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.pt" rel="license" target="_new">
+						Licença Creative Commons Atribuição-Uso Não-Comercial-Não a obras derivadas 3.0 Genérica
+						</a>.
+						
+				      </td>
+</tr>
+</table>
+</body>
