@@ -7,16 +7,15 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.middleheaven.domain.AnnotatedDomainModel;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
-import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.Query;
-import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableDomainModel;
+import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.db.DataBaseStoreKeeper;
 import org.middleheaven.storage.inmemory.NaiveStoreKeeper;
-import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 
@@ -29,11 +28,15 @@ public class StorageManagerTeste {
 	
 	@Before
 	public void setUp(){
+		
+		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
+		model.addEntity(TestSubject.class);
+		
 		storage = new DomainDataStorage(store , new StorableDomainModel(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
-				return new AnnotationsStorableEntityModel(type);
+				return (StorableEntityModel) model.getEntityModelFor(type);
 			}
 
 			@Override

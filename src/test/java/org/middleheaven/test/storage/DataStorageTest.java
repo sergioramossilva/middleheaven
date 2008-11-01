@@ -18,7 +18,9 @@ import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
+import org.middleheaven.domain.AnnotatedDomainModel;
 import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.measures.StorageManagerTeste.TestSubject;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
@@ -27,10 +29,8 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.datasource.DataSourceService;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
-import org.middleheaven.storage.datasource.DriverDataSource;
 import org.middleheaven.storage.datasource.DriverManagerDSProvider;
 import org.middleheaven.storage.db.DataBaseStoreKeeper;
-import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.sequence.service.FileSequenceStorageActivator;
@@ -68,12 +68,16 @@ public class DataStorageTest {
 				"sa",
 				""
 		));
+		
+		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
+		model.addEntity(TestSubject.class);
+		
 		DataSource datasource = ServiceRegistry.getService(DataSourceService.class).getDataSource("test");
 		ds = new DomainDataStorage(new DataBaseStoreKeeper(datasource) , new StorableDomainModel(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
-				return new AnnotationsStorableEntityModel(type);
+				return (StorableEntityModel) model.getEntityModelFor(type);
 			}
 
 			@Override
