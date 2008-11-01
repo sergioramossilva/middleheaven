@@ -1,5 +1,6 @@
 body {
   padding: 0px 0px 10px 0px;
+  background-color: #FCFCFC;
 }
 body, td, select, input, li{
   font-family: Verdana, Helvetica, Arial, sans-serif;
@@ -41,18 +42,18 @@ a.newWindow, a.newWindow:link, a.newWindow:visited, a.newWindow:active, a.newWin
 h2 {
   padding: 4px 4px 4px 6px;
   border: 1px solid #999;
-  background-color: #D2E1FF;
   font-weight:900;
   font-size: x-large;
-  color: #000066;
+  color: #FFFFFF;
+  background-color: #8CC5FF;
 }
 h3 {
   padding: 4px 4px 4px 6px;
   border: 1px solid #aaa;
-  background-color: #eee;
   font-weight: normal;
   font-size: large;
-  color: #000066;
+  color: #8CC5FF;
+  background-color: #FFFFFF;
 }
 h4 {
   padding: 4px 4px 4px 6px;
@@ -71,11 +72,17 @@ p {
   line-height: 1.3em;
   font-size: small;
 }
+
+#navcolumn{
+  background-color: #FFFFFF;
+}
+
 #breadcrumbs {
   border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
-  background-color: #ccc;
+  border-bottom: 1px solid #yellow;
+  background-color: #8CC5FF;
 }
+
 #leftColumn {
   margin: 10px 0 0 5px;
   border: 1px solid #999;
@@ -122,8 +129,12 @@ dt {
   margin: 8px;
 }
 #banner {
-  border-bottom: 1px solid #fff;
+  border-bottom: 0px solid #fff;
 }
+#bannerLeft img, #bannerRight img {
+  margin: 0px;
+}
+
 .errormark, .warningmark, .donemark, .infomark {
   background: url(../images/icon_error_sml.gif) no-repeat;
 }

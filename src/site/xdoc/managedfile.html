@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<body>
+<body>
+	<h2>Managed File Toolbox</h2>
+		<p align="justify">
+			I/O operations are many times considered boundary, less important, operations, however they are most frequently used, in an almost omnipresent awy in all applications
+			and in more that one flavor. Web applications, for example, often must cope with file download/upload features that are 
+			copied to a local filesystem. Commonly these features are introduced with the support of a third party API, 
+			and the real work boils down to stream plumbing.
+		</p>
+		<p align="justify">
+			Java allows for OS file system manipulation as we see fit in a very paltaform independent way, specilly by means of <font face="courier">java.io.File</font> class. 
+			However Jar/Zip files that also may contain files and file groups like their where folders have a very different treatment.
+			If you think of jar/zip file like a kind of <i>virtual file</i>, java does not support this idea directly. 
+			This idea is not new of far-fetched ( e.g. Windows XP and beyond already supports zip files under this this virtual file concept ).
+		</p>
+		<p align="justify">
+			The Managed File Toolbox allows for total abstraction of the underlying file system and allows for the creation of complex virtual filesystem 
+			based upon any other file-similar or file handling technology like FTP, HTTP, Zip and of course the OS native file system.
+		</p>
+	
+	<h2>File vs Managed File</h2>
+		<p align="justify">
+			A Managed File is a node in the file system similarly to <font face="courier">java.io.File</font>.
+			The main difference is on how to obtain an <font face="courier">InputStream</font> or <font face="courier">OutputStream</font> from the file.
+			Java IO uses the Adapter Pattern approach to create streams. MiddleHeaven's Managed File uses a simples Factory Method
+			that will return a <font face="courier">ManagedFileContent</font>
+		</p>
+		<p align="justify">
+			A Managed File can be copied to another file or folder simply by invoking <font face="courier">copyTo</font>. This can be a boring task
+			in standard Java has no copy utility is provided and we end writing it over and over. 
+		</p>
+	
+	<h2>Model</h2>
+		<p align="justify">
+			The figure below illustrates the basic types for the Managed File Toolbox in MiddleHeaven.
+			<table align="center" class="figure">
+<tr>
+<td align="center">
+<img src="managedfileuml.png"/>
+</td>
+</tr>
+<tr>
+<td class="legend">Ilustração 1: </td>
+</tr>
+</table>
+			The <font face="courier">ManagedFile</font> is obviously the main type. From it is possible to obtain other children files, or folders, and have access to
+			<font face="courier">ManagedFileContent</font> with in turn provides <font face="courier">InputStream</font> and <font face="courier">OutputStream</font> to the file. 
+		</p>	
+		
+	
+	<h2>Use</h2>
+		<p align="justify">
+		Using a Managed File is very simple. In this example we create an empty file i nthe current folder, locate the JUnit.jar in a local 
+		maven repository and copy it. 
+		<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div>
+<table>#ffffff030
+   <tr>
+  
+   <td>
+    
+<font>#80808001</font> <font>#ffffff</font>
+<br/>
+<font>#80808002</font> <font>#ffffff    </font>
+<font>#008000//ManagedFileRepositories is an integration utilities class that allows </font>
+<br/>
+<font>#80808003</font> <font>#ffffff    </font>
+<font>#008000// for integration with java.io.File</font>
+<br/>
+<font>#80808004</font> <font>#ffffff      </font>
+<br/>
+<font>#80808005</font> <font>#ffffff    </font>
+<font>#000000ManagedFile folder = ManagedFileRepositories.resolveFile</font>
+<font>#000000(</font>
+<font>#0000c0<b>new </b>
+</font>
+<font>#000000File</font>
+<font>#000000(</font>
+<font>#990000"."</font>
+<font>#000000))</font>
+<font>#000000;</font>
+<br/>
+<font>#80808006</font> <font>#ffffff</font>
+<br/>
+<font>#80808007</font> <font>#ffffff    </font>
+<font>#000000assertTrue</font>
+<font>#000000(</font>
+<font>#000000folder.exists</font>
+<font>#000000())</font>
+<font>#000000;</font>
+<br/>
+<font>#80808008</font> <font>#ffffff    </font>
+<br/>
+<font>#80808009</font> <font>#ffffff    </font>
+<font>#008000// resolving is simply acquiring a location where the file should be.</font>
+<br/>
+<font>#80808010</font> <font>#ffffff    </font>
+<font>#000000ManagedFile testJar = folder.resolveFile</font>
+<font>#000000(</font>
+<font>#990000"test.jar"</font>
+<font>#000000)</font>
+<font>#000000;</font>
+<br/>
+<font>#80808011</font> <font>#ffffff    </font>
+<br/>
+<font>#80808012</font> <font>#ffffff    </font>
+<font>#008000// if exists, delete it.</font>
+<br/>
+<font>#80808013</font> <font>#ffffff    </font>
+<font>#0000c0<b>if </b>
+</font>
+<font>#000000(</font>
+<font>#000000testJar.exists</font>
+<font>#000000()){</font>
+<br/>
+<font>#80808014</font> <font>#ffffff      </font>
+<font>#000000testJar.delete</font>
+<font>#000000()</font>
+<font>#000000;</font>
+<br/>
+<font>#80808015</font> <font>#ffffff    </font>
+<font>#000000}</font>
+<br/>
+<font>#80808016</font> <font>#ffffff    </font>
+<br/>
+<font>#80808017</font> <font>#ffffff    </font>
+<font>#008000// create a new (empty) file </font>
+<br/>
+<font>#80808018</font> <font>#ffffff    </font>
+<font>#000000testJar.createFile</font>
+<font>#000000()</font>
+<font>#000000;</font>
+<br/>
+<font>#80808019</font> <font>#ffffff    </font>
+<br/>
+<font>#80808020</font> <font>#ffffff    </font>
+<font>#008000// it must exist by now</font>
+<br/>
+<font>#80808021</font> <font>#ffffff    </font>
+<font>#000000assertTrue</font>
+<font>#000000(</font>
+<font>#000000testJar.exists</font>
+<font>#000000())</font>
+<font>#000000;</font>
+<br/>
+<font>#80808022</font> <font>#ffffff    </font>
+<br/>
+<font>#80808023</font> <font>#ffffff    </font>
+<font>#008000// manually obtain the path to the repository</font>
+<br/>
+<font>#80808024</font> <font>#ffffff      </font>
+<font>#000000ManagedFile rep = ManagedFileRepositories.resolveFile</font>
+<font>#000000(</font>
+<font>#0000c0<b>new </b>
+</font>
+<font>#000000File</font>
+<font>#000000(</font>
+<font>#000000System.getProperty</font>
+<font>#000000(</font>
+<font>#990000"user.home"</font>
+<font>#000000) </font>
+<font>#000000+ </font>
+<font>#990000"/.m2/repository/junit/junit/4.1"</font>
+<font>#000000))</font>
+<font>#000000;</font>
+<br/>
+<font>#80808025</font> <font>#ffffff      </font>
+<br/>
+<font>#80808026</font> <font>#ffffff      </font>
+<font>#008000// resolve the file </font>
+<br/>
+<font>#80808027</font> <font>#ffffff      </font>
+<font>#000000ManagedFile junitJar = rep.resolveFile</font>
+<font>#000000(</font>
+<font>#990000"junit-4.1.jar"</font>
+<font>#000000)</font>
+<font>#000000;</font>
+<br/>
+<font>#80808028</font> <font>#ffffff      </font>
+<br/>
+<font>#80808029</font> <font>#ffffff      </font>
+<font>#008000// copy it to the location previous created</font>
+<br/>
+<font>#80808030</font> <font>#ffffff      </font>
+<font>#000000junitJar.copyTo</font>
+<font>#000000(</font>
+<font>#000000testJar</font>
+<font>#000000)</font>
+<font>#000000;</font>
+<br/>
+<font>#80808031</font> <font>#ffffff      </font>
+<br/>
+<font>#80808032</font> <font>#ffffff      </font>
+<font>#008000// this a jar file that contains other files. So listFiles() collection will not be empty</font>
+<br/>
+<font>#80808033</font> <font>#ffffff      </font>
+<font>#000000assertFalse</font>
+<font>#000000(</font>
+<font>#000000junitJar.listFiles</font>
+<font>#000000()</font>
+<font>#000000.isEmpty</font>
+<font>#000000())</font>
+<font>#000000;</font>
+<br/>
+<font>#80808034</font> <font>#ffffff          </font>
+<br/>
+<font>#80808035</font> <font>#ffffff    </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 1: </td>
+</tr>
+</table> 
+		</p>
+		<p align="justify">
+			This example shows how we can turn a java.io.File into a ManageRepository. 
+			It also shows you who simple is to copy a file simply by invoking <font face="courier">copyTo</font>.
+			Finally is present a simple example to ilustrate the complete abstraction of the virtual file system of a Zip file
+			by iterating it as we would had done with any other Maanged File 
+		</p>
+	
+	<h2>Under the hood</h2>
+		<p align="justify">
+			The had use the managed file concept in other applications an frameworks I've develop along the year.
+			During this time I've crossed roads with Apache's Commons VFS that thrives on the same "virtual file" idea.
+			Because MiddleHeaven main goal is to abstract implementations and third party libraries I could no use Commons VFS directly.
+			Instead I came up with the <font face="courier">RepositoryEngine</font> concept. 
+			A repository engine provides a root <font face="courier">ManagedFileResolver</font> in order to resolve the location of any file within.
+		</p>
+		<p align="justify">
+			MiddleHeaven Managed File implementation is a almost direct translation of Common VFS witch already provides a vast 
+			variety of virtual systems like FTP and ZIP file , to name a few. Plans exist to incorporate WebDav and others.
+		</p>
+		<p align="justify">
+			However Commons VFS does not integrate natively with Commons Upload commonly use in web applications to mediate file upload logic.
+			This is where MiddleHeaven Managed File Toolbox architecture shines enabling the toolbox to provide the services we need based 
+			upon on the code we see most useful. MiddleHeaven Managed File Toolbox provides a Managed File implementation of a ManagedRepository 
+			that can be used to interact with the download files in the same exact way we would interact with a file on the disk.
+			We'll talk more about this we we visit the Web Toolbox. 
+		</p>
+	
+	</body>
+<h2>Licença</h2>
+<table align="center" width="70%">
+<tr>
+<td align="center" valign="center">
+<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/" rel="license">
+<img alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png" style="border-width:0"/>
+</a>
+</td>
+<td align="left" valign="top">  Sérgio Taborda<br/>
+				      Este trabalho é licenciado sob a <br/>
+<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.pt" rel="license" target="_new">
+						Licença Creative Commons Atribuição-Uso Não-Comercial-Não a obras derivadas 3.0 Genérica
+						</a>.
+						
+				      </td>
+</tr>
+</table>
+</body>

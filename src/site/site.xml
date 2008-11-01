@@ -12,9 +12,14 @@
     
     	<menu name="Quick Links">
       		<item name="Home" href="index.html"/>
-      		<item name="News" href="news.html"/>
-      		<item name="Download" href="https://sourceforge.net/project/showfiles.php?group_id=211558"/>
+      		<item name="History" href="news.html"/>
+      		<item name="Download" href="https://sourceforge.net/project/showfiles.php?group_id=211558" />
     	</menu>
+    	
+    	<menu name="Get Involved">
+			<item name="Blog" href="http://middleheavendev.blogspot.com/" />
+			<item name="Foruns" href="https://sourceforge.net/forum/?group_id=211558" />
+		</menu>
     	
     	<menu name="Documentation">
     		<item name="Licence" href="licence.html"/>
@@ -24,15 +29,14 @@
     		<item name="Roadmap" href="roadmap.html"/>
     	</menu>
     	
-    	<menu name="Toolboxes" href="toolboxes.html">
-    		
+    	<menu name="Toolboxes">
+    		<item name="Sequence" href="sequences.html"/>
+    		<item name="Managed File" href="managedfile.html"/>
     	</menu>
     	
 		<menu ref="reports" />
 		
-		<menu name="Get Involved">
-			<item name="Foruns" href="https://sourceforge.net/forum/?group_id=211558"/>
-		</menu>
+		
 	</body>
 
 	<poweredBy>

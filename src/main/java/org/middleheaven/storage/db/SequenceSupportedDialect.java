@@ -25,9 +25,9 @@ public abstract class SequenceSupportedDialect extends DataBaseDialect implement
 	public Sequence<Long> getSequence(DataSource datasource, String name){
 		Sequence<Long> sequence = sequences.get(name);
 		if ( sequence ==null){
-			sequence = Sequences.newSequenceFor(valueType);
+			sequence = Sequences.newSequenceFor(Long.class);
 			if (!(sequence instanceof StatePersistentSequence)){
-				throw new ClassCastException("No valid sequence has found for type " + valueType);
+				throw new ClassCastException("No valid sequence has found for type " + Long.class);
 			} else {
 				NamedSequenceAdapter named = new NamedSequenceAdapter(name,((StatePersistentSequence)sequence));
 				

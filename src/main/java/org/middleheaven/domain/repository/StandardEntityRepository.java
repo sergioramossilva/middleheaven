@@ -4,6 +4,7 @@ import org.middleheaven.domain.DomainModel;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
+import org.middleheaven.util.identity.Identity;
 
 
 public class StandardEntityRepository<E> implements Repository<E> {
@@ -47,6 +48,14 @@ public class StandardEntityRepository<E> implements Repository<E> {
 	@Override
 	public Query<E> findSame(E instance) {
 		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).isSame(instance).all());
+	}
+
+	@Override
+	public Query<E> findByIdentity(Identity id) {
+		return getDataStorage().createQuery(CriteriaBuilder.search(entityType)
+				.and(this.domainModel.getEntityModelFor(entityType).identityFieldModel().getLogicName().getColumnName()).eq(id)
+				.all()
+				);
 	}
 
 	

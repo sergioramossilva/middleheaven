@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
-	ElementType.TYPE, 
+	ElementType.TYPE
 	})
 @Documented
 public @interface ScopeSpecification {
