@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title>Managed File</title>
+	</properties>
+	<body>
+	<section name="Managed File Toolbox">
+		<p>
+			I/O operations are many times considered boundary, less important, operations, however they are most frequently used, in an almost omnipresent awy in all applications
+			and in more that one flavor. Web applications, for example, often must cope with file download/upload features that are 
+			copied to a local filesystem. Commonly these features are introduced with the support of a third party API, 
+			and the real work boils down to stream plumbing.
+		</p>
+		<p>
+			Java allows for OS file system manipulation as we see fit in a very paltaform independent way, specilly by means of <code>java.io.File</code> class. 
+			However Jar/Zip files that also may contain files and file groups like their where folders have a very different treatment.
+			If you think of jar/zip file like a kind of <i>virtual file</i>, java does not support this idea directly. 
+			This idea is not new of far-fetched ( e.g. Windows XP and beyond already supports zip files under this this virtual file concept ).
+		</p>
+		<p>
+			The Managed File Toolbox allows for total abstraction of the underlying file system and allows for the creation of complex virtual filesystem 
+			based upon any other file-similar or file handling technology like FTP, HTTP, Zip and of course the OS native file system.
+		</p>
+	</section>
+	<section name="File vs Managed File">
+		<p>
+			A Managed File is a node in the file system similarly to <code>java.io.File</code>.
+			The main difference is on how to obtain an <code>InputStream</code> or <code>OutputStream</code> from the file.
+			Java IO uses the Adapter Pattern approach to create streams. MiddleHeaven's Managed File uses a simples Factory Method
+			that will return a <code>ManagedFileContent</code>
+		</p>
+		<p>
+			A Managed File can be copied to another file or folder simply by invoking <code>copyTo</code>. This can be a boring task
+			in standard Java has no copy utility is provided and we end writing it over and over. 
+		</p>
+		<p>
+			The root repositories for files and folders can be obtained by abstracting any supported URI or <code>java.io.File</code>.
+			This task in normally done in bootstrap code. We will come back to this when we visit the Bootstrap and Service toolboxes 
+			
+		</p>
+	</section>
+	<section name="Model">
+		<p>
+			The figure below illustrates the basic types for the Managed File Toolbox in MiddleHeaven.
+			<figure>
+			<img src="managedfileuml.png"/>
+			</figure>
+			The <code>ManagedFile</code> is obviously the main type. From it is possible to obtain other children files, or folders, and have access to
+			<code>ManagedFileContent</code> with in turn provides <code>InputStream</code> and <code>OutputStream</code> to the file. 
+		</p>	
+		
+	</section>
+	<section name="Use">
+		<p>
+		Using a Managed File is very simple. In this example we create an empty file i nthe current folder, locate the JUnit.jar in a local 
+		maven repository and copy it. 
+		<pre name="source" class="java">
+		//ManagedFileRepositories is an integration utilities class that allows 
+		// for integration with java.io.File
+			
+		ManagedFile folder = ManagedFileRepositories.resolveFile(new File("."));
+
+		assertTrue(folder.exists());
+		
+		// resolving is simply acquiring a location where the file should be.
+		ManagedFile testJar = folder.resolveFile("test.jar");
+		
+		// if exists, delete it.
+		if (testJar.exists()){
+			testJar.delete();
+		}
+		
+		// create a new (empty) file 
+		testJar.createFile();
+		
+		// it must exist by now
+		assertTrue(testJar.exists());
+		
+		// manually obtain the path to the repository
+	    ManagedFile rep = ManagedFileRepositories.resolveFile(new File(System.getProperty("user.home") + "/.m2/repository/junit/junit/4.1"));
+	    
+	    // resolve the file 
+	    ManagedFile junitJar = rep.resolveFile("junit-4.1.jar");
+	    
+	    // copy it to the location previous created
+	    junitJar.copyTo(testJar);
+	    
+	    // this a jar file that contains other files. So listFiles() collection will not be empty
+	    assertFalse(junitJar.listFiles().isEmpty());
+	        
+		</pre> 
+		</p>
+		<p>
+			This example shows how we can turn a java.io.File into a ManageRepository. 
+			It also shows you who simple is to copy a file simply by invoking <code>copyTo</code>.
+			Finally is present a simple example to ilustrate the complete abstraction of the virtual file system of a Zip file
+			by iterating it as we would had done with any other Maanged File 
+		</p>
+	</section>
+	<section name="Under the hood">
+		<p>
+			The had use the managed file concept in other applications an frameworks I've develop along the year.
+			During this time I've crossed roads with Apache's Commons VFS that thrives on the same "virtual file" idea.
+			Because MiddleHeaven main goal is to abstract implementations and third party libraries I could no use Commons VFS directly.
+			Instead I came up with the <code>RepositoryEngine</code> concept. 
+			A repository engine provides a root <code>ManagedFileResolver</code> in order to resolve the location of any file within.
+		</p>
+		<p>
+			MiddleHeaven Managed File implementation is a almost direct translation of Common VFS witch already provides a vast 
+			variety of virtual systems like FTP and ZIP file , to name a few. Plans exist to incorporate WebDav and others.
+		</p>
+		<p>
+			However Commons VFS does not integrate natively with Commons Upload commonly use in web applications to mediate file upload logic.
+			This is where MiddleHeaven Managed File Toolbox architecture shines enabling the toolbox to provide the services we need based 
+			upon on the code we see most useful. MiddleHeaven Managed File Toolbox provides a Managed File implementation of a ManagedRepository 
+			that can be used to interact with the download files in the same exact way we would interact with a file on the disk.
+			We'll talk more about this we we visit the Web Toolbox. 
+		</p>
+	</section>
+	</body>
+</document>

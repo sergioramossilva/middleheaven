@@ -1,6 +1,7 @@
 package org.middleheaven.io.repository;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -21,10 +22,14 @@ public class ManagedFileRepositories {
 	
 	public static ManagedFile resolveFile(URL url){
 		try {
-			return engine.getManagedFileResolver().resolveFile(url.toURI().toString());
+			return resolveFile(url.toURI());
 		} catch (URISyntaxException e) {
 			throw new RepositoryCreationException(e);
 		}
+	}
+	
+	public static ManagedFile resolveFile(URI uri){
+		return engine.getManagedFileResolver().resolveFile(uri.toString());
 	}
 	
 	public static ManagedFile resolveFile(File file){

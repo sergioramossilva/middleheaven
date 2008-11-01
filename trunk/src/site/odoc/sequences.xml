@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <document>
 	<properties>
 		<author>Sérgio Taborda</author>
@@ -12,7 +11,7 @@
 			but it can be use to generate almost anything you need.  
 		</p>
 	</section>
-	<section name="Properties of a Sequence">
+	<section name="Properties of a Sequence" >
 		<p>
 			A sequence is characterized mainly by three properties:
 			<ul>
@@ -36,11 +35,11 @@
 		<code>TransactableSequence</code> tries to address this by locking the sequence to a specific transaction until it ends (committing or rolling back)
 		</p>
 	</section>
-	<section name="Model">
+	<section name="Model" >
 		<p>
 			The figure below illustrates the basic set of sequence types in MiddleHeaven and who the relate to each other.
 			<figure>
-			<img src="sequencesuml.png"/>
+			<img src="sequencesuml.png" />
 			</figure>
 			Not all sequences are presente as some are implement inside other toolboxes. I'll talk about them later.<br/>
 			Following the Separation of Concerns principle all basic types are modeled as interfaces. 
@@ -58,14 +57,14 @@
 	<section name="Use">
 		<p>
 		Using a sequence is very simple:
-		<pre name="source" class="java">
+		<source>
 			Sequence&lt;Long&gt; sequence = new LongSequence();
 			
 			Long value = sequence.next().value();
-		</pre> 
+		</source> 
 		</p>
 		<p>
-			Sequences can be used <i>per se</i> or in conjunction or within other toolboxes. The Storage Toolbox uses sequences
+			Sequences can be used <estrang>per se</estrang> or in conjunction or within other toolboxes. The Storage Toolbox uses sequences
 			to create different identification tokens for storable objects. For database supported storage MiddleHeaven abstracts the native sequence mechanism present in some 
 			databases as a Sequence of Long.
 		</p>

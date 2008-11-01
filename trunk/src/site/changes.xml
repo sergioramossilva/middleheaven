@@ -5,7 +5,6 @@
 		<author>Sergio Taborda</author>
 	</properties>
 	<body>
-	
 		<release version="0.0.2" description="Current work version">
 			<action dev="Sergio Taborda" type="add">Service integration is now based on OSGi by Apache Felix</action>
 			<action dev="Sergio Taborda" type="add">Managed File System is now an abstraction for Commons VSF</action>

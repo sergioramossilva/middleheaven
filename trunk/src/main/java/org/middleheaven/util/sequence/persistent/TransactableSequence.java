@@ -6,7 +6,6 @@ package org.middleheaven.util.sequence.persistent;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -16,9 +15,7 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.transactions.TransactionService;
 import org.middleheaven.util.sequence.AbstractStatePersistanteSequence;
 import org.middleheaven.util.sequence.SequenceState;
-import org.middleheaven.util.sequence.SequenceStateListener;
 import org.middleheaven.util.sequence.SequenceToken;
-import org.middleheaven.util.sequence.SequenceAdapter;
 import org.middleheaven.util.sequence.StateEditableSequence;
 import org.middleheaven.util.sequence.StatePersistentSequence;
 
@@ -31,7 +28,6 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
 	private Object lastUsed;
 	private StateEditableSequence<T> baseSequence;
 	
-	ReentrantLock lock = new ReentrantLock();
     BlockingQueue<TransactableSequenceValue> queue = new PriorityBlockingQueue<TransactableSequenceValue>();
     TransactableSequenceValue sv;
 
@@ -125,13 +121,7 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
 
         public synchronized void rollback(Xid xid) throws XAException {
             
-                queue.remove(this);
-                current= lastUsed+1;
-                
-                for (TransactableSequenceValue s : queue){
-                    s.actualValue = current;
-                    current++;
-                }
+              // TODO
                
         }
 

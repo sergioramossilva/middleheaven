@@ -1,6 +1,9 @@
 <document>
   <body>
     <news>
+      <entry name="01.11.2008">
+        <p>Site reorganized (again). Storage Toolbox added with permilinary Database support for PostgreSQL </p>
+      </entry>
       <entry name="19.07.2008">
         <p>Site reorganized. Storage Toolbox added with permilinary Database support for PostgreSQL </p>
       </entry>

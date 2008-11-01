@@ -14,7 +14,7 @@ import org.middleheaven.validation.Validator;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
-	ElementType.FIELD, 
+	ElementType.FIELD
 	})
 @Documented
 public @interface Validate {
