@@ -12,8 +12,10 @@ import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
+import org.middleheaven.domain.AnnotatedDomainModel;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.measures.StorageManagerTeste.TestSubject;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
@@ -21,7 +23,6 @@ import org.middleheaven.storage.StorableDomainModel;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
-import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
 import org.middleheaven.storage.xml.XMLStoreKeeper;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
@@ -45,12 +46,16 @@ public class XMLStorageTest {
 		new ServiceContextConfigurator().addEngine(engine);
 
 		// Configured
+		
+		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
+		model.addEntity(TestSubject.class);
+		
 		ManagedFile source = ManagedFileRepositories.resolveFile(this.getClass().getResource("data.xml"));
 		ds = new DomainDataStorage(XMLStoreKeeper.manage(source) , new StorableDomainModel(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
-				return new AnnotationsStorableEntityModel(type);
+				return (StorableEntityModel) model.getEntityModelFor(type);
 			}
 
 			@Override

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.measures.StorageManagerTeste.TestSubject;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
@@ -12,7 +14,6 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.inmemory.SpaceStoreKeeper;
-import org.middleheaven.storage.model.AnnotationsStorableEntityModel;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.space4j.Space4J;
@@ -38,12 +39,14 @@ public class SpaceStorageTest {
 	@Test
 	public void test(){
 
-
+		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
+		model.addEntity(TestSubject.class);
+		
 		DataStorage ds = new DomainDataStorage(new SpaceStoreKeeper(space4j) , new StorableDomainModel(){
 
 			@Override
 			public StorableEntityModel getStorageModel(Class<?> type) {
-				return new AnnotationsStorableEntityModel(type);
+				return (StorableEntityModel) model.getEntityModelFor(type);
 			}
 
 			@Override
