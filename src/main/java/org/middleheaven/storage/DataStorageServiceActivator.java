@@ -1,7 +1,7 @@
 package org.middleheaven.storage;
 
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.engine.ServiceActivator;
+import org.middleheaven.core.services.discover.ServiceActivator;
 
 public class DataStorageServiceActivator extends ServiceActivator {
 

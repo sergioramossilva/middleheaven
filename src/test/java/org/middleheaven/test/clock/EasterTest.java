@@ -7,15 +7,15 @@ import org.middleheaven.util.measure.time.CalendarDate;
 import org.middleheaven.util.measure.time.DateHolder;
 import org.middleheaven.util.measure.time.DayOfWeek;
 import org.middleheaven.util.measure.time.Month;
-import org.middleheaven.util.measure.time.ephemeris.EasterBasedCalculatedCalendarModel;
-import org.middleheaven.util.measure.time.ephemeris.EphemeridModel;
+import org.middleheaven.util.measure.time.ephemeris.EasterBasedCalculatedEphemerisModel;
+import org.middleheaven.util.measure.time.ephemeris.EphemerisModel;
 
 
 public class EasterTest {
 
 	@Test
 	public void testWorkingDays(){
-		EphemeridModel model = new EasterBasedCalculatedCalendarModel();
+		EphemerisModel model = new EasterBasedCalculatedEphemerisModel();
 		
 		DateHolder start = CalendarDate.date(2008,5,28);
 		DateHolder end = CalendarDate.date(2008,6,4);
@@ -35,7 +35,7 @@ public class EasterTest {
 	@Test
 	public void testEeasterCalculation(){
 		
-		EasterBasedCalculatedCalendarModel model = new EasterBasedCalculatedCalendarModel();
+		EasterBasedCalculatedEphemerisModel model = new EasterBasedCalculatedEphemerisModel();
 		
 		// from http://users.sa.chariot.net.au/~gmarts/eastcalc.htm
 		CalendarDate [] easter = {
@@ -64,7 +64,7 @@ public class EasterTest {
 		};
 		
 		for (int i=0; i < easter.length;i++){
-			assertEquals(	easter[i] , EasterBasedCalculatedCalendarModel.calculaEaster(easter[i].year()));
+			assertEquals(	easter[i] , EasterBasedCalculatedEphemerisModel.calculaEaster(easter[i].year()));
 		}
 		
 		// Good Friday

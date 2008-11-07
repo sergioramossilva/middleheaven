@@ -11,8 +11,8 @@ import org.middleheaven.core.ContainerActivator;
 import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceContextEngineConfigurationService;
-import org.middleheaven.core.services.ServiceDiscoveryEngine;
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.services.engine.LocalFileRepositoryDiscoveryEngine;
 import org.middleheaven.io.repository.FileRepositoryActivator;
@@ -45,9 +45,9 @@ public abstract class ExecutionEnvironmentBootstrap {
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
 		
 		// default init
-		engine.addActivator(new ContainerActivator(container));
-		engine.addActivator(new FileRepositoryActivator());
-		engine.addActivator(new LoggingActivator());
+		engine.addActivator(ContainerActivator.class);
+		engine.addActivator(FileRepositoryActivator.class);
+		engine.addActivator(LoggingActivator.class);
 		
 		configurator.addEngine(engine);
 		configurator.addEngine(new LocalFileRepositoryDiscoveryEngine());
@@ -78,15 +78,15 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 	private class ListServiceContextConfigurator extends ServiceContextConfigurator {
 		
-		ArrayList<ServiceDiscoveryEngine> engines = new ArrayList<ServiceDiscoveryEngine>();
-		public void addEngine(ServiceDiscoveryEngine engine){
+		ArrayList<ServiceActivatorDiscoveryEngine> engines = new ArrayList<ServiceActivatorDiscoveryEngine>();
+		public void addEngine(ServiceActivatorDiscoveryEngine engine){
 			engines.add(engine);
 			engines.trimToSize();
 			super.addEngine(engine);
 		}
 		
 		public void clear() {
-			for (ServiceDiscoveryEngine engine : engines){
+			for (ServiceActivatorDiscoveryEngine engine : engines){
 				super.removeEngine(engine);
 			}
 		}

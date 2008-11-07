@@ -4,8 +4,8 @@ import org.middleheaven.util.measure.time.clocks.ClockTicked;
 import org.middleheaven.work.scheduled.Schedule;
 
 /**
- * Common abstract class for all clocks hat depend on other, reference, clock
- *
+ * Encapsulates another Clock implementation in order to change the original clock behaviour
+ * or drive the new Clock properties from the encapsulated clock.  
  *
  */
 public abstract class WrappedClock extends Clock {

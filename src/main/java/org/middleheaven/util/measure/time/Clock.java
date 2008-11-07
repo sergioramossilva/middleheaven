@@ -31,7 +31,7 @@ public abstract class Clock {
 		return getTime().toString();
 	}
 	
-	protected abstract ClockTicked schedule( Schedule chronogram , Clock clock );
+	protected abstract ClockTicked schedule( Schedule schedule , Clock clock );
 	
    
 }

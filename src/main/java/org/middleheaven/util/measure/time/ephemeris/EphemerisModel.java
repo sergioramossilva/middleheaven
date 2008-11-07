@@ -9,7 +9,7 @@ import org.middleheaven.util.measure.time.DayOfWeek;
 import org.middleheaven.util.measure.time.Month;
 
 
-public abstract class EphemeridModel implements Serializable{
+public abstract class EphemerisModel implements Serializable{
 
 
 	private Chronology chronology;
@@ -51,7 +51,17 @@ public abstract class EphemeridModel implements Serializable{
 
 	public abstract Set<Ephemeris> getEphemeris(DateHolder date);
 
+	/**
+	 * Calculates the n-th working day of the month (the ordinal) 
+	 * @param month
+	 * @param ordinal the ordinal of the day. 1 for the first day, 2 for the second , etc...
+	 * @return DateHolder corresponding to the n-th working day of the month
+	 * @throws IllegalArgumentException if ordinal is less than 1
+	 */
 	public final DateHolder getOrdinalWorkingDayOfMonth(Month month , int ordinal){
+		if (ordinal<=0){
+			throw new IllegalArgumentException("Ordinal must be greater than zero");
+		}
 		DateHolder current = month.start();
 		int remaining = ordinal-1; // convert ordinal to numeral
 		
@@ -65,6 +75,12 @@ public abstract class EphemeridModel implements Serializable{
 		return current;
 	}
 	
+	/**
+	 * Calculates the number of word days between two dates.
+	 * @param start
+	 * @param end
+	 * @return
+	 */
 	public final int workingDaysBetween (DateHolder start,DateHolder end){
 		
 		DateHolder current = start;

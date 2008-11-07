@@ -16,7 +16,7 @@ import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
-import org.middleheaven.core.services.engine.ServiceActivator;
+import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.crypto.CryptoUtils;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;

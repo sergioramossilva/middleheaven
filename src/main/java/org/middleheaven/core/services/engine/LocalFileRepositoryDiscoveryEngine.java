@@ -12,53 +12,17 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.ServiceDiscoveryEngine;
-import org.middleheaven.core.services.ServiceDiscoveryException;
+import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.service.FileRepositoryService;
-import org.middleheaven.logging.LogBook;
-import org.middleheaven.logging.LoggingService;
 
-public class LocalFileRepositoryDiscoveryEngine implements ServiceDiscoveryEngine {
-
-	private List<ServiceActivator> activators = new LinkedList<ServiceActivator>();
-	private LogBook log;
-	
-	@Override
-	public void init(ServiceContext context) {
-	    log = context.getService(LoggingService.class, null).getLogBook(this.getClass().getName());
-		
-		loadActivators(context);
-		
-		boolean error = false;
-		for (ServiceActivator activator : activators){
-			try {
-				activator.activate(context);
-			} catch (Exception e){
-				error = true;
-				log.logFatal("Impossible to activate " + activator.getClass().getName(), e);
-			}
-		}
-		if (error==true){
-			throw new ServiceDiscoveryException("Impossible to iniciate all activators. Discovery fails");
-		}
-	}
-	
-	@Override
-	public void stop(ServiceContext context) {
-		for (ServiceActivator activator : activators){
-			try {
-				activator.inactivate(context);
-			} catch (Exception e){
-				log.logFatal("Impossible to  inactivate " + activator.getClass().getName(), e);
-			}
-		}
-	}
+public class LocalFileRepositoryDiscoveryEngine extends ServiceActivatorDiscoveryEngine {
 
 	
-	protected void loadActivators(ServiceContext context){
+	protected List<Class<ServiceActivator>> discoverActivators(ServiceContext context){
 		FileRepositoryService frs = context.getService(FileRepositoryService.class, null);
 
 		
@@ -84,6 +48,7 @@ public class LocalFileRepositoryDiscoveryEngine implements ServiceDiscoveryEngin
 
 		}));
 
+		List<Class<ServiceActivator>> activatorsClasses = new LinkedList<Class<ServiceActivator>>();
 		
 		URLClassLoader cloader ;
 		for (ManagedFile jar : serviceJars){
@@ -98,17 +63,11 @@ public class LocalFileRepositoryDiscoveryEngine implements ServiceDiscoveryEngin
 					String className = at.getValue("MiddleHeaven-Activator");
 					
 					if(className!=null && !className.isEmpty()){
-						addActivator((ServiceActivator) cloader.loadClass(className).newInstance());
+						activatorsClasses.add((Class<ServiceActivator>) cloader.loadClass(className));
 					}
 
 				}catch (IOException e) {
 					ManagedIOException.manage(e);
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -118,12 +77,12 @@ public class LocalFileRepositoryDiscoveryEngine implements ServiceDiscoveryEngin
 				e.printStackTrace();
 			} 
 		}
+		
+		return activatorsClasses;
 	}
 	
 
-	public void addActivator(ServiceActivator activator){
-		activators.add(activator);
-	}
+
 	
 
 }

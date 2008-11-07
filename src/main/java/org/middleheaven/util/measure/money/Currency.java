@@ -26,7 +26,8 @@ public abstract class Currency extends Unit<org.middleheaven.util.measure.measur
 	public static Currency currency(Locale locale ){
 		return new ISOCurrency(java.util.Currency.getInstance(locale));
 	}
-	
+
+
 	public abstract int getDefaultFractionDigits();
 	
 	@Override
@@ -90,5 +91,4 @@ public abstract class Currency extends Unit<org.middleheaven.util.measure.measur
 		return CompositeUnit.raise (this, value);
 	}
 
-	
 }

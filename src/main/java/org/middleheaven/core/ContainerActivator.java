@@ -2,12 +2,13 @@ package org.middleheaven.core;
 
 import org.middleheaven.core.services.ContainerService;
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.engine.ServiceActivator;
+import org.middleheaven.core.services.discover.ServiceActivator;
 
 public class ContainerActivator extends ServiceActivator {
     
 
 	public SimpleContainerService service;
+	
     public ContainerActivator(Container container) {
 		this.service= new SimpleContainerService(container);
 	}

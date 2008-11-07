@@ -1,5 +1,7 @@
 package org.middleheaven.util.measure.time;
 
+import org.middleheaven.core.exception.UnimplementedMethodException;
+
 
 
 public abstract class Chronology {
@@ -34,11 +36,16 @@ public abstract class Chronology {
 
 	public abstract Month monthOf(int ordinal, int month);
 
+	public abstract TimeHolder timeOf(TimePoint point);
+
 	public CalendarDate convertTo(CalendarDate date, Chronology chronology){
 		
 		// TODO 
-		throw new UnsupportedOperationException("Conversion between chonolies are not yet supported");
+		throw new UnimplementedMethodException("Conversion between chonologies are not yet supported");
 	}
+
+	
+
 
     
 }

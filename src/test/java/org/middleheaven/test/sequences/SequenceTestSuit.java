@@ -1,4 +1,4 @@
-package org.middleheaven.measures;
+package org.middleheaven.test.sequences;
 
 import static org.junit.Assert.assertTrue;
 

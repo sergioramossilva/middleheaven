@@ -12,6 +12,11 @@
 			and the real work boils down to stream plumbing.
 		</p>
 		<p>
+			The Managed File Toolbox is an essencial MiddleHeaven Toolbox. Many other toolboxes use Managed File Toolbox services to handle file-like data
+			and streams in a transparent way. We will se details on how when we talk about each one of them. Where we will look at Managed File Toolbox's 
+			simple core concepts and types.  
+		</p>
+		<p>
 			Java allows for OS file system manipulation as we see fit in a very paltaform independent way, specilly by means of <code>java.io.File</code> class. 
 			However Jar/Zip files that also may contain files and file groups like their where folders have a very different treatment.
 			If you think of jar/zip file like a kind of <i>virtual file</i>, java does not support this idea directly. 
@@ -21,6 +26,7 @@
 			The Managed File Toolbox allows for total abstraction of the underlying file system and allows for the creation of complex virtual filesystem 
 			based upon any other file-similar or file handling technology like FTP, HTTP, Zip and of course the OS native file system.
 		</p>
+
 	</section>
 	<section name="File vs Managed File" >
 		<p>
@@ -29,31 +35,53 @@
 			Java IO uses the Adapter Pattern approach to create streams. MiddleHeaven's Managed File uses a simples Factory Method
 			that will return a <code>ManagedFileContent</code>
 		</p>
-		<p>
+		<p>k
 			A Managed File can be copied to another file or folder simply by invoking <code>copyTo</code>. This can be a boring task
-			in standard Java has no copy utility is provided and we end writing it over and over. 
+			in standard Java has no copy utility is provided and we end writing it over and over. Even then, we must choose between 
+			the possibility to use the NI/O channels or not.
+			MiddleHeaven tries to use the most efficient copy method according to the real underlying file location and implementation.
 		</p>
 		<p>
 			The root repositories for files and folders can be obtained by abstracting any supported URI or <code>java.io.File</code>.
-			This task in normally done in bootstrap code. We will come back to this when we visit the Bootstrap and Service toolboxes 
-			
+			This task in normally done in bootstrap or configuration code where the application "roots" are configured. 
+			We will come back to this when we visit the Bootstrap and Service toolboxes 
 		</p>
 	</section>
 	<section name="Model" >
 		<p>
 			The figure below illustrates the basic types for the Managed File Toolbox in MiddleHeaven.
 			<figure>
-			<img src="managedfileuml.png" />
+				<img src="managedfileuml.png" />
 			</figure>
-			The <code>ManagedFile</code> is obviously the main type. From it is possible to obtain other children files, or folders, and have access to
-			<code>ManagedFileContent</code> with in turn provides <code>InputStream</code> and <code>OutputStream</code> to the file. 
+			The <code>ManagedFile</code> is the main type. From it is possible to obtain other children files, or folders, have access to
+			it parent file or to the <code>ManagedFileContent</code> with in turn provides <code>InputStream</code> and <code>OutputStream</code> to data itself.
 		</p>	
-		
+		<p>
+			Almost all operations throw  <code>ManagedIOException</code>, an IOException  runtime exception conterpart.  Exception handling best pratices 
+			dictate that all exceptions thrown by operations involving a subsystem or communication with external resources (like files, connections ,etc..) must be
+			checked exception. Here MiddleHeaven makes a trade-off. Normally this exception cannot be resolve only by the application itself, is common to have to have someone 
+			econfigure some port, address, firewall, permission , etc... So there is no mutch point in checking all exceptions where we do not have means to resolve them.
+			However when we do have means to solve them, or work arround them, we can still capture the runtime exception.<br/>
+			MiddleHeaven incorporates the Exception Handler pattern in order to translate common I/O exceptions into more meaningfull exception acording to best pratices 
+			(e.g. MiddleHeaven provides FileNotFoundManagedException that receives and holds the file path that was not found in order to be read aftwards for finner exception handling)
+		</p>
+		<p>
+		All <code>ManagedFile</code> provide the method <code>isWatchable</code> with normally returns false. By contract it only can return true 
+		if the <code>ManagedFile</code> implementation also implements <code>WatchableRepository</code>. <code>WatchableRepository</code> allows for watch-dog capabilities to be added 
+		by means of registering  <code>FileChangeListeners</code>.  the watch-dog implementation is provided by the underlying <code>ManagedFile</code> implementation.
+		</p>
+		<p>
+			Although <code>ManagedFile</code> is the main contract for users of the toolbox, <code>ManagedFileResolver</code> is the most relevant contract
+			for the implementation of the toolbox it self. Because the toolbox must be open to incorporate several different file-like systems and corresponding supporting API
+			MiddleHeaven opts for introducing an abstraction super layer called the engine, represented by the <code>RepositoryEngine</code> interface.
+			Different engines provide different <code>ManagedFileResolver</code>s  so any virtual file system could be incorporated.
+		</p>
 	</section>
 	<section name="Use">
 		<p>
-		Using a Managed File is very simple. In this example we create an empty file i nthe current folder, locate the JUnit.jar in a local 
-		maven repository and copy it. 
+		Using a Managed File is very simple. In this example we create an empty file in the current folder, locate the JUnit.jar in a local 
+		maven repository and copy it. As said before, normally the programmer will receive a  <code>ManagedFile</code> or <code>ManagedRepository</code> from else where in the system, 
+		like a service or via injection. For completion sake we also see in the following example who those "root" files can be obtain from standard <code>java.io.File</code>:
 		<source>
 		//ManagedFileRepositories is an integration utilities class that allows 
 		// for integration with java.io.File
@@ -91,13 +119,13 @@
 		</source> 
 		</p>
 		<p>
-			This example shows how we can turn a java.io.File into a ManageRepository. 
-			It also shows you who simple is to copy a file simply by invoking <code>copyTo</code>.
+			This example shows how we can abstract any java.io.File into a <code>ManagedFile</code>. 
+			It also shows how simple it is to copy a file simply by invoking <code>copyTo</code>.
 			Finally is present a simple example to ilustrate the complete abstraction of the virtual file system of a Zip file
-			by iterating it as we would had done with any other Maanged File 
+			by iterating it as we would had done with any other managed file 
 		</p>
 	</section>
-	<section name="Under the hood">
+	<section name="Under the Hood">
 		<p>
 			The had use the managed file concept in other applications an frameworks I've develop along the year.
 			During this time I've crossed roads with Apache's Commons VFS that thrives on the same "virtual file" idea.
@@ -110,9 +138,9 @@
 			variety of virtual systems like FTP and ZIP file , to name a few. Plans exist to incorporate WebDav and others.
 		</p>
 		<p>
-			However Commons VFS does not integrate natively with Commons Upload commonly use in web applications to mediate file upload logic.
+			However Commons VFS does not integrate natively with Commons Upload very frequently used in web applications to mediate file upload logic.
 			This is where MiddleHeaven Managed File Toolbox architecture shines enabling the toolbox to provide the services we need based 
-			upon on the code we see most useful. MiddleHeaven Managed File Toolbox provides a Managed File implementation of a ManagedRepository 
+			upon on the code we see most useful, merging or agregating diferent third party API when needed. MiddleHeaven Managed File Toolbox provides a Managed File implementation of a ManagedRepository 
 			that can be used to interact with the download files in the same exact way we would interact with a file on the disk.
 			We'll talk more about this we we visit the Web Toolbox. 
 		</p>

@@ -18,7 +18,7 @@ import org.middleheaven.work.scheduled.Schedule;
 
 /**
  * The clock used by the machine. This is the standard system clock with
- * cadence of 1s/s and default time zone. 
+ * cadence of 1 and default time zone. 
  *
  */
 public class MachineClock extends Clock {

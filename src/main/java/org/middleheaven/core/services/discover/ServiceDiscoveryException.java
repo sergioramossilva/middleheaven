@@ -1,4 +1,6 @@
-package org.middleheaven.core.services;
+package org.middleheaven.core.services.discover;
+
+import org.middleheaven.core.services.ServiceException;
 
 public class ServiceDiscoveryException extends ServiceException {
 

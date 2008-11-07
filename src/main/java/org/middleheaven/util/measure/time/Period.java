@@ -5,7 +5,7 @@ import org.middleheaven.util.measure.Integer;
 import org.middleheaven.util.measure.SI;
 import org.middleheaven.util.measure.Unit;
 
-public class Period extends ElapsedTime{
+public class Period extends ElapsedTime implements Comparable<Period>{
 
 	
 	public static Period miliseconds (long miliseconds){
@@ -38,8 +38,6 @@ public class Period extends ElapsedTime{
 		return other.plus(this);
 	}
 
-
-
 	public Unit unit() {
 		return SI.MILISECOND;
 	}
@@ -63,5 +61,10 @@ public class Period extends ElapsedTime{
 
 	public String toString(){
 		return Long.toString(this.miliseconds);
+	}
+
+	@Override
+	public int compareTo(Period other) {
+		return (int)(this.miliseconds - other.miliseconds);
 	}
 }

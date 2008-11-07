@@ -1,4 +1,4 @@
-package org.middleheaven.measures;
+package org.middleheaven.test.storage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

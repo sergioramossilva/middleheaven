@@ -1,6 +1,7 @@
 package org.middleheaven.util.measure.money;
 
 
+
 public class ISOCurrency extends Currency{
 
 
@@ -22,6 +23,8 @@ public class ISOCurrency extends Currency{
 	public String symbol() {
 		return iso.getCurrencyCode();
 	}
+
+
 	
 
 

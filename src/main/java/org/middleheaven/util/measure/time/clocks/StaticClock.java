@@ -74,7 +74,7 @@ public class StaticClock extends Clock {
 		}
 	}
 	/**
-	 * @return 0 (zero) as this clock never changes is time
+	 * @return 0 (zero) as this clock never changes its current time
 	 */
 	@Override
 	public double getCadence() {

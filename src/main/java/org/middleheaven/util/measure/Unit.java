@@ -11,7 +11,7 @@ public abstract class Unit<E extends Measurable> {
 
 	public abstract Dimension<E> dimension();
 	public abstract String symbol();
-	
+
 	public abstract Unit<E> plus(Unit<E> other) throws IncompatibleUnitsException;
 	public abstract Unit<E> minus(Unit<E> other) throws IncompatibleUnitsException;
 	public abstract <T extends Measurable> Unit<T> times(Unit<?> other);
