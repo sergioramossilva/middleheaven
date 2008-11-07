@@ -3,6 +3,7 @@ package org.middleheaven.util.measure.time;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.middleheaven.core.exception.UnimplementedMethodException;
 import org.middleheaven.util.measure.Dimension;
 import org.middleheaven.util.measure.IncompatibleUnitsException;
 import org.middleheaven.util.measure.SI;
@@ -36,69 +37,69 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		}
 	}
 	
-	public Duration(DurationType type, Number value) {
-		this();
-		fields.put(type,value);
-	}
-	
-	
 	protected Duration(Duration other) {
 		this();
 		for (Map.Entry<DurationType,Number> e : other.fields.entrySet()){
 			this.fields.put(e.getKey(), e.getValue()); 
 		}
 	}
-
 	
-	public static Duration weeks(int weeks){
-		return new Duration ( DurationType.DAYS, 7*weeks);
-	}
-	
-	public static Duration days(int days){
-		return new Duration ( DurationType.DAYS, days);
+	public static Duration of(){
+		return new Duration ();
 	}
 	
-	public static Duration date(int years, int months,int days){
-		Duration d = new Duration(DurationType.YEARS,years);
-		d.fields.put(DurationType.MONTHS, months);
-		d.fields.put(DurationType.DAYS, days);
-		return d;
+	private Duration add(DurationType type, Number value) {
+		fields.put(type,value);
+		return this;
 	}
-
-	public static Duration time(int hours, int minutes,int seconds){
-		Duration d = new Duration(DurationType.HOURS,hours);
-		d.fields.put(DurationType.MINUTES, minutes);
-		d.fields.put(DurationType.MILISECONDS, seconds * 1000);
-		return d;
+	
+	public Duration weeks(int weeks){
+		return new Duration ( this ).add(DurationType.DAYS, 7*weeks);
 	}
-
-	public static Duration years(int ammount){
-		return new Duration(DurationType.YEARS,ammount);
-	}
-
-	public static Duration months(int ammount){
-		return new Duration(DurationType.MONTHS,ammount);
-	}
-
-
-	public static Duration hours(int ammount){
-		return new Duration(DurationType.HOURS,ammount);
-	}
-
-	public static Duration minutes(int ammount){
-		return new Duration(DurationType.MINUTES,ammount);
-	}
-
-	public static Duration seconds(int ammount){
-		return new Duration(DurationType.MILISECONDS,ammount*1000);
-	}
-
-	public static Duration miliseconds(long ammount){
-		return new Duration(DurationType.MILISECONDS,ammount);
-	}
-
 	
 
+
+	public Duration days(int days){
+		return new Duration ( this ).add( DurationType.DAYS, days);
+	}
+	
+	public Duration date(int years, int months,int days){
+		return new Duration (this)
+		.add(DurationType.YEARS,years)
+		.add(DurationType.MONTHS, months)
+		.add(DurationType.DAYS, days);
+	}
+
+	public Duration time(int hours, int minutes,int seconds){
+		return new Duration (this)
+		.add(DurationType.HOURS,hours)
+		.add(DurationType.MINUTES, minutes)
+		.add(DurationType.MILISECONDS, seconds * 1000);
+	}
+
+	public Duration years(int ammount){
+		return new Duration ( this ).add(DurationType.YEARS,ammount);
+	}
+
+	public Duration months(int ammount){
+		return new Duration ( this ).add(DurationType.MONTHS,ammount);
+	}
+
+	public Duration hours(int ammount){
+		return new Duration ( this ).add(DurationType.HOURS,ammount);
+	}
+
+	public Duration minutes(int ammount){
+		return new Duration ( this ).add(DurationType.MINUTES,ammount);
+	}
+
+	public Duration seconds(int ammount){
+		return new Duration ( this ).add(DurationType.MILISECONDS,ammount*1000);
+	}
+
+	public Duration miliseconds(long ammount){
+		return new Duration ( this ).add(DurationType.MILISECONDS,ammount);
+	}
 
 	public int years(){
 		return fields.get(DurationType.YEARS).intValue();
@@ -205,8 +206,8 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 	}
 
 	public ElapsedTime over(org.middleheaven.util.measure.Number other) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO Implements Duration#over(Number); 
+		throw new UnimplementedMethodException();
 	}
 	
 	private static Number sum (Number a , Number b){

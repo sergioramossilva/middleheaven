@@ -17,7 +17,7 @@ import org.middleheaven.util.measure.time.Year;
  *
  * Days marked as Saturday, Sunday and Easter are considered non-working days 
  */
-public class EasterBasedCalculatedCalendarModel extends EphemeridModel {
+public class EasterBasedCalculatedEphemerisModel extends EphemerisModel {
 
 	/**
 	 * @param year
@@ -53,25 +53,25 @@ public class EasterBasedCalculatedCalendarModel extends EphemeridModel {
 			dateEphemeris.put(easterSunday, new DefaultEphemeris("Easter",false,easterSunday));
 
 			// 2 days before easter
-			DateHolder goodFriday = easterSunday.minus(Duration.days(2));
+			DateHolder goodFriday = easterSunday.minus(Duration.of().days(2));
 			dateEphemeris.put(goodFriday, new DefaultEphemeris("Good Friday",true,goodFriday));
 			
 			// 42 days before easter
-			DateHolder ashWendnesday = easterSunday.minus(Duration.days(42)).nearestBefore(DayOfWeek.WEDNESDAY);
+			DateHolder ashWendnesday = easterSunday.minus(Duration.of().days(42)).nearestBefore(DayOfWeek.WEDNESDAY);
 			
 			dateEphemeris.put(ashWendnesday, new DefaultEphemeris("Ash Wednesday",true,ashWendnesday));
 			
 			// 7 weeks (49 days) after easter
-			DateHolder whitSunday = easterSunday.plus(Duration.days(49));
+			DateHolder whitSunday = easterSunday.plus(Duration.of().days(49));
 			dateEphemeris.put(whitSunday, new DefaultEphemeris("Pentecost",false,whitSunday));
 			
 			// 39 days after easter
-			DateHolder ascensionDay = whitSunday.minus(Duration.days(10));
+			DateHolder ascensionDay = whitSunday.minus(Duration.of().days(10));
 			dateEphemeris.put(ascensionDay, new DefaultEphemeris("Ascension Day",false,ascensionDay));
 			
 			// 43 days before easter , 1 day before Ash Wednesday
-			DateHolder carnival = ashWendnesday.previousDate();
-			dateEphemeris.put(carnival, new DefaultEphemeris("Carnival",false,carnival));
+			DateHolder mardiGras = ashWendnesday.previousDate();
+			dateEphemeris.put(mardiGras, new DefaultEphemeris("Mardi Gras",false,mardiGras));
 			
 		} 
 

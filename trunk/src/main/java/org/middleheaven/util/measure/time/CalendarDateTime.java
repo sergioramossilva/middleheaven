@@ -3,7 +3,7 @@ package org.middleheaven.util.measure.time;
 import java.util.Date;
 
 
-public class CalendarDateTime extends AbstractTimePoint implements  DateHolder  {
+public class CalendarDateTime extends AbstractTimePoint implements  DateHolder , TimeHolder  {
 
 	public static CalendarDateTime now(){
 		return new CalendarDateTime(TimeContext.getTimeContext(), TimeContext.getTimeContext().now().milliseconds());
@@ -43,6 +43,20 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder  
         return context.getChronology().yearOf(this);
     }
     
+	@Override
+	public int hour() {
+		return context.getChronology().timeOf(this).hour();
+	}
+
+	@Override
+	public int minute() {
+		return context.getChronology().timeOf(this).minute();
+	}
+
+	@Override
+	public int second() {
+		return context.getChronology().timeOf(this).second();
+	}
     
     public boolean isWeekend(){
         return context.getReferenceWorkCalendar().isWeekend(this);
@@ -57,11 +71,11 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder  
     }
     
     public CalendarDateTime nextDate(){
-    	return context.getChronology().add(this, Duration.days(1));
+    	return context.getChronology().add(this, Duration.of().days(1));
     }
     
     public CalendarDateTime previousDate(){
-    	return context.getChronology().add(this, Duration.days(-1));
+    	return context.getChronology().add(this, Duration.of().days(-1));
     }
     
     public CalendarDate toDate(){
@@ -111,9 +125,9 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder  
 	@Override
 	public DateHolder nearest(DayOfWeek weekDay) {
 		
-		int diff= weekDay.ordinal() -  this.dayOfWeek().ordinal();
+		int diff= weekDay.calendarOrdinal() -  this.dayOfWeek().calendarOrdinal();
 		
-		return diff==0? this : this.plus(Duration.days(diff));
+		return diff==0? this : this.plus(Duration.of().days(diff));
 	}
 	
 	@Override
@@ -137,4 +151,11 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder  
 	public String toString(){
 		return new Date(this.milliseconds).toString();
 	}
+
+	@Override
+	public long miliseconds() {
+		return this.milliseconds;
+	}
+	
+
 }

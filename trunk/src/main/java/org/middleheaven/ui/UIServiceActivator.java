@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.engine.ServiceActivator;
+import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.ui.client.UIClient;
 
 public class UIServiceActivator extends ServiceActivator {

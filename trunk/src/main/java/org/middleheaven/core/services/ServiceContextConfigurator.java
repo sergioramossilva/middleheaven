@@ -1,5 +1,7 @@
 package org.middleheaven.core.services;
 
+import org.middleheaven.core.services.discover.ServiceDiscoveryEngine;
+
 
 public class ServiceContextConfigurator {
 

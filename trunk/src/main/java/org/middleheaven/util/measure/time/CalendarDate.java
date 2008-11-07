@@ -38,11 +38,11 @@ public class CalendarDate extends CalendarDateTime  implements Incrementable<Ela
 
 
     public CalendarDate nextDate(){
-    	return context.getChronology().add(this, Duration.days(1));
+    	return context.getChronology().add(this, Duration.of().days(1));
     }
     
     public CalendarDate previousDate(){
-    	return context.getChronology().add(this, Duration.days(-1));
+    	return context.getChronology().add(this, Duration.of().days(-1));
     }
 
     public CalendarDate plus (ElapsedTime elapsed){
@@ -54,11 +54,11 @@ public class CalendarDate extends CalendarDateTime  implements Incrementable<Ela
     }
 
 	public Range<CalendarDate> upTo(CalendarDate date) {
-		return to(date,Duration.days(1));
+		return to(date,Duration.of().days(1));
 	}
 
 	public Range<CalendarDate> downTo(CalendarDate date) {
-		return to(date,Duration.days(-1));
+		return to(date,Duration.of().days(-1));
 	}
 
 	public Range<CalendarDate> to(CalendarDate date, ElapsedTime elapsedTime) {

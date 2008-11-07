@@ -2,8 +2,8 @@ package org.middleheaven.util.measure.time;
 
 import org.middleheaven.util.measure.time.chono.JavaCalendarCronology;
 import org.middleheaven.util.measure.time.clocks.MachineClock;
-import org.middleheaven.util.measure.time.ephemeris.DefaultEphemeridModel;
-import org.middleheaven.util.measure.time.ephemeris.EphemeridModel;
+import org.middleheaven.util.measure.time.ephemeris.DefaultEphemerisModel;
+import org.middleheaven.util.measure.time.ephemeris.EphemerisModel;
 import org.middleheaven.util.measure.time.zones.JavaTimeZoneTable;
 
 public final class TimeContext {
@@ -11,7 +11,7 @@ public final class TimeContext {
 	
 	private static TimeContext current = new TimeContext(
 			new MachineClock(),
-			new DefaultEphemeridModel(),
+			new DefaultEphemerisModel(),
 			new JavaCalendarCronology(),
 			new JavaTimeZoneTable()
 			);
@@ -26,12 +26,12 @@ public final class TimeContext {
 	
 
 	private Clock referenceClock;
-	private EphemeridModel referenceWorkCalendar;
+	private EphemerisModel referenceWorkCalendar;
 	private Chronology chronology;
 	private TimeZoneTable timezoneTable;
 	
 	public TimeContext(Clock referenceClock,
-			EphemeridModel referenceWorkCalendar, 
+			EphemerisModel referenceWorkCalendar, 
 			Chronology chronology,
 			TimeZoneTable timezoneTable) {
 		
@@ -76,7 +76,7 @@ public final class TimeContext {
 	 * @return
 	 * 
 	 */
-	public EphemeridModel getReferenceWorkCalendar() {
+	public EphemerisModel getReferenceWorkCalendar() {
 		return referenceWorkCalendar;
 	}
 
@@ -84,7 +84,7 @@ public final class TimeContext {
 	 * @param referenceWorkCalendar
 	 * 
 	 */
-	public void setReferenceWorkCalendar(EphemeridModel referenceWorkCalendar) {
+	public void setReferenceWorkCalendar(EphemerisModel referenceWorkCalendar) {
 		this.referenceWorkCalendar = referenceWorkCalendar;
 	}
 

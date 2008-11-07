@@ -9,7 +9,7 @@ import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
 import org.apache.felix.framework.util.StringMap;
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.engine.ServiceActivator;
+import org.middleheaven.core.services.discover.ServiceActivator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.Constants;
 

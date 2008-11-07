@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.ServiceDiscoveryEngine;
+import org.middleheaven.core.services.discover.ServiceDiscoveryEngine;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -25,7 +25,11 @@ public class OSGiServiceEngine implements ServiceDiscoveryEngine{
 		this.serviceContext = context;
 		this.bundleContext.addServiceListener(listener);
 	}
-
+	
+	@Override
+	public void stop(ServiceContext context) {
+		this.bundleContext.removeServiceListener(listener);
+	}
 	
 	private class ServiceOSGiListener implements org.osgi.framework.ServiceListener{
 
@@ -53,12 +57,9 @@ public class OSGiServiceEngine implements ServiceDiscoveryEngine{
 		} 
 	}
 
-	@Override
-	public void stop(ServiceContext context) {
-		this.bundleContext.removeServiceListener(listener);
-		// TODO remove services register by this engine ?
-			
-	}
+
+
+
 
 
 }

@@ -2,7 +2,7 @@ package org.middleheaven.logging;
 
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.services.engine.ServiceActivator;
+import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.service.CommonRepositories;
 import org.middleheaven.io.repository.service.FileRepositoryService;

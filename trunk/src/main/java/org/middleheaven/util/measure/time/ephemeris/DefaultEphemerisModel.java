@@ -6,7 +6,7 @@ import java.util.Set;
 import org.middleheaven.util.measure.time.DateHolder;
 
 
-public final class DefaultEphemeridModel extends EphemeridModel {
+public final class DefaultEphemerisModel extends EphemerisModel {
 
 	@Override
 	public boolean isHoliday(DateHolder dateHolder) {

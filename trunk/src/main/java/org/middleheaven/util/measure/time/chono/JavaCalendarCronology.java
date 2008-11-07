@@ -8,6 +8,7 @@ import org.middleheaven.util.measure.time.DayOfMonth;
 import org.middleheaven.util.measure.time.DayOfWeek;
 import org.middleheaven.util.measure.time.Duration;
 import org.middleheaven.util.measure.time.Month;
+import org.middleheaven.util.measure.time.TimeHolder;
 import org.middleheaven.util.measure.time.TimePoint;
 import org.middleheaven.util.measure.time.Year;
 
@@ -67,6 +68,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 		calendar.clear(Calendar.MINUTE);
 		calendar.clear(Calendar.SECOND);
 		calendar.clear(Calendar.MILLISECOND);
+		
 		return calendar.getTimeInMillis();
 	}
 
@@ -125,4 +127,39 @@ public class JavaCalendarCronology extends AbstractChronology{
 		return new Month(year, month, calendar.getGreatestMinimum(Calendar.DAY_OF_MONTH));
 	}
 
+	@Override
+	public TimeHolder timeOf(TimePoint point) {
+		Calendar c =  (Calendar)prototype.clone();
+		c.setTimeInMillis(point.milliseconds());
+		return new CalendarTimeHolder(c);
+	}
+
+	
+	private static final class CalendarTimeHolder implements TimeHolder{
+		Calendar calendar;
+		public CalendarTimeHolder(Calendar calendar) {
+			this.calendar = calendar;
+		}
+
+		@Override
+		public int hour() {
+			return calendar.get(Calendar.HOUR_OF_DAY);
+		}
+
+		@Override
+		public long miliseconds() {
+			return calendar.get(Calendar.MILLISECOND);
+		}
+
+		@Override
+		public int minute() {
+			return calendar.get(Calendar.MINUTE);
+		}
+
+		@Override
+		public int second() {
+			return calendar.get(Calendar.SECOND);
+		}
+		
+	}
 }

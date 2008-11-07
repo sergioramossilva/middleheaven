@@ -28,4 +28,9 @@
 			<i><xsl:apply-templates/></i>
 	</xsl:template>
 	
+	<xsl:template match="figure">
+		<center>
+			<xsl:apply-templates/>
+		</center>
+	</xsl:template>
 </xsl:stylesheet>

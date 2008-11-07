@@ -83,7 +83,7 @@ public class ClockTest {
 		TimeZoneClock newYork = new TimeZoneClock(TimeZone.getTimeZone("GMT-04:00"), sclock);
 
 		// calculate time at New York
-		assertEquals(0L, now.minus(sclock.getTimeZone().getRawOffsetPeriod()).minus(Duration.hours(4)).milliseconds() - newYork.getTime().milliseconds() );
+		assertEquals(0L, now.minus(sclock.getTimeZone().getRawOffsetPeriod()).minus(Duration.of().hours(4)).milliseconds() - newYork.getTime().milliseconds() );
 
 	}
 	
@@ -103,7 +103,7 @@ public class ClockTest {
 		
 		TestClockTickListener listener = new TestClockTickListener();
 		
-		clock.addClockTickListener(listener, IntervalSchedule.schedule(time, time.plus(Duration.seconds(5)) , Period.seconds(1)));
+		clock.addClockTickListener(listener, IntervalSchedule.schedule(time, time.plus(Duration.of().seconds(5)) , Period.seconds(1)));
 		
 		try {
 			Thread.sleep(10000);
@@ -119,7 +119,7 @@ public class ClockTest {
 		
 	    listener = new TestClockTickListener();
 		
-		clock.addClockTickListener(listener, IntervalSchedule.schedule(time, time.plus(Duration.hours(5)) , Period.seconds(1)));
+		clock.addClockTickListener(listener, IntervalSchedule.schedule(time, time.plus(Duration.of().hours(5)) , Period.seconds(1)));
 		
 		try {
 			Thread.sleep(10000);

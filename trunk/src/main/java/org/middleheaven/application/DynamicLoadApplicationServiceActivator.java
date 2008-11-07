@@ -12,7 +12,7 @@ import java.util.jar.Manifest;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.services.ContainerService;
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.engine.ServiceActivator;
+import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.ManagedFile;

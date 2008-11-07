@@ -14,7 +14,7 @@ class BaseUnit<E extends Measurable> extends Unit<E> {
 
 	private Dimension<E> dim;
 	private String symbol;
-		
+	
 	protected BaseUnit(Dimension<E> dim, String symbol){
 		this.dim = dim;
 		this.symbol = symbol;
@@ -80,6 +80,8 @@ class BaseUnit<E extends Measurable> extends Unit<E> {
 	public <C extends Measurable> Unit<C> cast() {
 		return (Unit<C>) this;
 	}
+
+
 
 
 

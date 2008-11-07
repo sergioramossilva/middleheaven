@@ -20,7 +20,6 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.domain.AnnotatedDomainModel;
 import org.middleheaven.io.repository.ManagedFileRepositories;
-import org.middleheaven.measures.StorageManagerTeste.TestSubject;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
@@ -31,6 +30,7 @@ import org.middleheaven.storage.datasource.DataSourceService;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.datasource.DriverManagerDSProvider;
 import org.middleheaven.storage.db.DataBaseStoreKeeper;
+import org.middleheaven.test.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.sequence.service.FileSequenceStorageActivator;
@@ -49,8 +49,8 @@ public class DataStorageTest {
 
 		// Activator
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
-		engine.addActivator(new DataSourceServiceActivator());
-		engine.addActivator(new FileSequenceStorageActivator());
+		engine.addActivator(DataSourceServiceActivator.class);
+		engine.addActivator(FileSequenceStorageActivator.class);
 		new ServiceContextConfigurator().addEngine(engine);
 
 		// Configured

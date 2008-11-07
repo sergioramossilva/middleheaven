@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
@@ -19,13 +19,13 @@ import org.middleheaven.licence.LicenceServiceActivator;
 
 public class LicenceTeste {
 
-	@BeforeClass
-	public static void setUp(){
+	@Before
+	public void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
 		bootstrap.start();
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
-		engine.addActivator(new LicenceServiceActivator());
+		engine.addActivator(LicenceServiceActivator.class);
 		new ServiceContextConfigurator().addEngine(engine);
 	}
 
