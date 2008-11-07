@@ -128,6 +128,33 @@
 			<code>TimeContext</code> acts like a register for it self so you can define, for each application, witch time context is relevant.
 		</p>
 	</section>
+	<section name="Use" >
+		<p>
+		Here is an extract from the junit test that exemplifies how to use the Time Toolbox API data types and EphemerisModel.
+		EphemerisModel can be used to work with holidays/working days arithmetic. The code tests if 5 working days after 2008-5-28 is 
+		2008-6-4. In the end it test that 2008-6-6 is the 6th day of June 2008.
+		<source>
+			EphemerisModel model = new EasterBasedCalculatedEphemerisModel();
+		
+			DateHolder start = CalendarDate.date(2008,5,28);
+			DateHolder end = CalendarDate.date(2008,6,4);
+			
+			assertEquals(end, model.addWorkingDays(5, start));
+			assertEquals(start, model.subtractWorkingDays(5, end));
+			
+			start = CalendarDate.date(2008,6,2);
+			end = CalendarDate.date(2008,6,9);
+			
+			assertEquals(end, model.addWorkingDays(5, start));
+			assertEquals(start, model.subtractWorkingDays(5, end));
+			
+			assertEquals(CalendarDate.date(2008,6,6),model.getOrdinalWorkingDayOfMonth(Month.ofYear(2008,6), 6));
+
+		</source>
+		
+		</p>
+	
+	</section>
 	<section name="Under the Hood">
 		<p>
 		At this point you may be asking : "Is the Time Toolbox a clone of JSR 310" ? The answer is no. MiddleHeaven Time Toolbox was developed with several goals 
