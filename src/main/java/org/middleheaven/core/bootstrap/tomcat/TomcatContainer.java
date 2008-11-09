@@ -6,10 +6,10 @@ package org.middleheaven.core.bootstrap.tomcat;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.ServletBoundContainer;
+import org.middleheaven.core.WebContainer;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 
-public class TomcatContainer extends ServletBoundContainer  {
+public class TomcatContainer extends WebContainer  {
 
 
     public TomcatContainer(ServletContext context){

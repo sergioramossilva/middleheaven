@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.Locale;
 
 import org.junit.Test;
-import org.middleheaven.global.text.NumberWriteoutFormat;
-import org.middleheaven.global.text.FormatNotFoundException;
+import org.middleheaven.global.text.writeout.FormatNotFoundException;
+import org.middleheaven.global.text.writeout.NumberWriteoutFormat;
 
 public class NumberWordsFormatTest {
 

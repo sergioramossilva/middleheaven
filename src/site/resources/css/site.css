@@ -9,8 +9,8 @@ body, td, select, input, li{
 code{
   font-family: Courier, monospace;
   font-size: 13px;
-  border: 1px solid #999;
 }
+
 a {
   text-decoration: none;
 }
@@ -23,6 +23,7 @@ a:visited  {
 a:active, a:hover {
   color:#69c;
 }
+
 #legend li.externalLink {
   background: url(../images/external.png) left top no-repeat;
   padding-left: 18px;
@@ -68,9 +69,11 @@ h5 {
   font-size: normal;
   color: #000066;
 }
+
 p {
   line-height: 1.3em;
   font-size: small;
+  text-align: justify;
 }
 
 #navcolumn{
@@ -128,6 +131,12 @@ dt {
 #organizationLogo img, #projectLogo img, #projectLogo span{
   margin: 8px;
 }
+
+.pictureframe{
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #aaa;
+}
+
 #banner {
   border-bottom: 0px solid #fff;
 }

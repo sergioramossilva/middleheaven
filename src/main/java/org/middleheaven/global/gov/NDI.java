@@ -3,16 +3,18 @@ package org.middleheaven.global.gov;
 import java.io.Serializable;
 
 /**
- * Abstract a National Document Identification 
+ * Abstracts a National Document Identification 
  * This immutable object contains characters that can be interpreted as 
  * a document identification of some sort, i.e. Social Security Number, 
  * Passport , etc...
- * <code>NDI</code> provides methods to help the number's analyzis and validation 
+ * <code>NDI</code> provides methods to help the number's analysis and validation 
  *
  *@see http://en.wikipedia.org/wiki/National_identification_number
  */
 public class NDI implements CharSequence, Serializable{
 
+	private static final long serialVersionUID = 6015951818470234429L;
+	
 	private String sequence;
 
 	public NDI(char ... chars){

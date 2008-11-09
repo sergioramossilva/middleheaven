@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.classification.LogicOperator;
 import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.util.classification.LogicOperator;
 
 
 public class AbstractCriteria <T> implements Criteria<T>{

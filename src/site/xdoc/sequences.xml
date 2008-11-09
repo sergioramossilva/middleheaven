@@ -40,7 +40,9 @@
 		<p>
 			The figure below illustrates the basic set of sequence types in MiddleHeaven and who the relate to each other.
 			<center>
-			<img src="sequencesuml.png"/>
+			<a href="images/ilustrations/sequencesuml.png" target="_top">
+<img src="images/ilustrations/thumb_sequencesuml.png" class="pictureframe"/>
+</a>
 			</center>
 			Not all sequences are presente as some are implement inside other toolboxes. I'll talk about them later.<br/>
 			Following the Separation of Concerns principle all basic types are modeled as interfaces. 

@@ -4,7 +4,7 @@
  */
 package org.middleheaven.io.repository;
 
-import org.middleheaven.classification.BooleanClassifier;
+import org.middleheaven.util.classification.BooleanClassifier;
 
 public interface ManagedFileFilter extends BooleanClassifier<ManagedFile>{
 

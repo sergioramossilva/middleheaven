@@ -2,7 +2,8 @@
 <document>
   <body>
     <section name="News">
-<subsection name="19.07.2008">
+    
+	  <subsection name="19.07.2008">
         <p>Site reorganized. Storage Toolbox added with permilinary Database support for PostgreSQL </p>
       </subsection>
 <subsection name="15.06.2008">

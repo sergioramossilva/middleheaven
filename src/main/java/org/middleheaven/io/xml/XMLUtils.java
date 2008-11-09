@@ -7,7 +7,7 @@ package org.middleheaven.io.xml;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.middleheaven.global.ISO8601Format;
+import org.middleheaven.global.text.ISO8601Format;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

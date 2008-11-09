@@ -1,13 +1,13 @@
 package org.middleheaven.util.measure.time;
 
 import org.middleheaven.core.exception.UnimplementedMethodException;
+import org.middleheaven.util.measure.time.clocks.MachineClock;
 
 
 
 public abstract class Chronology {
 
-
-	protected Clock referenceClock;
+	protected Clock referenceClock = new MachineClock();
 	public void setClock(Clock referenceClock){
 		this.referenceClock = referenceClock;
 	}
@@ -43,9 +43,6 @@ public abstract class Chronology {
 		// TODO 
 		throw new UnimplementedMethodException("Conversion between chonologies are not yet supported");
 	}
-
-	
-
 
     
 }

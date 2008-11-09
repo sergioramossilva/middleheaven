@@ -179,15 +179,15 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		} catch (ValidationException e){
 			outcome =  outcomes.get(OutcomeStatus.INVALID);
 		} catch (InvocationTargetReflectionException e){
-			Logging.getBook("web").logError("Exception found invoking " + action.getName(), e);
+			Logging.getBook("web").error("Exception found invoking " + action.getName(), e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e.getCause());
 			outcome =  outcomes.get(OutcomeStatus.FAILURE);
 		} catch (Exception e){
-			Logging.getBook("web").logError("Exception found handling request", e);
+			Logging.getBook("web").error("Exception found handling request", e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  outcomes.get(OutcomeStatus.FAILURE);
 		} catch (Error e){
-			Logging.getBook("web").logFatal("Exception found handling request", e);
+			Logging.getBook("web").fatal("Exception found handling request", e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  outcomes.get(OutcomeStatus.ERROR);
 			if (outcome==null){

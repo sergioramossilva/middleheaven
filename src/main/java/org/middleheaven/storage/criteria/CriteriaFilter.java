@@ -1,6 +1,6 @@
 package org.middleheaven.storage.criteria;
 
-import org.middleheaven.classification.BooleanClassifier;
+import org.middleheaven.util.classification.BooleanClassifier;
 
 public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanClassifier<T>{
 

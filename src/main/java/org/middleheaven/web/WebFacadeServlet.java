@@ -77,7 +77,7 @@ public final class WebFacadeServlet extends HttpServlet {
 		} catch ( ActionHandlerNotFoundException e ){
 			response.sendError(501); // not implemented
 		} catch (RuntimeException e){
-			Logging.getBook("web").logError("Unexpected error" , e);
+			Logging.getBook("web").error("Unexpected error" , e);
 			response.sendError(500); // serve error
 		}
 	}

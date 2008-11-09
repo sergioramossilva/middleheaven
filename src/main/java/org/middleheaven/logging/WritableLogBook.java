@@ -13,11 +13,12 @@ public class WritableLogBook extends LogBook {
         super(name, level);
     }
 
-    public void addWriter(LogBookWriter writer){
+    public WritableLogBook addWriter(LogBookWriter writer){
         // add the writer only if its level could pass the books level
         if (writer.getLevel().canLog(level)){
             writers.add(writer);
         }
+        return this;
     }
 
     public void log(LoggingEvent event){

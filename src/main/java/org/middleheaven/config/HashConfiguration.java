@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.middleheaven.dependency.Dependency;
-import org.middleheaven.global.ISO8601Format;
+import org.middleheaven.global.text.ISO8601Format;
 import org.middleheaven.util.StringUtils;
 
 public class HashConfiguration implements Configuration{

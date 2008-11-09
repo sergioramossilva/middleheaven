@@ -57,23 +57,23 @@ public class CommonsLogAdapter implements Log {
     public void warn(Object arg0) {}
 
     public void warn(Object arg0, Throwable arg1) {
-        Logging.getBook(this.bookName).logTrace(arg0,arg1);
+        Logging.getBook(this.bookName).trace(arg0,arg1);
     }
 
     public void error(Object arg0) {
-    	Logging.getBook(this.bookName).logError(arg0);
+    	Logging.getBook(this.bookName).error(arg0);
     }
 
     public void error(Object arg0, Throwable arg1) {
-    	Logging.getBook(this.bookName).logError(arg0,arg1);
+    	Logging.getBook(this.bookName).error(arg0,arg1);
     }
 
     public void fatal(Object arg0) {
-    	Logging.getBook(this.bookName).logFatal(arg0);
+    	Logging.getBook(this.bookName).fatal(arg0);
     }
 
     public void fatal(Object arg0, Throwable arg1) {
-    	Logging.getBook(this.bookName).logFatal(arg0,arg1);
+    	Logging.getBook(this.bookName).fatal(arg0,arg1);
     }
 
 }

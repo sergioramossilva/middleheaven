@@ -7,7 +7,6 @@ package org.middleheaven.core.bootstrap;
 import java.util.ArrayList;
 
 import org.middleheaven.core.Container;
-import org.middleheaven.core.ContainerActivator;
 import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceContextEngineConfigurationService;
@@ -15,7 +14,10 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.services.engine.LocalFileRepositoryDiscoveryEngine;
+import org.middleheaven.core.wiring.DefaultWiringService;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.FileRepositoryActivator;
+import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
 
 /**
@@ -24,7 +26,6 @@ import org.middleheaven.logging.LoggingActivator;
  * bootstrap in different execution environments and allow
  * the applications execution to be environment independent.
  * 
- * The <code>ExecutionEnvironmentBootstrap</code> also starts the OSGi implementation service
  * @author Sergio M. M. Taborda 
  *
  */
@@ -32,22 +33,32 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 	
 	private ListServiceContextConfigurator configurator = new ListServiceContextConfigurator();
+	
 	/**
-	 * Entrypoint 
+	 * Start the environment 
 	 */
-	public final void start(){
+	public final void start(LogBook log){
 		long time = System.currentTimeMillis();
 		doBeforeStart();
 
+		log.debug("Resolving container");
+		
 		Container container = getContainer();
+		
+		log.trace("Container resolved: " + container.getEnvironmentName());
+		
+		log.debug("Register bootstrap services");
+		ServiceRegistry.register(WiringService.class, new DefaultWiringService());
+		ServiceRegistry.register(BootstrapService.class, new SimpleBootstrapService(container));
 		ServiceRegistry.register(ServiceContextEngineConfigurationService.class, new UniqueServiceContextEngineConfigurationService(), null);
 		
-		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
 		
-		// default init
-		engine.addActivator(ContainerActivator.class);
-		engine.addActivator(FileRepositoryActivator.class);
-		engine.addActivator(LoggingActivator.class);
+		log.debug("Inicialize service discovery engines");
+		
+		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
+		.addActivator(LoggingActivator.class)
+		.addActivator(FileRepositoryActivator.class);
+		
 		
 		configurator.addEngine(engine);
 		configurator.addEngine(new LocalFileRepositoryDiscoveryEngine());
@@ -56,7 +67,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 		doAfterStart();
 
-		System.out.println("Environment inicialized in " + (System.currentTimeMillis()-time) + " ms.");
+		log.info("Environment inicialized in " + (System.currentTimeMillis()-time) + " ms.");
 
 	}
 

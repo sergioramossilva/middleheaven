@@ -48,7 +48,7 @@ public class ModularAtlasService implements AtlasService {
 	}
 
 	@Override
-	public Town findCity(Country country, String name) {
+	public Town findTown(Country country, String name) {
 		
 		for (AtlasLocale division : country.getChildren()){
 			for (AtlasLocale city : division.getChildren()){
@@ -62,8 +62,8 @@ public class ModularAtlasService implements AtlasService {
 	}
 
 	@Override
-	public Town findCity(String isoCountryCode, String name) {
-		return findCity(this.findCountry(isoCountryCode), name);
+	public Town findTown(String isoCountryCode, String name) {
+		return findTown(this.findCountry(isoCountryCode), name);
 	}
 	
 

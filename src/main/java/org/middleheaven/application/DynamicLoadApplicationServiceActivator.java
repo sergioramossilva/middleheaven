@@ -10,7 +10,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.middleheaven.core.Container;
-import org.middleheaven.core.services.ContainerService;
+import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.io.ManagedIOException;
@@ -41,7 +41,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 	@Override
 	public void activate(ServiceContext context) {
 		log = context.getService(LoggingService.class, null).getLogBook(this.getClass().getName());
-		container  = context.getService(ContainerService.class, null).getContainer();
+		container  = context.getService(BootstrapService.class, null).getContainer();
 
 		context.register(ApplicationLoadingCycleService.class, new DynamicLoadApplicationService(container), null);
 	}
@@ -85,7 +85,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 				try {
 					module.load(context);
 				} catch (Exception e){
-					log.logWarn("Impossible to activate " + module.getModuleID(), e);
+					log.warn("Impossible to activate " + module.getModuleID(), e);
 				}
 			}
 			this.setState(ApplicationCycleState.LOADED);
@@ -99,7 +99,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 				try {
 					module.unload(context);
 				} catch (Exception e){
-					log.logWarn("Impossible to deactivate " + module.getModuleID(), e);
+					log.warn("Impossible to deactivate " + module.getModuleID(), e);
 				}
 			}
 			this.setState(ApplicationCycleState.STOPED);
@@ -165,10 +165,10 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 						}
 						context.addModule(module);
 					} catch (ClassCastException e){
-						log.logWarn(className + " is not a valid application module activator");
+						log.warn(className + " is not a valid application module activator");
 					}
 				}else {
-					log.logWarn(jar.getName() + " does not present an application module.");
+					log.warn(jar.getName() + " does not present an application module.");
 				}
 
 			}catch (IOException e) {

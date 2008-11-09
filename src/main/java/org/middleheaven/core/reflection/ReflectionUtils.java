@@ -372,10 +372,10 @@ public final class ReflectionUtils {
 		return annotated;
 	}
 
-	public static <T> Set<Constructor<T>> allAnnotatedConstructors( Class<T> type, Class<? extends Annotation> annotation) {
+	public static <T> List<Constructor<T>> allAnnotatedConstructors( Class<T> type, Class<? extends Annotation> annotation) {
 		Constructor<T>[] constructors = (Constructor<T>[]) type.getDeclaredConstructors();
 
-		Set<Constructor<T>> annotated = new HashSet<Constructor<T>>();
+		List<Constructor<T>> annotated = new ArrayList<Constructor<T>>(constructors.length);
 
 		for (Constructor<T> c : constructors){
 			if (c.isAnnotationPresent(annotation)){
@@ -473,6 +473,12 @@ public final class ReflectionUtils {
 		}
 	}
 
+	/**
+	 * Resolves all constructors for a type and returns them in a list ordered by number of parameters.
+	 * @param <T>
+	 * @param type
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> List<Constructor<T>> constructors(Class<T> type){
 		Constructor<T>[] constructors = (Constructor<T>[])type.getConstructors();

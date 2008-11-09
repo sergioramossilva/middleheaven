@@ -23,8 +23,8 @@ public class FourierTransform2 {
         for (int k = 0; k < N/2; k++) {
             even[k] = x[2*k];
             odd[k] = x[2*k + 1];
-            
         }
+        
         Complex[] q = fowardTransform(even);
         Complex[] r = fowardTransform(odd);
 

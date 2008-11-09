@@ -8,16 +8,12 @@ import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
 import org.apache.felix.framework.util.StringMap;
-import org.middleheaven.core.ContainerActivator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 public class HostApplication{
 
-	private ContainerActivator activator = null;
 	private Felix felix = null;
-
-
 
 	public HostApplication() {
 
@@ -41,10 +37,11 @@ public class HostApplication{
 
 		try
 		{
-			// Create host activator;
-			activator = new ContainerActivator(null);
 			List list = new ArrayList();
-			list.add(activator);
+			// Create host activator;
+			//ContainerActivator activator = new ContainerActivator(null);
+		
+			//list.add(activator);
 
 			// Now create an instance of the framework with
 			// our configuration properties and activator.

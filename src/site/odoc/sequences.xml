@@ -41,12 +41,12 @@
 			<figure>
 			<img src="sequencesuml.png" />
 			</figure>
-			Not all sequences are presente as some are implement inside other toolboxes. I'll talk about them later.<br/>
+			Not all sequences are present as some are implement inside other toolboxes. I'll talk about them later.<br/>
 			Following the Separation of Concerns principle all basic types are modeled as interfaces. 
 			All sequences are type-generic and have a  <code>next()</code> method that return the next token in the sequence.
 		    <code>StateEditableSequence</code> allows for manipulation of the sequence state (read/write). This is usefull mainlly 
 			for defining <code>StatePersistableSequence</code>, a sequence whose state can be persisted so it never resets. 
-			This will be most usefull for identity generation has we will see when we discuss the Storage Toolbox.
+			This will be most useful for identity generation has we will see when we discuss the Storage Toolbox.
 		</p>	
 		<p>
 			<code>RandomCharSequence</code> can be used to generate random sequence of characters (that may be further converted into String) 
