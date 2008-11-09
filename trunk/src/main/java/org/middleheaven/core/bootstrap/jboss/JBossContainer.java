@@ -9,7 +9,7 @@ import java.io.File;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.core.ContextIdentifier;
-import org.middleheaven.core.ServletBoundContainer;
+import org.middleheaven.core.WebContainer;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
@@ -17,7 +17,7 @@ import org.middleheaven.io.repository.ManagedFileRepositories;
 /**
  * @author  Sergio M. M. Taborda 
  */
-public abstract class JBossContainer extends ServletBoundContainer {
+public abstract class JBossContainer extends WebContainer {
 
     ContextIdentifier identifier;
 

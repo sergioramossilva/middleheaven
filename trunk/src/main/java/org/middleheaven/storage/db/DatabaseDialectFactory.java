@@ -51,7 +51,7 @@ public final class DatabaseDialectFactory {
 		String driverName = dbm.getDriverName();
 		String driverVersion = dbm.getDriverVersion();
 
-		Logging.getBook(DatabaseDialectFactory.class).logInfo("Inicializing dialect for: " + product + "  " + version + " usign driver " + driverName + " " + driverVersion );
+		Logging.getBook(DatabaseDialectFactory.class).info("Inicializing dialect for: " + product + "  " + version + " usign driver " + driverName + " " + driverVersion );
 
 		if (product.equalsIgnoreCase("Microsoft SQL Server")){
 			if (driverName.toLowerCase().startsWith("sqlserver")){

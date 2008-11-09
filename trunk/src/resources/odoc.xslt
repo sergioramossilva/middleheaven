@@ -33,4 +33,10 @@
 			<xsl:apply-templates/>
 		</center>
 	</xsl:template>
+	
+	<xsl:template match="img">
+		<a href="images/ilustrations/{@src}" target="_top" >
+			<img src="images/ilustrations/thumb_{@src}" class="pictureframe"/>
+		</a>
+	</xsl:template>
 </xsl:stylesheet>

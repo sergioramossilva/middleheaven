@@ -24,7 +24,7 @@ public abstract class LogBookWriter {
     }
 
     public final void log(LoggingEvent event){
-        if (event.level.canLog(level)){
+        if (this.level.canLog(event.level)){
             write(event);
         }
     }

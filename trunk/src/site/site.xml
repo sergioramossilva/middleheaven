@@ -32,6 +32,8 @@
     	<menu name="Toolboxes">
     		<item name="Sequence" href="sequences.html"/>
     		<item name="Managed File" href="managedfile.html"/>
+    		<item name="Quantity and Measure" href="measures.html"/>
+    		<item name="Quantity and Measure: Time" href="time.html"/>
     	</menu>
     	
 		<menu ref="reports" />

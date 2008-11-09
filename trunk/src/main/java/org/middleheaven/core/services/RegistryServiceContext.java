@@ -11,44 +11,64 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.wiring.BindConfiguration;
+import org.middleheaven.core.wiring.Binder;
+import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.util.CollectionUtils;
 
 public final class RegistryServiceContext implements ServiceContext{
 
 	final static Set<ServiceListener> serviceListeners = new CopyOnWriteArraySet<ServiceListener>();
 	final static Map<String , List<ServiceBinding>> registry = new TreeMap<String , List<ServiceBinding>>();
-	
+
+	public RegistryServiceContext(){}
+
 	private void fireServiceAdded(Class<?> serviceClass){
 		ServiceEvent event = new ServiceEvent(ServiceEvent.ServiceEventType.ADDED, serviceClass);
 		for (ServiceListener s : serviceListeners){
 			s.onEvent(event);
 		}
 	}
-	
+
 	private void fireServiceRemoved(Class<?> serviceClass){
 		ServiceEvent event = new ServiceEvent(ServiceEvent.ServiceEventType.REMOVED, serviceClass);
 		for (ServiceListener s : serviceListeners){
 			s.onEvent(event);
 		}
 	}
-	
-	
+
+
 	@Override
-	public <T, I extends T> void register(Class<T> serviceClass, I implementation, Map<String,String> properties) {
+	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String,String> properties) {
 		ServiceBinding b = new ServiceBinding(properties,implementation);
 		List<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list==null ){
-			list = new CopyOnWriteArrayList();
+			list = new CopyOnWriteArrayList<ServiceBinding>();
 			registry.put(serviceClass.getName(), list);
 		}
+
 		try{
 			list.add(b);
 			fireServiceAdded(serviceClass);
+
+			// bind 
+
+			this.getService(WiringService.class, null).getWiringContext().addConfiguration(new BindConfiguration(){
+
+				@Override
+				public void configure(Binder binder) {
+					binder.bind(serviceClass).in(Service.class).toInstance(implementation);
+				}
+
+			});
+
 		} catch (RuntimeException e){
 			list.remove(b);
 			throw e;
 		}
-		
+
+
 	}
 
 	@Override
@@ -68,7 +88,7 @@ public final class RegistryServiceContext implements ServiceContext{
 			if (properties==null || properties.isEmpty()){
 				return serviceClass.cast(list.get(0).implementation);
 			}
-			
+
 			// rank and match
 			double rank = 0;
 			ServiceBinding selected = null;
@@ -77,14 +97,14 @@ public final class RegistryServiceContext implements ServiceContext{
 					selected = b;
 				}
 			}
-			
+
 			if (selected !=null){
 				return serviceClass.cast(selected.implementation);
 			}
 		}
 		throw new ServiceNotFoundException(serviceClass.getName());
 	}
-	
+
 	@Override
 	public void addServiceListener(ServiceListener s) {
 		serviceListeners.add(s);
@@ -94,13 +114,13 @@ public final class RegistryServiceContext implements ServiceContext{
 	public void removeServiceListener(ServiceListener s) {
 		serviceListeners.remove(s);
 	}
-	
+
 
 	private static class ServiceBinding<I> {
-		
+
 		Map<String,String> properties;
 		I implementation;
-		
+
 		public ServiceBinding(Map<String,String> properties, I implementation) {
 			super();
 			if (properties==null || properties.isEmpty()){
@@ -110,19 +130,19 @@ public final class RegistryServiceContext implements ServiceContext{
 			}
 			this.implementation = implementation;
 		}
-		
+
 		public boolean equals(Object other){
 			return other instanceof ServiceBinding && equals((ServiceBinding)other);
 		}
-		
+
 		public int hashCode(){
 			return this.implementation.hashCode();
 		}
-		
+
 		public boolean equals(ServiceBinding other){
 			return this.implementation == other.implementation && CollectionUtils.equals(properties, other.properties);
 		}
-	
+
 		/**
 		 * 0 = Does not match at all
 		 * 1 = Match exactly
@@ -133,14 +153,14 @@ public final class RegistryServiceContext implements ServiceContext{
 			if (this.properties.size() < properties.size()){
 				return 0d;
 			}
-			
+
 			int count=0;
 			for (Map.Entry<String,String> entry : properties.entrySet() ){
 				if (this.properties.get(entry.getValue()).equals(entry.getValue())){
 					count++;
 				}
 			}
-			
+
 			return count * 1d / properties.size();
 		}
 	}
@@ -149,5 +169,5 @@ public final class RegistryServiceContext implements ServiceContext{
 
 
 
-	
+
 }

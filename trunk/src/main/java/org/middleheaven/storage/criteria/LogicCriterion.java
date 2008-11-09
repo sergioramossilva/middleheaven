@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.middleheaven.classification.LogicOperator;
 import org.middleheaven.util.CollectionUtils;
 import org.middleheaven.util.HashCodeUtils;
+import org.middleheaven.util.classification.LogicOperator;
 
 
 public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{

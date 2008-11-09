@@ -9,7 +9,7 @@ import java.util.TreeMap;
 import javax.sql.DataSource;
 
 import org.middleheaven.core.Container;
-import org.middleheaven.core.services.ContainerService;
+import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.io.ManagedIOException;
@@ -37,7 +37,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 	LogBook book;
 	public void activate(ServiceContext context){
 
-		Container container =  context.getService(ContainerService.class, null).getContainer();
+		Container container =  context.getService(BootstrapService.class, null).getContainer();
 		book = context.getService(LoggingService.class, null).getLogBook(null);
 
 		// look for the datasource mapping file
@@ -70,15 +70,15 @@ public class DataSourceServiceActivator extends ServiceActivator {
 					} else if ("jndi".equals(protocol)){
 						provider = JNDIDSProvider.provider(connectionParams);
 					} else {
-						book.logError("Error loading datasource file. Provider type not recognized");
+						book.error("Error loading datasource file. Provider type not recognized");
 					}
 					sources.put(connectionParams.getProperty("datasource.name"), provider );
 
 
 				} catch (ManagedIOException e) {
-					book.logError("Error loading datasource file", e);
+					book.error("Error loading datasource file", e);
 				} catch (IOException e) {
-					book.logError("Error loading datasource file", e);
+					book.error("Error loading datasource file", e);
 				} 
 			}
 

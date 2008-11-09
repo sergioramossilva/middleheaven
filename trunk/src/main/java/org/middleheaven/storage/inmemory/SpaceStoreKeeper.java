@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.classification.BooleanClassifier;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.PersistableState;
@@ -20,6 +19,7 @@ import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaFilter;
+import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.sequence.CannotCreateSequenceException;

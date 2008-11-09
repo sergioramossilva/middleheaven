@@ -132,7 +132,7 @@
 		<p>
 		Here is an extract from the junit test that exemplifies how to use the Time Toolbox API data types and EphemerisModel.
 		EphemerisModel can be used to work with holidays/working days arithmetic. The code tests if 5 working days after 2008-5-28 is 
-		2008-6-4. In the end it test that 2008-6-6 is the 6th day of June 2008.
+		2008-6-4. In the end it test that 2008-6-6 is the 5th working day of June 2008.
 		<source>
 			EphemerisModel model = new EasterBasedCalculatedEphemerisModel();
 		

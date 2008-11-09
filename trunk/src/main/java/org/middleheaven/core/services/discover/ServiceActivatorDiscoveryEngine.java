@@ -1,8 +1,9 @@
 package org.middleheaven.core.services.discover;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.core.dependency.DependencyLoader;
+import org.middleheaven.core.dependency.DependencyResolver;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.wiring.WiringContext;
 import org.middleheaven.core.wiring.WiringService;
@@ -17,21 +18,17 @@ import org.middleheaven.logging.LoggingService;
  */
 public abstract class ServiceActivatorDiscoveryEngine implements ServiceDiscoveryEngine {
 
-	private  List<ServiceActivator> activators;
+	private final List<ServiceActivator> activators = new LinkedList<ServiceActivator>();
 	
 	public void init(ServiceContext context) {
 		
-	    //LogBook log = context.getService(LoggingService.class, null).getLogBook(this.getClass().getName());
-		
-	    List<Class<ServiceActivator>> activatorsClasses = discoverActivators(context);
+	    List<ServiceActivatorInfo> activatorsInfo = discoverActivators(context);
 		
 	    WiringContext wiringContext = context.getService(WiringService.class, null).getWiringContext();
 	    
-	    DependencyLoader loader = new DependencyLoader();
+	    ServiceActivatorStarter starter = new ServiceActivatorStarter(context,activators);
 	    
-	    ServiceActivatorStarter<ServiceActivator> starter = new ServiceActivatorStarter<ServiceActivator>(context,activators);
-	    
-	    loader.load(wiringContext,activatorsClasses, starter);
+	    new DependencyResolver().resolve(wiringContext,activatorsInfo, starter);
 	    
 	}
 
@@ -42,10 +39,10 @@ public abstract class ServiceActivatorDiscoveryEngine implements ServiceDiscover
 			try {
 				activator.inactivate(context);
 			} catch (Exception e){
-				log.logFatal("Impossible to  inactivate " + activator.getClass().getName(), e);
+				log.fatal("Impossible to  inactivate " + activator.getClass().getName(), e);
 			}
 		}
 	}
 	
-	protected abstract List<Class<ServiceActivator>>  discoverActivators(ServiceContext context);
+	protected abstract List<ServiceActivatorInfo>  discoverActivators(ServiceContext context);
 }

@@ -24,30 +24,30 @@ class VoidLogBook extends LogBook{
     }
 
     @Override
-    public void logFatal(Object msg) {}
+    public void fatal(Object msg) {}
     @Override
-    public  void logFatal(Object msg, Throwable throwable) {}
+    public  void fatal(Object msg, Throwable throwable) {}
     @Override
-    public  void logError(Object msg) {}
+    public  void error(Object msg) {}
     @Override
-    public  void logError(Object msg, Throwable throwable) {}
+    public  void error(Object msg, Throwable throwable) {}
     @Override
-    public  void logWarn(Object msg) {}
+    public  void warn(Object msg) {}
     @Override
-    public  void logWarn(Object msg, Throwable throwable) {}
+    public  void warn(Object msg, Throwable throwable) {}
     @Override
-    public  void logInfo(Object msg) {}
+    public  void info(Object msg) {}
     @Override
-    public  void logInfo(Object msg, Throwable throwable) {}
+    public  void info(Object msg, Throwable throwable) {}
     @Override
-    public  void logDebug(Object msg) {}
+    public  void debug(Object msg) {}
     @Override
-    public  void logDebug(Object msg, Throwable throwable) {}
+    public  void debug(Object msg, Throwable throwable) {}
     @Override
-    public void logTrace(Object msg) {}
+    public void trace(Object msg) {}
 
     @Override
-    public void logTrace(Object msg, Throwable throwable) {}
+    public void trace(Object msg, Throwable throwable) {}
 
     @Override
     public void log(LoggingEvent event) {}

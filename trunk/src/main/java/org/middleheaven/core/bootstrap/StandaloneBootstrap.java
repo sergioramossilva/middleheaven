@@ -39,7 +39,7 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 				appCycle.start();
 			}
 		} catch (ServiceNotFoundException e){
-			Logging.getBook(this.getClass()).logWarn("Executing without Application Cycle Service");
+			Logging.getBook(this.getClass()).warn("Executing without Application Cycle Service");
 		}
 	}
 

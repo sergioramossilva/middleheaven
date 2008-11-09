@@ -3,23 +3,35 @@ package org.middleheaven.core.services.engine;
 import java.util.LinkedList;
 import java.util.List;
 
+import javassist.bytecode.Descriptor.Iterator;
+
+import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
+import org.middleheaven.core.services.discover.ServiceActivatorInfo;
+import org.middleheaven.core.wiring.Wire;
 
 public class ActivatorBagServiceDiscoveryEngine extends ServiceActivatorDiscoveryEngine {
 
-	private List<Class<ServiceActivator>> activators = new LinkedList<Class<ServiceActivator>>();
+	private List<ServiceActivatorInfo> activators = new LinkedList<ServiceActivatorInfo>();
 	
 	public ActivatorBagServiceDiscoveryEngine(){}
 
-	public ActivatorBagServiceDiscoveryEngine addActivator(Class<? extends ServiceActivator> activator){
-		activators.add((Class<ServiceActivator>) activator);
+	public ActivatorBagServiceDiscoveryEngine addActivatorInfo(ServiceActivatorInfo info){
+		activators.add(info);
+		return this;
+	}
+	
+	public ActivatorBagServiceDiscoveryEngine addActivator(Class<? extends ServiceActivator> type){
+		ServiceActivatorInfo info = new ServiceActivatorInfo((Class<ServiceActivator>) type);
+
+		activators.add(info);
 		return this;
 	}
 
 	@Override
-	protected List<Class<ServiceActivator>> discoverActivators(ServiceContext context) {
+	protected List<ServiceActivatorInfo> discoverActivators(ServiceContext context) {
 		return activators;
 	}
 	

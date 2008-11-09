@@ -17,7 +17,7 @@ public class Logging {
 		try{
 			return ServiceRegistry.getService(LoggingService.class).getLogBook(bookName);
 		} catch (ServiceNotFoundException e){
-			System.err.println("Inicialize the logging service properly");
+			System.err.println("Please inicialize the logging service properly");
 			return VoidLogBook.getInstance();
 		}
 	}

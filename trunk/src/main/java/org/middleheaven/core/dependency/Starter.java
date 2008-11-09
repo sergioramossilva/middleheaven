@@ -1,11 +1,13 @@
 package org.middleheaven.core.dependency;
 
+import java.util.List;
+
 import org.middleheaven.core.wiring.WiringContext;
 
-public interface Starter <T, D extends DependableProperties>{
+public interface Starter <T>{
 
-	public D wrap(T object);
+	public List<T> sort(List<T> dependencies);
 	
-	public void inicialize (D dependableProperties,WiringContext wiringContext) throws InicializationNotResolvedException,InicializationNotPossibleException;
+	public void inicialize (T dependableProperties,WiringContext wiringContext) throws InicializationNotResolvedException,InicializationNotPossibleException;
 	
 }

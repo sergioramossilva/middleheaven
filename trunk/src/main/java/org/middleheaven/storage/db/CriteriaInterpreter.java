@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.classification.LogicOperator;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
@@ -29,6 +28,7 @@ import org.middleheaven.storage.criteria.Projection;
 import org.middleheaven.storage.criteria.ProjectionOperator;
 import org.middleheaven.storage.criteria.SingleObjectValueHolder;
 import org.middleheaven.storage.criteria.SumFieldOperator;
+import org.middleheaven.util.classification.LogicOperator;
 
 
 public class CriteriaInterpreter {

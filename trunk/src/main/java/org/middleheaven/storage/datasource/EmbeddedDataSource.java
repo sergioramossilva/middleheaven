@@ -44,7 +44,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 	
 	public void start(){
 		
-		Logging.getBook(this.getClass()).logInfo("Starting :" + url);
+		Logging.getBook(this.getClass()).info("Starting :" + url);
 		
 		String[] params = new String[4];
 		params[0] = "-database.0";
@@ -57,7 +57,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 	
 	public void stop(){
 		
-		Logging.getBook(this.getClass()).logInfo("Stopping :" + url);
+		Logging.getBook(this.getClass()).info("Stopping :" + url);
 		
 		Connection con=null;
 		try{

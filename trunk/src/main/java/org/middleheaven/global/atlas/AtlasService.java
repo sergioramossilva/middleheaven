@@ -7,6 +7,6 @@ public interface AtlasService {
 
 	public Country findCountry(String isoCode);
 	public Collection<Country> findALLCountries();
-	public Town findCity(Country country , String name);
-	public Town findCity(String isoCountryCode , String name);
+	public Town findTown(Country country , String name);
+	public Town findTown(String isoCountryCode , String name);
 }

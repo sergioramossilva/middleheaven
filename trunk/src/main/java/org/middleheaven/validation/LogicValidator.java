@@ -1,6 +1,6 @@
 package org.middleheaven.validation;
 
-import org.middleheaven.classification.LogicOperator;
+import org.middleheaven.util.classification.LogicOperator;
 
 /**
  * 

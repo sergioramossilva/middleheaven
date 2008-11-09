@@ -273,7 +273,7 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 						}
 					}
 				} catch (TableAlreadyExistsException e){
-					Logging.getBook(this.getClass()).logInfo("Table " + tm.getName() + " already exists");
+					Logging.getBook(this.getClass()).info("Table " + tm.getName() + " already exists");
 				}
 			}
 		}

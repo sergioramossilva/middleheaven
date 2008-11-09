@@ -3,6 +3,7 @@ package org.middleheaven.logging;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.service.CommonRepositories;
 import org.middleheaven.io.repository.service.FileRepositoryService;
@@ -12,10 +13,13 @@ import org.middleheaven.logging.config.XMLLoggingConfigurator;
 
 public class LoggingActivator extends ServiceActivator {
 
+	FileRepositoryService service;
+	public LoggingActivator(@Service FileRepositoryService service){
+		this.service = service;
+	}
+	
 	@Override
 	public void activate(ServiceContext context) {
-
-		FileRepositoryService service = ServiceRegistry.getService(FileRepositoryService.class);
 
 		ManagedFile configFolder = service.getRepository(CommonRepositories.ENV_CONFIGURATION);
 

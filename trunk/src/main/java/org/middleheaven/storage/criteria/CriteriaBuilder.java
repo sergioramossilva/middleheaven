@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.middleheaven.classification.BooleanClassifier;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.Interval;
+import org.middleheaven.util.classification.BooleanClassifier;
 
 /**
  * An implementation of the

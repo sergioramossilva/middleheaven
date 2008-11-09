@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.middleheaven.core.reflection.IllegalAccesReflectionException;
@@ -25,20 +26,25 @@ public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 	public T resolve(Class<T> targetType, Set<Annotation> annotations) {
 		// Determine witch constructor to invoke
 
-		Set<Constructor<Base>> constructors =  ReflectionUtils.allAnnotatedConstructors( type, Wire.class);
+		List<Constructor<Base>> constructors =  ReflectionUtils.allAnnotatedConstructors( type, Wire.class);
 
+		Constructor<?> selectedConstructor;
 		if (constructors.isEmpty()){
-			// use default
-			return ReflectionUtils.newInstance(type);
+			// search not annotated constructors
+			constructors = ReflectionUtils.constructors(type);
+			if (constructors.size()>1){
+				throw new ConfigurationException("Multiple constructors found. Annotate one with @" + Wire.class.getSimpleName());
+			}
 		} else if (constructors.size()>1){
-			throw new ConfigurationException("Only one constructor may be annotated with @Inject");
-		}
-		// search for it
-		Constructor<?> c  = constructors.iterator().next();
-		c.setAccessible(true);
+			throw new ConfigurationException("Only one constructor may be annotated with @" + Wire.class.getSimpleName());
+		} 
+			
+		// by this line, there is only one constructor found
+		selectedConstructor  = constructors.get(0);
+		selectedConstructor.setAccessible(true);
 
-		Annotation[][] constructorAnnnnotations = c.getParameterAnnotations();
-		Class<?>[] types = c.getParameterTypes();
+		Annotation[][] constructorAnnnnotations = selectedConstructor.getParameterAnnotations();
+		Class<?>[] types = selectedConstructor.getParameterTypes();
 		Set[] specs = new Set[types.length];
 		Object[] objects = new Object[types.length];
 
@@ -46,7 +52,8 @@ public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 		for (int p =0; p< types.length;p++){
 			specs[p] = new HashSet();
 			for (Annotation a : constructorAnnnnotations[p]){
-				if (a.getClass().isAnnotationPresent(BindingSpecification.class)){
+				if (a.annotationType().isAnnotationPresent(BindingSpecification.class) ||
+						a.annotationType().isAnnotationPresent(ScopeSpecification.class)){
 					specs[p].add(a);
 				}
 			}
@@ -55,7 +62,7 @@ public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 
 
 		try {
-			return targetType.cast(c.newInstance(objects));
+			return targetType.cast(selectedConstructor.newInstance(objects));
 		} catch (Exception e) {
 			throw handleExceptions(targetType,e);
 		} 

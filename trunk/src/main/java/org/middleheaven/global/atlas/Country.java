@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.middleheaven.global.Culture;
 import org.middleheaven.global.address.AddressModel;
 import org.middleheaven.global.address.DefaultAddressModel;
 
@@ -41,8 +42,8 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 
 	}
 
-	public Locale toLocale(){
-		return new Locale(getLanguage().toString(),this.ISOCode());
+	public Culture getCulture(){
+		return Culture.valueOf(getLanguage().toString(),this.ISOCode());
 	}
 
 	public final AddressModel getAddressModel(){
