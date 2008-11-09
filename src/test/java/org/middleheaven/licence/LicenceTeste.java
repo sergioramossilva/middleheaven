@@ -15,6 +15,8 @@ import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.licence.LicenceService;
 import org.middleheaven.licence.LicenceServiceActivator;
+import org.middleheaven.logging.ConsoleLogBook;
+import org.middleheaven.logging.LoggingLevel;
 
 
 public class LicenceTeste {
@@ -23,7 +25,7 @@ public class LicenceTeste {
 	public void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
-		bootstrap.start();
+		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
 		engine.addActivator(LicenceServiceActivator.class);
 		new ServiceContextConfigurator().addEngine(engine);
