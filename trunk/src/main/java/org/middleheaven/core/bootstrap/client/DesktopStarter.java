@@ -9,6 +9,8 @@ import java.io.File;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.logging.ConsoleLogBook;
+import org.middleheaven.logging.LoggingLevel;
 
 /**
  * Entry Point for desktop applications.
@@ -26,7 +28,7 @@ public class DesktopStarter {
     	Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
         StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
        
-        bootstrap.start();
+        bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
     }
     
  

@@ -20,6 +20,8 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.domain.AnnotatedDomainModel;
 import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.logging.ConsoleLogBook;
+import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
@@ -45,7 +47,7 @@ public class DataStorageTest {
 	public void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
-		bootstrap.start();
+		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 
 		// Activator
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();

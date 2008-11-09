@@ -9,6 +9,8 @@ import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.logging.ConsoleLogBook;
+import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.ui.AbstractUIContainerModel;
 import org.middleheaven.ui.GenericUIComponent;
 import org.middleheaven.ui.UIComponent;
@@ -26,7 +28,7 @@ public class UITest {
 	public static void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
-		bootstrap.start();
+		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 		root = new GenericUIComponent(RenderType.ROOT, null);
 		UIComponent frame = root.addComponent(RenderType.FRAME, null);
 		frame.setUIModel(new AbstractUIContainerModel());
