@@ -1,10 +1,14 @@
 package org.middleheaven.global.address;
 
+import java.io.Serializable;
 
 
-public class PostalCode {
 
-	String code;
+public class PostalCode implements Serializable {
+
+	private static final long serialVersionUID = -9189029361559385788L;
+	
+	private String code;
 
 	public PostalCode (String code){
 		this.code = code;

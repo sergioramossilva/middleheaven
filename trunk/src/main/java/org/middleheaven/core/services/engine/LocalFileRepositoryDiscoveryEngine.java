@@ -69,45 +69,9 @@ public class LocalFileRepositoryDiscoveryEngine extends ServiceActivatorDiscover
 					
 					if(className!=null && !className.isEmpty()){
 						Class<ServiceActivator> type = (Class<ServiceActivator>) cloader.loadClass(className);
-						
-						ServiceActivatorInfo info = new ServiceActivatorInfo(type);
-						activatorsInfos.add(info);
-						
-						// TODO refactor to ManifestReader
-						String servicesParam = at.getValue("MiddleHeaven-Activator-Services");
-						
-						// provided Services
-						// coma separated class names
-						if (servicesParam!=null && !servicesParam.isEmpty()){
-							String[] services = servicesParam.split(";");
-							
-							for (String service : services){
-								ServiceInfo sinfo = new ServiceInfo(service);
-								
-								String paramsString = at.getValue(service + "-Params");
-								if (paramsString!=null && !paramsString.isEmpty()){
-									String[] params = paramsString.split(";");
-									for (String param : params){
-										String[] p = param.split("=");
-										sinfo.addParam(p[0], p[1]);
-									}
-								}
-								
-								info.provides(sinfo);
-							}
-						}
-						
-						// analise reflection for Activator
-						
-						Constructor<ServiceActivator> constrs = ReflectionUtils.constructors(info.getActivatorType()).get(0);
-						
-						for (Class<?> ct : constrs.getParameterTypes()){
-							ServiceInfo sinfo = new ServiceInfo(ct.getName());
-							// TODO params
-							
-							info.requires(sinfo);
-						}
-						
+
+						activatorsInfos.add(new ServiceActivatorInfo(type));
+
 					}
 
 				}catch (IOException e) {

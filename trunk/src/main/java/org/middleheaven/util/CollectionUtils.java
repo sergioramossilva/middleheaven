@@ -2,8 +2,8 @@ package org.middleheaven.util;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,25 +44,31 @@ public class CollectionUtils {
 
 	}
 
+	public static <T> boolean equals(Collection<? extends T> c1,Collection<? extends T> c2) {
 
-	public static <T> boolean equals(Collection<? extends T> a,Collection<? extends T> b) {
-
-		if (a==b){
+		if (c1==c2){
 			return true;
-		} else if (a.isEmpty() && b.isEmpty()){
+		} else if (c1.isEmpty() && c2.isEmpty()){
 			return true;
-		} if (a.size()!=b.size()){
+		} if (c1.size()!=c2.size()){
 			return false;
 		}
-		Iterator<?> ia = a.iterator();
-		Iterator<?> ib =b.iterator();
-		for (; (ia.hasNext() & ib.hasNext());){
-			if (!ia.next().equals(ib.next())){
+	
+		
+		if (!(c2 instanceof Set) && (c1 instanceof Set || c1.size() > c2.size())) {
+			//swap
+			Collection<? extends T> tmp = c1;
+			c1 = c2;
+			c2 = tmp;
+		}
+
+		for (T t : c1){
+			if (!c2.contains(t)){
 				return false;
 			}
 		}
-
 		return true;
+
 	}
 
 	public static <K,V> boolean equals(Map<? extends K, ? extends V> a,Map<? extends K, ? extends V> b) {
@@ -87,9 +93,13 @@ public class CollectionUtils {
 			c2 = tmp;
 		}
 
-		Collection<T> m = new LinkedList<T>(c1);
-		m.retainAll(c2);  
-		return m;
+		Collection<T> result = new HashSet<T>();
+		for (T obj : c1){
+			if (c2.contains(obj)){
+				result.add(obj);
+			}
+		}
+		return result;
 	}
 
 

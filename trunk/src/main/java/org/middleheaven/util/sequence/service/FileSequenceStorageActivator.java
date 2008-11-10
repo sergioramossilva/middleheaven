@@ -6,11 +6,12 @@ import java.util.Properties;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.Publish;
+import org.middleheaven.core.services.Require;
+import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.util.ParamsMap;
 import org.middleheaven.util.conversion.TypeConvertions;
 import org.middleheaven.util.sequence.SequenceState;
 import org.middleheaven.util.sequence.StateChangedEvent;
@@ -26,11 +27,24 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 
 	private Properties properties = new Properties();
 	private ManagedFile file;
+	private BootstrapService bootstrapService;
+	private SequenceStorageService sequenceStorageService;
 
+	
+	@Require
+	public void setBootstrapService(BootstrapService bootstrapService) {
+		this.bootstrapService = bootstrapService;
+	}
+
+	@Publish({"type=file", "remote=no"})
+	public SequenceStorageService getSequenceStorageService() {
+		return sequenceStorageService;
+	}
+	
 	@Override
-	public void activate(ServiceContext context) {
+	public void activate(ServiceAtivatorContext context) {
 
-		Container container = context.getService(BootstrapService.class, null).getContainer();
+		Container container = bootstrapService.getContainer();
 
 		if (!container.getAppDataRepository().isWriteable()){
 			throw new IllegalArgumentException("Data repository must be writable");
@@ -44,17 +58,13 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 			}
 		}
 
-		context.register(
-				SequenceStorageService.class, 
-				new FileSequenceStorageService(), 
-				new ParamsMap()
-				.setParam("type", "file")
-				.setParam("remote", "no")
-		);
+		sequenceStorageService = new FileSequenceStorageService();
 	}
 
+
+
 	@Override
-	public void inactivate(ServiceContext context) {
+	public void inactivate(ServiceAtivatorContext context) {
 		// no-op
 	}
 

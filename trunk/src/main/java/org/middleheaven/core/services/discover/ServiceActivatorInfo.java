@@ -1,11 +1,15 @@
 package org.middleheaven.core.services.discover;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.core.wiring.Wire;
+import org.middleheaven.core.services.Publish;
+import org.middleheaven.core.services.Require;
+import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.util.ParamsMap;
 
 
 public class ServiceActivatorInfo {
@@ -14,18 +18,44 @@ public class ServiceActivatorInfo {
 		super();
 		this.activatorType = activatorType;
 		
-		List<Constructor<ServiceActivator>> constructors =  ReflectionUtils.allAnnotatedConstructors( activatorType, Wire.class);
+		for (Method m : activatorType.getMethods()){
+			if (Modifier.isStatic(m.getModifiers())){
+				continue;
+			}
+			
+			if ( m.isAnnotationPresent(Require.class) ){
+				// requires 
 
-		if (constructors.isEmpty()){
-			// search not annotated constructors
-			constructors = ReflectionUtils.constructors(activatorType);
-		} 
-		
-		for (Constructor<ServiceActivator> c : constructors){
-			for (Class<?> ct : c.getParameterTypes()){
-				this.requires(ct.getName());
+				ServiceInfo pinfo = new ServiceInfo(m.getParameterTypes()[0].getName(),m);
+				Require p = m.getAnnotation(Require.class);
+				String [] params = p.value();
+				
+				for (String s : params){
+					String[] kv = s.split("=");
+					pinfo.addParam(kv[0], kv[1]);
+				}
+				
+				this.servicesRequired.add(pinfo);
+				
+			} else if (m.isAnnotationPresent(Publish.class)){
+				// publish 
+				ServiceInfo pinfo = new ServiceInfo(m.getReturnType().getName(),m);
+				Publish p = m.getAnnotation(Publish.class);
+				String [] params = p.value();
+				
+				for (String s : params){
+					String[] kv = s.split("=");
+					pinfo.addParam(kv[0], kv[1]);
+				}
+				
+				servicesProvided.add(pinfo);
 			}
 		}
+		
+		if (this.servicesProvided.isEmpty()){
+			throw new IllegalStateException("Activator " + activatorType.getName() + " does not provide any service.");
+		}
+
 		
 	}
 
@@ -55,20 +85,12 @@ public class ServiceActivatorInfo {
 		return this;
 	}
 	
-	public ServiceActivatorInfo provides(String serviceName){
-		this.servicesProvided.add(new ServiceInfo(serviceName));
-		return this;
-	}
 	
 	public ServiceActivatorInfo requires(ServiceInfo serviceInfo){
 		this.servicesRequired.add(serviceInfo);
 		return this;
 	}
 	
-	public ServiceActivatorInfo requires(String serviceName){
-		this.servicesRequired.add(new ServiceInfo(serviceName));
-		return this;
-	}
 
 	public boolean depends(ServiceActivatorInfo other) {
 		for (ServiceInfo si : this.servicesRequired){
@@ -77,6 +99,30 @@ public class ServiceActivatorInfo {
 			}
 		}
 		return false;
+	}
+
+	public void resolveRequiments(ServiceActivator activator,ServiceContext context) {
+		
+		for (ServiceInfo sinfo : this.servicesRequired){
+			
+			Method m = sinfo.getMethod();
+			Object obj = context.getService(m.getParameterTypes()[0], sinfo.getParams());
+			ReflectionUtils.invoke(Void.class, m, activator, obj);
+		}
+	
+	}
+
+	public void publishServices(ServiceActivator activator,ServiceContext context) {
+	
+		for (ServiceInfo sinfo : this.servicesProvided){
+			
+			Method m = sinfo.getMethod();
+
+			Object implementation = ReflectionUtils.invoke(m.getReturnType(), m, activator);
+			Class type = m.getReturnType();
+			context.register(type,implementation, sinfo.getParams());
+		}
+	
 	}
 
 

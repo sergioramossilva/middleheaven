@@ -1,18 +1,25 @@
 package org.middleheaven.core.services.discover;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.lang.reflect.Method;
+
+import org.middleheaven.util.ParamsMap;
 
 public class ServiceInfo {
 
 	private String serviceInterfaceTypeName;
-	private Map<String,String> params = new TreeMap<String,String>();
+	private ParamsMap params = new ParamsMap();
+	private Method method;
 	
-	public ServiceInfo(String serviceInterfaceTypeName) {
+	public ServiceInfo(String serviceInterfaceTypeName, Method method) {
 		this.serviceInterfaceTypeName = serviceInterfaceTypeName;
+		this.method = method;
 	}
 
-	public Map<String, String> getParams() {
+	protected Method getMethod(){
+		return method;
+	}
+	
+	public ParamsMap getParams() {
 		return params;
 	}
 

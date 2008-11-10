@@ -8,7 +8,7 @@ import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
 import org.apache.felix.framework.util.StringMap;
-import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.Constants;
@@ -18,7 +18,7 @@ public class OSGiActivator extends ServiceActivator {
 	private Felix felix = null;
 
 	@Override
-	public void activate(ServiceContext context) {
+	public void activate(ServiceAtivatorContext context) {
 
 		// Create a case-insensitive configuration property map.
 		Map<String,String> configMap = new StringMap(false);
@@ -58,7 +58,7 @@ public class OSGiActivator extends ServiceActivator {
 	}
 
 	@Override
-	public void inactivate(ServiceContext context) {
+	public void inactivate(ServiceAtivatorContext context) {
 		felix.stopAndWait();
 	}
 
