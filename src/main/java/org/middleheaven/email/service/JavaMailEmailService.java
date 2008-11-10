@@ -25,6 +25,7 @@ public class JavaMailEmailService implements EmailService {
 	private String stmpHost;
 	private String userName;
 	private String password;
+	
 	@Override
 	public void sendEmail(Email email) {
 		executeEmailSend(email);

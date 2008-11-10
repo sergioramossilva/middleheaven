@@ -12,7 +12,9 @@ import java.util.HashSet;
 import javassist.util.proxy.MethodHandler;
 
 import org.middleheaven.core.reflection.ProxyUtils;
-import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.Publish;
+import org.middleheaven.core.services.Require;
+import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
@@ -28,18 +30,26 @@ public class LicenceServiceActivator extends ServiceActivator {
 
 	private LicenceService implementation;
 	private LicenceProvider provider = new VoidLicenceProvider();
+	private FileRepositoryService frs;
 	
 	@Override
-	public void inactivate(ServiceContext context) {
+	public void inactivate(ServiceAtivatorContext context) {
 		implementation = null;
 	}
 	
-	@Override
-	public void activate(ServiceContext context) {
+	@Publish
+	public LicenceService getLicenceService(){
+		return implementation;
+	}
 	
-		FileRepositoryService frs = context.getService(FileRepositoryService.class, null);
-
-
+	@Require
+	public void setFileRepositoryService(FileRepositoryService fileService){
+		this.frs = fileService;
+	}
+	
+	@Override
+	public void activate(ServiceAtivatorContext context) {
+	
 		ManagedFile f = frs.getRepository("ENV_CONFIGURATION");
 		Collection<ManagedFile> licences = new HashSet<ManagedFile>();
 		licences.addAll( f.listFiles(new ManagedFileFilter(){
@@ -78,7 +88,6 @@ public class LicenceServiceActivator extends ServiceActivator {
 
 		implementation = new LicenceServiceImpl();
 
-		context.register(LicenceService.class, implementation, null);
 		context.addServiceListener(new ServiceLock());
 	}
 

@@ -10,7 +10,10 @@ import javax.sql.DataSource;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.AtivationException;
+import org.middleheaven.core.services.Publish;
+import org.middleheaven.core.services.Require;
+import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
@@ -35,10 +38,31 @@ public class DataSourceServiceActivator extends ServiceActivator {
 
 	Map <String , DataSourceProvider> sources = new TreeMap <String , DataSourceProvider>();
 	LogBook book;
-	public void activate(ServiceContext context){
+	
+	private BootstrapService bootstrapService;
+	private LoggingService loggingService;
+	private DataSourceService dataSourceService;
+	
+	@Publish
+	public DataSourceService getDataSourceService() {
+		return dataSourceService;
+	}
 
-		Container container =  context.getService(BootstrapService.class, null).getContainer();
-		book = context.getService(LoggingService.class, null).getLogBook(null);
+	@Require
+	public void setBootstrapService(BootstrapService bootstrapService) {
+		this.bootstrapService = bootstrapService;
+	}
+	
+	@Require
+	public void setLoggingService(LoggingService loggingService) {
+		this.loggingService = loggingService;
+	}
+
+	public void activate(ServiceAtivatorContext context){
+
+		Container container =  bootstrapService.getContainer();
+
+		book = loggingService.getLogBook(null);
 
 		// look for the datasource mapping file
 
@@ -74,20 +98,24 @@ public class DataSourceServiceActivator extends ServiceActivator {
 					}
 					sources.put(connectionParams.getProperty("datasource.name"), provider );
 
-
+					this.dataSourceService =  new HashDataSourceService();
 				} catch (ManagedIOException e) {
 					book.error("Error loading datasource file", e);
+					throw new AtivationException(e);
 				} catch (IOException e) {
 					book.error("Error loading datasource file", e);
+					throw new AtivationException(e);
 				} 
 			}
 
 		}
 
-		context.register(DataSourceService.class, new HashDataSourceService(), null);
+		
 
 	}
 	
+
+
 	private class HashDataSourceService implements DataSourceService{
 
 		@Override
@@ -106,7 +134,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 	}
 
 	@Override
-	public void inactivate(ServiceContext context) {
+	public void inactivate(ServiceAtivatorContext context) {
 		// no-op
 	}
 }

@@ -4,26 +4,50 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.core.wiring.WiringContext;
+import org.middleheaven.logging.LogBook;
 
 public class DependencyResolver {
 
-	public DependencyResolver(){}
+	LogBook log;
+	public DependencyResolver(LogBook log){
+		this.log = log;
+	}
 
-	public <T> void resolve (WiringContext wiringContext, List<T> dependables, Starter<T> starter){
+	/**
+	 * Instantiates all dependables with the given starter.
+	 * 
+	 * @param <T>
+	 * @param dependables
+	 * @param starter
+	 */
+	public <T> void resolve (List<T> dependables, Starter<T> starter){
+		
+		// this is a very simplistic algorithm that does not 
+		// resolve dependencies explicitly. 
+		// A stack is filled with the dependencies in order given by the stater;
+		// dependencies are then starter in that order. 
+		// if a dependency fails, its moved to another stack.
+		//  at the end of iterating the main stack if the new stack has a different number of members 
+		// the process is repeated. 
+		// If the two stacks have the same itens this means those items have a ciclic dependencie.
+		// proxies will them be used in order to overcome the cycle.
 		
 		List<T> stack = starter.sort(dependables);
 		LinkedList<T> newStack  = new  LinkedList<T>(stack);
 		LinkedList<T> oldStack  = new  LinkedList<T>();
 		
-		boolean error = false;
-		while (newStack.size() != oldStack.size()) {
+		
+		List<T> failedDependencies = new LinkedList<T>();
+		
+		int oldCount = 0;
+		while ( oldCount != newStack.size()) {
 			oldStack = newStack; 
+			oldCount = newStack.size();
 			newStack = new  LinkedList<T>();
 			for (Iterator<T> it = oldStack.iterator();  it.hasNext(); ){
 				T dependable = it.next();
 				try{
-					starter.inicialize(dependable,wiringContext);
+					starter.inicialize(dependable);
 					it.remove();
 				} catch (InicializationNotResolvedException e){
 					// dependencies not available yet 
@@ -31,18 +55,43 @@ public class DependencyResolver {
 					newStack.addLast(dependable);
 				}  catch (InicializationNotPossibleException e){
 					// dependencies will never be available
-					error = true;
+					failedDependencies.add(dependable);
+					
 				}  
 			}
 		}
 
-		if (error){
-			throw new IllegalStateException("Not all dependencies could be resolve");
+		if (!failedDependencies.isEmpty()){
+			for (T t : failedDependencies){
+				log.fatal("Impossible to resolve dependencies for " + t );
+			}
+			throw new DependencyResolutionFailedException(failedDependencies);
 		}
 		
 		// proxy phase
 		if (!newStack.isEmpty()){
-
+			for (Iterator<T> it = newStack.iterator();  it.hasNext(); ){
+				T dependable = it.next();
+				try{
+					starter.inicializeWithProxy(dependable);
+					it.remove();
+				} catch (InicializationNotResolvedException e){
+					// dependencies not available yet 
+					it.remove();
+					newStack.addLast(dependable);
+				}  catch (InicializationNotPossibleException e){
+					// dependencies will never be available
+					failedDependencies.add(dependable);
+					
+				}  
+			}
+		}
+		
+		if (!failedDependencies.isEmpty()){
+			for (T t : failedDependencies){
+				log.fatal("Impossible to resolve dependencies for " + t );
+			}
+			throw new DependencyResolutionFailedException(failedDependencies);
 		}
 	}
 }

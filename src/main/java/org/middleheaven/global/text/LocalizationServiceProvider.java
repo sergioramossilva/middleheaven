@@ -10,7 +10,9 @@ import java.util.Map;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.Publish;
+import org.middleheaven.core.services.Require;
+import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.global.CultureModel;
 
@@ -24,10 +26,21 @@ public class LocalizationServiceProvider extends ServiceActivator{
 
 	private Map<String, CultureModel> models = new HashMap<String, CultureModel>();
 	LocalizationService service = new LocalizationServiceImpl();
+	private BootstrapService bootstrapService;
+	
+	@Require
+	public void setBootstrapService(BootstrapService bootstrapService) {
+		this.bootstrapService = bootstrapService;
+	}
 
+	@Publish
+	public LocalizationService getLocalizationService(){
+		return service;
+	}
+	
 	@Override
-	public void activate(ServiceContext context) {
-		Container environment = context.getService(BootstrapService.class, null).getContainer();
+	public void activate(ServiceAtivatorContext context) {
+		Container environment = bootstrapService.getContainer();
 
 		RepositoryDomainBundle masterBundle = new RepositoryDomainBundle();
 		masterBundle.setRepository(environment.getEnvironmentConfigRepository());
@@ -40,7 +53,7 @@ public class LocalizationServiceProvider extends ServiceActivator{
 
 
 	@Override
-	public void inactivate(ServiceContext context) {
+	public void inactivate(ServiceAtivatorContext context) {
 		masterBundle = null;
 		service = null;
 	}

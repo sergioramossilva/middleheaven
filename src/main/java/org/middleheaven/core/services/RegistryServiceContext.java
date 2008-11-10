@@ -15,15 +15,26 @@ import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.logging.LogBook;
 import org.middleheaven.util.CollectionUtils;
 
 public final class RegistryServiceContext implements ServiceContext{
 
 	final static Set<ServiceListener> serviceListeners = new CopyOnWriteArraySet<ServiceListener>();
 	final static Map<String , List<ServiceBinding>> registry = new TreeMap<String , List<ServiceBinding>>();
+	private LogBook logBook;
 
-	public RegistryServiceContext(){}
+	public RegistryServiceContext(LogBook book){
+		this.logBook = book;
+		ServiceRegistry.context = this;
+	}
 
+	@Override
+	public LogBook getLogBook() {
+		return logBook;
+	}
+
+	
 	private void fireServiceAdded(Class<?> serviceClass){
 		ServiceEvent event = new ServiceEvent(ServiceEvent.ServiceEventType.ADDED, serviceClass);
 		for (ServiceListener s : serviceListeners){
@@ -164,6 +175,10 @@ public final class RegistryServiceContext implements ServiceContext{
 			return count * 1d / properties.size();
 		}
 	}
+
+
+
+
 
 
 

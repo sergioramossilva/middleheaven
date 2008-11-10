@@ -5,10 +5,7 @@ import java.util.List;
 
 import org.middleheaven.core.dependency.DependencyResolver;
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.wiring.WiringContext;
-import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.logging.LogBook;
-import org.middleheaven.logging.LoggingService;
 
 
 /**
@@ -21,19 +18,17 @@ public abstract class ServiceActivatorDiscoveryEngine implements ServiceDiscover
 	private final List<ServiceActivator> activators = new LinkedList<ServiceActivator>();
 	
 	public void init(ServiceContext context) {
-		
+		LogBook log = context.getLogBook();
 	    List<ServiceActivatorInfo> activatorsInfo = discoverActivators(context);
 		
-	    WiringContext wiringContext = context.getService(WiringService.class, null).getWiringContext();
-	    
 	    ServiceActivatorStarter starter = new ServiceActivatorStarter(context,activators);
 	    
-	    new DependencyResolver().resolve(wiringContext,activatorsInfo, starter);
+	    new DependencyResolver(context.getLogBook()).resolve(activatorsInfo, starter);
 	    
 	}
 
 	public void stop(ServiceContext context) {
-		LogBook log = context.getService(LoggingService.class, null).getLogBook(this.getClass().getName());
+		LogBook log = context.getLogBook();
 		
 		for (ServiceActivator activator : this.activators){
 			try {

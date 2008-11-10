@@ -1,20 +1,26 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.Publish;
+import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 
 public class DataStorageServiceActivator extends ServiceActivator {
 
 	 DataStorageService service = new HashDataStorageService();
 	 
-	@Override
-	public void activate(ServiceContext context) {
-		context.register(DataStorageService.class, service, null);
+	@Publish
+	public DataStorageService getService() {
+		return service;
 	}
 
 	@Override
-	public void inactivate(ServiceContext context) {
-		context.unRegister(DataStorageService.class, service, null);
+	public void activate(ServiceAtivatorContext context) {
+
+	}
+
+	@Override
+	public void inactivate(ServiceAtivatorContext context) {
+		
 	} 
 
 }

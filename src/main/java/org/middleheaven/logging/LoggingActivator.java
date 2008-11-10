@@ -1,9 +1,9 @@
 package org.middleheaven.logging;
 
-import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.services.Publish;
+import org.middleheaven.core.services.Require;
+import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.service.CommonRepositories;
 import org.middleheaven.io.repository.service.FileRepositoryService;
@@ -13,15 +13,25 @@ import org.middleheaven.logging.config.XMLLoggingConfigurator;
 
 public class LoggingActivator extends ServiceActivator {
 
-	FileRepositoryService service;
-	public LoggingActivator(@Service FileRepositoryService service){
-		this.service = service;
-	}
+	FileRepositoryService fileRepositoryService;
+	LoggingService loggingService;
 	
-	@Override
-	public void activate(ServiceContext context) {
+	public LoggingActivator(){}
 
-		ManagedFile configFolder = service.getRepository(CommonRepositories.ENV_CONFIGURATION);
+	@Require
+	public void setFileRepositoryService(FileRepositoryService fileRepositoryService) {
+		this.fileRepositoryService = fileRepositoryService;
+	}
+
+	@Publish
+	public LoggingService getLoggingService() {
+		return loggingService;
+	}
+
+	@Override
+	public void activate(ServiceAtivatorContext context) {
+
+		ManagedFile configFolder = fileRepositoryService.getRepository(CommonRepositories.ENV_CONFIGURATION);
 
 		LoggingConfigurator configurator = new BasicConfigurator();
 		LoggingConfiguration configuration = new LoggingConfiguration(null);
@@ -30,7 +40,7 @@ public class LoggingActivator extends ServiceActivator {
 			ManagedFile configXML = configFolder.resolveFile("log-config.xml");
 			if (configXML!=null && configXML.exists() && configXML.isReadable()){
 				configurator = new XMLLoggingConfigurator(configXML.getURL());
-				ManagedFile logFolder = service.getRepository(CommonRepositories.LOG);
+				ManagedFile logFolder = fileRepositoryService.getRepository(CommonRepositories.LOG);
 				configuration = new LoggingConfiguration(logFolder);
 			}
 		} 
@@ -40,12 +50,12 @@ public class LoggingActivator extends ServiceActivator {
 
 
 		// there are no special properties for this service
-		ServiceRegistry.register(LoggingService.class, new HashLoggingService(configuration, configurator), null);
+		this.loggingService = new HashLoggingService(configuration, configurator);
 
 	}
 
 	@Override
-	public void inactivate(ServiceContext context) {
+	public void inactivate(ServiceAtivatorContext context) {
 		// no-op
 	}
 

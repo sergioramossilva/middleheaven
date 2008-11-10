@@ -1,4 +1,4 @@
-package org.middleheaven.global.atlas;
+package org.middleheaven.global;
 
 public class Language implements Comparable<Language>{
 

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.ContextIdentifier;
+import org.middleheaven.core.services.RegistryServiceContext;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceContextEngineConfigurationService;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.services.engine.LocalFileRepositoryDiscoveryEngine;
@@ -39,6 +39,9 @@ public abstract class ExecutionEnvironmentBootstrap {
 	 */
 	public final void start(LogBook log){
 		long time = System.currentTimeMillis();
+		
+		RegistryServiceContext serviceRegistryContext = new RegistryServiceContext(log);
+
 		doBeforeStart();
 
 		log.debug("Resolving container");
@@ -48,9 +51,10 @@ public abstract class ExecutionEnvironmentBootstrap {
 		log.trace("Container resolved: " + container.getEnvironmentName());
 		
 		log.debug("Register bootstrap services");
-		ServiceRegistry.register(WiringService.class, new DefaultWiringService());
-		ServiceRegistry.register(BootstrapService.class, new SimpleBootstrapService(container));
-		ServiceRegistry.register(ServiceContextEngineConfigurationService.class, new UniqueServiceContextEngineConfigurationService(), null);
+		
+		serviceRegistryContext.register(WiringService.class, new DefaultWiringService(),null);
+		serviceRegistryContext.register(BootstrapService.class, new SimpleBootstrapService(container),null);
+		serviceRegistryContext.register(ServiceContextEngineConfigurationService.class, new UniqueServiceContextEngineConfigurationService(), null);
 		
 		
 		log.debug("Inicialize service discovery engines");

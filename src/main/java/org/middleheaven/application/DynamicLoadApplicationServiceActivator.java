@@ -11,7 +11,9 @@ import java.util.jar.Manifest;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.Publish;
+import org.middleheaven.core.services.Require;
+import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
@@ -25,9 +27,33 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 
 
 	private LogBook log;
-	Container container;
+
+	private LoggingService loggingService;
+	private BootstrapService bootstrapService;
+	private ApplicationLoadingCycleService applicationLoadingCycleService;
+	
+	@Require
+	public void setBootstrapService(BootstrapService bootstrapService) {
+		this.bootstrapService = bootstrapService;
+	}
+
+	@Require
+	public void setLoggingService(LoggingService loggingService) {
+		this.loggingService = loggingService;
+	}
+	
+	@Publish
+	public ApplicationLoadingCycleService getApplicationLoadingCycleService() {
+		return applicationLoadingCycleService;
+	}
 
 	public DynamicLoadApplicationServiceActivator(){}
+
+
+
+	public static void setAppModulesFilter(ManagedFileFilter appModulesFilter) {
+		DynamicLoadApplicationServiceActivator.appModulesFilter = appModulesFilter;
+	}
 
 	private static ManagedFileFilter appModulesFilter =  new ManagedFileFilter(){
 
@@ -37,17 +63,17 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 		}
 	};
 
-	
-	@Override
-	public void activate(ServiceContext context) {
-		log = context.getService(LoggingService.class, null).getLogBook(this.getClass().getName());
-		container  = context.getService(BootstrapService.class, null).getContainer();
 
-		context.register(ApplicationLoadingCycleService.class, new DynamicLoadApplicationService(container), null);
+
+	@Override
+	public void activate(ServiceAtivatorContext context) {
+		log = loggingService.getLogBook(this.getClass().getName());
+	
+		applicationLoadingCycleService =  new DynamicLoadApplicationService( bootstrapService.getContainer());
 	}
 
 	@Override
-	public void inactivate(ServiceContext context) {
+	public void inactivate(ServiceAtivatorContext context) {
 		cycle.stop();
 		log=null;
 	}
@@ -122,7 +148,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 			// these must be  jar files
 			Collection<ManagedFile> applicationModuleFiles = new HashSet<ManagedFile>();
 
-			ManagedFile f = container.getAppConfigRepository();
+			ManagedFile f =  bootstrapService.getContainer().getAppConfigRepository();
 
 			if (f.isWatchable()){
 				WatchableRepository wr = (WatchableRepository)f;

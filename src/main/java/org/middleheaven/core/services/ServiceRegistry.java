@@ -11,7 +11,7 @@ public final class ServiceRegistry {
 
 	private ServiceRegistry(){}
 	
-    private static ServiceContext context = new RegistryServiceContext();
+    static ServiceContext context;
 	private static Set<ServiceDiscoveryEngine> engines = new HashSet<ServiceDiscoveryEngine>();
 	
 
