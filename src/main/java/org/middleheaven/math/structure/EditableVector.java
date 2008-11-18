@@ -1,4 +1,4 @@
-package org.middleheaven.util.measure.structure;
+package org.middleheaven.math.structure;
 
 
 public class EditableVector<F extends Field<F>> extends DenseVector<F> {

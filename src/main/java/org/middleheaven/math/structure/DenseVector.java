@@ -1,4 +1,4 @@
-package org.middleheaven.util.measure.structure;
+package org.middleheaven.math.structure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +45,8 @@ public class DenseVector<F extends Field<F>> extends Vector<F> {
 		return new DenseVector<F>(nElements);
 	}
 
-	public boolean equals(Object other){
-		return other instanceof Vector && equals((Vector<F>)other);
+	public boolean equals (Object other){
+		return other instanceof Vector && equals((Vector)other);
 	}
 
 	public boolean equals(Vector<F> other){
@@ -70,6 +70,12 @@ public class DenseVector<F extends Field<F>> extends Vector<F> {
 			nelements.add(zero);
 		}
 		return new DenseVector<F>(nelements);
+	}
+
+	@Override
+	public F[] toArray(F[] elementsArray) {
+		elements.toArray(elementsArray);
+		return elementsArray;
 	}
 
 

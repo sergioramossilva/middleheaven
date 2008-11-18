@@ -53,7 +53,7 @@ public class ServiceProxy<T> implements ServiceListener, InvocationHandler {
 	@Override
 	public Object invoke(Object obj, Method method, Object[] params)throws Throwable {
 		if (service==null){
-			throw new ServiceUnavailableException("Service " + serviceClass.getName() + " is not present");
+			throw new ServiceUnavailableException(serviceClass.getName());
 		}
 		return method.invoke(service, params);
 	}

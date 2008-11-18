@@ -1,34 +1,53 @@
 package org.middleheaven.math.transforms;
 
+import java.util.Arrays;
+
+import org.middleheaven.math.structure.Vector;
 import org.middleheaven.util.measure.Complex;
 
 /**
  *  @See http://www.cs.princeton.edu/introcs/97data/FFT.java.html
  */
-public class FourierTransform {
+public class FourierTransform implements Transformation<Vector<Complex>>{
 	
-	// compute the FFT of x[], assuming its length is a power of 2
+	
+    public Vector<Complex> fowardTransform(Vector<Complex> data) {
+    	Complex[] x = new Complex[data.size()];
+    	Complex[]  fx = fowardTransform(data.toArray(x));
+    	
+    	return Vector.vector(fx);
+	}
+    
+	@Override
+	public Vector<Complex> reverseTransform(Vector<Complex> data) {
+		Complex[] x = new Complex[data.size()];
+		Complex[]  fx = reverseTransform(data.toArray(x));
+    	
+    	return Vector.vector(fx);
+	}
+    
+	// compute the FFT of x[], assuming its length is multiple of 2
     public Complex[] fowardTransform(Complex[] x) {
         int N = x.length;
 
         // base case
         if (N == 1) return new Complex[] { x[0] };
 
-        // radix 2 Cooley-Tukey FFT
-        if (N % 2 != 0) { throw new RuntimeException("N is not a power of 2"); }
+        // radix-2 Cooley-Tukey FFT
+        if (N % 2 != 0) { 
+        	final int nearest2Power = N + N%2;
+        	x = pad(x,Complex.ZERO(),nearest2Power);
+        }
 
         // fft of even terms
         Complex[] even = new Complex[N/2];
+        Complex[] odd = new Complex[N/2];
         for (int k = 0; k < N/2; k++) {
             even[k] = x[2*k];
-        }
-        Complex[] q = fowardTransform(even);
-
-        // fft of odd terms
-        Complex[] odd  = even;  // reuse the array
-        for (int k = 0; k < N/2; k++) {
             odd[k] = x[2*k + 1];
         }
+        
+        Complex[] q = fowardTransform(even);
         Complex[] r = fowardTransform(odd);
 
         // combine
@@ -43,8 +62,8 @@ public class FourierTransform {
     }
 
 
-    // compute the inverse FFT of x[], assuming its length is a power of 2
-    public Complex[] inverseTransaform(Complex[] x) {
+    // compute the inverse FFT of x[], assuming its length is a multiple of 2
+    public Complex[] reverseTransform(Complex[] x) {
         int N = x.length;
         Complex[] y = new Complex[N];
 
@@ -73,9 +92,16 @@ public class FourierTransform {
     // compute the circular convolution of x and y
     public Complex[] cconvolve(Complex[] x, Complex[] y) {
 
-        // should probably pad x and y with 0s so that they have same length
-        // and are powers of 2
-        if (x.length != y.length) { throw new RuntimeException("Dimensions don't agree"); }
+        // pad x and y with 0s so that they have same length
+        // and are multiples of 2
+        if (x.length != y.length) { 
+        	int max = Math.max(x.length, y.length);
+        	if ( max % 2 !=0){
+        		max += max %2; 
+        	}
+        	x = pad(x, Complex.ZERO(), max);
+        	y = pad(y, Complex.ZERO(), max);
+        }
 
         int N = x.length;
 
@@ -90,11 +116,18 @@ public class FourierTransform {
         }
 
         // compute inverse FFT
-        return inverseTransaform(c);
+        return reverseTransform(c);
     }
 
 
-    // compute the linear convolution of x and y
+    private Complex[] pad(Complex[] original, Complex pad, int max) {
+		Complex[] res = Arrays.copyOf(original, max);
+		Arrays.fill(res, original.length, max, pad);
+		return res;
+	}
+
+
+	// compute the linear convolution of x and y
     public Complex[] convolve(Complex[] x, Complex[] y) {
         final Complex ZERO = Complex.ZERO();
 
@@ -108,6 +141,8 @@ public class FourierTransform {
 
         return cconvolve(a, b);
     }
+
+
 
 
 

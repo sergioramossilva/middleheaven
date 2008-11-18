@@ -1,8 +1,8 @@
 package org.middleheaven.util.measure;
 
+import org.middleheaven.math.structure.Field;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.Range;
-import org.middleheaven.util.measure.structure.Field;
 
 
 /**

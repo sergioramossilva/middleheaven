@@ -6,4 +6,7 @@ public interface BootstrapService {
 
 	
 	public Container getContainer();
+
+	public void addListener(BootstapListener listener);
+	public void removeListener(BootstapListener listener);
 }

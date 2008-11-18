@@ -20,10 +20,6 @@ public abstract class AbstractApplicationModule implements ApplicationModule {
 		return applicationID;
 	}
 
-	@Override
-	public boolean isMain() {
-		return false;
-	}
 
 	@Override
 	public ModuleID getModuleID() {

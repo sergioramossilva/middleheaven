@@ -61,7 +61,7 @@ public class CoordinateTest {
 				AngularMeasure.degrees(0,8,33)
 		);
 
-		distance = DecimalMeasure.exact(Real.valueOf(155927.727), SI.METER); 
+		distance = DecimalMeasure.exact(Real.valueOf(155927.728), SI.METER); 
 		assertEquals(distance, model.distance(c1, c2));
 
 	}

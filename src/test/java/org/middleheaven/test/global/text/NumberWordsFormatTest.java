@@ -2,25 +2,40 @@ package org.middleheaven.test.global.text;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Locale;
+import java.io.File;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.middleheaven.core.Container;
+import org.middleheaven.core.bootstrap.StandaloneBootstrap;
+import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
+import org.middleheaven.global.Culture;
 import org.middleheaven.global.text.writeout.FormatNotFoundException;
 import org.middleheaven.global.text.writeout.NumberWriteoutFormat;
+import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.logging.ConsoleLogBook;
+import org.middleheaven.logging.LoggingLevel;
 
 public class NumberWordsFormatTest {
 
+	@BeforeClass
+	public static void setup(){
+		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
+		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
+		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
+	}
+	
 	@Test(expected=FormatNotFoundException.class)
 	public void testaNumberToWordsUnknown(){
 		
-		NumberWriteoutFormat.getInstance(new Locale("xx","XX"));
+		NumberWriteoutFormat.getInstance(Culture.valueOf("xx","XX"));
 	}
 	
 	@Test
 	public void testaNumberToWordsPtPT(){
 		
 		
-		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(new Locale("pt","PT"));
+		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("pt","PT"));
 		
 		assertEquals("zero", format.inWords(0));
 		assertEquals("cem", format.inWords(100));
@@ -37,10 +52,10 @@ public class NumberWordsFormatTest {
 	
 	
 	@Test
-	public void testaNumberToWordsEnEN(){
+	public void testaNumberToWordsEnGB(){
 		
 		
-		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(new Locale("en", "EN"));
+		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("en", "GB"));
 		
 		assertEquals("zero", format.inWords(0));
 		assertEquals("one hundred", format.inWords(100));
@@ -61,7 +76,7 @@ public class NumberWordsFormatTest {
 	public void testaNumberToWordsEsES(){
 		
 		
-		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(new Locale("es", "ES"));
+		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("es", "ES"));
 		
 		assertEquals("cero", format.inWords(0));
 		assertEquals("cien", format.inWords(100));
@@ -84,7 +99,7 @@ public class NumberWordsFormatTest {
 	public void testaNumberToWordsFrFR(){
 		
 		
-		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(new Locale("fr", "FR"));
+		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("fr", "FR"));
 		
 		assertEquals("zéro", format.inWords(0));
 		assertEquals("cent", format.inWords(100));

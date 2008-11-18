@@ -41,14 +41,14 @@ public class ChronologicalCountryBuilder implements AtlasContext{
 		
 		ChronologicalCountry currentCountry = null;
 		for (CountryInfo info : infoCountries){
-			if (!info.getIsoCode().equals(currentCountry.ISOCode())){
+			if (currentCountry !=null && !info.getIsoCode().equals(currentCountry.ISOCode())){
 				// new info;
 				// add the old to the list
 				if (currentCountry!=null) {
 					countries.put(currentCountry.ISOCode() , currentCountry);
 				}
-				currentCountry = new ChronologicalCountry(info.getIsoCode());
 			}
+			currentCountry = new ChronologicalCountry(info.getIsoCode());
 			currentCountry.setName(info.getName());
 			for (Language language : info.getLanguages()){
 				currentCountry.addLanguage(language);

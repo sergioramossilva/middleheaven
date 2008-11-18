@@ -57,10 +57,12 @@ public final class Culture implements Serializable{
 
 	private Culture(String languageCode, String countryCode, String ... variant){
 		this.variant = variant;
+		this.country = countryCode;
+		this.language = languageCode;
 	}
 	
 	public Country getCountry(){
-		return Atlas.getCountry(country);
+		return country==null ? null : Atlas.getCountry(country);
 	}
 	
 	public Language getLanguage(){
@@ -88,6 +90,6 @@ public final class Culture implements Serializable{
 	}
 	
 	public String toString(){
-		return country + "_" + language;
+		return language + "_" + country;
 	}
 }

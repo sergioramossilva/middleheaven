@@ -1,7 +1,7 @@
 package org.middleheaven.util.measure;
 
+import org.middleheaven.math.structure.Field;
 import org.middleheaven.util.measure.measures.Measurable;
-import org.middleheaven.util.measure.structure.Field;
 
 /**
  * The value of a measurement and the associated uncertainty

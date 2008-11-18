@@ -6,6 +6,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.middleheaven.math.structure.LUDecomposition;
+import org.middleheaven.math.structure.Matrix;
+import org.middleheaven.math.structure.Vector;
 import org.middleheaven.util.measure.AngularMeasure;
 import org.middleheaven.util.measure.DecimalMeasure;
 import org.middleheaven.util.measure.Dimension;
@@ -25,9 +28,6 @@ import org.middleheaven.util.measure.measures.Mass;
 import org.middleheaven.util.measure.measures.Time;
 import org.middleheaven.util.measure.measures.Velocity;
 import org.middleheaven.util.measure.money.Money;
-import org.middleheaven.util.measure.structure.LUDecomposition;
-import org.middleheaven.util.measure.structure.Matrix;
-import org.middleheaven.util.measure.structure.Vector;
 
 public class MeasuresTestSuit {
 

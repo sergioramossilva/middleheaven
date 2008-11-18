@@ -8,6 +8,7 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.domain.annotations.Key;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
@@ -79,7 +80,15 @@ public class StorageManagerTeste {
 
 	public class TestSubject {
 
+		private Identity identity;
 		
+		@Key
+		public Identity getIdentity() {
+			return identity;
+		}
+		public void setIdentity(Identity identity) {
+			this.identity = identity;
+		}
 		private String name;
 		private Date nacimento;
 		

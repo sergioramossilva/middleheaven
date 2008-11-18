@@ -1,6 +1,6 @@
 package org.middleheaven.util.measure;
 
-import org.middleheaven.util.measure.structure.Field;
+import org.middleheaven.math.structure.Field;
 
 
 public abstract class Complex extends Number<Complex> implements Field<Complex> ,Conjugatable<Complex> {

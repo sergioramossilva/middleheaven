@@ -322,9 +322,7 @@ public final class ReflectionUtils {
 	
 	public static <T> T newInstance(Class<T> castAs,Class<?> klass, Object ... args) throws ReflectionException{
 		try {
-			if (args.length==0){
-				return castAs.cast(klass.newInstance());
-			} else {
+
 				// look for a Constructor with the correct arguments
 				Class<?> [] parameterTypes = new Class<?> [args.length];
 				for (int i=0;i<args.length;i++){
@@ -334,6 +332,7 @@ public final class ReflectionUtils {
 				try {
 
 					Constructor<?> c = klass.getConstructor(parameterTypes);
+					c.setAccessible(true);
 					return castAs.cast(c.newInstance(args)); // Instantiate using the constructor
 				} catch (SecurityException e) {
 					throw new IllegalAccesReflectionException(e);
@@ -344,7 +343,7 @@ public final class ReflectionUtils {
 				} catch (InvocationTargetException e) {
 					throw new InvocationTargetReflectionException(e);
 				}
-			}
+			
 		} catch (InstantiationException e){
 			throw new ReflectionException(e);
 		} catch (IllegalAccessException e) {
