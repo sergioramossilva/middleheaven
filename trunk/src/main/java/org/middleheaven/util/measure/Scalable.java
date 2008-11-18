@@ -1,7 +1,7 @@
 package org.middleheaven.util.measure;
 
+import org.middleheaven.math.structure.GroupAdditive;
 import org.middleheaven.util.measure.measures.Measurable;
-import org.middleheaven.util.measure.structure.GroupAdditive;
 
 public interface Scalable<E extends Measurable,T extends Scalable<E,T>> extends GroupAdditive<T> {
 

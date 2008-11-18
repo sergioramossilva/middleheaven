@@ -13,7 +13,9 @@ public class AtlasLocaleInfo {
 	List<AtlasLocaleInfo> atlasLocations = new LinkedList<AtlasLocaleInfo>();
 	
 	public AtlasLocaleInfo( String isoCode,AtlasLocaleInfo parent) {
-	
+		if (isoCode==null){
+			throw new IllegalArgumentException("ISO code is required");
+		}
 		this.isoCode = isoCode;
 		this.parent = parent;
 	}

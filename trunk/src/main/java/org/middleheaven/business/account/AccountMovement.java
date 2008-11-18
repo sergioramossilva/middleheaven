@@ -1,12 +1,12 @@
 package org.middleheaven.business.account;
 
 import org.middleheaven.util.measure.Amount;
-import org.middleheaven.util.measure.time.DataTimeHolder;
+import org.middleheaven.util.measure.time.DateTimeHolder;
 
 public abstract class AccountMovement<A extends Amount<A,?>> {
 
 	private Account<A> acount;
-	private DataTimeHolder timsestamp;
+	private DateTimeHolder timsestamp;
 	private A amount;
 	private AccountOperation operation;
 	
@@ -17,10 +17,10 @@ public abstract class AccountMovement<A extends Amount<A,?>> {
 	public void setAcount(Account<A> acount) {
 		this.acount = acount;
 	}
-	public DataTimeHolder getTimsestamp() {
+	public DateTimeHolder getTimsestamp() {
 		return timsestamp;
 	}
-	public void setTimsestamp(DataTimeHolder timsestamp) {
+	public void setTimsestamp(DateTimeHolder timsestamp) {
 		this.timsestamp = timsestamp;
 	}
 	public A getAmount() {

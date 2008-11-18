@@ -1,4 +1,4 @@
-package org.middleheaven.util.measure.structure;
+package org.middleheaven.math.structure;
 
 public class SingleValueVectorDiagonalMatrix<F extends Field<F>> extends DiagonalMatrix<F> {
 

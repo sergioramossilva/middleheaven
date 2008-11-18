@@ -10,6 +10,8 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.middleheaven.core.Container;
+import org.middleheaven.core.bootstrap.BootstapListener;
+import org.middleheaven.core.bootstrap.BootstrapEvent;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.Require;
@@ -23,7 +25,7 @@ import org.middleheaven.io.repository.WatchableRepository;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingService;
 
-public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
+public class DynamicLoadApplicationServiceActivator extends ServiceActivator implements BootstapListener  {
 
 
 	private LogBook log;
@@ -50,7 +52,6 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 	public DynamicLoadApplicationServiceActivator(){}
 
 
-
 	public static void setAppModulesFilter(ManagedFileFilter appModulesFilter) {
 		DynamicLoadApplicationServiceActivator.appModulesFilter = appModulesFilter;
 	}
@@ -63,12 +64,11 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 		}
 	};
 
-
-
 	@Override
 	public void activate(ServiceAtivatorContext context) {
 		log = loggingService.getLogBook(this.getClass().getName());
 	
+		bootstrapService.addListener(this);
 		applicationLoadingCycleService =  new DynamicLoadApplicationService( bootstrapService.getContainer());
 	}
 
@@ -78,6 +78,16 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 		log=null;
 	}
 	
+	@Override
+	public void onBoostapEvent(BootstrapEvent event) {
+		if(event.isBootup() && event.isEnd()){
+			// start cycle
+			cycle.start();
+		} else if (event.isBootdown() && event.isStart()){
+			// end cycle
+			cycle.stop();
+		}
+	};
 	
 	private DefaultApplicationLoadingCycle cycle;
 	
@@ -144,8 +154,8 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 
 		protected void loadPresentModules(){
 
-			// look for all files ending in .apm
-			// these must be  jar files
+			// look for all files ending in .apm (Application Module)
+			// these must be jar files
 			Collection<ManagedFile> applicationModuleFiles = new HashSet<ManagedFile>();
 
 			ManagedFile f =  bootstrapService.getContainer().getAppConfigRepository();
@@ -213,7 +223,9 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator  {
 		}
 
 
-	};
+	}
+
+
 
 
 }

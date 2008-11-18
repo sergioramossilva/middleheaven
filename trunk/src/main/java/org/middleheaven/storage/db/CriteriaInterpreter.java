@@ -384,7 +384,8 @@ public class CriteriaInterpreter {
 			}
 			FieldValueHolder vholder = f.valueHolder();
 
-			if (!fm.isTransient() && !fm.isVersion()){
+			if (!fm.isTransient() && !fm.isVersion() && !fm.getDataType().isVirtual()){
+				
 				if (vholder.isEmpty()){
 					// empty value implies compare to NULL
 					criteriaBuffer.append(' ');

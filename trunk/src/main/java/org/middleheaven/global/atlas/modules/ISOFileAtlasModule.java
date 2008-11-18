@@ -55,7 +55,7 @@ public class ISOFileAtlasModule extends AtlasModule {
 
 				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 				int year = Integer.parseInt(reader.readLine());
-				DateHolder date = CalendarDate.date(year,0,1);
+				DateHolder date = CalendarDate.date(year,1,1);
 				String line;
 				while((line=reader.readLine())!=null){
 					if(line.trim().length()>0){

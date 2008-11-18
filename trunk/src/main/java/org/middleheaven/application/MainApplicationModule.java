@@ -18,9 +18,5 @@ public abstract class MainApplicationModule extends AbstractApplicationModule {
 		return new ModuleID(this.getApplicationID().getIdentifier(), this.getApplicationID().getVersion());
 	}
 
-	@Override
-	public final boolean isMain() {
-		return true;
-	}
 
 }

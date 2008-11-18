@@ -1,4 +1,4 @@
-package org.middleheaven.util.measure.structure;
+package org.middleheaven.math.structure;
 
 /**
  * Marks a class as belonging to a ring

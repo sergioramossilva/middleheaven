@@ -4,9 +4,9 @@ package org.middleheaven.util.measure;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.middleheaven.math.structure.GroupAdditive;
+import org.middleheaven.math.structure.Ring;
 import org.middleheaven.util.measure.measures.Dimensionless;
-import org.middleheaven.util.measure.structure.GroupAdditive;
-import org.middleheaven.util.measure.structure.Ring;
 
 /**
  * Represents a dimensionless <code>Quantity</code>.

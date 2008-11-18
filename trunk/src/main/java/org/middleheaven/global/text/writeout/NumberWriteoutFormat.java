@@ -3,6 +3,7 @@ package org.middleheaven.global.text.writeout;
 import java.util.Locale;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.global.Culture;
 
 public abstract class NumberWriteoutFormat {
 
@@ -15,17 +16,21 @@ public abstract class NumberWriteoutFormat {
 				new Locale("fr","FR")
 		};
 	}
-	
-	public static NumberWriteoutFormat getInstance(Locale locale){
-		String lang = locale.getLanguage();
-		String country = locale.getCountry();
-		if (country==null){
-			country = lang.toUpperCase();
-		}
+
+	public static NumberWriteoutFormat getInstance(Culture culture){
 		try{
-			return ReflectionUtils.newInstance("org.middleheaven.global.text." + country + lang + NumberWriteoutFormat.class.getSimpleName(),NumberWriteoutFormat.class);
+			String lang = culture.getLanguage().toString();
+			String country;
+			if (culture.getCountry()==null){
+				country = lang.toUpperCase();
+			} else {
+				country = culture.getCountry().ISOCode();
+			}
+
+			String name = NumberWriteoutFormat.class.getPackage().getName() + "."+ country + lang + NumberWriteoutFormat.class.getSimpleName();
+			return ReflectionUtils.newInstance(name,NumberWriteoutFormat.class);
 		} catch (Exception e){
-			throw new FormatNotFoundException("Cannot find format class for locale " + locale);
+			throw new FormatNotFoundException("Cannot find format class for culture " + culture);
 		}
 	}
 
@@ -54,8 +59,8 @@ public abstract class NumberWriteoutFormat {
 			return doPart(new StringBuilder(), number, false).toString().trim();
 		}
 	}
-	
-	
+
+
 	private StringBuilder doPart(StringBuilder builder, String part , boolean decimal){
 		if (part.equals("0")){
 			return builder.append(getGroupSufix(0,0,0)); 
@@ -72,7 +77,7 @@ public abstract class NumberWriteoutFormat {
 				}
 			}
 			final String groupPart = part.substring(Math.max(0, len - group*3), len - (group-1)*3);
-		    value = Integer.parseInt(groupPart);
+			value = Integer.parseInt(groupPart);
 			if (isNotable(value)){
 				buffer.append(getWordsForNotable(value,group));
 			} else {
@@ -95,13 +100,13 @@ public abstract class NumberWriteoutFormat {
 
 				}
 			}
-			
+
 			if (decimal){
 				buffer.append(" ").append(group==1 ? this.getFractionUnitName(len) : this.getGroupSufix(value,group,0));
 			} else {
 				buffer.append(" ").append(group==1 ? this.getUnitName() : this.getGroupSufix(value,group,0));
 			}
-			
+
 			builder.insert(0, buffer).insert(0, " ");	
 			buffer.delete(0, buffer.length());
 

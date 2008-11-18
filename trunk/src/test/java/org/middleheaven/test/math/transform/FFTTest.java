@@ -1,12 +1,14 @@
 package org.middleheaven.test.math.transform;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.middleheaven.math.structure.Vector;
 import org.middleheaven.math.transforms.FourierTransform;
-import org.middleheaven.math.transforms.FourierTransform2;
+import org.middleheaven.math.transforms.FourierTransform;
 import org.middleheaven.util.measure.Complex;
 
 
@@ -80,9 +82,11 @@ public class FFTTest {
 	        show(y, "y = fft(x)");
 
 	        // take inverse FFT
-	        Complex[] z = ft.inverseTransaform(y);
+	        Complex[] z = ft.reverseTransform(y);
 	        show(z, "z = ifft(y)");
 
+	        assertTrue(Arrays.equals(x,z));
+	        
 	        // circular convolution of x with itself
 	        Complex[] c = ft.cconvolve(x, x);
 	        show(c, "c = cconvolve(x, x)");
@@ -90,6 +94,29 @@ public class FFTTest {
 	        // linear convolution of x with itself
 	        Complex[] d = ft.convolve(x, x);
 	        show(d, "d = convolve(x, x)");
+	}
+	
+	@Test
+	public void testFFTVector(){
+			int N = 4;
+	        Complex[] x = new Complex[N];
+
+	        x[0] = Complex.valueOf( -0.03480425839330703 , 0);
+	        x[1] = Complex.valueOf(	0.07910192950176387 , 0);
+	        x[2] = Complex.valueOf( 0.7233322451735928 , 0);
+	        x[3] = Complex.valueOf( 0.1659819820667019 , 0);
+
+	        Vector<Complex> v = Vector.vector(x); 
+	       
+	        FourierTransform ft = new FourierTransform();
+	        
+	        // FFT of original data
+	        Vector<Complex> y = ft.fowardTransform(v);
+	     
+	        // take inverse FFT
+	        Vector<Complex> z = ft.reverseTransform(y);
+
+	        assertTrue(v.equals(z));
 	}
 	
 	@Test
@@ -105,7 +132,7 @@ public class FFTTest {
 	        // original data
 	        show(x, "x");
 	        FourierTransform ft = new FourierTransform();
-	        FourierTransform2 ft2 = new FourierTransform2();
+	        FourierTransform ft2 = new FourierTransform();
 	        
 	        // FFT of original data
 	        Complex[] y = ft.fowardTransform(x);

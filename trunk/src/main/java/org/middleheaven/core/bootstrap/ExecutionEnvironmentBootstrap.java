@@ -5,6 +5,8 @@
 package org.middleheaven.core.bootstrap;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.ContextIdentifier;
@@ -16,6 +18,7 @@ import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.services.engine.LocalFileRepositoryDiscoveryEngine;
 import org.middleheaven.core.wiring.DefaultWiringService;
 import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.global.atlas.modules.AtlasActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
@@ -33,6 +36,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 	
 	private ListServiceContextConfigurator configurator = new ListServiceContextConfigurator();
+	private SimpleBootstrapService bootstrapService = new SimpleBootstrapService();
 	
 	/**
 	 * Start the environment 
@@ -51,15 +55,17 @@ public abstract class ExecutionEnvironmentBootstrap {
 		log.trace("Container resolved: " + container.getEnvironmentName());
 		
 		log.debug("Register bootstrap services");
-		
+
 		serviceRegistryContext.register(WiringService.class, new DefaultWiringService(),null);
-		serviceRegistryContext.register(BootstrapService.class, new SimpleBootstrapService(container),null);
+		serviceRegistryContext.register(BootstrapService.class, bootstrapService,null);
 		serviceRegistryContext.register(ServiceContextEngineConfigurationService.class, new UniqueServiceContextEngineConfigurationService(), null);
 		
+		bootstrapService.fireBootupStart();
 		
 		log.debug("Inicialize service discovery engines");
 		
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
+		.addActivator(AtlasActivator.class)
 		.addActivator(LoggingActivator.class)
 		.addActivator(FileRepositoryActivator.class);
 		
@@ -72,15 +78,65 @@ public abstract class ExecutionEnvironmentBootstrap {
 		doAfterStart();
 
 		log.info("Environment inicialized in " + (System.currentTimeMillis()-time) + " ms.");
-
+		bootstrapService.fireBootupEnd();
 	}
 
+
+	private class SimpleBootstrapService implements BootstrapService{
+		
+
+		private List<BootstapListener> listeners = new CopyOnWriteArrayList<BootstapListener>();
+		
+		public SimpleBootstrapService() {
+		}
+
+		protected void fireBootupStart() {
+			fire (new BootstrapEvent(true,true));
+		}
+		
+		protected void fireBootupEnd() {
+			fire (new BootstrapEvent(true,false));
+		}
+
+		protected void fireBootdownEnd() {
+			fire (new BootstrapEvent(false,false));
+		}
+
+		protected void fireBootdownStart() {
+			fire (new BootstrapEvent(false,true));
+		}
+		
+		protected void fire(BootstrapEvent event) {
+			for (BootstapListener listener : listeners){
+				listener.onBoostapEvent(event);
+			}
+		}
+		
+		@Override
+		public Container getContainer() {
+			return ExecutionEnvironmentBootstrap.this.getContainer();
+		}
+
+		@Override
+		public void addListener(BootstapListener listener) {
+			listeners.add(listener);
+		}
+
+		@Override
+		public void removeListener(BootstapListener listener) {
+			listeners.remove(listener);
+		}
+
+
+		
+	}
 	
 	public final void stop(){
-
+		bootstrapService.fireBootdownStart();
 		doBeforeStop();
 		configurator.clear();
 		doAfterStop();
+		bootstrapService.fireBootdownEnd();
 	}
 
 	protected void doBeforeStart(){};

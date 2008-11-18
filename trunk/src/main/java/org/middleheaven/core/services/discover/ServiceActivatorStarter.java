@@ -43,6 +43,7 @@ public class ServiceActivatorStarter implements Starter<ServiceActivatorInfo> {
 			// service is not yet available
 			throw new InicializationNotResolvedException();
 		}catch (RuntimeException e){
+			e.printStackTrace();
 			throw new InicializationNotPossibleException();
 		}
 	}

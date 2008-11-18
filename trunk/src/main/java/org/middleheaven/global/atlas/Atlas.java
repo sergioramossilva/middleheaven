@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.middleheaven.core.services.ServiceRegistry;
+
 
 public class Atlas implements AtlasLocale{
 
@@ -20,7 +22,7 @@ public class Atlas implements AtlasLocale{
 	 */
 	@Override
 	public Set<AtlasLocale> getChildren() {
-		AtlasService service = null;
+		AtlasService service = ServiceRegistry.getService(AtlasService.class);
 		return Collections.unmodifiableSet(new HashSet<AtlasLocale>(service.findALLCountries()));
 	}
 
@@ -41,7 +43,6 @@ public class Atlas implements AtlasLocale{
 
 	@Override
 	public AtlasLocale getChild(String designation) {
-		AtlasService service = null;
-		return service.findCountry(designation);
+		return ServiceRegistry.getService(AtlasService.class).findCountry(designation);
 	}
 }

@@ -33,6 +33,23 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		super("'", "'", ".");
 	}
 	
+	// storedProcedures
+	public static boolean containsMatch(String target, String search) {
+		search = search.replaceAll("%", "");
+		return target.toLowerCase().contains(search.toLowerCase());
+	}
+
+	public static boolean endsWithMatch(String target, String search) {
+		search = search.replaceAll("%", "");
+		return target.toLowerCase().endsWith((search.toLowerCase()));
+	}
+	
+	public static boolean startsWithMatch(String target, String search) {
+		search = search.replaceAll("%", "");
+		return target.toLowerCase().startsWith((search.toLowerCase()));
+	}
+	// end stored procedures
+	
 	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,
 			StorableEntityModel model) {
 		return new HSQLCriteriaInterpreter(this, criteria, model);
@@ -85,6 +102,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 				}
 			}
 		}
+		
 	}
 	
 

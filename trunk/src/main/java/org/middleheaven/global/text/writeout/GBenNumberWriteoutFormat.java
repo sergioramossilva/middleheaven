@@ -4,9 +4,9 @@ package org.middleheaven.global.text.writeout;
  * 
  * @see http://www.grammarbook.com/numbers/numbers.asp
  */
-class ENenNumberWriteoutFormat extends NumberWriteoutFormat{
+class GBenNumberWriteoutFormat extends NumberWriteoutFormat{
 
-	public ENenNumberWriteoutFormat(){}
+	public GBenNumberWriteoutFormat(){}
 	
 	@Override
 	public String getNegativeSufix() {

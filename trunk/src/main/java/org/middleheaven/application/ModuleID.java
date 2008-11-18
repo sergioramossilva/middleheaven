@@ -6,6 +6,8 @@ import org.middleheaven.util.Version;
 
 public class ModuleID implements Serializable {
 
+
+	private static final long serialVersionUID = 1475241472644564012L;
 	private String identifier;
 	private Version version;
 	

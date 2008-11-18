@@ -1,4 +1,4 @@
-package org.middleheaven.util.measure.structure;
+package org.middleheaven.math.structure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +46,10 @@ public abstract class Vector<F extends Field<F>> implements VectorSpace<Vector<F
 	
 	abstract F get(int index);
 	abstract int getDimention();
+	
+	public int size(){
+		return this.getDimention();
+	}
 	
 	public Vector<F> cross(Vector<F> other){
 		if (this.getDimention()!=3 || this.getDimention()!=3){
@@ -114,5 +118,13 @@ public abstract class Vector<F extends Field<F>> implements VectorSpace<Vector<F
 		}
 		return DenseVector.vector(elements);
 	}
+	
+	public boolean equals (Object other){
+		return other instanceof Vector && equals((Vector)other);
+	}
+	
+	public abstract boolean equals (Vector<F> other);
+	
+	public abstract F[] toArray(F[] elements);
 	
 }
