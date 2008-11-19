@@ -9,6 +9,7 @@ import org.middleheaven.util.measure.IncompatibleUnitsException;
 import org.middleheaven.util.measure.Quantity;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.Unit;
+import org.middleheaven.util.measure.money.service.MoneyConverter;
 
 public class Money implements Amount<Money, org.middleheaven.util.measure.measures.Currency>, Comparable<Money> {
 
@@ -268,7 +269,7 @@ public class Money implements Amount<Money, org.middleheaven.util.measure.measur
 		return (int)(this.amount - other.amount);
 	}
 
-	public int compareTo(Money other,MoneyConvertor converter) {
+	public int compareTo(Money other,MoneyConverter converter) {
 		return this.compareTo(converter.convert(other, this.currency));
 	}
 

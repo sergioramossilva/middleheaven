@@ -18,12 +18,11 @@ import org.middleheaven.util.measure.Integer;
 import org.middleheaven.util.measure.Real;
 import org.middleheaven.util.measure.SI;
 import org.middleheaven.util.measure.Unit;
-import org.middleheaven.util.measure.convertion.UnitConversion;
 import org.middleheaven.util.measure.measures.Aceleration;
 import org.middleheaven.util.measure.measures.Area;
+import org.middleheaven.util.measure.measures.Distance;
 import org.middleheaven.util.measure.measures.Energy;
 import org.middleheaven.util.measure.measures.Force;
-import org.middleheaven.util.measure.measures.Distance;
 import org.middleheaven.util.measure.measures.Mass;
 import org.middleheaven.util.measure.measures.Time;
 import org.middleheaven.util.measure.measures.Velocity;
@@ -240,8 +239,32 @@ public class MeasuresTestSuit {
 		
 	}
 	
+	@Test(expected=IncompatibleUnitsException.class)
+	public void testAdditionMoneyDifferentCurrency(){
+
+		Money t = Money.money(330, "USD");
+		Money c = Money.money(330, "EUR");
+		
+	    // can only add money of the same currency
+		// raise exception
+	    t.plus(c); 
+
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void testWrongIsoCode(){
+
+		try {
+			Money.money(330, "EU"); // eu is not a iso code
+			assertFalse(true);
+		} catch (IllegalArgumentException e){
+			assertTrue(true);
+		}
+		
+	}
+	
 	@Test
-	public void testMoney (){
+	public void testMoneyOperations (){
 		
 		Money a = Money.money(100, "USD");
 		Money b = Money.money(230, "USD");
@@ -251,27 +274,12 @@ public class MeasuresTestSuit {
 		
 		Money m = a.plus(b);
 
-		assertEquals(Money.class, m.getClass());
 		assertEquals(t, m);
-		assertFalse(t.equals(c));
 		
-		try {
-			t.plus(c);
-			assertFalse(true);
-		} catch (IncompatibleUnitsException e){
-			assertTrue(true);
-		} catch (Exception e){
-			assertFalse(true);
-		}
+		// money are equal if both amount and currency are equal
+		assertFalse(t.equals(c));
 
-		try {
-			Money.money(330, "EU");
-			assertFalse(true);
-		} catch (IllegalArgumentException e){
-			assertTrue(true);
-		} catch (Exception e){
-			assertFalse(true);
-		}
+		// multiply by a real
 		Real n = Real.valueOf(3);
 		Money y = t.over(n);
 		assertEquals (Money.money(110, "USD"), y);

@@ -24,7 +24,7 @@ public class PropertyBindingBuilder<T>  {
 		return this;
 	}
 	
-	public PropertyBindingBuilder in(Class<? extends Scope> scope){
+	public PropertyBindingBuilder in(Class<? extends ScopePool> scope){
 		binding.setTargetScope(scope);
 		return this;
 	}

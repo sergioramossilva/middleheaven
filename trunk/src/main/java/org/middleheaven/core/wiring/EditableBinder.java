@@ -1,13 +1,11 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
 
 interface EditableBinder {
 
 	
-	public void addBinding(Binding binding);
-	public <T> T getInstance(Class<T> type,  Set<Annotation> specificationsSet);
-	public void removeBinding(Binding binding);
+	public <T> void addBinding(Binding<T> binding);
+	public <T> T getInstance(WiringSpecification<T> query);
+	public <T> void removeBinding(Binding<T> binding);
 
 }

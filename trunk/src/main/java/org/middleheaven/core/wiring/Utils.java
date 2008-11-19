@@ -60,7 +60,7 @@ final class Utils {
 				f.setAccessible(true);
 
 				Set<Annotation> specs = ReflectionUtils.getAnnotations(f, BindingSpecification.class);
-				Object value = binder.getInstance(f.getType(), specs);
+				Object value = binder.getInstance(WiringSpecification.search(f.getType(), specs));
 				if(!f.getType().isAssignableFrom(value.getClass())){
 					throw new BindingException(value.getClass().getName() + " can not be assigned to " + f.getType().getName());
 				}
@@ -84,7 +84,7 @@ final class Utils {
 							specs[p].add(a);
 						}
 					}
-					objects[p] = binder.getInstance(types[p], specs[p]);
+					objects[p] = binder.getInstance(WiringSpecification.search(types[p], specs[p]));
 				}
 
 
