@@ -30,6 +30,10 @@ public class ServiceProxy<T> implements ServiceListener, InvocationHandler {
 		this.lateBinder = lateBinder;
 		this.lateBinderObject = lateBinderObject;
 		
+		// the service may already exist 
+		service = ServiceRegistry.getService(serviceClass);
+		
+		// register a listener for further service alterations
 		ServiceRegistry.addServiceListener(this);
 
 	}

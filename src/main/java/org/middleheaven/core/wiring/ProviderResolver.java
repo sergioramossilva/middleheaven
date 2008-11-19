@@ -1,7 +1,5 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
 
 public class ProviderResolver<T> implements Resolver<T> {
 
@@ -13,7 +11,7 @@ public class ProviderResolver<T> implements Resolver<T> {
 	}
 	
 	@Override
-	public T resolve(Class<T> type, Set<Annotation> annotations) {
+	public T resolve(WiringSpecification query) {
 		return injector.getInstance(providerClass).provide();
 	}
 

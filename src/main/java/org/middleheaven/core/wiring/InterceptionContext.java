@@ -6,12 +6,10 @@ import java.util.Set;
 public class InterceptionContext <T>{
 
 	private T object;
-	private Class<?> target;
-	private Set<Annotation> annotations;
-	
-	public InterceptionContext(Class<?> target, Set<Annotation> annotations) {
-		this.target = target;
-		this.annotations = annotations;
+	private WiringSpecification<T> specification;
+
+	public InterceptionContext(WiringSpecification<T> query) {
+		this.specification = query;
 	}
 
 	protected T getObject() {
@@ -22,11 +20,15 @@ public class InterceptionContext <T>{
 		this.object = object;
 	}
 
+	protected WiringSpecification<T> getWiringSpecification(){
+		return specification;
+	}
+	
 	protected Class<?> getTarget() {
-		return target;
+		return specification.getContract();
 	}
 
 	protected Set<Annotation> getAnnotations() {
-		return annotations;
+		return specification.getSpecifications();
 	}
 }

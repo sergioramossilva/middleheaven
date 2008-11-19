@@ -1,6 +1,7 @@
 package org.middleheaven.core.wiring;
 
-public interface Provider <T>{
+public interface Provider<T> {
 
-	public T provide();
+	T provide();
+
 }

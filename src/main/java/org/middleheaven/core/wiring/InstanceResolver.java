@@ -1,8 +1,11 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
+/**
+ * Holds the real instance to be retrieved.
+ * This useful when you want to bind a contact to an already existing object.
+ * 
+ * @param <T> the type for the instance to retrieve
+ */
 public class InstanceResolver<T> implements Resolver<T> {
 
 	T object;
@@ -11,7 +14,7 @@ public class InstanceResolver<T> implements Resolver<T> {
 	}
 	
 	@Override
-	public T resolve(Class<T> type, Set<Annotation> annotations) {
+	public T resolve(WiringSpecification<T> query) {
 		return object;
 	}
 

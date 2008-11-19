@@ -26,7 +26,7 @@ public class InterceptorChain<T> {
 
 		@Override
 		public void intercept(InterceptionContext context, InterceptorChain chain) {
-			context.setObject(resolver.resolve(context.getTarget(),context.getAnnotations()));
+			context.setObject(resolver.resolve(context.getWiringSpecification()));
 		}
 		
 	}

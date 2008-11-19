@@ -3,29 +3,39 @@ package org.middleheaven.core.wiring;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.middleheaven.core.reflection.ProxyUtils;
 
 public class DefaultWiringService implements WiringService{
-
+	
+	@SuppressWarnings("unchecked")
+	PropertyResolver propertyResolver = new PropertyResolver();
+	
 	DefaultWiringContext wiringContext = new DefaultWiringContext();
 	BinderImpl binder = new BinderImpl();
 	List<Interceptor> interceptors = new ArrayList<Interceptor>();
-	PropertyResolver propertyResolver = new PropertyResolver();
-	Map<String,Class<? extends Scope>> scopes = new TreeMap<String,Class<? extends Scope>>();
-	DefaultScope defaultScope = new DefaultScope();
+	Map<String,Class<? extends ScopePool>> scopes = new TreeMap<String,Class<? extends ScopePool>>();
+	Map<String, ScopePool> scopePools = new TreeMap<String,ScopePool>();
 
 	public DefaultWiringService(){
 		scopes.put(Shared.class.getName(), SharedScope.class);
-		binder.bind(SharedScope.class).toInstance(new SharedScope());
+		scopes.put(Default.class.getName(), DefaultScope.class);
+		DefaultScope defaultScope = new DefaultScope();
+		SharedScope sharedScope = new SharedScope();
+		
+		scopePools.put(DefaultScope.class.getName(),defaultScope);
+		scopePools.put(SharedScope.class.getName(),new SharedScope());
+		
+		binder.bind(SharedScope.class).in(Shared.class).toInstance(sharedScope);
+		binder.bind(DefaultScope.class).in(Shared.class).toInstance(defaultScope);
 	}
+	
+	
 	@Override
 	public WiringContext getWiringContext() {
 		return wiringContext;
@@ -44,7 +54,7 @@ public class DefaultWiringService implements WiringService{
 		}
 
 		@Override
-		public <S extends Scope> void bindScope(Class<? extends Annotation> annotation, Class<S> scopeClass) {
+		public <S extends ScopePool> void bindScope(Class<? extends Annotation> annotation, Class<S> scopeClass) {
 			scopes.put(annotation.getName(),scopeClass);
 		}
 
@@ -67,17 +77,17 @@ public class DefaultWiringService implements WiringService{
 		}
 
 		@Override
-		public <T> T getInstance(Class<T> type,  Set<Annotation> specificationsSet){
-			Key<T> key = Key.keyFor(type, specificationsSet);
+		public <T> T getInstance( WiringSpecification<T> query ){
+			Key<T> key = Key.keyFor(query.getContract(), query.getSpecifications());
 
 			Binding<T> binding = bindings.get(key);
 			if (binding==null){
 				// if its a concrete classe create a binding now
-				if (!type.isAnnotation() && !type.isInterface()){
-					this.bind(type).to(type);
-					return getInstance(type,specificationsSet);
+				if (!query.getContract().isAnnotation() && !query.getContract().isInterface()){
+					this.bind(query.getContract()).to(query.getContract());
+					return getInstance(query); // repeat search
 				}
-				throw new BindingException(type.getName() + " is not bound");
+				throw new BindingNotFoundException(query.getContract());
 			}
 			if (stack.contains(key)){
 				// cyclic reference
@@ -87,42 +97,50 @@ public class DefaultWiringService implements WiringService{
 					proxy = new CyclicProxy();
 					cyclicProxies.put(key, proxy);
 				}
-				return ProxyUtils.proxy(type, proxy);
+				return  ProxyUtils.proxy(query.getContract(), proxy);
 
 			} else {
 				stack.offer(key);
-				Scope scope;
-				if (binding.getScope()!=null){
-					Class<? extends Scope> scopeClass = scopes.get(binding.getScope().getName());
-					if (scopeClass==null){
-						scope = defaultScope;
+				try{
+					ScopePool scopePool;
+					Class<? extends ScopePool> scopeClass;
+					if (binding.getScope()==null){
+						scopeClass = scopes.get(Default.class.getName());
 					} else {
-						scope = getInstance(scopeClass, new HashSet());
+						scopeClass = scopes.get(binding.getScope().getName());
 					}
-				} else {
-					scope = defaultScope;
-				}
+					
+					
+					scopePool = scopePools.get(scopeClass.getName());
+					if (scopePool==null){
+						scopePool = getInstance(WiringSpecification.search(scopeClass));
+						scopePools.put(scopeClass.getName(), scopePool);
+					}
 
-				final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(interceptors, binding.getResolver());
-				final T obj = scope.scope(type, specificationsSet, interceptorResolver);
+					final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(interceptors, binding.getResolver());
+					final T obj = scopePool.scope(query, interceptorResolver);
 
-				CyclicProxy proxy = cyclicProxies.get(key);
-				if (proxy!=null){
-					proxy.setRealObject(obj);
+					CyclicProxy proxy = cyclicProxies.get(key);
+					if (proxy!=null){
+						proxy.setRealObject(obj);
+					}
+					stack.remove(key);
+					return WireUtils.populate(binder,obj);
+				} catch (RuntimeException e){
+					stack.remove(key);
+					throw e;
 				}
-				stack.remove(key);
-				return WireUtils.populate(binder,obj);
 			}
 
 		}
-		
+
 		@Override
 		public void removeBinding(Binding binding) {
 			bindings.remove(binding.getKey());
-			
+
 		}
 
-	
+
 
 	}
 
@@ -138,7 +156,8 @@ public class DefaultWiringService implements WiringService{
 
 		@Override
 		public <T> T getInstance(Class<T> type) {
-			return binder.getInstance(type, new HashSet<Annotation>());
+
+			return binder.getInstance(WiringSpecification.search(type));
 		}
 
 

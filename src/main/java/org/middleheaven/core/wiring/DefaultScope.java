@@ -1,13 +1,11 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
 
-public class DefaultScope implements Scope {
+public class DefaultScope implements ScopePool {
 
 	@Override
-	public <T> T scope(Class<T> type, Set<Annotation> annotations,  Resolver<T> resolver) {
-		return resolver.resolve(type, annotations);
+	public <T> T scope(WiringSpecification<T> query, Resolver<T> resolver) {
+		return resolver.resolve(query);
 	}
 
 }

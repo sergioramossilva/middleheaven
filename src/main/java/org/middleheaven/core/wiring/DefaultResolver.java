@@ -12,6 +12,12 @@ import org.middleheaven.core.reflection.InstantiationReflectionException;
 import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.core.reflection.ReflectionUtils;
 
+/**
+ * Retrieves the object by dynamic constructions and automatic dependency injection 
+ *
+ * @param <T>
+ * @param <Base>
+ */
 public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 
 	EditableBinder binder;
@@ -23,7 +29,7 @@ public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 	}
 	
 	@Override
-	public T resolve(Class<T> targetType, Set<Annotation> annotations) {
+	public T resolve(WiringSpecification<T> query) {
 		// Determine witch constructor to invoke
 
 		List<Constructor<Base>> constructors =  ReflectionUtils.allAnnotatedConstructors( type, Wire.class);
@@ -43,12 +49,13 @@ public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 		selectedConstructor  = constructors.get(0);
 		selectedConstructor.setAccessible(true);
 
+		// determine wiringQuery for the contructor params
 		Annotation[][] constructorAnnnnotations = selectedConstructor.getParameterAnnotations();
 		Class<?>[] types = selectedConstructor.getParameterTypes();
 		Set[] specs = new Set[types.length];
 		Object[] objects = new Object[types.length];
 
-
+	
 		for (int p =0; p< types.length;p++){
 			specs[p] = new HashSet();
 			for (Annotation a : constructorAnnnnotations[p]){
@@ -57,14 +64,14 @@ public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 					specs[p].add(a);
 				}
 			}
-			objects[p] = binder.getInstance(types[p], specs[p]);
+			objects[p] = binder.getInstance(WiringSpecification.search(types[p],specs[p]));
 		}
 
 
 		try {
-			return targetType.cast(selectedConstructor.newInstance(objects));
+			return query.getContract().cast(selectedConstructor.newInstance(objects));
 		} catch (Exception e) {
-			throw handleExceptions(targetType,e);
+			throw handleExceptions(query.getContract(),e);
 		} 
 
 	}

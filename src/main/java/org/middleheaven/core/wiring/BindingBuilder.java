@@ -46,11 +46,5 @@ public class BindingBuilder<T> {
 		return this;
 	}
 	
-	/*
-	public BindingBuilder<T> toValue(T object){
-		binding.setProvider(new ObjectProvider<T>(object));
-		binder.addBinding(binding);
-		return this;
-	}
-	*/
+
 }

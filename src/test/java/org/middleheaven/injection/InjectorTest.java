@@ -1,11 +1,18 @@
 package org.middleheaven.injection;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.middleheaven.core.Container;
+import org.middleheaven.core.bootstrap.StandaloneBootstrap;
+import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
@@ -23,29 +30,35 @@ import org.middleheaven.injection.mock.Greeter;
 import org.middleheaven.injection.mock.HelloMessage;
 import org.middleheaven.injection.mock.Message;
 import org.middleheaven.injection.mock.MockDisplay;
+import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.logging.ConsoleLogBook;
+import org.middleheaven.logging.LoggingLevel;
 
 public class InjectorTest {
 
-	WiringService service = new DefaultWiringService();
 	
-	@Before
-	public void setUp(){
-		new ServiceContextConfigurator().addEngine(new ActivatorBagServiceDiscoveryEngine());
+	@BeforeClass
+	public static void setUp(){
+		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
+		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
+		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
+		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
+
+		new ServiceContextConfigurator().addEngine(engine);
 		
-		ServiceRegistry.register(WiringService.class, new DefaultWiringService());
-		service =ServiceRegistry.getService(WiringService.class);
+		WiringService service =ServiceRegistry.getService(WiringService.class);
 	}
 	
 	@After
 	public void tearDown(){
-		service= null;
+		
 	}
 	
 	@Test
 	public void simpleTest(){
 		final MockDisplay md = new MockDisplay();
 		
-		service.getWiringContext()
+		ServiceRegistry.getService(WiringService.class).getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -65,7 +78,10 @@ public class InjectorTest {
 	
 	@Test
 	public void serviceTest(){
-		WiringService inj = service.getWiringContext()
+		
+		// obtain the service it self from wiring
+		
+		WiringContext context = ServiceRegistry.getService(WiringService.class).getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -75,21 +91,30 @@ public class InjectorTest {
 			
 			}
 			
-		})
-		.getInstance(WiringService.class);
+		});
 		
-		assertTrue(inj!=null);
-		assertTrue(inj instanceof WiringService);
+		WiringService inj1 =  context.getInstance(WiringService.class);
 		
-		WiringContext i = inj.getWiringContext();
+		assertNotNull(inj1);
 
+		// the service is shared so its the same also
+		WiringService inj2 =  context.getInstance(WiringService.class);
+		
+		assertSame(inj1, inj2);
+		
+		// the context is the same
+		WiringContext context2 = inj1.getWiringContext();
+		
+		assertSame(context, context2);
+		
+		
 	}
 	
 	@Test
 	public void sharedInstanceTest(){
 		final MockDisplay md = new MockDisplay();
 		
-		WiringContext inj = service.getWiringContext()
+		WiringContext inj = ServiceRegistry.getService(WiringService.class).getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -112,7 +137,7 @@ public class InjectorTest {
 	@Test
 	public void cyclicTest(){
 
-		WiringContext inj = service.getWiringContext()
+		WiringContext inj = ServiceRegistry.getService(WiringService.class).getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -133,7 +158,7 @@ public class InjectorTest {
 	@Test
 	public void cyclicSharedTest(){
 
-		WiringContext inj = service.getWiringContext()
+		WiringContext inj = ServiceRegistry.getService(WiringService.class).getWiringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override

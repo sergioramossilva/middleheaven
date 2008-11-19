@@ -1,9 +1,12 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
-import java.util.Set;
 
+/**
+ * Allows for interception of the resolve request.
+ *
+ * @param <T>
+ */
 public class InterceptorResolver<T> implements Resolver<T> {
 
 	
@@ -17,10 +20,10 @@ public class InterceptorResolver<T> implements Resolver<T> {
 	}
 
 	@Override
-	public T resolve(Class<T> type, Set<Annotation> specificationsSet) {
+	public T resolve(WiringSpecification<T> query) {
 
 		InterceptorChain<T> chain = new InterceptorChain<T>(interceptors,original);
-		InterceptionContext<T> context = new InterceptionContext<T>(type,specificationsSet);
+		InterceptionContext<T> context = new InterceptionContext<T>(query);
 
 		chain.doChain(context);
 
