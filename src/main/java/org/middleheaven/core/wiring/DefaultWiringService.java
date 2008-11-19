@@ -110,7 +110,6 @@ public class DefaultWiringService implements WiringService{
 						scopeClass = scopes.get(binding.getScope().getName());
 					}
 					
-					
 					scopePool = scopePools.get(scopeClass.getName());
 					if (scopePool==null){
 						scopePool = getInstance(WiringSpecification.search(scopeClass));
