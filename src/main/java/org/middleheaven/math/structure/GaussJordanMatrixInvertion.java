@@ -1,9 +1,9 @@
 package org.middleheaven.math.structure;
 
-public class GaussJordanInvertion {
+public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 
 
-	public static <F extends Field<F>> Matrix<F> invert( Matrix<F> matrix){
+	public <F extends Field<F>> Matrix<F> invert( Matrix<F> matrix){
 
 		if (!matrix.isSquare()){
 			throw new ArithmeticException("Matrix not invertable");

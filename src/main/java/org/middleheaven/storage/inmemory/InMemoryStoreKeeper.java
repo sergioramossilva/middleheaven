@@ -17,7 +17,7 @@ import org.middleheaven.util.identity.IntegerIdentitySequence;
 import org.middleheaven.util.sequence.LongSequence;
 import org.middleheaven.util.sequence.Sequence;
 
-public class NaiveStoreKeeper extends AbstractStoreKeeper {
+public class InMemoryStoreKeeper extends AbstractStoreKeeper {
 
 	final Map<String, Collection<Storable> > data = new HashMap<String, Collection<Storable> >();
 	final Map<String, Sequence<Identity>> sequences = new HashMap<String,Sequence<Identity>>();

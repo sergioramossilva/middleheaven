@@ -4,7 +4,7 @@ public abstract class Identity implements Comparable<Identity>{
 
 
 	public boolean equals(Object other){
-		return this.getClass().isAssignableFrom(other.getClass()) && equals((Identity)other);
+		return other !=null && this.getClass().isAssignableFrom(other.getClass()) && equals((Identity)other);
 	}
 	
 	public abstract int hashCode();

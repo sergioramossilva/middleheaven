@@ -13,9 +13,7 @@ public class Month implements Iterable<DayOfMonth>, Serializable{
 
  
     private int year;
-    
     private int ordinal;
- 
     private int daysCount;
     
     public static Month ofYear(int year, int month){
@@ -79,6 +77,13 @@ public class Month implements Iterable<DayOfMonth>, Serializable{
 		return CalendarDate.date(year, ordinal, daysCount);
 	}
 
+	
+	public TimeInterval asInterval(){
+		return new TimeInterval (
+				CalendarDate.date(year, ordinal, 1),
+				CalendarDate.date(year, ordinal, daysCount)
+		);
+	}
 
 
 }

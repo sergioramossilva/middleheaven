@@ -4,7 +4,12 @@ import java.util.Collection;
 
 import org.middleheaven.util.Interval;
 
-
+/**
+ * Extention for the CriteriaBuilder to support creation of fields 
+ * constrains a fluente interface. 
+ *
+ * @param <T>
+ */
 public interface Constraint<T> {
 
 	public CriteriaBuilder<T> eq(Object value);  

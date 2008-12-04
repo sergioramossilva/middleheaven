@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.core.reflection.ProxyUtils;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
@@ -78,7 +77,7 @@ public class DomainDataStorage implements DataStorage {
 		} else {
 			
 		}
-		return nextID(identityType , metadataService.getStorageModel(entityType).logicNameForEntity());
+		return nextID(identityType , metadataService.getStorageModel(entityType).getEntityLogicName());
 	}
 
 	protected <I extends Identity> I nextID(Class<I> identityType,String identifiableName) {

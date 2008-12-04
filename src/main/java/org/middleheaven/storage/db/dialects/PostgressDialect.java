@@ -31,8 +31,11 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 
 	@Override
 	public StorageException handleSQLException(SQLException e) {
-		// TODO Auto-generated method stub
-		return new StorageException(e.getMessage());
+		String msg = e.getMessage();
+		if (e.getNextException()!=null){
+			msg += "\n" + e.getNextException().getMessage();
+		}
+		return new StorageException(msg);
 	}
 
 	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
