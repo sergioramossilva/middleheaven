@@ -108,7 +108,12 @@ public class DefaultWiringService implements WiringService{
 						scopeClass = scopes.get(Default.class.getName());
 					} else {
 						scopeClass = scopes.get(binding.getScope().getName());
+						if (scopeClass==null){
+							throw new BindingNotFoundException(binding.getScope());
+						}
 					}
+					
+					
 					
 					scopePool = scopePools.get(scopeClass.getName());
 					if (scopePool==null){
@@ -124,7 +129,7 @@ public class DefaultWiringService implements WiringService{
 						proxy.setRealObject(obj);
 					}
 					stack.remove(key);
-					return WireUtils.populate(binder,obj);
+					return WireUtils.wireMembers(binder,obj);
 				} catch (RuntimeException e){
 					stack.remove(key);
 					throw e;
@@ -138,9 +143,6 @@ public class DefaultWiringService implements WiringService{
 			bindings.remove(binding.getKey());
 
 		}
-
-
-
 	}
 
 	private class DefaultWiringContext implements WiringContext{
@@ -159,6 +161,15 @@ public class DefaultWiringService implements WiringService{
 			return binder.getInstance(WiringSpecification.search(type));
 		}
 
+		@Override
+		public <T> T getInstance(Class<T> type, Map<String, String> params) {
+			return binder.getInstance(WiringSpecification.search(type, params));
+		}
+		
+		@Override
+		public void wireMembers(Object object) {
+			WireUtils.wireMembers(binder,object);
+		}
 
 	}
 

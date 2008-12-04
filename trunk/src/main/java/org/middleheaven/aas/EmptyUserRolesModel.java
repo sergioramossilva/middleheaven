@@ -3,6 +3,11 @@ package org.middleheaven.aas;
 import java.util.Collections;
 import java.util.Set;
 
+
+/**
+ * Empty implementation of <code>UserRolesModel</code>.
+ * No user has roles. 
+ */
 public final class EmptyUserRolesModel implements UserRolesModel {
 
 	@Override

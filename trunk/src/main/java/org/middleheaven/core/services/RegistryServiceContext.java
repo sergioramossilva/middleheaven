@@ -11,8 +11,10 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
+import org.middleheaven.core.wiring.Shared;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.logging.LogBook;
@@ -27,6 +29,24 @@ public final class RegistryServiceContext implements ServiceContext{
 	public RegistryServiceContext(LogBook book){
 		this.logBook = book;
 		ServiceRegistry.context = this;
+		
+		this.addServiceListener(new ServiceListener(){
+
+			@Override
+			public void onEvent(ServiceEvent event) {
+				if (event.getType().equals(ServiceEventType.ADDED) && event.serviceClass.equals(WiringService.class)){
+					getService(WiringService.class, null).getWiringContext().addConfiguration(new BindConfiguration(){
+
+						@Override
+						public void configure(Binder binder) {
+							binder.bind(ServiceContext.class).in(Shared.class).toInstance(RegistryServiceContext.this);
+						}
+
+					});
+				}
+			}
+			
+		});
 	}
 
 	@Override
@@ -52,6 +72,8 @@ public final class RegistryServiceContext implements ServiceContext{
 
 	@Override
 	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String,String> properties) {
+		
+		
 		ServiceBinding b = new ServiceBinding(properties,implementation);
 		List<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list==null ){
@@ -79,14 +101,24 @@ public final class RegistryServiceContext implements ServiceContext{
 			throw e;
 		}
 
-
 	}
 
+	public <T> void unRegister(Class<T> serviceClass) {
+		
+		List<ServiceBinding> list = registry.get(serviceClass.getName());
+		if (list!=null){
+			list.clear();
+			registry.remove(serviceClass.getName());
+			this.fireServiceRemoved(serviceClass);
+		}
+	}
+	
 	@Override
 	public <T, I extends T> void unRegister(Class<T> serviceClass,I implementation, Map<String,String> properties) {
 		ServiceBinding b = new ServiceBinding(properties,implementation);
 		List<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list!=null && list.remove(b) ){
+			registry.remove(serviceClass.getName());
 			this.fireServiceRemoved(serviceClass);
 		}
 	}
@@ -167,7 +199,7 @@ public final class RegistryServiceContext implements ServiceContext{
 
 			int count=0;
 			for (Map.Entry<String,String> entry : properties.entrySet() ){
-				if (this.properties.get(entry.getValue()).equals(entry.getValue())){
+				if (entry.getValue()!=null && entry.getValue().equals(this.properties.get(entry.getKey()))){
 					count++;
 				}
 			}

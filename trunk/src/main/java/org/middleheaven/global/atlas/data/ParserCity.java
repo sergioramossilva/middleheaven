@@ -25,7 +25,7 @@ public class ParserCity {
 
 		try {
 			InputStream in = new FileInputStream(file);
-			
+
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			reader.readLine(); // first line is header
 			String line;
@@ -34,18 +34,25 @@ public class ParserCity {
 			while((line=reader.readLine())!=null){
 				if(line.trim().length()>0){
 					String[] nameCode = line.split(",");
-					
+
+					nameCode = purge(nameCode);
+
 					String country = nameCode[1].replaceAll("\"", "");
 					if (!country.equals(currentCountry)){
 						if (out!=null){
 							out.close();
 						}
-					    out = new PrintWriter(new FileOutputStream(file.getParentFile().getAbsoluteFile() + "/unlocode-" + country + ".csv"));
-						
+
+						File f = new File(file.getParentFile().getAbsoluteFile() + "/unlocode-" + country + ".csv");
+						if (file.exists()){
+							file.delete();
+						}
+						out = new PrintWriter(new FileOutputStream(f));
+
 						currentCountry = country;
 					}
 					out.println(line.substring(line.indexOf(",")+1).replaceAll("\"", "").replaceAll(",", ";"));
-					
+
 				}
 			}
 			reader.close();
@@ -55,6 +62,26 @@ public class ParserCity {
 			e.printStackTrace();
 		}
 
+	}
+
+	private static String[] purge(String[] nameCode) {
+
+		if (nameCode.length > 6){
+			String[] result = new String[nameCode.length];
+			int j =-1;
+			for (int i =0; i < nameCode.length;i++){
+				if (i==3 && nameCode[i+2].equals(nameCode[i])){
+					i++;
+					continue;
+				} else {
+					j++;
+					result[j] = nameCode[i];
+				}
+			}
+			return result;
+		} else {
+			return nameCode;
+		}
 	}
 
 }

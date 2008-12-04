@@ -26,7 +26,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 
 			client.execute(null); // TODO provide a context
 		} catch (ServiceNotFoundException e){
-			Logging.getBook(this.getClass()).warn("Executing withou UI client");
+			Logging.getBook(this.getClass()).warn("Executing without UI client");
 		}
 
 	}

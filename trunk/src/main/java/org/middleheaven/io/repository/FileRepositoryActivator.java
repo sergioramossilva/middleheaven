@@ -43,6 +43,7 @@ public class FileRepositoryActivator extends ServiceActivator {
 
 	@Override
 	public void inactivate(ServiceAtivatorContext context) {
+
 		// no-op
 		fileRepositoryService = null;
 	}

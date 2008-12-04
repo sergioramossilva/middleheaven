@@ -18,9 +18,32 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 	private List<Language> languages = Collections.emptyList();
 
 	protected Country(String isoCode){
-		super(null,isoCode);
+		super(null,isoCode,isoCode);
+	}
+	
+	protected Country(String isoCode, String name){
+		super(null,isoCode,name);
+	}
+	
+	public String toString(){
+		return this.name;
 	}
 
+	@Override
+	public boolean isCountry() {
+		return true;
+	}
+
+	@Override
+	public boolean isDivision() {
+		return false;
+	}
+
+	@Override
+	public boolean isTown() {
+		return false;
+	}
+	
 	public Currency getCurrentCurrency (){
 		return Currency.getInstance(new Locale(getLanguage().toString(),this.ISOCode()));
 	}
@@ -42,7 +65,7 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 		}
 
 	}
-
+	
 	public Culture getCulture(){
 		return Culture.valueOf(getLanguage().toString(),this.ISOCode());
 	}
@@ -60,17 +83,13 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 	}
 
 
-	public final String getName(){
-		return name;
-	}
-
 	protected final void setName(String name){
 		this.name = name;
 	}
 
 
 	@Override
-	public final String getDesignation() {
+	public final String getName() {
 		return this.ISOCode();
 	}
 

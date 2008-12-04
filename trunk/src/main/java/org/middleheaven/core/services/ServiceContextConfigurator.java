@@ -15,5 +15,7 @@ public class ServiceContextConfigurator {
 		ServiceRegistry.removeEngine(engine);
 	}
 	
-
+	public void removeAllEngines(){
+		ServiceRegistry.removeAllEngines();
+	}
 }

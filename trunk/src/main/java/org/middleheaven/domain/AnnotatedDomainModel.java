@@ -200,7 +200,7 @@ public class AnnotatedDomainModel implements DomainModel{
 		}
 
 		@Override
-		public String logicNameForEntity() {
+		public String getEntityLogicName() {
 			return logicEntityName;
 		}
 

@@ -12,19 +12,19 @@ public class PropertyBindingBuilder<T>  {
 	PropertyBindingBuilder (EditableBinder binder , Binding<T> binding){
 		this.binder = binder;
 		this.binding = binding;
-		this.binding.addAnnotation(Property.class);
+		this.binding.addAnnotation(Name.class);
 		binder.addBinding(binding);
 	}
 
-	public PropertyBindingBuilder named (String name){
+	public PropertyBindingBuilder<T> named (String name){
 		this.name = name;
 		if (this.object != null && name!=null){
-			((PropertyResolver)binding.getResolver()).setProperty(name , object);
+			((PropertyResolver<T>)binding.getResolver()).setProperty(name , object);
 		}
 		return this;
 	}
 	
-	public PropertyBindingBuilder in(Class<? extends ScopePool> scope){
+	public PropertyBindingBuilder<T> in(Class<? extends ScopePool> scope){
 		binding.setTargetScope(scope);
 		return this;
 	}
@@ -32,7 +32,7 @@ public class PropertyBindingBuilder<T>  {
 	public PropertyBindingBuilder<T> toInstance(T object){
 		this.object = object;
 		if (this.object != null && name!=null){
-			((PropertyResolver)binding.getResolver()).setProperty(name , object);
+			((PropertyResolver<T>)binding.getResolver()).setProperty(name , object);
 		}
 		return this;
 	} 

@@ -6,11 +6,13 @@ public abstract class AbstractAtlasLocale implements AtlasLocale {
 
 	private String isoCode;
 	private AtlasLocale parent;
+	protected String name;
 
     
-	protected AbstractAtlasLocale(AtlasLocale parent,  String isoCode){
+	protected AbstractAtlasLocale(AtlasLocale parent,  String isoCode , String name){
 		this.isoCode = isoCode;
 		this.parent = parent;
+		this.name = name;
 	}
     
 	
@@ -22,10 +24,9 @@ public abstract class AbstractAtlasLocale implements AtlasLocale {
 		return isoCode;
 	}
 
-
 	@Override
-	public String getDesignation() {
-		return isoCode;
+	public String getName() {
+		return name;
 	}
 
 	@Override
@@ -43,15 +44,15 @@ public abstract class AbstractAtlasLocale implements AtlasLocale {
 	}
 	
 	public boolean equals(AtlasLocale other){
-		return this.isoCode.equals(other.getDesignation()) && this.parent.equals(other.getParent()); 
+		return this.isoCode.equals(other.getName()) && this.parent.equals(other.getParent()); 
 	}
 	
 	public int hashCode(){
 		return this.isoCode.hashCode() ^ this.parent.hashCode();
 	}
 
-	public final String toString(){
-		return isoCode;
+	public String toString(){
+		return name;
 	}
 	
 	@Override

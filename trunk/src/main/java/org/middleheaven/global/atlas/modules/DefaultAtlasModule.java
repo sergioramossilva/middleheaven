@@ -20,8 +20,13 @@ public class DefaultAtlasModule extends AtlasModule {
 		
 		for (String code : isoCodes ){
 			CountryInfo info = new CountryInfo(code , time);
+			info.setName(code);
+			
 			info.addLanguage(this.findLocaleForCountry(code).getLanguage());
+			context.addCountryInfo(info);
 		}
+		
+		
 	}
 
 	

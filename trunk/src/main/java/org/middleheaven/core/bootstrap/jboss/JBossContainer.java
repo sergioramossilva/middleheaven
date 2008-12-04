@@ -25,6 +25,8 @@ public abstract class JBossContainer extends WebContainer {
        super(context);
     }
     
+ 
+    
     @Override
     public String getEnvironmentName() {
         // TODO add more details like System: versao , OS , etc 
@@ -45,7 +47,6 @@ public abstract class JBossContainer extends WebContainer {
         System.setProperty("java.naming.factory.initial",  "org.jnp.interfaces.NamingContextFactory");
         System.setProperty("java.naming.provider.url", "localhost:1099");
         
- 
     }
 
 

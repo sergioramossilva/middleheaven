@@ -11,11 +11,11 @@ import java.util.Set;
 public class RolePermissionRule implements AccessRule {
 
 	@Override
-	public void assertPermission(User user, Permission permission) throws AccessException {
+	public void assertPermission(AccessModel model, User user, Permission permission) throws AccessException {
 		
-		Set<Role> roles = AuthenticationContext.getAuthenticationContext().getUserRolesModel().getUserRoles(user);
+		Set<Role> roles = model.getUserRolesModel().getUserRoles(user);
 
-		RolesPermissionModel rolePermissionModel = AuthenticationContext.getAuthenticationContext().getRolePermissionModel();
+		RolesPermissionModel rolePermissionModel = model.getRolePermissionModel();
 		
 		for (Role role : roles){
 			if (rolePermissionModel.getRolePermissions(role).implies(permission)){

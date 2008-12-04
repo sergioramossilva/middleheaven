@@ -40,7 +40,7 @@ public abstract class Address {
 		} else if (type.equals(AddressPartType.POSTAL_CODE)){
 			return postalCode.toString();
 		} else if (type.equals(AddressPartType.COUNTRY_CODE)){
-			return country.getDesignation();
+			return country.ISOCode();
 		} else {
 			return parts.get(type);
 		}

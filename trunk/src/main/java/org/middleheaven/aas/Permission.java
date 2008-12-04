@@ -19,19 +19,19 @@ public interface Permission extends Serializable{
     
     /**
      * 
-     * @return <code>true</code> se o <code>ResourceAcessor</code> não
-     * necessita de nenhuma permissão especial para satisfazer esta permissão.
-     * Ou seja, todos os  <code>ResourceAcessor</code> têm acesso ao recurso protegido
-     * por esta permissão.
+     * @return <code>true</code> if the <code>ResourceAcessor</code> does not 
+     * need any special permission to satisfy this permission, i.e.
+     * all <code>ResourceAcessor</code> have access to the resource protected by this permission.
+     * 
      */
     public boolean isLenient();
     
     /**
      * 
-     * @return  <code>true</code> se nenhuma permissão do <code>ResourceAcessor</code> 
-     *  satisfazer esta permissão independente de quais as permissões do <code>ResourceAcessor</code> 
-     * Ou seja, nenhum <code>ResourceAcessor</code> têm acesso ao recurso protegido
-     * por esta permissão.
+     * @return  <code>true</code> if no <code>ResourceAcessor</code> permission
+     * can satisfy this permissions independently of witch permissions the <code>ResourceAcessor</code> has,
+     * i.e. no <code>ResourceAcessor</code> can have acess to the resouce protected by this permission.
+     * 
      */
     public boolean isStrict();
     

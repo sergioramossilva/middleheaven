@@ -27,8 +27,12 @@ public class Atlas implements AtlasLocale{
 	}
 
 	@Override
-	public String getDesignation() {
+	public String ISOCode() {
 		return "atlas";
+	}
+	
+	public String getName(){
+		return "Atlas";
 	}
 
 	@Override
@@ -44,5 +48,20 @@ public class Atlas implements AtlasLocale{
 	@Override
 	public AtlasLocale getChild(String designation) {
 		return ServiceRegistry.getService(AtlasService.class).findCountry(designation);
+	}
+
+	@Override
+	public boolean isCountry() {
+		return false;
+	}
+
+	@Override
+	public boolean isDivision() {
+		return false;
+	}
+
+	@Override
+	public boolean isTown() {
+		return false;
 	}
 }

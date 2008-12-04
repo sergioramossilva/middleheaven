@@ -14,9 +14,9 @@ public class RolePresenceRule implements AccessRule {
 	Map<String, PermissionSet > permissions = new TreeMap<String, PermissionSet >();
 	
 	@Override
-	public final void assertPermission(User user, Permission permission) throws AccessException{
+	public final void assertPermission(AccessModel model, User user, Permission permission) throws AccessException{
 		
-		Set<Role> roles = AuthenticationContext.getAuthenticationContext().getUserRolesModel().getUserRoles(user);
+		Set<Role> roles = model.getUserRolesModel().getUserRoles(user);
 		
 		for (Role role : roles){
 			
@@ -25,7 +25,7 @@ public class RolePresenceRule implements AccessRule {
 			}
 			
 		}
-		throw new RoleMissingException();
+		throw new RoleNotFoundException();
 	}
 
 	
@@ -39,10 +39,7 @@ public class RolePresenceRule implements AccessRule {
 	    for (Permission p : permission){
 	    	set.add((ResourcePermission)p);  
 	    }
-	    
-	    
-		
-		
+
 		return this;
 	}
 

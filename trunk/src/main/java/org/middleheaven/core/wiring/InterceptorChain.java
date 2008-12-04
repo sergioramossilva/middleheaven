@@ -5,9 +5,9 @@ import java.util.List;
 
 public class InterceptorChain<T> {
 
-	List<Interceptor> interceptors = new LinkedList<Interceptor>();
-	int current=-1;
-	Resolver<T> resolver;
+	private List<Interceptor> interceptors = new LinkedList<Interceptor>();
+	private int current=-1;
+	private Resolver<T> resolver;
 	
 	public InterceptorChain(List<Interceptor> interceptors, Resolver<T> resolver) {
 		this.interceptors.addAll(interceptors);

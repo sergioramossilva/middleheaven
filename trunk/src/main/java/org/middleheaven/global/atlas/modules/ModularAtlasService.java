@@ -26,7 +26,15 @@ public class ModularAtlasService implements AtlasService {
 		modules.add(new ISOFileAtlasModule());
 		
 		for (AtlasModule module: modules){
-			module.loadAtlas(context);
+			try{
+				module.loadAtlas(context);
+			} catch (AtlasNotFoundException e){
+				
+			}
+		}
+		
+		if (context.countries().isEmpty()){
+			new DefaultAtlasModule().loadAtlas(context);
 		}
 		
 		context.build();

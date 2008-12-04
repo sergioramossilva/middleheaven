@@ -14,7 +14,7 @@ import org.middleheaven.core.reflection.ReflectionUtils;
 
 final class WireUtils {
 
-	public static <T> T populate (EditableBinder binder,T obj){
+	public static <T> T wireMembers (EditableBinder binder,T obj){
 		Set<Field> fields = ReflectionUtils.allAnnotatedFields(obj.getClass(), Wire.class);
 		try {
 			for (Field f : fields){

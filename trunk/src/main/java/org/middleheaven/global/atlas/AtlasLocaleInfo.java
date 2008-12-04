@@ -32,6 +32,7 @@ public class AtlasLocaleInfo {
 	public String getName() {
 		return name;
 	}
+	
 	public String getIsoCode() {
 		return isoCode;
 	}
