@@ -42,28 +42,28 @@ public abstract class DataBaseDialect {
 	 * 
 	 * @return true if this dialect SQL syntax permits define a explicit limit to the number of rows returned in a query
 	 */
-	public abstract boolean supportsCountLimit();
+	protected abstract boolean supportsCountLimit();
 
 	/**
 	 * 
 	 * @return true if this dialect SQL syntax permits define a explicit offset for the rows returned
 	 */
-	public abstract boolean supportsOffSet();
+	protected abstract boolean supportsOffSet();
 
 
-	public String startDelimiter() {
+	protected String startDelimiter() {
 		return startDelimiter;
 	}
 
-	public String endDelimiter() {
+	protected String endDelimiter() {
 		return endDelimiter;
 	}
 
-	public String fieldSeparator() {
+	protected String fieldSeparator() {
 		return fieldSeparator;
 	}
 
-	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
+	protected void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
 		buffer.append(startDelimiter);
 		buffer.append(hardname.getTableName().toLowerCase());
 		buffer.append(endDelimiter);
@@ -73,7 +73,7 @@ public abstract class DataBaseDialect {
 		buffer.append(endDelimiter);
 	}
 
-	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
+	protected void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
 		buffer.append(startDelimiter);
 		buffer.append(hardname.getTableName().toLowerCase());
 		buffer.append(endDelimiter);
@@ -85,7 +85,7 @@ public abstract class DataBaseDialect {
 		}
 	}
 
-	public void writeEnclosureHardname(StringBuilder buffer , String hardname){
+	protected void writeEnclosureHardname(StringBuilder buffer , String hardname){
 		buffer.append(startDelimiter);
 		buffer.append(hardname);
 		buffer.append(endDelimiter);
@@ -136,7 +136,7 @@ public abstract class DataBaseDialect {
 		return new SQLStoreCollectionCommand(data,sql.toString(),fields);
 	}
 	
-	public <T> Criteria<T> merge(Criteria<T> criteria, StorableEntityModel model){
+	protected <T> Criteria<T> merge(Criteria<T> criteria, StorableEntityModel model){
 		if (criteria instanceof DBCriteria){
 			return (DBCriteria)criteria;
 		}

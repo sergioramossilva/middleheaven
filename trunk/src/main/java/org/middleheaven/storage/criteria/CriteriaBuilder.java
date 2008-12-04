@@ -27,7 +27,7 @@ public final class CriteriaBuilder<T> {
 		this.criteria = new AbstractCriteria<T>(type);
 	}
 
-	public Collection<T> filter(Collection<T> items){
+	protected Collection<T> filter(Collection<T> items){
 		Collection<T> results = new ArrayList<T>(items.size());
 
 		BooleanClassifier<T> filter = new CriteriaFilter<T> (all());

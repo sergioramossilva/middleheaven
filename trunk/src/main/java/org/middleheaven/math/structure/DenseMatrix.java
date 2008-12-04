@@ -258,16 +258,8 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 	@Override
 	public Matrix<F> inverse() {
 		
-		return GaussJordanInvertion.invert(this);
-		/*
-		F zero = this.get(0, 0).minus(this.get(0, 0));
-		F det = this.determinant();
-		if (!(this.isSquare() && !det.equals(zero))){
-			throw new ArithmeticException("Inverse matrix does not exist");
-		}
-
-		return adjoint().times(det.inverse());
-		*/
+		return new DefaultMatrixInvertion().invert(this);
+	
 	}
 
 

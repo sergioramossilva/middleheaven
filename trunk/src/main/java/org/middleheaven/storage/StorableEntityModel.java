@@ -9,7 +9,7 @@ public interface StorableEntityModel extends EntityModel{
 
 	public <E> Class<E> getEntityClass();
 	public String getEntityHardName();
-	public String logicNameForEntity();
+	public String getEntityLogicName();
 	
 	public StorableFieldModel fieldModel(QualifiedName logicName);
 	public StorableFieldModel identityFieldModel();

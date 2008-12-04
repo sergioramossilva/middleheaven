@@ -11,7 +11,9 @@ import java.util.Iterator;
  */
 public class Year implements Serializable{
 
-    private int ordinal;
+	private static final long serialVersionUID = -7801128905367924609L;
+
+	private int ordinal;
    
     private int monthInYear;
     Chronology chronology;
@@ -23,7 +25,7 @@ public class Year implements Serializable{
         this.chronology = chronology;
     }
     
-    
+
     public Chronology getChronology(){
     	return chronology;
     }
@@ -51,6 +53,15 @@ public class Year implements Serializable{
         return new MonthIterator(); 
     }
     
+    
+	public DateHolder start() {
+		return startMonth().start();
+	}
+	
+	public DateHolder end(){
+		return endMonth().end();
+	}
+	
     public Month endMonth(){
     	return Month.ofYear(ordinal, monthInYear);
     }
@@ -58,6 +69,14 @@ public class Year implements Serializable{
     public Month startMonth(){
     	return Month.ofYear(ordinal, 1);
     }
+    
+	public TimeInterval asInterval(){
+		return new TimeInterval (
+				startMonth().asInterval().start(),
+				endMonth().asInterval().end()
+		);
+	}
+	
     
     public Month month(int month){
     	
