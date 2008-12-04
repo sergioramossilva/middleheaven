@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
 import org.middleheaven.core.services.discover.ServiceDiscoveryEngine;
 
 public final class ServiceRegistry {
@@ -26,6 +27,13 @@ public final class ServiceRegistry {
 			engines.remove(engine);
 		}
     }
+    
+    protected static void removeAllEngines(){
+    	for (ServiceDiscoveryEngine engine : engines){
+    		engine.stop(context);
+		}
+    	engines.clear();
+    }
 
     
     public static void addServiceListener (ServiceListener listener){
@@ -36,12 +44,32 @@ public final class ServiceRegistry {
     	context.removeServiceListener(listener);
     }
     
+    /**
+     * Returns a service implementation compatible with <code>serviceClass</code>
+     * @param <T> the serviceClass type
+     * @param serviceClass the serviceClass contract
+     * @return a service implementation compatible with <code>serviceClass</code> contract.
+     * @throws ServiceNotFoundException if no implementation is found for the service
+     */
     public static <T> T getService(Class<T> serviceClass){
     	return getService(serviceClass, Collections.<String,String>emptyMap());
     }
     
+    /**
+     * Returns a service implementation compatible with <code>serviceClass</code>
+     * and the specified service properties
+     * @param <T> the serviceClass type
+     * @param serviceClass the serviceClass contract
+     * @param properties the specific properties for the service implementation
+     * @return a service implementation compatible with <code>serviceClass</code> contract.
+     * @throws ServiceNotFoundException if no implementation is found for the service or the properties
+     */
     public static <T> T getService(Class<T> serviceClass, Map<String,String> properties){
-    	return context.getService(serviceClass, properties);
+    	T service = context.getService(serviceClass, properties);
+    	if (service==null){
+    		throw new ServiceNotFoundException(serviceClass.getName());
+    	}
+    	return service;
     }
 
     public static <T, I extends T> void register(Class<T> serviceClass,I implementation) {

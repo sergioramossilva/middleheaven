@@ -13,6 +13,7 @@ public abstract class WebContainer implements Container  {
 	public WebContainer(ServletContext context) {
 		this.context = context;
 	}
+	
 	 /**
      * @return <code>ManagedFileRepository</code> representing the Repository where application configuration files are stored. 
      * Normally this points to the WEB-INF folder for war applications
@@ -44,6 +45,7 @@ public abstract class WebContainer implements Container  {
     }
 
 
+   
     public ManagedFile getAppClasspathRepository() {
         return ManagedFileRepositories.resolveFile(new File(context.getRealPath("./WEB-INF/classes")));
     }

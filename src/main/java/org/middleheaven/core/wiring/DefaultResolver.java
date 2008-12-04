@@ -39,7 +39,7 @@ public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 			// search not annotated constructors
 			constructors = ReflectionUtils.constructors(type);
 			if (constructors.size()>1){
-				throw new ConfigurationException("Multiple constructors found. Annotate one with @" + Wire.class.getSimpleName());
+				throw new ConfigurationException("Multiple constructors found for " + type + ". Annotate only one with @" + Wire.class.getSimpleName());
 			}
 		} else if (constructors.size()>1){
 			throw new ConfigurationException("Only one constructor may be annotated with @" + Wire.class.getSimpleName());

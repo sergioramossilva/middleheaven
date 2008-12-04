@@ -18,7 +18,7 @@ public abstract class ServiceActivatorDiscoveryEngine implements ServiceDiscover
 	private final List<ServiceActivator> activators = new LinkedList<ServiceActivator>();
 	
 	public void init(ServiceContext context) {
-		LogBook log = context.getLogBook();
+		
 	    List<ServiceActivatorInfo> activatorsInfo = discoverActivators(context);
 		
 	    ServiceActivatorStarter starter = new ServiceActivatorStarter(context,activators);
@@ -30,13 +30,9 @@ public abstract class ServiceActivatorDiscoveryEngine implements ServiceDiscover
 	public void stop(ServiceContext context) {
 		LogBook log = context.getLogBook();
 		
-		for (ServiceActivator activator : this.activators){
-			try {
-				activator.inactivate(context);
-			} catch (Exception e){
-				log.fatal("Impossible to  inactivate " + activator.getClass().getName(), e);
-			}
-		}
+		ServiceActivatorStoper stoper = new ServiceActivatorStoper(context,activators);
+		
+		stoper.stop();
 	}
 	
 	protected abstract List<ServiceActivatorInfo>  discoverActivators(ServiceContext context);

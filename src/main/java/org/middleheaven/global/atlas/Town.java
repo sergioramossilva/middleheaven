@@ -4,18 +4,12 @@ import java.io.Serializable;
 
 public abstract class Town  extends AbstractAtlasLocale implements Serializable{
 
-
-	private String name;
 	AtlasLocale parent;
 	
 	protected Town(AtlasLocale parent , String isoCode,String name){
-		super(parent,isoCode);
-		this.name = name;
+		super(parent,isoCode,name);
 	}
-	
-    public final String getName(){
-    	return name;
-    }
+
 	
 	public boolean equals(Object other){
 		return other instanceof Town && equals((Town)other);
@@ -25,5 +19,21 @@ public abstract class Town  extends AbstractAtlasLocale implements Serializable{
 		return this.ISOCode().equals(other.ISOCode()); 
 	}
 	
+	@Override
+	public boolean isCountry() {
+		return false;
+	}
+
+	@Override
+	public boolean isDivision() {
+		return false;
+	}
+
+	@Override
+	public boolean isTown() {
+		return true;
+	}
+
+
 
 }

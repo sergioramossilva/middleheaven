@@ -60,7 +60,7 @@ public class ServiceActivatorStarter implements Starter<ServiceActivatorInfo> {
 				try{
 					 obj = context.getService(m.getParameterTypes()[0], sinfo.getParams());
 				} catch (ServiceNotFoundException e){
-					 obj =  ServiceProxy.newInstance(m.getParameterTypes()[0],activator,m);
+					 obj =  ServiceProxy.newInstance(m.getParameterTypes()[0],activator,m,sinfo.getParams());
 				}
 				ReflectionUtils.invoke(Void.class, m, activator, obj);
 			}

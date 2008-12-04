@@ -3,10 +3,12 @@ package org.middleheaven.core.wiring.service;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Map;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
+import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.ServiceUnavailableException;
 
@@ -17,22 +19,26 @@ public class ServiceProxy<T> implements ServiceListener, InvocationHandler {
 	Method lateBinder;
 	private Object lateBinderObject;
 	
-	public static <T> T newInstance(Class<T> type,Object lateBinderObject, Method lateBinder){
-		return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type}, new ServiceProxy<T>(type,lateBinderObject,lateBinder));
+	@SuppressWarnings("unchecked")
+	public static <T> T newInstance(Class<T> type,Object lateBinderObject, Method lateBinder,Map<String,String> params){
+		return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type}, new ServiceProxy<T>(type,lateBinderObject,lateBinder,params));
 	}
 	
-	public ServiceProxy(Class<T> serviceClass){
-		this(serviceClass,null,null);
+	public ServiceProxy(Class<T> serviceClass,Map<String,String> params){
+		this(serviceClass,null,null,params);
 	}
 	
-	protected ServiceProxy(Class<T> serviceClass, Object lateBinderObject, Method lateBinder){
+	protected ServiceProxy(Class<T> serviceClass, Object lateBinderObject, Method lateBinder, Map<String,String> params){
 		this.serviceClass = serviceClass;
 		this.lateBinder = lateBinder;
 		this.lateBinderObject = lateBinderObject;
 		
 		// the service may already exist 
-		service = ServiceRegistry.getService(serviceClass);
-		
+		try{
+			service = ServiceRegistry.getService(serviceClass,params);
+		} catch (ServiceNotFoundException e){
+			// no-op : service is not yet available
+		}
 		// register a listener for further service alterations
 		ServiceRegistry.addServiceListener(this);
 
@@ -60,5 +66,14 @@ public class ServiceProxy<T> implements ServiceListener, InvocationHandler {
 			throw new ServiceUnavailableException(serviceClass.getName());
 		}
 		return method.invoke(service, params);
+	}
+	
+	public boolean equals(Object other){
+		return other instanceof ServiceProxy && 
+		this.service != null && this.service.equals(((ServiceProxy)other).service);
+	}
+	
+	public int hashCode(){
+		return this.service == null ? null : service.hashCode();
 	}
 }

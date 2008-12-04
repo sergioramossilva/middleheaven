@@ -10,7 +10,7 @@ public class ResolverBindingBuilder<T> {
 	ResolverBindingBuilder (EditableBinder binder , Binding<T> binding){
 		this.binder = binder;
 		this.binding = binding;
-		this.binding.addAnnotation(Property.class);
+		this.binding.addAnnotation(Name.class);
 		binder.addBinding(binding);
 	}
 	

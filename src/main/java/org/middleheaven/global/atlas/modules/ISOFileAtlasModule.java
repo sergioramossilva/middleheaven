@@ -10,9 +10,12 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.middleheaven.global.atlas.Atlas;
 import org.middleheaven.global.atlas.AtlasContext;
 import org.middleheaven.global.atlas.AtlasLocaleInfo;
 import org.middleheaven.global.atlas.AtlasModule;
+import org.middleheaven.global.atlas.CountryDivisionInfo;
+import org.middleheaven.global.atlas.CountryDivisionType;
 import org.middleheaven.global.atlas.CountryInfo;
 import org.middleheaven.util.measure.time.CalendarDate;
 import org.middleheaven.util.measure.time.DateHolder;
@@ -25,14 +28,14 @@ public class ISOFileAtlasModule extends AtlasModule {
 
 		String atlaspath = System.getProperty("middleheaven.atlas.data.path");
 		if (atlaspath!=null){
-			
+
 			try {
 				File file = new File(atlaspath.replaceAll("file:/", "")).getCanonicalFile();
 				path = file.getAbsolutePath();
 			} catch (IOException e) {
 
 			}
-			
+
 		} 
 
 	}
@@ -42,7 +45,8 @@ public class ISOFileAtlasModule extends AtlasModule {
 			File f = new File( path  + File.separator + filename);
 			return new FileInputStream (f);
 		} catch (FileNotFoundException e) {
-			return this.getClass().getResourceAsStream("/org/middleheaven/global/atlas/data/" + filename);
+			String name = "/" + Atlas.class.getPackage().getName().replaceAll("\\.","/") + "/data/" + filename;
+			return this.getClass().getResourceAsStream(name);
 		}
 	}
 
@@ -62,7 +66,7 @@ public class ISOFileAtlasModule extends AtlasModule {
 						String[] nameCode = line.split(";");
 						CountryInfo info = new CountryInfo(nameCode[1],date);
 						info.setName(nameCode[0]);
-						
+
 						context.addCountryInfo(loadCountry(info));
 
 					}
@@ -74,15 +78,19 @@ public class ISOFileAtlasModule extends AtlasModule {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			throw new AtlasNotFoundException();
 		}
 	}
 
+
+
 	private CountryInfo loadCountry(CountryInfo countryInfo) throws IOException{
-		
+
 		countryInfo.addLanguage( this.findLocaleForCountry(countryInfo.getIsoCode()).getLanguage());
-		
+
 		// read countryDivisions
-		Map<String ,AtlasLocaleInfo > divisions = new TreeMap<String ,AtlasLocaleInfo>();
+		Map<String ,CountryDivisionInfo > divisions = new TreeMap<String ,CountryDivisionInfo>();
 		InputStream in = locate("iso3166-2-"  + countryInfo.getIsoCode() + ".csv");
 		if (in!=null){
 
@@ -91,21 +99,19 @@ public class ISOFileAtlasModule extends AtlasModule {
 			while((line=reader.readLine())!=null){
 				if(line.trim().length()>0){
 					String[] nameCode = line.split(";");
-					AtlasLocaleInfo div = new AtlasLocaleInfo (nameCode[1],countryInfo);
+					CountryDivisionInfo div = new CountryDivisionInfo (nameCode[1],countryInfo);
 					div.setName(nameCode[2]);
-					
+					div.setType(CountryDivisionType.fromText(nameCode[3]));
 					countryInfo.addAtlasLocale(div);
 					divisions.put(div.getIsoCode(), div);
 				}
 			}
 			reader.close();
 		} 
-		
-	
+
 		// read cities
-		boolean hasDivisions = !divisions.isEmpty();
-		
-	    in = locate("unlocode-"  + countryInfo.getIsoCode() + ".csv");
+
+		in = locate("unlocode-"  + countryInfo.getIsoCode() + ".csv");
 		if (in!=null){
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
@@ -113,30 +119,42 @@ public class ISOFileAtlasModule extends AtlasModule {
 			while((line=reader.readLine())!=null){
 				if(line.trim().length()>0){
 					String[] nameCode = line.split(";");
-					
-					if (nameCode.length>4 && !nameCode[4].isEmpty()){
-						if (hasDivisions){
-							AtlasLocaleInfo division = divisions.get(nameCode[4]);
+					if (nameCode.length>4){
+
+						if (divisions.isEmpty()) {
+							countryInfo.addAtlasLocale(new AtlasLocaleInfo(nameCode[1],countryInfo).setName(nameCode[2]));
+						}  else if (nameCode[4].trim().length()>0 ){ // division is defined
+							CountryDivisionInfo division = divisions.get(nameCode[4]);
 							if (division!=null){
 								division.addAtlasLocale(new AtlasLocaleInfo(nameCode[1],division).setName(nameCode[2]));
 							} else {
-								// TODO log
-								System.out.println("Division " + nameCode[4] + " for country " + countryInfo.getIsoCode() + " was not found");
+								// division not found
+								division = new CountryDivisionInfo (nameCode[4],countryInfo);
+								division.setName(nameCode[2]);
+								division.setType(CountryDivisionType.fromText(nameCode[3]));
+
+								countryInfo.addAtlasLocale(division);
+								divisions.put(division.getIsoCode(), division);
+								division.addAtlasLocale(new AtlasLocaleInfo(nameCode[1],division).setName(nameCode[2]));
+
 							}
+
+
 						} else {
-							countryInfo.addAtlasLocale(new AtlasLocaleInfo(nameCode[1],countryInfo).setName(nameCode[2]));
+							System.out.println("Cannot add a non division to a devided country (division=" + nameCode[2] + ", country=" +countryInfo.getIsoCode() + ")");
 						}
 					}
+
 				}
 			}
 			reader.close();
 		} 
-		
+
 		return countryInfo;
 	}
 
 
 
-	
+
 
 }

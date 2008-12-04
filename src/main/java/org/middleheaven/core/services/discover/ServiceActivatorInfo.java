@@ -125,5 +125,17 @@ public class ServiceActivatorInfo {
 	
 	}
 
+	public void unPublishServices(ServiceActivator activator,ServiceContext context) {
+		
+		for (ServiceInfo sinfo : this.servicesProvided){
+			
+			Method m = sinfo.getMethod();
+
+			Object implementation = ReflectionUtils.invoke(m.getReturnType(), m, activator);
+			Class type = m.getReturnType();
+			context.unRegister(type,implementation, sinfo.getParams());
+		}
+	
+	}
 
 }

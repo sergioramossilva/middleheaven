@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 	})
 @BindingSpecification
 @Documented
-public @interface Property {
+public @interface Name {
 
 	String value();
 }

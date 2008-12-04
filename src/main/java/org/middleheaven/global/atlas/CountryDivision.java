@@ -2,47 +2,49 @@ package org.middleheaven.global.atlas;
 
 import java.io.Serializable;
 
-public abstract class CountryDivision implements AtlasLocale , Serializable{
+public abstract class CountryDivision extends AbstractAtlasLocale implements  Serializable{
 
-	private String isoCode;
-	private String name;
-	private Country country;
 
-	protected CountryDivision(Country country, String isoCode,String name){
-		this.isoCode = isoCode;
-		this.name = name;
-		this.country = country;
+	private static final long serialVersionUID = -2027599092597564580L;
+	
+	private CountryDivisionType type;
+
+	protected CountryDivision(Country country, String isoCode,CountryDivisionType type){
+		super(country, isoCode,isoCode);
+		this.type = type;
 	}
     
+	
+	@Override
+	public boolean isCountry() {
+		return false;
+	}
+
+	@Override
+	public boolean isDivision() {
+		return true;
+	}
+
+	@Override
+	public boolean isTown() {
+		return false;
+	}
+	
 	public String ISOCode(){
-		return country.ISOCode() + " "+ isoCode;
+		return this.getParent().ISOCode() + " "+ super.ISOCode();
 	}
 	
-	public String subDevision(){
-		return isoCode;
+	public void setName(String name){
+		this.name = name;
 	}
 	
-	public final String getName(){
-		return name;
+	public CountryDivisionType getType(){
+		return type;
 	}
-
-	@Override
-	public String getDesignation() {
-		return isoCode;
-	}
-
-	@Override
-	public AtlasLocale getParent() {
-		return country;
-	}
-
+	
 	@Override
 	public String getQualifiedDesignation() {
-		return country.getQualifiedDesignation() + "." + isoCode;
-	}
-
-	public final String toString(){
-		return getDesignation();
+		return this.getParent().getQualifiedDesignation() + "." + super.ISOCode();
 	}
 	
 	public boolean equals(Object other){
@@ -50,10 +52,10 @@ public abstract class CountryDivision implements AtlasLocale , Serializable{
 	}
 	
 	public boolean equals(CountryDivision other){
-		return this.isoCode.equals(other.getDesignation()) && this.country.equals(other.country); 
+		return this.ISOCode().equals(other.ISOCode()) && this.getParent().equals(other.getParent()); 
 	}
 	
 	public int hashCode(){
-		return this.isoCode.hashCode() ^ this.country.hashCode();
+		return this.ISOCode().hashCode() ^ this.getParent().hashCode();
 	}
 }

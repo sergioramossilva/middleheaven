@@ -11,7 +11,7 @@ public class ProviderResolver<T> implements Resolver<T> {
 	}
 	
 	@Override
-	public T resolve(WiringSpecification query) {
+	public T resolve(WiringSpecification<T> query) {
 		return injector.getInstance(providerClass).provide();
 	}
 

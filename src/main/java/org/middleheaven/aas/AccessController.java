@@ -3,9 +3,10 @@ package org.middleheaven.aas;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public final class AccessController {
+public final class AccessController implements AccessControlService {
 
 	private Set<AccessRule> rules = new CopyOnWriteArraySet<AccessRule>();
+	private AccessModel model;
 	
 	public AccessController(){}
 	
@@ -24,8 +25,13 @@ public final class AccessController {
 		}
 		
 		for (AccessRule rule: rules){
-			rule.assertPermission(user, permission);
+			rule.assertPermission(model,user, permission);
 		}
+	}
+	
+	
+	public void setAccessModel(AccessModel model){
+		this.model = model;
 	}
 	
 	public AccessController addRule(AccessRule rule){
@@ -36,5 +42,17 @@ public final class AccessController {
 	public AccessController removeRule(AccessRule rule){
 		this.rules.remove(rule);
 		return this;
+	}
+
+	@Override
+	public void assertRole(User user, String roleName) throws RoleNotFoundException {
+		if (!this.model.getUserRolesModel().isUserInRole(user, roleName)){
+			throw new RoleNotFoundException(roleName);
+		}
+	}
+
+	@Override
+	public Set<Role> getUserRoles(User user) {
+		return this.model.getUserRolesModel().getUserRoles(user);
 	}
 }

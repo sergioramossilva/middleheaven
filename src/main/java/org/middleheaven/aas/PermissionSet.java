@@ -5,9 +5,11 @@ import java.util.Iterator;
 
 public class PermissionSet implements Permission {
 
-    private HashMap<String,ResourcePermission> permissions = new HashMap<String,ResourcePermission>(); 
+    private HashMap<String,ResourcePermission> permissions;
     
-    public PermissionSet(){}
+    public PermissionSet(){
+    	permissions = new HashMap<String,ResourcePermission>(); 
+    }
 
     public void add(ResourcePermission p){
         permissions.put(p.resourceName,p);

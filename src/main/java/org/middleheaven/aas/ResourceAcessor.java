@@ -3,7 +3,7 @@ package org.middleheaven.aas;
 
 public interface ResourceAcessor {
 
-    public Object getID();
+    public String getName();
     public boolean hasPermission(Permission permit);
 
 }

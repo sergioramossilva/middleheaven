@@ -7,10 +7,7 @@ import java.io.Serializable;
  * Roles can be mapped to actors who use the application. 
  *
  */
-public interface Role extends Serializable{
+public interface Role extends Serializable,ResourceAcessor{
 
 
-	public String getName();
-	public boolean hasPermission(Permission permission);
-	
 }

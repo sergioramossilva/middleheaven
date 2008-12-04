@@ -8,7 +8,7 @@ public interface AccessRule {
 	 * 
 	 * @param user the user who's permissions are being tested
 	 * @param permission the permission the user must have
-	 * @throws AccessException exception thrown if the user does not have the exception
+	 * @throws AccessException exception thrown if the user does not have the correct permission
 	 */
-	public void assertPermission(User user, Permission permission) throws AccessException;
+	public void assertPermission(AccessModel model, User user, Permission permission) throws AccessException;
 }

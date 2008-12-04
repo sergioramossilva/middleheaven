@@ -25,7 +25,7 @@ import org.middleheaven.logging.LoggingActivator;
 
 /**
  * This is the entry point for all applications
- * Subclasses of <code>ExecutionEnvironmentBootstrap</code> implements
+ * Subclasses of <code>ExecutionEnvironmentBootstrap</code> implement
  * bootstrap in different execution environments and allow
  * the applications execution to be environment independent.
  * 
@@ -37,6 +37,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 	
 	private ListServiceContextConfigurator configurator = new ListServiceContextConfigurator();
 	private SimpleBootstrapService bootstrapService = new SimpleBootstrapService();
+	private RegistryServiceContext serviceRegistryContext;
 	
 	/**
 	 * Start the environment 
@@ -44,7 +45,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 	public final void start(LogBook log){
 		long time = System.currentTimeMillis();
 		
-		RegistryServiceContext serviceRegistryContext = new RegistryServiceContext(log);
+		serviceRegistryContext = new RegistryServiceContext(log);
 
 		doBeforeStart();
 
@@ -81,7 +82,11 @@ public abstract class ExecutionEnvironmentBootstrap {
 		bootstrapService.fireBootupEnd();
 	}
 
-
+	public ServiceContextConfigurator getServiceContextConfigurator(){
+		return this.configurator;
+	}
+	
+	
 	private class SimpleBootstrapService implements BootstrapService{
 		
 
@@ -134,8 +139,14 @@ public abstract class ExecutionEnvironmentBootstrap {
 	public final void stop(){
 		bootstrapService.fireBootdownStart();
 		doBeforeStop();
-		configurator.clear();
+		configurator.removeAllEngines();
+		
+		serviceRegistryContext.unRegister(ServiceContextEngineConfigurationService.class);
+		serviceRegistryContext.unRegister(BootstrapService.class);
+		serviceRegistryContext.unRegister(WiringService.class);
+	
 		doAfterStop();
+
 		bootstrapService.fireBootdownEnd();
 	}
 
@@ -156,11 +167,6 @@ public abstract class ExecutionEnvironmentBootstrap {
 			super.addEngine(engine);
 		}
 		
-		public void clear() {
-			for (ServiceActivatorDiscoveryEngine engine : engines){
-				super.removeEngine(engine);
-			}
-		}
 	}
 	
 		
