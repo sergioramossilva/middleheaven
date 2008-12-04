@@ -1,6 +1,6 @@
 package org.middleheaven.test.atlas;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
 
 import java.io.File;
 import java.net.URL;
@@ -20,9 +20,10 @@ public class AtlasTeste {
 		
 		ChronologicalCountryBuilder context = new ChronologicalCountryBuilder();
 
-		
 		DefaultAtlasModule m = new DefaultAtlasModule();
 		m.loadAtlas(context);
+		
+		context.build();
 		
 		assertEquals(Locale.getISOCountries().length, context.countries().size());
 	}
@@ -35,11 +36,14 @@ public class AtlasTeste {
 		ISOFileAtlasModule m = new ISOFileAtlasModule();
 		m.loadAtlas(context);
 		
+		context.build();
+		
 		assertEquals(246,  context.countries().size());
 		
-	
 		Country brazil = context.get("BR");
 		assertEquals(27, brazil.getChildren().size());
+		
+		assertNotNull(brazil.getChild("MG"));
 		
 		assertEquals(263,brazil.getChild("MG").getChildren().size());
 		
@@ -65,6 +69,8 @@ public class AtlasTeste {
 		
 		ISOFileAtlasModule m = new ISOFileAtlasModule();
 		m.loadAtlas(context);
+		
+		context.build();
 		
 		assertEquals(246,  context.countries().size());
 		

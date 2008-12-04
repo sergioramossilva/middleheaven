@@ -1,31 +1,27 @@
 package org.middleheaven.licence;
 
 import static org.junit.Assert.assertTrue;
-
-import java.io.File;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.core.Container;
-import org.middleheaven.core.bootstrap.StandaloneBootstrap;
-import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
-import org.middleheaven.io.repository.ManagedFileRepositories;
-import org.middleheaven.licence.LicenceService;
-import org.middleheaven.licence.LicenceServiceActivator;
-import org.middleheaven.logging.ConsoleLogBook;
-import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.license.CertificatedLicence;
+import org.middleheaven.license.LicenceServiceActivator;
+import org.middleheaven.license.License;
+import org.middleheaven.license.LicenseException;
+import org.middleheaven.license.LicenseService;
+import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 
-public class LicenceTeste {
+public class LicenceTeste extends MiddleHeavenTestCase{
 
 	@Before
 	public void setUp(){
-		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
-		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
-		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
+		super.setUp();
+		
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
 		engine.addActivator(LicenceServiceActivator.class);
 		new ServiceContextConfigurator().addEngine(engine);
@@ -35,21 +31,42 @@ public class LicenceTeste {
 	@Test(expected=SecurityException.class)
 	public void testSecureService(){
 
-		LicenceService ls = ServiceRegistry.getService(LicenceService.class);
-		ServiceRegistry.register(LicenceService.class, ls);
-		assertTrue(false);
+		// The License Service is not changeable one defined
+		LicenseService ls = ServiceRegistry.getService(LicenseService.class);
+		ServiceRegistry.register(LicenseService.class, ls);
+
+		fail("SecurityException not throwned");
 
 	}
 
 	
 	@Test
-	public void teste(){
-		LicenceService ls = ServiceRegistry.getService(LicenceService.class);
-		Licence licence = ls.getLicence("featureA", "1.0.0");
+	public void testLicenceRead(){
+		LicenseService ls = ServiceRegistry.getService(LicenseService.class);
+		License licence = ls.getLicence("featureA", "1.0.0");
 
 		assertTrue(licence instanceof CertificatedLicence);
 
 		assertTrue(licence.isValid());
 	}
 	
+	@Test
+	public void testLicenceControl(){
+		
+
+		License licence = ServiceRegistry.getService(LicenseService.class)
+				.getLicence("featureA", "1.0.0");
+		
+		try{
+			licence.checkOut();
+		
+			// do protected code
+		
+		} catch (LicenseException e){
+			// no valid license exists
+			fail("LicenseException throwed");
+		} finally {
+			licence.checkIn();
+		}
+	}
 }

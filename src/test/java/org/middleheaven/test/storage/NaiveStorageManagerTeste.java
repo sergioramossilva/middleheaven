@@ -11,14 +11,14 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.inmemory.NaiveStoreKeeper;
+import org.middleheaven.storage.inmemory.InMemoryStoreKeeper;
 
 
 public class NaiveStorageManagerTeste {
 
 	DomainDataStorage manager;
 	TestSubject subj = new TestSubject();
-	NaiveStoreKeeper store = new NaiveStoreKeeper();
+	InMemoryStoreKeeper store = new InMemoryStoreKeeper();
 	
 	@Before
 	public void setUp(){

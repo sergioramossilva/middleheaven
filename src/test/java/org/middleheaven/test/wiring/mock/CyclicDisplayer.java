@@ -1,4 +1,4 @@
-package org.middleheaven.injection.mock;
+package org.middleheaven.test.wiring.mock;
 
 import org.middleheaven.core.wiring.Wire;
 
