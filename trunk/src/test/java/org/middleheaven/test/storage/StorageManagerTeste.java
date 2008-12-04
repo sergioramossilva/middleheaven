@@ -16,7 +16,7 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableDomainModel;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.inmemory.NaiveStoreKeeper;
+import org.middleheaven.storage.inmemory.InMemoryStoreKeeper;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 
@@ -25,7 +25,7 @@ public class StorageManagerTeste {
 
 	DataStorage storage;
 	
-	NaiveStoreKeeper store = new NaiveStoreKeeper();
+	InMemoryStoreKeeper store = new InMemoryStoreKeeper();
 	
 	@Before
 	public void setUp(){

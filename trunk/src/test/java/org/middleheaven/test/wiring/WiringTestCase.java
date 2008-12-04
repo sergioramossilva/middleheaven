@@ -1,58 +1,33 @@
-package org.middleheaven.injection;
+package org.middleheaven.test.wiring;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.middleheaven.core.Container;
-import org.middleheaven.core.bootstrap.StandaloneBootstrap;
-import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
-import org.middleheaven.core.services.ServiceContextConfigurator;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.DefaultWiringService;
 import org.middleheaven.core.wiring.Shared;
 import org.middleheaven.core.wiring.WiringContext;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
-import org.middleheaven.injection.mock.CyclicDisplayer;
-import org.middleheaven.injection.mock.Displayer;
-import org.middleheaven.injection.mock.Greeter;
-import org.middleheaven.injection.mock.HelloMessage;
-import org.middleheaven.injection.mock.Message;
-import org.middleheaven.injection.mock.MockDisplay;
-import org.middleheaven.io.repository.ManagedFileRepositories;
-import org.middleheaven.logging.ConsoleLogBook;
-import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.test.wiring.mock.CyclicDisplayer;
+import org.middleheaven.test.wiring.mock.DictionaryService;
+import org.middleheaven.test.wiring.mock.Displayer;
+import org.middleheaven.test.wiring.mock.Greeter;
+import org.middleheaven.test.wiring.mock.HashDictionaryService;
+import org.middleheaven.test.wiring.mock.HelloMessage;
+import org.middleheaven.test.wiring.mock.Message;
+import org.middleheaven.test.wiring.mock.MockDisplay;
+import org.middleheaven.tool.test.MiddleHeavenTestCase;
+import org.middleheaven.util.ParamsMap;
 
-public class InjectorTest {
+public class WiringTestCase extends MiddleHeavenTestCase {
 
-	
-	@BeforeClass
-	public static void setUp(){
-		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
-		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
-		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
-		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
-
-		new ServiceContextConfigurator().addEngine(engine);
-		
-		WiringService service =ServiceRegistry.getService(WiringService.class);
-	}
-	
-	@After
-	public void tearDown(){
-		
-	}
 	
 	@Test
 	public void simpleTest(){
@@ -81,7 +56,7 @@ public class InjectorTest {
 		
 		// obtain the service it self from wiring
 		
-		WiringContext context = ServiceRegistry.getService(WiringService.class).getWiringContext()
+		WiringContext context = this.getWriringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -97,12 +72,12 @@ public class InjectorTest {
 		
 		assertNotNull(inj1);
 
-		// the service is shared so its the same also
+		// the service is shared so its the same always
 		WiringService inj2 =  context.getInstance(WiringService.class);
 		
-		assertSame(inj1, inj2);
+		assertSame(inj1 , inj2);
 		
-		// the context is the same
+		// the context is also the same
 		WiringContext context2 = inj1.getWiringContext();
 		
 		assertSame(context, context2);
@@ -114,7 +89,7 @@ public class InjectorTest {
 	public void sharedInstanceTest(){
 		final MockDisplay md = new MockDisplay();
 		
-		WiringContext inj = ServiceRegistry.getService(WiringService.class).getWiringContext()
+		WiringContext inj = this.getWriringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -137,7 +112,7 @@ public class InjectorTest {
 	@Test
 	public void cyclicTest(){
 
-		WiringContext inj = ServiceRegistry.getService(WiringService.class).getWiringContext()
+		WiringContext inj = this.getWriringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -158,7 +133,7 @@ public class InjectorTest {
 	@Test
 	public void cyclicSharedTest(){
 
-		WiringContext inj = ServiceRegistry.getService(WiringService.class).getWiringContext()
+		WiringContext inj = this.getWriringContext()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -174,6 +149,48 @@ public class InjectorTest {
 		
 		Greeter g = inj.getInstance(Greeter.class);
 		g.sayHello();
+		
+	}
+	
+	@Test
+	public void serviceWiring(){
+		
+
+		WiringContext inj = this.getWriringContext()
+		.addConfiguration(new BindConfiguration(){
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(DictionaryService.class).in(Service.class);
+				binder.bindScope(Service.class, ServiceScope.class);
+			}
+			
+		});
+		
+
+		ServiceContext serviceContext = inj.getInstance(ServiceContext.class);
+		
+		ParamsMap paramsEn = new ParamsMap();
+		paramsEn.put("lang", "en");
+		serviceContext.register(DictionaryService.class, new HashDictionaryService("en"),paramsEn);
+		
+		ParamsMap paramsPT = new ParamsMap();
+		paramsPT.put("lang", "pt");
+		serviceContext.register(DictionaryService.class, new HashDictionaryService("pt"),paramsPT);
+		
+		
+		DictionaryService enDic = inj.getInstance(DictionaryService.class, paramsEn);
+		
+		assertEquals("en", enDic.getLang());
+		
+		DictionaryService ptDic = inj.getInstance(DictionaryService.class, paramsPT);
+		
+		assertEquals("pt", ptDic.getLang());
+		
+		// with no params the service scope will choose one of the existing implementations
+		DictionaryService eDic = inj.getInstance(DictionaryService.class);
+		
+		assertNotNull(eDic);
 		
 	}
 }

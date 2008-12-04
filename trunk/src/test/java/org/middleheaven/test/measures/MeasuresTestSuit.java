@@ -46,107 +46,7 @@ public class MeasuresTestSuit {
 		assertEquals(AngularMeasure.degrees(90), ap.plus(diff.negate()).reduce());
 	}
 	
-    //@Test 
-    public void matrixLU(){
-    	Matrix<Real> A = Matrix.matrix(3,3, Real.valueOf(
-    			6 , -2 , 0, 
-    			9 ,-1 ,1, 
-    			3, 7, 5
-    			));
-		
-    	Matrix<Real> U = Matrix.matrix(3,3, Real.valueOf(
-    			1, 0.3 , 0, 
-    			0 ,1 ,0.5, 
-    			0, 0, 1
-    			));
-		
-    	
-    	Matrix<Real> L = Matrix.matrix(3,3, Real.valueOf(
-    			6 , 0 , 0, 
-    			9 ,2 , 0, 
-    			3, -8, 1
-    			));
-		
-    	LUDecomposition<Real> lud = new LUDecomposition<Real>(A);
-    	
-    	assertEquals(L , lud.getL());
-    	assertEquals(U , lud.getU());
-    	
-    	
-    	Matrix<Real> N = Matrix.matrix(3,3, Real.valueOf(1 , 1 , 2, 1 ,2 ,1,2, 1, 1));
-		
-    	lud = new LUDecomposition<Real>(N);
-    	
-    	assertEquals(N , lud.getL().times(lud.getU()));
-    }
-    
-
-	@Test
-	public void matrix(){
-
-		Vector<Real> v1 = Vector.vector(1,1,2);
-		Vector<Real> v2 = Vector.vector(1,2,1);
-		Vector<Real> v3 = Vector.vector(2,1,1);
-		
-		Matrix<Real> M = Matrix.matrix(v1,v2,v3);
-		
-		Vector<Real> v4 = Vector.vector(2,2,4);
-		Vector<Real> v5 = Vector.vector(2,4,2);
-		Vector<Real> v6 = Vector.vector(4,2,2);
-		
-		Matrix<Real> N = Matrix.matrix(3,3, Real.valueOf(2 , 2 , 4, 2 ,4 ,2,4, 2, 2));
-		
-	
-		Real det = M.determinant();
-		
-		assertEquals(Real.valueOf(-4),det);
-		
-		assertEquals(Real.valueOf(4),M.trace());
-		
-		assertEquals(M , M.transpose());
-		
-		assertEquals(N , M.times(Real.valueOf(2.0)));
-		
-		assertEquals(N , M.plus(M));
-		
-		Vector<Real> v7 = Vector.vector(12,10,10);
-		assertEquals(v7, M.times(v4));
-		
-		Matrix<Real> P = Matrix.matrix(3,3, Real.valueOf(1 , 1 , 2, 1 ,2 ,1, 2, 1, 1));
-		assertEquals(M, P);
-		
-		Matrix<Real> Q = Matrix.matrix(3,3, Real.valueOf(12 , 10 , 10, 10 ,12 ,10, 10, 10, 12));
-		assertEquals(Q, M.times(N));
-	
-		Matrix<Real> A = Matrix.matrix(3,3, Real.valueOf(1 , 1 , -3, 1 ,-3 ,1, -3, 1, 1));
-		assertEquals(A, M.adjoint());
-		
-		Matrix<Real> I = Matrix.identity(3);
-		assertEquals(I, I.times(I));
-		
-		assertEquals(I.getRow(1), I.getColumn(1));
-		assertEquals(I, M.times(M.inverse()));
-		
-		assertEquals(M, M.times(I));
-
-	}
-
-	@Test 
-	public void randomMatrix (){
-		Matrix<Real> R = Matrix.random(3,3,2);
-	
-		// same seed produces the same matrix
-		assertEquals(R, Matrix.random(3,3,2));
-		
-		// the matrix is invertible
-		assertTrue(R.hasInverse());
-		
-		//big matrix
-		Matrix<Real> P = Matrix.random(10,10,2);
-		Matrix<Real> I = Matrix.identity(10);
-//		assertEquals(I, P.times(P.inverse()));
-	}
-	
+  
 	@Test
 	public void testDimentions(){
 		
@@ -254,13 +154,8 @@ public class MeasuresTestSuit {
 	@Test(expected=IllegalArgumentException.class)
 	public void testWrongIsoCode(){
 
-		try {
-			Money.money(330, "EU"); // eu is not a iso code
-			assertFalse(true);
-		} catch (IllegalArgumentException e){
-			assertTrue(true);
-		}
-		
+		Money.money(330, "EU"); // eu is not a iso code
+
 	}
 	
 	@Test
@@ -298,21 +193,7 @@ public class MeasuresTestSuit {
 		
 	}
 	
-	@Test
-	public void testNumbers(){
-		
-		Real a = Real.valueOf(1.2);
-		Real b = Real.valueOf(1.2);
-		Real c = Real.valueOf(2.4);
-		
-		assertEquals(c, a.plus(b));
-		
-		Integer i = Integer.valueOf(10);
-		Integer j = Integer.valueOf(12);
-		
-		assertEquals(Real.valueOf(11.2), a.plus(i));
-		assertEquals(j, i.times(a));
-	}
+
 	@Test
 	public void testDurationAndPeriod(){
 		
