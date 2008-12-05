@@ -66,7 +66,7 @@ public final class Culture implements Serializable{
 	}
 	
 	public Language getLanguage(){
-		return new Language(language);
+		return Language.valueOf(language);
 	}
 	
 	public Chronology getChonology(){

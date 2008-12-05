@@ -6,27 +6,30 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.middleheaven.global.Language;
+
 public abstract class AtlasModule {
 
-	Map<String , List<Locale> > countryLocales;
+	Map<String , List<Language> > countryLocales;
 	
-	protected synchronized Locale findLocaleForCountry(String isoCode){
+	protected synchronized Language findLocaleForCountry(String isoCode){
 		if (countryLocales==null){
+			// load locales
 			final Locale[] locales = Locale.getAvailableLocales();
-			countryLocales = new TreeMap<String , List<Locale> >();
+			countryLocales = new TreeMap<String , List<Language> >();
 			for (Locale locale : locales ){
-				List<Locale> list = countryLocales.get(locale.getCountry());
+				List<Language> list = countryLocales.get(locale.getCountry());
 				if (list==null){
-					list=new ArrayList<Locale>();
+					list=new ArrayList<Language>();
 					countryLocales.put(locale.getCountry(), list);
 				}
-				list.add(locale);
+				list.add(Language.valueOf(locale.getLanguage()));
 			}
 		}
 		
-		List<Locale> list =  countryLocales.get(isoCode);
+		List<Language> list =  countryLocales.get(isoCode);
 		if (list==null || list.isEmpty()){
-			return new Locale("",isoCode);
+			return Language.valueOf("");
 		} else {
 			return list.get(0);
 		}

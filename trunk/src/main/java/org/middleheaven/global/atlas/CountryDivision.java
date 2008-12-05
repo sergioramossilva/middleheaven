@@ -29,10 +29,7 @@ public abstract class CountryDivision extends AbstractAtlasLocale implements  Se
 	public boolean isTown() {
 		return false;
 	}
-	
-	public String ISOCode(){
-		return this.getParent().ISOCode() + " "+ super.ISOCode();
-	}
+
 	
 	public void setName(String name){
 		this.name = name;

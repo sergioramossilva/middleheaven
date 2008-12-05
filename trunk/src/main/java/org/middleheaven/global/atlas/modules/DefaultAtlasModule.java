@@ -22,7 +22,7 @@ public class DefaultAtlasModule extends AtlasModule {
 			CountryInfo info = new CountryInfo(code , time);
 			info.setName(code);
 			
-			info.addLanguage(this.findLocaleForCountry(code).getLanguage());
+			info.addLanguage(this.findLocaleForCountry(code));
 			context.addCountryInfo(info);
 		}
 		

@@ -66,7 +66,8 @@ public class ISOFileAtlasModule extends AtlasModule {
 						String[] nameCode = line.split(";");
 						CountryInfo info = new CountryInfo(nameCode[1],date);
 						info.setName(nameCode[0]);
-
+						info.addLanguage(this.findLocaleForCountry(info.getIsoCode()));
+						
 						context.addCountryInfo(loadCountry(info));
 
 					}
@@ -87,8 +88,7 @@ public class ISOFileAtlasModule extends AtlasModule {
 
 	private CountryInfo loadCountry(CountryInfo countryInfo) throws IOException{
 
-		countryInfo.addLanguage( this.findLocaleForCountry(countryInfo.getIsoCode()).getLanguage());
-
+	
 		// read countryDivisions
 		Map<String ,CountryDivisionInfo > divisions = new TreeMap<String ,CountryDivisionInfo>();
 		InputStream in = locate("iso3166-2-"  + countryInfo.getIsoCode() + ".csv");
@@ -127,7 +127,9 @@ public class ISOFileAtlasModule extends AtlasModule {
 							CountryDivisionInfo division = divisions.get(nameCode[4]);
 							if (division!=null){
 								division.addAtlasLocale(new AtlasLocaleInfo(nameCode[1],division).setName(nameCode[2]));
-							} else {
+							} 
+							/*
+							else {
 								// division not found
 								division = new CountryDivisionInfo (nameCode[4],countryInfo);
 								division.setName(nameCode[2]);
@@ -138,11 +140,12 @@ public class ISOFileAtlasModule extends AtlasModule {
 								division.addAtlasLocale(new AtlasLocaleInfo(nameCode[1],division).setName(nameCode[2]));
 
 							}
+*/
 
-
-						} else {
-							System.out.println("Cannot add a non division to a devided country (division=" + nameCode[2] + ", country=" +countryInfo.getIsoCode() + ")");
-						}
+						} //else {
+							// Cannot add a non division to a devided country 
+							// no op
+						//}
 					}
 
 				}
