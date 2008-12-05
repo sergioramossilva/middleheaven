@@ -2,7 +2,6 @@ package org.middleheaven.global.atlas;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -11,6 +10,8 @@ import org.middleheaven.global.Culture;
 import org.middleheaven.global.Language;
 import org.middleheaven.global.address.AddressModel;
 import org.middleheaven.global.address.DefaultAddressModel;
+import org.middleheaven.util.measure.money.Currency;
+import org.middleheaven.util.measure.money.ISOCurrency;
 
 public abstract class Country extends AbstractAtlasLocale implements Serializable {
 
@@ -45,7 +46,7 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 	}
 	
 	public Currency getCurrentCurrency (){
-		return Currency.getInstance(new Locale(getLanguage().toString(),this.ISOCode()));
+		return new ISOCurrency(java.util.Currency.getInstance(new Locale(getLanguage().toString(),this.ISOCode())));
 	}
 
 	public Language getLanguage(){

@@ -30,8 +30,8 @@ public class  CountryInfo extends AtlasLocaleInfo {
 		return languages;
 	}
 
-	public void addLanguage(String languageCode) {
-		languages.add(new Language(languageCode));
+	public void addLanguage(Language language) {
+		languages.add(language);
 	}
 
 	

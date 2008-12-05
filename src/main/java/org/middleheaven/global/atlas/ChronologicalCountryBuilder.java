@@ -90,11 +90,6 @@ public class ChronologicalCountryBuilder implements AtlasContext{
 			super(isoCode);
 		}
 
-		public void addLanguage(Language language) {
-			// TODO Auto-generated method stub
-			
-		}
-
 		public void addAtlasLocale(AtlasLocale cal) {
 			children.put(cal.ISOCode(), cal);
 		}
