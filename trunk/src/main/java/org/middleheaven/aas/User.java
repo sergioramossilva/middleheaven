@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * Represents an application user (human or otherwise)
  * 
- * Autentication is the process of atributing roles based on credencials the user has;
+ * Authentication is the process of attributing roles based on credencials the user has;
  * 
  *
  */

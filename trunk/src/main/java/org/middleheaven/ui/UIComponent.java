@@ -1,5 +1,6 @@
 package org.middleheaven.ui;
 
+import java.util.List;
 import java.util.Set;
 
 import org.middleheaven.ui.rendering.RenderType;
@@ -10,7 +11,7 @@ import org.middleheaven.ui.rendering.RenderType;
  *
  * @author Sérgio M.M. Taborda
  */
-public interface UIComponent {
+public interface UIComponent extends UIArea {
 
     /**
      * @return ID that uniquely identifies this component
@@ -56,10 +57,10 @@ public interface UIComponent {
     public void setUIParent(UIComponent parent);
     
     /**
-     * @return ummodifiable children components set. Use <code>addComponent()</code> and <code>removeComponent()</code>
+     * @return ummodifiable children components set as a <code>List</code>. Use <code>addComponent()</code> and <code>removeComponent()</code>
      * to edit the set.
      */
-    public Set<UIComponent> getChildrenComponents();
+    public List<UIComponent> getChildrenComponents();
     
     /**
      * 
@@ -99,6 +100,10 @@ public interface UIComponent {
     public boolean equals(Object other);
     
     public int hashCode();
+
+	public void setBounds(int x, int y, int width, int height);
+
+	public void setBounds(int x, int y);
     
 
 }

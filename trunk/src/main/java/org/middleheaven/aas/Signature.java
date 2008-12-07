@@ -4,6 +4,6 @@ public interface Signature {
 
 	boolean isValid();
 
-	Object refresh();
+	void refresh();
 
 }
