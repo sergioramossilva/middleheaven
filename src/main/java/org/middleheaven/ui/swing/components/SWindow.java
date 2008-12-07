@@ -1,5 +1,6 @@
 package org.middleheaven.ui.swing.components;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
@@ -34,7 +35,7 @@ public class SWindow extends JFrame implements UIComponent{
 	}
 
 	@Override
-	public Set<UIComponent> getChildrenComponents() {
+	public List<UIComponent> getChildrenComponents() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -102,6 +103,11 @@ public class SWindow extends JFrame implements UIComponent{
 	@Override
 	public void setUIParent(UIComponent parent) {
 		this.parent = parent;
+	}
+
+	@Override
+	public void setBounds(int x, int y) {
+		this.setBounds(x, y, this.getWidth(), this.getHeight());
 	}
 
 }

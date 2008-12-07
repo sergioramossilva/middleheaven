@@ -1,7 +1,8 @@
 package org.middleheaven.ui;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.middleheaven.ui.rendering.RenderType;
@@ -10,7 +11,7 @@ public class GenericUIComponent implements UIContainer,UILayout{
 
 	static private int nextID=0;
 	
-	private Set<UIComponent> children = new HashSet<UIComponent>();
+	private List<UIComponent> children = new LinkedList<UIComponent>();
 	private UILayout layout = null;
 	private String id;
 	private String familly; 
@@ -19,6 +20,12 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	private UIComponent parent;
 	private boolean visible = true;
 	private boolean enable = true;
+
+	private int x;
+	private int y;
+
+	private int height;
+	private int width;
 	
 	
 	public GenericUIComponent(RenderType renderType, String familly){
@@ -50,7 +57,7 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	}
 	
 	@Override
-	public void addChildComponent(UIComponent component, Object layoutConstrain) {
+	public void addChildComponent(UIComponent component, UILayoutConstraint layoutConstrain) {
 		if (layout!=null){
 			layout.addChildComponent(component,layoutConstrain);
 		} else {
@@ -96,8 +103,8 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	}
 	
 	@Override
-	public Set<UIComponent> getChildrenComponents() {
-		return Collections.unmodifiableSet(this.children);
+	public List<UIComponent> getChildrenComponents() {
+		return Collections.unmodifiableList(this.children);
 	}
 
 	@Override
@@ -177,12 +184,34 @@ public class GenericUIComponent implements UIContainer,UILayout{
 
 	@Override
 	public int getHeight() {
-		return 100;
+		return this.height;
 	}
 
 	@Override
 	public int getWidth() {
-		return 100;
+		return this.width;
+	}
+
+	public int getX(){
+		return this.x;
+	}
+	
+	public int getY(){
+		return this.y;
+	}
+	
+	@Override
+	public void setBounds(int x, int y, int width, int height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+
+	@Override
+	public void setBounds(int x, int y) {
+		// TODO implement UIComponent.setBounds
+		
 	}
 
 

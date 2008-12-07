@@ -3,6 +3,7 @@ package org.middleheaven.ui;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.middleheaven.ui.rendering.RenderType;
@@ -70,7 +71,7 @@ public final class UIQuery {
     }
     
     private static UIComponent searchChildContainer(UIComponent base, String id){
-        Set<UIComponent> components = base.getChildrenComponents();
+        List<UIComponent> components = base.getChildrenComponents();
         
         for (UIComponent component : components){
             if (component instanceof NamingContainer && component.getID().equals(id)){
@@ -90,7 +91,7 @@ public final class UIQuery {
     
     private static void searchChildren(UIComponent parent , Collection<UIComponent> foundChilds , String id){
         boolean found = false;
-        Set<UIComponent> components = parent.getChildrenComponents();
+        List<UIComponent> components = parent.getChildrenComponents();
 
         for (UIComponent component : components){
       
