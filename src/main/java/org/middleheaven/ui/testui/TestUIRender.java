@@ -14,7 +14,7 @@ public class TestUIRender extends UIRender {
 		TestUIComponent t=  new TestUIComponent(component.getType(), component.getFamily());
 		
 		t.setUIModel(component.getUIModel());
-		t.setID(component.getID());
+		t.setGID(component.getGID());
 		t.setUIParent(parent);
 
 		return t;

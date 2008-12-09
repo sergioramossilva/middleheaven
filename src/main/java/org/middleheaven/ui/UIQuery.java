@@ -6,8 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.middleheaven.ui.rendering.RenderType;
-
 public final class UIQuery {
 
 	public static UIQuery findRoot(){
@@ -45,7 +43,7 @@ public final class UIQuery {
             }
         }
         
-        if (isRoot && base.getType().equals(RenderType.ROOT) ){
+        if (isRoot && UIClient.class.equals( base.getType()) ){
             return Collections.singleton(base);
         }
         
@@ -74,7 +72,7 @@ public final class UIQuery {
         List<UIComponent> components = base.getChildrenComponents();
         
         for (UIComponent component : components){
-            if (component instanceof NamingContainer && component.getID().equals(id)){
+            if (component instanceof NamingContainer && component.getGID().equals(id)){
                 return component;
             }
         }
@@ -95,7 +93,7 @@ public final class UIQuery {
 
         for (UIComponent component : components){
       
-            if (component.getID().equals(id)){
+            if (component.getGID().equals(id)){
                 foundChilds.add(component);
                 found = true;
             }

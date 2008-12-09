@@ -41,7 +41,7 @@ public class SwingUITest {
 		UIComponent wui = srk.renderComponent(context, uie, root);
 		
 		assertNotNull(wui);
-		assertEquals(root.getID(), wui.getID());
+		assertEquals(root.getGID(), wui.getGID());
 		assertTrue(wui instanceof JFrame);
 		
 	}

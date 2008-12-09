@@ -6,9 +6,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.middleheaven.logging.Logging;
+import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.UIContainer;
-import org.middleheaven.ui.UILayout;
+import org.middleheaven.ui.components.UIContainer;
+import org.middleheaven.ui.components.UILayout;
 
 /**
  * 
@@ -40,7 +41,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         if (render ==null){
             throw new IllegalStateException("Render not found for component " + component.getType() + ":" + component.getFamily());
         }
-        if (!component.getType().equals(RenderType.ROOT)){
+        if (!UIClient.class.equals(component)){
             if (parent==null || !isRendered(parent)){
                 throw new IllegalArgumentException("Parent component is not rendered. Parent is " + String.valueOf(parent));
             }
@@ -55,7 +56,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         // render component
         UIComponent renderedComponent = render.render(context, parent, component);
         // copy IDs
-        renderedComponent.setID(component.getID());
+        renderedComponent.setGID(component.getGID());
         //copy models
         renderedComponent.setUIModel(component.getUIModel());
         
@@ -82,7 +83,7 @@ public abstract class AbstractRenderKit extends RenderKit {
     }
 
 
-    public UIRender getRender(RenderType componentType, String familly) {
+    public <T extends UIComponent> UIRender getRender(Class<T> componentType, String familly) {
         
         RenderPropertiesKey key = new RenderPropertiesKey(familly, componentType);
         
@@ -100,12 +101,12 @@ public abstract class AbstractRenderKit extends RenderKit {
         
     }
 
-    public void addRender(UIRender render, RenderType componentType) {
+    public <T extends UIComponent>  void addRender(UIRender render, Class<T> componentType) {
         addRender(render,componentType,"");
     }
 
 
-    public final void addRender(UIRender render, RenderType componentType, String familly) {
+    public final <T extends UIComponent>  void addRender(UIRender render,  Class<T> componentType, String familly) {
         
         RenderPropertiesKey key = new RenderPropertiesKey(familly, componentType);
         
@@ -123,9 +124,9 @@ public abstract class AbstractRenderKit extends RenderKit {
 		private static final long serialVersionUID = 1L;
 		
 		final String familly; 
-        final RenderType type;
+        final Class<?> type;
         
-        public RenderPropertiesKey(String familly , RenderType type){
+        public RenderPropertiesKey(String familly , Class<?>  type){
             this.familly = familly==null?"":familly.trim();
             this.type = type;
         }
@@ -135,8 +136,8 @@ public abstract class AbstractRenderKit extends RenderKit {
         }
 
 
-        public final RenderType getRenderType() {
-            return type;
+        public final <T extends UIComponent> Class<T> getRenderType() {
+            return (Class<T>) type;
         }
         
         public final boolean equals(Object other){
@@ -144,7 +145,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         }
         
         public final boolean equals(RenderPropertiesKey other){
-            return this.type.equals(other.type) && this.familly.equals(other.familly);
+            return this.type.getName().equals(other.type.getName()) && this.familly.equals(other.familly);
         }
         
         public final int hashCode(){

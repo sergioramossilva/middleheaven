@@ -1,9 +1,8 @@
 package org.middleheaven.ui.testui;
 
-import org.middleheaven.ui.UIArea;
+import org.middleheaven.ui.Displayable;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
-import org.middleheaven.ui.rendering.RenderType;
 import org.middleheaven.ui.rendering.UIRender;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
@@ -16,7 +15,7 @@ public class TestRenderKit extends AbstractRenderKit {
 	final UIUnitConverter converter = new UIUnitConverter(){
 
 		@Override
-		protected double[] getDialogBaseUnits(UIArea layoutable) {
+		protected double[] getDialogBaseUnits(Displayable layoutable) {
 			return new double[]{100.0,100.0};
 		}
 		
@@ -33,7 +32,7 @@ public class TestRenderKit extends AbstractRenderKit {
 		return converter;
 	}
 
-	public UIRender getRender(RenderType componentType, String familly) {
+	public <T extends UIComponent> UIRender getRender(Class<T> componentType, String familly) {
 		return render;
 	}
 

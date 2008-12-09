@@ -1,6 +1,6 @@
 package org.middleheaven.ui.rendering;
 
-import org.middleheaven.ui.UIArea;
+import org.middleheaven.ui.Displayable;
 
 public abstract class UIUnitConverter {
 
@@ -9,7 +9,7 @@ public abstract class UIUnitConverter {
     protected UIUnitConverter(){}
 
 
-    public final int convertVertical(String unitValue, UIArea container ,int availableSpace){
+    public final int convertVertical(String unitValue, Displayable container ,int availableSpace){
         unitValue = unitValue.toLowerCase();
         int res=0;
         if (unitValue.startsWith("g")){
@@ -26,7 +26,7 @@ public abstract class UIUnitConverter {
         return res;
     }
 
-    public final int convertHorizontal(String unitValue, UIArea container , int availableSpace){
+    public final int convertHorizontal(String unitValue, Displayable container , int availableSpace){
         if (unitValue.trim().length()==0){
             throw new IllegalArgumentException("Unitvalue cannot be empty");
         }
@@ -47,6 +47,6 @@ public abstract class UIUnitConverter {
         return res;
     }
 
-    protected abstract double[] getDialogBaseUnits(UIArea layoutable);
+    protected abstract double[] getDialogBaseUnits(Displayable layoutable);
 
 }

@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.middleheaven.ui.ComponentAggregationEvent;
-import org.middleheaven.ui.UIArea;
+import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UILayoutConstraint;
-import org.middleheaven.ui.UILayoutModel;
+import org.middleheaven.ui.models.UILayoutModel;
 
 public class UIBorderLayoutModel implements UILayoutModel {
 
@@ -41,7 +41,7 @@ public class UIBorderLayoutModel implements UILayoutModel {
 	}
 
 	@Override
-	public UIArea getLayoutablePreferedSize(UIArea layoutable) {
+	public UIDimension getLayoutablePreferedSize(UIDimension layoutable) {
 		return layoutable;
 	}
 

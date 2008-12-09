@@ -1,12 +1,13 @@
 package org.middleheaven.ui.swing;
 
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import org.middleheaven.ui.UIComponent;
+import org.middleheaven.ui.awt.TrayIconRender;
+import org.middleheaven.ui.components.UIDesktopTrayIcon;
+import org.middleheaven.ui.components.UIWindow;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
-import org.middleheaven.ui.rendering.RenderType;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
 public class SwingRenderKit extends AbstractRenderKit {
@@ -15,7 +16,8 @@ public class SwingRenderKit extends AbstractRenderKit {
 	
 	public SwingRenderKit(){
 			
-		this.addRender(new SWindowRender(), RenderType.WINDOW);
+		this.addRender(new SWindowRender(), UIWindow.class);
+		this.addRender(new TrayIconRender(), UIDesktopTrayIcon.class);
 	}
 	
 	@Override

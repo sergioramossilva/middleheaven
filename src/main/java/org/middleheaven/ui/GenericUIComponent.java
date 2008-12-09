@@ -5,9 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.middleheaven.ui.rendering.RenderType;
+import org.middleheaven.ui.components.UIContainer;
+import org.middleheaven.ui.components.UIInput;
+import org.middleheaven.ui.components.UILayout;
 
-public class GenericUIComponent implements UIContainer,UILayout{
+public class GenericUIComponent<T extends UIComponent> implements UIContainer,UILayout{
 
 	static private int nextID=0;
 	
@@ -15,7 +17,7 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	private UILayout layout = null;
 	private String id;
 	private String familly; 
-	private RenderType renderType;
+	private Class<T> renderType;
 	private UIModel model;
 	private UIComponent parent;
 	private boolean visible = true;
@@ -28,24 +30,24 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	private int width;
 	
 	
-	public GenericUIComponent(RenderType renderType, String familly){
+	public GenericUIComponent(Class<T> renderType, String familly){
 		this.renderType = renderType;
 		this.familly = familly;
 		this.id = Integer.toString(nextID++);
-		if (!renderType.equals(RenderType.LAYOUT)){
-			layout = new GenericUIComponent(RenderType.LAYOUT,"border");
+		if (!renderType.equals(UIInput.class)){
+			layout = new GenericUIComponent(UILayout.class,"border");
 		}
 
 	}
 	
 	// Special Methods for genericUIComponent 
 	
-	public GenericUIComponent addComponent(RenderType renderType, String familly){
+	public  GenericUIComponent addComponent(Class<T> renderType, String familly){
 		return new GenericUIComponent( renderType,  familly);
 	}
 	
 	public boolean equals(UIComponent other){
-		return this.id.equals(other.getID());
+		return this.id.equals(other.getGID());
 	}
 	
 	public int hashCode(){
@@ -66,12 +68,17 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	}
 	
 	@Override
-	public void addChildComponent(UIComponent component) {
+	public void addComponent(UIComponent component) {
 		children.add(component);
 	}
 	
 	@Override
-	public void removeChildComponent(UIComponent component) {
+	public void addComponent(UIComponent component,UILayoutConstraint layoutConstrain) {
+		children.add(component);
+	}
+
+	@Override
+	public void removeComponent(UIComponent component) {
 		children.remove(component);
 	}
 
@@ -118,12 +125,12 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	}
 
 	@Override
-	public String getID() {
+	public String getGID() {
 		return id;
 	}
 
 	@Override
-	public RenderType getType() {
+	public Class<T> getType() {
 		return renderType;
 	}
 
@@ -163,7 +170,7 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	}
 
 	@Override
-	public void setID(String id) {
+	public void setGID(String id) {
 		this.id = id;
 	}
 
@@ -209,9 +216,28 @@ public class GenericUIComponent implements UIContainer,UILayout{
 	}
 
 	@Override
-	public void setBounds(int x, int y) {
-		// TODO implement UIComponent.setBounds
-		
+	public void setPosition(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
+
+
+
+	@Override
+	public UIDimension getDimension() {
+		return new UIDimension(this.width,this.height);
+	}
+
+	@Override
+	public UIPosition getPosition() {
+		return new UIPosition(x,y);
+	}
+
+	@Override
+	public void setSize(UIDimension size) {
+		this.width = size.getWidth();
+		this.height = size.getHeight();
 	}
 
 

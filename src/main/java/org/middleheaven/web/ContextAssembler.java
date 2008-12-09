@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.middleheaven.core.reflection.BeanAssembler;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.ui.Context;
+import org.middleheaven.ui.ContextScope;
 
 public class ContextAssembler implements BeanAssembler {
 

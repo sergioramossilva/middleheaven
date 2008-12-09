@@ -1,6 +1,5 @@
 package org.middleheaven.ui;
 
-import org.middleheaven.ui.client.UIClient;
 
 public interface UIService {
 

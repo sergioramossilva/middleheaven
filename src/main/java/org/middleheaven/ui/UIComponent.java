@@ -3,22 +3,20 @@ package org.middleheaven.ui;
 import java.util.List;
 import java.util.Set;
 
-import org.middleheaven.ui.rendering.RenderType;
-
 
 /**
  * Abstract base visual component.  
  *
  * @author Sérgio M.M. Taborda
  */
-public interface UIComponent extends UIArea {
+public interface UIComponent extends  Displayable {
 
     /**
      * @return ID that uniquely identifies this component
      */
-    public String getID();
+    public String getGID();
     
-    public void setID(String id);
+    public void setGID(String id);
 
     /**
      * 
@@ -38,7 +36,7 @@ public interface UIComponent extends UIArea {
      * 
      * @return component rendering type
      */
-    public RenderType getType();
+    public <T extends UIComponent> Class<T> getType();
     
     /**
      * @return component rendering family
@@ -72,13 +70,13 @@ public interface UIComponent extends UIArea {
      * Add a component
      * @param component component to add
      */
-    public void addChildComponent(UIComponent component);
+    public void addComponent(UIComponent component);
     
     /**
      * Remove a component
      * @param component component to remove
      */
-    public void removeChildComponent(UIComponent component);
+    public void removeComponent(UIComponent component);
     
     /**
      * Executes a UIQuery upon this component.
@@ -93,6 +91,7 @@ public interface UIComponent extends UIArea {
     
     public void setEnabled(boolean enabled);
     public boolean isEnabled();
+    
     public void gainFocus();
     public boolean hasFocus();
     
@@ -101,9 +100,7 @@ public interface UIComponent extends UIArea {
     
     public int hashCode();
 
-	public void setBounds(int x, int y, int width, int height);
 
-	public void setBounds(int x, int y);
     
 
 }

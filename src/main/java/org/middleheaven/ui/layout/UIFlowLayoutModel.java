@@ -3,9 +3,9 @@ package org.middleheaven.ui.layout;
 import java.util.List;
 
 import org.middleheaven.ui.ComponentAggregationEvent;
-import org.middleheaven.ui.UIArea;
+import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.UILayoutModel;
+import org.middleheaven.ui.models.UILayoutModel;
 
 public class UIFlowLayoutModel implements UILayoutModel {
 
@@ -16,7 +16,7 @@ public class UIFlowLayoutModel implements UILayoutModel {
 	public void componentRemoved(ComponentAggregationEvent event) {}
 
 	@Override
-	public UIArea getLayoutablePreferedSize(UIArea layoutable) {
+	public UIDimension getLayoutablePreferedSize(UIDimension layoutable) {
 		return layoutable;
 	}
 
@@ -43,7 +43,7 @@ public class UIFlowLayoutModel implements UILayoutModel {
 			} else {
 				remainingWidth -=  componentWidth;
 				previousX += componentWidth;
-				component.setBounds(previousX, 0);
+				component.setPosition(previousX, 0);
 			}
 
 		}
