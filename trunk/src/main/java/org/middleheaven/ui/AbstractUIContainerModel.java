@@ -3,6 +3,10 @@ package org.middleheaven.ui;
 import java.util.List;
 import java.util.Set;
 
+import org.middleheaven.ui.components.UIContainer;
+import org.middleheaven.ui.components.UILayout;
+import org.middleheaven.ui.models.UIContainerModel;
+
 
 public class AbstractUIContainerModel implements UIContainerModel {
 

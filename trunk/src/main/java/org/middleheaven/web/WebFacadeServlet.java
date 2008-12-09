@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.logging.Logging;
+import org.middleheaven.ui.ContextScope;
 
 public final class WebFacadeServlet extends HttpServlet {
 

@@ -1,5 +1,5 @@
 package org.middleheaven.ui.testui;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -13,11 +13,10 @@ import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.ui.AbstractUIContainerModel;
 import org.middleheaven.ui.GenericUIComponent;
+import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.rendering.RenderType;
+import org.middleheaven.ui.components.UIView;
 import org.middleheaven.ui.rendering.RenderingContext;
-import org.middleheaven.ui.testui.TestRenderKit;
-import org.middleheaven.ui.testui.TestUIComponent;
 
 
 
@@ -29,8 +28,8 @@ public class UITest {
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
-		root = new GenericUIComponent(RenderType.ROOT, null);
-		UIComponent frame = root.addComponent(RenderType.FRAME, null);
+		root = new GenericUIComponent(UIClient.class, null);
+		UIComponent frame = root.addComponent(UIView.class, null);
 		frame.setUIModel(new AbstractUIContainerModel());
 	
 	}

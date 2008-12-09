@@ -3,13 +3,13 @@ package org.middleheaven.ui.swing;
 import java.awt.Container;
 import java.awt.FontMetrics;
 
-import org.middleheaven.ui.UIArea;
+import org.middleheaven.ui.Displayable;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
 
 public class SwingUnitConverter extends UIUnitConverter {
 
-    protected double[] getDialogBaseUnits(UIArea layoutable) {
+    protected double[] getDialogBaseUnits(Displayable layoutable) {
         Container c;
         if (layoutable instanceof Container){
             c = (Container)layoutable;

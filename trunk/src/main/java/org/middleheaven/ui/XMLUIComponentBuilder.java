@@ -2,13 +2,12 @@ package org.middleheaven.ui;
 
 import java.io.File;
 
-
+import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;
 import org.middleheaven.io.xml.XMLObjectContructor;
 import org.middleheaven.io.xml.XMLUtils;
-import org.middleheaven.ui.rendering.RenderType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,13 +56,13 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIComponent> impl
 		if ("default".equals(familly)){
 			familly = null;
 		}
-		GenericUIComponent uiComponent = new GenericUIComponent(RenderType.valueOf(type.toUpperCase()), familly);
+		GenericUIComponent uiComponent = new GenericUIComponent(ReflectionUtils.loadClass("org.middleheaven.ui" + type), familly);
 		if (!name.isEmpty()){
-			uiComponent.setID(name);
+			uiComponent.setGID(name);
 		}
 		uiComponent.setUIParent(parent);
 		if (parent!=null){
-			parent.addChildComponent(uiComponent);
+			parent.addComponent(uiComponent);
 		}
 		NodeList children = node.getChildNodes();
 		for (int i=0; i < children.getLength(); i++){

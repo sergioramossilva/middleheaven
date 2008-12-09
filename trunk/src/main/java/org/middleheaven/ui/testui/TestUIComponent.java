@@ -1,7 +1,7 @@
 package org.middleheaven.ui.testui;
 
 import org.middleheaven.ui.GenericUIComponent;
-import org.middleheaven.ui.rendering.RenderType;
+import org.middleheaven.ui.UIComponent;
 
 /**
  * This component can be used to test proposes.
@@ -9,12 +9,12 @@ import org.middleheaven.ui.rendering.RenderType;
  * test. 
  * 
  */
-public class TestUIComponent extends GenericUIComponent {
+public class TestUIComponent<T extends UIComponent> extends GenericUIComponent<T> {
 
 
 	private boolean hasFocus = false;
 	
-	public TestUIComponent(RenderType renderType, String familly) {
+	public TestUIComponent(Class<T> renderType, String familly) {
 		super(renderType, familly);
 	}
 

@@ -1,7 +1,7 @@
 package org.middleheaven.ui;
 
+import org.middleheaven.ui.components.UIContainer;
 import org.middleheaven.ui.rendering.RenderKit;
-import org.middleheaven.ui.rendering.RenderType;
 
 
 public class UIEnvironment extends GenericUIComponent implements UIContainer {
@@ -9,12 +9,12 @@ public class UIEnvironment extends GenericUIComponent implements UIContainer {
 	private RenderKit renderKit;
 	
 	public UIEnvironment() {
-		super(RenderType.ROOT, null);
+		super(UIClient.class, null);
 	}
 
 	public UIEnvironment(String name) {
-		super(RenderType.ROOT, null);
-		this.setID(name);
+		super(UIClient.class, null);
+		this.setGID(name);
 	}
 
 	public RenderKit getRenderKit() {

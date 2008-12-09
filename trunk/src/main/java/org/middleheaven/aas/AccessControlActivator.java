@@ -8,6 +8,7 @@ public class AccessControlActivator extends ServiceActivator {
 
 	
 	AccessControlService controler;
+	
 	@Publish
 	public AccessControlService getAccessControlService(){
 		return this.controler;

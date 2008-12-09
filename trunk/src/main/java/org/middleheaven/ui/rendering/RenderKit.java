@@ -20,7 +20,7 @@ public abstract class RenderKit implements Serializable{
     public interface RenderProperties extends Serializable{
         
         public String getFamilly();
-        public RenderType getRenderType();
+        public <T extends UIComponent> Class<T> getRenderType();
         
     }
     
@@ -67,10 +67,10 @@ public abstract class RenderKit implements Serializable{
      * @param renderType
      * @return Render apropriado para o tipo de componente ou <code>null</code> se nenhum foi encontrado.
      */
-    public abstract UIRender getRender(RenderType componentType, String familly);
+    public  abstract <T extends UIComponent>  UIRender getRender(Class<T> componentType, String familly);
     
     
-    public abstract void addRender(UIRender render, RenderType componentType, String familly);
+    public abstract <T extends UIComponent>  void addRender(UIRender render, Class<T> componentType, String familly);
     
 
     /**

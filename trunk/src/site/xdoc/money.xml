@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title>Money Toolbox</title>
+	</properties>
+	<body>
+	<section name="Quantity and Measure: Money Toolbox">
+		<p>
+		It's not possible to develop a business application without having to handle money amounts.
+		Ultimately "business" means "making money", right ?. Some businesses have money as the primary product (aka banks) 
+		where it is even more important to control it correctly.
+		</p>
+		<p>
+		Money is - put simple - an amount (a number) of currency. Well, this is the hook we need to integrate money into the 
+		Quantity and Measure toolbox. Money is a measure of currency amount.
+		</p>
+	</section>
+	<section name="Money">
+		<p>
+		Money is a well know design pattern. Everybody knows that doubles and floats do not cut it when you want to handle money.
+		Standard java offers the possibility to use BigDecimal as a value object for representing money, but a simpler ( more strong typed) 
+		solution exists.<br/>
+		So we start by considering that money has is a finite amount. It is not possible to represent an 1/3 with money. It simply isn't.
+		This show us that all operations with money are integer operations. 
+		</p>
+		<p>
+		Because all money operations with money are integer operations we can use a <code>long</code> to store the amount. Now you may be thinking: 
+		"what about the cents?". Well we multiply the real amount by a power of 10, the result will be a integer value. 
+		When the amount is asked for, we divide by that same factor before returning. Very simple. 
+		</p>
+		<p>
+		Using the <code>long</code> is very cleaver but need to multiply by a factor that converts fractional amounts into integer amounts.
+		By what power of 10 is that factor ? Well, for dollar, that uses two decimals for cents, it would be 10<sup>2</sup>=100.
+		And for Yen ? Well, Yen doesn't have a fractional part! Yes, not all currencies have the same fractional number of digits. 
+		Some have none, and some have more than two. In standard java we use <code>getDefaultFractionDigits()</code> from <code>Currency</code> 
+		to discover the fraction digits for each currency. 
+		</p>
+	</section>
+	<section name="Currency">
+		<p>
+		Currency is not <i>the</i> unit for money amounts in a way similar as meter is <i>the</i> unit of length. It's <i>a</i> unit.
+		There are, in fact, several possible units as for length there are several. The main difference is that for physical units that
+		are units more used that other. The SI uses meter, and any one using the SI uses the same unit. For money this is not possible.
+		there is no standard currency. So each country adopts it's own currency, but because countries trade with each other they need to convert
+		values between the different currencies. 
+		</p>
+		<p>
+		Currency conversion is not, in essence, different from length unit conversion (say meter to mile), but in practice, all other units have 
+		constant conversion rates, currency does not. <br/>
+		Information about the current and historical currency rates is an asset , an so, many companies sell access to query this information. 
+		(nowerdays mostly over webservices). So, another basic operation in the money toolbox is currency conversion, i.e. convert money with amount 
+		expressed in a currency,to money with amount expressed in another.
+		</p>
+		<p>
+		In standard java we use <code>getDefaultFractionDigits()</code> from <code>Currency</code> 
+		to discover the fraction digits for each currency , but MiddleHeaven's <code>Currency</code> is an <code>Unit</code>. How can we handle this.
+		MiddleHeaven resolves this by providing <code>Currency</code> as and abstract class. This way we can implement other currencies. 
+		Some applications (specially finance related), may establish different sets of properties for they currency object.
+		MiddleHeaven provides ISOCurrency that is in fact based on standard java <code>Currency</code> class.
+		</p>
+		<p>
+		Currencies are further related to countries, cultures, and treaties (like euro) and change over time. A country can have more that one official currency
+		and can have more that one currency over the years. So handling all these details for currencies is tied to tracking all these changes and possibilities.
+		</p>
+	</section>
+	<section name="Model">
+		<p>
+		<code>Money</code> class represent money amounts and permits arithmetic operations. Some operations are special, like division, and there is no operation to multiply
+		a <code>Money</code> for <code>Money</code> ( there is no <code>Money</code> squared). You can multiply it, however, by any real number.
+		<code>Money</code> is an <code>Amount</code> witch is a <code>Quantity</code> that can perform group operations (addition and subtraction)
+		<code>Currency</code> is the measurable. <code>ISOCurrency</code> is the default implementation for <code>Currency</code>
+		</p>
+		<p>
+		The <code>MoneyConverter</code> is a simple interface to convert money between currencies that is used together with <code>MoneyConverterService</code>. We will cover services later on and we will be back to
+		this toolbox for examples.
+		</p>
+	</section>
+	<section name="Use">
+		<p>
+		This example demonstrates a unit test that performs operations with money.
+		Money object need a currency to be specified, and as default we can specify it by means of
+		a simple string with the currency ISO code. 
+		<pre name="source" class="java">
+		Money a = Money.money(100, "USD");
+		Money b = Money.money(230, "USD");
+		Money t = Money.money(330, "USD");
+		
+		Money c = Money.money(330, "EUR");
+		
+		Money m = a.plus(b);
+
+		assertEquals(t, m);
+		
+		// money are equal if both amount and currency are equal
+		assertFalse(t.equals(c));
+		
+	    // can only add money of the same currency
+	    // will throw  IncompatibleUnitsException
+		t.plus(c); 
+	
+		
+	    // eu is not an ISO code
+	    // will throw IllegalArgumentException
+		
+		Money.money(330, "EU"); // eu is not a iso code
+	
+		
+		// division by a real
+		Real n = Real.valueOf(3);
+		Money y = t.over(n);
+		assertEquals (Money.money(110, "USD"), y);
+		
+		</pre>
+		
+		</p>
+	
+	</section>
+	</body>
+</document>

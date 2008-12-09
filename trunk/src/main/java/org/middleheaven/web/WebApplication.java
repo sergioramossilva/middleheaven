@@ -3,6 +3,8 @@ package org.middleheaven.web;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.middleheaven.ui.Context;
+
 /**
  * Represent the application running the the web container.
  * This class must be extended by each application and the qualified name registred in the web.xml file

@@ -7,8 +7,10 @@ import javax.swing.JFrame;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIModel;
+import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.UIQuery;
-import org.middleheaven.ui.rendering.RenderType;
+import org.middleheaven.ui.UIDimension;
+import org.middleheaven.ui.components.UIWindow;
 
 public class SWindow extends JFrame implements UIComponent{
 
@@ -17,7 +19,7 @@ public class SWindow extends JFrame implements UIComponent{
 	
 	
 	@Override
-	public void addChildComponent(UIComponent component) {
+	public void addComponent(UIComponent component) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -53,13 +55,13 @@ public class SWindow extends JFrame implements UIComponent{
 	}
 
 	@Override
-	public String getID() {
+	public String getGID() {
 		return id;
 	}
 
 	@Override
-	public RenderType getType() {
-		return RenderType.WINDOW;
+	public <T extends UIComponent> Class<T> getType() {
+		return (Class<T>) UIWindow.class;
 	}
 
 	@Override
@@ -79,7 +81,7 @@ public class SWindow extends JFrame implements UIComponent{
 	}
 
 	@Override
-	public void removeChildComponent(UIComponent component) {
+	public void removeComponent(UIComponent component) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -91,7 +93,7 @@ public class SWindow extends JFrame implements UIComponent{
 	}
 
 	@Override
-	public void setID(String id) {
+	public void setGID(String id) {
 		this.id = id;
 	}
 
@@ -106,8 +108,23 @@ public class SWindow extends JFrame implements UIComponent{
 	}
 
 	@Override
-	public void setBounds(int x, int y) {
+	public void setPosition(int x, int y) {
 		this.setBounds(x, y, this.getWidth(), this.getHeight());
+	}
+
+	@Override
+	public UIPosition getPosition() {
+		return new UIPosition(this.getX(),this.getY());
+	}
+
+	@Override
+	public void setSize(UIDimension size) {
+		this.setSize(size.getWidth(), size.getHeight());
+	}
+
+	@Override
+	public UIDimension getDimension() {
+		return new UIDimension(this.getWidth(), this.getHeight());
 	}
 
 }

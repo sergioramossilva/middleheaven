@@ -6,7 +6,6 @@ import java.util.TreeMap;
 import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
-import org.middleheaven.ui.client.UIClient;
 
 public class UIServiceActivator extends ServiceActivator {
 
@@ -40,7 +39,7 @@ public class UIServiceActivator extends ServiceActivator {
 
 		@Override
 		public void registerEnvironment(UIEnvironment env) {
-		    envs.put(env.getID(),env);
+		    envs.put(env.getGID(),env);
 		}
 
 		@Override
