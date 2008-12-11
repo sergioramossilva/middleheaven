@@ -37,6 +37,7 @@ public final class WebFacadeServlet extends HttpServlet {
 			StringBuffer requestURL = request.getRequestURL();
 
 			if (suffix!=null && requestURL.indexOf(suffix) != requestURL.length() - suffix.length()){
+				Logging.getBook("web").warn("Sufix missmatch ("+ requestURL +")");
 				response.sendError(501); // service not implemented
 				return;
 			} 
