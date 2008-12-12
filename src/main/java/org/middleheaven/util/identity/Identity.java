@@ -1,6 +1,8 @@
 package org.middleheaven.util.identity;
 
-public abstract class Identity implements Comparable<Identity>{
+import java.io.Serializable;
+
+public abstract class Identity implements Comparable<Identity> , Serializable{
 
 
 	public boolean equals(Object other){

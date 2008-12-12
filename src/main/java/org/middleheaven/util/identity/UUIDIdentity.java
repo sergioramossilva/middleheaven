@@ -1,8 +1,9 @@
 package org.middleheaven.util.identity;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public class UUIDIdentity extends Identity {
+public class UUIDIdentity extends Identity implements Serializable {
 
 	UUID value;
 	

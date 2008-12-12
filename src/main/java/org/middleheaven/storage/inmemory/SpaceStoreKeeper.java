@@ -86,7 +86,7 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 	public void insert(Collection<Storable> list, StorableEntityModel model) {
 
 		// Grab the space where all data resides...
-	
+
 		final String entityRef = model.getEntityHardName(); 
 
 		try {
@@ -203,7 +203,7 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 
 
 	}
-	
+
 	private class SpaceSequence implements Sequence<Identity> {
 
 		public String seqName;
@@ -250,17 +250,19 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 
 		@Override
 		public Collection<T> list() {
-			
+
 			Collection<T> results = new LinkedList<T>();
 
 			BooleanClassifier<T> filter = new CriteriaFilter<T> (criteria);
-			
+
 			Iterator<Object> iter = space.getIterator(model.getEntityHardName());
 
-			while (iter.hasNext()) {
-				T elem = (T)iter.next();
-				if (filter.classify(elem)){
-					results.add(elem);
+			if (iter!=null){
+				while (iter.hasNext()) {
+					T elem = (T)iter.next();
+					if (filter.classify(elem)){
+						results.add(elem);
+					}
 				}
 			}
 
@@ -277,6 +279,6 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 	@Override
 	public void remove(Criteria<?> criteria, StorableEntityModel model) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
