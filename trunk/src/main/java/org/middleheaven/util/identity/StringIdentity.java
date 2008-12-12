@@ -1,7 +1,9 @@
 package org.middleheaven.util.identity;
 
+import java.io.Serializable;
 
-public class StringIdentity extends Identity {
+
+public class StringIdentity extends Identity implements Serializable {
 
 	String value;
 	

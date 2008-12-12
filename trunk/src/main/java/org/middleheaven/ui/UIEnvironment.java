@@ -9,11 +9,11 @@ public class UIEnvironment extends GenericUIComponent implements UIContainer {
 	private RenderKit renderKit;
 	
 	public UIEnvironment() {
-		super(UIClient.class, null);
+		super(UIEnvironment.class, null);
 	}
 
 	public UIEnvironment(String name) {
-		super(UIClient.class, null);
+		super(UIEnvironment.class, null);
 		this.setGID(name);
 	}
 

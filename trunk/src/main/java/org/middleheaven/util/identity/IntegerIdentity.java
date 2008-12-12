@@ -1,6 +1,8 @@
 package org.middleheaven.util.identity;
 
-public class IntegerIdentity extends Identity {
+import java.io.Serializable;
+
+public class IntegerIdentity extends Identity implements Serializable {
 
 	
 	private int value;

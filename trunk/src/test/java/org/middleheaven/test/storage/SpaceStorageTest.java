@@ -2,6 +2,9 @@ package org.middleheaven.test.storage;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.middleheaven.domain.AnnotatedDomainModel;
@@ -13,7 +16,6 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.inmemory.SpaceStoreKeeper;
-import org.middleheaven.test.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.space4j.Space4J;
@@ -23,11 +25,13 @@ import org.space4j.implementation.SimpleSpace4J;
 public class SpaceStorageTest {
 
 	static Space4J space4j; 
-
+    static File folder;
+    
 	@BeforeClass
 	public static void setUp(){
 		try {
-			space4j = new SimpleSpace4J("./test");
+			folder = new File("./space4j_db/tests4j");
+			space4j = new SimpleSpace4J("./tests4j");
 			space4j.start();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -35,12 +39,23 @@ public class SpaceStorageTest {
 		} 
 	}
 
-
+	@AfterClass
+	public static void tearDown(){
+		try {
+			if (folder.exists()){
+				folder.delete();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+	
 	@Test
 	public void test(){
 
 		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
-		model.addEntity(TestSubject.class);
+		model.addEntity(Subject.class);
 		
 		DataStorage ds = new DomainDataStorage(new SpaceStoreKeeper(space4j) , new StorableDomainModel(){
 
