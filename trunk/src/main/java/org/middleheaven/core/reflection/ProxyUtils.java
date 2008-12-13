@@ -96,7 +96,7 @@ public final class ProxyUtils {
 
 			return foo;
 		} catch (InstantiationException e) {
-			throw new ReflectionException(e);
+			throw new InstantiationReflectionException(delegationTarget.getClass().getName(), e.getMessage());
 		} catch (IllegalAccessException e) {
 			throw new IllegalAccesReflectionException(e);
 		}
