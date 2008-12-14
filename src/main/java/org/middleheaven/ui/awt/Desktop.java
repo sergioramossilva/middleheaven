@@ -15,6 +15,11 @@ import org.middleheaven.ui.components.UIDesktop;
 public class Desktop extends AbstractUIClient implements UIDesktop {
 
 
+	public Desktop() {
+		super(new AWTRenderKit());
+		// TODO Auto-generated constructor stub
+	}
+
 	public void addComponent(UIComponent component){
 		super.addComponent(component);
 		

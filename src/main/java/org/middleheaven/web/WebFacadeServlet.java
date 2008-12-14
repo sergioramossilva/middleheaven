@@ -32,6 +32,11 @@ public final class WebFacadeServlet extends HttpServlet {
 	private void doService(HttpServices service, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
 		try {
+			
+			// Determine the current environment from URL information
+			
+			String enviromentName = this.parseEnviromentName(request.getRequestURL());
+			
 			final String suffix = getServletConfig().getInitParameter("suffix");
 
 			StringBuffer requestURL = request.getRequestURL();
@@ -82,6 +87,17 @@ public final class WebFacadeServlet extends HttpServlet {
 			Logging.getBook("web").error("Unexpected error" , e);
 			response.sendError(500); // serve error
 		}
+	}
+
+	private String parseEnviromentName(HttpServletRequest request) {
+		StringBuilder requestURL = new StringBuilder(request.getRequestURL());
+		
+		String contextPath = request.getContextPath();
+		int pos = requestURL.indexOf(contextPath)+contextPath.length();
+		int endpos = requestURL.lastIndexOf("/");
+		
+		if
+		requestURL.substring(pos+1);
 	}
 
 	private CharSequence stripedRequestPath(HttpServletRequest request , String suffix ) {

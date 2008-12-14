@@ -5,5 +5,5 @@ public enum UIEnvironmentType {
 	DESKTOP,
 	BROWSER,
 	CONSOLE,
-	REST
+	WEBSERVICE
 }

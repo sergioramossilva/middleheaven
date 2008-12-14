@@ -7,8 +7,8 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIEnvironmentType;
-import org.middleheaven.ui.UIService;
 import org.middleheaven.ui.models.UIClientModel;
+import org.middleheaven.ui.service.UIService;
 
 
 public class DesktopUIContainer extends StandaloneContainer {

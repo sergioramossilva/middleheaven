@@ -1,32 +1,57 @@
 package org.middleheaven.ui;
 
-import org.middleheaven.ui.components.UIContainer;
-import org.middleheaven.ui.rendering.RenderKit;
+import java.io.Serializable;
 
 
-public class UIEnvironment extends GenericUIComponent implements UIContainer {
+/**
+ * User Interface Environment.
+ * An application can have more than one User Interface Environment. 
+ * Different types of User Interface Environment are used to interact with different categories of users.
+ * Human uses interact via a Console, Desktop or Browser environment while other application interact via a 
+ * Webservice environment.
+ *  
+ *
+ */
+public class UIEnvironment implements Serializable{
 
-	private RenderKit renderKit;
+	private static final long serialVersionUID = -7807493488204561383L;
 	
-	public UIEnvironment() {
-		super(UIEnvironment.class, null);
-	}
-
-	public UIEnvironment(String name) {
-		super(UIEnvironment.class, null);
-		this.setGID(name);
-	}
-
-	public RenderKit getRenderKit() {
-		return renderKit;
-	}
-
-	public void setRenderKit(RenderKit renderKit) {
-		this.renderKit = renderKit;
-	}
+	private UIClient client;
+	private UIEnvironmentType type;
+	private String name;
 	
-	public boolean isRendered(){
-		return true;
+	public UIClient getUIClient(){
+		return this.client;
 	}
 	
+	public void setUIClient(UIClient client){
+		this.client = client;
+	}
+	
+	public UIEnvironmentType getType(){
+		return this.type;
+	}
+	
+	public void setType(UIEnvironmentType type){
+		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
+	public boolean equals(Object other){
+		return other instanceof UIEnvironment 
+		&& ((UIEnvironment)other).name.equals(this.name)
+		&& ((UIEnvironment)other).type.equals(this.type);
+	}
+	
+	public int hashCode(){
+		return name.hashCode();
+	}
 }

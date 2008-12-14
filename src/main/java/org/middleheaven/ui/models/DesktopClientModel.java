@@ -7,9 +7,9 @@ import org.middleheaven.ui.Context;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIEnvironment;
-import org.middleheaven.ui.UIService;
 import org.middleheaven.ui.rendering.RenderKit;
 import org.middleheaven.ui.rendering.RenderingContext;
+import org.middleheaven.ui.service.UIService;
 
 /**
  * Desktop based UIClient. Allows to build window based applications.

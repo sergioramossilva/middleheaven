@@ -2,7 +2,7 @@
  * Created on 2006/09/07
  *
  */
-package org.middleheaven.core.bootstrap.tomcat;
+package org.middleheaven.web.bootstrap;
 
 import javax.servlet.ServletContext;
 

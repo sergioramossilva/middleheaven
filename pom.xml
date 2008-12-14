@@ -186,16 +186,29 @@
 	</distributionManagement>
 	<reporting>
 		<plugins>
-			<!--
+			
 			<plugin> 
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId> 
 				<configuration>
 					<stylesheetfile>${basedir}\src\resources\jdocstyle.css</stylesheetfile>
+					<excludePackageNames>org.middleheaven.test*</excludePackageNames>
+					
+					<groups>
+			            <group>
+			              <title>Core Packages</title>
+			              <packages>org.middleheaven.core*</packages>
+			            </group>
+			            <group>
+			              <title>Managed IO Toolbox</title>
+			              <packages>org.middleheaven.io*</packages>
+			            </group>
+			        </groups>
+					
 				</configuration> 
 				<version>2.5</version> 
 			</plugin> 
-			
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>

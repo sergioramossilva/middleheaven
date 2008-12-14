@@ -2,7 +2,7 @@
  * Created on 2006/09/02
  *
  */
-package org.middleheaven.core.bootstrap.jboss;
+package org.middleheaven.web.bootstrap;
 
 import java.io.File;
 
