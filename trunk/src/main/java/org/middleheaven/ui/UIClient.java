@@ -1,5 +1,7 @@
 package org.middleheaven.ui;
 
+import org.middleheaven.ui.rendering.RenderKit;
+
 
 /**
  * The client graphical interface the user interact with in order
@@ -8,5 +10,6 @@ package org.middleheaven.ui;
  */
 public interface UIClient extends UIComponent{
 
-
+	public RenderKit getRenderKit();
+	public void setRenderKit(RenderKit renderKit);
 }

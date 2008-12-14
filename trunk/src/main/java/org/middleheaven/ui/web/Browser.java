@@ -8,10 +8,16 @@ public class Browser extends AbstractUIClient implements UIBrowser{
 
 	
 	
+	public Browser() {
+		super(new HTMLRenderKit());
+	}
+
 	@Override
 	public UIDimension getDimension() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 }
