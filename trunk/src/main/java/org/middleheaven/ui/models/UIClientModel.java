@@ -1,15 +1,11 @@
 package org.middleheaven.ui.models;
 
-import org.middleheaven.ui.Context;
 import org.middleheaven.ui.UIModel;
+import org.middleheaven.ui.rendering.RenderKit;
 
 public interface UIClientModel extends UIModel {
 
-	
-	/**
-	 * Start the client UI.
-	 * @param context context with informations
-	 */
-	public void execute(Context context);
+	public RenderKit getRenderKit();
+	public void setRenderKit(RenderKit renderKit);
 	
 }

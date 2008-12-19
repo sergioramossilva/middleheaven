@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.components.UIWindow;
 
 
 /**
@@ -53,9 +52,9 @@ public abstract class RenderKit implements Serializable{
     /**
      * Renderize the component determine the render automatically
      */
-    public abstract  UIComponent renderComponent(RenderingContext context,UIComponent parent, UIComponent component);
+    public abstract  <T extends UIComponent> T renderComponent(RenderingContext context,UIComponent parent, T component);
     
-    public abstract  UIComponent renderComponent(UIRender render, RenderingContext context,UIComponent parent, UIComponent component);
+    public abstract  <T extends UIComponent> T renderComponent(UIRender render, RenderingContext context,UIComponent parent, T component);
     
     /**
      * Encontra o <code>Render</code> apropriado para o tipo de componente pedido
