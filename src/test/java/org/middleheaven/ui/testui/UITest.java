@@ -22,24 +22,26 @@ import org.middleheaven.ui.rendering.RenderingContext;
 
 public class UITest {
 
-	private static GenericUIComponent root;
 	@BeforeClass
 	public static void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
-		root = new GenericUIComponent(UIClient.class, null);
-		UIComponent frame = root.addComponent(UIView.class, null);
-		frame.setUIModel(new AbstractUIContainerModel());
+		
 	
 	}
 	
 	@Test
 	public void testRendering(){
-		TestRenderKit rk = new TestRenderKit();
-		RenderingContext context = new RenderingContext();
 		
-		UIComponent renderedUIC = rk.renderComponent(context, null, root);
+		GenericUIComponent root = new GenericUIComponent(UIClient.class, null);
+		UIComponent frame = root.addComponent(UIView.class, null);
+		frame.setUIModel(new AbstractUIContainerModel());
+		
+		TestRenderKit rk = new TestRenderKit();
+		RenderingContext context = new RenderingContext(rk);
+		
+		UIComponent renderedUIC = rk.renderComponent(context,null, root);
 		
 		assertTrue (renderedUIC.isRendered());
 		assertTrue (renderedUIC instanceof  TestUIComponent);

@@ -1,24 +1,29 @@
-<ui>
-	<uic type="window" >
-		<uic type="layout" familly="tabs">
-			<uic name="frameA" type="frame" >
-				<model>
-					<text>Frame A</text>
-				</model>
-				<uic name="labelA" type="label" >
+<ui type="desktop" name="teste">
+	<uic type="client">
+		<model>
+			<renderkit>SwingRenderKit</renderkit>
+		</model>
+		<uic type="window" >
+			<uic type="layout" familly="tabs">
+				<uic name="frameA" type="view" >
 					<model>
-					<text>Olá Mundo</text>
+						<text>Frame A</text>
 					</model>
+					<uic name="labelA" type="label" >
+						<model>
+						<text>Olá Mundo</text>
+						</model>
+					</uic>
 				</uic>
-			</uic>
-			<uic name="frameB" type="frame" >
-				<model>
-					<text>Frame B</text>
-				</model>
-				<uic name="labelB" type="label" >
+				<uic name="frameB" type="view" >
 					<model>
-					<text>Olá Mundo Lado B</text>
+						<text>Frame B</text>
 					</model>
+					<uic name="labelB" type="label" >
+						<model>
+						<text>Olá Mundo Lado B</text>
+						</model>
+					</uic>
 				</uic>
 			</uic>
 		</uic>
