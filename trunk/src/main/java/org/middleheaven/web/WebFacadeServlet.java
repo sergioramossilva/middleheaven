@@ -35,7 +35,7 @@ public final class WebFacadeServlet extends HttpServlet {
 			
 			// Determine the current environment from URL information
 			
-			String enviromentName = this.parseEnviromentName(request.getRequestURL());
+			String enviromentName = this.parseEnviromentName(request);
 			
 			final String suffix = getServletConfig().getInitParameter("suffix");
 
@@ -97,7 +97,7 @@ public final class WebFacadeServlet extends HttpServlet {
 		int endpos = requestURL.lastIndexOf("/");
 		
 		
-		requestURL.substring(pos+1);
+		return requestURL.substring(pos+1);
 	}
 
 	private CharSequence stripedRequestPath(HttpServletRequest request , String suffix ) {
