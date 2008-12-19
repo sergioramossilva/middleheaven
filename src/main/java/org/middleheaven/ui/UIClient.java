@@ -1,6 +1,7 @@
 package org.middleheaven.ui;
 
-import org.middleheaven.ui.rendering.RenderKit;
+import org.middleheaven.ui.models.UIClientModel;
+
 
 
 /**
@@ -10,6 +11,8 @@ import org.middleheaven.ui.rendering.RenderKit;
  */
 public interface UIClient extends UIComponent{
 
-	public RenderKit getRenderKit();
-	public void setRenderKit(RenderKit renderKit);
+
+	public UIClientModel getUIModel();
+	
+	
 }

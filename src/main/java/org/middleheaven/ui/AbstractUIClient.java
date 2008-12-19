@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.middleheaven.ui.models.UIClientModel;
-import org.middleheaven.ui.rendering.RenderKit;
 
 public abstract class AbstractUIClient implements UIClient , NamingContainer {
 
@@ -17,21 +16,7 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	private Map<String, UIComponent> components = new LinkedHashMap<String, UIComponent>();
 	
 	private UIClientModel uiModel;
-	private RenderKit renderKit;
-	
-	public AbstractUIClient(RenderKit renderKit){
-		this.renderKit = renderKit;
-	}
-	
-	@Override
-	public RenderKit getRenderKit() {
-		return renderKit;
-	}
 
-	@Override
-	public void setRenderKit(RenderKit renderKit) {
-		this.renderKit = renderKit;
-	}
 	
 	@Override
 	public void setUIModel(UIModel model) {
