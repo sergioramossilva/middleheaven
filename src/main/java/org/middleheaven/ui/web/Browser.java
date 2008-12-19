@@ -9,7 +9,7 @@ public class Browser extends AbstractUIClient implements UIBrowser{
 	
 	
 	public Browser() {
-		super(new HTMLRenderKit());
+	
 	}
 
 	@Override
