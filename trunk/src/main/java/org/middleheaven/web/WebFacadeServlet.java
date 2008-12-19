@@ -96,7 +96,7 @@ public final class WebFacadeServlet extends HttpServlet {
 		int pos = requestURL.indexOf(contextPath)+contextPath.length();
 		int endpos = requestURL.lastIndexOf("/");
 		
-		if
+		
 		requestURL.substring(pos+1);
 	}
 
