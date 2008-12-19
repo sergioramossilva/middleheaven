@@ -21,7 +21,10 @@ import org.middleheaven.logging.LoggingLevel;
  */
 public class DesktopStarter {
 
-	
+	public static void main(String[] args){
+		
+		new DesktopStarter().execute(args);
+	}
 	
     public void execute(String[] args){
     	

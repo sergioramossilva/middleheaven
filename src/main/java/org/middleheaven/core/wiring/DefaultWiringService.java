@@ -2,6 +2,7 @@ package org.middleheaven.core.wiring;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +10,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.TreeMap;
 
-import org.middleheaven.core.reflection.ProxyUtils;
+import org.middleheaven.core.reflection.ReflectionUtils;
+
 
 public class DefaultWiringService implements WiringService{
 	
@@ -87,7 +89,31 @@ public class DefaultWiringService implements WiringService{
 					this.bind(query.getContract()).to(query.getContract());
 					return getInstance(query); // repeat search
 				}
-				throw new BindingNotFoundException(query.getContract());
+				
+				// try understand from wich scope could be readed
+				Annotation[] all = ReflectionUtils.getAnnotations(query.getContract());
+				
+				List <Annotation> annotations = new ArrayList<Annotation>(Arrays.asList(all));
+				if (annotations.isEmpty()){
+					annotations.addAll(query.getSpecifications());
+				}
+				Annotation found=null;
+				for (Annotation a : annotations){
+					if(scopes.containsKey(a.annotationType().getName())){
+						if ( found !=null){
+							throw new BindingException("To many auto binding options");
+						}
+						found = a;
+					}
+				}
+				
+				if (found!=null){
+					new BindingBuilder<T>(this,query.getContract()).in(found.annotationType());
+					return getInstance(query); // repeat search
+				} else {
+					throw new BindingNotFoundException(query.getContract());
+				}
+				
 			}
 			if (stack.contains(key)){
 				// cyclic reference
@@ -97,7 +123,7 @@ public class DefaultWiringService implements WiringService{
 					proxy = new CyclicProxy();
 					cyclicProxies.put(key, proxy);
 				}
-				return  ProxyUtils.proxy(query.getContract(), proxy);
+				return  ReflectionUtils.proxy(query.getContract(), proxy);
 
 			} else {
 				stack.offer(key);

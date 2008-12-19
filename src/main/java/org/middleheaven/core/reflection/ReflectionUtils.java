@@ -7,8 +7,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,37 +31,132 @@ public final class ReflectionUtils {
 
 	public ReflectionUtils(){}
 
+	private static class MethodInvocationHandler implements InvocationHandler{
 
-	public static <I> I proxy (Object delegationTarget , Class<I> proxyInterface , MethodHandler delegator ){
+		private MethodHandler methodHandler;
+		private MethodInvocationHandler(MethodHandler methodHandler){
+			this.methodHandler =  methodHandler;
+		}
+
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			return methodHandler.invoke(proxy,method,null,args);
+		}
+
+	}
+	
+	public static <T> T proxy (Class<T> facadeClass , MethodHandler delegator){
+		try {
+			if (facadeClass.isInterface()){
+				return (T)Proxy.newProxyInstance(ReflectionUtils.class.getClassLoader(),new Class<?>[]{facadeClass}, new MethodInvocationHandler(delegator));
+			} else{
+				ProxyFactory f = new ProxyFactory();
+				f.setSuperclass(facadeClass);
+				f.setFilter(new MethodFilter() {
+					public boolean isHandled(Method m) {
+						// ignore finalize()
+						return !m.getName().equals("finalize");
+					}
+				});
+				Constructor[] all = facadeClass.getConstructors();
+				Constructor candidate=null;
+				for (Constructor c : all){
+					if (candidate==null || c.getParameterTypes().length < candidate.getParameterTypes().length ) {
+						candidate = c;
+					}
+				}
+				Object[] allNull = new Object[candidate.getParameterTypes().length]; 
+				return (T)f.create(candidate.getParameterTypes(), allNull, delegator);
+
+			} 
+		} catch (InstantiationException e) {
+			throw new InstantiationReflectionException(facadeClass.getName(), e.getMessage());
+		} catch (Exception e) {
+			throw new ReflectionExceptionHandler().handle(e);
+		}
+	}
+
+	
+	public static <I> I proxy (final Object delegationTarget , Class<I> proxyInterface){
 		if (!proxyInterface.isInterface()){
 			throw new IllegalArgumentException("Proxy must be applied with an interface");
 		}
-		ProxyFactory f = new ProxyFactory();
-		f.setSuperclass(delegationTarget.getClass());
-		f.setInterfaces(new Class[]{proxyInterface});
-		f.setFilter(new MethodFilter() {
-			public boolean isHandled(Method m) {
-				// ignore finalize()
-				return !m.getName().equals("finalize");
+		
+		return proxyInterface.cast(Proxy.newProxyInstance(delegationTarget.getClass().getClassLoader(), new Class[]{proxyInterface}, new InvocationHandler(){
+
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				try {
+					return method.invoke(delegationTarget, args);  // execute the original method.
+				} catch (IllegalArgumentException e){
+					// try to find a method with the same name and parameters 
+					Method m = delegationTarget.getClass().getMethod(method.getName(), method.getParameterTypes());
+					if (m!=null && m.getReturnType().isAssignableFrom(method.getReturnType()) ){
+						return m.invoke(delegationTarget, args);
+					} else {
+						throw new NoSuchMethodReflectionException (method.toString());
+					}
+				}
+				
 			}
-		});
+			
+		}));
+	}
 
-		I foo;
-		try {
-			Class c = f.createClass();
-			foo = (I)c.newInstance();
+	public static <I> I proxy (Object delegationTarget , Class<I> proxyInterface , final ProxyHandler delegator ){
+		if (!proxyInterface.isInterface()){
+			throw new IllegalArgumentException("Proxy must be applied with an interface");
+		}
 
-			((ProxyObject)foo).setHandler(delegator);
+		if (proxyInterface.isInstance(delegationTarget)){
+			// the object already implements the interface. just wrapp it
+			return proxyInterface.cast(Proxy.newProxyInstance(delegationTarget.getClass().getClassLoader(), new Class[]{proxyInterface}, new InvocationHandler(){
 
-			copy(delegationTarget, foo);
-			return foo;
-		} catch (InstantiationException e) {
-			throw new ReflectionException(e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException(e);
+				@Override
+				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+					return delegator.invoke(proxy, method, null, args);
+				}
+				
+			}));
+			
+		} else {
+			// delegationTarget does not implement the same interface
+
+			ProxyFactory f = new ProxyFactory();
+			f.setSuperclass(delegationTarget.getClass());
+			f.setInterfaces(new Class[]{proxyInterface});
+			f.setFilter(new MethodFilter() {
+				public boolean isHandled(Method m) {
+					// ignore finalize()
+					return !m.getName().equals("finalize");
+				}
+			});
+
+			I foo;
+			try {
+				Class c = f.createClass();
+				foo = (I)c.newInstance();
+
+				((ProxyObject)foo).setHandler(new MethodHandler(){
+
+					@Override
+					public Object invoke(Object proxy, Method invoked, Method original, Object[] args) throws Throwable {
+						return delegator.invoke(proxy, invoked, original, args);
+					}
+					
+				});
+
+				copy(delegationTarget, foo);
+				return foo;
+			} catch (InstantiationException e) {
+				throw new ReflectionException(e);
+			} catch (IllegalAccessException e) {
+				throw new ReflectionException(e);
+			}
 		}
 	}
-	
+
 	public static Set<Class> getPackageClasses(Package classPackage) {
 
 		Set<Class> classes = new HashSet<Class>();
@@ -82,7 +179,7 @@ public final class ReflectionUtils {
 			throw new ReflectionException(e);
 		}
 	}
-	
+
 	private static void process(Set<Class> classes , URL url , String base) throws IOException{
 		if (url.getProtocol().equals("file")){
 			try {
@@ -106,7 +203,7 @@ public final class ReflectionUtils {
 			} 
 		}
 	}
-	
+
 	public static <T> T copy(T original , T copy ){
 		Collection<PropertyAccessor> assessors = getPropertyAccessors(original.getClass());
 
@@ -115,11 +212,11 @@ public final class ReflectionUtils {
 		}
 		return copy;
 	}
-	
+
 	public static PropertyAccessor getPropertyAccessor(Class<?> type, String fieldName){
 		return new PropertyAccessor(type,fieldName);
 	}
-	
+
 	public static Collection<PropertyAccessor> getPropertyAccessors(Class<?> type)
 	throws ReflectionException{
 
@@ -133,11 +230,11 @@ public final class ReflectionUtils {
 		}
 		return result;
 	}
-	
+
 	/*
 	public static Object getFieldValue(Object target, String name) {
 		name = name.toLowerCase();
-		
+
 		Set<Field> fields = getAllFields(target.getClass());
 		Field f=null;
 		for (Field fd : fields){
@@ -146,7 +243,7 @@ public final class ReflectionUtils {
 				break;
 			}
 		}
-		
+
 		if (f==null){
 			try {
 				Method[] ms = target.getClass().getMethods();
@@ -165,14 +262,14 @@ public final class ReflectionUtils {
 			}catch (InvocationTargetException e) {
 				throw new InvocationTargetReflectionException(e);
 			}
-			
+
 		} else {
 			return getFieldValue (target,f);
 		}
-		
+
 	}
-	
-	
+
+
 	public static Object getFieldValue( Object target,Field f) {
 		try {
 			try {
@@ -195,11 +292,11 @@ public final class ReflectionUtils {
 			throw new InvocationTargetReflectionException(e);
 		}
 	}
-	
-	
+
+
 	public static void setFieldValue (Object target,String name,  Object value){
 		name = name.toLowerCase();
-		
+
 		Set<Field> fields = getAllFields(target.getClass());
 		Field f=null;
 		for (Field fd : fields){
@@ -208,7 +305,7 @@ public final class ReflectionUtils {
 				break;
 			}
 		}
-		
+
 		if (f==null){
 			try {
 				Method[] ms = target.getClass().getMethods();
@@ -227,13 +324,13 @@ public final class ReflectionUtils {
 			}catch (InvocationTargetException e) {
 				throw new InvocationTargetReflectionException(e);
 			}
-			
+
 		} else {
 			setFieldValue(f,target,value);
 		}
 	}
-	*/
-	
+	 */
+
 	/**
 	 * Set a field with a value. If there is a set<Field>() method , that method is invoked
 	 * otherwise the set is made directly.
@@ -259,8 +356,8 @@ public final class ReflectionUtils {
 			throw new InvocationTargetReflectionException(e);
 		}
 	}
-	*/
-	
+	 */
+
 	/**
 	 * Determines if class <code>match</code> is a superclass or supper-interface
 	 * of class <code>test</code> 
@@ -319,31 +416,31 @@ public final class ReflectionUtils {
 	public static <T> T newInstance(Class<T> klass, Object ... args) throws ReflectionException{
 		return newInstance(klass,klass,args);
 	}
-	
+
 	public static <T> T newInstance(Class<T> castAs,Class<?> klass, Object ... args) throws ReflectionException{
 		try {
 
-				// look for a Constructor with the correct arguments
-				Class<?> [] parameterTypes = new Class<?> [args.length];
-				for (int i=0;i<args.length;i++){
-					parameterTypes[i] = args[i].getClass();
-				}
+			// look for a Constructor with the correct arguments
+			Class<?> [] parameterTypes = new Class<?> [args.length];
+			for (int i=0;i<args.length;i++){
+				parameterTypes[i] = args[i].getClass();
+			}
 
-				try {
+			try {
 
-					Constructor<?> c = klass.getConstructor(parameterTypes);
-					c.setAccessible(true);
-					return castAs.cast(c.newInstance(args)); // Instantiate using the constructor
-				} catch (SecurityException e) {
-					throw new IllegalAccesReflectionException(e);
-				} catch (NoSuchMethodException e) {
-					throw new NoSuchMethodReflectionException(e);
-				} catch (IllegalArgumentException e) {
-					throw new IllegalAccesReflectionException(e);
-				} catch (InvocationTargetException e) {
-					throw new InvocationTargetReflectionException(e);
-				}
-			
+				Constructor<?> c = klass.getConstructor(parameterTypes);
+				c.setAccessible(true);
+				return castAs.cast(c.newInstance(args)); // Instantiate using the constructor
+			} catch (SecurityException e) {
+				throw new IllegalAccesReflectionException(e);
+			} catch (NoSuchMethodException e) {
+				throw new NoSuchMethodReflectionException(e);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalAccesReflectionException(e);
+			} catch (InvocationTargetException e) {
+				throw new InvocationTargetReflectionException(e);
+			}
+
 		} catch (InstantiationException e){
 			throw new ReflectionException(e);
 		} catch (IllegalAccessException e) {
@@ -384,7 +481,7 @@ public final class ReflectionUtils {
 
 		return annotated;
 	}
-	
+
 	public static Set<Method> allAnnotatedMethods(Class<?> type, Class<? extends Annotation> annotation) {
 		Method[] methods = type.getDeclaredMethods();
 
@@ -399,12 +496,14 @@ public final class ReflectionUtils {
 		return annotated;
 	}
 
-	
 
-	
+
+
 	public static boolean isAnnotadedWith(Class<?> candidate,Class<? extends Annotation> annotationClass) {
 		return candidate.isAnnotationPresent(annotationClass);
 	}
+	
+
 
 	public static <A extends Annotation> A getAnnotation(Class<?> annotated, Class<A> annotationClass){
 		return annotated.getAnnotation(annotationClass);
@@ -413,7 +512,7 @@ public final class ReflectionUtils {
 	public static <A extends Annotation> A getAnnotation(AccessibleObject obj, Class<A> annotationClass){
 		return obj.getAnnotation(annotationClass);
 	}
-	
+
 	public static <A extends Annotation> A getAnnotation(Field field, Class<A> annotationClass) {
 		if (field.isAnnotationPresent(annotationClass)){
 			return field.getAnnotation(annotationClass);
@@ -428,11 +527,17 @@ public final class ReflectionUtils {
 		}
 		return classes;
 	}
+
+	public static Annotation[] getAnnotations(Class<?> type) {
+
+		return type.getDeclaredAnnotations();
+	
+	}
 	
 	public static Set<Annotation> getAnnotations(Field f, Class<? extends Annotation> specificAnnotation) {
-		
+
 		Set<Annotation> result = new HashSet<Annotation>(); 
-		
+
 		Annotation[] all = f.getDeclaredAnnotations();
 		for (Annotation a : all){
 			if (a.annotationType().isAnnotationPresent(specificAnnotation)){
@@ -443,20 +548,20 @@ public final class ReflectionUtils {
 	}
 
 	public static Set<Field> getAllFields(Class<?> type) {
-		 Set<Field> fields = new HashSet<Field>();
-		 
+		Set<Field> fields = new HashSet<Field>();
 
-		 for (Field f : type.getDeclaredFields()){
-			 fields.add(f);
-		 }
 
-		 return fields;
+		for (Field f : type.getDeclaredFields()){
+			fields.add(f);
+		}
+
+		return fields;
 	}
-	
+
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Class<?> translatingObjectClass, Object ... params) {
 		return invoke(returnType, methodToInvoke, newInstance(translatingObjectClass), params);
 	}
-	
+
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Object translatingObject, Object ... params) {
 		try {
 			methodToInvoke.setAccessible(true);
@@ -481,19 +586,19 @@ public final class ReflectionUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> List<Constructor<T>> constructors(Class<T> type){
 		Constructor<T>[] constructors = (Constructor<T>[])type.getConstructors();
-		
+
 		Arrays.sort(constructors, new Comparator<Constructor<T>>(){
 
 			@Override
 			public int compare(Constructor<T> a, Constructor<T> b) {
 				return a.getParameterTypes().length - b.getParameterTypes().length;
 			}
-			
+
 		});
-		
+
 		return Arrays.asList(constructors);
 	}
-	
+
 
 
 

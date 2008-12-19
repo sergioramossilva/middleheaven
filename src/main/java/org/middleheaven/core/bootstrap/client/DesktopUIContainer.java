@@ -5,14 +5,21 @@ import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.Logging;
+import org.middleheaven.ui.MapContext;
 import org.middleheaven.ui.UIClient;
+import org.middleheaven.ui.UIComponent;
+import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIEnvironmentType;
-import org.middleheaven.ui.models.UIClientModel;
-import org.middleheaven.ui.service.UIService;
+import org.middleheaven.ui.UIService;
+import org.middleheaven.ui.components.UIDesktop;
+import org.middleheaven.ui.models.DesktopClientModel;
+import org.middleheaven.ui.rendering.RenderKit;
+import org.middleheaven.ui.rendering.RenderingContext;
 
 
 public class DesktopUIContainer extends StandaloneContainer {
 
+	RenderingContext renderedContext;
 
 	public DesktopUIContainer(ManagedFile repository) {
 		super(repository);
@@ -22,10 +29,26 @@ public class DesktopUIContainer extends StandaloneContainer {
 
 		try{
 			UIService uiService=ServiceRegistry.getService(UIService.class);
+			
+			UIEnvironment env = uiService.getDefaultUIEnvironment(UIEnvironmentType.DESKTOP);
 
-			UIClient client = uiService.getUIClient(UIEnvironmentType.DESKTOP, "main");
+			if (env.getClients().isEmpty()){
+				throw new RuntimeException("No UIClients defined for environment" + env.getName());
+			}
+			
+			UIClient client = env.getClients().iterator().next();
+			
+			final RenderKit renderKit = client.getUIModel().getRenderKit();
+			
+			this.renderedContext = new RenderingContext(new MapContext(),renderKit);
+	
+			client = renderKit.renderComponent(renderedContext, null, client);
+			
+			DesktopClientModel clientModel = (DesktopClientModel) client.getUIModel();
+			UIComponent mainWindow = clientModel.defineMainWindow((UIDesktop)client,renderedContext);
 
-			((UIClientModel)client.getUIModel()).execute(null); // TODO provide a context
+			renderKit.show(mainWindow);
+			
 		} catch (ServiceNotFoundException e){
 			Logging.getBook(this.getClass()).warn("Executing without UI client");
 		}
@@ -34,8 +57,27 @@ public class DesktopUIContainer extends StandaloneContainer {
 
 	@Override
 	public void stop(ExecutionEnvironmentBootstrap bootstrap) {
-		// TODO Auto-generated method stub
+		try{
+			UIService uiService=ServiceRegistry.getService(UIService.class);
+			
+			UIEnvironment env = uiService.getDefaultUIEnvironment(UIEnvironmentType.DESKTOP);
 
+			if (env.getClients().isEmpty()){
+				return;
+			}
+			
+			UIClient client = env.getClients().iterator().next();
+			
+			final RenderKit renderKit = client.getUIModel().getRenderKit();
+			
+			DesktopClientModel clientModel = (DesktopClientModel) client.getUIModel();
+			UIComponent mainWindow = clientModel.defineMainWindow((UIDesktop)client,renderedContext);
+
+			renderKit.dispose(mainWindow);
+			
+		} catch (ServiceNotFoundException e){
+			Logging.getBook(this.getClass()).trace("Stopping without UI client");
+		}
 	}
 
 
