@@ -41,7 +41,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         if (render ==null){
             throw new IllegalStateException("Render not found for component " + component.getType() + ":" + component.getFamily());
         }
-        if (!UIClient.class.equals(component)){
+        if (!UIClient.class.equals(component.getType())){
             if (parent==null || !isRendered(parent)){
                 throw new IllegalArgumentException("Parent component is not rendered. Parent is " + String.valueOf(parent));
             }

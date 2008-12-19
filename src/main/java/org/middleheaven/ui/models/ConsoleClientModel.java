@@ -1,8 +1,5 @@
 package org.middleheaven.ui.models;
 
-import java.io.Console;
-
-import org.middleheaven.ui.Context;
 
 /**
  * Console based UIClient. Allows to build console applications 
@@ -12,15 +9,7 @@ import org.middleheaven.ui.Context;
  *  
  * @author Sergio Taborda
  */
-public abstract class ConsoleClientModel implements UIClientModel {
+public abstract class ConsoleClientModel extends AbstractUIClientModel {
 
-	@Override
-	public final void execute(Context context) {
-		
-		main(context,System.console());
-		
-	}
-	
-	public abstract void main(Context context, Console console);
 
 }
