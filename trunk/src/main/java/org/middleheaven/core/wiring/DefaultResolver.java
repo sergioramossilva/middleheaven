@@ -55,18 +55,27 @@ public class DefaultResolver<T, Base extends T> implements Resolver<T> {
 		Set[] specs = new Set[types.length];
 		Object[] objects = new Object[types.length];
 
-	
-		for (int p =0; p< types.length;p++){
-			specs[p] = new HashSet();
-			for (Annotation a : constructorAnnnnotations[p]){
+		for (int p =0; p< constructorAnnnnotations.length;p++){
+			// inner classes have a added parameter on index 0 that 
+			// get annotations does not cover.
+			// read from end to start
+
+			int typeIndex = types.length - 1 - p;
+			int annotIndex = constructorAnnnnotations.length - 1 -p;
+
+			specs[typeIndex] = new HashSet();
+
+
+			for (Annotation a : constructorAnnnnotations[annotIndex]){
+
 				if (a.annotationType().isAnnotationPresent(BindingSpecification.class) ||
 						a.annotationType().isAnnotationPresent(ScopeSpecification.class)){
-					specs[p].add(a);
+					specs[typeIndex].add(a);
 				}
 			}
-			objects[p] = binder.getInstance(WiringSpecification.search(types[p],specs[p]));
-		}
 
+			objects[typeIndex] = binder.getInstance(WiringSpecification.search(types[typeIndex],specs[typeIndex]));
+		}
 
 		try {
 			return query.getContract().cast(selectedConstructor.newInstance(objects));

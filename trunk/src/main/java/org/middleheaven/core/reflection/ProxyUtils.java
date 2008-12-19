@@ -12,7 +12,10 @@ import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 
 
-
+/***
+ * @deprecated use ReflectionUtils.proxy()
+ */
+@Deprecated
 public final class ProxyUtils {
 
 	private ProxyUtils(){}
@@ -96,39 +99,13 @@ public final class ProxyUtils {
 
 			return foo;
 		} catch (InstantiationException e) {
-			throw new InstantiationReflectionException(delegationTarget.getClass().getName(), e.getMessage());
+			throw new ReflectionException(e);
 		} catch (IllegalAccessException e) {
 			throw new IllegalAccesReflectionException(e);
 		}
 	}
 
-	public static <T> T proxyForClass (Class<T> template){
-		ProxyFactory f = new ProxyFactory();
-		f.setSuperclass(template);
-		f.setFilter(new MethodFilter() {
-			public boolean isHandled(Method m) {
-				// ignore finalize()
-				return !m.getName().equals("finalize");
-			}
-		});
-		Class<?> c = f.createClass();
-		T foo;
-		try {
-			foo = (T)c.newInstance();
-			MethodHandler mi = new OriginalMethodHandler();
+	
 
-			((ProxyObject)foo).setHandler(mi);
-
-			return foo;
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-
-	};
 
 }

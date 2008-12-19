@@ -1,6 +1,6 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.core.reflection.ProxyUtils;
+import org.middleheaven.core.reflection.ReflectionUtils;
 
 public abstract class AbstractStoreKeeper implements StoreKeeper {
 
@@ -19,7 +19,7 @@ public abstract class AbstractStoreKeeper implements StoreKeeper {
 			p = (Storable)obj;
 		} else {
 			// not managed yet
-			p = ProxyUtils.decorate(obj, Storable.class, new PersistableMethodHandler(obj.getClass()));
+			p = ReflectionUtils.proxy(obj, Storable.class, new PersistableMethodHandler(obj.getClass()));
 		}
 		return (T)p;
 	}
