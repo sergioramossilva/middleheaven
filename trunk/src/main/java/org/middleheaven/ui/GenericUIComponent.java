@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.middleheaven.core.reflection.DefaultMethodDelegator;
+import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.ui.components.UIContainer;
 import org.middleheaven.ui.components.UIInput;
 import org.middleheaven.ui.components.UILayout;
@@ -29,12 +31,15 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	private int height;
 	private int width;
 	
+	public static <T extends UIComponent>  T getInstance(Class<T> renderType, String familly){
+		return ReflectionUtils.proxy(new GenericUIComponent(renderType, familly), renderType);
+	}
 	
 	public GenericUIComponent(Class<T> renderType, String familly){
 		this.renderType = renderType;
 		this.familly = familly;
 		this.id = Integer.toString(nextID++);
-		if (!renderType.equals(UIInput.class)){
+		if (renderType.equals(UIContainer.class)){
 			layout = new GenericUIComponent(UILayout.class,"border");
 		}
 

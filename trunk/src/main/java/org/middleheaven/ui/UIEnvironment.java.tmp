@@ -1,6 +1,5 @@
 package org.middleheaven.ui;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -9,7 +8,7 @@ import org.middleheaven.ui.components.UIContainer;
 import org.middleheaven.ui.rendering.RenderKit;
 
 
-
+public abstract class UIEnvironment  {
 /**
  * User Interface Environment.
  * An application can have more than one User Interface Environment. 
@@ -19,7 +18,7 @@ import org.middleheaven.ui.rendering.RenderKit;
  *  
  *
  */
-public abstract class UIEnvironment implements Serializable{
+public class UIEnvironment implements Serializable{
 
 	private static final long serialVersionUID = -7807493488204561383L;
 
