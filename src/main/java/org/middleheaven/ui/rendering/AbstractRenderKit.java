@@ -57,21 +57,25 @@ public abstract class AbstractRenderKit extends RenderKit {
         UIComponent renderedComponent = render.render(context, parent, component);
         // copy IDs
         renderedComponent.setGID(component.getGID());
+        // copy family
+        renderedComponent.setFamily(component.getFamily());
         //copy models
         renderedComponent.setUIModel(component.getUIModel());
         
         // if the component renders its children components then there is nothing else to do
         // otherwise render the children components and add them to it.
-        if (!(component instanceof UILayout) && !render.isChildrenRenderer()){
+        if (!render.isChildrenRenderer(  context,  parent,  component)){
             // does it need a container
             if (component instanceof UIContainer){
             	// render layout
-            	UILayout layout = (UILayout)this.renderComponent(context, component , ((UIContainer)component).getLayout());
-            	((UIContainer)renderedComponent).setLayout(layout);
+            	UILayout layout = (UILayout)this.renderComponent(context, component , ((UIContainer)component).getUIContainerLayout());
+            	((UIContainer)renderedComponent).setUIContainerLayout(layout);
             }
 
             for (UIComponent child : component.getChildrenComponents()){
-                renderComponent(context,renderedComponent,child);
+                UIComponent rchild = renderComponent(context,renderedComponent,child);
+                
+                renderedComponent.addComponent(rchild);
             }
 
         } 

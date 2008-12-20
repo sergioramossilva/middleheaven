@@ -4,4 +4,6 @@ import org.middleheaven.ui.UIComponent;
 
 public interface UIWindow extends UIComponent{
 
+	
+	public UIWindowModel getUIModel();
 }

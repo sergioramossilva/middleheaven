@@ -41,7 +41,8 @@ final class WireUtils {
 				for (int p =0; p< types.length;p++){
 					specs[p] = new HashSet();
 					for (Annotation a : annotations[p]){
-						if (a.getClass().isAnnotationPresent(BindingSpecification.class)){
+						if (a.annotationType().isAnnotationPresent(BindingSpecification.class) || 
+								a.annotationType().isAnnotationPresent(ScopeSpecification.class)){
 							specs[p].add(a);
 						}
 					}
@@ -67,7 +68,7 @@ final class WireUtils {
 		} catch (IllegalArgumentException e) {
 			throw new IllegalAccesReflectionException(e);
 		} catch (InvocationTargetException e) {
-			throw new InvocationTargetReflectionException(e);
+			throw new InvocationTargetReflectionException(e.getTargetException());
 		} catch (InstantiationException e) {
 			throw new InstantiationReflectionException(type.getName(), e.getMessage());
 		} catch (IllegalAccessException e) {

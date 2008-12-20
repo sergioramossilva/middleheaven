@@ -33,12 +33,13 @@ import org.middleheaven.storage.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.datasource.DriverManagerDSProvider;
 import org.middleheaven.storage.db.DataBaseStoreKeeper;
 import org.middleheaven.test.storage.StorageManagerTeste.TestSubject;
+import org.middleheaven.tool.test.MiddleHeavenTestCase;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.sequence.service.FileSequenceStorageActivator;
 
 
-public class DataStorageTest {
+public class DataStorageTest extends MiddleHeavenTestCase {
 
 	static DataStorage ds;
 	static boolean runTest=true;
@@ -46,7 +47,7 @@ public class DataStorageTest {
 	@Before
 	public void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
-		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
+		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 
 		// Activator

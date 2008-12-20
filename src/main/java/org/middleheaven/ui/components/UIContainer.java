@@ -11,8 +11,8 @@ import org.middleheaven.ui.UILayoutConstraint;
  */
 public interface UIContainer extends UIComponent  {
 
-    public void setLayout(UILayout component);
-    public UILayout getLayout();
+    public void setUIContainerLayout(UILayout component);
+    public UILayout getUIContainerLayout();
     
     public void addComponent (UIComponent component, UILayoutConstraint layoutConstrain);
     public void removeComponent (UIComponent component);

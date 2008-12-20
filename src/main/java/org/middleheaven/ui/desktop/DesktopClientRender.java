@@ -3,8 +3,10 @@ package org.middleheaven.ui.desktop;
 import org.middleheaven.progress.BoundProgress;
 import org.middleheaven.progress.Progress;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UIDesktop;
+import org.middleheaven.ui.desktop.awt.Desktop;
 import org.middleheaven.ui.models.DesktopClientModel;
 import org.middleheaven.ui.rendering.RenderKit;
 import org.middleheaven.ui.rendering.RenderingContext;
@@ -17,43 +19,47 @@ public class DesktopClientRender  extends UIRender{
 	}
 	
 	@Override
-	protected UIComponent build(RenderingContext context, UIComponent parent, UIComponent client) {
+	protected UIComponent build(RenderingContext context, UIComponent parent, UIComponent component) {
+		
+		Desktop dclient = new Desktop();
 		
 		// parent is null has the client is a root element
 		RenderKit renderKit = context.getRenderKit();
 		
-		DesktopClientModel clientModel = (DesktopClientModel) client.getUIModel();
+		DesktopClientModel clientModel = (DesktopClientModel) component.getUIModel();
 		
-		Progress progress = new BoundProgress(client.getChildrenCount());
+		dclient.setUIModel(clientModel);
+		
+		Progress progress = new BoundProgress(component.getChildrenCount());
 
 		context.setAttribute(ContextScope.RENDERING, "progress", progress);
 
-		UIComponent splash = clientModel.defineSplashWindow((UIDesktop)client,context);
+		UIComponent splash = clientModel.defineSplashWindow((UIClient)component,context);
 		
 		// show progress
 		if (splash!=null){
 			if (!splash.isRendered()){
-				splash = renderKit.renderComponent(context, client, splash);
+				splash = renderKit.renderComponent(context, dclient, splash);
 			}
 			renderKit.show(splash);
 		}
 		
-		for (UIComponent component : client.getChildrenComponents()){
+		
+		for (UIComponent comp : component.getChildrenComponents()){
 			
-			client.removeComponent(component);
 			
-			UIComponent renderedComponent = renderKit.renderComponent(context, client, component);
+			UIComponent renderedComponent = renderKit.renderComponent(context, dclient, comp);
 
-			client.addComponent(renderedComponent);
+			dclient.addComponent(renderedComponent);
 			
 			progress.increment();
 		}
 		
-
 		
+
 		renderKit.dispose(splash);
 	
-		return client;
+		return dclient;
 	}
 
 }

@@ -1,9 +1,11 @@
-package org.middleheaven.ui.swing.components;
+package org.middleheaven.ui.desktop.swing;
 
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIModel;
@@ -11,47 +13,66 @@ import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.UIQuery;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.components.UIWindow;
+import org.middleheaven.ui.components.UIWindowModel;
+import org.middleheaven.util.DelegatingList;
 
 public class SWindow extends JFrame implements UIComponent{
 
 	private UIComponent parent;
 	private String id;
+	private String family;
+	private UIWindowModel model;
 	
+	@Override
+	public Set<UIComponent> findComponents(UIQuery query) {
+		return query.execute(this);
+	}
 	
 	@Override
 	public void addComponent(UIComponent component) {
-		// TODO Auto-generated method stub
-		
+		component.setUIParent(this);
+		if (component instanceof JMenuBar){
+			this.setJMenuBar((JMenuBar)component);
+		} else {
+			this.getContentPane().add((JComponent)component);
+		}
 	}
 
 	@Override
-	public Set<UIComponent> findComponents(UIQuery query) {
-		// TODO Auto-generated method stub
-		return null;
+	public void removeComponent(UIComponent component) {
+		this.getContentPane().remove((JComponent)component);
 	}
-
-	@Override
-	public void gainFocus() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	@Override
 	public List<UIComponent> getChildrenComponents() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DelegatingList<UIComponent>(){
+
+			@Override
+			public UIComponent get(int index) {
+				return (UIComponent)getContentPane().getComponent(index);
+			}
+
+			@Override
+			public int size() {
+				return getComponentCount();
+			}
+			
+		};
 	}
 
 	@Override
 	public int getChildrenCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getComponentCount();
+	}
+	
+	@Override
+	public void gainFocus() {
+		this.requestFocus();
 	}
 
 	@Override
 	public String getFamily() {
-		// TODO Auto-generated method stub
-		return null;
+		return family;
 	}
 
 	@Override
@@ -65,9 +86,8 @@ public class SWindow extends JFrame implements UIComponent{
 	}
 
 	@Override
-	public UIModel getUIModel() {
-		// TODO Auto-generated method stub
-		return null;
+	public UIWindowModel getUIModel() {
+		return model;
 	}
 
 	@Override
@@ -81,15 +101,8 @@ public class SWindow extends JFrame implements UIComponent{
 	}
 
 	@Override
-	public void removeComponent(UIComponent component) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void setFamily(String family) {
-		// TODO Auto-generated method stub
-		
+		this.family = family;
 	}
 
 	@Override
@@ -99,7 +112,8 @@ public class SWindow extends JFrame implements UIComponent{
 
 	@Override
 	public void setUIModel(UIModel model) {
-		
+		this.model = (UIWindowModel) model;
+		this.setTitle(this.model.getTitle());
 	}
 
 	@Override

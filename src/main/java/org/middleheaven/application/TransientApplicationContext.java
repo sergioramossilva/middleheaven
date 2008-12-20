@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.Container;
+import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.wiring.WiringContext;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.util.LiveCollection;
 import org.middleheaven.util.Version;
@@ -14,10 +17,12 @@ public class TransientApplicationContext implements ApplicationContext {
 	Map<String, ApplicationModule> modules = new HashMap<String, ApplicationModule>();
 	Collection<ApplicationModule> all = new LiveCollection<ApplicationModule>();
 	
-	Container container;
+	private Container container;
+	private WiringContext wcontext;
 	
-	public TransientApplicationContext(Container configContext) {
+	public TransientApplicationContext(WiringContext wcontext, Container configContext) {
 		this.container = configContext;
+		this.wcontext = wcontext;
 	}
 
 	public ApplicationModule getOlderModulePresent(ModuleID moduleID) {
@@ -36,6 +41,9 @@ public class TransientApplicationContext implements ApplicationContext {
 	
 	@Override
 	public void addModule(ApplicationModule module) {
+		
+		wcontext.wireMembers(module);
+		
 		ApplicationModule currentModule = modules.get(module.getModuleID().getIdentifier());
 		if (currentModule==null){
 			modules.put(module.getModuleID().getIdentifier(),module);

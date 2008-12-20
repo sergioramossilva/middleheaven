@@ -2,9 +2,11 @@ package org.middleheaven.core.wiring;
 
 import java.lang.reflect.Method;
 
+import org.middleheaven.core.reflection.ProxyHandler;
+
 import javassist.util.proxy.MethodHandler;
 
-public class CyclicProxy implements MethodHandler{
+public class CyclicProxy implements ProxyHandler{
 
 	private Object realObject;
 	

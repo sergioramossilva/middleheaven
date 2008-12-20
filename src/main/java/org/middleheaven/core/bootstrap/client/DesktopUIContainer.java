@@ -25,7 +25,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 		super(repository);
 	}
 
-	public void init(ExecutionEnvironmentBootstrap bootstrap){
+	public void start(ExecutionEnvironmentBootstrap bootstrap){
 
 		try{
 			UIService uiService=ServiceRegistry.getService(UIService.class);
@@ -45,7 +45,17 @@ public class DesktopUIContainer extends StandaloneContainer {
 			client = renderKit.renderComponent(renderedContext, null, client);
 			
 			DesktopClientModel clientModel = (DesktopClientModel) client.getUIModel();
-			UIComponent mainWindow = clientModel.defineMainWindow((UIDesktop)client,renderedContext);
+			
+			
+			UIComponent mainWindow;
+			 if (client.getChildrenCount()>1){
+				mainWindow = clientModel.defineMainWindow((UIDesktop)client,renderedContext);
+			} else if (client.getChildrenCount()==0){
+				Logging.getBook(this.getClass()).error("No main window found");
+				return;
+			} else {
+				mainWindow = client.getChildrenComponents().get(0);
+			}
 
 			renderKit.show(mainWindow);
 			

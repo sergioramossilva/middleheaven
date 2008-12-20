@@ -6,6 +6,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Holds information to find another UIComponent from a given finder
+ *
+ */
 public final class UIQuery {
 
 	public static UIQuery findRoot(){
@@ -88,7 +92,10 @@ public final class UIQuery {
     }
     
     private static void searchChildren(UIComponent parent , Collection<UIComponent> foundChilds , String id){
-        boolean found = false;
+        if (parent ==null){
+        	return;
+        }
+    	boolean found = false;
         List<UIComponent> components = parent.getChildrenComponents();
 
         for (UIComponent component : components){

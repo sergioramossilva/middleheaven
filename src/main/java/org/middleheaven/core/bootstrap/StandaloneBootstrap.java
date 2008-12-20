@@ -5,12 +5,17 @@
 package org.middleheaven.core.bootstrap;
 
 import org.middleheaven.application.ApplicationLoadingCycle;
-import org.middleheaven.application.ApplicationLoadingCycleService;
+import org.middleheaven.application.ApplicationLoadingService;
+import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.ContextIdentifier;
+import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.logging.Logging;
+import org.middleheaven.ui.UIServiceActivator;
 
 
 /**
@@ -19,9 +24,11 @@ import org.middleheaven.logging.Logging;
 public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 
 	Container env;
+	private Object starter;
 
-	public StandaloneBootstrap(Container env){
+	public StandaloneBootstrap(Object starter , Container env){
 		this.env = env;
+		this.starter = starter;
 	}
 
 	@Override
@@ -29,11 +36,24 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 		return ContextIdentifier.getInstance("app");
 	}
 
+	public void configuate(ServiceContextConfigurator configurator){
+		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
+		.addActivator(DynamicLoadApplicationServiceActivator.class)
+		.addActivator(UIServiceActivator.class)
+		;
+		
+		configurator.addEngine(engine);
+	}
+
 	ApplicationLoadingCycle appCycle;
 
 	protected void doAfterStart(){
+		
+		 
+        ServiceRegistry.getService(WiringService.class).getWiringContext().wireMembers(starter);
+        
 		try{
-			ApplicationLoadingCycleService app = ServiceRegistry.getService(ApplicationLoadingCycleService.class);
+			ApplicationLoadingService app = ServiceRegistry.getService(ApplicationLoadingService.class);
 			if (app!=null){
 				appCycle = app.getApplicationLoadingCycle();
 				appCycle.start();

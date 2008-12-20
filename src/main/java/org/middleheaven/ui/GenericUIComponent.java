@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.core.reflection.DefaultMethodDelegator;
 import org.middleheaven.core.reflection.ReflectionUtils;
@@ -15,7 +16,7 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 
 	static private int nextID=0;
 	
-	private List<UIComponent> children = new LinkedList<UIComponent>();
+	private List<UIComponent> children = new CopyOnWriteArrayList<UIComponent>();
 	private UILayout layout = null;
 	private String id;
 	private String familly; 
@@ -51,9 +52,10 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 		return new GenericUIComponent( renderType,  familly);
 	}
 	
-	public boolean equals(UIComponent other){
-		return this.id.equals(other.getGID());
+	public boolean equals(Object other){
+		return other instanceof UIComponent && this.id.equals(((UIComponent)other).getGID());
 	}
+	
 	
 	public int hashCode(){
 		return this.id.hashCode();
@@ -88,12 +90,12 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	}
 
 	@Override
-	public UILayout getLayout() {
+	public UILayout getUIContainerLayout() {
 		return layout;
 	}
 
 	@Override
-	public void setLayout(UILayout component) {
+	public void setUIContainerLayout(UILayout component) {
 		this.layout = component;
 	}
 
@@ -164,7 +166,6 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 		return this.visible;
 	}
 
-	@Override
 	public void setEnabled(boolean enabled) {
 		this.enable = enabled;
 	}

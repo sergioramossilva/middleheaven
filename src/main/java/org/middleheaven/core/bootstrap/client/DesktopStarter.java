@@ -19,20 +19,17 @@ import org.middleheaven.logging.LoggingLevel;
  * 
  *
  */
-public class DesktopStarter {
+public abstract class DesktopStarter {
 
-	public static void main(String[] args){
-		
-		new DesktopStarter().execute(args);
-	}
+	
 	
     public void execute(String[] args){
     	
     	Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
-        StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
-       
+        StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
         bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
+       
     }
     
- 
+   
 }
