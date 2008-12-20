@@ -16,7 +16,7 @@ public abstract class UIRender implements Serializable{
 	 * Is this renderer responsible for rendering children components
 	 * @return
 	 */
-	public boolean isChildrenRenderer() {
+	public boolean isChildrenRenderer(RenderingContext context, UIComponent parent,UIComponent component) {
 		return false;
 	}
 	

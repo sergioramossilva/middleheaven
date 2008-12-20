@@ -15,16 +15,11 @@ import org.middleheaven.global.text.writeout.NumberWriteoutFormat;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
-public class NumberWordsFormatTest {
+public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 
-	@BeforeClass
-	public static void setup(){
-		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
-		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
-		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
-	}
-	
+
 	@Test(expected=FormatNotFoundException.class)
 	public void testaNumberToWordsUnknown(){
 		

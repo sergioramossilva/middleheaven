@@ -85,11 +85,9 @@ public interface UIComponent extends  Displayable {
      */
     public Set<UIComponent> findComponents(UIQuery query);
     
-    
     public void setVisible(boolean visible);
     public boolean isVisible();
     
-    public void setEnabled(boolean enabled);
     public boolean isEnabled();
     
     public void gainFocus();
@@ -99,6 +97,10 @@ public interface UIComponent extends  Displayable {
     public boolean equals(Object other);
     
     public int hashCode();
+
+	void setEnabled(boolean enabled);
+
+	
 
 
     

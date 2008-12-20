@@ -14,11 +14,10 @@ import org.middleheaven.io.repository.ManagedFile;
 public interface  Container  {
 
 
-    public abstract String getEnvironmentName();
+    public String getEnvironmentName();
     
-    public abstract void init(ExecutionEnvironmentBootstrap bootstrap);
-    
-    
+    public void init(ExecutionEnvironmentBootstrap bootstrap);
+    public void start(ExecutionEnvironmentBootstrap bootstrap);
     public void stop(ExecutionEnvironmentBootstrap bootstrap);
     
     /**

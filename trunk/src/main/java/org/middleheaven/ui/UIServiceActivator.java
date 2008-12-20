@@ -53,7 +53,8 @@ public class UIServiceActivator extends ServiceActivator {
 		@Override
 		public void registerEnvironment(UIEnvironment env, boolean isDefault) {
 			if (isDefault){
-				if (!env.equals(defaultEnvs.get(env.getType()))){
+				UIEnvironment existing = defaultEnvs.get(env.getType());
+				if (existing !=null && !env.equals(existing)){
 					throw new UIException("Default environment already set for type " + env.getType());
 				}
 				this.defaultEnvs.put(env.getType(), env);

@@ -17,6 +17,7 @@ import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.ManagedFile;
@@ -32,7 +33,9 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 
 	private LoggingService loggingService;
 	private BootstrapService bootstrapService;
-	private ApplicationLoadingCycleService applicationLoadingCycleService;
+	private ApplicationLoadingService applicationLoadingCycleService;
+
+	private WiringService wiringService;
 	
 	@Require
 	public void setBootstrapService(BootstrapService bootstrapService) {
@@ -44,11 +47,25 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 		this.loggingService = loggingService;
 	}
 	
+	@Require
+	public void setWiringService(WiringService wiringService) {
+		this.wiringService = wiringService;
+	}
+	
 	@Publish
-	public ApplicationLoadingCycleService getApplicationLoadingCycleService() {
+	public ApplicationLoadingService getApplicationLoadingCycleService() {
 		return applicationLoadingCycleService;
 	}
 
+	@Override
+	public void activate(ServiceAtivatorContext context) {
+		log = loggingService.getLogBook(this.getClass().getName());
+	
+		bootstrapService.addListener(this);
+		applicationLoadingCycleService =  new DynamicLoadApplicationService( bootstrapService.getContainer());
+	}
+
+	
 	public DynamicLoadApplicationServiceActivator(){}
 
 
@@ -64,13 +81,6 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 		}
 	};
 
-	@Override
-	public void activate(ServiceAtivatorContext context) {
-		log = loggingService.getLogBook(this.getClass().getName());
-	
-		bootstrapService.addListener(this);
-		applicationLoadingCycleService =  new DynamicLoadApplicationService( bootstrapService.getContainer());
-	}
 
 	@Override
 	public void inactivate(ServiceAtivatorContext context) {
@@ -91,15 +101,22 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 	
 	private DefaultApplicationLoadingCycle cycle;
 	
-	private class DynamicLoadApplicationService implements ApplicationLoadingCycleService {
+	private class DynamicLoadApplicationService implements ApplicationLoadingService {
+		TransientApplicationContext context;
 		
 		public DynamicLoadApplicationService(Container container) {
-			TransientApplicationContext context = new TransientApplicationContext(container);
+			context = new TransientApplicationContext(wiringService.getWiringContext(),container);
 			cycle = new DinamicLoadingCycle(context);
 		}
+		
 		@Override
 		public ApplicationLoadingCycle getApplicationLoadingCycle() {
 			return cycle;
+		}
+		
+		@Override
+		public ApplicationContext getApplicationContext(){
+			return context;
 		}
 		
 	}
@@ -114,23 +131,27 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 
 		@Override
 		public void start() {
-			
+			log.info("Scanning for applications");
 			this.setState(ApplicationCycleState.STOPED);
 			loadPresentModules();
+			log.info("Activating applications");
 			for (ApplicationModule module : context.modules()){
 				try {
 					module.load(context);
-				} catch (Exception e){
-					log.warn("Impossible to activate " + module.getModuleID(), e);
+				} catch (RuntimeException e){
+					log.error("Impossible to activate " + module.getModuleID(), e);
+					throw e;
 				}
 			}
 			this.setState(ApplicationCycleState.LOADED);
 			this.setState(ApplicationCycleState.READY);
+			log.info("Applications ready");
 		}
 
 		@Override
 		public void stop() {
 			this.setState(ApplicationCycleState.PAUSED);
+			log.info("Deactivating applications");
 			for (ApplicationModule module : context.modules()){
 				try {
 					module.unload(context);
@@ -139,6 +160,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 				}
 			}
 			this.setState(ApplicationCycleState.STOPED);
+			log.info("Applications deactivated");
 		}
 
 		@Override
@@ -165,7 +187,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 				wr.addFileChangelistener(cycle, f);
 			}
 
-			// filter apm only 
+			// filter apm only (apm are jar files)
 			applicationModuleFiles.addAll( f.listFiles(appModulesFilter));
 
 

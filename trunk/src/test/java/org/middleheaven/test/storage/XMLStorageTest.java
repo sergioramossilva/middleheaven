@@ -26,19 +26,20 @@ import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.xml.XMLStoreKeeper;
 import org.middleheaven.test.storage.StorageManagerTeste.TestSubject;
+import org.middleheaven.tool.test.MiddleHeavenTestCase;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.sequence.service.FileSequenceStorageActivator;
 
 
-public class XMLStorageTest {
+public class XMLStorageTest extends MiddleHeavenTestCase{
 
 	static DataStorage ds;
 	
 	@Before
 	public void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
-		StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
+		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 
 		// Activator

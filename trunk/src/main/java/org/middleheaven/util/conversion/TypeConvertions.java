@@ -25,7 +25,12 @@ public class TypeConvertions {
 		if (value==null){
 			return null;
 		}
-		if (type.isAssignableFrom(value.getClass())){
+		
+		if (type.isPrimitive()){
+			return (T)value;
+		}
+		
+		if (type.isInstance(value)){
 			return type.cast(value);
 		}
 		Class<O> valueClass = (Class<O>) value.getClass();
@@ -38,6 +43,7 @@ public class TypeConvertions {
 	}
 
 	public static <O,R> TypeConverter<O,R> getConverter(Class<O> from , Class<R> to){
+		
 		if (to.isPrimitive()){
 			String wrapper = to.getSimpleName().substring(0,1).toUpperCase() + to.getSimpleName().substring(1);
 			if (to.getSimpleName().equals("int")){

@@ -16,11 +16,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.middleheaven.util.classification.BooleanClassifier;
 
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
@@ -33,8 +37,8 @@ public final class ReflectionUtils {
 
 	private static class MethodInvocationHandler implements InvocationHandler{
 
-		private MethodHandler methodHandler;
-		private MethodInvocationHandler(MethodHandler methodHandler){
+		private ProxyHandler methodHandler;
+		private MethodInvocationHandler(ProxyHandler methodHandler){
 			this.methodHandler =  methodHandler;
 		}
 
@@ -46,7 +50,7 @@ public final class ReflectionUtils {
 
 	}
 	
-	public static <T> T proxy (Class<T> facadeClass , MethodHandler delegator){
+	public static <T> T proxy (Class<T> facadeClass , final ProxyHandler delegator){
 		try {
 			if (facadeClass.isInterface()){
 				return (T)Proxy.newProxyInstance(ReflectionUtils.class.getClassLoader(),new Class<?>[]{facadeClass}, new MethodInvocationHandler(delegator));
@@ -67,7 +71,15 @@ public final class ReflectionUtils {
 					}
 				}
 				Object[] allNull = new Object[candidate.getParameterTypes().length]; 
-				return (T)f.create(candidate.getParameterTypes(), allNull, delegator);
+				return (T)f.create(candidate.getParameterTypes(), allNull, new MethodHandler(){
+
+					@Override
+					public Object invoke(Object proxy, Method invokedOnInterface, Method originalOnClass, Object[] args) throws Throwable {
+						return delegator.invoke(proxy, invokedOnInterface, originalOnClass, args);
+					}
+
+					
+				});
 
 			} 
 		} catch (InstantiationException e) {
@@ -217,14 +229,22 @@ public final class ReflectionUtils {
 		return new PropertyAccessor(type,fieldName);
 	}
 
-	public static Collection<PropertyAccessor> getPropertyAccessors(Class<?> type)
-	throws ReflectionException{
+	public static Collection<PropertyAccessor> getPropertyAccessors(Class<?> type)throws ReflectionException{
 
+		if (type==null){
+			return Collections.emptySet();
+		}
+		
 		Collection<PropertyAccessor> result = new ArrayList<PropertyAccessor> ();
 		for (Method m : type.getMethods()){
-			if ((m.getName().startsWith("get") || m.getName().startsWith("is")) && !m.getName().startsWith("getClass") ){
-				//result.add(new PropertyAccessor(type, m.getName().substring(3)));
-				result.add(getPropertyAccessor(type, m.getName().substring(3)));
+			
+			if (!m.getName().startsWith("getClass") ){
+				if (m.getName().startsWith("get")){
+					result.add(getPropertyAccessor(type, m.getName().substring(3)));
+				} else if (m.getName().startsWith("is")){
+					result.add(getPropertyAccessor(type, m.getName().substring(2)));
+				}
+				
 			}
 
 		}
@@ -597,6 +617,26 @@ public final class ReflectionUtils {
 		});
 
 		return Arrays.asList(constructors);
+	}
+
+	public static List<Method> getMethods(Class<?> type) {
+		return getMethods(type,null);
+	}
+	
+	public static List<Method> getMethods(Class<?> type, BooleanClassifier<Method> filter) {
+		
+		List<Method> result = new ArrayList<Method>(Arrays.asList(type.getMethods()));
+		
+		if (filter!=null){
+			for (Iterator<Method> it = result.iterator();it.hasNext(); ){
+				if (!filter.classify(it.next())){
+					it.remove();
+				}
+			}
+		}
+		
+		return result;
+		
 	}
 
 

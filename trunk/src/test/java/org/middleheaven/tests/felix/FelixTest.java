@@ -9,6 +9,7 @@ import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 public class FelixTest {
 
@@ -17,7 +18,7 @@ public class FelixTest {
 		
 		
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
-        StandaloneBootstrap bootstrap = new StandaloneBootstrap(container);
+        StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
         bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 
 	}

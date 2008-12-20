@@ -10,6 +10,7 @@ import java.util.Date;
 import org.middleheaven.global.text.ISO8601Format;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 public class XMLUtils {
@@ -142,5 +143,19 @@ public class XMLUtils {
     public final int getInt(String attribName , Element el) throws XMLAttributemissingException{
         return intAttribute(attribName,el,null);
     }
+
+	public static Node getChildNode(String name, Node node) {
+		if (node ==null){
+			return null;
+		}
+		NodeList list = node.getChildNodes();
+		for (int i=0; i < list.getLength(); i++){
+			Node no = list.item(i);
+			if (no.getNodeName().equalsIgnoreCase(name)){
+				return no;
+			}
+		}
+		return null;
+	}
 
 }

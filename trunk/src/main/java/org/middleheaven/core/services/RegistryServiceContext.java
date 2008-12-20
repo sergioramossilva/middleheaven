@@ -72,8 +72,7 @@ public final class RegistryServiceContext implements ServiceContext{
 
 	@Override
 	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String,String> properties) {
-		
-		
+
 		ServiceBinding b = new ServiceBinding(properties,implementation);
 		List<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list==null ){

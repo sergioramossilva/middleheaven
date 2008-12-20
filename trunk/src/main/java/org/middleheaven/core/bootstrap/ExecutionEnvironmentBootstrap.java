@@ -13,10 +13,12 @@ import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.core.services.RegistryServiceContext;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceContextEngineConfigurationService;
+import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.services.engine.LocalFileRepositoryDiscoveryEngine;
 import org.middleheaven.core.wiring.DefaultWiringService;
+import org.middleheaven.core.wiring.WiringContext;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.global.atlas.modules.AtlasActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
@@ -73,15 +75,22 @@ public abstract class ExecutionEnvironmentBootstrap {
 		
 		configurator.addEngine(engine);
 		configurator.addEngine(new LocalFileRepositoryDiscoveryEngine());
-
+		configuate(configurator);
+		
 		container.init(this);
 
 		doAfterStart();
+		
+		container.start(this);
 
 		log.info("Environment inicialized in " + (System.currentTimeMillis()-time) + " ms.");
 		bootstrapService.fireBootupEnd();
 	}
 
+	public void configuate(ServiceContextConfigurator configurator){
+		
+	}
+	
 	public ServiceContextConfigurator getServiceContextConfigurator(){
 		return this.configurator;
 	}

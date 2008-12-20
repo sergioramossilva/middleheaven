@@ -11,6 +11,8 @@ import java.util.Queue;
 import java.util.TreeMap;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.wiring.service.ServiceScope;
 
 
 public class DefaultWiringService implements WiringService{
@@ -27,14 +29,17 @@ public class DefaultWiringService implements WiringService{
 	public DefaultWiringService(){
 		scopes.put(Shared.class.getName(), SharedScope.class);
 		scopes.put(Default.class.getName(), DefaultScope.class);
+		scopes.put(Service.class.getName(), ServiceScope.class);
+		
 		DefaultScope defaultScope = new DefaultScope();
 		SharedScope sharedScope = new SharedScope();
 		
 		scopePools.put(DefaultScope.class.getName(),defaultScope);
-		scopePools.put(SharedScope.class.getName(),new SharedScope());
+		scopePools.put(SharedScope.class.getName(),sharedScope);
 		
 		binder.bind(SharedScope.class).in(Shared.class).toInstance(sharedScope);
 		binder.bind(DefaultScope.class).in(Shared.class).toInstance(defaultScope);
+		binder.bind(ServiceScope.class).in(Shared.class);
 	}
 	
 	
@@ -147,7 +152,11 @@ public class DefaultWiringService implements WiringService{
 						scopePools.put(scopeClass.getName(), scopePool);
 					}
 
-					final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(interceptors, binding.getResolver());
+					Resolver<T> resolver = binding.getResolver();
+					if (resolver==null){
+						resolver = new DefaultResolver(binding.getAbstractType(),this);
+					}
+					final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(interceptors,resolver);
 					final T obj = scopePool.scope(query, interceptorResolver);
 
 					CyclicProxy proxy = cyclicProxies.get(key);

@@ -1,8 +1,10 @@
 package org.middleheaven.application;
 
-public interface ApplicationLoadingCycleService {
+public interface ApplicationLoadingService {
 
 	
 	public ApplicationLoadingCycle getApplicationLoadingCycle();
+
+	public ApplicationContext getApplicationContext();
 
 }

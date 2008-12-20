@@ -1,8 +1,9 @@
 package org.middleheaven.ui.models;
 
+import org.middleheaven.ui.AbstractUIModel;
 import org.middleheaven.ui.rendering.RenderKit;
 
-public abstract class AbstractUIClientModel implements UIClientModel{
+public abstract class AbstractUIClientModel extends AbstractUIModel implements UIClientModel{
 
 	private RenderKit renderKit;
 	

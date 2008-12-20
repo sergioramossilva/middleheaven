@@ -5,8 +5,6 @@ import java.lang.reflect.Method;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.ReflectionUtils;
 
-import javassist.util.proxy.MethodHandler;
-
 public class PersistableMethodHandler implements ProxyHandler  {
 
 	

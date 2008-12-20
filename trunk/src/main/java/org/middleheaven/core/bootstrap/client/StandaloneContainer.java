@@ -5,6 +5,7 @@
 package org.middleheaven.core.bootstrap.client;
 
 import org.middleheaven.core.Container;
+import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.io.repository.ManagedFile;
 
 /**
@@ -47,5 +48,8 @@ public abstract class StandaloneContainer implements Container {
     public ManagedFile getAppClasspathRepository() {
         return repository.resolveFile("bin");
     }
+    
+    public void init(ExecutionEnvironmentBootstrap bootstrap){}
+
 
 }
