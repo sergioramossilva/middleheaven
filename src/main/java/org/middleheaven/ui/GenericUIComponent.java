@@ -1,9 +1,9 @@
 package org.middleheaven.ui;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.core.reflection.DefaultMethodDelegator;
@@ -102,7 +102,7 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 
 
 	@Override
-	public Set<UIComponent> findComponents(UIQuery query) {
+	public Collection<UIComponent> findComponents(UIQuery query) {
 		return query.execute(this);
 	}
 

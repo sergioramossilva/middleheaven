@@ -1,7 +1,7 @@
 package org.middleheaven.ui;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -83,7 +83,7 @@ public interface UIComponent extends  Displayable {
      * @param query - expression to execute
      * @return set of encountered components
      */
-    public Set<UIComponent> findComponents(UIQuery query);
+    public Collection<UIComponent> findComponents(UIQuery query);
     
     public void setVisible(boolean visible);
     public boolean isVisible();

@@ -1,6 +1,6 @@
 package org.middleheaven.demos;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIQuery;
@@ -11,10 +11,10 @@ public class ShrinkButtonModel extends AbstractUICommandModel {
 
 	@Override
 	public void onCommand(UICommand command) {
-		Set<UIComponent> res  = command.findComponents(UIQuery.find("//"));
+		Collection<UIComponent> res  = command.findComponents(UIQuery.search("../buttonA"));
 		
 		UIComponent grow = res.iterator().next();
-		grow.getUIModel().setEnabled(false);
+		grow.getUIModel().setEnabled(true);
 	}
 
 
