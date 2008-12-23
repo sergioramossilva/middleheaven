@@ -1,8 +1,8 @@
 package org.middleheaven.ui.desktop.swing;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JMenuItem;
 
@@ -29,7 +29,7 @@ public class SMenuButton extends JMenuItem implements UIComponent {
 	}
 
 	@Override
-	public Set<UIComponent> findComponents(UIQuery query) {
+	public Collection<UIComponent> findComponents(UIQuery query) {
 		return query.execute(this);
 	}
 

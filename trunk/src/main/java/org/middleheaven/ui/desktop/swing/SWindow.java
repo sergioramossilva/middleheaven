@@ -1,7 +1,7 @@
 package org.middleheaven.ui.desktop.swing;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -24,7 +24,7 @@ public class SWindow extends JFrame implements UIComponent{
 	private UIWindowModel model;
 	
 	@Override
-	public Set<UIComponent> findComponents(UIQuery query) {
+	public Collection<UIComponent> findComponents(UIQuery query) {
 		return query.execute(this);
 	}
 	

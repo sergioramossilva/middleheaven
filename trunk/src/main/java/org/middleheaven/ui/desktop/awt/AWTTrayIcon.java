@@ -3,9 +3,9 @@ package org.middleheaven.ui.desktop.awt;
 import java.awt.Image;
 import java.awt.PopupMenu;
 import java.awt.TrayIcon;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
@@ -32,7 +32,7 @@ public class AWTTrayIcon extends TrayIcon implements UIDesktopTrayIcon{
 	}
 
 	@Override
-	public Set<UIComponent> findComponents(UIQuery query) {
+	public Collection<UIComponent> findComponents(UIQuery query) {
 		return Collections.emptySet();
 	}
 

@@ -1,9 +1,9 @@
 package org.middleheaven.ui.desktop.swing;
 
 import java.awt.event.ActionEvent;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -54,7 +54,7 @@ public class SButton extends JButton implements UICommand {
 	}
 
 	@Override
-	public Set<UIComponent> findComponents(UIQuery query) {
+	public Collection<UIComponent> findComponents(UIQuery query) {
 		return query.execute(this);
 	}
 

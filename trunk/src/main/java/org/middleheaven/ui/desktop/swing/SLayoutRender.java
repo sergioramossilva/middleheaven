@@ -22,11 +22,11 @@ public class SLayoutRender extends UIRender {
 	
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent,UIComponent component) {
-		SBasePanel s = new SBasePanel();
+		SLayout s = new SLayout();
 		
 		String[] famillyParams =  component.getFamily().split(":");
 		if (famillyParams[0].equals("tabs")){
-		
+	
 			s.setLayout(new BorderLayout());
 			
 			JTabbedPane tabs = new JTabbedPane();
@@ -43,6 +43,7 @@ public class SLayoutRender extends UIRender {
 					tabs.add("", (JComponent)renderedComponent);
 				}
 				
+				s.addComponent(renderedComponent);
 			}
 			
 		

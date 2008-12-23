@@ -1,11 +1,10 @@
 package org.middleheaven.ui;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.middleheaven.ui.models.UIClientModel;
 
@@ -29,12 +28,13 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	}
 
 	
-	public Set<UIComponent> findContainedComponent(String componentID){
-		return Collections.singleton(components.get(componentID));
+	public UIComponent findContainedComponent(String componentID){
+		return components.get(componentID);
 	}
 	
 	@Override
 	public void addComponent(UIComponent component) {
+		component.setUIParent(this);
 		components.put(component.getGID(), component);
 	}
 	
@@ -44,7 +44,7 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	}
 
 	@Override
-	public Set<UIComponent> findComponents(UIQuery query) {
+	public Collection<UIComponent> findComponents(UIQuery query) {
 		return query.execute(this);
 	}
 

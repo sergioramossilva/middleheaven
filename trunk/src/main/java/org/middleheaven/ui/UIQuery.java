@@ -1,10 +1,11 @@
 package org.middleheaven.ui;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Queue;
+
 
 /**
  * Holds information to find another UIComponent from a given finder
@@ -12,12 +13,15 @@ import java.util.Set;
  */
 public final class UIQuery {
 
-	public static UIQuery findRoot(){
-		return find("/");
+	private static UIComponent findRoot(UIComponent component){
+		if (component.getUIParent()==null){
+			return component;
+		} else {
+			return findRoot (component.getUIParent());
+		}
 	}
-	
-	public static UIQuery find(String expression){
-	     return new UIQuery(expression); 
+	public static UIQuery search(String expr) {
+		return new UIQuery(expr);
 	}
 	
 	private String expression;
@@ -25,111 +29,74 @@ public final class UIQuery {
 		this.expression = expression;
 	}
 	
-	public Set<UIComponent> execute ( UIComponent currentComponent){
+	public List<UIComponent> execute ( UIComponent currentComponent){
 		return findByExpression(currentComponent, expression);
 	}
 	
-    private static Set<UIComponent> findByExpression(UIComponent component, String expr){
-        
-        String[] path = expr.trim().split("/");
-          
-        boolean isRoot = false;
-        if (path.length==0 || path[0].length()==0){
-            // root if the first char was a '/'
-            expr = expr.substring(1);
-            isRoot= true;
-        }
-        UIComponent base = searchBase (component,isRoot);  
-        
-        if (path.length>1){
-            for (int i=0;base!=null && i<path.length-1;i++){
-                base = searchChildContainer(base,path[i]);
-            }
-        }
-        
-        if (isRoot && UIClient.class.equals( base.getType()) ){
-            return Collections.singleton(base);
-        }
-        
-        return searchContainerChilds(base,path[path.length-1]);
-   
-    }
-    
-    /**
-     * Retrieve the base component for the search. 
-     * @param component
-     * @param isRoot
-     * @return
-     */
-    private static UIComponent searchBase(UIComponent component, boolean isRoot){
-        if (component.getUIParent()==null) return component; // cannot go up
-        
-        // not is root and is a naming container
-        if (!isRoot && component instanceof NamingContainer){
-            return component;
-        }
-        
-        return searchBase(component.getUIParent(),isRoot);
-    }
-    
-    private static UIComponent searchChildContainer(UIComponent base, String id){
-        List<UIComponent> components = base.getChildrenComponents();
-        
-        for (UIComponent component : components){
-            if (component instanceof NamingContainer && component.getGID().equals(id)){
-                return component;
-            }
-        }
-        
-        for (UIComponent component : components){
-            UIComponent c = searchChildContainer(component,id); 
-            if (c!=null){
-                return c;
-            }
-        }
-        
-        return null;
-    }
-    
-    private static void searchChildren(UIComponent parent , Collection<UIComponent> foundChilds , String id){
-        if (parent ==null){
-        	return;
-        }
-    	boolean found = false;
-        List<UIComponent> components = parent.getChildrenComponents();
+    private static List<UIComponent> findByExpression(UIComponent component, String expr){
+    	
+    	// component to wich the paths is relative
+    	UIComponent base = component;
+    	expr = expr.replaceAll("\\.", "#");
+    	
+    	if (expr.startsWith("/")){ // absolute path
+    		base = findRoot (component); // is relative to the top parent. find it
+    		// remove the / from the expression to make it relative
+    		expr = expr.substring(1);
+    		
+    		if (expr.length()==0){
+    			return Collections.singletonList(base); // no other search needed
+    		}
+    	} 
+    	
+    	LinkedList<UIComponent> baseStack = new LinkedList<UIComponent>();
+    	baseStack.add(base);
+    	
+    	Queue<String> pathStack = new LinkedList<String>(Arrays.asList(expr.split("/")));
+    	
+    	resolveStack (baseStack , pathStack );
 
-        for (UIComponent component : components){
-      
-            if (component.getGID().equals(id)){
-                foundChilds.add(component);
-                found = true;
-            }
-        }
-        
-        if (!found){
-        	// not foun as a child of the component.
-        	// search as a child of the children
-            for (UIComponent component : components){
-                searchChildren(component,foundChilds ,id); 
-            }
-        }
+    	return baseStack;
     }
     
-    private static Set<UIComponent> findContainerChildren(UIComponent base, String id){
-        // brut-force search
-        Set<UIComponent> list = new LinkedHashSet<UIComponent>();
-        
-        searchChildren(base, list,id);
-        
-        // could not be found
-        return list;
-    }
+	private static void resolveStack(Queue<UIComponent> baseStack, Queue<String> pathStack) {
+		
+		if (pathStack.isEmpty()){
+			return; // stop
+		}
+		
+		String id = pathStack.poll();
+		
+		if ( id.equals("#")){
+			// no-op , the base is the same
+		} else if (id.equals("##")){
+			baseStack.offer(baseStack.poll().getUIParent()); // the parent
+		} else { // by id
+			
+			UIComponent current = baseStack.poll();
+			
+			if (current instanceof NamingContainer){
+				UIComponent uic= ((NamingContainer)current).findContainedComponent(id);
+				if (uic!=null){
+					baseStack.add(uic);
+				}
+			} else {
+				List<UIComponent> all = current.getChildrenComponents();
+				for (UIComponent child : all){
+					if (child.getGID().equals(id)){
+						baseStack.offer(child);
+						break;
+					}
+				}
+				// not found , break process
+				pathStack.clear();
+			}
+		}
+		
+		// iterate 
+		resolveStack (baseStack , pathStack );
+	}
+
+	
     
-    private static Set<UIComponent> searchContainerChilds(UIComponent base, String id){
-        if (base instanceof NamingContainer){
-            return ((NamingContainer)base).findContainedComponent(id);
-        }
-        
-        return findContainerChildren(base,id);
-    }
 }
