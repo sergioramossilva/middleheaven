@@ -44,11 +44,6 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	}
 
 	@Override
-	public Collection<UIComponent> findComponents(UIQuery query) {
-		return query.execute(this);
-	}
-
-	@Override
 	public void gainFocus() {
 		//no-op
 	}

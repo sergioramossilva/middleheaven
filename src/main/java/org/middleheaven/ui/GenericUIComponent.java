@@ -100,12 +100,6 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	}
 
 
-
-	@Override
-	public Collection<UIComponent> findComponents(UIQuery query) {
-		return query.execute(this);
-	}
-
 	@Override
 	public void gainFocus() {
 		//no-op

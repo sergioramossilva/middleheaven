@@ -17,7 +17,7 @@ import org.middleheaven.tool.test.MiddleHeavenTestCase;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIEnvironment;
-import org.middleheaven.ui.UIQuery;
+import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.XMLUIComponentBuilder;
 import org.middleheaven.ui.desktop.awt.Desktop;
 import org.middleheaven.ui.rendering.RenderKit;
@@ -89,35 +89,35 @@ public class SwingUITest extends MiddleHeavenTestCase {
 		UIComponent layoutui = wui.getChildrenComponents().get(0);
 		assertNotNull(layoutui);
 	
-		List<UIComponent> components = UIQuery.search("/").execute(layoutui);
+		List<UIComponent> components = UITreeCriteria.search("/").execute(layoutui);
 		
 		assertFalse(components.isEmpty());
 		assertEquals(client, components.get(0));
 		
-		components = UIQuery.search("..").execute(layoutui);
+		components = UITreeCriteria.search("..").execute(layoutui);
 		
 		assertFalse(components.isEmpty());
 		assertEquals(wui, components.get(0));
 		
-		components = UIQuery.search(".").execute(layoutui);
+		components = UITreeCriteria.search(".").execute(layoutui);
 		
 		assertFalse(components.isEmpty());
 		assertEquals(layoutui, components.get(0));
 		
 		
-		components = UIQuery.search("./../..").execute(layoutui);
+		components = UITreeCriteria.search("./../..").execute(layoutui);
 		
 		assertFalse(components.isEmpty());
 		assertEquals(client, components.get(0));
 		
 		
-		components = UIQuery.search("frameA").execute(layoutui);
+		components = UITreeCriteria.search("frameA").execute(layoutui);
 		
 		UIComponent frameA = components.get(0);
 		assertFalse(components.isEmpty());
 		assertEquals("frameA", frameA.getGID());
 		
-		components = UIQuery.search("./../frameB").execute(frameA);
+		components = UITreeCriteria.search("./../frameB").execute(frameA);
 		
 		UIComponent frameB = components.get(0);
 		assertFalse(components.isEmpty());

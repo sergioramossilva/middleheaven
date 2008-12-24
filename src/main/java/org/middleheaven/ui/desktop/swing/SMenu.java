@@ -10,7 +10,7 @@ import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.UIQuery;
+import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.components.UILabel;
 import org.middleheaven.ui.models.UICommandModel;
 import org.middleheaven.util.DelegatingList;
@@ -29,11 +29,6 @@ public class SMenu extends JMenu implements UIComponent {
 	@Override
 	public void gainFocus() {
 		this.requestFocus();
-	}
-	
-	@Override
-	public Collection<UIComponent> findComponents(UIQuery query) {
-		return query.execute(this);
 	}
 	
 	@Override
