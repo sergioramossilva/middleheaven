@@ -1,6 +1,5 @@
 package org.middleheaven.ui;
 
-import java.util.Collection;
 import java.util.List;
 
 
@@ -77,13 +76,6 @@ public interface UIComponent extends  Displayable {
      * @param component component to remove
      */
     public void removeComponent(UIComponent component);
-    
-    /**
-     * Executes a UIQuery upon this component.
-     * @param query - expression to execute
-     * @return set of encountered components
-     */
-    public Collection<UIComponent> findComponents(UIQuery query);
     
     public void setVisible(boolean visible);
     public boolean isVisible();

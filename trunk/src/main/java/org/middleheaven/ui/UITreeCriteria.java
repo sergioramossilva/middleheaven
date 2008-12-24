@@ -11,7 +11,7 @@ import java.util.Queue;
  * Holds information to find another UIComponent from a given finder
  *
  */
-public final class UIQuery {
+public final class UITreeCriteria {
 
 	private static UIComponent findRoot(UIComponent component){
 		if (component.getUIParent()==null){
@@ -20,12 +20,12 @@ public final class UIQuery {
 			return findRoot (component.getUIParent());
 		}
 	}
-	public static UIQuery search(String expr) {
-		return new UIQuery(expr);
+	public static UITreeCriteria search(String expr) {
+		return new UITreeCriteria(expr);
 	}
 	
 	private String expression;
-	private UIQuery(String expression){
+	private UITreeCriteria(String expression){
 		this.expression = expression;
 	}
 	
@@ -34,6 +34,10 @@ public final class UIQuery {
 	}
 	
     private static List<UIComponent> findByExpression(UIComponent component, String expr){
+    	
+    	if (!component.isRendered()){
+    		throw new IllegalArgumentException("Cannot perform tree search on non rendered components");
+    	}
     	
     	// component to wich the paths is relative
     	UIComponent base = component;

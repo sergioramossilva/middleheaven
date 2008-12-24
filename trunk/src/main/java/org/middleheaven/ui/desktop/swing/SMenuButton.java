@@ -10,7 +10,7 @@ import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.UIQuery;
+import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.components.UILabel;
 import org.middleheaven.ui.models.UICommandModel;
 
@@ -26,11 +26,6 @@ public class SMenuButton extends JMenuItem implements UIComponent {
 	@Override
 	public void addComponent(UIComponent component) {
 		//no-op
-	}
-
-	@Override
-	public Collection<UIComponent> findComponents(UIQuery query) {
-		return query.execute(this);
 	}
 
 	@Override
