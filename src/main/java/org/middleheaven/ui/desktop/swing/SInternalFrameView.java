@@ -1,55 +1,72 @@
 package org.middleheaven.ui.desktop.swing;
 
-import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JLabel;
+import javax.swing.JComponent;
+import javax.swing.JInternalFrame;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
-import org.middleheaven.ui.UIMessageModel;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.UIReadState;
-import org.middleheaven.ui.components.UILabel;
-import org.middleheaven.util.bean.BeanBinding;
+import org.middleheaven.ui.components.UITitledUIModel;
+import org.middleheaven.ui.components.UIView;
+import org.middleheaven.util.DelegatingList;
 
-public class SLabel extends JLabel implements UILabel {
+public class SInternalFrameView extends JInternalFrame implements UIView{
 
-
-	private static final long serialVersionUID = 1L;
-	
 	private String family;
 	private String id;
-	private UIMessageModel model;
+	private UITitledUIModel model;
 	private UIComponent parent;
 
 	@Override
 	public void setUIModel(UIModel model) {
-		this.model = (UIMessageModel)model;
-		
-		this.setText(this.model.getText());
-		BeanBinding.bind(this.model, this);
+		this.model = (UITitledUIModel)model;
 	}
 	
 	@Override
+	public UITitledUIModel getUIModel() {
+		return model;
+	}
+
+	@Override
 	public void addComponent(UIComponent component) {
-		//no-op
+		component.setUIParent(this);
+		this.getContentPane().add((JComponent)component);
+	}
+	
+	
+	@Override
+	public void removeComponent(UIComponent component) {
+		this.getContentPane().remove((JComponent)component);
 	}
 
 	@Override
 	public void gainFocus() {
-		//no-op
+		this.requestFocus();
 	}
 
 	@Override
 	public List<UIComponent> getChildrenComponents() {
-		return Collections.emptyList();
+		return new DelegatingList<UIComponent>(){
+
+			@Override
+			public UIComponent get(int index) {
+				return (UIComponent)getContentPane().getComponent(index);
+			}
+
+			@Override
+			public int size() {
+				return getContentPane().getComponentCount();
+			}
+			
+		};
 	}
 
 	@Override
 	public int getChildrenCount() {
-		return 0;
+		return this.getContentPane().getComponentCount();
 	}
 
 	@Override
@@ -64,12 +81,7 @@ public class SLabel extends JLabel implements UILabel {
 
 	@Override
 	public <T extends UIComponent> Class<T> getType() {
-		return (Class<T>) UILabel.class;
-	}
-
-	@Override
-	public UIMessageModel getUIModel() {
-		return model;
+		return (Class<T>) UIView.class;
 	}
 
 	@Override
@@ -82,10 +94,6 @@ public class SLabel extends JLabel implements UILabel {
 		return true;
 	}
 
-	@Override
-	public void removeComponent(UIComponent component) {
-		// nop-op
-	}
 
 	@Override
 	public void setFamily(String family) {
@@ -94,7 +102,7 @@ public class SLabel extends JLabel implements UILabel {
 
 	@Override
 	public void setGID(String id) {
-		this.id= id;
+		this.id = id;
 	}
 
 
@@ -106,27 +114,26 @@ public class SLabel extends JLabel implements UILabel {
 
 	@Override
 	public UIDimension getDimension() {
-		return new UIDimension(this.getWidth(), this.getHeight());
+		// TODO implement Displayable.getDimension
+		return null;
 	}
 
 	@Override
 	public UIPosition getPosition() {
-		return new UIPosition(this.getX(),this.getY());
+		// TODO implement Displayable.getPosition
+		return null;
 	}
 
 	@Override
 	public void setPosition(int x, int y) {
-		this.setBounds(x, y, this.getWidth(), this.getHeight());
+		// TODO implement Displayable.setPosition
+		
 	}
 
 	@Override
 	public void setSize(UIDimension size) {
-		this.setBounds(this.getX(), this.getY(), size.getWidth(), size.getHeight());
-	}
-
-	@Override
-	public UIReadState getReadState() {
-		return UIReadState.OUTPUT_ONLY;
+		// TODO implement Displayable.setSize
+		
 	}
 
 }

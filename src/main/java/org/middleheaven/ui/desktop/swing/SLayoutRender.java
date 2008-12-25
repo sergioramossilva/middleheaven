@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
 import javax.swing.JTabbedPane;
 
 import org.middleheaven.ui.UIComponent;
@@ -17,7 +19,7 @@ import org.middleheaven.ui.rendering.UIRender;
 public class SLayoutRender extends UIRender {
 
 	public boolean isChildrenRenderer(RenderingContext context, UIComponent parent,UIComponent component) {
-		return component.getFamily().equals("tabs");
+		return component.getFamily().equals("tabs") || component.getFamily().equals("innerframes");
 	}
 	
 	@Override
@@ -38,7 +40,7 @@ public class SLayoutRender extends UIRender {
 				UIComponent renderedComponent = renderKit.renderComponent(context, s, comp);
 
 				if (renderedComponent instanceof UIView){
-					tabs.add(((UIView)renderedComponent).getTitle(), (JComponent)renderedComponent);
+					tabs.add(((UIView)renderedComponent).getUIModel().getTitle(), (JComponent)renderedComponent);
 				} else {
 					tabs.add("", (JComponent)renderedComponent);
 				}
@@ -47,6 +49,27 @@ public class SLayoutRender extends UIRender {
 			}
 			
 		
+		} else if (famillyParams[0].equals("innerframes")){
+			s.setLayout(new BorderLayout());
+			
+			JDesktopPane desktopPane = new JDesktopPane();
+			s.add(desktopPane, BorderLayout.CENTER);
+			
+			RenderKit renderKit = context.getRenderKit();
+			for (UIComponent comp : component.getChildrenComponents()){
+
+				UIComponent renderedComponent = renderKit.renderComponent(context, s, comp);
+
+				JInternalFrame iframe = new JInternalFrame();
+				
+				iframe.getContentPane().add((JComponent)renderedComponent);
+				iframe.setBounds(0, 0, 200, 200); // TODO how to change this size ? FIX make UIVIEW the JInternalFrame
+				iframe.setTitle("Iframe");
+				
+				iframe.setVisible(true);
+				desktopPane.add(iframe);
+			}
+			
 		} else if (famillyParams[0].equals("box")){
 		
 			int orientation = BoxLayout.Y_AXIS;

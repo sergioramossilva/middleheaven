@@ -1,0 +1,34 @@
+<ui type="desktop" name="teste">
+	<uic type="client">
+		<model>
+			<renderkit>SwingRenderKit</renderkit>
+		</model>
+		<uic type="window" >
+		<model>
+			<title>Inner Frames Demo</title>
+		</model>
+			<uic type="layout" familly="innerframes">
+				<uic name="frameA" type="view" >
+					<model>
+						<text>Frame A</text>
+					</model>
+					<uic name="labelA" type="label" >
+						<model>
+							<text>Olá Mundo</text>
+						</model>
+					</uic>
+				</uic>
+				<uic name="frameB" type="view" >
+					<model>
+						<text>Frame B</text>
+					</model>
+					<uic name="labelB" type="label" >
+						<model>
+						<text>Olá Mundo Lado B</text>
+						</model>
+					</uic>
+				</uic>
+			</uic>
+		</uic>
+	</uic>
+</ui>

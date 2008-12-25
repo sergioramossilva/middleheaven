@@ -4,6 +4,7 @@ import java.beans.PropertyChangeListener;
 
 public interface UIModel {
 
+
 	public void setEnabled(boolean enabled);
 	public boolean isEnabled();
 	
