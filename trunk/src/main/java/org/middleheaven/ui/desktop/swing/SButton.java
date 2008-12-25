@@ -15,6 +15,7 @@ import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.components.UICommand;
 import org.middleheaven.ui.components.UILabel;
+import org.middleheaven.ui.models.SActionEvent;
 import org.middleheaven.ui.models.UICommandModel;
 import org.middleheaven.util.bean.BeanBinding;
 
@@ -34,11 +35,12 @@ public class SButton extends JButton implements UICommand {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.onCommand(SButton.this);
+				model.onCommand(new SActionEvent(SButton.this));
 			}
 			
 		});
 	}
+	
 	@Override
 	public void setUIModel(UIModel model) {
 		this.model = (UICommandModel)model;

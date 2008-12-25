@@ -1,5 +1,7 @@
 package org.middleheaven.ui.desktop.swing;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +24,52 @@ public class SWindow extends JFrame implements UIComponent{
 	private String id;
 	private String family;
 	private UIWindowModel model;
+	
+	public SWindow(){
+		
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		this.addWindowListener(new WindowListener(){
+
+			@Override
+			public void windowClosed(WindowEvent arg0) {
+				// Invoked when a window has been closed as the result of calling dispose on the window. 
+			}
+
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				// Invoked when the user attempts to close the window from the window's system menu. If the program does not explicitly hide or dispose the 
+				// window while processing this event, the window close operation will be cancelled. 
+			}
+
+			@Override
+			public void windowActivated(WindowEvent arg0) {
+				// Invoked when the Window is set to be the active Window. Only a Frame or a Dialog can be the active Window. The native windowing system may denote the active Window or its children with special decorations, such as a highlighted title bar. The active Window is always either the focused Window, or the first Frame or Dialog that is an owner of the focused Window. 
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent arg0) {
+				// Invoked when a Window is no longer the active Window. Only a Frame or a Dialog can be the active Window. The native windowing system may denote the active Window or its children with special decorations, such as a highlighted title bar. The active Window is always either the focused Window, or the first Frame or Dialog that is an owner of the focused Window. 
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent arg0) {
+				// Invoked when a window is changed from a minimized to a normal state. 
+			}
+
+			@Override
+			public void windowIconified(WindowEvent arg0) {
+				//Invoked when a window is changed from a normal to a minimized state. 
+				
+			}
+
+			@Override
+			public void windowOpened(WindowEvent arg0) {
+				//Invoked the first time a window is made visible. 
+			}
+			
+		});
+	}
 	
 	@Override
 	public void addComponent(UIComponent component) {

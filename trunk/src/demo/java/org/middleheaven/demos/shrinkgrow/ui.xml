@@ -5,7 +5,7 @@
 		</model>
 		<uic name="window" type="window">
 			<model>
-				<title>Test Window</title>
+				<title>Grow and Shrink Window</title>
 			</model>
 			<uic type="commandset" familly="menu">
 				<uic type="commandset" familly="menu">

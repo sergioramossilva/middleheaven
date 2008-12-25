@@ -9,7 +9,7 @@ public class SViewRender extends UIRender {
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent,UIComponent component) {
 
-		return new SView();
+		return new SPanelView();
 	}
 
 }

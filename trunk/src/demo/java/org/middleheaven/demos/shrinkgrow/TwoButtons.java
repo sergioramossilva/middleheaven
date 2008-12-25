@@ -1,4 +1,4 @@
-package org.middleheaven.demos;
+package org.middleheaven.demos.shrinkgrow;
 import org.middleheaven.application.ApplicationLoadingService;
 import org.middleheaven.core.bootstrap.client.DesktopStarter;
 import org.middleheaven.core.wiring.Wire;

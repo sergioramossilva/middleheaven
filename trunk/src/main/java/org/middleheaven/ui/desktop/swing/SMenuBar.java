@@ -1,6 +1,5 @@
 package org.middleheaven.ui.desktop.swing;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -10,21 +9,27 @@ import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.components.UICommandSet;
+import org.middleheaven.ui.models.UICommandModel;
 import org.middleheaven.util.DelegatingList;
+import org.middleheaven.util.bean.BeanBinding;
 
-public class SMenuBar extends JMenuBar implements UIComponent {
+public class SMenuBar extends JMenuBar implements UICommandSet {
 
 	private static final long serialVersionUID = 1L;
 	
 	private String family;
 	private String id;
-	private UIModel model;
+	private UICommandModel model;
 	private UIComponent parent;
 
-	
-	
+	@Override
+	public void setUIModel(UIModel model) {
+		this.model = (UICommandModel)model;
+		
+		BeanBinding.bind(this.model, this);
+	}
+
 	@Override
 	public void gainFocus() {
 		this.requestFocus();
@@ -74,7 +79,7 @@ public class SMenuBar extends JMenuBar implements UIComponent {
 	}
 
 	@Override
-	public UIModel getUIModel() {
+	public UICommandModel getUIModel() {
 		return model;
 	}
 
@@ -98,10 +103,6 @@ public class SMenuBar extends JMenuBar implements UIComponent {
 		this.id= id;
 	}
 
-	@Override
-	public void setUIModel(UIModel model) {
-		this.model = model;
-	}
 
 	@Override
 	public void setUIParent(UIComponent parent) {

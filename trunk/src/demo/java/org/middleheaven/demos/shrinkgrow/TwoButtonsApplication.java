@@ -1,4 +1,4 @@
-package org.middleheaven.demos;
+package org.middleheaven.demos.shrinkgrow;
 
 import java.io.File;
 
@@ -28,7 +28,7 @@ public class TwoButtonsApplication extends MainApplicationModule{
 	@Override
 	public void load(ApplicationContext context) {
 		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder();
-		UIEnvironment root = xmlBuilder.buildFrom(new File("./src/demo/java/org/middleheaven/demos/ui.xml"));
+		UIEnvironment root = xmlBuilder.buildFrom(new File("./src/demo/java/org/middleheaven/demos/shrinkgrow/ui.xml"));
 		
 		service.registerEnvironment(root, true);
 	}

@@ -1,20 +1,23 @@
 package org.middleheaven.ui.desktop.swing;
 
-import java.util.Collection;
+import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.UITreeCriteria;
+import org.middleheaven.ui.components.UICommand;
 import org.middleheaven.ui.components.UILabel;
+import org.middleheaven.ui.models.SActionEvent;
 import org.middleheaven.ui.models.UICommandModel;
+import org.middleheaven.util.bean.BeanBinding;
 
-public class SMenuButton extends JMenuItem implements UIComponent {
+public class SMenuButton extends JMenuItem implements UICommand {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -23,6 +26,27 @@ public class SMenuButton extends JMenuItem implements UIComponent {
 	private UICommandModel model;
 	private UIComponent parent;
 
+	public SMenuButton(){
+		super ();
+		
+		this.setAction(new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				model.onCommand(new SActionEvent(SMenuButton.this));
+			}
+			
+		});
+	}
+	
+	@Override
+	public void setUIModel(UIModel model) {
+		this.model = (UICommandModel)model;
+		this.setText(this.model.getText());
+		
+		BeanBinding.bind(this.model, this.getAction());
+	}
+	
 	@Override
 	public void addComponent(UIComponent component) {
 		//no-op
@@ -59,7 +83,7 @@ public class SMenuButton extends JMenuItem implements UIComponent {
 	}
 
 	@Override
-	public UIModel getUIModel() {
+	public UICommandModel getUIModel() {
 		return model;
 	}
 
@@ -86,12 +110,6 @@ public class SMenuButton extends JMenuItem implements UIComponent {
 	@Override
 	public void setGID(String id) {
 		this.id= id;
-	}
-
-	@Override
-	public void setUIModel(UIModel model) {
-		this.model = (UICommandModel)model;
-		this.setText(this.model.getText());
 	}
 
 	@Override
