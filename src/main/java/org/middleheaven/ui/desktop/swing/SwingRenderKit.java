@@ -2,7 +2,10 @@ package org.middleheaven.ui.desktop.swing;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
+import org.middleheaven.core.reflection.IllegalAccessReflectionException;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UICommand;
@@ -22,7 +25,9 @@ public class SwingRenderKit extends AbstractRenderKit {
 	private SwingUnitConverter unitConverter = new SwingUnitConverter();
 	
 	public SwingRenderKit(){
-			
+		
+		setLookandFeel();
+		
 		this.addRender(new DesktopClientRender(), UIClient.class);
 		this.addRender(new TrayIconRender(), UIDesktopTrayIcon.class);
 		this.addRender(new SWindowRender(), UIWindow.class);
@@ -33,6 +38,21 @@ public class SwingRenderKit extends AbstractRenderKit {
 		this.addRender(new SMenuRender(), UICommandSet.class,  "menu");
 	}
 	
+	protected void setLookandFeel() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			//no-op just don't change
+		} catch (InstantiationException e) {
+			//no-op just don't change
+		} catch (IllegalAccessException e) {
+			throw new IllegalAccessReflectionException(e);
+		} catch (UnsupportedLookAndFeelException e) {
+			throw new RuntimeException(e);
+		}
+		
+	}
+
 	@Override
 	public UIUnitConverter getUnitConverted() {
 		return unitConverter;

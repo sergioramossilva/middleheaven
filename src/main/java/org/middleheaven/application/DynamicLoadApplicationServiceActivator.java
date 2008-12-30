@@ -62,7 +62,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 		log = loggingService.getLogBook(this.getClass().getName());
 	
 		bootstrapService.addListener(this);
-		applicationLoadingCycleService =  new DynamicLoadApplicationService( bootstrapService.getContainer());
+		applicationLoadingCycleService =  new DynamicLoadApplicationService( bootstrapService.getEnvironmentBootstrap().getContainer());
 	}
 
 	
@@ -180,7 +180,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 			// these must be jar files
 			Collection<ManagedFile> applicationModuleFiles = new HashSet<ManagedFile>();
 
-			ManagedFile f =  bootstrapService.getContainer().getAppConfigRepository();
+			ManagedFile f =  bootstrapService.getEnvironmentBootstrap().getContainer().getAppConfigRepository();
 
 			if (f.isWatchable()){
 				WatchableRepository wr = (WatchableRepository)f;

@@ -1,18 +1,16 @@
-package org.middleheaven.ui.models;
+package org.middleheaven.ui.events;
 
 import org.middleheaven.ui.UIComponent;
 
-public class SActionEvent implements UIActionEvent {
+public abstract class UIEvent {
 
 	private UIComponent source;
 	
-	public SActionEvent(UIComponent source){
+	public UIEvent(UIComponent source){
 		this.source = source;
 	}
 	
-	@Override
 	public UIComponent getSource() {
 		return source;
 	}
-
 }

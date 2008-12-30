@@ -13,12 +13,10 @@ import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.core.services.RegistryServiceContext;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceContextEngineConfigurationService;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.services.engine.LocalFileRepositoryDiscoveryEngine;
 import org.middleheaven.core.wiring.DefaultWiringService;
-import org.middleheaven.core.wiring.WiringContext;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.global.atlas.modules.AtlasActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
@@ -38,13 +36,15 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 	
 	private ListServiceContextConfigurator configurator = new ListServiceContextConfigurator();
-	private SimpleBootstrapService bootstrapService = new SimpleBootstrapService();
+	private SimpleBootstrapService bootstrapService;
 	private RegistryServiceContext serviceRegistryContext;
 	
 	/**
 	 * Start the environment 
 	 */
 	public final void start(LogBook log){
+		bootstrapService = new SimpleBootstrapService(this);
+		
 		long time = System.currentTimeMillis();
 		
 		serviceRegistryContext = new RegistryServiceContext(log);
@@ -98,10 +98,11 @@ public abstract class ExecutionEnvironmentBootstrap {
 	
 	private class SimpleBootstrapService implements BootstrapService{
 		
-
+		private ExecutionEnvironmentBootstrap executionEnvironmentBootstrap;
 		private List<BootstapListener> listeners = new CopyOnWriteArrayList<BootstapListener>();
 		
-		public SimpleBootstrapService() {
+		public SimpleBootstrapService(ExecutionEnvironmentBootstrap executionEnvironmentBootstrap) {
+			this.executionEnvironmentBootstrap = executionEnvironmentBootstrap;
 		}
 
 		protected void fireBootupStart() {
@@ -126,10 +127,6 @@ public abstract class ExecutionEnvironmentBootstrap {
 			}
 		}
 		
-		@Override
-		public Container getContainer() {
-			return ExecutionEnvironmentBootstrap.this.getContainer();
-		}
 
 		@Override
 		public void addListener(BootstapListener listener) {
@@ -139,6 +136,11 @@ public abstract class ExecutionEnvironmentBootstrap {
 		@Override
 		public void removeListener(BootstapListener listener) {
 			listeners.remove(listener);
+		}
+
+		@Override
+		public ExecutionEnvironmentBootstrap getEnvironmentBootstrap() {
+			return executionEnvironmentBootstrap;
 		}
 
 

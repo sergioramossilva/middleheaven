@@ -16,7 +16,7 @@ public class ReflectionException extends RuntimeException {
 
 	public static RuntimeException manage(Throwable e) {
 		if (e instanceof SecurityException){
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		} else if (e instanceof NoSuchMethodException){
 			throw new NoSuchMethodReflectionException(e);
 		}

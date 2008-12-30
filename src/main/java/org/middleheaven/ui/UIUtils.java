@@ -11,6 +11,6 @@ public class UIUtils {
 		final int x = (relative.getWidth()- component.getWidth())/2;
 		final int y = (relative.getHeight()- component.getHeight())/2;
 		
-		component.setPosition(x, y);
+		component.setBounds(x, y, component.getWidth(), component.getHeight());
 	}
 }

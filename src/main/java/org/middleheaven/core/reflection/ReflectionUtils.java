@@ -398,9 +398,9 @@ public final class ReflectionUtils {
 				try {
 					return m.invoke(obj, new Object[0]);
 				} catch (IllegalArgumentException e) {
-					new IllegalAccesReflectionException(e);
+					new IllegalAccessReflectionException(e);
 				} catch (IllegalAccessException e) {
-					throw new IllegalAccesReflectionException(e);
+					throw new IllegalAccessReflectionException(e);
 				} catch (InvocationTargetException e) {
 					throw new InvocationTargetReflectionException(e);
 				}
@@ -452,11 +452,11 @@ public final class ReflectionUtils {
 				c.setAccessible(true);
 				return castAs.cast(c.newInstance(args)); // Instantiate using the constructor
 			} catch (SecurityException e) {
-				throw new IllegalAccesReflectionException(e);
+				throw new IllegalAccessReflectionException(e);
 			} catch (NoSuchMethodException e) {
 				throw new NoSuchMethodReflectionException(e);
 			} catch (IllegalArgumentException e) {
-				throw new IllegalAccesReflectionException(e);
+				throw new IllegalAccessReflectionException(e);
 			} catch (InvocationTargetException e) {
 				throw new InvocationTargetReflectionException(e);
 			}
@@ -464,7 +464,7 @@ public final class ReflectionUtils {
 		} catch (InstantiationException e){
 			throw new ReflectionException(e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		}
 	}
 
@@ -587,13 +587,13 @@ public final class ReflectionUtils {
 			methodToInvoke.setAccessible(true);
 			return returnType.cast(methodToInvoke.invoke(translatingObject, params));
 		} catch (SecurityException e) {
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		} catch (InvocationTargetException e) {
 			throw new InvocationTargetReflectionException(e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		}
 	}
 

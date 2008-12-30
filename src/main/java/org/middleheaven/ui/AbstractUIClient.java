@@ -159,11 +159,7 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
-		throw new UnsupportedOperationException("Cannto change " + this.getClass().getSimpleName() + " bounds");
+		throw new UnsupportedOperationException("Can't change " + this.getClass().getSimpleName() + " bounds");
 	}
 
-	@Override
-	public void setPosition(int x, int y) {
-		throw new UnsupportedOperationException("Cannto change " + this.getClass().getSimpleName() + " position");
-	}
 }

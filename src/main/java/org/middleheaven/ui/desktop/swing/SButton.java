@@ -1,7 +1,6 @@
 package org.middleheaven.ui.desktop.swing;
 
 import java.awt.event.ActionEvent;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,10 +11,9 @@ import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.components.UICommand;
 import org.middleheaven.ui.components.UILabel;
-import org.middleheaven.ui.models.SActionEvent;
+import org.middleheaven.ui.events.UIActionEvent;
 import org.middleheaven.ui.models.UICommandModel;
 import org.middleheaven.util.bean.BeanBinding;
 
@@ -35,7 +33,7 @@ public class SButton extends JButton implements UICommand {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.onCommand(new SActionEvent(SButton.this));
+				model.onCommand(new UIActionEvent(SButton.this));
 			}
 			
 		});
@@ -129,11 +127,6 @@ public class SButton extends JButton implements UICommand {
 	@Override
 	public UIPosition getPosition() {
 		return new UIPosition(this.getX(),this.getY());
-	}
-
-	@Override
-	public void setPosition(int x, int y) {
-		this.setBounds(x, y, this.getWidth(), this.getHeight());
 	}
 
 	@Override

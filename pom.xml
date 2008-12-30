@@ -193,6 +193,7 @@
 				<configuration>
 					<stylesheetfile>${basedir}\src\resources\jdocstyle.css</stylesheetfile>
 					<excludePackageNames>org.middleheaven.test*</excludePackageNames>
+					<javadocVersion>1.6</javadocVersion>
 					
 					<groups>
 			            <group>

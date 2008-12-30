@@ -215,14 +215,6 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 		this.height = height;
 	}
 
-	@Override
-	public void setPosition(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-
-
 
 	@Override
 	public UIDimension getDimension() {

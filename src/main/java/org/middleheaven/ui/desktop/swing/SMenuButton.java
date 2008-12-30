@@ -13,7 +13,7 @@ import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.components.UICommand;
 import org.middleheaven.ui.components.UILabel;
-import org.middleheaven.ui.models.SActionEvent;
+import org.middleheaven.ui.events.UIActionEvent;
 import org.middleheaven.ui.models.UICommandModel;
 import org.middleheaven.util.bean.BeanBinding;
 
@@ -33,7 +33,7 @@ public class SMenuButton extends JMenuItem implements UICommand {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				model.onCommand(new SActionEvent(SMenuButton.this));
+				model.onCommand(new UIActionEvent(SMenuButton.this));
 			}
 			
 		});
@@ -125,11 +125,6 @@ public class SMenuButton extends JMenuItem implements UICommand {
 	@Override
 	public UIPosition getPosition() {
 		return new UIPosition(this.getX(),this.getY());
-	}
-
-	@Override
-	public void setPosition(int x, int y) {
-		this.setBounds(x, y, this.getWidth(), this.getHeight());
 	}
 
 	@Override

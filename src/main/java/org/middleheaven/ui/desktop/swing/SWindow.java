@@ -1,8 +1,9 @@
 package org.middleheaven.ui.desktop.swing;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -10,15 +11,17 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
 import org.middleheaven.ui.UIComponent;
+import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.UITreeCriteria;
-import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.components.UIWindow;
-import org.middleheaven.ui.components.UIWindowModel;
+import org.middleheaven.ui.events.UIFocusEvent;
+import org.middleheaven.ui.events.UIPrespectiveEvent;
+import org.middleheaven.ui.events.UIWindowEvent;
+import org.middleheaven.ui.models.UIWindowModel;
 import org.middleheaven.util.DelegatingList;
 
-public class SWindow extends JFrame implements UIComponent{
+public class SWindow extends JFrame implements UIWindow{
 
 	private UIComponent parent;
 	private String id;
@@ -26,47 +29,86 @@ public class SWindow extends JFrame implements UIComponent{
 	private UIWindowModel model;
 	
 	public SWindow(){
-		
+
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		this.addFocusListener(new FocusListener (){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				model.onFocusGained(new UIFocusEvent(SWindow.this));
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				model.onFocusLost(new UIFocusEvent(SWindow.this));
+			}
+			
+		});
 		
 		this.addWindowListener(new WindowListener(){
 
 			@Override
-			public void windowClosed(WindowEvent arg0) {
-				// Invoked when a window has been closed as the result of calling dispose on the window. 
-			}
-
-			@Override
-			public void windowClosing(WindowEvent arg0) {
-				// Invoked when the user attempts to close the window from the window's system menu. If the program does not explicitly hide or dispose the 
-				// window while processing this event, the window close operation will be cancelled. 
-			}
-
-			@Override
-			public void windowActivated(WindowEvent arg0) {
-				// Invoked when the Window is set to be the active Window. Only a Frame or a Dialog can be the active Window. The native windowing system may denote the active Window or its children with special decorations, such as a highlighted title bar. The active Window is always either the focused Window, or the first Frame or Dialog that is an owner of the focused Window. 
+			public void windowOpened(WindowEvent event) {
+				//Invoked the first time a window is made visible.
+				model.onOpened(new UIPrespectiveEvent(SWindow.this));
 			}
 			
 			@Override
-			public void windowDeactivated(WindowEvent arg0) {
-				// Invoked when a Window is no longer the active Window. Only a Frame or a Dialog can be the active Window. The native windowing system may denote the active Window or its children with special decorations, such as a highlighted title bar. The active Window is always either the focused Window, or the first Frame or Dialog that is an owner of the focused Window. 
+			public void windowClosed(WindowEvent arg0) {
+				// Invoked when a window has been closed as the result of calling dispose on the window.
+				model.onClosed(new UIPrespectiveEvent(SWindow.this));
 			}
 
 			@Override
-			public void windowDeiconified(WindowEvent arg0) {
+			public void windowClosing(WindowEvent event) {
+				// Invoked when the user attempts to close the window from the window's system menu. 
+				// If the program does not explicitly hide or dispose the 
+				// window while processing this event, the window close operation will be cancelled. 
+				model.onClosing(new UIPrespectiveEvent(SWindow.this));
+				if (!SWindow.this.isVisible()){
+					SWindow.this.dispose();
+				}
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent event) {
 				// Invoked when a window is changed from a minimized to a normal state. 
+				model.onDeiconified(new UIPrespectiveEvent(SWindow.this));
 			}
 
 			@Override
-			public void windowIconified(WindowEvent arg0) {
+			public void windowIconified(WindowEvent event) {
 				//Invoked when a window is changed from a normal to a minimized state. 
-				
+				model.onIconified(new UIPrespectiveEvent(SWindow.this));
 			}
 
+			
 			@Override
-			public void windowOpened(WindowEvent arg0) {
-				//Invoked the first time a window is made visible. 
+			public void windowActivated(WindowEvent event) {
+				// Invoked when the Window is set to be the active Window. 
+				// Only a Frame or a Dialog can be the active Window. 
+				// The native windowing system may denote the active Window or its children with special decorations,
+				// such as a highlighted title bar. 
+				// The active Window is always either the focused Window, or the first Frame or Dialog that is an owner 
+				// of the focused Window. 
+				model.onAtivated(new UIWindowEvent(SWindow.this));
 			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent event) {
+				// Invoked when a Window is no longer the active Window. 
+				// Only a Frame or a Dialog can be the active Window. 
+				// The native windowing system may denote the active Window or its children with special decorations, 
+				// such as a highlighted title bar. 
+				// The active Window is always either the focused Window, or the first Frame or Dialog that is an 
+				// owner of the focused Window.
+				
+				model.onDeativated(new UIWindowEvent(SWindow.this));
+			}
+
+
+		
 			
 		});
 	}
@@ -162,11 +204,6 @@ public class SWindow extends JFrame implements UIComponent{
 	@Override
 	public void setUIParent(UIComponent parent) {
 		this.parent = parent;
-	}
-
-	@Override
-	public void setPosition(int x, int y) {
-		this.setBounds(x, y, this.getWidth(), this.getHeight());
 	}
 
 	@Override

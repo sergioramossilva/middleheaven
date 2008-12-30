@@ -13,6 +13,5 @@ public interface Displayable {
     
 	public void setBounds(int x, int y, int width, int height);
 
-	public void setPosition(int x, int y);
 	public void setSize(UIDimension size);
 }

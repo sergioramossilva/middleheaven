@@ -3,7 +3,6 @@ package org.middleheaven.ui.desktop.awt;
 import java.awt.Image;
 import java.awt.PopupMenu;
 import java.awt.TrayIcon;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.components.UIDesktopTrayIcon;
 
 public class AWTTrayIcon extends TrayIcon implements UIDesktopTrayIcon{
@@ -152,32 +150,23 @@ public class AWTTrayIcon extends TrayIcon implements UIDesktopTrayIcon{
 
 	@Override
 	public int getX() {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public int getY() {
-		// TODO Auto-generated method stub
-		return 0;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public void setPosition(int x, int y) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void setSize(UIDimension size) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
 }

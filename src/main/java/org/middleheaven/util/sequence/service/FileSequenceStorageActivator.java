@@ -44,7 +44,7 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 	@Override
 	public void activate(ServiceAtivatorContext context) {
 
-		Container container = bootstrapService.getContainer();
+		Container container = bootstrapService.getEnvironmentBootstrap().getContainer();
 
 		if (!container.getAppDataRepository().isWriteable()){
 			throw new IllegalArgumentException("Data repository must be writable");

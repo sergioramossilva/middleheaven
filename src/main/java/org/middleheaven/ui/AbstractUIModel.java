@@ -5,6 +5,8 @@ import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.middleheaven.ui.events.UIFocusEvent;
+
 public abstract class AbstractUIModel implements UIModel {
 
 	private List<PropertyChangeListener> propertyChangeListeners = new CopyOnWriteArrayList<PropertyChangeListener>();
@@ -40,5 +42,17 @@ public abstract class AbstractUIModel implements UIModel {
 		
 		return newValue;
 	}
+	
+	@Override
+	public void onFocusGained(UIFocusEvent event) {
+		// no-op
+		
+	}
+
+	@Override
+	public void onFocusLost(UIFocusEvent event) {
+		// no-op
+	}
+
 
 }

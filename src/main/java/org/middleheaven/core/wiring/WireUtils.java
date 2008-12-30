@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.middleheaven.core.reflection.IllegalAccesReflectionException;
+import org.middleheaven.core.reflection.IllegalAccessReflectionException;
 import org.middleheaven.core.reflection.InstantiationReflectionException;
 import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.core.reflection.ReflectionUtils;
@@ -64,15 +64,15 @@ final class WireUtils {
 		try {
 			throw t;
 		} catch (SecurityException e) {
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		} catch (InvocationTargetException e) {
 			throw new InvocationTargetReflectionException(e.getTargetException());
 		} catch (InstantiationException e) {
 			throw new InstantiationReflectionException(type.getName(), e.getMessage());
 		} catch (IllegalAccessException e) {
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Error e) {
