@@ -101,7 +101,7 @@ public final class ProxyUtils {
 		} catch (InstantiationException e) {
 			throw new ReflectionException(e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalAccesReflectionException(e);
+			throw new IllegalAccessReflectionException(e);
 		}
 	}
 

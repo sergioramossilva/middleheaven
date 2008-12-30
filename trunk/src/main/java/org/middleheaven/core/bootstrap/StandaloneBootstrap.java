@@ -63,10 +63,13 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 		}
 	}
 
-	protected void doAfterStop(){
+	protected void doBeforeStop(){
 		if (appCycle!=null){
 			appCycle.stop();
 		}
+	}
+	
+	protected void doAfterStop(){
 		System.exit(0);
 	}
 

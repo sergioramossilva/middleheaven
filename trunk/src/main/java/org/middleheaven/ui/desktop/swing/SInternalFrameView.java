@@ -1,32 +1,96 @@
 package org.middleheaven.ui.desktop.swing;
 
+import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.ui.components.UITitledUIModel;
 import org.middleheaven.ui.components.UIView;
+import org.middleheaven.ui.events.UIFocusEvent;
+import org.middleheaven.ui.events.UIPrespectiveEvent;
+import org.middleheaven.ui.models.UIViewModel;
 import org.middleheaven.util.DelegatingList;
 
 public class SInternalFrameView extends JInternalFrame implements UIView{
 
 	private String family;
 	private String id;
-	private UITitledUIModel model;
+	private UIViewModel model;
 	private UIComponent parent;
 
+	
+	public SInternalFrameView(){
+		
+		this.addFocusListener(new FocusListener(){
+
+			@Override
+			public void focusGained(FocusEvent e) {
+				model.onFocusGained(new UIFocusEvent(SInternalFrameView.this));
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				model.onFocusLost(new UIFocusEvent(SInternalFrameView.this));
+			}
+			
+		});
+		
+		this.addInternalFrameListener(new InternalFrameListener(){
+
+			@Override
+			public void internalFrameActivated(InternalFrameEvent e) {
+				model.onFocusGained(new UIFocusEvent(SInternalFrameView.this));
+			}
+			
+			@Override
+			public void internalFrameDeactivated(InternalFrameEvent e) {
+				model.onFocusLost(new UIFocusEvent(SInternalFrameView.this));
+			}
+
+			@Override
+			public void internalFrameOpened(InternalFrameEvent e) {
+				model.onOpened(new UIPrespectiveEvent(SInternalFrameView.this));
+			}
+			
+			@Override
+			public void internalFrameClosed(InternalFrameEvent e) {
+				model.onClosed(new UIPrespectiveEvent(SInternalFrameView.this));
+			}
+
+			@Override
+			public void internalFrameClosing(InternalFrameEvent e) {
+				model.onClosing(new UIPrespectiveEvent(SInternalFrameView.this));
+			}
+
+			@Override
+			public void internalFrameDeiconified(InternalFrameEvent e) {
+				model.onDeiconified(new UIPrespectiveEvent(SInternalFrameView.this));
+			}
+
+			@Override
+			public void internalFrameIconified(InternalFrameEvent e) {
+				model.onIconified(new UIPrespectiveEvent(SInternalFrameView.this));
+			}
+
+
+		});
+	}
 	@Override
 	public void setUIModel(UIModel model) {
-		this.model = (UITitledUIModel)model;
+		this.model = (UIViewModel)model;
 	}
 	
 	@Override
-	public UITitledUIModel getUIModel() {
+	public UIViewModel getUIModel() {
 		return model;
 	}
 
@@ -114,26 +178,18 @@ public class SInternalFrameView extends JInternalFrame implements UIView{
 
 	@Override
 	public UIDimension getDimension() {
-		// TODO implement Displayable.getDimension
-		return null;
+		return new UIDimension(this.getWidth(), this.getHeight());
 	}
 
 	@Override
 	public UIPosition getPosition() {
-		// TODO implement Displayable.getPosition
-		return null;
+		return new UIPosition(this.getX(), this.getY());
 	}
 
-	@Override
-	public void setPosition(int x, int y) {
-		// TODO implement Displayable.setPosition
-		
-	}
 
 	@Override
 	public void setSize(UIDimension size) {
-		// TODO implement Displayable.setSize
-		
+		this.setSize(new Dimension(size.getWidth(), size.getHeight()));
 	}
 
 }

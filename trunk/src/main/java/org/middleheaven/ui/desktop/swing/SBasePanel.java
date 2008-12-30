@@ -122,11 +122,6 @@ public class SBasePanel extends JPanel implements UIComponent{
 	}
 
 	@Override
-	public void setPosition(int x, int y) {
-		this.setBounds(x, y, this.getWidth(), this.getHeight());
-	}
-
-	@Override
 	public void setSize(UIDimension size) {
 		this.setBounds(this.getX(), this.getY(), size.getWidth(), size.getHeight());
 	}

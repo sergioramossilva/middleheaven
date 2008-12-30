@@ -13,6 +13,8 @@ public interface UIClient extends UIComponent{
 
 
 	public UIClientModel getUIModel();
+
+	public void exit();
 	
 	
 }

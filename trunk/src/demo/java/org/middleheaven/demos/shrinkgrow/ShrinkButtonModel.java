@@ -6,8 +6,9 @@ import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.UIUtils;
+import org.middleheaven.ui.events.UIActionEvent;
+import org.middleheaven.ui.events.UIFocusEvent;
 import org.middleheaven.ui.models.AbstractUICommandModel;
-import org.middleheaven.ui.models.UIActionEvent;
 
 public class ShrinkButtonModel extends AbstractUICommandModel {
 
@@ -22,6 +23,7 @@ public class ShrinkButtonModel extends AbstractUICommandModel {
 		
 		UIUtils.center(window);
 	}
+
 
 
 

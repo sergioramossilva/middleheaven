@@ -3,8 +3,8 @@ package org.middleheaven.ui.models;
 import org.middleheaven.ui.Context;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.components.UIDesktop;
 import org.middleheaven.ui.desktop.swing.SwingRenderKit;
+import org.middleheaven.ui.events.UIFocusEvent;
 
 /**
  * Desktop based UIClient. Allows to build window based applications.
@@ -18,6 +18,16 @@ public abstract class DesktopClientModel extends AbstractUIClientModel{
 	
 	public DesktopClientModel(){
 		this.setRenderKit(new SwingRenderKit());
+	}
+	
+	@Override
+	public final void onFocusGained(UIFocusEvent event) {
+		// no-op
+	}
+
+	@Override
+	public final void onFocusLost(UIFocusEvent event) {
+		// no-op
 	}
 	
 	/**

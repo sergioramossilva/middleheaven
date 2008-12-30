@@ -43,7 +43,7 @@ public class UIFlowLayoutModel implements UILayoutModel {
 			} else {
 				remainingWidth -=  componentWidth;
 				previousX += componentWidth;
-				component.setPosition(previousX, 0);
+				component.setBounds(previousX, 0,component.getWidth(), component.getHeight());
 			}
 
 		}

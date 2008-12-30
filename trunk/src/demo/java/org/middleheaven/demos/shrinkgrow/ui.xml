@@ -46,12 +46,12 @@
 			</uic>
 			<uic name="layout" type="layout" familly="flow">
 				<uic name="buttonA" type="command" familly="button">
-					<model class="org.middleheaven.demos.GrowButtonModel">
+					<model class="org.middleheaven.demos.shrinkgrow.GrowButtonModel">
 						<text>Grow</text>
 					</model>
 				</uic>
 				<uic name="buttonB" type="command" familly="button">
-					<model class="org.middleheaven.demos.ShrinkButtonModel">
+					<model class="org.middleheaven.demos.shrinkgrow.ShrinkButtonModel">
 						<text>Shrink</text>
 					</model>
 				</uic>

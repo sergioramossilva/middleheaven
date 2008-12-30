@@ -18,6 +18,11 @@ public class Browser extends AbstractUIClient implements UIBrowser{
 		return null;
 	}
 
+	@Override
+	public void exit() {
+		// no-op
+	}
+
 
 
 }

@@ -40,7 +40,7 @@ public class LocalizationServiceProvider extends ServiceActivator{
 	
 	@Override
 	public void activate(ServiceAtivatorContext context) {
-		Container environment = bootstrapService.getContainer();
+		Container environment = bootstrapService.getEnvironmentBootstrap().getContainer();
 
 		RepositoryDomainBundle masterBundle = new RepositoryDomainBundle();
 		masterBundle.setRepository(environment.getEnvironmentConfigRepository());

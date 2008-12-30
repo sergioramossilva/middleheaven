@@ -20,9 +20,13 @@ import org.middleheaven.io.xml.XMLObjectContructor;
 import org.middleheaven.io.xml.XMLUtils;
 import org.middleheaven.ui.components.UIDesktop;
 import org.middleheaven.ui.components.UITitledUIModel;
+import org.middleheaven.ui.desktop.awt.UIExitEvent;
 import org.middleheaven.ui.desktop.swing.SwingRenderKit;
+import org.middleheaven.ui.events.UIFocusEvent;
+import org.middleheaven.ui.models.DefaultUIWindowModel;
 import org.middleheaven.ui.models.DesktopClientModel;
 import org.middleheaven.ui.models.UIClientModel;
+import org.middleheaven.ui.models.UIWindowModel;
 import org.middleheaven.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -150,22 +154,14 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 							@Override
 							public UIComponent defineSplashWindow(UIClient client,Context context) {return null;}
 
-							@Override
-							public boolean isEnabled() {
-								// TODO implement UIModel.isEnabled
-								return false;
-							}
 
-							@Override
-							public void setEnabled(boolean enabled) {
-								// TODO implement UIModel.setEnabled
-								
-							}
 						};
 					} else if (envType.equals(UIEnvironmentType.BROWSER)){
 						uiModel = null; // TODO
-					}
-				} else {
+					}  
+				} else if (UIWindowModel.class.isAssignableFrom(uiModelClass)) { 
+					uiModel = new DefaultUIWindowModel();
+			   } else {
 
 					uiModel = ReflectionUtils.proxy(uiModelClass, new PropertyBagProxyHandler());
 

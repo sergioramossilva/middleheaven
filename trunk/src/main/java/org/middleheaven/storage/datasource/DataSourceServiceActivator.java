@@ -60,7 +60,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 
 	public void activate(ServiceAtivatorContext context){
 
-		Container container =  bootstrapService.getContainer();
+		Container container =  bootstrapService.getEnvironmentBootstrap().getContainer();
 
 		book = loggingService.getLogBook(null);
 

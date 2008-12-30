@@ -1,0 +1,9 @@
+package org.middleheaven.core.reflection;
+
+public class IllegalAccessReflectionException extends ReflectionException {
+
+	public IllegalAccessReflectionException(Throwable t) {
+		super(t);
+	}
+
+}
