@@ -9,7 +9,13 @@ public class SViewRender extends UIRender {
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent,UIComponent component) {
 
-		return new SPanelView();
+		if ("innerframe".equals(component.getFamily())){
+			return new SInternalFrameView();
+			
+		} else {
+			return new SPanelView();
+		}
+		
 	}
 
 }

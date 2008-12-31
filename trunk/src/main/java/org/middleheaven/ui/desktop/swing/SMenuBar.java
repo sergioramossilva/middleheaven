@@ -22,6 +22,8 @@ public class SMenuBar extends JMenuBar implements UICommandSet {
 	private String id;
 	private UICommandModel model;
 	private UIComponent parent;
+	
+	public SMenuBar(){}
 
 	@Override
 	public void setUIModel(UIModel model) {

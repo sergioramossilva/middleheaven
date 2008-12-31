@@ -56,17 +56,21 @@ public class SLayoutRender extends UIRender {
 			s.add(desktopPane, BorderLayout.CENTER);
 			
 			RenderKit renderKit = context.getRenderKit();
+			UIRender render = renderKit.getRender(UIView.class, "innerframe");
+			
 			for (UIComponent comp : component.getChildrenComponents()){
 
-				UIComponent renderedComponent = renderKit.renderComponent(context, s, comp);
+				comp.setFamily("innerframe");
+				
+				UIComponent renderedComponent = renderKit.renderComponent(render,context, s, comp);
+				renderedComponent.setUIModel(comp.getUIModel());
+				
+				JInternalFrame iframe = (JInternalFrame)renderedComponent;
+				
+				iframe.setBounds(0, 0, 200, 200); // TODO how to change this size ? 
 
-				JInternalFrame iframe = new JInternalFrame();
-				
-				iframe.getContentPane().add((JComponent)renderedComponent);
-				iframe.setBounds(0, 0, 200, 200); // TODO how to change this size ? FIX make UIVIEW the JInternalFrame
-				iframe.setTitle("Iframe");
-				
 				iframe.setVisible(true);
+				
 				desktopPane.add(iframe);
 			}
 			
