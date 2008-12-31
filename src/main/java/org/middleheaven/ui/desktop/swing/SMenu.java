@@ -11,11 +11,12 @@ import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.UITreeCriteria;
+import org.middleheaven.ui.components.UICommandSet;
 import org.middleheaven.ui.components.UILabel;
 import org.middleheaven.ui.models.UICommandModel;
 import org.middleheaven.util.DelegatingList;
 
-public class SMenu extends JMenu implements UIComponent {
+public class SMenu extends JMenu implements UICommandSet {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -77,11 +78,11 @@ public class SMenu extends JMenu implements UIComponent {
 
 	@Override
 	public <T extends UIComponent> Class<T> getType() {
-		return (Class<T>) UILabel.class;
+		return (Class<T>) UICommandSet.class;
 	}
 
 	@Override
-	public UIModel getUIModel() {
+	public UICommandModel getUIModel() {
 		return model;
 	}
 

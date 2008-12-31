@@ -3,10 +3,12 @@ package org.middleheaven.ui.desktop.swing;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.beans.PropertyVetoException;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
+import javax.swing.JMenuBar;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
@@ -19,6 +21,7 @@ import org.middleheaven.ui.events.UIFocusEvent;
 import org.middleheaven.ui.events.UIPrespectiveEvent;
 import org.middleheaven.ui.models.UIViewModel;
 import org.middleheaven.util.DelegatingList;
+import org.middleheaven.util.bean.BeanBinding;
 
 public class SInternalFrameView extends JInternalFrame implements UIView{
 
@@ -29,6 +32,10 @@ public class SInternalFrameView extends JInternalFrame implements UIView{
 
 	
 	public SInternalFrameView(){
+		
+		this.setClosable(true);
+		this.setIconifiable(true);
+		this.setMaximizable(true);
 		
 		this.addFocusListener(new FocusListener(){
 
@@ -87,6 +94,9 @@ public class SInternalFrameView extends JInternalFrame implements UIView{
 	@Override
 	public void setUIModel(UIModel model) {
 		this.model = (UIViewModel)model;
+		this.setTitle(this.model.getTitle());
+		
+		BeanBinding.bind(this.model, this);
 	}
 	
 	@Override
@@ -97,7 +107,12 @@ public class SInternalFrameView extends JInternalFrame implements UIView{
 	@Override
 	public void addComponent(UIComponent component) {
 		component.setUIParent(this);
-		this.getContentPane().add((JComponent)component);
+		
+		if (component instanceof JMenuBar){
+			this.setJMenuBar((JMenuBar)component);
+		} else {
+			this.getContentPane().add((JComponent)component);
+		}
 	}
 	
 	
@@ -108,7 +123,11 @@ public class SInternalFrameView extends JInternalFrame implements UIView{
 
 	@Override
 	public void gainFocus() {
-		this.requestFocus();
+		try {
+			this.setSelected(true);
+		} catch (PropertyVetoException e) {
+			// can-t select at this time
+		}
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package org.middleheaven.ui.desktop.swing;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UICommandSet;
-import org.middleheaven.ui.components.UIWindow;
 import org.middleheaven.ui.rendering.RenderKit;
 import org.middleheaven.ui.rendering.RenderingContext;
 import org.middleheaven.ui.rendering.UIRender;
@@ -21,9 +20,9 @@ public class SMenuRender extends UIRender {
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent,UIComponent component) {
 		
-		UIComponent menu = parent.getType().equals(UIWindow.class) ? 
-			new SMenuBar() : 
-			new SMenu();
+		UIComponent menu = parent.getType().equals(UICommandSet.class) ? 
+			new SMenu() : 
+			new SMenuBar();
 
 		menu.setFamily("menu");
 		
