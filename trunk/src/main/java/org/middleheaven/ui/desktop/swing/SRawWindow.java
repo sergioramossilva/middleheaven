@@ -3,28 +3,33 @@ package org.middleheaven.ui.desktop.swing;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JMenuBar;
+import javax.swing.JWindow;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
+import org.middleheaven.ui.components.UIWindow;
+import org.middleheaven.ui.models.UIWindowModel;
 import org.middleheaven.util.DelegatingList;
 
-public abstract class SBasePanel extends JPanel implements UIComponent{
+public class SRawWindow extends JWindow implements UIWindow{
 
-
-	private static final long serialVersionUID = 1L;
-	
-	private UIModel model;
-	private UIComponent parent;
+	UIWindowModel model;
 	private String family;
 	private String id;
+	private UIComponent parent;
 	
-	public SBasePanel(){
-
+	public SRawWindow(){
+		
 	}
 	
+	@Override
+	public UIWindowModel getUIModel() {
+		return model;
+	}
+
 	@Override
 	public void gainFocus() {
 		this.requestFocus();
@@ -33,12 +38,13 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 	@Override
 	public void addComponent(UIComponent component) {
 		component.setUIParent(this);
-		this.add((JComponent)component);
+		this.getContentPane().add((JComponent)component);
+		
 	}
 
 	@Override
 	public void removeComponent(UIComponent component) {
-		this.remove((JComponent)component);
+		this.getContentPane().remove((JComponent)component);
 	}
 	
 	@Override
@@ -47,7 +53,7 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 
 			@Override
 			public UIComponent get(int index) {
-				return (UIComponent)getComponent(index);
+				return (UIComponent)getContentPane().getComponent(index);
 			}
 
 			@Override
@@ -60,9 +66,9 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 
 	@Override
 	public int getChildrenCount() {
-		return this.getComponentCount();
+		return getComponentCount();
 	}
-
+	
 	@Override
 	public String getFamily() {
 		return family;
@@ -74,8 +80,8 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 	}
 
 	@Override
-	public UIModel getUIModel() {
-		return model;
+	public <T extends UIComponent> Class<T> getType() {
+		return (Class<T>) UIWindow.class;
 	}
 
 	@Override
@@ -88,9 +94,11 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 		return true;
 	}
 
+
+
 	@Override
 	public void setFamily(String family) {
-		this.family = family;
+		this.family= family;
 	}
 
 	@Override
@@ -100,17 +108,12 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 
 	@Override
 	public void setUIModel(UIModel model) {
-		this.model = model;
+		this.model = (UIWindowModel) model;
 	}
 
 	@Override
 	public void setUIParent(UIComponent parent) {
 		this.parent = parent;
-	}
-
-	@Override
-	public UIDimension getDimension() {
-		return new UIDimension(this.getWidth(), this.getHeight());
 	}
 
 	@Override
@@ -120,7 +123,13 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 
 	@Override
 	public void setSize(UIDimension size) {
-		this.setBounds(this.getX(), this.getY(), size.getWidth(), size.getHeight());
+		this.setSize(size.getWidth(), size.getHeight());
 	}
+
+	@Override
+	public UIDimension getDimension() {
+		return new UIDimension(this.getWidth(), this.getHeight());
+	}
+
 
 }

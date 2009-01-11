@@ -110,7 +110,7 @@ public class StringUtils {
 
     }
 
-	public static String capaitalize(String text) {
+	public static String capitalize(String text) {
 		StringBuilder builder  = new StringBuilder(text);
 		builder.replace(0, 1, builder.substring(0,1).toUpperCase());
 		return builder.toString();

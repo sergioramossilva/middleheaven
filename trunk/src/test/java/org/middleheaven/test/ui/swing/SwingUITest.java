@@ -1,12 +1,11 @@
 package org.middleheaven.test.ui.swing;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -28,7 +27,7 @@ public class SwingUITest extends MiddleHeavenTestCase {
 
 	@Test
 	public void testXMLBuilder(){
-		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder();
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWriringContext());
 		UIEnvironment root = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
 		assertNotNull(root);
 		// one client
@@ -43,7 +42,7 @@ public class SwingUITest extends MiddleHeavenTestCase {
 	@Test
 	public void testSwingRenderKit(){
 
-		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder();
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWriringContext());
 		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
 
 		UIClient client = env.getClients().iterator().next();
@@ -75,7 +74,7 @@ public class SwingUITest extends MiddleHeavenTestCase {
 	@Test
 	public void textUIQuery(){
 
-		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder();
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWriringContext());
 		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
 
 		UIClient client = env.getClients().iterator().next();
@@ -89,35 +88,41 @@ public class SwingUITest extends MiddleHeavenTestCase {
 		UIComponent layoutui = wui.getChildrenComponents().get(0);
 		assertNotNull(layoutui);
 	
-		List<UIComponent> components = UITreeCriteria.search("/").execute(layoutui);
+		List<UIComponent> components = UITreeCriteria.search("/").execute(layoutui)
+		.list();
 		
 		assertFalse(components.isEmpty());
 		assertEquals(client, components.get(0));
 		
-		components = UITreeCriteria.search("..").execute(layoutui);
+		components = UITreeCriteria.search("..").execute(layoutui)
+		.list();
 		
 		assertFalse(components.isEmpty());
 		assertEquals(wui, components.get(0));
 		
-		components = UITreeCriteria.search(".").execute(layoutui);
+		components = UITreeCriteria.search(".").execute(layoutui)
+		.list();
 		
 		assertFalse(components.isEmpty());
 		assertEquals(layoutui, components.get(0));
 		
 		
-		components = UITreeCriteria.search("./../..").execute(layoutui);
+		components = UITreeCriteria.search("./../..").execute(layoutui)
+		.list();
 		
 		assertFalse(components.isEmpty());
 		assertEquals(client, components.get(0));
 		
 		
-		components = UITreeCriteria.search("frameA").execute(layoutui);
+		components = UITreeCriteria.search("frameA").execute(layoutui)
+		.list();
 		
 		UIComponent frameA = components.get(0);
 		assertFalse(components.isEmpty());
 		assertEquals("frameA", frameA.getGID());
 		
-		components = UITreeCriteria.search("./../frameB").execute(frameA);
+		components = UITreeCriteria.search("./../frameB").execute(layoutui)
+		.list();
 		
 		UIComponent frameB = components.get(0);
 		assertFalse(components.isEmpty());

@@ -12,7 +12,7 @@ public class DefaultUIWindowModel extends AbstractUIModel implements UIWindowMod
 	
 	@Override
 	public void onClosed(UIPrespectiveEvent event) {
-		UIClient client = (UIClient)UITreeCriteria.search("/").execute(event.getSource()).get(0);
+		UIClient client =UITreeCriteria.search("/").execute(event.getSource()).first(UIClient.class);
 		client.exit();
 	}
 

@@ -1,25 +1,19 @@
 package org.middleheaven.ui.desktop.swing;
 
 import org.middleheaven.ui.UIComponent;
+import org.middleheaven.ui.UIUtils;
+import org.middleheaven.ui.components.UIWindow;
 import org.middleheaven.ui.rendering.RenderingContext;
 import org.middleheaven.ui.rendering.UIRender;
 
-public class SCommandRender extends UIRender {
-
-	private static final long serialVersionUID = 1L;
+public class SSplashWindowRender extends UIRender {
 
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent,UIComponent component) {
-	
-		if ("menu".equals(parent.getFamily())){
-			if (parent instanceof SMenu){
-				return new SMenuButton();
-			} else {
-				return new SMenu();
-			}
-		} else {
-			return new SButton();
-		}
+
+		UIWindow window =  new SRawWindow();
+
+		return window;
 	}
 
 }
