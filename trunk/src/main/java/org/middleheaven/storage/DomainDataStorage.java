@@ -2,7 +2,9 @@ package org.middleheaven.storage;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.storage.criteria.Criteria;
@@ -19,6 +21,7 @@ public class DomainDataStorage implements DataStorage {
 
 	StoreKeeper storeKeeper;
 	StorableDomainModel metadataService;
+	Set<DataStorageListener> listeners = new CopyOnWriteArraySet<DataStorageListener>();
 	
 	public DomainDataStorage(StoreKeeper storeManager,StorableDomainModel metadataService) {
 		this.storeKeeper = storeManager;
@@ -126,6 +129,7 @@ public class DomainDataStorage implements DataStorage {
 		this.storeKeeper.insert(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.RETRIVED);
+		fireAddEvent(p);
 	}
 
 	private void doUpdate(Storable p) {
@@ -136,6 +140,7 @@ public class DomainDataStorage implements DataStorage {
 		this.storeKeeper.update(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.RETRIVED);
+		fireUpdatedEvent(p);
 	}
 
 	private void doDelete(Storable p) {
@@ -146,6 +151,7 @@ public class DomainDataStorage implements DataStorage {
 		this.storeKeeper.remove(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.DELETED);
+		fireRemovedEvent(p);
 	}
 
 
@@ -168,4 +174,49 @@ public class DomainDataStorage implements DataStorage {
 		this.storeKeeper.remove(criteria, metadataService.getStorageModel(criteria.getTargetClass()));
 	}
 
+	@Override
+	public void addStorageListener(DataStorageListener listener) {
+		listeners.add(listener);
+	}
+
+	@Override
+	public void removeStorageListener(DataStorageListener listener) {
+		listeners.remove(listener);
+	}
+	
+	private void fireAddEvent(Object instance){
+		StorageChangeEvent event = new StorageChangeEvent(instance,
+				false, true, false
+		);
+		
+		for (DataStorageListener listener : listeners){
+			listener.onStorageChange(event);
+		}
+		
+		event = null;
+	}
+	
+	private void fireRemovedEvent(Object instance){
+		StorageChangeEvent event = new StorageChangeEvent(instance,
+				true, false, false
+		);
+		
+		for (DataStorageListener listener : listeners){
+			listener.onStorageChange(event);
+		}
+		
+		event = null;
+	}
+
+	private void fireUpdatedEvent(Object instance){
+		StorageChangeEvent event = new StorageChangeEvent(instance,
+				false, false, true
+		);
+		
+		for (DataStorageListener listener : listeners){
+			listener.onStorageChange(event);
+		}
+		
+		event = null;
+	}
 }
