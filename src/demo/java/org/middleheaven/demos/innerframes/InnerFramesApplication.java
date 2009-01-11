@@ -6,6 +6,7 @@ import org.middleheaven.application.ApplicationContext;
 import org.middleheaven.application.ApplicationID;
 import org.middleheaven.application.MainApplicationModule;
 import org.middleheaven.core.wiring.Wire;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIService;
 import org.middleheaven.ui.XMLUIComponentBuilder;
@@ -13,8 +14,9 @@ import org.middleheaven.util.Version;
 
 public class InnerFramesApplication extends MainApplicationModule{
 
-	private UIService service;
-
+	private UIService uiService;
+	private WiringService wiringService;
+	
 	public InnerFramesApplication() {
 		super(new ApplicationID("innerframes", Version.from(0, 0, 0)));
 	
@@ -22,15 +24,21 @@ public class InnerFramesApplication extends MainApplicationModule{
 
 	@Wire
 	public void setUIService(UIService service){
-		this.service = service;
+		this.uiService = service;
 	}
+	
+	@Wire
+	public void setWiringService(WiringService service){
+		this.wiringService = service;
+	}
+	
 	
 	@Override
 	public void load(ApplicationContext context) {
-		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder();
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(wiringService.getWiringContext());
 		UIEnvironment root = xmlBuilder.buildFrom(new File("./src/demo/java/org/middleheaven/demos/innerframes/ui.xml"));
 		
-		service.registerEnvironment(root, true);
+		uiService.registerEnvironment(root, true);
 	}
 
 	@Override

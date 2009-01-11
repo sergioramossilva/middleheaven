@@ -423,6 +423,15 @@ public final class ReflectionUtils {
 			throw new NoSuchClassReflectionException(className);
 		}
 	}
+	
+	
+	public static <T> Class<T> loadClass(String className, Class<T> superType) throws InstantiationReflectionException{
+		try {
+			return (Class<T>)Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			throw new NoSuchClassReflectionException(className);
+		}
+	}
 
 	public static <T> T newInstance(String className, Class<T> type) throws ClassNotFoundReflectionException {
 

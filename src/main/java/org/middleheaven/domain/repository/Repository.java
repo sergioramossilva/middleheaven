@@ -23,6 +23,9 @@ public interface Repository<E> {
 	public E store(E entity);
 	
 	public void remove(E entity);
+	
+	public void addRepositoryListener(RepositoryListener listener);
+	public void removeRepositoryListener(RepositoryListener listener);
 
 	public void setDomainModel(DomainModel domainModel);
 }
