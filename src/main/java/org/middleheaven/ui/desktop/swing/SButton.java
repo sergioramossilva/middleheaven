@@ -80,7 +80,7 @@ public class SButton extends JButton implements UICommand {
 
 	@Override
 	public <T extends UIComponent> Class<T> getType() {
-		return (Class<T>) UILabel.class;
+		return (Class<T>) UICommand.class;
 	}
 
 	@Override

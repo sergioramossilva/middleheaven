@@ -3,33 +3,40 @@ package org.middleheaven.ui.desktop.swing;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JToolBar;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
+import org.middleheaven.ui.components.UICommandSet;
+import org.middleheaven.ui.models.UICommandModel;
 import org.middleheaven.util.DelegatingList;
 
-public abstract class SBasePanel extends JPanel implements UIComponent{
+public class SToolbar extends JToolBar implements UICommandSet{
 
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2053844931546150045L;
 	
-	private UIModel model;
-	private UIComponent parent;
 	private String family;
 	private String id;
+	private UICommandModel model;
+	private UIComponent parent;
 	
-	public SBasePanel(){
-
+	public SToolbar(){
+		
+	}
+	
+	@Override
+	public UICommandModel getUIModel() {
+		return model;
 	}
 	
 	@Override
 	public void gainFocus() {
 		this.requestFocus();
 	}
-
+	
 	@Override
 	public void addComponent(UIComponent component) {
 		component.setUIParent(this);
@@ -57,7 +64,7 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 			
 		};
 	}
-
+	
 	@Override
 	public int getChildrenCount() {
 		return this.getComponentCount();
@@ -74,8 +81,8 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 	}
 
 	@Override
-	public UIModel getUIModel() {
-		return model;
+	public <T extends UIComponent> Class<T> getType() {
+		return (Class<T>) UICommandSet.class;
 	}
 
 	@Override
@@ -87,6 +94,8 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 	public boolean isRendered() {
 		return true;
 	}
+
+
 
 	@Override
 	public void setFamily(String family) {
@@ -100,7 +109,7 @@ public abstract class SBasePanel extends JPanel implements UIComponent{
 
 	@Override
 	public void setUIModel(UIModel model) {
-		this.model = model;
+		this.model = (UICommandModel)model;
 	}
 
 	@Override
