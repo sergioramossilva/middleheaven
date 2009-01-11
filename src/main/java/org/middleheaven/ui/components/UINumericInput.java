@@ -1,5 +1,9 @@
 package org.middleheaven.ui.components;
 
-public interface UINumericInput extends UIOpenInput{
+import org.middleheaven.ui.models.UINumericInputModel;
 
+public interface UINumericInput extends UIFieldInput{
+
+	
+	public UINumericInputModel getUIModel();
 }

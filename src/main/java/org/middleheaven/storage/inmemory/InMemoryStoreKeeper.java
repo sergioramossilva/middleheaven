@@ -14,7 +14,6 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
-import org.middleheaven.util.sequence.LongSequence;
 import org.middleheaven.util.sequence.Sequence;
 
 public class InMemoryStoreKeeper extends AbstractStoreKeeper {

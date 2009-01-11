@@ -34,6 +34,10 @@ public abstract class AbstractUIModel implements UIModel {
 	}
 
 	protected <T> T firePropertyChange (String propertyName, T oldValue, T newValue){
+		if (newValue!=null && newValue.equals(oldValue)) {
+			return newValue;
+		}
+		
 		PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
 		
 		for (PropertyChangeListener listener : this.propertyChangeListeners){

@@ -1,5 +1,5 @@
 package org.middleheaven.ui.components;
 
-public interface UIDateInput extends UIOpenInput {
+public interface UIDateInput extends UIFieldInput {
 
 }

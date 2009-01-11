@@ -6,7 +6,7 @@ import org.middleheaven.ui.UILayoutConstraint;
 
 public interface UILayout extends UIComponent{
 
-	 public void addChildComponent (UIComponent component, UILayoutConstraint layoutConstrain);
+	 public void addComponent (UIComponent component, UILayoutConstraint layoutConstrain);
 	 public void removeComponent (UIComponent component);
 	    
 }

@@ -1,15 +1,11 @@
 package org.middleheaven.ui;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.middleheaven.core.reflection.DefaultMethodDelegator;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.ui.components.UIContainer;
-import org.middleheaven.ui.components.UIInput;
 import org.middleheaven.ui.components.UILayout;
 
 public class GenericUIComponent<T extends UIComponent> implements UIContainer,UILayout{
@@ -66,9 +62,9 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	}
 	
 	@Override
-	public void addChildComponent(UIComponent component, UILayoutConstraint layoutConstrain) {
+	public void addComponent(UIComponent component, UILayoutConstraint layoutConstrain) {
 		if (layout!=null){
-			layout.addChildComponent(component,layoutConstrain);
+			layout.addComponent(component,layoutConstrain);
 		} else {
 			children.add(component);
 		}
@@ -76,11 +72,6 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	
 	@Override
 	public void addComponent(UIComponent component) {
-		children.add(component);
-	}
-	
-	@Override
-	public void addComponent(UIComponent component,UILayoutConstraint layoutConstrain) {
 		children.add(component);
 	}
 
@@ -152,7 +143,7 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 
 	@Override
 	public boolean isRendered() {
-		return true;
+		return false;
 	}
 
 	@Override
