@@ -29,8 +29,45 @@ public final class UITreeCriteria {
 		this.expression = expression;
 	}
 	
-	public List<UIComponent> execute ( UIComponent currentComponent){
-		return findByExpression(currentComponent, expression);
+	public UIQuery execute ( UIComponent currentComponent){
+		return new ListUIQuery(currentComponent, expression);
+	}
+	
+	private static class ListUIQuery implements UIQuery{
+		private UIComponent currentComponent;
+		private String expression;
+		
+		public ListUIQuery(UIComponent currentComponent, String expression) {
+			super();
+			this.currentComponent = currentComponent;
+			this.expression = expression;
+		}
+
+		@Override
+		public UIComponent find(int index) {
+			return list().get(index);
+		}
+
+		@Override
+		public <T extends UIComponent> T find(int index, Class<T> type) {
+			return type.cast(list().get(index));
+		}
+
+		@Override
+		public UIComponent first() {
+			return find(0);
+		}
+
+		@Override
+		public <T extends UIComponent> T first(Class<T> type) {
+			return type.cast(first());
+		}
+
+		@Override
+		public List<UIComponent> list() {
+			return findByExpression(currentComponent, expression);
+		}
+		
 	}
 	
     private static List<UIComponent> findByExpression(UIComponent component, String expr){

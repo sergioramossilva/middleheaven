@@ -1,11 +1,6 @@
 package org.middleheaven.ui;
 
-import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.util.Collection;
 
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
@@ -13,19 +8,21 @@ import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.PropertyBagProxyHandler;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.wiring.BindConfiguration;
+import org.middleheaven.core.wiring.Binder;
+import org.middleheaven.core.wiring.BindingNotFoundException;
+import org.middleheaven.core.wiring.WiringContext;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;
 import org.middleheaven.io.xml.XMLObjectContructor;
 import org.middleheaven.io.xml.XMLUtils;
-import org.middleheaven.ui.components.UIDesktop;
-import org.middleheaven.ui.components.UITitledUIModel;
-import org.middleheaven.ui.desktop.awt.UIExitEvent;
 import org.middleheaven.ui.desktop.swing.SwingRenderKit;
-import org.middleheaven.ui.events.UIFocusEvent;
+import org.middleheaven.ui.models.AbstractUIFieldInputModel;
 import org.middleheaven.ui.models.DefaultUIWindowModel;
 import org.middleheaven.ui.models.DesktopClientModel;
 import org.middleheaven.ui.models.UIClientModel;
+import org.middleheaven.ui.models.UIFieldInputModel;
 import org.middleheaven.ui.models.UIWindowModel;
 import org.middleheaven.util.StringUtils;
 import org.w3c.dom.Document;
@@ -35,6 +32,11 @@ import org.w3c.dom.NodeList;
 
 public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> implements UIComponentBuilder {
 
+	WiringContext wiringContext;
+	
+	public XMLUIComponentBuilder(WiringContext wiringContext){
+		this.wiringContext = wiringContext;
+	}
 
 	@Override
 	public UIEnvironment build() {
@@ -86,9 +88,9 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			type = "CommandSet";
 		}
 		try {
-			return (Class<T>) ReflectionUtils.loadClass("org.middleheaven.ui.UI" + StringUtils.capaitalize(type));
+			return (Class<T>) ReflectionUtils.loadClass("org.middleheaven.ui.UI" + StringUtils.capitalize(type));
 		} catch (NoSuchClassReflectionException e) {
-			return (Class<T>) ReflectionUtils.loadClass("org.middleheaven.ui.components.UI" + StringUtils.capaitalize(type));
+			return (Class<T>) ReflectionUtils.loadClass("org.middleheaven.ui.components.UI" + StringUtils.capitalize(type));
 		}
 	}
 
@@ -125,8 +127,15 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			// if class attribute is defined
 			String modelClass = XMLUtils.getStringAttribute("class", modelNode, "");
 			if (!modelClass.isEmpty()){
-				uiModel = ReflectionUtils.newInstance(modelClass, UIModel.class);
-				uiModelClass = uiModel.getClass();
+				uiModelClass = ReflectionUtils.loadClass(modelClass, UIModel.class);
+				try{
+					uiModel = wiringContext.getInstance(uiModelClass);
+				} catch (BindingNotFoundException e){
+					uiModel = ReflectionUtils.newInstance(modelClass, UIModel.class);
+					wiringContext.addConfiguration(new ModelBinderConfiguration(uiModelClass, uiModel));
+				}
+				
+				
 			}	
 		}
 
@@ -143,30 +152,35 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 
 
 			try {
+			
+					// load
+					if (UIClientModel.class.isAssignableFrom(uiModelClass)){
+						if (envType.equals(UIEnvironmentType.DESKTOP)){
+							uiModel = new DesktopClientModel(){
 
-				if (UIClientModel.class.isAssignableFrom(uiModelClass)){
-					if (envType.equals(UIEnvironmentType.DESKTOP)){
-						uiModel = new DesktopClientModel(){
+								@Override
+								public UIComponent defineMainWindow(UIClient client,Context context) {
+									return client.getChildrenComponents().get(client.getChildrenCount()-1);
+								}
 
-							@Override
-							public UIComponent defineMainWindow(UIClient client,Context context) {return null;}
+								@Override
+								public UIComponent defineSplashWindow(UIClient client,Context context) {
+									return client.getChildrenCount() == 1 ? null : client.getChildrenComponents().get(0);
+								}
 
-							@Override
-							public UIComponent defineSplashWindow(UIClient client,Context context) {return null;}
-
-
-						};
-					} else if (envType.equals(UIEnvironmentType.BROWSER)){
-						uiModel = null; // TODO
-					}  
-				} else if (UIWindowModel.class.isAssignableFrom(uiModelClass)) { 
-					uiModel = new DefaultUIWindowModel();
-			   } else {
-
-					uiModel = ReflectionUtils.proxy(uiModelClass, new PropertyBagProxyHandler());
-
-				}
-
+							};
+						} else if (envType.equals(UIEnvironmentType.BROWSER)){
+							uiModel = null; // TODO
+						}  
+					} else if (UIWindowModel.class.isAssignableFrom(uiModelClass)) { 
+						uiModel = new DefaultUIWindowModel();
+					} else if (UIFieldInputModel.class.isAssignableFrom(uiModelClass)){
+						uiModel = new AbstractUIFieldInputModel();
+					} else {
+						uiModel = ReflectionUtils.proxy(uiModelClass, new PropertyBagProxyHandler());
+					}
+					
+			
 			} catch (SecurityException e) {
 				throw new ReflectionException(e);
 			} 
@@ -206,6 +220,22 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 		return uiComponent;
 	}
 
+	
+	private static class ModelBinderConfiguration <T> implements BindConfiguration{
+		Class<T> uiModelClass;
+		T uiModel;
+		
+		public  ModelBinderConfiguration(Class<T> uiModelClass , T uiModel){
+			this.uiModel = uiModel;
+			this.uiModelClass = uiModelClass;
+		}
+		
+		@Override
+		public void configure(Binder binder) {
+			binder.bind(uiModelClass).toInstance(uiModel);
+		}
+		
+	}
 	public static class BuildedUIEnvironment extends UIEnvironment{
 
 

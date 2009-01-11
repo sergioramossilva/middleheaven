@@ -5,7 +5,6 @@ import org.middleheaven.progress.Progress;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.components.UIDesktop;
 import org.middleheaven.ui.desktop.awt.Desktop;
 import org.middleheaven.ui.models.DesktopClientModel;
 import org.middleheaven.ui.rendering.RenderKit;
@@ -41,7 +40,9 @@ public class DesktopClientRender  extends UIRender{
 			if (!splash.isRendered()){
 				splash = renderKit.renderComponent(context, dclient, splash);
 			}
+			splash.setUIParent(dclient);
 			renderKit.show(splash);
+			splash.gainFocus();
 		}
 		
 		
@@ -56,7 +57,6 @@ public class DesktopClientRender  extends UIRender{
 		}
 		
 		
-
 		renderKit.dispose(splash);
 	
 		return dclient;

@@ -1,5 +1,7 @@
 package org.middleheaven.ui;
 
-public interface UIMessageModel extends UITextLabeledModel {
+import org.middleheaven.ui.models.UIOutputModel;
+
+public interface UIMessageModel extends UIOutputModel, UITextLabeledModel {
 
 }
