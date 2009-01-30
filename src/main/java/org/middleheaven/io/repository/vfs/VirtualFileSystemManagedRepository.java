@@ -77,21 +77,6 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 	}
 
 	@Override
-	public ManagedFile create(String filename) throws ManagedIOException {
-		if (!this.isWriteable()){
-			throw new RepositoryNotWritableException(this.getClass().getName() + "(" +  this.root.getName().getBaseName() + ")");
-		}
-		
-		try {
-			FileObject fo = root.resolveFile("./" + filename);
-			fo.createFile();
-			return new VirtualFileSystemMangedFile(fo); // allways relative
-		} catch (FileSystemException e) {
-			throw new VirtualFileSystemException(e);
-		}
-	}
-
-	@Override
 	public boolean delete(String filename) throws ManagedIOException {
 		if (!this.isWriteable()){
 			throw new RepositoryNotWritableException(this.getClass().getName() + "(" +  this.root.getName().getBaseName() + ")");

@@ -118,7 +118,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 	public void testCriteriaDelete(){
 		if(runTest){
 			Criteria<Subject> all = search(Subject.class).all();
-
+			
 			// remove them
 			ds.remove(all);
 

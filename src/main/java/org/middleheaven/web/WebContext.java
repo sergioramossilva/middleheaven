@@ -41,7 +41,7 @@ public class WebContext extends AbstractContext {
 			this.setAttribute(ContextScope.REQUEST, Context.UPLOADS_FILE_REPOSITORY, rep);
 		} else {
 			parameters = request.getParameterMap();
-			this.setAttribute(ContextScope.REQUEST, Context.UPLOADS_FILE_REPOSITORY, new EmptyFileRepository());
+			this.setAttribute(ContextScope.REQUEST, Context.UPLOADS_FILE_REPOSITORY, EmptyFileRepository.getRepository());
 		}
 	}
 	
