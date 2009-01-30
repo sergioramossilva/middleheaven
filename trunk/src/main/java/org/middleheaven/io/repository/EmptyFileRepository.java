@@ -4,22 +4,23 @@ import org.middleheaven.io.ManagedIOException;
 
 public class EmptyFileRepository implements ManagedFileRepository {
 
+	private static final EmptyFileRepository me = new EmptyFileRepository();
 	
-	public EmptyFileRepository(){}
-	
-	@Override
-	public ManagedFile create(String filename) throws ManagedIOException {
-		return null;
+	public static EmptyFileRepository getRepository(){
+		return me;
 	}
+
+	private EmptyFileRepository(){}
+	
 
 	@Override
 	public boolean delete(String filename) throws ManagedIOException {
-		return true;
+		throw new RepositoryNotWritableException(this.getClass().getName());
 	}
 
 	@Override
 	public boolean delete(ManagedFile file) throws ManagedIOException {
-		return true;
+		throw new RepositoryNotWritableException(this.getClass().getName());
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class EmptyFileRepository implements ManagedFileRepository {
 
 	@Override
 	public ManagedFile retrive(String filename) throws ManagedIOException {
-		return null;
+		return new VoidManagedFile(null,filename);
 	}
 
 	@Override

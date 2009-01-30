@@ -34,6 +34,7 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	private HttpServletRequest request;
 	private DiskFileItemFactory factory;
 	
+
 	public UploadManagedFileRepository (HttpServletRequest request){
 		this(request,null);
 	}
@@ -90,10 +91,6 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 				files = Collections.emptyMap();
 			}
 		}
-	}
-	@Override
-	public ManagedFile create(String filename) throws ManagedIOException {
-		throw new UnsupportedOperationException("Not supported");
 	}
 
 	@Override

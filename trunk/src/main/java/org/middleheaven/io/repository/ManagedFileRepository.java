@@ -52,13 +52,6 @@ public interface ManagedFileRepository{
      */
     public abstract boolean delete(ManagedFile file) throws ManagedIOException;
 
-    /**
-     * Creates a new file on the repository. 
-     * @param filename
-     * @return
-     * @throws ManagedIOException
-     */
-    public abstract ManagedFile create(String filename) throws ManagedIOException;
 
     /**
      * Retrives a ManagedFile representing the file with the specified name
