@@ -74,6 +74,7 @@ public class PropertyAccessor extends FieldAccessor {
 	public Object getValue(Object target) throws ReflectionException{
 		try {
 			if (acessor!=null){
+				acessor.setAccessible(true);
 				return acessor.invoke(target, new Object[0]);
 			} else if (field !=null){
 				field.setAccessible(true);
