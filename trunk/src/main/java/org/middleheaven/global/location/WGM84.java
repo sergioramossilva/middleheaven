@@ -10,12 +10,12 @@ import static java.lang.Math.hypot;
 import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 
-import org.middleheaven.util.measure.AngularMeasure;
-import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.Real;
-import org.middleheaven.util.measure.SI;
-import org.middleheaven.util.measure.coordinate.GeoCoordinate;
-import org.middleheaven.util.measure.measures.Distance;
+import org.middleheaven.quantity.coordinate.GeoCoordinate;
+import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.measurables.Distance;
+import org.middleheaven.quantity.measure.AngularMeasure;
+import org.middleheaven.quantity.measure.DecimalMeasure;
+import org.middleheaven.quantity.unit.SI;
 
 
 public class WGM84 extends ElipsoideModel{

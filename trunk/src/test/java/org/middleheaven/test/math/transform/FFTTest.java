@@ -6,10 +6,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.middleheaven.math.structure.Vector;
-import org.middleheaven.math.transforms.FourierTransform;
-import org.middleheaven.math.transforms.FourierTransform;
-import org.middleheaven.util.measure.Complex;
+import org.middleheaven.quantity.math.Complex;
+import org.middleheaven.quantity.math.transforms.FourierTransform;
+import org.middleheaven.quantity.structure.Vector;
 
 
 public class FFTTest {

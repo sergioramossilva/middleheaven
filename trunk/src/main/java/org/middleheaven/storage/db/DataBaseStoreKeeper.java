@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import org.middleheaven.data.DataType;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.logging.Logging;
+import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
@@ -27,7 +28,6 @@ import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IdentitySequence;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
-import org.middleheaven.util.sequence.Sequence;
 
 public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 

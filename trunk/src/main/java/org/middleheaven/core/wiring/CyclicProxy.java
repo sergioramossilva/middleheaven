@@ -1,26 +1,23 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.reflect.Method;
-
+import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
-
-import javassist.util.proxy.MethodHandler;
 
 public class CyclicProxy implements ProxyHandler{
 
 	private Object realObject;
 	
+	protected void setRealObject(Object realObject) {
+		this.realObject = realObject;
+	}
+
 	@Override
-	public Object invoke(Object obj, Method method, Method original, Object[] params) throws Throwable {
+	public Object invoke(Object proxy, Object[] args, MethodDelegator delegator)throws Throwable {
 		if (realObject==null){
 			throw new InstantiationException("Cyclic Reference was not resolved");
 		} else {
-			return method.invoke(realObject,params);
+			return delegator.invoke(realObject,args);
 		}
-	}
-
-	protected void setRealObject(Object realObject) {
-		this.realObject = realObject;
 	}
 
 }

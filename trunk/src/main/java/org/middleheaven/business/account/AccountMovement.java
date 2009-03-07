@@ -1,7 +1,7 @@
 package org.middleheaven.business.account;
 
-import org.middleheaven.util.measure.Amount;
-import org.middleheaven.util.measure.time.DateTimeHolder;
+import org.middleheaven.quantity.measure.Amount;
+import org.middleheaven.quantity.time.DateTimeHolder;
 
 public abstract class AccountMovement<A extends Amount<A,?>> {
 

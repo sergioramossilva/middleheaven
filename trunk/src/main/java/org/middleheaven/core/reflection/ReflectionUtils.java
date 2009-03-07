@@ -7,166 +7,40 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.middleheaven.util.classification.BooleanClassifier;
 
-import javassist.util.proxy.MethodFilter;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
-import javassist.util.proxy.ProxyObject;
-
 public final class ReflectionUtils {
 
+	private static ReflectionStrategy stategy = new CGLibReflectionStrategy();
+	
 	public ReflectionUtils(){}
-
-	private static class MethodInvocationHandler implements InvocationHandler{
-
-		private ProxyHandler methodHandler;
-		private MethodInvocationHandler(ProxyHandler methodHandler){
-			this.methodHandler =  methodHandler;
-		}
-
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			return methodHandler.invoke(proxy,method,null,args);
-		}
-
-	}
 	
 	public static <T> T proxy (Class<T> facadeClass , final ProxyHandler delegator){
-		try {
-			if (facadeClass.isInterface()){
-				return (T)Proxy.newProxyInstance(ReflectionUtils.class.getClassLoader(),new Class<?>[]{facadeClass}, new MethodInvocationHandler(delegator));
-			} else{
-				ProxyFactory f = new ProxyFactory();
-				f.setSuperclass(facadeClass);
-				f.setFilter(new MethodFilter() {
-					public boolean isHandled(Method m) {
-						// ignore finalize()
-						return !m.getName().equals("finalize");
-					}
-				});
-				Constructor[] all = facadeClass.getConstructors();
-				Constructor candidate=null;
-				for (Constructor c : all){
-					if (candidate==null || c.getParameterTypes().length < candidate.getParameterTypes().length ) {
-						candidate = c;
-					}
-				}
-				Object[] allNull = new Object[candidate.getParameterTypes().length]; 
-				return (T)f.create(candidate.getParameterTypes(), allNull, new MethodHandler(){
-
-					@Override
-					public Object invoke(Object proxy, Method invokedOnInterface, Method originalOnClass, Object[] args) throws Throwable {
-						return delegator.invoke(proxy, invokedOnInterface, originalOnClass, args);
-					}
-
-					
-				});
-
-			} 
-		} catch (InstantiationException e) {
-			throw new InstantiationReflectionException(facadeClass.getName(), e.getMessage());
-		} catch (Exception e) {
-			throw new ReflectionExceptionHandler().handle(e);
-		}
+		return stategy.proxy(facadeClass, delegator);
 	}
 
-	
-	public static <I> I proxy (final Object delegationTarget , Class<I> proxyInterface){
-		if (!proxyInterface.isInterface()){
-			throw new IllegalArgumentException("Proxy must be applied with an interface");
-		}
-		
-		return proxyInterface.cast(Proxy.newProxyInstance(delegationTarget.getClass().getClassLoader(), new Class[]{proxyInterface}, new InvocationHandler(){
-
-			@Override
-			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-				try {
-					return method.invoke(delegationTarget, args);  // execute the original method.
-				} catch (IllegalArgumentException e){
-					// try to find a method with the same name and parameters 
-					Method m = delegationTarget.getClass().getMethod(method.getName(), method.getParameterTypes());
-					if (m!=null && m.getReturnType().isAssignableFrom(method.getReturnType()) ){
-						return m.invoke(delegationTarget, args);
-					} else {
-						throw new NoSuchMethodReflectionException (method.toString());
-					}
-				}
-				
-			}
-			
-		}));
+	public static <I> I proxy ( Object delegationTarget , Class<I> proxyInterface){
+		return stategy.proxy(delegationTarget, proxyInterface);
 	}
 
 	public static <I> I proxy (Object delegationTarget , Class<I> proxyInterface , final ProxyHandler delegator ){
-		if (!proxyInterface.isInterface()){
-			throw new IllegalArgumentException("Proxy must be applied with an interface");
-		}
-
-		if (proxyInterface.isInstance(delegationTarget)){
-			// the object already implements the interface. just wrapp it
-			return proxyInterface.cast(Proxy.newProxyInstance(delegationTarget.getClass().getClassLoader(), new Class[]{proxyInterface}, new InvocationHandler(){
-
-				@Override
-				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-					return delegator.invoke(proxy, method, null, args);
-				}
-				
-			}));
-			
-		} else {
-			// delegationTarget does not implement the same interface
-
-			ProxyFactory f = new ProxyFactory();
-			f.setSuperclass(delegationTarget.getClass());
-			f.setInterfaces(new Class[]{proxyInterface});
-			f.setFilter(new MethodFilter() {
-				public boolean isHandled(Method m) {
-					// ignore finalize()
-					return !m.getName().equals("finalize");
-				}
-			});
-
-			I foo;
-			try {
-				Class c = f.createClass();
-				foo = (I)c.newInstance();
-
-				((ProxyObject)foo).setHandler(new MethodHandler(){
-
-					@Override
-					public Object invoke(Object proxy, Method invoked, Method original, Object[] args) throws Throwable {
-						return delegator.invoke(proxy, invoked, original, args);
-					}
-					
-				});
-
-				copy(delegationTarget, foo);
-				return foo;
-			} catch (InstantiationException e) {
-				throw new ReflectionException(e);
-			} catch (IllegalAccessException e) {
-				throw new ReflectionException(e);
-			}
-		}
+		return stategy.proxy(delegationTarget, proxyInterface, delegator);
 	}
 
 	public static Set<Class> getPackageClasses(Package classPackage) {
@@ -217,166 +91,20 @@ public final class ReflectionUtils {
 	}
 
 	public static <T> T copy(T original , T copy ){
-		Collection<PropertyAccessor> assessors = getPropertyAccessors(original.getClass());
 
-		for (PropertyAccessor fa : assessors){
+		for (PropertyAccessor fa :  getPropertyAccessors(original.getClass())){
 			fa.setValue(copy, fa.getValue(original));
 		}
 		return copy;
 	}
 
 	public static PropertyAccessor getPropertyAccessor(Class<?> type, String fieldName){
-		return new PropertyAccessor(type,fieldName);
+		return stategy.getPropertyAccessor(type, fieldName);
 	}
 
-	public static Collection<PropertyAccessor> getPropertyAccessors(Class<?> type)throws ReflectionException{
-
-		if (type==null){
-			return Collections.emptySet();
-		}
-		
-		Collection<PropertyAccessor> result = new ArrayList<PropertyAccessor> ();
-		for (Method m : type.getMethods()){
-			
-			if (!m.getName().startsWith("getClass") ){
-				if (m.getName().startsWith("get")){
-					result.add(getPropertyAccessor(type, m.getName().substring(3)));
-				} else if (m.getName().startsWith("is")){
-					result.add(getPropertyAccessor(type, m.getName().substring(2)));
-				}
-				
-			}
-
-		}
-		return result;
+	public static Iterable<PropertyAccessor> getPropertyAccessors(Class<?> type)throws ReflectionException{
+		return stategy.getPropertyAccessors(type);
 	}
-
-	/*
-	public static Object getFieldValue(Object target, String name) {
-		name = name.toLowerCase();
-
-		Set<Field> fields = getAllFields(target.getClass());
-		Field f=null;
-		for (Field fd : fields){
-			if (fd.getName().toLowerCase().endsWith(name)){
-				f = fd;
-				break;
-			}
-		}
-
-		if (f==null){
-			try {
-				Method[] ms = target.getClass().getMethods();
-				for (Method m : ms){
-					if (m.getName().toLowerCase().endsWith(name) && m.getName().toLowerCase().contains("get")){
-						m.setAccessible(true);
-						return m.invoke(target);
-					}
-				}
-				//throw  new NoSuchMethodReflectionException(name + " not found");
-				return null;
-			} catch (IllegalArgumentException e) {
-				throw new IllegalAccesReflectionException(e);
-			} catch (IllegalAccessException e) {
-				throw new IllegalAccesReflectionException(e);
-			}catch (InvocationTargetException e) {
-				throw new InvocationTargetReflectionException(e);
-			}
-
-		} else {
-			return getFieldValue (target,f);
-		}
-
-	}
-
-
-	public static Object getFieldValue( Object target,Field f) {
-		try {
-			try {
-				f.setAccessible(true);
-				String prefix="get";
-				if (f.getType().equals(Boolean.class)){
-					prefix="is";
-				}
-				Method m = target.getClass().getMethod(prefix + f.getName());
-				return m.invoke(target);
-			} catch (NoSuchMethodException e ){
-				return f.get(target); // read directly from attribute
-			} 
-
-		} catch (IllegalArgumentException e) {
-			throw new IllegalAccesReflectionException(e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalAccesReflectionException(e);
-		}catch (InvocationTargetException e) {
-			throw new InvocationTargetReflectionException(e);
-		}
-	}
-
-
-	public static void setFieldValue (Object target,String name,  Object value){
-		name = name.toLowerCase();
-
-		Set<Field> fields = getAllFields(target.getClass());
-		Field f=null;
-		for (Field fd : fields){
-			if (fd.getName().toLowerCase().endsWith(name)){
-				f = fd;
-				break;
-			}
-		}
-
-		if (f==null){
-			try {
-				Method[] ms = target.getClass().getMethods();
-				for (Method m : ms){
-					if (m.getName().toLowerCase().endsWith(name) && m.getName().toLowerCase().contains("set")){
-						m.setAccessible(true);
-						m.invoke(target,value);
-						return;
-					}
-				}
-				//throw  new NoSuchMethodReflectionException(name + " not found");
-			} catch (IllegalArgumentException e) {
-				throw new IllegalAccesReflectionException(e);
-			} catch (IllegalAccessException e) {
-				throw new IllegalAccesReflectionException(e);
-			}catch (InvocationTargetException e) {
-				throw new InvocationTargetReflectionException(e);
-			}
-
-		} else {
-			setFieldValue(f,target,value);
-		}
-	}
-	 */
-
-	/**
-	 * Set a field with a value. If there is a set<Field>() method , that method is invoked
-	 * otherwise the set is made directly.
-	 * @param f
-	 * @param value
-	 */
-	/*
-	public static void setFieldValue (Field f, Object target, Object value){
-		try {
-			try {
-				f.setAccessible(true);
-				Method m = target.getClass().getMethod("set" + f.getName(), value.getClass());
-				m.invoke(target, value);
-			} catch (NoSuchMethodException e ){
-				f.set(target, value);
-			} 
-
-		} catch (IllegalArgumentException e) {
-			throw new IllegalAccesReflectionException(e);
-		} catch (IllegalAccessException e) {
-			throw new IllegalAccesReflectionException(e);
-		}catch (InvocationTargetException e) {
-			throw new InvocationTargetReflectionException(e);
-		}
-	}
-	 */
 
 	/**
 	 * Determines if class <code>match</code> is a superclass or supper-interface
@@ -390,9 +118,8 @@ public final class ReflectionUtils {
 	}
 
 	public static Object compareField (Object obj , String fieldName)throws ReflectionException{
-		Method[] methods = obj.getClass().getMethods();
 
-		for (Method m : methods){
+		for (Method m : getMethods(obj.getClass())){
 			String name = m.getName().toLowerCase();
 			if ( (name.startsWith("get") || name.startsWith("is")) && name.endsWith(fieldName)){
 				try {
@@ -532,8 +259,6 @@ public final class ReflectionUtils {
 		return candidate.isAnnotationPresent(annotationClass);
 	}
 	
-
-
 	public static <A extends Annotation> A getAnnotation(Class<?> annotated, Class<A> annotationClass){
 		return annotated.getAnnotation(annotationClass);
 	}
@@ -628,13 +353,65 @@ public final class ReflectionUtils {
 		return Arrays.asList(constructors);
 	}
 
+
+	private static Map<String, Map<MethodKey , Method >> classMethods = new WeakHashMap<String, Map<MethodKey , Method >>();
+	
+	private final static class MethodKey {
+
+		String id;
+		int hash;
+		
+		public MethodKey(Class<?> type, String name, Class<?>[] parameterTypes) {
+			StringBuilder builder = new StringBuilder( type.getName())
+			.append('#').append(name).append('(');
+		
+			for (int i=0; i < parameterTypes.length;i++){
+				if (i>0){
+					builder.append(',');
+				}
+				builder.append(parameterTypes[i].getName());
+			}
+			
+			this.id = builder.toString();
+			hash = id.hashCode();
+		}
+		
+		public boolean equals(Object other){
+			return ((MethodKey)other).id.equals(this.id);
+		}
+		
+		public int hashCode(){
+			return hash;
+		}
+	}
+	
+	public static Map<MethodKey , Method> getClassMethods (Class<?> type){
+		Map<MethodKey , Method>  methods = classMethods.get(type.getName());
+		
+		if (methods == null){
+			methods = new HashMap<MethodKey , Method>();
+			classMethods.put(type.getName(), methods);
+			for (Method m : type.getMethods()){
+				methods.put(new MethodKey(type,m.getName(),m.getParameterTypes()), m);
+			}
+		}
+		
+		return methods;
+	}
+	
+	public static Method getMethod (Class<?> type , String name, Class<?>[] paramTypes){
+		MethodKey key = new MethodKey(type,name,paramTypes);
+		return getClassMethods(type).get(key);
+	}
+	
 	public static List<Method> getMethods(Class<?> type) {
 		return getMethods(type,null);
 	}
 	
 	public static List<Method> getMethods(Class<?> type, BooleanClassifier<Method> filter) {
 		
-		List<Method> result = new ArrayList<Method>(Arrays.asList(type.getMethods()));
+
+		List<Method> result = new ArrayList<Method>(getClassMethods(type).values());
 		
 		if (filter!=null){
 			for (Iterator<Method> it = result.iterator();it.hasNext(); ){

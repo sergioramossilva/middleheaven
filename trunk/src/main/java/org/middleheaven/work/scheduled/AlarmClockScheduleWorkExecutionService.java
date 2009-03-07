@@ -1,10 +1,10 @@
 package org.middleheaven.work.scheduled;
 
-import org.middleheaven.util.measure.time.Clock;
-import org.middleheaven.util.measure.time.TimeContext;
-import org.middleheaven.util.measure.time.TimePoint;
-import org.middleheaven.util.measure.time.clocks.ClockTickListener;
-import org.middleheaven.util.measure.time.clocks.StaticClock;
+import org.middleheaven.quantity.time.Clock;
+import org.middleheaven.quantity.time.TimeContext;
+import org.middleheaven.quantity.time.TimePoint;
+import org.middleheaven.quantity.time.clocks.ClockTickListener;
+import org.middleheaven.quantity.time.clocks.StaticClock;
 import org.middleheaven.work.Work;
 
 public class AlarmClockScheduleWorkExecutionService implements ScheduleWorkExecutorService {

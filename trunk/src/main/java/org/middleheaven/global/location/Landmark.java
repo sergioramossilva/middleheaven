@@ -1,7 +1,7 @@
 package org.middleheaven.global.location;
 
 import org.middleheaven.global.address.Address;
-import org.middleheaven.util.measure.coordinate.GeoCoordinate;
+import org.middleheaven.quantity.coordinate.GeoCoordinate;
 
 public class Landmark implements Locatable{
 

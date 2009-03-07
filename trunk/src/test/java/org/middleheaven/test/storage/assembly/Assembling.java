@@ -1,15 +1,16 @@
 package org.middleheaven.test.storage.assembly;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import org.junit.Test;
-import org.middleheaven.storage.assembly.AssemblyLine;
+import org.middleheaven.quantity.money.Money;
+import org.middleheaven.storage.assembly.AssemblyContext;
+import org.middleheaven.storage.assembly.AssemblyLineService;
 import org.middleheaven.storage.assembly.DataContext;
 import org.middleheaven.storage.assembly.MapDataContext;
-import org.middleheaven.util.measure.money.Money;
+import org.middleheaven.storage.assembly.SimpleAssemblyLine;
 
 
 public class Assembling {
@@ -27,11 +28,10 @@ public class Assembling {
 		test.setSalary(salary);
 		test.setMale(false);
 		
-		AssemblyLine line = new AssemblyLine(test);
+		AssemblyLineService line = new SimpleAssemblyLine();
 		
-		DataContext context = new MapDataContext();
-		
-		line.unAssemble(context, null, null);
+		AssemblyContext context = AssemblyContext.contextualize(test);
+		line.unAssemble(context);
 		
 		assertEquals("Ana",context.get(test.getClass().getName() + ".name"));
 		assertEquals(false,context.get(test.getClass().getName()  + ".male"));
@@ -40,15 +40,49 @@ public class Assembling {
 		
 	}
 	
+	@Test
+	public void goandback(){
+		
+		Money salary = Money.money("100000", "USD");
+		
+		TestClass test = new TestClass();
+		
+		test.setName("Ana");
+		test.setBirthday(new Date());
+		test.setSalary(salary);
+		test.setMale(false);
+		
+		AssemblyLineService line = new SimpleAssemblyLine();
+		
+		AssemblyContext context = AssemblyContext.contextualize(test);
+		line.unAssemble(context);
+		
+		assertEquals("Ana",context.get(test.getClass().getName() + ".name"));
+		assertEquals(false,context.get(test.getClass().getName()  + ".male"));
+		assertEquals(salary.amount().asNumber(),context.get(test.getClass().getName()  + ".salary.amount"));
+		assertEquals(salary.unit().toString(),context.get(test.getClass().getName()  + ".salary.currency"));
+		
+		
+		TestClass result = (TestClass)line.assemble(context);
+		
+		assertEquals("Ana",result.getName());
+		assertEquals(false,result.isMale());
+		assertEquals(salary, result.getSalary());
+
+		
+	}
 	
 	
-	private class TestClass {
+	public static class TestClass {
 		
 		private String name;
 		private Date birthday;
 		private Money salary;
 		private boolean isMale;
 		
+		public TestClass (){
+			
+		}
 		public String getName() {
 			return name;
 		}

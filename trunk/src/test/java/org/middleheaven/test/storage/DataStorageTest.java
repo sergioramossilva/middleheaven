@@ -22,6 +22,7 @@ import org.middleheaven.domain.AnnotatedDomainModel;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.sequence.service.FileSequenceStorageActivator;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
@@ -36,7 +37,6 @@ import org.middleheaven.test.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
-import org.middleheaven.util.sequence.service.FileSequenceStorageActivator;
 
 
 public class DataStorageTest extends MiddleHeavenTestCase {

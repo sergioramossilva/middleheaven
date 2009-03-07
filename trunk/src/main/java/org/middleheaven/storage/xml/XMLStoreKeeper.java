@@ -14,6 +14,7 @@ import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;
 import org.middleheaven.io.xml.XMLObjectContructor;
+import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
@@ -22,7 +23,6 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.sequence.Sequence;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 

@@ -1,8 +1,8 @@
 package org.middleheaven.work.scheduled;
 
-import org.middleheaven.util.measure.time.Clock;
-import org.middleheaven.util.measure.time.WrappedClock;
-import org.middleheaven.util.measure.time.clocks.ClockTickListener;
+import org.middleheaven.quantity.time.Clock;
+import org.middleheaven.quantity.time.WrappedClock;
+import org.middleheaven.quantity.time.clocks.ClockTickListener;
 
 /**
  * Clock that warns when a determinated timepoint has arrived. 

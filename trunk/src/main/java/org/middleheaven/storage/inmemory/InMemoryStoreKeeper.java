@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
@@ -14,7 +15,6 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
-import org.middleheaven.util.sequence.Sequence;
 
 public class InMemoryStoreKeeper extends AbstractStoreKeeper {
 

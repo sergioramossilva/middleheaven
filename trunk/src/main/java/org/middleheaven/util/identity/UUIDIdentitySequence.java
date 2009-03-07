@@ -1,8 +1,8 @@
 package org.middleheaven.util.identity;
 
-import org.middleheaven.util.sequence.DefaultToken;
-import org.middleheaven.util.sequence.RandomSequence;
-import org.middleheaven.util.sequence.SequenceToken;
+import org.middleheaven.sequence.DefaultToken;
+import org.middleheaven.sequence.RandomSequence;
+import org.middleheaven.sequence.SequenceToken;
 
 public class UUIDIdentitySequence implements IdentitySequence<UUIDIdentity>, RandomSequence<UUIDIdentity>{
 

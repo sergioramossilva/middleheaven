@@ -8,9 +8,9 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 
-import javassist.util.proxy.MethodHandler;
-
-import org.middleheaven.core.reflection.ProxyUtils;
+import org.middleheaven.core.reflection.MethodDelegator;
+import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
@@ -144,7 +144,7 @@ public class LicenceServiceActivator extends ServiceActivator {
 
 				Object obj = cloader.loadClass(className).newInstance();
 
-				SerializableLicenceProvider p = ProxyUtils.proxy(SerializableLicenceProvider.class, LicenceProviderHandler.wrapp(obj));
+				SerializableLicenceProvider p = ReflectionUtils.proxy(SerializableLicenceProvider.class, LicenceProviderHandler.wrapp(obj));
 
 				String data = buffer.substring(buffer.indexOf("<data>")+ "<data>".length(), buffer.indexOf("</data>"));
 
@@ -168,7 +168,7 @@ public class LicenceServiceActivator extends ServiceActivator {
 		return providers;
 	}
 
-	private static class LicenceProviderHandler implements MethodHandler{
+	private static class LicenceProviderHandler implements ProxyHandler{
 
 		Object provider;
 		Method getLicenceMethod;
@@ -188,8 +188,8 @@ public class LicenceServiceActivator extends ServiceActivator {
 		}
 
 		@Override
-		public Object invoke(Object obj, Method proxy, Method original,Object[] args) throws Throwable {
-			if (proxy.getName().equals(getLicenceMethod.getName())){
+		public Object invoke(Object proxy, Object[] args, MethodDelegator delegator) throws Throwable {
+			if (delegator.getName().equals(getLicenceMethod.getName())){
 				try{
 					Object objx=  getLicenceMethod.invoke(provider, args);
 
@@ -197,7 +197,7 @@ public class LicenceServiceActivator extends ServiceActivator {
 				} catch (Throwable t){
 					return null;
 				}
-			} else if (proxy.getName().equals(setAttributesMethod.getName())){
+			} else if (delegator.getName().equals(setAttributesMethod.getName())){
 				return setAttributesMethod.invoke(provider, args);
 			} else {
 				return null;

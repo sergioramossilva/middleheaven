@@ -4,11 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.math.structure.LUDecomposition;
-import org.middleheaven.math.structure.Matrix;
-import org.middleheaven.math.structure.Vector;
-import org.middleheaven.util.measure.Integer;
-import org.middleheaven.util.measure.Real;
+import org.middleheaven.quantity.math.Integer;
+import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.structure.LUDecomposition;
+import org.middleheaven.quantity.structure.Matrix;
+import org.middleheaven.quantity.structure.Vector;
 
 public class StructuresTest {
 

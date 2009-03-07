@@ -3,10 +3,10 @@ package org.middleheaven.business.account.warehouse;
 import java.util.List;
 
 import org.junit.Test;
-import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.SI;
-import org.middleheaven.util.measure.measures.Mass;
-import org.middleheaven.util.measure.time.CalendarDate;
+import org.middleheaven.quantity.measurables.Mass;
+import org.middleheaven.quantity.measure.DecimalMeasure;
+import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.unit.SI;
 
 
 public class TesteAccount {

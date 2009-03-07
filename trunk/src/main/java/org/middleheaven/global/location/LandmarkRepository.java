@@ -1,6 +1,6 @@
 package org.middleheaven.global.location;
 
-import org.middleheaven.util.measure.AngularMeasure;
+import org.middleheaven.quantity.measure.AngularMeasure;
 
 
 public abstract class LandmarkRepository {

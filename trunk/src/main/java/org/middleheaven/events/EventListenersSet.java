@@ -1,12 +1,11 @@
 package org.middleheaven.events;
 
-import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import javassist.util.proxy.MethodHandler;
-
-import org.middleheaven.core.reflection.ProxyUtils;
+import org.middleheaven.core.reflection.MethodDelegator;
+import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.core.reflection.ReflectionUtils;
 
 /**
  * 
@@ -19,7 +18,7 @@ public class EventListenersSet<L> {
 	
 	public static <T> EventListenersSet<T> newSet(Class<T> listenerType){
 		EventListenersSet<T> set = new EventListenersSet<T>();
-		set.listener  = ProxyUtils.decorate(set, listenerType, new EventMethodHandler(set));
+		set.listener  = ReflectionUtils.proxy(listenerType, new EventMethodHandler(set));
 		return set;
 	}
 	
@@ -37,7 +36,7 @@ public class EventListenersSet<L> {
 		return listener;
 	}
 
-	private static class EventMethodHandler implements MethodHandler{
+	private static class EventMethodHandler implements ProxyHandler{
 
 		Set<?> listeners;
 		
@@ -46,9 +45,10 @@ public class EventListenersSet<L> {
 		}
 
 		@Override
-		public Object invoke(Object obj, Method method, Method method2,Object[] params) throws Throwable {
+		public Object invoke(Object proxy, Object[] args, MethodDelegator delegator) throws Throwable {
+			
 			for (Object listener: listeners){
-				method.invoke(listener, params);
+				delegator.invoke(listener, args);
 			}
 			return null;
 		}

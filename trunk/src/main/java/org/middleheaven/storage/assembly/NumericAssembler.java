@@ -2,22 +2,26 @@ package org.middleheaven.storage.assembly;
 
 public class NumericAssembler implements Assembler{
 
+
 	@Override
-	public void assemble(DataContext context, AssemblyLine line) {
+	public Class<?> getAssembleType() {
+		return org.middleheaven.quantity.math.Number.class;
+	}
+
+	@Override
+	public void assemble(AssemblyLineService service, AssemblyContext context,
+			Data data) {
 		// TODO implement Assembler.assemble
 		
 	}
 
 	@Override
-	public Class<?> getAssembleType() {
-		return org.middleheaven.util.measure.Number.class;
-	}
-
-	@Override
-	public void unAssemble(DataContext context, AssemblyLine line) {
-		org.middleheaven.util.measure.Number number = (org.middleheaven.util.measure.Number)line.getObject();
+	public void unAssemble(AssemblyLineService service,
+			AssemblyContext context, Data data) {
+	
+		org.middleheaven.quantity.math.Number number = (org.middleheaven.quantity.math.Number)data.getValue();
 		
-		context.put(line.getName(), number.asNumber());
+		context.put(data.getName(), number.asNumber());
 	}
 
 }

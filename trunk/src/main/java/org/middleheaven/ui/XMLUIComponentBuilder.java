@@ -2,6 +2,7 @@ package org.middleheaven.ui;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.PropertyAccessor;
@@ -191,7 +192,7 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 		// inject attributes
 
 
-		Collection<PropertyAccessor> properties = ReflectionUtils.getPropertyAccessors(uiModelClass);
+		Iterable<PropertyAccessor> properties = ReflectionUtils.getPropertyAccessors(uiModelClass);
 
 		for (PropertyAccessor p : properties){
 			Node pnode = XMLUtils.getChildNode(p.getName().toString(), modelNode);

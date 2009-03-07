@@ -10,8 +10,8 @@ import org.middleheaven.global.Culture;
 import org.middleheaven.global.Language;
 import org.middleheaven.global.address.AddressModel;
 import org.middleheaven.global.address.DefaultAddressModel;
-import org.middleheaven.util.measure.money.Currency;
-import org.middleheaven.util.measure.money.ISOCurrency;
+import org.middleheaven.quantity.money.Currency;
+import org.middleheaven.quantity.money.ISOCurrency;
 
 public abstract class Country extends AbstractAtlasLocale implements Serializable {
 

@@ -1,6 +1,6 @@
 package org.middleheaven.aas;
 
-import org.middleheaven.util.measure.time.DateTimeHolder;
+import org.middleheaven.quantity.time.DateTimeHolder;
 
 public interface ExpirableCredential extends Credential {
 

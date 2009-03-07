@@ -2,9 +2,9 @@ package org.middleheaven.storage;
 
 import java.util.Collection;
 
+import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.sequence.Sequence;
 
 public interface StoreKeeper {
 
