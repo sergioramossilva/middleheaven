@@ -1,8 +1,8 @@
 package org.middleheaven.global.location;
 
-import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.coordinate.GeoCoordinate;
-import org.middleheaven.util.measure.measures.Distance;
+import org.middleheaven.quantity.coordinate.GeoCoordinate;
+import org.middleheaven.quantity.measurables.Distance;
+import org.middleheaven.quantity.measure.DecimalMeasure;
 
 public abstract class WorldGeodeticModel {
 

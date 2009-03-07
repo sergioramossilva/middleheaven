@@ -5,12 +5,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.junit.Test;
+import org.middleheaven.sequence.IterableBasedSequence;
+import org.middleheaven.sequence.Sequence;
+import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.util.CharacterIncrementor;
 import org.middleheaven.util.NumberIncrementor;
 import org.middleheaven.util.Range;
-import org.middleheaven.util.sequence.IterableBasedSequence;
-import org.middleheaven.util.sequence.Sequence;
-import org.middleheaven.util.sequence.SequenceToken;
 
 
 public class SequenceTestSuit {

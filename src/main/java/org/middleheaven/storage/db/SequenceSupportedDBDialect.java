@@ -6,10 +6,10 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import org.middleheaven.sequence.DefaultToken;
+import org.middleheaven.sequence.Sequence;
+import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.util.sequence.DefaultToken;
-import org.middleheaven.util.sequence.Sequence;
-import org.middleheaven.util.sequence.SequenceToken;
 
 
 public abstract class SequenceSupportedDBDialect extends DataBaseDialect {

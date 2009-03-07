@@ -20,6 +20,7 @@ public abstract class AbstractStoreKeeper implements StoreKeeper {
 		} else {
 			// not managed yet
 			p = ReflectionUtils.proxy(obj, Storable.class, new PersistableMethodHandler(obj.getClass()));
+			ReflectionUtils.copy(obj, p);
 		}
 		return (T)p;
 	}

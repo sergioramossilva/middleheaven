@@ -1,7 +1,7 @@
 package org.middleheaven.work.scheduled;
 
-import org.middleheaven.util.measure.time.Period;
-import org.middleheaven.util.measure.time.TimePoint;
+import org.middleheaven.quantity.time.Period;
+import org.middleheaven.quantity.time.TimePoint;
 
 public interface Schedule {
 

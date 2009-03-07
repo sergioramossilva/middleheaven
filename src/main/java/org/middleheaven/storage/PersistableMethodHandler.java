@@ -1,7 +1,6 @@
 package org.middleheaven.storage;
 
-import java.lang.reflect.Method;
-
+import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.ReflectionUtils;
 
@@ -17,27 +16,28 @@ public class PersistableMethodHandler implements ProxyHandler  {
 	}
 	
 	@Override
-	public Object invoke(Object self, Method invoked, Method original,Object[] args) throws Throwable {
-		if (original == null){
-			if (invoked.getName().equals("getFieldValue")){
+	public Object invoke(Object self, Object[] args, MethodDelegator delegator) throws Throwable {
+		String methodName = delegator.getName();
+		if (!delegator.hasSuper()){
+			if (methodName.equals("getFieldValue")){
 				StorableFieldModel model = (StorableFieldModel)args[0];
 				String name = model.getHardName().getColumnName();
 				
 				return ReflectionUtils.getPropertyAccessor(self.getClass(),name).getValue(self);
-			} else if (invoked.getName().equals("setFieldValue")){
+			} else if (methodName.equals("setFieldValue")){
 				StorableFieldModel model = (StorableFieldModel)args[0];
 				String name = model.getHardName().getColumnName();
 				
 				ReflectionUtils.getPropertyAccessor(this.originalType,name).setValue(self,args[1]);
 				return null;
 			} else {
-				return this.getClass().getMethod(invoked.getName(), invoked.getParameterTypes()).invoke(this, args);
+				return ReflectionUtils.getMethod(this.getClass(), methodName, delegator.getInvoked().getParameterTypes()).invoke(this, args);
 			}
 		} else {
-			if (invoked.getName().startsWith("set")){
+			if (methodName.startsWith("set")){
 				state = state.edit();
 			}
-			return original.invoke(self, args);  // execute the original method.
+			return delegator.invokeSuper(self, args);  // execute the original method.
 		}
 	}
 
@@ -66,6 +66,7 @@ public class PersistableMethodHandler implements ProxyHandler  {
 	public void setPersistableState(PersistableState state) {
 		this.state = state;
 	}
+
 
 	
 

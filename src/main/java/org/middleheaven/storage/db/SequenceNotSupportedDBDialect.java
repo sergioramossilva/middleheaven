@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.util.sequence.Sequence;
+import org.middleheaven.sequence.Sequence;
 
 
 

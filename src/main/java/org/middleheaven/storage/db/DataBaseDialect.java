@@ -12,6 +12,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.middleheaven.data.DataType;
+import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
@@ -22,7 +23,6 @@ import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.Criterion;
 import org.middleheaven.storage.criteria.FieldCriterion;
 import org.middleheaven.storage.criteria.LogicCriterion;
-import org.middleheaven.util.sequence.Sequence;
 
 public abstract class DataBaseDialect {
 

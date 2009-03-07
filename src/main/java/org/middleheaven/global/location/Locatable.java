@@ -1,6 +1,6 @@
 package org.middleheaven.global.location;
 
-import org.middleheaven.util.measure.coordinate.GeoCoordinate;
+import org.middleheaven.quantity.coordinate.GeoCoordinate;
 
 public interface Locatable {
 	

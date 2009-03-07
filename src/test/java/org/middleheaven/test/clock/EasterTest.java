@@ -3,12 +3,12 @@ package org.middleheaven.test.clock;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.middleheaven.util.measure.time.CalendarDate;
-import org.middleheaven.util.measure.time.DateHolder;
-import org.middleheaven.util.measure.time.DayOfWeek;
-import org.middleheaven.util.measure.time.Month;
-import org.middleheaven.util.measure.time.ephemeris.EasterBasedCalculatedEphemerisModel;
-import org.middleheaven.util.measure.time.ephemeris.EphemerisModel;
+import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.DateHolder;
+import org.middleheaven.quantity.time.DayOfWeek;
+import org.middleheaven.quantity.time.Month;
+import org.middleheaven.quantity.time.ephemeris.EasterBasedCalculatedEphemerisModel;
+import org.middleheaven.quantity.time.ephemeris.EphemerisModel;
 
 
 public class EasterTest {

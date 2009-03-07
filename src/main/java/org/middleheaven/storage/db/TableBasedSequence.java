@@ -11,9 +11,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.util.sequence.DefaultToken;
-import org.middleheaven.util.sequence.Sequence;
-import org.middleheaven.util.sequence.SequenceToken;
+import org.middleheaven.sequence.DefaultToken;
+import org.middleheaven.sequence.Sequence;
+import org.middleheaven.sequence.SequenceToken;
 
 public class TableBasedSequence implements Sequence<Long> {
 

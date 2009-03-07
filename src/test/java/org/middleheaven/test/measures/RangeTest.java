@@ -11,10 +11,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.Duration;
 import org.middleheaven.util.Range;
-import org.middleheaven.util.measure.Real;
-import org.middleheaven.util.measure.time.CalendarDate;
-import org.middleheaven.util.measure.time.Duration;
 
 public class RangeTest {
 

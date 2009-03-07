@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.middleheaven.global.Language;
-import org.middleheaven.util.measure.time.DateHolder;
+import org.middleheaven.quantity.time.DateHolder;
 
 
 public class  CountryInfo extends AtlasLocaleInfo {

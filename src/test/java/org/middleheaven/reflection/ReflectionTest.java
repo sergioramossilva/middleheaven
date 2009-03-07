@@ -1,12 +1,13 @@
 package org.middleheaven.reflection;
 
-import java.lang.reflect.Method;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Date;
 
-import javassist.util.proxy.MethodHandler;
-
 import org.junit.Test;
-import org.middleheaven.core.reflection.ProxyUtils;
+import org.middleheaven.core.reflection.MethodDelegator;
+import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.core.reflection.ReflectionUtils;
 
 
 public class ReflectionTest {
@@ -16,14 +17,21 @@ public class ReflectionTest {
 	public void testProxy(){
 		
 		
-		ProxyUtils.decorate(new Date() , Cloneable.class , new TestMethodHandler());
+		Object obj = ReflectionUtils.proxy(new Date() , Cloneable.class , new TestMethodHandler());
+		
+		assertTrue(obj instanceof Cloneable);
+		assertTrue(obj instanceof Date);
 	}
 	
 	
-	public class TestMethodHandler  implements MethodHandler {
-		public Object invoke(Object self, Method m, Method original,Object[] args) throws Throwable {
-			System.out.println("Name: " + m.getName());
-			return original.invoke(self, args);  // execute the original method.
+	public class TestMethodHandler  implements ProxyHandler {
+		
+
+		@Override
+		public Object invoke(Object self, Object[] args,
+				MethodDelegator delegator) throws Throwable {
+			System.out.println("Name: " + delegator.getName());
+			return delegator.invokeSuper(self, args);  // execute the original method.
 		}
 	}
 }

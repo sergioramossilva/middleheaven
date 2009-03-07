@@ -1,7 +1,7 @@
 package org.middleheaven.global.location;
 
-import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.time.Period;
+import org.middleheaven.quantity.measure.DecimalMeasure;
+import org.middleheaven.quantity.time.Period;
 
 public interface LocationProvider {
 

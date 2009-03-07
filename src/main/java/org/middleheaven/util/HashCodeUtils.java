@@ -19,6 +19,7 @@ import java.util.Iterator;
 *  }
 * </pre>
 * 
+* TODO implement has builder.
 * @see http://www.javapractices.com/Topic28.cjp
 */
 public final class HashCodeUtils {

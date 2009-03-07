@@ -7,15 +7,15 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.sequence.DefaultToken;
+import org.middleheaven.sequence.Sequence;
+import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IdentitySequence;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.identity.UUIDIdentity;
 import org.middleheaven.util.identity.UUIDIdentitySequence;
-import org.middleheaven.util.sequence.DefaultToken;
-import org.middleheaven.util.sequence.Sequence;
-import org.middleheaven.util.sequence.SequenceToken;
 
 public class DomainDataStorage implements DataStorage {
 
@@ -46,6 +46,7 @@ public class DomainDataStorage implements DataStorage {
 		} else {
 			// not managed yet
 			p = ReflectionUtils.proxy(obj, Storable.class, new PersistableMethodHandler(obj.getClass()));
+			ReflectionUtils.copy(obj, p);
 		}
 		doStore(p);
 		return (T)p;

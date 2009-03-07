@@ -6,27 +6,27 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.math.structure.LUDecomposition;
-import org.middleheaven.math.structure.Matrix;
-import org.middleheaven.math.structure.Vector;
-import org.middleheaven.util.measure.AngularMeasure;
-import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.Dimension;
-import org.middleheaven.util.measure.IncompatibleDimentionException;
-import org.middleheaven.util.measure.IncompatibleUnitsException;
-import org.middleheaven.util.measure.Integer;
-import org.middleheaven.util.measure.Real;
-import org.middleheaven.util.measure.SI;
-import org.middleheaven.util.measure.Unit;
-import org.middleheaven.util.measure.measures.Aceleration;
-import org.middleheaven.util.measure.measures.Area;
-import org.middleheaven.util.measure.measures.Distance;
-import org.middleheaven.util.measure.measures.Energy;
-import org.middleheaven.util.measure.measures.Force;
-import org.middleheaven.util.measure.measures.Mass;
-import org.middleheaven.util.measure.measures.Time;
-import org.middleheaven.util.measure.measures.Velocity;
-import org.middleheaven.util.measure.money.Money;
+import org.middleheaven.quantity.math.Integer;
+import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.measurables.Aceleration;
+import org.middleheaven.quantity.measurables.Area;
+import org.middleheaven.quantity.measurables.Distance;
+import org.middleheaven.quantity.measurables.Energy;
+import org.middleheaven.quantity.measurables.Force;
+import org.middleheaven.quantity.measurables.Mass;
+import org.middleheaven.quantity.measurables.Time;
+import org.middleheaven.quantity.measurables.Velocity;
+import org.middleheaven.quantity.measure.AngularMeasure;
+import org.middleheaven.quantity.measure.DecimalMeasure;
+import org.middleheaven.quantity.money.Money;
+import org.middleheaven.quantity.structure.LUDecomposition;
+import org.middleheaven.quantity.structure.Matrix;
+import org.middleheaven.quantity.structure.Vector;
+import org.middleheaven.quantity.unit.Dimension;
+import org.middleheaven.quantity.unit.IncompatibleDimentionException;
+import org.middleheaven.quantity.unit.IncompatibleUnitsException;
+import org.middleheaven.quantity.unit.SI;
+import org.middleheaven.quantity.unit.Unit;
 
 public class MeasuresTestSuit {
 

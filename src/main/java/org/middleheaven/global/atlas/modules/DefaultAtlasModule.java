@@ -5,8 +5,8 @@ import java.util.Locale;
 import org.middleheaven.global.atlas.AtlasContext;
 import org.middleheaven.global.atlas.AtlasModule;
 import org.middleheaven.global.atlas.CountryInfo;
-import org.middleheaven.util.measure.time.CalendarDate;
-import org.middleheaven.util.measure.time.DateHolder;
+import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.DateHolder;
 
 public class DefaultAtlasModule extends AtlasModule {
 

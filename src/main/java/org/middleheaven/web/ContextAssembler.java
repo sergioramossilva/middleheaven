@@ -23,9 +23,7 @@ public class ContextAssembler implements BeanAssembler {
 		
 		B instance = ReflectionUtils.newInstance(type);
 		
-		Collection<PropertyAccessor> acessors = ReflectionUtils.getPropertyAccessors(type);
-		
-		for (PropertyAccessor acessor:acessors){
+		for (PropertyAccessor acessor:ReflectionUtils.getPropertyAccessors(type)){
 			acessor.setValue(instance,context.getAttribute(scope,acessor.getName().toLowerCase(), acessor.getValueType()));
 		}
 

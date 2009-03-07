@@ -3,10 +3,10 @@ package org.middleheaven.global.location;
 import java.io.Serializable;
 
 import org.middleheaven.global.address.Address;
-import org.middleheaven.util.measure.AngularMeasure;
-import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.coordinate.GeoCoordinate;
-import org.middleheaven.util.measure.measures.Velocity;
+import org.middleheaven.quantity.coordinate.GeoCoordinate;
+import org.middleheaven.quantity.measurables.Velocity;
+import org.middleheaven.quantity.measure.AngularMeasure;
+import org.middleheaven.quantity.measure.DecimalMeasure;
 
 /**
  * Represents the standard set of basic location information. 

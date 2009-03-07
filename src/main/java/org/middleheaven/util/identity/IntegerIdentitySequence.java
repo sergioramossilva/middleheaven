@@ -1,10 +1,10 @@
 package org.middleheaven.util.identity;
 
-import org.middleheaven.util.sequence.DefaultToken;
-import org.middleheaven.util.sequence.Sequence;
-import org.middleheaven.util.sequence.SequenceState;
-import org.middleheaven.util.sequence.SequenceToken;
-import org.middleheaven.util.sequence.StateEditableSequence;
+import org.middleheaven.sequence.DefaultToken;
+import org.middleheaven.sequence.Sequence;
+import org.middleheaven.sequence.SequenceState;
+import org.middleheaven.sequence.SequenceToken;
+import org.middleheaven.sequence.StateEditableSequence;
 
 public final class IntegerIdentitySequence implements IdentitySequence<IntegerIdentity> , StateEditableSequence<IntegerIdentity> {
 

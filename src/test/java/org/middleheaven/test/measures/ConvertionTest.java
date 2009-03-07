@@ -3,13 +3,13 @@ package org.middleheaven.test.measures;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.middleheaven.util.measure.AngularMeasure;
-import org.middleheaven.util.measure.DecimalMeasure;
-import org.middleheaven.util.measure.NonSI;
-import org.middleheaven.util.measure.Real;
-import org.middleheaven.util.measure.SI;
-import org.middleheaven.util.measure.measures.Angle;
-import org.middleheaven.util.measure.measures.Temperature;
+import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.measurables.Angle;
+import org.middleheaven.quantity.measurables.Temperature;
+import org.middleheaven.quantity.measure.AngularMeasure;
+import org.middleheaven.quantity.measure.DecimalMeasure;
+import org.middleheaven.quantity.unit.NonSI;
+import org.middleheaven.quantity.unit.SI;
 
 
 public class ConvertionTest {

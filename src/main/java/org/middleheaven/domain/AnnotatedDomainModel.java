@@ -31,14 +31,14 @@ import org.middleheaven.domain.annotations.Version;
 import org.middleheaven.domain.repository.Repository;
 import org.middleheaven.domain.repository.RepositoryRegister;
 import org.middleheaven.domain.repository.StandardEntityRepository;
+import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DataStorageService;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.measure.time.CalendarDate;
-import org.middleheaven.util.measure.time.CalendarDateTime;
 
 /**
  * <code>DomainModel</code> builded by reading annotations in the entity classes.
@@ -168,7 +168,7 @@ public class AnnotatedDomainModel implements DomainModel{
 			logicEntityName = entityType.getSimpleName().toLowerCase();
 			hardEntityName = hardnameMapper.getEntityHardname(entityType);
 
-			Collection<PropertyAccessor> propertyAccessors = ReflectionUtils.getPropertyAccessors(entityType);
+			Iterable<PropertyAccessor> propertyAccessors = ReflectionUtils.getPropertyAccessors(entityType);
 
 			for (PropertyAccessor pa : propertyAccessors){
 				AnnotatedStorableFieldModel sfm = new AnnotatedStorableFieldModel(
