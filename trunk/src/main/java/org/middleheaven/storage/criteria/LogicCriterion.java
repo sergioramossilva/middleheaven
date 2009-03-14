@@ -9,7 +9,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.middleheaven.util.CollectionUtils;
-import org.middleheaven.util.HashCodeUtils;
+import org.middleheaven.util.Hash;
 import org.middleheaven.util.classification.LogicOperator;
 
 
@@ -177,7 +177,7 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 	}
 
 	public int hashCode(){
-		return operator.hashCode() ^ HashCodeUtils.hash(HashCodeUtils.SEED,criteria);
+		return Hash.hash(operator).hash(criteria).hashCode();
 	}
 
 	public int criteriaCount(){
