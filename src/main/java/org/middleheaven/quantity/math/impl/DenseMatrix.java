@@ -1,10 +1,16 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
+import org.middleheaven.quantity.math.Conjugatable;
+import org.middleheaven.quantity.math.Matrix;
+import org.middleheaven.quantity.math.Vector;
+import org.middleheaven.quantity.math.structure.DefaultMatrixInvertion;
+import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 
+class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 
 	protected List<DenseVector<F>> rows;
 	private int columnsCount;
@@ -14,7 +20,7 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 		this.rowsCount = rowsCount;
 		this.columnsCount = columnsCount;
 		rows = new ArrayList<DenseVector<F>>(rowsCount);
-		
+
 		for (int r = 0; r < this.rowsCount; r++){
 			rows.add(new DenseVector<F>(columnsCount, value));
 		}
@@ -26,13 +32,32 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 		rows = new ArrayList<DenseVector<F>>();
 
 		for (int r = 0; r < this.rowsCount; r++){
-			rows.add((DenseVector<F>)Vector.vector(other.getRow(r)));
+			rows.add(new DenseVector<F>(other.getRow(r)));
 		}
 	}
-	DenseMatrix(List<DenseVector<F>> rows){
-		this.rows = rows;
+
+
+	DenseMatrix(List<Vector<F>> rows){
 		this.rowsCount = rows.size();
-		this.columnsCount = rows.get(0).getDimention();
+		this.columnsCount = rows.get(0).size();
+		this.rows = new ArrayList<DenseVector<F>>(rows.size());
+
+		for (Vector<F> vector : rows){
+			this.rows.add(new DenseVector<F>(vector));
+		}
+
+	}
+
+
+	private DenseMatrix(int rowsCount, int columnsCount){
+		this.rowsCount = rowsCount;
+		this.columnsCount = columnsCount;
+	}
+
+	private DenseMatrix<F> fromPrivateList(List<DenseVector<F>> rows){
+		DenseMatrix<F> m = new DenseMatrix<F>(rows.size(),rows.get(0).size());
+		m.rows = rows;
+		return m;
 	}
 
 	@Override
@@ -75,7 +100,7 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 			trows.add(new DenseVector<F>(elements));
 		}
 
-		return (new DenseMatrix<F>(trows)).transpose();
+		return fromPrivateList(trows).transpose();
 	}
 
 	public Vector<F> getRow(int row){
@@ -84,7 +109,7 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 		for (int i=0; i<n;i++){
 			elements.add(this.get(row,i));
 		}
-		return DenseVector.vector(elements);
+		return Vector.vector(elements);
 	}
 
 	public Vector<F> getColumn(int column){
@@ -93,7 +118,7 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 		for (int i=0; i<n;i++){
 			elements.add(this.get(i,column));
 		}
-		return DenseVector.vector(elements);
+		return Vector.vector(elements);
 	}
 
 	public Vector<F> getDiagonal(){
@@ -102,7 +127,7 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 		for (int i=1; i<n;i++){
 			elements.add(this.get(i,i));
 		}
-		return DenseVector.vector(elements);
+		return Vector.vector(elements);
 
 	}
 
@@ -128,39 +153,38 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 		}
 
 		F zero = mat.get(0,0).zero(); // ZERO
+		
+		F result = zero;
+		DenseVector<F> masterRow =  (DenseVector)mat.getRow(0);
 
-	
+		for(int i = 0; i < masterRow.getDimention(); i++) { 
+			DenseMatrix<F> temp = mat.remove(0,i);
 
-			F result = zero;
-			Vector<F> masterRow =  mat.getRow(0);
-
-			for(int i = 0; i < masterRow.getDimention(); i++) { 
-				DenseMatrix<F> temp = mat.remove(0,i);
-
-				F x = masterRow.get(i);
-				if (!x.equals(zero)){
-					if( Math.pow(-1, i)==-1){
-						result = result.plus(determinant(temp).times(x.negate())); 
-					} else {
-						result = result.plus(determinant(temp).times(x)); 
-					}
+			F x = masterRow.get(i);
+			if (!x.equals(zero)){
+				if( Math.pow(-1, i)==-1){
+					result = result.plus(determinant(temp).times(x.negate())); 
+				} else {
+					result = result.plus(determinant(temp).times(x)); 
 				}
 			}
-			return result; 
-		
+		}
+		return result; 
+
 	} 
-	
+
 
 	DenseMatrix<F> remove(int row, int column) {
 		List<DenseVector<F>> newRows = new ArrayList<DenseVector<F>>(this.rows.size());
+		MathStructuresFactory factory = MathStructuresFactory.getFactory();
 
 		for (DenseVector<F> v : this.rows){
-			newRows.add(v.remove(column));
+			newRows.add( v.remove(column));
 		}
 
 		newRows.remove(row);
 
-		return new DenseMatrix<F>(newRows);
+		return this.fromPrivateList(newRows);
 	}
 
 
@@ -172,20 +196,21 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 			elements.add(vector.times(this.getColumn(c)) );
 		}
 
-		return new DenseVector<F>(elements);
+		return Vector.vector(elements);
 	}
 
 	@Override
 	public Matrix<F> transpose() {
 		List<DenseVector<F>> trows = new ArrayList<DenseVector<F>>(this.rowsCount);
+
 		for (int r =0; r < this.rowsCount; r++){
 			List<F> elements = new ArrayList<F>();
 			for (int c =0; c < this.columnsCount; c++){
 				elements.add(this.get(c,r));
 			}
-			trows.add((DenseVector<F>)DenseVector.vector(elements));
+			trows.add(new DenseVector<F>(elements));
 		}
-		return new DenseMatrix<F>(trows);
+		return fromPrivateList(trows);
 	}
 
 	@Override
@@ -196,9 +221,9 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 			for (int c =0; c < this.columnsCount; c++){
 				elements.add(this.get(r,c).times(a));
 			}
-			trows.add((DenseVector<F>)DenseVector.vector(elements));
+			trows.add(new DenseVector<F>(elements));
 		}
-		return new DenseMatrix<F>(trows);
+		return fromPrivateList(trows);
 	}
 
 	@Override
@@ -211,7 +236,7 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 			}
 			trows.add(new DenseVector<F>(elements));
 		}
-		return new DenseMatrix<F>(trows);
+		return fromPrivateList(trows);
 	}
 
 	@Override
@@ -224,7 +249,7 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 			}
 			trows.add(new DenseVector<F>(elements));
 		}
-		return new DenseMatrix<F>(trows);
+		return fromPrivateList(trows);
 	}
 
 	@Override
@@ -246,7 +271,11 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 		}
 
 
-		return new DenseMatrix<F>(all);
+		return fromPrivateList(all);
+	}
+
+	protected Matrix<F> duplicate(){
+		return new DenseMatrix<F>(this);
 	}
 
 	@Override
@@ -257,9 +286,27 @@ public class DenseMatrix<F extends Field<F>> extends Matrix<F> {
 
 	@Override
 	public Matrix<F> inverse() {
-		
+
 		return new DefaultMatrixInvertion().invert(this);
-	
+
+	}
+
+	@Override
+	public Matrix<F> conjugate() {
+		F value = this.get(0, 0);
+		if (value instanceof Conjugatable){
+
+			// conjugate all elements
+			List<DenseVector<F>> rows = new ArrayList<DenseVector<F>>(this.rowsCount);
+
+			for (DenseVector<F> vector : this.rows){
+				rows.add(vector.conjugate());
+			}
+
+			return this.fromPrivateList(rows);
+		} else {
+			return new DenseMatrix<F>(this);
+		}
 	}
 
 

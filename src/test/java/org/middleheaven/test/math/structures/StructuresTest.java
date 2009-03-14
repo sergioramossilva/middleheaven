@@ -5,10 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.middleheaven.quantity.math.Integer;
+import org.middleheaven.quantity.math.Matrix;
 import org.middleheaven.quantity.math.Real;
-import org.middleheaven.quantity.structure.LUDecomposition;
-import org.middleheaven.quantity.structure.Matrix;
-import org.middleheaven.quantity.structure.Vector;
+import org.middleheaven.quantity.math.Vector;
+import org.middleheaven.quantity.math.impl.LUDecomposition;
 
 public class StructuresTest {
 

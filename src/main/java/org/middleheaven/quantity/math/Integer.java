@@ -1,6 +1,7 @@
 package org.middleheaven.quantity.math;
 
-import org.middleheaven.quantity.structure.Field;
+import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.Range;
 
@@ -17,7 +18,7 @@ public abstract class Integer extends Number<Integer> implements Field<Integer> 
 	private static final long serialVersionUID = 8636156681654308959L;
 
 	public static Integer valueOf (String value) {
-		return NumberFactory.getFactory().numberFor(Integer.class , value);
+		return MathStructuresFactory.getFactory().numberFor(Integer.class , value);
 	}
 	
 	public static Integer valueOf (Number<?> other) {
@@ -32,7 +33,7 @@ public abstract class Integer extends Number<Integer> implements Field<Integer> 
 	}
 	
 	public static Integer valueOf (long other) {
-		return (Integer)NumberFactory.getFactory().numberFor(Integer.class, Long.toString(other));
+		return (Integer)MathStructuresFactory.getFactory().numberFor(Integer.class, Long.toString(other));
 	}
    
 	protected final int rank(){

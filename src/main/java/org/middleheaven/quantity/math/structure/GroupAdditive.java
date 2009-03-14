@@ -1,4 +1,4 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math.structure;
 
 
 public interface GroupAdditive<A> {
@@ -25,7 +25,7 @@ public interface GroupAdditive<A> {
 	
 	
 	/**
-	 * ZERO is defined as this.plus(this.negate)
+	 * ZERO is the group neutral element defined as this.plus(this.negate)
 	 * @return zero
 	 */
 	public A zero();

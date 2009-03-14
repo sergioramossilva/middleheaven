@@ -1,4 +1,9 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math.impl;
+
+import org.middleheaven.quantity.math.Conjugatable;
+import org.middleheaven.quantity.math.Matrix;
+import org.middleheaven.quantity.math.Vector;
+import org.middleheaven.quantity.math.structure.Field;
 
 public class SingleValueVectorDiagonalMatrix<F extends Field<F>> extends DiagonalMatrix<F> {
 
@@ -111,6 +116,18 @@ public class SingleValueVectorDiagonalMatrix<F extends Field<F>> extends Diagona
 		} else {
 			return other.plus(this);
 		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Matrix<F> conjugate() {
+		if (value instanceof Conjugatable){
+			return new SingleValueVectorDiagonalMatrix(this.size, ((Conjugatable<F>)this.value).conjugate());
+		} else {
+			return this;
+		}
+		
 	}
 
 

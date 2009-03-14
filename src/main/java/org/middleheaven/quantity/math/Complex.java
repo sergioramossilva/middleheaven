@@ -1,7 +1,8 @@
 package org.middleheaven.quantity.math;
 
+import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.quantity.measure.AngularMeasure;
-import org.middleheaven.quantity.structure.Field;
 
 
 public abstract class Complex extends Number<Complex> implements Field<Complex> ,Conjugatable<Complex> {
@@ -12,36 +13,36 @@ public abstract class Complex extends Number<Complex> implements Field<Complex> 
 		
 		Real real = magnitude.times(phase.cos());
 		Real imaginary = magnitude.times(phase.sin());
-		return (Complex)NumberFactory.getFactory().numberFor(Complex.class , real ,  imaginary);
+		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class , real ,  imaginary);
 	}
 	
 	public static Complex valueOf(Real real, Real imaginary) {
-		return (Complex)NumberFactory.getFactory().numberFor(Complex.class , real ,  imaginary);
+		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class , real ,  imaginary);
 	}
 	
 	public static Complex valueOf(java.lang.Number real, java.lang.Number imaginary) {
-		return (Complex)NumberFactory.getFactory().numberFor(Complex.class ,real.toString() + "+i" + imaginary.toString());
+		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class ,real.toString() + "+i" + imaginary.toString());
 	}
 	
 	public static Complex valueOf(String value) {
-		return (Complex)NumberFactory.getFactory().numberFor(Complex.class ,value);
+		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class ,value);
 	}
 	
 	public static Complex ONE(){
-		return NumberFactory.getFactory().numberFor(Complex.class , "1+i0");
+		return MathStructuresFactory.getFactory().numberFor(Complex.class , "1+i0");
 	}
 
 	public static Complex ZERO(){
-		return NumberFactory.getFactory().numberFor(Complex.class , "0+i0");
+		return MathStructuresFactory.getFactory().numberFor(Complex.class , "0+i0");
 	}
 	
 	public static Complex I(){
-		return NumberFactory.getFactory().numberFor(Complex.class , "0+i1");
+		return MathStructuresFactory.getFactory().numberFor(Complex.class , "0+i1");
 	}
 	
 	@Override
 	public Number<Complex> promote(Number<?> other) {
-		return NumberFactory.getFactory().promote(other, Complex.class); 
+		return MathStructuresFactory.getFactory().promote(other, Complex.class); 
 	}
 	
 	/**

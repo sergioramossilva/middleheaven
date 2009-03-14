@@ -1,13 +1,16 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.MathStructuresFactory;
+import org.middleheaven.quantity.math.structure.Ring;
+import org.middleheaven.quantity.math.structure.VectorSpace;
 
 
-public abstract class Matrix<F extends Field<F>> implements VectorSpace<Matrix<F>,F>, Ring<Matrix<F>>{
+public abstract class Matrix<F extends Field<F>> implements VectorSpace<Matrix<F>,F>, Ring<Matrix<F>>, Conjugatable<Matrix<F>>{
 
 
 	public static Matrix<Real> random(int rows, int columns){
@@ -19,56 +22,59 @@ public abstract class Matrix<F extends Field<F>> implements VectorSpace<Matrix<F
 	}
 	
 	public static Matrix<Real> random(int rows, int columns , Random r){
-		List<DenseVector<Real>> all = new ArrayList<DenseVector<Real>>(rows);
+		List<Vector<Real>> matrixRows = new ArrayList<Vector<Real>>(rows);
 		List<Real> elements = new ArrayList<Real>(columns);
 		int counts =0;
 		int length = rows*columns;
+		MathStructuresFactory factory = MathStructuresFactory.getFactory();
 		for (int i =0; i < length; i++, counts++){
 			if ( counts / columns == 1){
 				counts=0;
-				all.add((DenseVector<Real>)DenseVector.vector(elements));
+				matrixRows.add(factory.vectorize(elements));
 				elements = new ArrayList<Real>(columns);
 			} 
 			elements.add(Real.valueOf(r.nextDouble()));
 		}
-		all.add((DenseVector<Real>)DenseVector.vector(elements));
-		return new DenseMatrix<Real>(all);
+		matrixRows.add(factory.vectorize(elements));
+		return factory.matrixFrom(matrixRows);
 	}
 	
 	public static Matrix<Real> identity(int size) {
-		return new SingleValueVectorDiagonalMatrix<Real>(size, Real.ONE());
+		return MathStructuresFactory.getFactory().diagonal(size,Real.ONE());
 	}
 	
-	public static <F extends Field<F>> Matrix<F> identity(int size, F one) {
-		return new SingleValueVectorDiagonalMatrix<F>(size, one);
+	public static <F extends Field<F>> Matrix<F> diagonal(int size, F value) {
+		return MathStructuresFactory.getFactory().diagonal(size,value);
 	}
 	
 	public static <T extends Field<T>> Matrix<T> matrix(Vector<T>... rows){
-		List<DenseVector<T>> all = new ArrayList<DenseVector<T>>();
+		MathStructuresFactory factory = MathStructuresFactory.getFactory();
+		List<Vector<T>> matrixRows = new ArrayList<Vector<T>>();
 		for (Vector<T> v : rows){
-			all.add((DenseVector<T>)DenseVector.vector(v));
+			matrixRows.add(factory.vectorize(v));
 		}
-		return new DenseMatrix<T>(all);
+		return factory.matrixFrom(matrixRows);
 	}
 
 	public static <T extends Field<T>> Matrix<T> matrix(int rows, int columns, T ... values){
 		if (values.length != rows * columns){
 			throw new IllegalArgumentException("Invalid dimentions");
 		}
+		MathStructuresFactory factory = MathStructuresFactory.getFactory();
 		
-		List<DenseVector<T>> all = new ArrayList<DenseVector<T>>(rows);
+		List<Vector<T>> matrixRows = new ArrayList<Vector<T>>(rows);
 		List<T> elements = new ArrayList<T>(columns);
 		int counts =0;
 		for (int i =0; i < values.length; i++, counts++){
 			if ( counts / columns == 1){
 				counts=0;
-				all.add((DenseVector<T>)DenseVector.vector(elements));
+				matrixRows.add(factory.vectorize(elements));
 				elements = new ArrayList<T>(columns);
 			} 
 			elements.add(values[i]);
 		}
-		all.add((DenseVector<T>)DenseVector.vector(elements));
-		return new DenseMatrix<T>(all);
+		matrixRows.add(factory.vectorize(elements));
+		return factory.matrixFrom(matrixRows);
 	}
 	
 	public boolean isSquare(){
@@ -156,11 +162,11 @@ public abstract class Matrix<F extends Field<F>> implements VectorSpace<Matrix<F
 
 	@Override
 	public Matrix<F> one() {
-		return identity(this.columnsCount(), this.get(0, 0).one());
+		return diagonal(this.columnsCount(), this.get(0, 0).one());
 	}
 	
 	@Override
 	public Matrix<F> zero() {
-		return identity(this.columnsCount(), this.get(0, 0).zero());
+		return diagonal(this.columnsCount(), this.get(0, 0).zero());
 	}
 }
