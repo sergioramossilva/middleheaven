@@ -3,7 +3,7 @@ package org.middleheaven.quantity.math.transforms;
 import java.util.Arrays;
 
 import org.middleheaven.quantity.math.Complex;
-import org.middleheaven.quantity.structure.Vector;
+import org.middleheaven.quantity.math.Vector;
 
 /**
  *  @See http://www.cs.princeton.edu/introcs/97data/FFT.java.html

@@ -1,9 +1,13 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public abstract class DiagonalMatrix<F extends Field<F>> extends Matrix<F> {
+import org.middleheaven.quantity.math.Matrix;
+import org.middleheaven.quantity.math.Vector;
+import org.middleheaven.quantity.math.structure.Field;
+
+abstract class DiagonalMatrix<F extends Field<F>> extends Matrix<F> {
 
 
 	@Override

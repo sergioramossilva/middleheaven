@@ -1,14 +1,21 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math.impl;
+
+import java.util.Arrays;
+
+import org.middleheaven.quantity.math.Conjugatable;
+import org.middleheaven.quantity.math.Matrix;
+import org.middleheaven.quantity.math.Vector;
+import org.middleheaven.quantity.math.structure.Field;
 
 class VectorDiagonalMatrix<F extends Field<F>> extends DiagonalMatrix<F> {
 
 	protected F zero;
 	
-	protected Vector<F> diag;
+	protected DenseVector<F> diag;
 	
 
     VectorDiagonalMatrix( F ... elements){
-		this.diag = DenseVector.vector(elements);
+		this.diag = new DenseVector<F>(Arrays.asList(elements));
 		
 		this.zero = elements[0].minus(elements[0]);
 	}
@@ -16,25 +23,25 @@ class VectorDiagonalMatrix<F extends Field<F>> extends DiagonalMatrix<F> {
     
 	VectorDiagonalMatrix( Vector<F> vector){
 	 
-		this.diag = DenseVector.vector(vector);
+		this.diag = new DenseVector<F>(vector);
 		
 		this.zero = diag.get(0).minus(diag.get(0));
 	}
 	
 	@Override
 	public int columnsCount() {
-		return diag.getDimention();
+		return diag.size();
 	}
 
 	@Override
 	public int rowsCount() {
-		return diag.getDimention();
+		return diag.size();
 	}
 
 	@Override
 	public F determinant() {
 		F product = diag.get(0);
-		for (int i=1 ; i < diag.getDimention(); i++){
+		for (int i=1 ; i < diag.size(); i++){
 			product = product.times(diag.get(1));
 		}
 		return product;
@@ -110,6 +117,18 @@ class VectorDiagonalMatrix<F extends Field<F>> extends DiagonalMatrix<F> {
 		}
 	}
 
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Matrix<F> conjugate() {
+		F value = diag.get(0);
+		if (value instanceof Conjugatable){
+			return new VectorDiagonalMatrix(diag.conjugate());
+		} else {
+			return this;
+		}
+		
+	}
 	
 
 	

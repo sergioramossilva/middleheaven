@@ -1,4 +1,6 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math.structure;
+
+import org.middleheaven.quantity.math.Matrix;
 
 public interface MatrixInvertionAlgorithm {
 

@@ -1,10 +1,14 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.middleheaven.quantity.math.Conjugatable;
+import org.middleheaven.quantity.math.Matrix;
+import org.middleheaven.quantity.math.structure.Field;
 
-public class EditableMatrix<F extends Field<F>> extends DenseMatrix<F> {
+
+class EditableMatrix<F extends Field<F>> extends DenseMatrix<F> {
 
 
 	static <T extends Field<T>> EditableMatrix<T> augmentWithEntity(Matrix<T> m){
@@ -63,5 +67,8 @@ public class EditableMatrix<F extends Field<F>> extends DenseMatrix<F> {
 		return this;
 	}
 
-
+	protected Matrix<F> duplicate(){
+		return new EditableMatrix<F>(this);
+	}
+	
 }

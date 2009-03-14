@@ -1,8 +1,8 @@
 package org.middleheaven.quantity.measure;
 
 import org.middleheaven.quantity.Quantity;
+import org.middleheaven.quantity.math.structure.Field;
 import org.middleheaven.quantity.measurables.Measurable;
-import org.middleheaven.quantity.structure.Field;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.Unit;
 

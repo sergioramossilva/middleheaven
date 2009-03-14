@@ -5,9 +5,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.middleheaven.quantity.Quantity;
+import org.middleheaven.quantity.math.structure.GroupAdditive;
+import org.middleheaven.quantity.math.structure.Ring;
 import org.middleheaven.quantity.measurables.Dimensionless;
-import org.middleheaven.quantity.structure.GroupAdditive;
-import org.middleheaven.quantity.structure.Ring;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
 

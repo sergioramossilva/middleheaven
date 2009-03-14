@@ -1,14 +1,14 @@
 package org.middleheaven.quantity.math;
 
-import org.middleheaven.quantity.structure.Field;
+import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.Range;
 
 
 /**
- * Represents an real number 
+ * Represents an element of |R  (the real numbers set) 
  * 
- * @author Sergio M.M. Taborda
  */
 public abstract class Real extends Number<Real> implements Field<Real> ,  Comparable<Number> ,Incrementable <Real>{
 
@@ -17,7 +17,7 @@ public abstract class Real extends Number<Real> implements Field<Real> ,  Compar
 	}
 	
 	public static Real[] valueOf(java.lang.Number ... array){
-		NumberFactory factory = NumberFactory.getFactory();
+		MathStructuresFactory factory = MathStructuresFactory.getFactory();
 		Real[] res = new Real[array.length];
 		for (int i =0 ; i < array.length; i++){
 			res[i] = factory.numberFor(Real.class, array[i].toString());
@@ -27,35 +27,35 @@ public abstract class Real extends Number<Real> implements Field<Real> ,  Compar
 	
 
 	public static Real ONE(){
-		return NumberFactory.getFactory().numberFor( Real.class , "1");
+		return MathStructuresFactory.getFactory().numberFor( Real.class , "1");
 	}
 
 	public static Real ZERO(){
-		return NumberFactory.getFactory().numberFor( Real.class, "0");
+		return MathStructuresFactory.getFactory().numberFor( Real.class, "0");
 	}
 	
 	public static Real valueOf (String value) {
-		return NumberFactory.getFactory().numberFor( Real.class, value);
+		return MathStructuresFactory.getFactory().numberFor( Real.class, value);
 	}
 
 	public static Real valueOf (Number<?> other) {
 		if (other instanceof Real){
 			return (Real)other;
 		} 
-		return NumberFactory.getFactory().numberFor(Real.class, other.toString());
+		return MathStructuresFactory.getFactory().numberFor(Real.class, other.toString());
 	}
 
 	public static Real valueOf (java.lang.Number other) {
-		return NumberFactory.getFactory().numberFor(Real.class,other.toString());
+		return MathStructuresFactory.getFactory().numberFor(Real.class,other.toString());
 	}
 
 	public static Real valueOf (double other) {
-		return NumberFactory.getFactory().numberFor( Real.class, Double.toString(other));
+		return MathStructuresFactory.getFactory().numberFor( Real.class, Double.toString(other));
 	}
 
 	@Override
 	public Number<Real> promote(Number<?> other) {
-		return NumberFactory.getFactory().promote(other, Real.class); 
+		return MathStructuresFactory.getFactory().promote(other, Real.class); 
 	}
 
 	protected final int rank(){

@@ -7,8 +7,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import org.middleheaven.quantity.math.Complex;
+import org.middleheaven.quantity.math.Vector;
 import org.middleheaven.quantity.math.transforms.FourierTransform;
-import org.middleheaven.quantity.structure.Vector;
 
 
 public class FFTTest {

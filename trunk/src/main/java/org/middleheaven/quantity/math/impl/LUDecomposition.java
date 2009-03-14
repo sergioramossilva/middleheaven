@@ -1,4 +1,7 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math.impl;
+
+import org.middleheaven.quantity.math.Matrix;
+import org.middleheaven.quantity.math.structure.Field;
 
 
 /** LU Decomposition.

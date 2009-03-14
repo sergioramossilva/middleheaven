@@ -1,28 +1,32 @@
-package org.middleheaven.quantity.structure;
+package org.middleheaven.quantity.math;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.MathStructuresFactory;
+import org.middleheaven.quantity.math.structure.VectorSpace;
 
 public abstract class Vector<F extends Field<F>> implements VectorSpace<Vector<F>,F>{
-
-	
-	public static Vector<Real> vector(Number ... elements){
+	public static Vector<Real> vector(java.lang.Number ... elements){
 		
 		Real[] relements = new Real[elements.length];
 		for (int i =0;i < elements.length;i++){
 			relements[i] = Real.valueOf(elements[i]);
 		}
-		
-		return new DenseVector<Real>(Arrays.asList(relements));
+
+		return  vector(Arrays.asList(relements));
 	}
 	
-	public static<T extends Field<T>> Vector<T> vector(T ... elements){
-		return new DenseVector<T>(Arrays.asList(elements));
+	public static <T extends Field<T>> Vector<T> vector(T ... elements){
+		return vector(Arrays.asList(elements));
 	}
-
+	
+	public static<T extends Field<T>> Vector<T> vector(List<T> elements){
+		return MathStructuresFactory.getFactory().vectorize(elements);
+	}
+	
 	public static<T extends Field<T>> Vector<T> vector(int size, T element){
 		List<T> elements = new ArrayList<T>(size);
 		for (int i=0;  i< size; i++){
@@ -32,25 +36,22 @@ public abstract class Vector<F extends Field<F>> implements VectorSpace<Vector<F
 	}
 	
 	public static <T extends Field<T>> Vector<T> vector(Vector<T> other){
-		return new DenseVector<T>(other);
+		return MathStructuresFactory.getFactory().vectorize(other);
 	}
 
 	public static <T extends Field<T>> Vector<T> replicate(int dimention, T value){
-		return new DenseVector<T>(dimention, value);
+		return MathStructuresFactory.getFactory().vectorize(dimention, value);
 	}
 	
-	public static<T extends Field<T>> Vector<T> vector(List<T> elements){
-
-		return new DenseVector<T>(elements);
-	}
+	public abstract F get(int index);
 	
-	abstract F get(int index);
-	abstract int getDimention();
+	protected abstract int getDimention();
 	
 	public int size(){
 		return this.getDimention();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Vector<F> cross(Vector<F> other){
 		if (this.getDimention()!=3 || this.getDimention()!=3){
 			throw new ArithmeticException("Cross product it not defined in this space");
@@ -87,7 +88,7 @@ public abstract class Vector<F extends Field<F>> implements VectorSpace<Vector<F
 		for (int i =0; i <this.getDimention(); i++){
 			elements.add((this.get(i).times(a)));
 		}
-		return DenseVector.vector(elements);
+		return vector(elements);
 	}
 
 	@Override
@@ -104,7 +105,7 @@ public abstract class Vector<F extends Field<F>> implements VectorSpace<Vector<F
 		for (int i =0; i <this.getDimention(); i++){
 			elements.add((this.get(i).negate()));
 		}
-		return DenseVector.vector(elements);
+		return vector(elements);
 	}
 
 	@Override
@@ -116,9 +117,10 @@ public abstract class Vector<F extends Field<F>> implements VectorSpace<Vector<F
 		for (int i =0; i <this.getDimention(); i++){
 			elements.add((this.get(i).plus(other.get(i))));
 		}
-		return DenseVector.vector(elements);
+		return vector(elements);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public boolean equals (Object other){
 		return other instanceof Vector && equals((Vector)other);
 	}
