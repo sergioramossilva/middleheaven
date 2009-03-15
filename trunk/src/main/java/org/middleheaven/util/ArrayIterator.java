@@ -4,8 +4,8 @@ import java.util.Iterator;
 
 public final class ArrayIterator<T> implements Iterator<T> {
 
-	T[] array;
-	int index = -1;
+	private T[] array;
+	private int index = -1;
 	
 	public ArrayIterator(T[] array) {
 		super();

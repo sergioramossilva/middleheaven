@@ -12,11 +12,12 @@ import org.apache.commons.fileupload.FileItem;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.AbstractManagedFile;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileType;
+import org.middleheaven.io.repository.MediaManagedFile;
+import org.middleheaven.io.repository.MediaManagedFileContent;
 
-public class UploadManagedFile extends AbstractManagedFile  {
+public class UploadManagedFile extends AbstractManagedFile implements MediaManagedFile {
 
 	private final FileItem fileItem;
 	private final ManagedFile parent;
@@ -58,7 +59,8 @@ public class UploadManagedFile extends AbstractManagedFile  {
 
 	@Override
 	public boolean delete() {
-		return false;
+		fileItem.delete();
+		return true;
 	}
 
 	@Override
@@ -67,7 +69,7 @@ public class UploadManagedFile extends AbstractManagedFile  {
 	}
 
 	@Override
-	public ManagedFileContent getContent() {
+	public MediaManagedFileContent getContent() {
 		return new FileItemManagedFileContent();
 	}
 
@@ -122,7 +124,7 @@ public class UploadManagedFile extends AbstractManagedFile  {
 		return null;
 	}
 
-	private class FileItemManagedFileContent implements  ManagedFileContent{
+	private class FileItemManagedFileContent implements  MediaManagedFileContent{
 
 		@Override
 		public InputStream getInputStream() throws ManagedIOException{
@@ -149,10 +151,35 @@ public class UploadManagedFile extends AbstractManagedFile  {
 			return fileItem.getSize();
 		}
 
+		@Override
+		public void setSize(long size) throws ManagedIOException {
+			// not supported. fail silently
+		}
+
+		@Override
+		public String getContentType() {
+			return fileItem.getContentType();
+		}
+
+		@Override
+		public void setContentType(String contentType) {
+			// not supported. fail silently
+		}
+
 	}
 
 	@Override
 	public boolean isWatchable() {
 		return false;
+	}
+
+	@Override
+	public long getSize() throws ManagedIOException {
+		return fileItem.getSize();
+	}
+
+	@Override
+	public void setName(String name) {
+		throw new ManagedIOException("unsuppported operation");
 	}
 }

@@ -6,12 +6,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.middleheaven.ui.ContextScope;
+
 /**
- * Marks a method to be executed as the service method in a web request
+ * Marks a method to be executed as the service method is it is a Get request
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target(ElementType.PARAMETER)
 @Documented
-public @interface Service {
+public @interface In {
 
+	String value();
+	ContextScope scope () default ContextScope.PARAMETERS;
 }

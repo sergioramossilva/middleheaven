@@ -15,7 +15,6 @@ import org.middleheaven.core.reflection.ClassNotFoundReflectionException;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.data.DataType;
 import org.middleheaven.domain.annotations.Column;
 import org.middleheaven.domain.annotations.Entity;
 import org.middleheaven.domain.annotations.Key;
@@ -138,9 +137,9 @@ public class AnnotatedDomainModel implements DomainModel{
 
 	public void addAllEntities(Package entitiesPackage){
 
-		Set<Class> entities = ReflectionUtils.getPackageClasses(entitiesPackage);
+		Set<Class<?>> entities = ReflectionUtils.getPackageClasses(entitiesPackage);
 
-		for (Class c : entities){
+		for (Class<?> c : entities){
 			if (c.isAnnotationPresent(Entity.class)){
 				addEntity(c);
 			}

@@ -11,7 +11,7 @@ import java.util.jar.JarFile;
 
 public class VersionReader {
 
-	   /**
+	 /**
      * Reads the version from a string in the format *-M.m.r.b-* where * is any number of characters
      * M is the major number, m the minor , r the revision and b the build number
      * @return the correct Version

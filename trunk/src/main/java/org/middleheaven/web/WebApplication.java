@@ -72,7 +72,7 @@ public abstract class WebApplication {
 	 * @param targetUrl
 	 */
 	protected void mapIndex(String targetUrl) {
-		 map("", Index.class).onSuccess().forwardTo( targetUrl);
+		map(Index.class).to("").withNoAction().onSuccess().redirectTo(targetUrl);
 	}
 	
 	/**
@@ -81,25 +81,24 @@ public abstract class WebApplication {
 	 * @param presenter
 	 * @return
 	 */
-	protected PresenterCommandMappingBuilder map(String url, Class<?> presenter) {
-
-		PresenterCommandMappingBuilder builder = PresenterCommandMappingBuilder.map(presenter).to("/" + url);
+	public <P> PresenterCommandMappingBuilder map(Class<P> presenter){
+		
+		PresenterCommandMappingBuilder builder = PresenterCommandMappingBuilder.map(presenter);
 		this.mappings.add(builder.getMapping());
-		
-		setDefaults(builder, url);
-		
-	
 		return builder;
 	}
 	
-	protected void setDefaults(PresenterCommandMappingBuilder builder ,String url ){
+	protected void setDefaults(URLMappingBuilder builder ,String url ){
 		// set defaults
-		String[] parts = url.substring(1).split("\\.");
-		String presenter = parts[0]; 
-		builder.onSuccess().forwardTo(presenter.concat("/sucess.jsp"))
-		.onInvalid().forwardTo(presenter.concat("/invalid.jsp"))
-		.onFailure().forwardTo("error.jsp")
-		.onError().forwardTo("error.jsp");
+		if (url.indexOf(".")>=0){
+			String[] parts = url.substring(1).split("\\.");
+			String presenter = parts[0]; 
+			builder.withNoAction()
+			.onSuccess().forwardTo(presenter.concat("/sucess.jsp"))
+			.onInvalid().forwardTo(presenter.concat("/invalid.jsp"))
+			.onFailure().forwardTo("error.jsp")
+			.onError().forwardTo("error.jsp");
+		}
 	}
 	
 	

@@ -4,5 +4,6 @@ public enum HttpServices {
 
 	POST,
 	GET, 
-	DELETE, PUT
+	DELETE, 
+	PUT
 }

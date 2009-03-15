@@ -23,7 +23,7 @@ public class RolePermissionRule implements AccessRule {
 			}
 		}
 		
-		throw new AccessDeniedEception();
+		throw new AccessDeniedException();
 	}
 
 }

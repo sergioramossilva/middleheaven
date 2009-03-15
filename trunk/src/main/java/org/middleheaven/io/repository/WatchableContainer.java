@@ -4,7 +4,11 @@
  */
 package org.middleheaven.io.repository;
 
-public interface WatchableRepository{
+/**
+ * 
+ *
+ */
+public interface WatchableContainer{
 
     /**
      * Registers a <code>FileChangeListener</code> on this repository.

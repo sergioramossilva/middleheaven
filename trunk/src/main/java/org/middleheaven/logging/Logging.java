@@ -31,67 +31,67 @@ public class Logging {
 		getBook((String)null).log(loggingEvent);
 	}
 
-	public static void logFatal(Object msg) {
+	public static void fatal(Object msg) {
 		log(new LoggingEvent(LoggingLevel.FATAL,msg));
 	}
 
-	public static void logFatal(Object msg, Throwable throwable) {
+	public static void fatal(Object msg, Throwable throwable) {
 
 		log(new LoggingEvent(LoggingLevel.FATAL,msg,throwable));
 
 	}
 
-	public static void logError(Object msg) {
+	public static void error(Object msg) {
 
 		log(new LoggingEvent(LoggingLevel.ERROR,msg));
 
 	}
 
-	public static void logError(Object msg, Throwable throwable) {
+	public static void error(Object msg, Throwable throwable) {
 
 		log(new LoggingEvent(LoggingLevel.ERROR,msg,throwable));
 
 	}
 
 
-	public static void logWarn(Object msg) {
+	public static void warn(Object msg) {
 
 		log(new LoggingEvent(LoggingLevel.WARN,msg));
 
 	}
 
-	public static void logWarn(Object msg, Throwable throwable) {
+	public static void warn(Object msg, Throwable throwable) {
 		log(new LoggingEvent(LoggingLevel.WARN,msg,throwable));
 
 	}
 
-	public static void logInfo(Object msg) {
+	public static void info(Object msg) {
 		log(new LoggingEvent(LoggingLevel.INFO,msg));
 
 	}
 
-	public static void logInfo(Object msg, Throwable throwable) {
+	public static void info(Object msg, Throwable throwable) {
 		log(new LoggingEvent(LoggingLevel.INFO,msg,throwable));
 
 	}
 
-	public static void logDebug(Object msg) {
+	public static void debug(Object msg) {
 		log(new LoggingEvent(LoggingLevel.DEBUG,msg));
 
 	}
 
-	public static void logDebug(Object msg, Throwable throwable) {
+	public static void debug(Object msg, Throwable throwable) {
 		log(new LoggingEvent(LoggingLevel.DEBUG,msg,throwable));
 
 	}
 
-	public static void logTrace(Object msg) {
+	public static void trace(Object msg) {
 		log(new LoggingEvent(LoggingLevel.TRACE,msg));
 
 	}
 
 
-	public static void logTrace(Object msg, Throwable throwable) {
+	public static void trace(Object msg, Throwable throwable) {
 		log(new LoggingEvent(LoggingLevel.TRACE,msg,throwable));
 	}
 

@@ -26,7 +26,7 @@ public class CommonsVSFRepositoryEngine implements RepositoryEngine {
 			try {
 				FileObject file = VFS.getManager().resolveFile(filepath);
 				
-				return new VirtualFileSystemMangedFile(file);
+				return new VirtualFileSystemManagedFile(file);
 			} catch (FileSystemException e) {
 				throw new RepositoryCreationException(e);
 			}

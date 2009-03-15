@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;

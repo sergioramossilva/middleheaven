@@ -14,11 +14,12 @@ import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.global.Culture;
 import org.middleheaven.global.CultureModel;
 
 
 /**
- * @author  Sergio M. M. Taborda 
+ *
  */
 public class LocalizationServiceProvider extends ServiceActivator{
 
@@ -74,26 +75,32 @@ public class LocalizationServiceProvider extends ServiceActivator{
 
 
 		public String getMessage(GlobalLabel label, boolean asMnemonic) {
-			return null; // TODO
+			return getMessage(this.getExecutionEnvironmentCulture(), label, asMnemonic); 
 		}
 
-		public String getMessage(Locale locale, GlobalLabel label, boolean asMnemonic) {
-			String message = masterBundle.localizeLabel(label, locale);
+		@Override
+		public String getMessage(Culture culture, GlobalLabel localResource, boolean asMnemonic) {
+			String message = masterBundle.localizeLabel(localResource, culture.toLocale());
 			if (asMnemonic){
 				return message.replaceAll("&", "");
 			}
 			return message;
 		}
 
-
-
-		public void dispose() {}
-
 		@Override
-		public <T> Formatter<T> getFormatter(Class<T> type, Locale locale) {
-			// TODO Auto-generated method stub
+		public TimestampFormatter getTimestampFormatter(Culture culture) {
+			// TODO implement LocalizationService.getTimestampFormatter
 			return null;
 		}
+
+		@Override
+		public Culture getExecutionEnvironmentCulture() {
+			return Culture.defaultValue();
+		}
+
+		
+
+		
 
 
 

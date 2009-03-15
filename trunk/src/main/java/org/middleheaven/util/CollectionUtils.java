@@ -44,7 +44,15 @@ public class CollectionUtils {
 
 	}
 
-	public static <T> boolean equals(Collection<? extends T> c1,Collection<? extends T> c2) {
+	/**
+	 * Collections are equals if they contain the same elements 
+	 * independent of ordering.
+	 * @param <T>
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
+	public static <T> boolean equalsIgnoreOrder(Collection<? extends T> c1,Collection<? extends T> c2) {
 
 		if (c1==c2){
 			return true;
@@ -75,11 +83,18 @@ public class CollectionUtils {
 		if (a==b){
 			return true;
 		} else {
-			return equals(a.entrySet(), b.entrySet());
+			return equalsIgnoreOrder(a.entrySet(), b.entrySet());
 		}
 
 	}
 
+	/**
+	 * Returns a collection with the common elements in c1 and c2
+	 * @param <T>
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
 	public static <T> Collection<T> intersect(Collection<T> c1,Collection<T> c2) {
 
 		if (c1.isEmpty() || c2.isEmpty()){
@@ -99,6 +114,7 @@ public class CollectionUtils {
 				result.add(obj);
 			}
 		}
+		
 		return result;
 	}
 

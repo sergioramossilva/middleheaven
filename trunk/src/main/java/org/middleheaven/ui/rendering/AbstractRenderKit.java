@@ -94,7 +94,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         UIRender render = renders.get(key);
         
         if (render ==null){
-        	Logging.logWarn("No render has found for familly " + familly + " and type " + componentType + ". Using default familly");
+        	Logging.warn("No render has found for familly " + familly + " and type " + componentType + ". Using default familly");
             // search default render
             key = new RenderPropertiesKey("", componentType);
             

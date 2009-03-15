@@ -6,6 +6,7 @@ public enum ContextScope {
 	APPLICATION,
 	SESSION,
 	REQUEST,
+	HEADER,
 	PARAMETERS, // read only
 	CONFIGURATION // read only
 	

@@ -1,6 +1,5 @@
 package org.middleheaven.domain;
 
-import org.middleheaven.data.DataType;
 import org.middleheaven.storage.QualifiedName;
 
 public interface EntityFieldModel {

@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD , ElementType.METHOD})

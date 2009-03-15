@@ -1,5 +1,6 @@
 package org.middleheaven.util.conversion;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,12 @@ public class TypeConvertions {
 		converters.put(new Key(to,from), converter.inverse());
 	}
 
+	public static <O,R> void removeConverter(Class<O> from, Class<R> to) {
+		converters.remove(new Key(from,to));
+		converters.remove(new Key(to,from));
+	}  
+	
+	
 	public static <O,R> TypeConverter<O,R> getConverter(Class<O> from , Class<R> to){
 		
 		if (to.isPrimitive()){
@@ -93,5 +100,7 @@ public class TypeConvertions {
 			return a.from.isAssignableFrom(b.from) && a.to.isAssignableFrom(b.to) ||
 			b.from.isAssignableFrom(a.from) && b.to.isAssignableFrom(a.to);
 		}
-	}  
+	}
+
+	
 }

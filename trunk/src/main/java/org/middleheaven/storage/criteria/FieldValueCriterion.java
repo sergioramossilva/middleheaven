@@ -1,6 +1,6 @@
 package org.middleheaven.storage.criteria;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 
 class FieldValueCriterion implements FieldCriterion {

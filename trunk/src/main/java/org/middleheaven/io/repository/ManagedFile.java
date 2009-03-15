@@ -11,13 +11,25 @@ import org.middleheaven.io.ManagedIOException;
 
 
 /**
- * @author  Sergio M.M. Taborda
+ * A common abstract for all types of files : disk files, url addresses, uploaded files, email attachments, etc ...
  */
 public interface ManagedFile extends ManagedFileResolver{
 
 	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException;
 
 	public Collection<? extends  ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException;
+	
+	
+	public void setName(String name);
+	
+	/**
+	 * For FILE managed files it returns the same as <code>getContent().getSize</code>
+	 * for FOLDER managed files it returns the sum of inner FILE and FOLDER getSize()
+	 * 
+	 * @return the byte length of the managed file.   
+	 * @throws ManagedIOException
+	 */
+	public long getSize() throws ManagedIOException;
 	
 	/**
 	 * Test if the another file is contained in this file.

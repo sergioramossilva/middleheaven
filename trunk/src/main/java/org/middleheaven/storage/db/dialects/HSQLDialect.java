@@ -9,7 +9,7 @@ import java.util.Collections;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorageException;

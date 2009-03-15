@@ -6,8 +6,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -26,73 +26,83 @@ import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
+import org.middleheaven.io.repository.VirtualFolder;
 
 public class UploadManagedFileRepository extends AbstractManagedFile implements  ManagedFileRepository,QueryableRepository {
 
 
-	private Map<String, UploadManagedFile> files;
-	private HttpServletRequest request;
-	private DiskFileItemFactory factory;
-	
-
-	public UploadManagedFileRepository (HttpServletRequest request){
-		this(request,null);
+	public static ManagedFileRepository repositoryOf(HttpServletRequest request, Map<String, String> parameters) {
+		return repositoryOf(request, parameters , null);
 	}
 	
-	public UploadManagedFileRepository (HttpServletRequest request,ManagedFile temporary ){
+	public static ManagedFileRepository repositoryOf(HttpServletRequest request, Map<String, String> parameters,ManagedFile temporary) {
 		if (temporary != null && !(temporary.isWriteable() && temporary.getType().isOnlyFolder())){
 			throw new ManagedIOException("Temporary location must be a folder");
 		}
-		this.request = request;
-		factory = new DiskFileItemFactory();
-		factory.setSizeThreshold(1024*1024);
+
+		UploadManagedFileRepository repository = new UploadManagedFileRepository();
+		
+		repository.factory = new DiskFileItemFactory();
+		repository.factory.setSizeThreshold(1024*1024);
 		if (temporary!=null){
 			try {
-				factory.setRepository(new File(temporary.getURL().toURI()));
+				repository.factory.setRepository(new File(temporary.getURL().toURI()));
 			} catch (URISyntaxException e) {
 				// if cannot use temporary repository, then doesn't 
 			}
 		}
-		
+
+		final boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+		if (isMultipart) {  
+			repository.files = new TreeMap<String, VirtualFolder>();
+
+			// Create a factory for disk-based file items
+
+			// Create a new file upload handler
+			ServletFileUpload upload = new ServletFileUpload(repository.factory);
+			
+			// Parse the request
+			try {
+
+				for (Iterator<?> it = upload.parseRequest(request).iterator();it.hasNext();){
+					FileItem item = (FileItem) it.next();
+					if (!item.isFormField()) {  
+						// is a file
+					
+						VirtualFolder folder = new VirtualFolder(item.getFieldName(), repository);
+						repository.files.put(folder.getName(), folder);
+						folder.add(new UploadManagedFile(item, repository));
+						
+					} else if (parameters!=null){
+						parameters.put(item.getFieldName(), item.getString());
+					}
+				}
+
+			} catch (FileUploadException e) {
+				throw new ManagedIOException(e);
+			}  
+		} else {
+			repository.files = Collections.emptyMap();
+		}
+
+		return repository;
 	}
 	
-	/// if request was not read , read it now.
-	@SuppressWarnings("unchecked")
-	private synchronized  void init()throws ManagedIOException{
-
-		if (files==null){
-			
-
-			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-			if (isMultipart) {  
-				files = new TreeMap<String, UploadManagedFile>();
-
-				// Create a factory for disk-based file items
-				
-				// Create a new file upload handler
-				ServletFileUpload upload = new ServletFileUpload(factory);
-
-				// Parse the request
-				try {
-					List<FileItem> items = upload.parseRequest(request);
-
-					for ( FileItem item : items){
-						if (!item.isFormField()) {  
-							// is a file
-							UploadManagedFile file = new UploadManagedFile(item, this);
-							files.put(file.getName(), file);
-						}  
-					}
-
-				} catch (FileUploadException e) {
-					throw new ManagedIOException(e);
-				}  
-			} else {
-				files = Collections.emptyMap();
-			}
+	private Map<String, VirtualFolder> files;
+	private HttpServletRequest request;
+	DiskFileItemFactory factory;
+	private String name = "upload repository";
+	
+	private UploadManagedFileRepository(){}
+	
+	public void dispose(){
+		// remove all files
+		for (VirtualFolder folder : this.files.values()){
+			folder.clear();
 		}
+		this.files.clear();
 	}
-
+	
 	@Override
 	public boolean delete(String filename) throws ManagedIOException {
 		return false;
@@ -119,13 +129,11 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 
 	@Override
 	public boolean exists(String filename) throws ManagedIOException {
-		init();
 		return files.containsKey(filename);
 	}
 
 	@Override
 	public ManagedFile retrive(String filename) throws ManagedIOException {
-		init();
 		return files.get(filename);
 	}
 
@@ -136,14 +144,12 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 
 	@Override
 	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
-		init();
 		return files.values();
 	}
 
 	@Override
 	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
 
-		init();
 		Collection<ManagedFile> mfiles = new LinkedList<ManagedFile>();
 
 		for (ManagedFile file : files.values()){
@@ -189,7 +195,7 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 
 	@Override
 	public String getName() {
-		return null;
+		return name;
 	}
 
 	@Override
@@ -220,5 +226,21 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	public boolean isWatchable() {
 		return false;
 	}
+
+	@Override
+	public long getSize() throws ManagedIOException {
+		long sum = 0;
+		for (ManagedFile file  : this.files.values()){
+			sum += file.getSize();
+		}
+		return sum;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
 
 }
