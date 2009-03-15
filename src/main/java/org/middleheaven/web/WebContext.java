@@ -1,145 +1,35 @@
 package org.middleheaven.web;
 
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Map;
-import java.util.TreeMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.middleheaven.io.repository.EmptyFileRepository;
-import org.middleheaven.io.repository.ManagedFileRepository;
-import org.middleheaven.io.repository.upload.UploadManagedFileRepository;
+import org.middleheaven.global.Culture;
+import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.ui.AbstractContext;
-import org.middleheaven.ui.Context;
-import org.middleheaven.ui.ContextScope;
-import org.middleheaven.util.conversion.TypeConvertions;
 
 
-public class WebContext extends AbstractContext {
 
-	private final HttpServletRequest request;
-	private final HttpServletResponse response;
-	private final Map<String,String> parameters;
-	
-	private HttpServices service;
-	
-	@SuppressWarnings("unchecked")
-	public WebContext(HttpServices service, HttpServletRequest request, HttpServletResponse response) {
+public abstract class WebContext extends AbstractContext{
+
+
+	public static final String UPLOADS_FILESYSTEM = "_UPLOADS_FILESYSTEM";
+	public static final String APPLICATION_CONTEXT_FILESYSTEM = "_APPLICATION_CONTEXT_FILESYSTEM";
+	public static final String REQUEST_REMOTE_ADDRESS = "_REQUEST_REMOTE_ADDRESS";
+	public static final String REQUEST_REMOTE_HOST = "_REQUEST_REMOTE_HOST";
+	public static final String REQUEST_SERVER_PORT = "_REQUEST_SERVER_PORT";
+	public static final String REQUEST_SERVER_NAME = "_REQUEST_SERVER_NAME";
+	public static final String REQUEST_URL = "_REQUEST_URL";
+
+	public WebContext() {
 		super();
-		this.request = request;
-		this.response = response;
-		this.service = service;
-		
-		if (ServletFileUpload.isMultipartContent(request)){
-
-			parameters = new TreeMap<String,String>();
-			UploadManagedFileRepository rep = new UploadManagedFileRepository(request);
-	
-			this.setAttribute(ContextScope.REQUEST, Context.UPLOADS_FILE_REPOSITORY, rep);
-		} else {
-			parameters = request.getParameterMap();
-			this.setAttribute(ContextScope.REQUEST, Context.UPLOADS_FILE_REPOSITORY, EmptyFileRepository.getRepository());
-		}
 	}
 	
-	public HttpServices getHttpService(){
-		return service;
-	}
-
-	public ManagedFileRepository getUploadFileSystem(){
-		return this.getAttribute(ContextScope.REQUEST, Context.UPLOADS_FILE_REPOSITORY,ManagedFileRepository.class);
-	}
+	public abstract HttpServices getHttpService();
 	
-	public ManagedFileRepository getApplicationContextFileSystem(){
-		return this.getAttribute(ContextScope.REQUEST, Context.APPLICATION_CONTEXT_FILE_REPOSITORY,ManagedFileRepository.class);
-	}
+	public abstract Agent getAgent();
 	
-	public HttpServletRequest getRequest() {
-		return request;
-	}
+	public abstract MediaManagedFile responseMediaFile();
 
-	public HttpServletResponse getResponse() {
-		return response;
-	}
+	protected abstract Map<String,String> getParameters();
 	
-	@Override
-	public <T> T getAttribute(ContextScope scope, String name, Class<T> type) {
-		Object value;
-		switch (scope){
-		case CONFIGURATION:
-			value = request.getSession().getServletContext().getInitParameter(name);
-			break;
-		case APPLICATION:
-			value = request.getSession().getServletContext().getAttribute(name);
-			break;
-		case SESSION:
-			value = request.getSession().getAttribute(name);
-			break;
-		case REQUEST:
-			value = request.getAttribute(name);
-			break;
-		case PARAMETERS:
-			value = parameters.get(name);
-			if (value!=null && value.getClass().isArray()){
-				value = ((String[])value)[0];
-			}
-			break;
-		default:
-			throw new IllegalArgumentException("Unavailable scope " + scope);
-		}
-
-		if (type==null){
-			return (T)value;
-		}
-		return TypeConvertions.convert(value, type);
-
-	}
-
-	@Override
-	public void setAttribute(ContextScope scope, String name, Object value) {
-		
-		switch (scope){
-		case APPLICATION:
-			request.getSession().getServletContext().setAttribute(name,value);
-			break;
-		case SESSION:
-			request.getSession().setAttribute(name,value);
-			break;
-		case REQUEST:
-			request.setAttribute(name,value);
-			break;
-		case PARAMETERS:
-		case CONFIGURATION:
-			throw new IllegalArgumentException(scope + " is read-only");
-		default:
-			throw new IllegalArgumentException("Unavailable scope " + scope);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Enumeration<String> getAttributeNames(ContextScope scope) {
-		switch (scope){
-		case CONFIGURATION:
-			return request.getSession().getServletContext().getInitParameterNames();
-		case APPLICATION:
-			return request.getSession().getServletContext().getAttributeNames();
-		case SESSION:
-			return request.getSession().getAttributeNames();
-		case REQUEST:
-			return request.getAttributeNames();
-		case PARAMETERS:
-			return Collections.enumeration(this.parameters.keySet());
-		default:
-			throw new IllegalArgumentException("Unavailable scope " + scope);
-		}
-	}
-
-
-
-	
-
+	public abstract Culture getCulture();
 }

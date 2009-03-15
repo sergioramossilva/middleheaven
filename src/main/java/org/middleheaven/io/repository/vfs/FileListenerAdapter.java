@@ -18,7 +18,7 @@ class FileListenerAdapter implements FileListener {
 	public void fileChanged(FileChangeEvent event) throws Exception {
 		this.listener.onChange(
 				new org.middleheaven.io.repository.FileChangeEvent(
-						new VirtualFileSystemMangedFile(event.getFile()
+						new VirtualFileSystemManagedFile(event.getFile()
 						)
 				)
 		);
@@ -28,7 +28,7 @@ class FileListenerAdapter implements FileListener {
 	public void fileCreated(FileChangeEvent event) throws Exception {
 		this.listener.onChange(
 				new org.middleheaven.io.repository.FileChangeEvent(
-						new VirtualFileSystemMangedFile(event.getFile()
+						new VirtualFileSystemManagedFile(event.getFile()
 						)
 				)
 		);
@@ -38,7 +38,7 @@ class FileListenerAdapter implements FileListener {
 	public void fileDeleted(FileChangeEvent event) throws Exception {
 		this.listener.onChange(
 				new org.middleheaven.io.repository.FileChangeEvent(
-						new VirtualFileSystemMangedFile(event.getFile()
+						new VirtualFileSystemManagedFile(event.getFile()
 						)
 				)
 		);

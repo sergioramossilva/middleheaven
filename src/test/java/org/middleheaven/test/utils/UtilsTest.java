@@ -36,7 +36,7 @@ public class UtilsTest {
 		r.add("B");
 		r.add("D");
 		
-		assertTrue(CollectionUtils.equals(r, CollectionUtils.intersect(a, b)));
+		assertTrue(CollectionUtils.equalsIgnoreOrder(r, CollectionUtils.intersect(a, b)));
 	}
 	
 	@Test

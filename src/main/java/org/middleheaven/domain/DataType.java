@@ -1,4 +1,4 @@
-package org.middleheaven.data;
+package org.middleheaven.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;

@@ -4,7 +4,6 @@ import org.middleheaven.web.Interceptor;
 import org.middleheaven.web.InterceptorChain;
 import org.middleheaven.web.OutcomeStatus;
 import org.middleheaven.web.PresenterCommandMappingBuilder;
-import org.middleheaven.web.WebCommandMapping;
 import org.middleheaven.web.WebContext;
 
 
@@ -14,20 +13,20 @@ public class TesteWriting {
 	
 	public void testWriting(){
 		
-		WebCommandMapping wm = PresenterCommandMappingBuilder.map(ProjectPresenter.class)
+		PresenterCommandMappingBuilder.map(ProjectPresenter.class)
 		.to("/projeto.*")
-		.to("/ref/projeto*")
 		.with(new ProjectInterceptor())
+		.withAction("save")
 		.on(OutcomeStatus.SUCCESS).forwardTo("project.list.html")
-		.on(OutcomeStatus.FAILURE).forwardTo("genericfailure.html")
-		.build();
+		.on(OutcomeStatus.FAILURE).forwardTo("genericfailure.html");
 		
-		WebCommandMapping wm2 = PresenterCommandMappingBuilder.map(ProjectPresenter.class)
+		PresenterCommandMappingBuilder.map(ProjectPresenter.class)
 		.to("/projeto.*")
 		.with(new ProjectInterceptor())
+		.withAction("save")
 		.on(OutcomeStatus.SUCCESS).forwardTo("project.list.html")
-		.on(OutcomeStatus.FAILURE).redirectTo(404)
-		.build();
+		.on(OutcomeStatus.FAILURE).redirectTo(404);
+
 	}
 	
 	

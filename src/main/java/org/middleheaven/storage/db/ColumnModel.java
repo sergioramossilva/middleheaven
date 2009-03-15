@@ -1,6 +1,6 @@
 package org.middleheaven.storage.db;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 
 
 public class ColumnModel {

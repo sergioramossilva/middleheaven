@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.sequence.Sequence;

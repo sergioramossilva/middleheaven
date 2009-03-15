@@ -56,7 +56,7 @@ public class AsynchronousWriter extends AbstractWriterAttachable{
         try {
             this.queue.put(event);
         } catch (InterruptedException e) {
-            Logging.logWarn("Interrupted queue put");
+            Logging.warn("Interrupted queue put");
         }
     }
 

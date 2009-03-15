@@ -1,6 +1,6 @@
 package org.middleheaven.storage.criteria;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 
 public class SingleObjectValueHolder implements FieldValueHolder {
 

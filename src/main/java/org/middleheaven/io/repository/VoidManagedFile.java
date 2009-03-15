@@ -104,4 +104,14 @@ public class VoidManagedFile implements ManagedFile {
 		return new VoidManagedFile(this,filepath);
 	}
 
+	@Override
+	public long getSize() throws ManagedIOException {
+		return 0;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }

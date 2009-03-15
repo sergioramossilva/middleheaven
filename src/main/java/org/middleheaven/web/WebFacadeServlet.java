@@ -47,7 +47,7 @@ public final class WebFacadeServlet extends HttpServlet {
 				return;
 			} 
 
-			WebContext context = new WebContext(service,request,response);
+			WebContext context = new RequestResponseWebContext(request,response);
 
 			// resolve request location
 			context.setAttribute(ContextScope.REQUEST, "locale", request.getLocale());

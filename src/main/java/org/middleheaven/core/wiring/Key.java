@@ -49,7 +49,7 @@ public class Key<T> {
 	
 	public boolean equals(Key<T> other){
 		return other.targetClass == this.targetClass || ( other.targetClass.getName().equals(this.targetClass.getName()) &&
-		 	CollectionUtils.equals(this.specifications, other.specifications));
+		 	CollectionUtils.equalsIgnoreOrder(this.specifications, other.specifications));
 
 	}
 }

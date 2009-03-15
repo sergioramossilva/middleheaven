@@ -17,9 +17,9 @@ import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotQueriableException;
 import org.middleheaven.io.repository.RepositoryNotRedableException;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
-import org.middleheaven.io.repository.WatchableRepository;
+import org.middleheaven.io.repository.WatchableContainer;
 
-public class VirtualFileSystemManagedRepository implements ManagedFileRepository,QueryableRepository,WatchableRepository{
+public class VirtualFileSystemManagedRepository implements ManagedFileRepository,QueryableRepository,WatchableContainer{
 
 	private FileObject root;
 	
@@ -60,7 +60,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 		}
 
 		try {
-			return new VirtualFileSystemMangedFile(root.resolveFile("./" + filename)); // allways relative
+			return new VirtualFileSystemManagedFile(root.resolveFile("./" + filename)); // allways relative
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
@@ -109,8 +109,8 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 			if (!nfo.exists()){
 				nfo.createFile();
 				
-				if (file instanceof VirtualFileSystemMangedFile){
-					FileObject ofo = ((VirtualFileSystemMangedFile)file).file;
+				if (file instanceof VirtualFileSystemManagedFile){
+					FileObject ofo = ((VirtualFileSystemManagedFile)file).file;
 					
 					FileUtil.copyContent(ofo, nfo);
 				} else {
@@ -156,7 +156,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 			Collection<ManagedFile> mfiles = new ArrayList<ManagedFile>();
 
 			for (FileObject fo : files){
-				mfiles.add(new VirtualFileSystemMangedFile(fo));
+				mfiles.add(new VirtualFileSystemManagedFile(fo));
 			}
 
 			return mfiles;
@@ -178,7 +178,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 			Collection<ManagedFile> mfiles = new ArrayList<ManagedFile>();
 
 			for (FileObject fo : files){
-				ManagedFile mf = new VirtualFileSystemMangedFile(fo);
+				ManagedFile mf = new VirtualFileSystemManagedFile(fo);
 				if (filter.classify(mf)){
 					mfiles.add(mf);
 				}

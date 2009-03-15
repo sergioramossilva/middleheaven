@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;

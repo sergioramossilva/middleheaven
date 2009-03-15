@@ -43,9 +43,9 @@ public final class ReflectionUtils {
 		return stategy.proxy(delegationTarget, proxyInterface, delegator);
 	}
 
-	public static Set<Class> getPackageClasses(Package classPackage) {
+	public static Set<Class<?>> getPackageClasses(Package classPackage) {
 
-		Set<Class> classes = new HashSet<Class>();
+		Set<Class<?>> classes = new HashSet<Class<?>>();
 		try {
 			ClassLoader cl = classPackage.getClass().getClassLoader();
 			if (cl == null) {
@@ -66,7 +66,7 @@ public final class ReflectionUtils {
 		}
 	}
 
-	private static void process(Set<Class> classes , URL url , String base) throws IOException{
+	private static void process(Set<Class<?>> classes , URL url , String base) throws IOException{
 		if (url.getProtocol().equals("file")){
 			try {
 				File folder = new File(url.toURI());
@@ -151,10 +151,9 @@ public final class ReflectionUtils {
 		}
 	}
 	
-	
-	public static <T> Class<T> loadClass(String className, Class<T> superType) throws InstantiationReflectionException{
+	public static <T> Class<? extends T> loadClass(String className, Class<T> superType) throws InstantiationReflectionException{
 		try {
-			return (Class<T>)Class.forName(className);
+			return Class.forName(className).asSubclass(superType);
 		} catch (ClassNotFoundException e) {
 			throw new NoSuchClassReflectionException(className);
 		}
@@ -224,6 +223,7 @@ public final class ReflectionUtils {
 		return annotated;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> List<Constructor<T>> allAnnotatedConstructors( Class<T> type, Class<? extends Annotation> annotation) {
 		Constructor<T>[] constructors = (Constructor<T>[]) type.getDeclaredConstructors();
 
@@ -385,7 +385,7 @@ public final class ReflectionUtils {
 		}
 	}
 	
-	public static Map<MethodKey , Method> getClassMethods (Class<?> type){
+	private static Map<MethodKey , Method> getClassMethods (Class<?> type){
 		Map<MethodKey , Method>  methods = classMethods.get(type.getName());
 		
 		if (methods == null){

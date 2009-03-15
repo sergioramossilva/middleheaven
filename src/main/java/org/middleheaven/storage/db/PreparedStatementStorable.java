@@ -7,7 +7,7 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
 

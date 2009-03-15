@@ -5,9 +5,19 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Permits iteration and manipulation at the same time
+ * The iteration continues to the final element, if an element is add 
+ * during iteration it will also be iterated
+ *
+ * @param <T>
+ */
 public class LiveCollection<T> implements Collection<T> {
 
-	List<T> all = new ArrayList<T>();
+	private List<T> all = new ArrayList<T>();
+	
+	
+	public LiveCollection(){}
 	
 	@Override
 	public boolean add(T e) {
@@ -91,7 +101,7 @@ public class LiveCollection<T> implements Collection<T> {
 	}
 
 	@Override
-	public <T> T[] toArray(T[] a) {
+	public <X> X[] toArray(X[] a) {
 		return all.toArray(a);
 	}
 

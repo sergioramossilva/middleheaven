@@ -18,15 +18,15 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileType;
-import org.middleheaven.io.repository.WatchableRepository;
+import org.middleheaven.io.repository.WatchableContainer;
 
-public final class VirtualFileSystemMangedFile extends AbstractManagedFile implements WatchableRepository {
+public final class VirtualFileSystemManagedFile extends AbstractManagedFile implements WatchableContainer {
 
 	final FileObject file;
 	final String finalPath;
 	 boolean isfilefolder;
 	
-	public VirtualFileSystemMangedFile(FileObject file){
+	public VirtualFileSystemManagedFile(FileObject file){
 		this.file = file;
 		try {	
 			if (file.getType().hasContent()){
@@ -66,7 +66,7 @@ public final class VirtualFileSystemMangedFile extends AbstractManagedFile imple
 			Collection<ManagedFile> mfiles = new ArrayList<ManagedFile>();
 
 			for (FileObject fo : files){
-				mfiles.add(new VirtualFileSystemMangedFile(fo));
+				mfiles.add(new VirtualFileSystemManagedFile(fo));
 			}
 
 			return mfiles;
@@ -89,7 +89,7 @@ public final class VirtualFileSystemMangedFile extends AbstractManagedFile imple
 			Collection<ManagedFile> mfiles = new ArrayList<ManagedFile>();
 
 			for (FileObject fo : files){
-				ManagedFile mf = new VirtualFileSystemMangedFile(fo);
+				ManagedFile mf = new VirtualFileSystemManagedFile(fo);
 				if (filter.classify(mf)){
 					mfiles.add(mf);
 				}
@@ -133,7 +133,7 @@ public final class VirtualFileSystemMangedFile extends AbstractManagedFile imple
 	@Override
 	public ManagedFile resolveFile(String filepath) {
 		try{
-			return new VirtualFileSystemMangedFile(getVirtualFolder().resolveFile(filepath));
+			return new VirtualFileSystemManagedFile(getVirtualFolder().resolveFile(filepath));
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
@@ -193,7 +193,7 @@ public final class VirtualFileSystemMangedFile extends AbstractManagedFile imple
 	@Override
 	public ManagedFile getParent() {
 		try{
-			return new VirtualFileSystemMangedFile(file.getParent());
+			return new VirtualFileSystemManagedFile(file.getParent());
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
@@ -207,7 +207,7 @@ public final class VirtualFileSystemMangedFile extends AbstractManagedFile imple
 
 	@Override
 	public boolean equals(Object other){
-		return getClass().isInstance(other) && ((VirtualFileSystemMangedFile)other).file.equals(this.file);
+		return getClass().isInstance(other) && ((VirtualFileSystemManagedFile)other).file.equals(this.file);
 	}
 
 	@Override
@@ -264,11 +264,12 @@ public final class VirtualFileSystemMangedFile extends AbstractManagedFile imple
 
 		@Override
 		public long getSize() throws ManagedIOException {
-			try {
-				return file.getContent().getSize();
-			} catch (FileSystemException e) {
-				throw new VirtualFileSystemException(e);
-			}
+			return VirtualFileSystemManagedFile.this.getSize();
+		}
+
+		@Override
+		public void setSize(long size) throws ManagedIOException {
+			// not-supported , fail silently
 		}
 
 	}
@@ -296,4 +297,20 @@ public final class VirtualFileSystemMangedFile extends AbstractManagedFile imple
 		return this.getType().isFolder();
 	}
 
+	@Override
+	public long getSize() throws ManagedIOException {
+		try {
+			return file.getContent().getSize();
+		} catch (FileSystemException e) {
+			throw new VirtualFileSystemException(e);
+		}
+	}
+
+	@Override
+	public void setName(String name) {
+		// TODO implement ManagedFile.setName
+		
+	}
+
+	
 }

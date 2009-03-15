@@ -22,7 +22,7 @@ import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileFilter;
-import org.middleheaven.io.repository.WatchableRepository;
+import org.middleheaven.io.repository.WatchableContainer;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingService;
 
@@ -183,7 +183,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 			ManagedFile f =  bootstrapService.getEnvironmentBootstrap().getContainer().getAppConfigRepository();
 
 			if (f.isWatchable()){
-				WatchableRepository wr = (WatchableRepository)f;
+				WatchableContainer wr = (WatchableContainer)f;
 				wr.addFileChangelistener(cycle, f);
 			}
 

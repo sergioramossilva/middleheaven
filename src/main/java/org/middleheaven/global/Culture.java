@@ -9,10 +9,24 @@ import org.middleheaven.global.atlas.Country;
 import org.middleheaven.quantity.time.Chonologies;
 import org.middleheaven.quantity.time.Chronology;
 
+/**
+ * Representation of a culture.
+ * A culture is identified by a language and a country and an optional set of variants
+ *
+ */
 public final class Culture implements Serializable{
 
 	private static final long serialVersionUID = 518771233494907193L;
 
+	public static Culture defaultValue(){
+		return valueOf(Locale.getDefault());
+	}
+	
+	public static Culture valueOf(Locale locale) {
+		return valueOf(locale.getLanguage(), locale.getCountry());
+	}
+
+	
 	public static Culture valueOf(String language){
 		return new Culture(language.toLowerCase());
 	}
@@ -92,4 +106,7 @@ public final class Culture implements Serializable{
 	public String toString(){
 		return language + "_" + country;
 	}
+
+
+
 }

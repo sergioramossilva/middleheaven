@@ -4,8 +4,7 @@
  */
 package org.middleheaven.global.text;
 
-import java.util.Locale;
-
+import org.middleheaven.global.Culture;
 import org.middleheaven.global.CultureModel;
 
 
@@ -17,7 +16,7 @@ public interface LocalizationService  {
      * Return the correct locale based on the <code>System</code> properties.
      * @return
      */
-    public Locale getExecutionEnvironmentLocale();
+    public Culture getExecutionEnvironmentCulture();
     
     /**
      * Returns the localeModel used by a specific application
@@ -41,7 +40,7 @@ public interface LocalizationService  {
      * @param asmnemonic
      * @return
      */
-    public String getMessage(Locale locale , GlobalLabel localResource , boolean asMnemonic);
+    public String getMessage(Culture culture , GlobalLabel localResource , boolean asMnemonic);
     
     /**
      * Returns the localized text for a given localResource. If parameter <code>asMnemonic</code> is <code>false</code>
@@ -55,10 +54,10 @@ public interface LocalizationService  {
     
     
     /**
-     * Returns a <code>Formatter</code> for the given <code>Locale</code> and object <code>Class</code>
-     * @param type
+     * Returns a <code>TimestampFormatter</code> for the given <code>Locale</code>
+     * 
      * @param locale
      * @return
      */
-    public <T> Formatter<T> getFormatter (Class<T> type, Locale locale);
+    public  TimestampFormatter getTimestampFormatter (Culture culture);
 }

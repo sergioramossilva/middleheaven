@@ -2,7 +2,7 @@ package org.middleheaven.storage.criteria;
 
 import java.util.Collection;
 
-import org.middleheaven.data.DataType;
+import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 
 public class CollectionFieldInSetCriteria implements FieldInSetCriteria {

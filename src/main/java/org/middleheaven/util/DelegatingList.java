@@ -7,6 +7,9 @@ import java.util.ListIterator;
 
 public abstract class DelegatingList<E> implements List<E> {
 
+	
+	public DelegatingList(){}
+	
 	@Override
 	public abstract int size();
 	
@@ -18,6 +21,7 @@ public abstract class DelegatingList<E> implements List<E> {
 		throw new UnsupportedOperationException("SubList is not supported");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public E[] toArray() {
 		Object[] array = new Object[this.size()];
@@ -29,6 +33,7 @@ public abstract class DelegatingList<E> implements List<E> {
 		return (E[]) array;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T[] toArray(T[] array) {
 		
@@ -83,6 +88,7 @@ public abstract class DelegatingList<E> implements List<E> {
 			return previousIndex() < 0;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public T next() {
 			return (T) get(++index);
@@ -93,6 +99,7 @@ public abstract class DelegatingList<E> implements List<E> {
 			return index + 1;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public T previous() {
 			return (T) get(--index);

@@ -12,7 +12,7 @@ import java.util.MissingResourceException;
 import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.FileChangeListener;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.WatchableRepository;
+import org.middleheaven.io.repository.WatchableContainer;
 
 /**
  * @author  Sergio M. M. Taborda 
@@ -83,8 +83,8 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
      * @param file
      */
     private void createWatcher(ManagedFile file ){
-        if (this.repository instanceof WatchableRepository){
-            ((WatchableRepository)this.repository).addFileChangelistener(this, file);
+        if (this.repository instanceof WatchableContainer){
+            ((WatchableContainer)this.repository).addFileChangelistener(this, file);
         }
     }
 
