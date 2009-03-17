@@ -103,8 +103,10 @@
         <module name="FileLength"/>
         <module name="LineLength"/>
         <module name="MethodLength"/>
-        <module name="ParameterNumber"/>
-
+    	<module name="ParameterNumber">
+	   		<property name="max" value="5"/>
+	   		<property name="tokens" value="METHOD_DEF"/>
+		</module>
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
@@ -131,9 +133,7 @@
         <!-- Modifier Checks                                    -->
         <!-- See http://checkstyle.sf.net/config_modifiers.html -->
         <module name="ModifierOrder"/>
-        <!-- 
-        <module name="RedundantModifier"/>
- 		-->
+
 
         <!-- Checks for blocks. You know, those {}'s         -->
         <!-- See http://checkstyle.sf.net/config_blocks.html -->
@@ -147,9 +147,10 @@
         <!-- Checks for common coding problems               -->
         <!-- See http://checkstyle.sf.net/config_coding.html -->
         <module name="AvoidInlineConditionals"/>
-        <module name="DoubleCheckedLocking"/>    <!-- MY FAVOURITE -->
+        <module name="DoubleCheckedLocking"/>    
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
+		<module name="MissingCtor"/>
         <module name="HiddenField"/>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
@@ -161,6 +162,10 @@
         </module>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
+		<module name="CovariantEquals"/>
+		<module name="RequireThis"/>
+		<module name="MultipleVariableDeclarations"/>
+	
 
         <!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
@@ -169,6 +174,7 @@
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier"/>
+		<module name="MutableException"/>
 
 
         <!-- Miscellaneous other checks.                   -->
@@ -184,7 +190,9 @@
             <property name="severity" value="ignore"/>
         </module>
         <module name="UpperEll"/>
-
+         <module name="EmptyBlock"/>
+		<module name="UnnecessaryParentheses" />
+		
     </module>
 
 </module>
