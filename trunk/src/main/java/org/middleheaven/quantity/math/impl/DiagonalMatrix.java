@@ -10,10 +10,11 @@ import org.middleheaven.quantity.math.structure.Field;
 abstract class DiagonalMatrix<F extends Field<F>> extends Matrix<F> {
 
 
+	
 	@Override
 	public Matrix<F> times(Matrix<F> other) {
 		int n = this.rowsCount();
-		Vector<F>[] vectors = new Vector[n];
+		@SuppressWarnings("unchecked") Vector<F>[] vectors = new Vector[n];
 		for (int i =0; i < n; i++){
 			vectors[i] = other.getRow(i).times(this.get(i, i));
 		}
@@ -24,7 +25,10 @@ abstract class DiagonalMatrix<F extends Field<F>> extends Matrix<F> {
 		Object[] v = new Object[this.rowsCount()];
 		Arrays.fill(v, get(index,index).zero());
 		v[index]= get(index,index);
-		return DenseVector.vector( new ArrayList(Arrays.asList(v)));
+		
+		@SuppressWarnings("unchecked") Vector<F> result = DenseVector.vector( new ArrayList(Arrays.asList(v)));
+		
+		return result;
 	}
 	
 	@Override

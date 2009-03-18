@@ -37,7 +37,7 @@ public class HostApplication{
 
 		try
 		{
-			List list = new ArrayList();
+			@SuppressWarnings("unchecked") List<?> list = new ArrayList();
 			// Create host activator;
 			//ContainerActivator activator = new ContainerActivator(null);
 		

@@ -19,7 +19,7 @@ class ArrayInterceptorChain  implements InterceptorChain {
 		
 		if (current<interceptors.length){
 			current++;
-			interceptors[current-1].onIntercept(notification, this);
+			interceptors[current - 1].onIntercept(notification, this);
 		} else {
 			doFinal(notification);
 		}

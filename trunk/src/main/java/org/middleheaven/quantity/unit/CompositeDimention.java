@@ -4,10 +4,17 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-
+@SuppressWarnings("unchecked")
 public class CompositeDimention extends Dimension {
 
+	/*
+	 * Due to limitation of the model dimension generic type can not be atributed 
+	 * so the class is all marked with @SuppressWarnings("unchecked") 
+	 */
 	
+	private static final long serialVersionUID = 963244403057787828L;
+
+
 	public static Dimension multiply(Dimension a, Dimension b){
 		CompositeDimention c = new  CompositeDimention();
 		c.add(a, 1);
@@ -25,25 +32,27 @@ public class CompositeDimention extends Dimension {
 
 	private TreeMap<Character , BaseDimention > dims = new TreeMap<Character , BaseDimention >();
 
+
 	CompositeDimention(CompositeDimention other){
 		// clone 
-		this.dims = (TreeMap) other.dims.clone();
+		 this.dims = (TreeMap) other.dims.clone();
 
 	}
 
 	
 	CompositeDimention(){
-		this.dims.put(Character.valueOf('1'), (BaseDimention)Dimension.DIMENTIONLESS);
+		this.dims.put(Character.valueOf('1'), BaseDimention.class.cast(Dimension.DIMENTIONLESS));
 	}
 	
 	
-	private void add(Dimension other , int sign){
+	private void add(Dimension<?> other , int sign){
 		if (other instanceof BaseDimention){
-    		BaseDimention c = dims.get(((BaseDimention)other).axis());
+			BaseDimention<?> baseDim = (BaseDimention<?>)other; 
+    		BaseDimention<?> c = dims.get(baseDim.axis());
     		if (c!=null){
-    			dims.put(((BaseDimention)other).axis(), (BaseDimention)BaseDimention.base(c.axis(),c.exponent()+sign*((BaseDimention)other).exponent()).simplify());
+    			dims.put(baseDim.axis(), BaseDimention.class.cast(BaseDimention.base(c.axis(),c.exponent()+sign*baseDim.exponent()).simplify()));
     		} else {
-    			dims.put(((BaseDimention)other).axis(), BaseDimention.base(((BaseDimention)other).axis(),sign*((BaseDimention)other).exponent()));
+    			dims.put(baseDim.axis(), BaseDimention.base(baseDim.axis(),sign*baseDim.exponent()));
     		}
 
     	} else {

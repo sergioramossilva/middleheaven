@@ -7,8 +7,9 @@ import org.middleheaven.quantity.measurables.Measurable;
 
 class BaseDimention<E extends Measurable> extends Dimension<E> implements Comparable<BaseDimention<E>>{
 
-	
-    private final char axis;
+	private static final long serialVersionUID = -3990402812522767184L;
+
+	private final char axis;
  
     private int exponent = 1;
 	
@@ -34,10 +35,10 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 	}
 	
 	public boolean equals (Object other){
-		return other instanceof BaseDimention && equals((BaseDimention)other);
+		return other instanceof BaseDimention && equals((BaseDimention<?>)other);
 	}
 	
-	public boolean equals (BaseDimention other){
+	public boolean equals (BaseDimention<?> other){
 		return other.exponent == this.exponent && this.axis == other.axis;
 	}
 	
@@ -45,6 +46,7 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 		return this.exponent ^ (int)this.axis;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected Dimension simplify(){
 		if (this.exponent==0){
 			return Dimension.DIMENTIONLESS;
@@ -78,6 +80,7 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 	}
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Measurable> Dimension<T> over(Dimension<?> other) {
 		if (other instanceof BaseDimention){
@@ -91,7 +94,7 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 	}
 
 
-	@Override
+	@Override @SuppressWarnings("unchecked")
 	public <T extends Measurable> Dimension<T> times(Dimension<?> other) {
 		if (exponent==0){
 			return (Dimension<T>) other;

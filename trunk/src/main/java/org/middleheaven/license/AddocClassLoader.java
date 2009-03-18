@@ -1,9 +1,5 @@
 package org.middleheaven.license;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -22,7 +18,7 @@ public class AddocClassLoader extends ClassLoader {
 
 
 	public Class<?> findClass(String className){
-		byte classByte[];
+
 		Class<?> result= classes.get(className);
 		if(result != null){
 			return result;

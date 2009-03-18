@@ -40,9 +40,9 @@ public class BRCPFValidator implements Validator<NDI> {
 
 	    
 	    int vd = dac % 11;
-	    vd = vd <=1 ? 0 : 11-vd;
+	    vd = vd <=1 ? 0 : 11 - vd;
 	    
-	    if( id[id.length-2] != vd){
+	    if( id[id.length - 2] != vd){
 	    	context.add(MessageInvalidationReason.invalid());
 	    	return;
 	    }
@@ -54,9 +54,9 @@ public class BRCPFValidator implements Validator<NDI> {
 	    }
 	    
 	    vd = dac % 11;
-	    vd = vd <=1 ? 0 : 11-vd;
+	    vd = vd <=1 ? 0 : 11 - vd;
 	    
-	    if(id[id.length-1] != vd){
+	    if(id[id.length - 1] != vd){
 	    	context.add(MessageInvalidationReason.invalid());
 	    	return;
 	    }
