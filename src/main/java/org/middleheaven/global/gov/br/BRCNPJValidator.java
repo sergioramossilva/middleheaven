@@ -5,9 +5,13 @@ import org.middleheaven.validation.MessageInvalidationReason;
 import org.middleheaven.validation.ValidationContext;
 import org.middleheaven.validation.Validator;
 
-public class BRCNPJValidator implements Validator<NDI> {
+public final class BRCNPJValidator implements Validator<NDI> {
 
+	private static final int MODULE = 11;
+	private static final int CNPJ_LENGTH = 14;
 	private boolean acceptAllEqual = false;
+	
+	public BRCNPJValidator(){}
 	
 	@Override
 	public void validate(ValidationContext context, NDI ndi) {
@@ -15,7 +19,7 @@ public class BRCNPJValidator implements Validator<NDI> {
 		final int[] combB = {6,5,4,3,2,9,8,7,6,5,4,3,2};
 	    final int[] id = ndi.asIntArray();
 		
-	    if (id.length!=14){
+	    if (id.length != CNPJ_LENGTH){
 	    	context.add(MessageInvalidationReason.invalid());
 	    	return;
 	    }
@@ -26,10 +30,10 @@ public class BRCNPJValidator implements Validator<NDI> {
 	    	dac += id[i]*combA[i];
 	    }
 	    
-	    int vd = dac % 11;
-	    vd = vd <=1 ? 0 : 11-vd;
+	    int vd = dac % MODULE;
+	    vd = vd <=1 ? 0 : MODULE - vd;
 	    
-	    if( id[id.length-2] != vd){
+	    if( id[id.length - 2] != vd){
 	    	context.add(MessageInvalidationReason.invalid());
 	    	return;
 	    }
@@ -40,10 +44,10 @@ public class BRCNPJValidator implements Validator<NDI> {
 	    	dac += id[i]*combB[i];
 	    }
 	    
-	    vd = dac % 11;
-	    vd = vd <=1 ? 0 : 11-vd;
+	    vd = dac % MODULE;
+	    vd = vd <= 1 ? 0 : MODULE - vd;
 	    
-	    if (id[id.length-1] != vd){
+	    if (id[id.length - 1] != vd) {
 	    	context.add(MessageInvalidationReason.invalid());
 	    	return;
 	    }

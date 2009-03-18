@@ -1,12 +1,13 @@
 package org.middleheaven.test.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.global.official.NDI;
-import org.middleheaven.global.official.br.BRCNPJValidator;
-import org.middleheaven.global.official.br.BRCPFValidator;
-import org.middleheaven.global.official.us.USSocialSecurtyNumberValidator;
+import org.middleheaven.global.gov.NDI;
+import org.middleheaven.global.gov.br.BRCNPJValidator;
+import org.middleheaven.global.gov.br.BRCPFValidator;
+import org.middleheaven.global.gov.us.USSocialSecurtyNumberValidator;
 import org.middleheaven.validation.DefaultValidationContext;
 import org.middleheaven.validation.LogicValidator;
 

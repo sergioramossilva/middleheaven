@@ -122,8 +122,8 @@ public abstract class DataBaseDialect {
 			fields.add(fm);
 		}
 
-		names.delete(names.length()-1, names.length());
-		values.delete(values.length()-1, values.length());
+		names.delete(names.length() - 1, names.length());
+		values.delete(values.length() - 1, values.length());
 
 		StringBuilder sql = new StringBuilder("INSERT INTO ")
 		.append(model.getEntityHardName())
@@ -138,9 +138,10 @@ public abstract class DataBaseDialect {
 	
 	protected <T> Criteria<T> merge(Criteria<T> criteria, StorableEntityModel model){
 		if (criteria instanceof DBCriteria){
-			return (DBCriteria)criteria;
+			final DBCriteria<T> dbCriteria = (DBCriteria<T>)criteria;
+			return dbCriteria;
 		}
-		DBCriteria<T> merged = new DBCriteria<T>((AbstractCriteria)criteria);
+		DBCriteria<T> merged = new DBCriteria<T>((AbstractCriteria<T>)criteria);
 		merged.restrictAll(model);
 		return merged;
 		

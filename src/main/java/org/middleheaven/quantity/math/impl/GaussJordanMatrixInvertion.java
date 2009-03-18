@@ -63,10 +63,10 @@ public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 	// pre: A[i][q]==A[k][q]==0 for 1<=q<j
 	private  static  <F extends Field<F>>  void swap(EditableMatrix<F> A, int i, int k, int j){
 		final int m = A.columnsCount();
-		for(int q=j-1; q<m; q++){
+		for(int q=j - 1; q<m; q++){
 			F temp = A.get(i,q);
-			A.set(i, q , A.get(k,q));
-			A.set(k,q , temp);
+			A.set(i,q,A.get(k,q));
+			A.set(k,q,temp);
 		}
 	}
 

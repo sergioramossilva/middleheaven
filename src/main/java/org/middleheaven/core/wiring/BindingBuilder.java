@@ -5,7 +5,7 @@ import org.middleheaven.core.reflection.ReflectionUtils;
 
 public class BindingBuilder<T> {
 
-	protected Binding binding;
+	protected Binding<?> binding;
 	protected EditableBinder binder;
 	
 	BindingBuilder (EditableBinder binder , Class<T> type){
@@ -16,6 +16,7 @@ public class BindingBuilder<T> {
 	
 	}
 	
+	@SuppressWarnings("unchecked")
 	public BindingBuilder<T> to(Class<? extends T> type){
 		binding.setResolver(new DefaultResolver(type,binder));
 		return this;
@@ -29,6 +30,7 @@ public class BindingBuilder<T> {
 		return this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public BindingBuilder<T> toInstance(T object){
 		binding.setResolver(new InstanceResolver(object));
 		return this;
