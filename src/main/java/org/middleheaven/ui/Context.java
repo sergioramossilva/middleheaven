@@ -2,8 +2,10 @@ package org.middleheaven.ui;
 
 import java.util.Enumeration;
 
+import org.middleheaven.global.CultureResolver;
 
-public interface Context {
+
+public interface Context extends CultureResolver{
 
 	public final String APPLICATION_CONTEXT_FILE_REPOSITORY = "_appContextFR";
 	public final String UPLOADS_FILE_REPOSITORY = "_uploadsFR";

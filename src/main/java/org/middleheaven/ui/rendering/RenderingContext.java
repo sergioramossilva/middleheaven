@@ -2,6 +2,7 @@ package org.middleheaven.ui.rendering;
 
 import java.util.Enumeration;
 
+import org.middleheaven.global.Culture;
 import org.middleheaven.ui.Context;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.MapContext;
@@ -9,7 +10,7 @@ import org.middleheaven.ui.MapContext;
 public class RenderingContext implements Context{
 
 	public RenderingContext(RenderKit kit) {
-		this(new MapContext(), kit);
+		this(new MapContext(null), kit);
 	}
 	
 	Context context;
@@ -41,6 +42,11 @@ public class RenderingContext implements Context{
 	@Override
 	public void setAttribute(ContextScope scope, String name, Object value) {
 		context.setAttribute(scope,name,value);
+	}
+
+	@Override
+	public Culture getCulture() {
+		return context.getCulture();
 	}
 
 }

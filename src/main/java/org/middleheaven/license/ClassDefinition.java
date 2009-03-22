@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.middleheaven.crypto.CryptoUtils;
+import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.IOUtils;
 
 public class ClassDefinition {
 
+	private static Base64CipherAlgorithm base64 = new Base64CipherAlgorithm();
 	
 	public ClassDefinition (){
 		
@@ -24,7 +25,7 @@ public class ClassDefinition {
 		
 		DataOutputStream da = new DataOutputStream(out);
 		da.writeUTF(className);
-		da.writeUTF(new String(CryptoUtils.encodeBase64(a.toByteArray())));
+		da.writeUTF(new String(base64.cipher(a.toByteArray())));
 	}
 	
 	public String read (InputStream in , OutputStream classDefStream) throws IOException{
@@ -33,7 +34,7 @@ public class ClassDefinition {
 		String name = d.readUTF();
 		String code = d.readUTF();
 		
-		byte[] def = CryptoUtils.decodeBase64(code.getBytes());
+		byte[] def = base64.revertCipher(code.getBytes());
 		
 		classDefStream.write(def);
 		

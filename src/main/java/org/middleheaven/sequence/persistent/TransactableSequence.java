@@ -28,8 +28,8 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
 	private Object lastUsed;
 	private StateEditableSequence<T> baseSequence;
 	
-    BlockingQueue<TransactableSequenceValue> queue = new PriorityBlockingQueue<TransactableSequenceValue>();
-    TransactableSequenceValue sv;
+    BlockingQueue<TransactableSequenceValue<T>> queue = new PriorityBlockingQueue<TransactableSequenceValue<T>>();
+
 
     public static <K extends Comparable<? super K>> TransactableSequence<K> getSequence(String name,StatePersistentSequence<K> baseSequence){
         return new TransactableSequence<K>(name,baseSequence);
@@ -64,24 +64,24 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
         return sv;
     }
 
-    private class TransactableSequenceValue<T> implements SequenceToken<T>,Comparable<TransactableSequenceValue<T>>, XAResource {
+    private class TransactableSequenceValue<I extends Comparable<? super I>> implements SequenceToken<I>,Comparable<TransactableSequenceValue<I>>, XAResource {
 
-        private Object actualValue;
+        private I actualValue;
         private Xid xid;
         
-        TransactableSequenceValue(T actualValue){
+        TransactableSequenceValue(I actualValue){
             this.actualValue = actualValue;
         }
 
-        public int compareTo(TransactableSequenceValue other) {
-            return (((Comparable)this.actualValue).compareTo(((Comparable)other.actualValue)));
+        public int compareTo(TransactableSequenceValue<I> other) {
+            return this.actualValue.compareTo(other.actualValue);
         }
         
         public String toString(){
             return actualValue.toString();
         }
         
-        public T value() {
+        public I value() {
 
             while (queue.peek()!=this){
                 try {
@@ -91,7 +91,7 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
                 }
             }
             
-            return (T)actualValue;
+            return actualValue;
  
         }
 

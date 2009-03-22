@@ -5,6 +5,7 @@ import java.util.Map;
 import org.middleheaven.global.Culture;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.ui.AbstractContext;
+import org.middleheaven.web.processing.HttpUserAgent;
 
 
 
@@ -23,9 +24,9 @@ public abstract class WebContext extends AbstractContext{
 		super();
 	}
 	
-	public abstract HttpServices getHttpService();
+	public abstract HttpMethod getHttpService();
 	
-	public abstract Agent getAgent();
+	public abstract HttpUserAgent getAgent();
 	
 	public abstract MediaManagedFile responseMediaFile();
 

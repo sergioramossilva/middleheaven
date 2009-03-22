@@ -50,11 +50,12 @@ public class JFreeChartEngine extends AbstractChartEngine  {
 			this.fireDatasetChanged();
 		}
 		
+		
 		private void fillData(Dataset dataset){
 			for (Series series : dataset){
 				for (int i = 0 ; i < series.size(); i++){
-					Comparable c = series.getValue(0, i);
-					Comparable x = series.getValue(1, i);
+					@SuppressWarnings("unchecked") Comparable c = series.getValue(0, i);
+					@SuppressWarnings("unchecked") Comparable x = series.getValue(1, i);
 					this.addValue(new BigDecimal(x.toString()), series.getName(), c);
 				}
 			}
@@ -82,8 +83,8 @@ public class JFreeChartEngine extends AbstractChartEngine  {
 			for (Series series : dataset){
 				XYSeries jseries = new XYSeries(series.getName());
 				for (int i = 0 ; i < series.size(); i++){
-					Comparable x = series.getValue(0, i);
-					Comparable y = series.getValue(1, i);
+					@SuppressWarnings("unchecked") Comparable x = series.getValue(0, i);
+					@SuppressWarnings("unchecked") Comparable y = series.getValue(1, i);
 					jseries.add(new BigDecimal(x.toString()), new BigDecimal(y.toString()));
 				}
 				this.addSeries(jseries);
@@ -92,7 +93,7 @@ public class JFreeChartEngine extends AbstractChartEngine  {
 		
 	}
 	
-	private static <T> T createJFreeDataSet(Class<T> dataSetType, Dataset dataset,ChartLayout layout){
+	private static <T> T createJFreeDataSet(Class<T> dataSetType, Dataset dataset){
 
 	   if (dataSetType.equals(XYSeriesCollection.class)){
 			
@@ -106,13 +107,13 @@ public class JFreeChartEngine extends AbstractChartEngine  {
 
 			for (Series series : dataset){
 				for (int i = 0 ; i < series.size(); i++){
-					Comparable c = series.getValue(0, i);
-					Comparable x = series.getValue(1, i);
+					@SuppressWarnings("unchecked") Comparable c = series.getValue(0, i);
+					@SuppressWarnings("unchecked") Comparable x = series.getValue(1, i);
 					jdataset.setValue(c, new BigDecimal(x.toString()));
 				}
 			}
 
-			return (T)jdataset;
+			return dataSetType.cast(jdataset);
 		}else {
 			throw new UnsupportedOperationException (dataSetType + " is not supported");
 		}
@@ -123,7 +124,7 @@ public class JFreeChartEngine extends AbstractChartEngine  {
 
 	    JFreeChart chart;
 		if (layout.getType().equals(ChartType.XY)){
-			final XYSeriesCollection dataset = createJFreeDataSet( XYSeriesCollection.class, data, layout);
+			final XYSeriesCollection dataset = createJFreeDataSet( XYSeriesCollection.class, data);
 
 			chart= ChartFactory.createXYLineChart(
 					layout.getTitle(),      // chart title
@@ -137,7 +138,7 @@ public class JFreeChartEngine extends AbstractChartEngine  {
 			);
 			
 		} else if (layout.getType().equals(ChartType.BARS)){
-			final CategoryDataset dataset = createJFreeDataSet( CategoryDataset.class, data, layout);
+			final CategoryDataset dataset = createJFreeDataSet( CategoryDataset.class, data);
 
 
 			
@@ -177,7 +178,7 @@ public class JFreeChartEngine extends AbstractChartEngine  {
 
 	
 		} else  if (layout.getType().equals(ChartType.PIE)){
-			final PieDataset dataset = createJFreeDataSet( PieDataset.class, data, layout);
+			final PieDataset dataset = createJFreeDataSet( PieDataset.class, data);
 
 
 			chart = ChartFactory.createPieChart(

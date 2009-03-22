@@ -9,7 +9,6 @@ import java.io.File;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.core.ContextIdentifier;
-import org.middleheaven.core.WebContainer;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;

@@ -13,6 +13,8 @@ import org.middleheaven.io.repository.EmptyFileRepository;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.upload.UploadManagedFileRepository;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.web.processing.HttpProcessingUtils;
+import org.middleheaven.web.processing.HttpUserAgent;
 
 public class RequestResponseWebContext extends ServletWebContext{
 
@@ -37,8 +39,8 @@ public class RequestResponseWebContext extends ServletWebContext{
 		}
 	}
 
-	public Agent getAgent(){
-		return Agent.parse(request);
+	public HttpUserAgent getAgent(){
+		return HttpProcessingUtils.parse(request);
 	}
 	
 	public HttpServletRequest getRequest() {
@@ -75,8 +77,8 @@ public class RequestResponseWebContext extends ServletWebContext{
 	}
 
 	@Override
-	public HttpServices getHttpService() {
-		return HttpServices.valueOf(request.getMethod().toUpperCase());
+	public HttpMethod getHttpService() {
+		return HttpMethod.valueOf(request.getMethod().toUpperCase());
 	}
 
 	@Override

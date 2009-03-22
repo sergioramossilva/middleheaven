@@ -15,12 +15,12 @@ public @interface ManyToMany {
 	 * 
 	 * @return end point entity class
 	 */
-	Class target();
+	Class<?> target();
 	
 	/**
 	 * 
 	 * @return Entity class that acts as mediator
 	 */
-	Class mediator();
+	Class<?> mediator();
 	
 }

@@ -18,7 +18,7 @@ import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
 import org.middleheaven.core.services.discover.ServiceActivator;
-import org.middleheaven.crypto.CryptoUtils;
+import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.service.FileRepositoryService;
@@ -118,7 +118,8 @@ public class LicenceServiceActivator extends ServiceActivator {
 		AddocClassLoader cloader = new AddocClassLoader();
 
 		LogBook logBook = Logging.getBook(this.getClass());
-
+		Base64CipherAlgorithm base64 = new Base64CipherAlgorithm();
+		
 		for (ManagedFile f : licences){
 			// open file and decipher it with key
 
@@ -133,7 +134,7 @@ public class LicenceServiceActivator extends ServiceActivator {
 
 				String classDef = buffer.substring(buffer.indexOf("<class>")+ "<class>".length(), buffer.indexOf("</class>"));
 
-				ByteArrayInputStream in = new ByteArrayInputStream(CryptoUtils.decodeBase64(classDef.getBytes()));
+				ByteArrayInputStream in = new ByteArrayInputStream(base64.revertCipher(classDef.getBytes()));
 
 				ByteArrayOutputStream classDefStream = new ByteArrayOutputStream();
 

@@ -14,22 +14,22 @@ import org.middleheaven.ui.ContextScope;
 public final class WebFacadeServlet extends HttpServlet {
 
 	public final void doPut(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
-		doService(HttpServices.PUT,request,response);
+		doService(HttpMethod.PUT,request,response);
 	}
 
 	public final void doDelete(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
-		doService(HttpServices.DELETE,request,response);
+		doService(HttpMethod.DELETE,request,response);
 	}
 
 	public final void doPost(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
-		doService(HttpServices.POST,request,response);
+		doService(HttpMethod.POST,request,response);
 	}
 
 	public final void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
-		doService(HttpServices.GET,request,response);
+		doService(HttpMethod.GET,request,response);
 	}
 
-	private void doService(HttpServices service, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+	private void doService(HttpMethod service, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
 		try {
 			

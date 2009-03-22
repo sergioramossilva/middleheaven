@@ -8,26 +8,28 @@ import org.middleheaven.io.repository.BufferedMediaVirtualFile;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.MapContext;
+import org.middleheaven.web.processing.HttpUserAgent;
 
 
 public final class MapWebContext  extends WebContext{
 
-	private Agent agent;
-	private HttpServices service;
-	private MapContext mapContext = new MapContext();
+	private HttpUserAgent agent;
+	private HttpMethod service;
+	private MapContext mapContext;
 	private MediaManagedFile file = new BufferedMediaVirtualFile();
 	private Culture culture= Culture.defaultValue();
 	
-	public MapWebContext(HttpServices service) {
+	public MapWebContext(Culture culture, HttpMethod service) {
 		this.service = service;
+		this.mapContext = new MapContext(culture);
 	}
 
 	@Override
-	public Agent getAgent() {
+	public HttpUserAgent getAgent() {
 		return agent;
 	}
 	
-	public void setAgent(Agent agent){
+	public void setAgent(HttpUserAgent agent){
 		this.agent = agent;
 	}
 
@@ -46,7 +48,7 @@ public final class MapWebContext  extends WebContext{
 	}
 
 	@Override
-	public HttpServices getHttpService() {
+	public HttpMethod getHttpService() {
 		return service;
 	}
 
