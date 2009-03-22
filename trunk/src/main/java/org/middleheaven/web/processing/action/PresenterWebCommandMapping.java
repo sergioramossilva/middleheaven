@@ -47,7 +47,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	private final Map<String , Method> actions = new TreeMap<String,Method>();
 	private final List<String> patterns = new LinkedList<String>();
 
-	private EnumMap<HttpServices, Method> serviceMethods = new EnumMap<HttpServices, Method>(HttpServices.class);
+	private EnumMap<HttpMethod, Method> serviceMethods = new EnumMap<HttpMethod, Method>(HttpMethod.class);
 
 	private Method doService=null;
 
@@ -75,16 +75,16 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 			// a method can have multiple bindings (not chain ifs)
 			if (m.isAnnotationPresent(Post.class)){
-				serviceMethods.put(HttpServices.POST,m);
+				serviceMethods.put(HttpMethod.POST,m);
 			} 
 			if (m.isAnnotationPresent(Get.class)){
-				serviceMethods.put(HttpServices.GET,m);
+				serviceMethods.put(HttpMethod.GET,m);
 			} 
 			if (m.isAnnotationPresent(Delete.class)){
-				serviceMethods.put(HttpServices.DELETE,m);
+				serviceMethods.put(HttpMethod.DELETE,m);
 			} 
 			if (m.isAnnotationPresent(Put.class)){
-				serviceMethods.put(HttpServices.PUT,m);
+				serviceMethods.put(HttpMethod.PUT,m);
 			} 
 			if (m.isAnnotationPresent(ProcessRequest.class)){
 				doService = m;
@@ -226,7 +226,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				} 
 
 				if (actionMethod==null){
-					if (context.getHttpService().equals(HttpServices.GET)){
+					if (context.getHttpService().equals(HttpMethod.GET)){
 						return resolveOutcome(null,OutcomeStatus.SUCCESS);
 					} else {
 						throw new ActionHandlerNotFoundException();

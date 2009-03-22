@@ -6,16 +6,22 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.middleheaven.global.Culture;
 import org.middleheaven.util.conversion.TypeConvertions;
 
 public class MapContext extends AbstractContext {
 
-	EnumMap<ContextScope, Map<String, Object>> contextMap = new EnumMap<ContextScope, Map<String, Object>>(ContextScope.class);
+	EnumMap<ContextScope, ParamMap> contextMap = new EnumMap<ContextScope, ParamMap>(ContextScope.class);
+	private Culture culture;
 
-
-	public MapContext(){
+	static class ParamMap extends TreeMap<String, Object>{
+		
+	}
+	
+	public MapContext(Culture culture){
+		this.culture = culture;
 		for ( ContextScope scope : ContextScope.values()){
-			contextMap.put(scope, new TreeMap<String, Object>());
+			contextMap.put(scope, new ParamMap());
 		}
 	}
 	
@@ -36,7 +42,21 @@ public class MapContext extends AbstractContext {
 	
 
 	public <O> Map<String, O> getScopeMap(ContextScope scope, Class<O> type) {
-		return (Map<String, O>) contextMap.get(scope);
+		
+		ParamMap map = contextMap.get(scope);
+		if ( map == null){
+			return Collections.emptyMap();
+		}
+		Map<String,O> result = new TreeMap<String,O>();
+		for (Map.Entry<String,Object> entry : map.entrySet()){
+			result.put(entry.getKey(), TypeConvertions.convert(entry.getValue(), type));
+		}
+		return result;
+	}
+
+	@Override
+	public Culture getCulture() {
+		return culture;
 	}
 
 }

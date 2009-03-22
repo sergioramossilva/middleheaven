@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -14,5 +15,5 @@ import org.middleheaven.util.identity.IntegerIdentity;
 public @interface Key {
 
 	
-	Class type() default IntegerIdentity.class;
+	Class<? extends Identity> type() default IntegerIdentity.class;
 }

@@ -25,13 +25,16 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		servletContext =  servletContextEvent.getServletContext();
 		servletContext.setAttribute("application.id", this.getContextIdentifier());
+		HttpServerService httpService = new ServletHttpServerService();
 		
-		ServiceRegistry.register(HTTPServerService.class, new ServletHttpServerService(servletContext));
+		ServiceRegistry.register(HttpServerService.class, httpService);
 		
 		start(
 				new WritableLogBook("web container book",LoggingLevel.ALL)
 				.addWriter(new ServletContextLogBookWriter(servletContext))
 		);
+		
+		httpService.start();
 	}
 
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {

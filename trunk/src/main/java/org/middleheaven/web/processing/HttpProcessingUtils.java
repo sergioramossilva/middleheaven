@@ -1,52 +1,32 @@
-package org.middleheaven.web.processing.action;
+package org.middleheaven.web.processing;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Represents the user agent. 
- * Normally the user agent is a browser.
- */
-public class Agent {
+import org.middleheaven.util.OperatingSystemInfo;
+import org.middleheaven.util.VersionReader;
 
 
-	public static final Agent UNKOWN = new Agent();
+public class HttpProcessingUtils {
 
-	public static Agent parse(HttpServletRequest request){
-
-		String userAgent = request.getHeader("User-Agent");
-		Agent a = new Agent();
-		String[] res = getBrowser(userAgent);
-		a.name = res[0];
-		a.version = res[1];
-		a.base = res[2];
-		
-		res = getOS(userAgent);
-		a.operatingSystem = res[0];
-		a.operatingSystemVersion = res[1];
-		a.operatingSystemVersionBase = res[2];
-
-		return a;
-	}
-
-	private String name;
-	private String version;
-	private String base;
-	private String operatingSystem;
-	private String operatingSystemVersion;
-	private String operatingSystemVersionBase;
-
-	public Agent(){
-		
-	}
+	
+	private HttpProcessingUtils(){}
+	
 	// see http://nerds.palmdrive.net/useragent/code.html
 
-	public String getName() {
-		return name;
-	}
+	public static HttpUserAgent parse(HttpServletRequest request){
 
-	public String getOperatingSystem() {
-		return operatingSystem;
+		String userAgent = request.getHeader("User-Agent");
+		
+		
+		String[] res = getBrowser(userAgent);
+		BrowserInfo binfo = new BrowserInfo(res[0],res[1],VersionReader.fromString(res[2]));
+		
+		res = getOS(userAgent);
+		OperatingSystemInfo osInfo = new OperatingSystemInfo(res[0],res[1],res[2]);
+		
+		return new HttpUserAgent(binfo, osInfo);
 	}
+	
 
 	private static String getVersionNumber(String userAgent, int position) {
 		if (position<0) return "";
@@ -257,29 +237,4 @@ public class Agent {
 
 	}
 
-	public String getVersion() {
-		return version;
-	}
-
-	public String getBase() {
-		return base;
-	}
-
-	public String getOperatingSystemVersion() {
-		return operatingSystemVersion;
-	}
-
-	public String getOperatingSystemVersionBase() {
-		return operatingSystemVersionBase;
-	} 
-	
-	public boolean isIE(){
-		return this.name.equalsIgnoreCase("MSIE");
-	}
-	
-	public boolean isFirefox(){
-		return this.name.equalsIgnoreCase("Firefox");
-	}
 }
-
-

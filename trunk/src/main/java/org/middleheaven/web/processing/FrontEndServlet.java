@@ -31,14 +31,18 @@ public final class FrontEndServlet extends HttpServlet {
 
 	private void doService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
-		HttpProcessor processor = ServiceRegistry.getService(HTTPServerService.class).processorFor(request.getRequestURI());
+		try{
+			ServletHttpServerService serverService = (ServletHttpServerService) ServiceRegistry.getService(HttpServerService.class);
 		
-		if (processor == null){
-			response.sendError(HTTPErrors.NOT_FOUND.errorCode()); 
-			return;
+			serverService.processRequest(request, response);
+			
+		} catch (ClassCastException e){
+			// this servelet can only work with this specific implementation of HTTPServerService
+			throw new ServletException("HTTPServerService not compatible with generic Servlet Container");
 		}
 		
-		processor.process(request, response);
+		
+		
 		
 	}
 }

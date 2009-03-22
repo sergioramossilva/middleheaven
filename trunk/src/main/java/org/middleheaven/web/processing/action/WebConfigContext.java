@@ -4,6 +4,7 @@ import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
 
+import org.middleheaven.global.Culture;
 import org.middleheaven.ui.Context;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.util.conversion.TypeConvertions;
@@ -11,9 +12,17 @@ import org.middleheaven.util.conversion.TypeConvertions;
 public class WebConfigContext implements Context {
 
 	ServletContext ctx;
+	private Culture culture;
 	
 	public WebConfigContext(ServletContext ctx) {
 		this.ctx = ctx;
+		String sCulture = ctx.getInitParameter("culture");
+		if (sCulture !=null){
+			this.culture = Culture.valueOf(sCulture.split("_"));
+		} else {
+			this.culture = Culture.defaultValue();
+		}
+		
 	}
 
 	
@@ -77,6 +86,12 @@ public class WebConfigContext implements Context {
 			}
 		}
 		return null;
+	}
+
+
+	@Override
+	public Culture getCulture() {
+		return culture; 
 	}
 
 

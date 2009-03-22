@@ -105,6 +105,7 @@ public abstract class ServletWebContext extends WebContext {
 		};
 	}
 	
+	
 	@Override
 	public <T> T getAttribute(ContextScope scope, String name, Class<T> type) {
 		Object value = null;
@@ -168,7 +169,9 @@ public abstract class ServletWebContext extends WebContext {
 		}
 
 		if (type==null){
-			return (T)value;
+			// do not convert or cast
+			@SuppressWarnings("unchecked") T t = (T)value;
+			return t;
 		}
 		return TypeConvertions.convert(value, type);
 
