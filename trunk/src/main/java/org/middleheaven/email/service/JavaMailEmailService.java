@@ -1,5 +1,6 @@
 package org.middleheaven.email.service;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -18,6 +19,10 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.middleheaven.email.Email;
+import org.middleheaven.email.EmailAsynchrounsCallbak;
+import org.middleheaven.email.EmailException;
+import org.middleheaven.email.EmailRecipientType;
+import org.middleheaven.email.EmailService;
 
 public class JavaMailEmailService implements EmailService {
 
@@ -86,26 +91,26 @@ public class JavaMailEmailService implements EmailService {
         
         // set recipients
         int i;
-        String[] recipients = email.getRecipients(Message.RecipientType.TO);
-        Address[] adresses = new InternetAddress[recipients.length];
-        for (i=0; i<recipients.length ; i++){
-            adresses[i] = new InternetAddress(recipients[i]);
+        List<String> recipients = email.getRecipients(EmailRecipientType.TO);
+        Address[] adresses = new InternetAddress[recipients.size()];
+        for (i=0; i<adresses.length ; i++){
+            adresses[i] = new InternetAddress(recipients.get(i));
         }
         m.setRecipients(Message.RecipientType.TO, adresses);
         
         // set copy recipients
-        recipients = email.getRecipients(Message.RecipientType.CC);
-        adresses = new InternetAddress[recipients.length];
-        for (i=0; i<recipients.length ; i++){
-            adresses[i] = new InternetAddress(recipients[i]);
+        recipients = email.getRecipients(EmailRecipientType.CC);
+        adresses = new InternetAddress[recipients.size()];
+        for (i=0; i<adresses.length  ; i++){
+        	adresses[i] = new InternetAddress(recipients.get(i));
         }
         m.setRecipients(Message.RecipientType.CC, adresses);
         
         // set blind copy recipients
-        recipients = email.getRecipients(Message.RecipientType.BCC);
-        adresses = new InternetAddress[recipients.length];
-        for (i=0; i<recipients.length ; i++){
-            adresses[i] = new InternetAddress(recipients[i]);
+        recipients = email.getRecipients(EmailRecipientType.BCC);
+        adresses = new InternetAddress[recipients.size()];
+        for (i=0; i<adresses.length  ; i++){
+        	adresses[i] = new InternetAddress(recipients.get(i));
         }
         m.setRecipients(Message.RecipientType.BCC, adresses);
         

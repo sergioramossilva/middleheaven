@@ -15,8 +15,8 @@ public interface License {
 	/**
 	 * Allocates an instance of the license. Is not more instances are available 
 	 * a <code>LicenceException</code> is thrown 
-	 * @throws InvalidLicenceException if the license is invalid
-	 * @throws NoMoreLicenceInstancesAvailableException if no more instances are available at the moment
+	 * @throws InvalidLicenseException if the license is invalid
+	 * @throws NoMoreLicenseInstancesAvailableException if no more instances are available at the moment
 	 * 
 	 */
 	public void checkOut();

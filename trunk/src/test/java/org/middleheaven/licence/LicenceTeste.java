@@ -8,8 +8,8 @@ import org.junit.Test;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
-import org.middleheaven.license.CertificatedLicence;
-import org.middleheaven.license.LicenceServiceActivator;
+import org.middleheaven.license.CertificatedLicense;
+import org.middleheaven.license.LicenseServiceActivator;
 import org.middleheaven.license.License;
 import org.middleheaven.license.LicenseException;
 import org.middleheaven.license.LicenseService;
@@ -23,7 +23,7 @@ public class LicenceTeste extends MiddleHeavenTestCase{
 		super.setUp();
 		
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
-		engine.addActivator(LicenceServiceActivator.class);
+		engine.addActivator(LicenseServiceActivator.class);
 		new ServiceContextConfigurator().addEngine(engine);
 	}
 
@@ -45,7 +45,7 @@ public class LicenceTeste extends MiddleHeavenTestCase{
 		LicenseService ls = ServiceRegistry.getService(LicenseService.class);
 		License licence = ls.getLicence("featureA", "1.0.0");
 
-		assertTrue(licence instanceof CertificatedLicence);
+		assertTrue(licence instanceof CertificatedLicense);
 
 		assertTrue(licence.isValid());
 	}

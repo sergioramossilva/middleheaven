@@ -3,23 +3,23 @@ package org.middleheaven.license;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ComposedProvider implements LicenceProvider {
+public class ComposedProvider implements LicenseProvider {
 
-	List<LicenceProvider> providers = new CopyOnWriteArrayList<LicenceProvider>();
+	List<LicenseProvider> providers = new CopyOnWriteArrayList<LicenseProvider>();
 	
-	public void addProvider (LicenceProvider other){
+	public void addProvider (LicenseProvider other){
 		providers.add(other);
 	}
 	
 	@Override
 	public License getLicence(String featureID, String version) {
-		for (LicenceProvider p: providers){
+		for (LicenseProvider p: providers){
 			License lic = p.getLicence(featureID, version);
 			if (lic.isValid()){
 				return lic;
 			}
 		}
-		return new VoidLicence(featureID);
+		return new VoidLicense(featureID);
 	}
 
 

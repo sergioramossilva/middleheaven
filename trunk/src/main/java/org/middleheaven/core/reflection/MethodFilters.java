@@ -1,8 +1,7 @@
 package org.middleheaven.core.reflection;
 
 import java.lang.reflect.Method;
-
-import javassist.Modifier;
+import java.lang.reflect.Modifier;
 
 import org.middleheaven.util.classification.BooleanClassifier;
 

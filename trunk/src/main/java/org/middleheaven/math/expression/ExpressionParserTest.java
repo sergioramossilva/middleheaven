@@ -1,12 +1,11 @@
-package org.middleheaven.test.expression;
+package org.middleheaven.math.expression;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.math.expression.Expression;
-import org.middleheaven.math.expression.InfixParser;
 
 
 public class ExpressionParserTest {
