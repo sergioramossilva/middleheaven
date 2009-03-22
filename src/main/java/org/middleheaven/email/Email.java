@@ -4,13 +4,13 @@ package org.middleheaven.email;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataSource;
-import javax.mail.Message;
 
 
 
@@ -18,7 +18,6 @@ import javax.mail.Message;
  * A email message. This class wraps javax.mail and javax.activation classes
  * to facilitate email creation
  * 
- * @author Sérgio M.M. Taborda
  */
 public class Email implements Serializable {
  
@@ -27,7 +26,7 @@ public class Email implements Serializable {
 	private DataSource body;
 	private String from;
     private String subject;
-    private Map<Message.RecipientType,List<String>> recipients = new HashMap<Message.RecipientType, List<String>>();
+    private Map<EmailRecipientType,List<String>> recipients = new EnumMap<EmailRecipientType, List<String>>(EmailRecipientType.class);
     private Date sendDate;
 	private Collection<DataSource> attachments = new ArrayList <DataSource>(); 
 	
@@ -81,7 +80,7 @@ public class Email implements Serializable {
      * @param adress
      */
     public Email addToAdress(String ... adress){
-        addRecipients(Message.RecipientType.TO, adress);
+        addRecipients(EmailRecipientType.TO, adress);
         return this;
     }
     
@@ -90,7 +89,7 @@ public class Email implements Serializable {
      * @param adress
      */
     public Email addCCAdress(String ... adress){
-        addRecipients(Message.RecipientType.CC, adress);
+        addRecipients(EmailRecipientType.CC, adress);
         return this;
     }
     
@@ -99,15 +98,16 @@ public class Email implements Serializable {
      * @param adress
      */
     public Email addBCCAdress(String ... adress){
-        addRecipients(Message.RecipientType.BCC, adress);
+        addRecipients(EmailRecipientType.BCC, adress);
         return this;
     }
 
-	private void addRecipients(Message.RecipientType type, String[] addresses) {
+	public void addRecipients(EmailRecipientType type, String ... addresses) {
         List<String> adresses = this.recipients.get (type);
         if (adresses==null){
             adresses = new ArrayList<String>();
         }
+        
         for (String address : addresses){
             adresses.add(address);
         }
@@ -116,14 +116,12 @@ public class Email implements Serializable {
             
 	}
 	 
-	public String[] getRecipients(Message.RecipientType type) {
+	public List<String> getRecipients(EmailRecipientType type) {
 		List<String> adresses = this.recipients.get(type);
-        if (adresses==null || adresses.isEmpty()) {
-            return new String[0];
+        if (adresses==null){
+        	return Collections.emptyList();
         } else {
-        	String[] addressesArray = new String[adresses.size()];
-        	adresses.toArray(addressesArray);
-        	return addressesArray;
+        	return Collections.unmodifiableList(adresses);
         }
 	}
 	 

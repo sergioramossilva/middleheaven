@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.email.Email;
-import org.middleheaven.email.service.EmailService;
+import org.middleheaven.email.EmailService;
 import org.middleheaven.io.network.NetUtils;
 import org.middleheaven.logging.LogBookWriter;
 import org.middleheaven.logging.LogWritingIOExcepiton;
