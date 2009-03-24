@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
-import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.core.bootstrap.client.StandaloneContainer;
 import org.middleheaven.domain.AnnotatedDomainModel;
 import org.middleheaven.io.repository.ManagedFileRepositories;
