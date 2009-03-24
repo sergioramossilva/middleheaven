@@ -20,12 +20,12 @@ import org.middleheaven.util.identity.UUIDIdentitySequence;
 public class DomainDataStorage implements DataStorage {
 
 	StoreKeeper storeKeeper;
-	StorableDomainModel metadataService;
+	StorableDomainModel domainModel;
 	Set<DataStorageListener> listeners = new CopyOnWriteArraySet<DataStorageListener>();
 	
-	public DomainDataStorage(StoreKeeper storeManager,StorableDomainModel metadataService) {
+	public DomainDataStorage(StoreKeeper storeManager,StorableDomainModel domainModel) {
 		this.storeKeeper = storeManager;
-		this.metadataService = metadataService;
+		this.domainModel = domainModel;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class DomainDataStorage implements DataStorage {
 
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
-		return storeKeeper.createQuery(criteria, metadataService.getStorageModel(criteria.getTargetClass()) ,strategy);
+		return storeKeeper.createQuery(criteria, domainModel.getStorageModel(criteria.getTargetClass()) ,strategy);
 	}
 	
 	@Override
@@ -75,13 +75,13 @@ public class DomainDataStorage implements DataStorage {
 	private Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
 	
 	protected Identity nextID(Class<?> entityType) {
-		Class<? extends Identity> identityType = metadataService.indentityTypeFor(entityType);
+		Class<? extends Identity> identityType = domainModel.indentityTypeFor(entityType);
 		if (UUIDIdentity.class.isAssignableFrom(identityType)){
 			return new UUIDIdentitySequence().next().value();
 		} else {
 			
 		}
-		return nextID(identityType , metadataService.getStorageModel(entityType).getEntityLogicName());
+		return nextID(identityType , domainModel.getStorageModel(entityType).getEntityLogicName());
 	}
 
 	protected <I extends Identity> I nextID(Class<I> identityType,String identifiableName) {
@@ -127,7 +127,7 @@ public class DomainDataStorage implements DataStorage {
 		// assign key
 		p.setIdentity(this.storeKeeper.getSequence(p.getPersistableClass().getName()).next().value());
 		
-		this.storeKeeper.insert(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
+		this.storeKeeper.insert(Collections.singleton(p),domainModel.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.RETRIVED);
 		fireAddEvent(p);
@@ -138,7 +138,7 @@ public class DomainDataStorage implements DataStorage {
 			doInsert(p);
 		}
 		
-		this.storeKeeper.update(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
+		this.storeKeeper.update(Collections.singleton(p),domainModel.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.RETRIVED);
 		fireUpdatedEvent(p);
@@ -149,7 +149,7 @@ public class DomainDataStorage implements DataStorage {
 			return;
 		}
 		
-		this.storeKeeper.remove(Collections.singleton(p),metadataService.getStorageModel(p.getPersistableClass()));
+		this.storeKeeper.remove(Collections.singleton(p),domainModel.getStorageModel(p.getPersistableClass()));
 		
 		p.setPersistableState(PersistableState.DELETED);
 		fireRemovedEvent(p);
@@ -172,7 +172,7 @@ public class DomainDataStorage implements DataStorage {
 
 	@Override
 	public <T> void remove(Criteria<T> criteria) {
-		this.storeKeeper.remove(criteria, metadataService.getStorageModel(criteria.getTargetClass()));
+		this.storeKeeper.remove(criteria, domainModel.getStorageModel(criteria.getTargetClass()));
 	}
 
 	@Override

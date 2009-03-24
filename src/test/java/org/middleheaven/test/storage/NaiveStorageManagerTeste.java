@@ -3,15 +3,29 @@ package org.middleheaven.test.storage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
+import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.storage.Storable;
-import org.middleheaven.storage.Query;
+import org.middleheaven.core.Container;
+import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.bootstrap.StandaloneBootstrap;
+import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
+import org.middleheaven.core.bootstrap.client.StandaloneContainer;
+import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.logging.ConsoleLogBook;
+import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.storage.DomainDataStorage;
+import org.middleheaven.storage.Query;
+import org.middleheaven.storage.Storable;
+import org.middleheaven.storage.StorableDomainModel;
+import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.inmemory.InMemoryStoreKeeper;
+import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentity;
 
 
 public class NaiveStorageManagerTeste {
@@ -22,12 +36,47 @@ public class NaiveStorageManagerTeste {
 	
 	@Before
 	public void setUp(){
-		manager = new DomainDataStorage(store,null);
-		subj.setNacimento(new Date());
+		// bootstrap
+		Container container = new StandaloneContainer(ManagedFileRepositories.resolveFile(new File("."))){
+
+			@Override
+			public void start(ExecutionEnvironmentBootstrap bootstrap) {
+				// TODO implement Container.start
+				
+			}
+
+			@Override
+			public void stop(ExecutionEnvironmentBootstrap bootstrap) {
+				// TODO implement Container.stop
+				
+			}};
+			
+		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
+		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
+		
+		// create model
+		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
+		model.addEntity(TestSubject.class);
+		
+		manager = new DomainDataStorage(store , new StorableDomainModel(){
+
+			@Override
+			public StorableEntityModel getStorageModel(Class<?> type) {
+				return (StorableEntityModel) model.getEntityModelFor(type);
+			}
+
+			@Override
+			public Class<? extends Identity> indentityTypeFor(
+					Class<?> entityType) {
+				return IntegerIdentity.class;
+			}
+
+		});
+		subj.setNascimento(CalendarDate.today());
 		subj.setName("Alberto");
 	}
 	
-	//@Test
+	@Test
 	public void testInsert(){
 		
 		Query<TestSubject> q = manager.createQuery(CriteriaBuilder.search(TestSubject.class).all());
@@ -41,35 +90,45 @@ public class NaiveStorageManagerTeste {
 		Storable p = (Storable)subj;
 		
 		assertTrue(p.getIdentity()!=null);
-		assertEquals( new Long(0), p.getIdentity());
+
 		assertEquals(new Long(1) , new Long(q.count()));
 		
 		// verify re-insert does nothing
 		subj = manager.store(subj);
-		assertEquals( new Long(0), p.getIdentity());
 
 		assertEquals(new Long(1) , new Long(q.count()));
 		
 	}
 	
 
-	public class TestSubject {
+	public static class TestSubject {
 
-		
+		private Identity identity;
 		private String name;
-		private Date nacimento;
+		private CalendarDate nacimento;
 		
-		protected String getName() {
+		public String getName() {
 			return name;
 		}
-		protected void setName(String name) {
+		
+		public void setName(String name) {
 			this.name = name;
 		}
-		protected Date getNacimento() {
+		
+		public CalendarDate getNascimento() {
 			return nacimento;
 		}
-		protected void setNacimento(Date nacimento) {
+		
+		public void setNascimento(CalendarDate nacimento) {
 			this.nacimento = nacimento;
+		}
+
+		public void setIdentity(Identity identity) {
+			this.identity = identity;
+		}
+
+		public Identity getIdentity() {
+			return identity;
 		}
 		
 	}
