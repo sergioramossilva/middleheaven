@@ -57,15 +57,17 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 	private class ProxyHandlerInterceptor implements MethodInterceptor{
 
 		private ProxyHandler handler;
-
-		public ProxyHandlerInterceptor(ProxyHandler handler) {
+		private Class<?> originalType;
+		
+		public ProxyHandlerInterceptor(Class<?> originalType, ProxyHandler handler) {
 			super();
+			this.originalType = originalType;
 			this.handler = handler;
 		}
 
 		@Override
 		public Object intercept(Object proxy, Method invoked, Object[] args,MethodProxy methodProxy) throws Throwable {
-			return handler.invoke(proxy, args, new ProxyMethodDelegator(proxy.getClass(),invoked,methodProxy));
+			return handler.invoke(proxy, args, new ProxyMethodDelegator(originalType,invoked,methodProxy));
 		}
 
 	}
@@ -76,7 +78,7 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 		try{
 			return facadeClass.cast(Enhancer.create(
 					facadeClass,
-					new ProxyHandlerInterceptor(handler)
+					new ProxyHandlerInterceptor(facadeClass,handler)
 			));
 		}catch (RuntimeException e){
 			throw new ReflectionException(e);
@@ -117,7 +119,7 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 				return proxyInterface.cast(Enhancer.create(
 						delegationTarget.getClass(), 
 						new Class[]{proxyInterface},
-						new ProxyHandlerInterceptor(handler))
+						new ProxyHandlerInterceptor(delegationTarget.getClass(),handler))
 				);
 			}catch (RuntimeException e){
 				throw new ReflectionException(e);

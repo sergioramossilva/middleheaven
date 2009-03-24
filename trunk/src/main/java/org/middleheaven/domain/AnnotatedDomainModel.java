@@ -30,6 +30,7 @@ import org.middleheaven.domain.annotations.Version;
 import org.middleheaven.domain.repository.Repository;
 import org.middleheaven.domain.repository.RepositoryRegister;
 import org.middleheaven.domain.repository.StandardEntityRepository;
+import org.middleheaven.logging.Logging;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.storage.DataStorage;
@@ -77,7 +78,7 @@ public class AnnotatedDomainModel implements DomainModel{
 		rep.setDomainModel(this);
 		return rep;
 	}
-	
+
 
 	@Override
 	public <E, R extends Repository<E>> R repository(Class<R> repositoryType) {
@@ -97,9 +98,9 @@ public class AnnotatedDomainModel implements DomainModel{
 	public <E> void addEntity(Class<E> entityType,Repository<? extends E> repository) {
 		this.repositoryRegistry.setRepository(entityType, repository);
 		// add annotaded storemodel
-	
-			this.addStorableModel(entityType);
-		
+
+		this.addStorableModel(entityType);
+
 	}
 
 	private void addStorableModel(Class<?> entityType){
@@ -169,22 +170,39 @@ public class AnnotatedDomainModel implements DomainModel{
 
 			Iterable<PropertyAccessor> propertyAccessors = ReflectionUtils.getPropertyAccessors(entityType);
 
-			for (PropertyAccessor pa : propertyAccessors){
-				AnnotatedStorableFieldModel sfm = new AnnotatedStorableFieldModel(
-						pa, 
-						QualifiedName.qualify(logicEntityName, pa.getName().toLowerCase())
-				);
+			AnnotatedStorableFieldModel possibleKey=null;
 
-				if (sfm.isKey()){
-					keyFieldModel = sfm;
+			if (!propertyAccessors.iterator().hasNext()){
+				throw new IllegalModelException("No public fields found for entity " + logicEntityName + ".");
+			} else {
+				for (PropertyAccessor pa : propertyAccessors){
+					AnnotatedStorableFieldModel sfm = new AnnotatedStorableFieldModel(
+							pa, 
+							QualifiedName.qualify(logicEntityName, pa.getName().toLowerCase())
+					);
+
+					if (sfm.isKey()){
+						keyFieldModel = sfm;
+					}else if (sfm.getDataType().equals(DataType.IDENTITY)){
+						possibleKey = sfm;
+					}
+
+					this.fields.put(sfm.getLogicName() , sfm);
 				}
 
-				this.fields.put(sfm.getLogicName() , sfm);
+				if (keyFieldModel==null){
+					// search for one returning Identity
+					if (possibleKey!=null){
+						// possibly the key field.
+						Logging.warn("No key field found for entity " + logicEntityName + " but found possible match in " + possibleKey.getLogicName());
+						keyFieldModel = possibleKey;
+
+					} else {
+						throw new IllegalModelException("No key field found for entity " + logicEntityName + ". Annotate the key acessor with @Key");
+					}
+				}
 			}
 
-			if (keyFieldModel==null){
-				throw new IllegalModelException("No key field found for entity " + logicEntityName + ". Annotate the key acessor with @Key");
-			}
 		}
 
 
@@ -225,8 +243,8 @@ public class AnnotatedDomainModel implements DomainModel{
 		public Object newInstance() {
 			return ReflectionUtils.newInstance(entityType);
 		}
-		
-		
+
+
 		@Override
 		public Class<?> getEntityClass() {
 			return entityType;
@@ -264,7 +282,7 @@ public class AnnotatedDomainModel implements DomainModel{
 				this.isVersion = pa.isAnnotatedWith(Version.class);
 				this.isUnique = pa.isAnnotatedWith(Unique.class);
 				this.valueType = pa.getValueType();
-				
+
 				if(pa.isAnnotatedWith(Key.class)){
 					this.isKey = true;
 					Key key = pa.getAnnotation(Key.class);
@@ -295,12 +313,12 @@ public class AnnotatedDomainModel implements DomainModel{
 					this.dataType = DataType.ONE_TO_MANY;
 					OneToMany ref = pa.getAnnotation(OneToMany.class);
 					Class target = ref.target();
-					
+
 				} else if (pa.isAnnotatedWith(ManyToMany.class)){
 					this.dataType = DataType.MANY_TO_MANY;
 					ManyToMany ref = pa.getAnnotation(ManyToMany.class);
 					Class target = ref.target();
-					
+
 				}
 
 				if(pa.isAnnotatedWith(Column.class)){
@@ -347,8 +365,8 @@ public class AnnotatedDomainModel implements DomainModel{
 				}
 			}
 
-			private boolean matchTypes(Class<?> candidate , Class ... types){
-				for (Class t : types){
+			private boolean matchTypes(Class<?> candidate , Class<?> ... types){
+				for (Class<?> t : types){
 					if (candidate.isAssignableFrom(t)){
 						return true;
 					}

@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
 import org.middleheaven.core.services.discover.ServiceDiscoveryEngine;
 
 public final class ServiceRegistry {
@@ -65,6 +64,9 @@ public final class ServiceRegistry {
      * @throws ServiceNotFoundException if no implementation is found for the service or the properties
      */
     public static <T> T getService(Class<T> serviceClass, Map<String,String> properties){
+    	if (context == null){
+    		
+    	}
     	T service = context.getService(serviceClass, properties);
     	if (service==null){
     		throw new ServiceNotFoundException(serviceClass.getName());
