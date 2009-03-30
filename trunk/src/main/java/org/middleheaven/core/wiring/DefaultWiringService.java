@@ -1,6 +1,7 @@
 package org.middleheaven.core.wiring;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,10 +17,10 @@ import org.middleheaven.core.wiring.service.ServiceScope;
 
 
 public class DefaultWiringService implements WiringService{
-	
-	@SuppressWarnings("unchecked")
-	PropertyResolver propertyResolver = new PropertyResolver();
-	
+
+
+	PropertyResolver<Object> propertyResolver = new PropertyResolver<Object>();
+
 	DefaultWiringContext wiringContext = new DefaultWiringContext();
 	BinderImpl binder = new BinderImpl();
 	List<Interceptor> interceptors = new ArrayList<Interceptor>();
@@ -30,19 +31,19 @@ public class DefaultWiringService implements WiringService{
 		scopes.put(Shared.class.getName(), SharedScope.class);
 		scopes.put(Default.class.getName(), DefaultScope.class);
 		scopes.put(Service.class.getName(), ServiceScope.class);
-		
+
 		DefaultScope defaultScope = new DefaultScope();
 		SharedScope sharedScope = new SharedScope();
-		
+
 		scopePools.put(DefaultScope.class.getName(),defaultScope);
 		scopePools.put(SharedScope.class.getName(),sharedScope);
-		
+
 		binder.bind(SharedScope.class).in(Shared.class).toInstance(sharedScope);
 		binder.bind(DefaultScope.class).in(Shared.class).toInstance(defaultScope);
 		binder.bind(ServiceScope.class).in(Shared.class);
 	}
-	
-	
+
+
 	@Override
 	public WiringContext getWiringContext() {
 		return wiringContext;
@@ -52,12 +53,12 @@ public class DefaultWiringService implements WiringService{
 
 	private class BinderImpl implements Binder,EditableBinder,ConnectableBinder{
 
-		Queue stack = new LinkedList();
+		Queue<Key> stack = new LinkedList<Key>();
 		Map<Key, CyclicProxy> cyclicProxies = new HashMap<Key, CyclicProxy>();
 
 		@Override
 		public <T> BindingBuilder<T> bind(Class<T> type) {
-			return new BindingBuilder(this, type);
+			return new BindingBuilder<T>(this, type);
 		}
 
 		@Override
@@ -68,11 +69,11 @@ public class DefaultWiringService implements WiringService{
 
 		@Override
 		public <T> PropertyBindingBuilder<T> bindProperty(Class<T> type) {
-			Binding<T> binding = new Binding<T>();
+			Binding binding = new Binding();
 			binding.setStartType(type);
 			binding.setResolver(propertyResolver);
 
-			PropertyBindingBuilder b = new PropertyBindingBuilder(this,binding);
+			PropertyBindingBuilder<T> b = new PropertyBindingBuilder<T>(this,binding);
 			binder.addBinding(binding);
 
 			return b;
@@ -83,21 +84,22 @@ public class DefaultWiringService implements WiringService{
 			bindings.put(binding.getKey(), binding);
 		}
 
+
 		@Override
 		public <T> T getInstance( WiringSpecification<T> query ){
-			Key<T> key = Key.keyFor(query.getContract(), query.getSpecifications());
+			Key key = Key.keyFor(query.getContract(), query.getSpecifications());
 
-			Binding<T> binding = bindings.get(key);
+			Binding binding = bindings.get(key);
 			if (binding==null){
 				// if its a concrete classe create a binding now
-				if (!query.getContract().isAnnotation() && !query.getContract().isInterface()){
+				if (!query.getContract().isAnnotation() && !query.getContract().isInterface() && !Modifier.isAbstract(query.getContract().getModifiers())){
 					this.bind(query.getContract()).to(query.getContract());
 					return getInstance(query); // repeat search
 				}
-				
+
 				// try understand from wich scope could be readed
 				Annotation[] all = ReflectionUtils.getAnnotations(query.getContract());
-				
+
 				List <Annotation> annotations = new ArrayList<Annotation>(Arrays.asList(all));
 				if (annotations.isEmpty()){
 					annotations.addAll(query.getSpecifications());
@@ -106,19 +108,19 @@ public class DefaultWiringService implements WiringService{
 				for (Annotation a : annotations){
 					if(scopes.containsKey(a.annotationType().getName())){
 						if ( found !=null){
-							throw new BindingException("To many auto binding options");
+							throw new BindingException("To many auto-binding options");
 						}
 						found = a;
 					}
 				}
-				
+
 				if (found!=null){
 					new BindingBuilder<T>(this,query.getContract()).in(found.annotationType());
 					return getInstance(query); // repeat search
 				} else {
 					throw new BindingNotFoundException(query.getContract());
 				}
-				
+
 			}
 			if (stack.contains(key)){
 				// cyclic reference
@@ -143,9 +145,9 @@ public class DefaultWiringService implements WiringService{
 							throw new BindingNotFoundException(binding.getScope());
 						}
 					}
-					
-					
-					
+
+
+
 					scopePool = scopePools.get(scopeClass.getName());
 					if (scopePool==null){
 						scopePool = getInstance(WiringSpecification.search(scopeClass));
@@ -200,7 +202,7 @@ public class DefaultWiringService implements WiringService{
 		public <T> T getInstance(Class<T> type, Map<String, String> params) {
 			return binder.getInstance(WiringSpecification.search(type, params));
 		}
-		
+
 		@Override
 		public void wireMembers(Object object) {
 			WireUtils.wireMembers(binder,object);

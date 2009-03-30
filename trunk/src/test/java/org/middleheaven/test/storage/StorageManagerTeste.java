@@ -7,18 +7,17 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.domain.DomailModelBuilder;
+import org.middleheaven.domain.DomainClasses;
+import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.annotations.Key;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.Storable;
-import org.middleheaven.storage.StorableDomainModel;
-import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.inmemory.InMemoryStoreKeeper;
 import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.identity.IntegerIdentity;
 
 
 public class StorageManagerTeste {
@@ -30,23 +29,12 @@ public class StorageManagerTeste {
 	@Before
 	public void setUp(){
 		
-		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
-		model.addEntity(TestSubject.class);
+
+		final DomainModel model = new DomailModelBuilder().build(
+				new DomainClasses().add(TestSubject.class)
+		);
 		
-		storage = new DomainDataStorage(store , new StorableDomainModel(){
-
-			@Override
-			public StorableEntityModel getStorageModel(Class<?> type) {
-				return (StorableEntityModel) model.getEntityModelFor(type);
-			}
-
-			@Override
-			public Class<? extends Identity> indentityTypeFor(
-					Class<?> entityType) {
-				return IntegerIdentity.class;
-			}
-
-		});
+		storage = new DomainDataStorage(store , model);
 		
 	}
 	

@@ -11,7 +11,9 @@ import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.StandaloneContainer;
-import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.domain.DomailModelBuilder;
+import org.middleheaven.domain.DomainClasses;
+import org.middleheaven.domain.DomainModel;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
@@ -19,12 +21,9 @@ import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.Storable;
-import org.middleheaven.storage.StorableDomainModel;
-import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.inmemory.InMemoryStoreKeeper;
 import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.identity.IntegerIdentity;
 
 
 public class NaiveStorageManagerTeste {
@@ -54,23 +53,12 @@ public class NaiveStorageManagerTeste {
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 		
 		// create model
-		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
-		model.addEntity(TestSubject.class);
+		final DomainModel model = new DomailModelBuilder().build(
+				new DomainClasses().add(TestSubject.class)
+		);
 		
-		manager = new DomainDataStorage(store , new StorableDomainModel(){
-
-			@Override
-			public StorableEntityModel getStorageModel(Class<?> type) {
-				return (StorableEntityModel) model.getEntityModelFor(type);
-			}
-
-			@Override
-			public Class<? extends Identity> indentityTypeFor(
-					Class<?> entityType) {
-				return IntegerIdentity.class;
-			}
-
-		});
+		manager = new DomainDataStorage(store , model);
+		
 		subj.setNascimento(CalendarDate.today());
 		subj.setName("Alberto");
 	}

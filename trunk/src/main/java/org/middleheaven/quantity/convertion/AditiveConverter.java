@@ -5,12 +5,12 @@ import org.middleheaven.quantity.measurables.Measurable;
 import org.middleheaven.quantity.measure.Scalable;
 import org.middleheaven.quantity.unit.Unit;
 
-public final class AditiveConverter<E extends Measurable> extends AbstractUnitConverter<E> {
+public final class AditiveConverter<E extends Measurable , T extends Scalable<E,T>> extends AbstractUnitConverter<E,T> {
 
-	
-	public static <E extends Measurable> AditiveConverter<E> convert(Unit<E> originalUnit,
+	@SuppressWarnings("unchecked")
+	public static <E extends Measurable> AditiveConverter<E,?> convert(Unit<E> originalUnit,
 			Unit<E> resultUnit, Real shift) {
-		return new AditiveConverter<E>(shift,originalUnit, resultUnit );
+		return new AditiveConverter(shift,originalUnit, resultUnit );
 	}
 	
 	private final Real shift;
@@ -19,9 +19,8 @@ public final class AditiveConverter<E extends Measurable> extends AbstractUnitCo
 		this.shift = shift;
 	}
 
-
 	@Override
-	public <T extends Scalable<E, T>> T convertFoward(T value) {
+	public T convertFoward(T value) {
 		if (!value.unit().equals(this.originalUnit)){
 			throw new IllegalArgumentException("Expected unit " + this.originalUnit + " but was " + value.unit());
 		}
@@ -29,10 +28,8 @@ public final class AditiveConverter<E extends Measurable> extends AbstractUnitCo
 		return value.times(Real.ONE(),  this.resultUnit).minus(diff);
 	}
 
-
-
 	@Override
-	public <T extends Scalable<E, T>> T convertReverse(T value) {
+	public T convertReverse(T value) {
 		if (!value.unit().equals(this.resultUnit)){
 			throw new IllegalArgumentException("Expected unit " + this.originalUnit + " but was " + value.unit());
 		}

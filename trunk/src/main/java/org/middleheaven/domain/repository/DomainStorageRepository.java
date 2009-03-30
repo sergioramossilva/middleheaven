@@ -9,17 +9,23 @@ import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
 
 
-public class StandardEntityRepository<E> extends AbstractRepository<E>  {
+public class DomainStorageRepository<E> extends AbstractRepository<E>  {
 
 	private Class<E> entityType;
 	private DomainModel domainModel;
 	private DataStorageListener storageListener;
+	private DataStorage dataStorage;
 
-	public StandardEntityRepository(Class<E> entityType){
+	public DomainStorageRepository(Class<E> entityType,DataStorage dataStorage){
 		this.entityType = entityType;
-
+		this.dataStorage = dataStorage;
 	}
 
+	public DataStorage getDataStorage(){
+		return dataStorage;
+	}
+
+	
 	@Override
 	public void addRepositoryListener(RepositoryListener listener) {
 		super.addRepositoryListener(listener);
@@ -49,9 +55,6 @@ public class StandardEntityRepository<E> extends AbstractRepository<E>  {
 		this.domainModel = domainModel;
 	}
 
-	protected DataStorage getDataStorage(){
-		return domainModel.storageOf(entityType);
-	}
 
 	@Override
 	public void remove(E intance) {
@@ -81,9 +84,14 @@ public class StandardEntityRepository<E> extends AbstractRepository<E>  {
 	@Override
 	public Query<E> findByIdentity(Identity id) {
 		return getDataStorage().createQuery(CriteriaBuilder.search(entityType)
-				.and(this.domainModel.getEntityModelFor(entityType).identityFieldModel().getLogicName().getColumnName()).eq(id)
+				.and(this.domainModel.getEntityModelFor(entityType).identityFieldModel().getLogicName().getName()).eq(id)
 				.all()
 		);
+	}
+
+	@Override
+	public Identity getIdentityFor(E instance) {
+		return dataStorage.getIdentityFor(instance);
 	}
 
 

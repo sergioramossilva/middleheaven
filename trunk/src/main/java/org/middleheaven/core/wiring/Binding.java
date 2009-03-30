@@ -4,12 +4,11 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Binding<T> {
+public class Binding {
 
-	
 	private Class<?> startType;
 	private Class<?> scope;
-	private Resolver<T> resolver;
+	private Resolver resolver;
 	private Set specifications = new HashSet();
 	
 	public String toString(){
@@ -23,16 +22,17 @@ public class Binding<T> {
 		this.startType = startType;
 	}
 	
-	protected void setResolver(Resolver<T> resolver) {
+	protected void setResolver(Resolver<?> resolver) {
 		this.resolver = resolver;
 	}
 	
-	protected Resolver<T> getResolver() {
+	@SuppressWarnings("unchecked")
+	protected <T> Resolver<T> getResolver() {
 		return resolver;
 	}
 
-	public Key<T> getKey(){
-		return (Key<T>)Key.keyFor(this.startType, specifications);
+	public Key getKey(){
+		return Key.keyFor(this.startType, specifications);
 	}
 
 

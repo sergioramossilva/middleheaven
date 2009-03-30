@@ -4,8 +4,8 @@ package org.middleheaven.core.wiring;
 interface EditableBinder {
 
 	
-	public <T> void addBinding(Binding<T> binding);
+	public void addBinding(Binding binding);
 	public <T> T getInstance(WiringSpecification<T> query);
-	public <T> void removeBinding(Binding<T> binding);
+	public void removeBinding(Binding binding);
 
 }

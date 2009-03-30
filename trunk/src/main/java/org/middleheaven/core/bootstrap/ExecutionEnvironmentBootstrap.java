@@ -166,7 +166,6 @@ public abstract class ExecutionEnvironmentBootstrap {
 	protected void doBeforeStop(){};
 	protected void doAfterStop(){}; 
 
-	public abstract ContextIdentifier getContextIdentifier();
 	public abstract Container getContainer();
 
 	private class ListServiceContextConfigurator extends ServiceContextConfigurator {

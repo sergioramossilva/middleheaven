@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.domain.DomainModel;
 import org.middleheaven.sequence.DefaultToken;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.sequence.SequenceToken;
@@ -20,12 +21,20 @@ import org.middleheaven.util.identity.UUIDIdentitySequence;
 public class DomainDataStorage implements DataStorage {
 
 	StoreKeeper storeKeeper;
-	StorableDomainModel domainModel;
+	DomainModel domainModel;
 	Set<DataStorageListener> listeners = new CopyOnWriteArraySet<DataStorageListener>();
-	
-	public DomainDataStorage(StoreKeeper storeManager,StorableDomainModel domainModel) {
+	private Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
+
+	public DomainDataStorage(StoreKeeper storeManager,DomainModel domainModel) {
 		this.storeKeeper = storeManager;
 		this.domainModel = domainModel;
+	}
+
+	public final Identity getIdentityFor(Object object){
+		if (object instanceof Storable){
+			return ((Storable)object).getIdentity();
+		}
+		return null;
 	}
 
 	@Override
@@ -35,9 +44,12 @@ public class DomainDataStorage implements DataStorage {
 
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
-		return storeKeeper.createQuery(criteria, domainModel.getStorageModel(criteria.getTargetClass()) ,strategy);
+		return storeKeeper.createQuery(criteria, 
+				storeKeeper.storableModelOf(domainModel.getEntityModelFor(criteria.getTargetClass())) ,
+				strategy
+		);
 	}
-	
+
 	@Override
 	public <T> T store(T obj) {
 		Storable p;
@@ -51,7 +63,34 @@ public class DomainDataStorage implements DataStorage {
 		doStore(p);
 		return (T)p;
 	}
-	
+
+	protected Identity nextID(Class<?> entityType) {
+		Class<? extends Identity> identityType = domainModel.getEntityModelFor(entityType).getIdentityType();
+		if (UUIDIdentity.class.isAssignableFrom(identityType)){
+			return new UUIDIdentitySequence().next().value();
+		} else {
+
+		}
+		return nextID(identityType , domainModel.getEntityModelFor(entityType).getEntityName());
+	}
+
+	protected <I extends Identity> I nextID(Class<I> identityType,String identifiableName) {
+		if (identityType.equals(IntegerIdentity.class)){
+
+			IdentitySequence<Identity> idSequence = sequences.get(identifiableName);
+			if (idSequence == null){
+				Sequence<Identity> dialectSequence = this.storeKeeper.getSequence(identifiableName); 
+				idSequence = new DataBaseIntegerIdentitySequence(dialectSequence);
+				sequences.put(identifiableName,idSequence);
+			} 
+
+			return identityType.cast(idSequence.next().value());
+
+		} else {
+			throw new StorageException("Identity of type " + identityType.getName() + " is not supported by " + this.getClass().getName());
+		}
+	}
+
 	private final void doStore(Storable p){
 		switch (p.getPersistableState()){
 		case DELETED:
@@ -71,40 +110,11 @@ public class DomainDataStorage implements DataStorage {
 			throw new IllegalStateException(p.getPersistableState() + " is unkown");
 		}
 	}
-	
-	private Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
-	
-	protected Identity nextID(Class<?> entityType) {
-		Class<? extends Identity> identityType = domainModel.indentityTypeFor(entityType);
-		if (UUIDIdentity.class.isAssignableFrom(identityType)){
-			return new UUIDIdentitySequence().next().value();
-		} else {
-			
-		}
-		return nextID(identityType , domainModel.getStorageModel(entityType).getEntityLogicName());
-	}
-
-	protected <I extends Identity> I nextID(Class<I> identityType,String identifiableName) {
-		if (identityType.equals(IntegerIdentity.class)){
-			
-			IdentitySequence<Identity> idSequence = sequences.get(identifiableName);
-			if (idSequence == null){
-				Sequence<Identity> dialectSequence = this.storeKeeper.getSequence(identifiableName); 
-				idSequence = new DataBaseIntegerIdentitySequence(dialectSequence);
-				sequences.put(identifiableName,idSequence);
-			} 
-			
-			return identityType.cast(idSequence.next().value());
-
-		} else {
-			throw new StorageException("Identity of type " + identityType.getName() + " is not supported by " + this.getClass().getName());
-		}
-	}
 
 	private static class DataBaseIntegerIdentitySequence implements IdentitySequence<Identity> {
 
 		Sequence<Identity> baseSequence;
-		
+
 		public DataBaseIntegerIdentitySequence(Sequence<Identity> baseSequence) {
 			super();
 			this.baseSequence = baseSequence;
@@ -115,20 +125,23 @@ public class DomainDataStorage implements DataStorage {
 			// TODO define LongIdentity
 			return new DefaultToken<Identity>(baseSequence.next().value());
 		}
-		
-		
+
+
 	}
-	
+
 	private void doInsert(Storable p) {
 		if (p.getIdentity()!=null){
 			doUpdate(p);
 		}
-		
+
 		// assign key
 		p.setIdentity(this.storeKeeper.getSequence(p.getPersistableClass().getName()).next().value());
-		
-		this.storeKeeper.insert(Collections.singleton(p),domainModel.getStorageModel(p.getPersistableClass()));
-		
+
+		this.storeKeeper.insert(
+				Collections.singleton(p),
+				storeKeeper.storableModelOf(domainModel.getEntityModelFor(p.getPersistableClass()))
+		);
+
 		p.setPersistableState(PersistableState.RETRIVED);
 		fireAddEvent(p);
 	}
@@ -137,9 +150,12 @@ public class DomainDataStorage implements DataStorage {
 		if (p.getIdentity()==null){
 			doInsert(p);
 		}
-		
-		this.storeKeeper.update(Collections.singleton(p),domainModel.getStorageModel(p.getPersistableClass()));
-		
+
+		this.storeKeeper.update(
+				Collections.singleton(p),
+				storeKeeper.storableModelOf(domainModel.getEntityModelFor(p.getPersistableClass()))
+		);
+
 		p.setPersistableState(PersistableState.RETRIVED);
 		fireUpdatedEvent(p);
 	}
@@ -148,9 +164,12 @@ public class DomainDataStorage implements DataStorage {
 		if (p.getIdentity()==null){
 			return;
 		}
-		
-		this.storeKeeper.remove(Collections.singleton(p),domainModel.getStorageModel(p.getPersistableClass()));
-		
+
+		this.storeKeeper.remove(
+				Collections.singleton(p),
+				storeKeeper.storableModelOf((domainModel.getEntityModelFor(p.getPersistableClass())))
+		);
+
 		p.setPersistableState(PersistableState.DELETED);
 		fireRemovedEvent(p);
 	}
@@ -167,12 +186,14 @@ public class DomainDataStorage implements DataStorage {
 		// else 
 		// not managed
 		// do nothing as this obj is not in the store
-		
+
 	}
 
 	@Override
 	public <T> void remove(Criteria<T> criteria) {
-		this.storeKeeper.remove(criteria, domainModel.getStorageModel(criteria.getTargetClass()));
+		this.storeKeeper.remove(criteria, 
+				storeKeeper.storableModelOf(domainModel.getEntityModelFor(criteria.getTargetClass()))
+		);
 	}
 
 	@Override
@@ -184,28 +205,28 @@ public class DomainDataStorage implements DataStorage {
 	public void removeStorageListener(DataStorageListener listener) {
 		listeners.remove(listener);
 	}
-	
+
 	private void fireAddEvent(Object instance){
 		StorageChangeEvent event = new StorageChangeEvent(instance,
 				false, true, false
 		);
-		
+
 		for (DataStorageListener listener : listeners){
 			listener.onStorageChange(event);
 		}
-		
+
 		event = null;
 	}
-	
+
 	private void fireRemovedEvent(Object instance){
 		StorageChangeEvent event = new StorageChangeEvent(instance,
 				true, false, false
 		);
-		
+
 		for (DataStorageListener listener : listeners){
 			listener.onStorageChange(event);
 		}
-		
+
 		event = null;
 	}
 
@@ -213,11 +234,11 @@ public class DomainDataStorage implements DataStorage {
 		StorageChangeEvent event = new StorageChangeEvent(instance,
 				false, false, true
 		);
-		
+
 		for (DataStorageListener listener : listeners){
 			listener.onStorageChange(event);
 		}
-		
+
 		event = null;
 	}
 }

@@ -37,15 +37,7 @@ public final class WebFacadeServlet extends HttpServlet {
 			
 			String enviromentName = this.parseEnviromentName(request);
 			
-			final String suffix = getServletConfig().getInitParameter("suffix");
-
 			StringBuffer requestURL = request.getRequestURL();
-
-			if (suffix!=null && requestURL.indexOf(suffix) != requestURL.length() - suffix.length()){
-				Logging.getBook("web").warn("Sufix missmatch ("+ requestURL +")");
-				response.sendError(501); // service not implemented
-				return;
-			} 
 
 			WebContext context = new RequestResponseWebContext(request,response);
 
@@ -59,7 +51,7 @@ public final class WebFacadeServlet extends HttpServlet {
 
 			WebCommandMappingService mapper = ServiceRegistry.getService(WebCommandMappingService.class);
 
-			WebCommandMapping webCommandMapping = mapper.resolve(stripedRequestPath(request, suffix));
+			WebCommandMapping webCommandMapping = mapper.resolve(stripedRequestPath(request));
 
 			if (webCommandMapping==null){
 				// 404 resource not found
@@ -100,14 +92,14 @@ public final class WebFacadeServlet extends HttpServlet {
 		return requestURL.substring(pos+1);
 	}
 
-	private CharSequence stripedRequestPath(HttpServletRequest request , String suffix ) {
+	private CharSequence stripedRequestPath(HttpServletRequest request ) {
 		StringBuilder requestURL = new StringBuilder(request.getRequestURL());
-		String end = ".";
-		if ( suffix != null){
-			end = end.concat(suffix);
-		}
+	
+		String contextPath = request.getContextPath();
 		// remove context from the start and suffix from end
-		String[] url = requestURL.substring( requestURL.indexOf(request.getContextPath()) + request.getContextPath().length(), requestURL.length() - end.length()).split("\\.") ;
+		final int afterContext = requestURL.indexOf(contextPath)>0 ? requestURL.indexOf(contextPath) + contextPath.length(): 0;
+		
+		String[] url = requestURL.substring(afterContext, requestURL.length() - requestURL.lastIndexOf(".",afterContext)).split("\\.") ;
 		
 		if ( url.length>1){
 			request.setAttribute("action", url[1]);

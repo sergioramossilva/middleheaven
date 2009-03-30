@@ -12,11 +12,16 @@ import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.WrappStorableReader;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
 
 public class InMemoryStoreKeeper extends AbstractStoreKeeper {
+	
+	public InMemoryStoreKeeper() {
+		super(new WrappStorableReader());
+	}
 
 	final Map<String, Collection<Storable> > data = new HashMap<String, Collection<Storable> >();
 	final Map<String, Sequence<Identity>> sequences = new HashMap<String,Sequence<Identity>>();
@@ -77,7 +82,6 @@ public class InMemoryStoreKeeper extends AbstractStoreKeeper {
 			Storable s = collection.iterator().next();
 			this.getBulkData(s.getPersistableClass().getName()).removeAll(collection);
 			this.setBulkData(collection);
-			
 		}
 	}
 
@@ -86,6 +90,10 @@ public class InMemoryStoreKeeper extends AbstractStoreKeeper {
 		// TODO Auto-generated method stub
 		
 	}
+
+
+
+
 
 
 

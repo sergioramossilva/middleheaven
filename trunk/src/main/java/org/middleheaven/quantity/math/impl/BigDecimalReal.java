@@ -165,6 +165,7 @@ public class BigDecimalReal extends Real{
 		return this.asNumber().toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Incrementable<Real>> T incrementBy(Real increment) {
 		return (T)this.plus(increment);
@@ -220,7 +221,7 @@ public class BigDecimalReal extends Real{
 	}
 
 	@Override
-	public int compareTo(org.middleheaven.quantity.math.Number o) {
+	public int compareTo(org.middleheaven.quantity.math.Number<? super Real> o) {
 		return this.asNumber().compareTo(o.asNumber());
 	}
 

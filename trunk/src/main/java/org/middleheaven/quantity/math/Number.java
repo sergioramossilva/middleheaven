@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.middleheaven.quantity.Quantity;
+import org.middleheaven.quantity.math.structure.Field;
 import org.middleheaven.quantity.math.structure.GroupAdditive;
 import org.middleheaven.quantity.math.structure.Ring;
 import org.middleheaven.quantity.measurables.Dimensionless;
@@ -18,7 +19,7 @@ import org.middleheaven.quantity.unit.Unit;
  * 
  *
  */
-public abstract class Number<T extends Number<T>> implements Quantity<Dimensionless> , Serializable, GroupAdditive<T>, Ring<T>  {
+public abstract class Number<T extends Number<T>> implements Field<T> , Quantity<Dimensionless> , Serializable, GroupAdditive<T>, Ring<T>  {
 
 
 	private static final long serialVersionUID = -3007304512447112381L;
@@ -72,9 +73,11 @@ public abstract class Number<T extends Number<T>> implements Quantity<Dimensionl
 		return other instanceof Number && equals((Number<?>)other);
 	}
 	
+
 	private boolean equals(Number<?> other){
-		if (other.getClass().equals(this.getClass())){
-			return this.equalsSame((T) this.getClass().cast(other));
+		if (this.getClass().isInstance(other)){
+			@SuppressWarnings("unchecked") T n = (T) this.getClass().cast(other);
+			return this.equalsSame(n);
 		} else {
 			return this.asNumber().compareTo(other.asNumber())==0;
 		}

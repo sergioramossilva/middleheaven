@@ -12,7 +12,6 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 		this.passe = passe;
 	}
 	
-	
 	@Override
 	public java.lang.Number increment(java.lang.Number object) {
 		try {

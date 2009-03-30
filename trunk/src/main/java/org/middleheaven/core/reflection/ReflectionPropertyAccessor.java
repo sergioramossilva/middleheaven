@@ -91,6 +91,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 		}
 	}
 
+	
 	public void  setValue(Object target, Object value ){
 		try {
 
@@ -98,7 +99,8 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 				modifier.invoke(target, TypeConvertions.convert(value,modifier.getParameterTypes()[0]));
 			} else if (modifyByField && field!=null){
 				field.setAccessible(true);
-				field.set(target,TypeConvertions.convert(value,(Class)field.getGenericType()));
+				@SuppressWarnings("unchecked") Object obj = TypeConvertions.convert(value,(Class)field.getGenericType());
+				field.set(target,obj);
 			} // else is read only. not an exception
 		}catch (IllegalArgumentException e) {
 			throw new ReflectionException(e);

@@ -8,22 +8,22 @@ import java.util.Set;
 
 import org.middleheaven.util.CollectionUtils;
 
-public class Key<T> {
+public class Key {
 
-	private Class<T> targetClass;
+	private Class targetClass;
 	private Set specifications = new HashSet ();
 	
 	public String toString(){
 		return targetClass.getName() + "+" + specifications.toString();
 	}
 	
-	public static <T> Key<T> keyFor(Class<T> targetClass, Set<Annotation> specificationsSet) {
-		return new Key<T>(targetClass,specificationsSet);
+	public static  Key keyFor(Class<?> targetClass, Set<Annotation> specificationsSet) {
+		return new Key(targetClass,specificationsSet);
 	}
 	
-	private Key(Class<T> targetClass, Set<Annotation> specificationsSet) {
+	private Key(Class<?> targetClass, Set<Annotation> specificationsSet) {
 		this.targetClass = targetClass;
-		for (Iterator it = specificationsSet.iterator();it.hasNext();){
+		for (Iterator<Annotation> it = specificationsSet.iterator();it.hasNext();){
 			Object a  = it.next();
 			if (a==null){
 				continue;
@@ -47,7 +47,7 @@ public class Key<T> {
 		return other instanceof Key && equals((Key)other);
 	}
 	
-	public boolean equals(Key<T> other){
+	public boolean equals(Key other){
 		return other.targetClass == this.targetClass || ( other.targetClass.getName().equals(this.targetClass.getName()) &&
 		 	CollectionUtils.equalsIgnoreOrder(this.specifications, other.specifications));
 

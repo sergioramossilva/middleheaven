@@ -41,14 +41,14 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
 
 
-		buffer.append(hardname.getTableName().toLowerCase());
+		buffer.append(hardname.getQualifier().toLowerCase());
 		buffer.append(fieldSeparator());
-		buffer.append(hardname.getColumnName().toLowerCase());
+		buffer.append(hardname.getName().toLowerCase());
 	}
 	
 	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
 
-		buffer.append(hardname.getColumnName().toLowerCase());
+		buffer.append(hardname.getName().toLowerCase());
 
 	}
 

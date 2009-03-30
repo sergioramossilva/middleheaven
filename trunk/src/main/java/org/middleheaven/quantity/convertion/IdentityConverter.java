@@ -4,8 +4,7 @@ import org.middleheaven.quantity.measurables.Measurable;
 import org.middleheaven.quantity.measure.Scalable;
 import org.middleheaven.quantity.unit.Unit;
 
-class IdentityConverter<E extends Measurable> implements UnitConverter<E> {
-
+class IdentityConverter<E extends Measurable,T extends Scalable<E,T>> implements UnitConverter<E,T> {
 	
 	private Unit<E> unit;
 
@@ -25,17 +24,17 @@ class IdentityConverter<E extends Measurable> implements UnitConverter<E> {
 	}
 
 	@Override
-	public <T extends Scalable<E, T>> T convertFoward(T value) {
+	public T convertFoward(T value) {
 		return value;
 	}
 
 	@Override
-	public <T extends Scalable<E, T>> T convertReverse(T value) {
+	public T convertReverse(T value) {
 		return value;
 	}
 
 	@Override
-	public UnitConverter<E> inverse() {
+	public UnitConverter<E,T> inverse() {
 		return this;
 	}
 

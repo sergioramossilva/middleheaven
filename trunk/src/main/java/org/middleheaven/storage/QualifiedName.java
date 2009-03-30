@@ -4,25 +4,25 @@ import java.io.Serializable;
 
 public class QualifiedName implements Serializable{
 
-	private String tableName;
-	private String columnName;
+	private String qualifier;
+	private String name;
 	
 
-	public static QualifiedName qualify(String tableName, String columnName){
-		return new QualifiedName(tableName,columnName);
+	public static QualifiedName qualify(String qualifier, String name){
+		return new QualifiedName(qualifier,name);
 	}
 	
-	private QualifiedName(String tableName, String columnName) {
+	private QualifiedName(String qualifier, String name) {
 		super();
-		this.tableName = tableName;
-		this.columnName = columnName;
+		this.qualifier = qualifier;
+		this.name = name;
 	}
 	
-	public String getTableName() {
-		return tableName;
+	public String getQualifier() {
+		return qualifier;
 	}
-	public String getColumnName() {
-		return columnName;
+	public String getName() {
+		return name;
 	}
 	
 	public boolean equals(Object other) {
@@ -30,11 +30,11 @@ public class QualifiedName implements Serializable{
 	}
 
 	public boolean equals(QualifiedName other) {
-		return this.columnName.equals(other.columnName) && this.tableName.equals(other.tableName);
+		return this.name.equals(other.name) && this.qualifier.equals(other.qualifier);
 	}
 
 	public int hashCode() {
-		return columnName.hashCode() ^ tableName.hashCode();
+		return name.hashCode() ^ qualifier.hashCode();
 	}
 
 

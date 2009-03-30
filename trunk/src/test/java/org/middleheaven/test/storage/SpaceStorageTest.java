@@ -7,17 +7,15 @@ import java.io.File;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.domain.DomailModelBuilder;
+import org.middleheaven.domain.DomainClasses;
+import org.middleheaven.domain.DomainModel;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
-import org.middleheaven.storage.StorableDomainModel;
-import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.inmemory.SpaceStoreKeeper;
-import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.identity.IntegerIdentity;
 import org.space4j.Space4J;
 import org.space4j.implementation.SimpleSpace4J;
 
@@ -54,22 +52,11 @@ public class SpaceStorageTest {
 	@Test
 	public void test(){
 
-		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
-		model.addEntity(Subject.class);
+		final DomainModel model = new DomailModelBuilder().build(
+				new DomainClasses().add(Subject.class)
+		);
 		
-		DataStorage ds = new DomainDataStorage(new SpaceStoreKeeper(space4j) , new StorableDomainModel(){
-
-			@Override
-			public StorableEntityModel getStorageModel(Class<?> type) {
-				return (StorableEntityModel) model.getEntityModelFor(type);
-			}
-
-			@Override
-			public Class<? extends Identity> indentityTypeFor(Class<?> entityType) {
-				return IntegerIdentity.class;
-			}
-
-		});
+		DataStorage ds = new DomainDataStorage(new SpaceStoreKeeper(space4j) , model);
 
 		// read all
 		Criteria<Subject> c = CriteriaBuilder.search(Subject.class).all();

@@ -4,17 +4,16 @@ import org.middleheaven.quantity.measurables.Measurable;
 import org.middleheaven.quantity.measure.Scalable;
 import org.middleheaven.quantity.unit.Unit;
 
-public final class InvertedUnitConverter<E extends Measurable> implements UnitConverter<E> {
+public final class InvertedUnitConverter<E extends Measurable,T extends Scalable<E,T>> implements UnitConverter<E,T> {
 
-	private UnitConverter<E> original;
+	private UnitConverter<E,T> original;
 	
-	public InvertedUnitConverter(UnitConverter<E> original){
+	public InvertedUnitConverter(UnitConverter<E,T> original){
 		this.original = original;
 	}
-	
 
 	@Override
-	public UnitConverter<E> inverse() {
+	public UnitConverter<E,T> inverse() {
 		return original;
 	}
 
@@ -30,13 +29,13 @@ public final class InvertedUnitConverter<E extends Measurable> implements UnitCo
 
 
 	@Override
-	public <T extends Scalable<E, T>> T convertFoward(T value) {
+	public T convertFoward(T value) {
 		return original.convertReverse(value);
 	}
 
 
 	@Override
-	public <T extends Scalable<E, T>> T convertReverse(T value) {
+	public T convertReverse(T value) {
 		return original.convertFoward(value);
 	}
 

@@ -9,10 +9,9 @@ import org.middleheaven.util.Range;
 /**
  * Represents an integer number
  * 
- * @author Sergio M.M. Taborda
  *
  */
-public abstract class Integer extends Number<Integer> implements Field<Integer> ,  Comparable<Number>, Enumerable<Integer> , Incrementable <Integer>{
+public abstract class Integer extends Number<Integer> implements Field<Integer> ,  Comparable<Number<? super Integer>>, Enumerable<Integer> , Incrementable <Integer>{
 
 
 	private static final long serialVersionUID = 8636156681654308959L;
@@ -22,8 +21,8 @@ public abstract class Integer extends Number<Integer> implements Field<Integer> 
 	}
 	
 	public static Integer valueOf (Number<?> other) {
-		if (other instanceof Integer){
-			return (Integer)other;
+		if (Integer.class.isInstance(other)){
+			return Integer.class.cast(other);
 		} 
 		return valueOf(other.asNumber().longValue());
 	}

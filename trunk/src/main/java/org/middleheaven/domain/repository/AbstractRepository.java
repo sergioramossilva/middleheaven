@@ -17,7 +17,6 @@ public abstract class AbstractRepository<E> implements Repository<E> {
 		listeners.remove(listener);
 	}
 
-
 	protected void fireChangeEvent(E instance, boolean isDeleted, boolean isAdded, boolean isUpdated){
 		RepositoryChangeEvent<E> event = new RepositoryChangeEvent<E>(
 				this,

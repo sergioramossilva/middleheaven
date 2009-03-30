@@ -66,15 +66,15 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 
 	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
 
-		if (!hardname.getColumnName().isEmpty()){
-			buffer.append(hardname.getColumnName().toLowerCase());
+		if (!hardname.getName().isEmpty()){
+			buffer.append(hardname.getName().toLowerCase());
 		}
 	}
 
 	
 
 	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
-		buffer.append(hardname.getColumnName().toLowerCase());
+		buffer.append(hardname.getName().toLowerCase());
 	}
 
 

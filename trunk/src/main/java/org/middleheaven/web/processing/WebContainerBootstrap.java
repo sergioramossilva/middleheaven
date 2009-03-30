@@ -9,7 +9,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.middleheaven.core.Container;
-import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.logging.LoggingLevel;
@@ -24,15 +23,17 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		servletContext =  servletContextEvent.getServletContext();
-		servletContext.setAttribute("application.id", this.getContextIdentifier());
+
 		HttpServerService httpService = new ServletHttpServerService();
 		
-		ServiceRegistry.register(HttpServerService.class, httpService);
 		
 		start(
 				new WritableLogBook("web container book",LoggingLevel.ALL)
 				.addWriter(new ServletContextLogBookWriter(servletContext))
 		);
+		
+		ServiceRegistry.register(HttpServerService.class, httpService);
+		
 		
 		httpService.start();
 	}
@@ -40,13 +41,6 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
 		stop();
 		servletContext = null;
-	}
-
-
-	@Override
-	public ContextIdentifier getContextIdentifier() {
-		// get it from a parameter in the configuration
-		return ContextIdentifier.getInstance((String)servletContext.getInitParameter("application.id"));
 	}
 
 	@Override

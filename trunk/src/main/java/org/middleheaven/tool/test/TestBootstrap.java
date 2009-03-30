@@ -3,7 +3,6 @@ package org.middleheaven.tool.test;
 import java.io.File;
 
 import org.middleheaven.core.Container;
-import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.io.repository.ManagedFileRepositories;
@@ -19,9 +18,6 @@ public class TestBootstrap extends ExecutionEnvironmentBootstrap{
 		return container;
 	}
 
-	@Override
-	public ContextIdentifier getContextIdentifier() {
-		return ContextIdentifier.getInstance("app");
-	}
+
 
 }

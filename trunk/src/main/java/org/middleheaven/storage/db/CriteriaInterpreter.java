@@ -324,19 +324,19 @@ public class CriteriaInterpreter {
 				.append(dialect().endDelimiter())
 				.append(" ON ")
 				.append(dialect().startDelimiter())
-				.append(fm.getHardName().getTableName())
+				.append(fm.getHardName().getQualifier())
 				.append(dialect().endDelimiter())
 				.append(dialect().fieldSeparator())
 				.append(dialect().startDelimiter())
-				.append(fm.getHardName().getColumnName())
+				.append(fm.getHardName().getName())
 				.append(dialect().endDelimiter())
 				.append(" = ")
 				.append(dialect().startDelimiter())
-				.append(kfm.getTableName())
+				.append(kfm.getQualifier())
 				.append(dialect().endDelimiter())
 				.append(dialect().fieldSeparator())
 				.append(dialect().startDelimiter())
-				.append(kfm.getColumnName())
+				.append(kfm.getName())
 				.append(dialect().endDelimiter());
 
 				// do not write WHERE claus because it will been writen in the normal process
@@ -505,19 +505,19 @@ public class CriteriaInterpreter {
 			QualifiedName n = ((SumFieldOperator)op).getFieldName();
 			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
 			selectBuffer.append(") AS ");
-			selectBuffer.append(n.getColumnName().toLowerCase());
+			selectBuffer.append(n.getName().toLowerCase());
 		} else if (op instanceof MaxFieldOperator){
 			selectBuffer.append("MAX(");
 			QualifiedName n = ((MaxFieldOperator)op).getFieldName();
 			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
 			selectBuffer.append(") AS ");
-			selectBuffer.append(n.getColumnName().toLowerCase());
+			selectBuffer.append(n.getName().toLowerCase());
 		} else if (op instanceof MinFieldOperator){
 			selectBuffer.append("MIN(");
 			QualifiedName n = ((MinFieldOperator)op).getFieldName();
 			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
 			selectBuffer.append(") AS ");
-			selectBuffer.append(n.getColumnName().toLowerCase());
+			selectBuffer.append(n.getName().toLowerCase());
 		} else {
 			throw new StorageException("ProjectionOperator " + op.getClass().getName() + " is not supported by " + this.getClass().getName());
 		}

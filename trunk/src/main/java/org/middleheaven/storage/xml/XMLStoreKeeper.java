@@ -20,6 +20,7 @@ import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
@@ -41,12 +42,13 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 	}
 
 
-	public static XMLStoreKeeper manage(ManagedFile source){
-		return new XMLStoreKeeper(source);
+	public static XMLStoreKeeper manage(ManagedFile source,StorableModelReader reader){
+		return new XMLStoreKeeper(source, reader);
 	}
 
 	Document doc;
-	public XMLStoreKeeper(ManagedFile source){
+	public XMLStoreKeeper(ManagedFile source , StorableModelReader reader){
+		super(reader);
 		if (source.getType().isFile()){
 			XMLStoreContructor c = new XMLStoreContructor();
 			c.constructFrom(source);

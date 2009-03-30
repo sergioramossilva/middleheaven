@@ -18,9 +18,5 @@ public class JWSBootstrap extends ExecutionEnvironmentBootstrap{
 		return null;
 	}
 
-	@Override
-	public ContextIdentifier getContextIdentifier() {
-		return ContextIdentifier.getInstance(System.getProperty("middleheaven.application.id"));
-	}
 
 }

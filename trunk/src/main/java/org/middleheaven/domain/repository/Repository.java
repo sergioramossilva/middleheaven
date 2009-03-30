@@ -5,13 +5,14 @@ import org.middleheaven.storage.Query;
 import org.middleheaven.util.identity.Identity;
 
 /**
- * 
- * @author Sérgio Taborda
+ * Logic reservatoire for object of a certain class.
  *
  * @param <E> Repository's entity
  */
 public interface Repository<E> {
 
+	public Identity getIdentityFor(E instance);
+	
 	public Query<E> findAll();
 	
 	public Query<E> findByIdentity(Identity id );
@@ -26,6 +27,7 @@ public interface Repository<E> {
 	
 	public void addRepositoryListener(RepositoryListener listener);
 	public void removeRepositoryListener(RepositoryListener listener);
-
+	
 	public void setDomainModel(DomainModel domainModel);
+
 }

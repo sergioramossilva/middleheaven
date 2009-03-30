@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.domain.EntityModel;
 import org.middleheaven.sequence.CannotCreateSequenceException;
 import org.middleheaven.sequence.DefaultToken;
 import org.middleheaven.sequence.Sequence;
@@ -22,6 +23,7 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
+import org.middleheaven.storage.WrappStorableReader;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaFilter;
 import org.middleheaven.util.classification.BooleanClassifier;
@@ -47,7 +49,7 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 	final Map<String, Sequence<Long>> sequences = new HashMap<String,Sequence<Long>>();
 
 	public SpaceStoreKeeper(Space4J space4j){
-
+		super(new WrappStorableReader());
 		this.space4j = space4j;
 
 		space = space4j.getSpace();
@@ -85,9 +87,10 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 	@Override
 	public void insert(Collection<Storable> list, StorableEntityModel model) {
 
+		StorableEntityModel smodel = this.storableModelOf(model);
 		// Grab the space where all data resides...
 
-		final String entityRef = model.getEntityHardName(); 
+		final String entityRef = smodel.getEntityHardName(); 
 
 		try {
 
@@ -117,13 +120,14 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 		}
 	}
 
-	public Storable serialize(Storable other,StorableEntityModel model){
+	public Storable serialize(Storable other,EntityModel model){
 		SpaceStorable ss = new SpaceStorable();
-
+		StorableEntityModel smodel = this.storableModelOf(model);
+		
 		ss.key = other.getIdentity();
 		ss.state = other.getPersistableState();
 		ss.persistableClassName = other.getPersistableClass().getName();
-		for (StorableFieldModel fm : model.fields()){
+		for (StorableFieldModel fm : smodel.fields()){
 			ss.setFieldValue(fm, other.getFieldValue(fm));
 		}
 		return ss;
@@ -132,6 +136,8 @@ public class SpaceStoreKeeper extends AbstractStoreKeeper {
 
 	@Override
 	public void remove(Collection<Storable> obj, StorableEntityModel model) {
+		StorableEntityModel smodel = this.storableModelOf(model);
+		
 		final String entityRef = model.getEntityHardName(); 
 
 		try{

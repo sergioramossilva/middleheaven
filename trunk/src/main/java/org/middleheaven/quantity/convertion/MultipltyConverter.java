@@ -5,12 +5,12 @@ import org.middleheaven.quantity.measurables.Measurable;
 import org.middleheaven.quantity.measure.Scalable;
 import org.middleheaven.quantity.unit.Unit;
 
-public final class MultipltyConverter<E extends Measurable> extends AbstractUnitConverter<E>{
+public final class MultipltyConverter<E extends Measurable,T extends Scalable<E,T>> extends AbstractUnitConverter<E,T>{
 
 	private Real factor;
 	
-	public static <T,E extends Measurable> MultipltyConverter<E> convert(Unit<E> originalUnit, Unit<E> resultUnit,Real factor){
-		return new MultipltyConverter<E>(originalUnit, resultUnit, factor);
+	public static <E extends Measurable,I extends Scalable<E,I>> MultipltyConverter<E,I> convert(Unit<E> originalUnit, Unit<E> resultUnit,Real factor){
+		return new MultipltyConverter<E,I>(originalUnit, resultUnit, factor);
 	}
 
 	private MultipltyConverter(Unit<E> originalUnit, Unit<E> resultUnit,Real factor) {
@@ -19,7 +19,7 @@ public final class MultipltyConverter<E extends Measurable> extends AbstractUnit
 	}
 	
 	@Override
-	public <T extends Scalable<E, T>> T convertFoward(T value) {
+	public T convertFoward(T value) {
 		if (!value.unit().equals(this.originalUnit)){
 			throw new IllegalArgumentException("Expected unit " + this.originalUnit + " but was " + value.unit());
 		}
@@ -27,7 +27,7 @@ public final class MultipltyConverter<E extends Measurable> extends AbstractUnit
 	}
 
 	@Override
-	public <T extends Scalable<E, T>> T convertReverse(T value) {
+	public T convertReverse(T value) {
 		if (!value.unit().equals(this.resultUnit)){
 			throw new IllegalArgumentException("Expected unit " + this.originalUnit + " but was " + value.unit());
 		}

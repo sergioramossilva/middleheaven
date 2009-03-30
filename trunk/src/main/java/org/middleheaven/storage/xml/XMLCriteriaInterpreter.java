@@ -38,38 +38,38 @@ public class XMLCriteriaInterpreter {
 			CriterionOperator op = fc.getOperator();
 			if (!op.isNegated()){
 				if ( op.equals(CriterionOperator.EQUAL)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append("=")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				} else if ( op.equals(CriterionOperator.LESS_THAN)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append("<")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				} else if ( op.equals(CriterionOperator.LESS_THAN_OR_EQUAL)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append("<=")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				}else if ( op.equals(CriterionOperator.GREATER_THAN)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append(">")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				}else if ( op.equals(CriterionOperator.GREATER_THAN_OR_EQUAL)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append(">=")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				}else if ( op.equals(CriterionOperator.STARTS_WITH)){
 					builder.append("starts-with(")
-					.append(fc.getFieldName().getColumnName())
+					.append(fc.getFieldName().getName())
 					.append(',')
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
@@ -77,7 +77,7 @@ public class XMLCriteriaInterpreter {
 					.append(')');	
 				}else if ( op.equals(CriterionOperator.CONTAINS)){
 					builder.append("contains(")
-					.append(fc.getFieldName().getColumnName())
+					.append(fc.getFieldName().getName())
 					.append(',')
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
@@ -85,7 +85,7 @@ public class XMLCriteriaInterpreter {
 					.append(')');	
 				}else if ( op.equals(CriterionOperator.STARTS_WITH)){
 					builder.append("ends-with(")
-					.append(fc.getFieldName().getColumnName())
+					.append(fc.getFieldName().getName())
 					.append(',')
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
@@ -95,38 +95,38 @@ public class XMLCriteriaInterpreter {
 				
 			} else { // not
 				if ( op.equals(CriterionOperator.EQUAL)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append("!=")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				} else if ( op.equals(CriterionOperator.LESS_THAN)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append(">=")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				} else if ( op.equals(CriterionOperator.LESS_THAN_OR_EQUAL)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append(">")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				}else if ( op.equals(CriterionOperator.GREATER_THAN)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append("<=")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				}else if ( op.equals(CriterionOperator.GREATER_THAN_OR_EQUAL)){
-					builder.append(fc.getFieldName().getColumnName())
+					builder.append(fc.getFieldName().getName())
 					.append("<")
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
 					.append("'");
 				}else if ( op.equals(CriterionOperator.STARTS_WITH)){
 					builder.append("not(starts-with(")
-					.append(fc.getFieldName().getColumnName())
+					.append(fc.getFieldName().getName())
 					.append(',')
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
@@ -134,7 +134,7 @@ public class XMLCriteriaInterpreter {
 					.append("))");	
 				}else if ( op.equals(CriterionOperator.CONTAINS)){
 					builder.append("not(contains(")
-					.append(fc.getFieldName().getColumnName())
+					.append(fc.getFieldName().getName())
 					.append(',')
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())
@@ -142,7 +142,7 @@ public class XMLCriteriaInterpreter {
 					.append("))");	
 				}else if ( op.equals(CriterionOperator.STARTS_WITH)){
 					builder.append("not(ends-with(")
-					.append(fc.getFieldName().getColumnName())
+					.append(fc.getFieldName().getName())
 					.append(',')
 					.append("'")
 					.append(fc.valueHolder().getValue().toString())

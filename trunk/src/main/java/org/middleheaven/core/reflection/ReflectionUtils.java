@@ -312,6 +312,38 @@ public final class ReflectionUtils {
 		return fields;
 	}
 
+	public static void invokeMain(Class<?> mainClass,  String ... params) {
+		try {
+			Method methodToInvoke = mainClass.getMethod("main", String[].class);
+			methodToInvoke.setAccessible(true);
+			methodToInvoke.invoke(null, params);
+		} catch (SecurityException e) {
+			throw new IllegalAccessReflectionException(e);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalAccessReflectionException(e);
+		} catch (InvocationTargetException e) {
+			throw new InvocationTargetReflectionException(e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalAccessReflectionException(e);
+		} catch (NoSuchMethodException e) {
+			throw new NoSuchMethodReflectionException(e);
+		}
+	}
+	public static <T> T invokeStatic(Class<T> returnType,Method methodToInvoke, Object ... params) {
+		try {
+			methodToInvoke.setAccessible(true);
+			return returnType.cast(methodToInvoke.invoke(null, params));
+		} catch (SecurityException e) {
+			throw new IllegalAccessReflectionException(e);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalAccessReflectionException(e);
+		} catch (InvocationTargetException e) {
+			throw new InvocationTargetReflectionException(e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalAccessReflectionException(e);
+		}
+	}
+	
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Class<?> translatingObjectClass, Object ... params) {
 		return invoke(returnType, methodToInvoke, newInstance(translatingObjectClass), params);
 	}
@@ -319,7 +351,12 @@ public final class ReflectionUtils {
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Object translatingObject, Object ... params) {
 		try {
 			methodToInvoke.setAccessible(true);
-			return returnType.cast(methodToInvoke.invoke(translatingObject, params));
+			Object obj = methodToInvoke.invoke(translatingObject, params);
+			if (returnType!=null){
+				return returnType.cast(obj);
+			} else {
+				return null;
+			}
 		} catch (SecurityException e) {
 			throw new IllegalAccessReflectionException(e);
 		} catch (IllegalArgumentException e) {
@@ -423,6 +460,11 @@ public final class ReflectionUtils {
 		
 		return result;
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T> genericClass(T object) {
+		return (Class<T>) object.getClass();
 	}
 
 

@@ -49,7 +49,7 @@ public class DefaultStorableFieldModel implements StorableFieldModel {
 		return null;
 	}
 	
-	public boolean isKey(){
+	public boolean isIdentity(){
 		return isKey;
 	}
 	

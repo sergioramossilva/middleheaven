@@ -12,7 +12,9 @@ import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
-import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.domain.DomailModelBuilder;
+import org.middleheaven.domain.DomainClasses;
+import org.middleheaven.domain.DomainModel;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
@@ -21,15 +23,12 @@ import org.middleheaven.sequence.service.FileSequenceStorageActivator;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
-import org.middleheaven.storage.StorableDomainModel;
-import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.WrappStorableReader;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.xml.XMLStoreKeeper;
 import org.middleheaven.test.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
-import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.identity.IntegerIdentity;
 
 
 public class XMLStorageTest extends MiddleHeavenTestCase{
@@ -50,24 +49,12 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 
 		// Configured
 		
-		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
-		model.addEntity(TestSubject.class);
+		final DomainModel model = new DomailModelBuilder().build(
+				new DomainClasses().add(TestSubject.class)
+		);
 		
 		ManagedFile source = ManagedFileRepositories.resolveFile(this.getClass().getResource("data.xml"));
-		ds = new DomainDataStorage(XMLStoreKeeper.manage(source) , new StorableDomainModel(){
-
-			@Override
-			public StorableEntityModel getStorageModel(Class<?> type) {
-				return (StorableEntityModel) model.getEntityModelFor(type);
-			}
-
-			@Override
-			public Class<? extends Identity> indentityTypeFor(Class<?> entityType) {
-				return IntegerIdentity.class;
-			}
-
-		});
-
+		ds = new DomainDataStorage(XMLStoreKeeper.manage(source, new WrappStorableReader()) , model);
 	}
 	
 	@Test 

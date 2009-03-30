@@ -15,20 +15,20 @@ public class TesteAccount {
 	public void testInterface(){
 		
 		Product p = null;
-		ProductStockRepository rep = new ProductStockRepository(p);
+		ProductStockRepository<Mass> rep = new ProductStockRepository<Mass>(p);
 
 		CalendarDate today = CalendarDate.today();
 		
-		List<ProductStock> stocks = rep.getOwnerAccounts(p);
+		List<ProductStock<Mass>> stocks = rep.getOwnerAccounts(p);
 		DecimalMeasure<Mass> total = DecimalMeasure.zero(SI.KILOGRAM);
 		
-		for (ProductStock s : stocks){
+		for (ProductStock<Mass> s : stocks){
 			DecimalMeasure<Mass> d = s.getBalance(today).cast();
 			total = total.plus(d);
 		}
 		
-		List<ProductMovement> movements = stocks.get(0).getMovements(today.upTo(today.nextDate().nextDate()));
-		for (ProductMovement m : movements){
+		List<ProductMovement<Mass>> movements = stocks.get(0).getMovements(today.upTo(today.nextDate().nextDate()));
+		for (ProductMovement<Mass> m : movements){
 			m.getAcount().getOwner().equals(p);
 		}
 	}

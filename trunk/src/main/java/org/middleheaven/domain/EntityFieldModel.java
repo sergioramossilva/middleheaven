@@ -8,9 +8,10 @@ public interface EntityFieldModel {
 	public DataType getDataType();
 	public boolean isTransient();
 	public boolean isVersion();
-	public boolean isKey();
+	public boolean isIdentity();
 	public Class<?> getValueClass();
 	public boolean isUnique();
 	
+	public String getParam(String key);
 	
 }

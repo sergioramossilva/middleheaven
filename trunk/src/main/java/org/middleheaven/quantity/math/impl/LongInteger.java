@@ -85,6 +85,7 @@ public class LongInteger extends Integer {
 		return new LongInteger(this.value/other.asNumber().longValue());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Incrementable<Integer>> T incrementBy(Integer increment) {
 		return (T)this.plus(increment);
@@ -142,7 +143,7 @@ public class LongInteger extends Integer {
 	}
 
 	@Override
-	public int compareTo(Number o) {
+	public int compareTo(Number<? super Integer> o) {
 		return this.asNumber().compareTo(o.asNumber());
 	}
 

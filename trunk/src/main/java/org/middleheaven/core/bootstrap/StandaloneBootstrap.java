@@ -31,11 +31,6 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 		this.starter = starter;
 	}
 
-	@Override
-	public ContextIdentifier getContextIdentifier() {
-		return ContextIdentifier.getInstance("app");
-	}
-
 	public void configuate(ServiceContextConfigurator configurator){
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
 		.addActivator(DynamicLoadApplicationServiceActivator.class)

@@ -3,6 +3,7 @@ package org.middleheaven.quantity.time.chono;
 import java.util.Calendar;
 import java.util.Locale;
 
+import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.quantity.time.AbstractChronology;
 import org.middleheaven.quantity.time.DayOfMonth;
 import org.middleheaven.quantity.time.DayOfWeek;
@@ -30,6 +31,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 		this(Calendar.getInstance(locale));
 	}
 
+	
 	@Override
 	public <T extends TimePoint> T add(T point, Duration duration) {
 		Calendar calendar = (Calendar)prototype.clone();
@@ -41,7 +43,8 @@ public class JavaCalendarCronology extends AbstractChronology{
 		calendar.add(Calendar.HOUR, duration.hours());
 		calendar.add(Calendar.MINUTE, duration.minutes());
 		calendar.add(Calendar.MILLISECOND, (int)(duration.secounds()*1000));
-		return reduce(timePointFor(calendar.getTimeInMillis()), point.getClass());
+	
+		return reduce(timePointFor(calendar.getTimeInMillis()), ReflectionUtils.genericClass(point) );
 	}
 
 
