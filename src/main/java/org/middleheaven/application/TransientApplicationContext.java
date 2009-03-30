@@ -5,9 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.Container;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringContext;
-import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.util.LiveCollection;
 import org.middleheaven.util.Version;

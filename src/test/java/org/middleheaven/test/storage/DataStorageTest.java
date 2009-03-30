@@ -18,7 +18,9 @@ import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
-import org.middleheaven.domain.AnnotatedDomainModel;
+import org.middleheaven.domain.DomailModelBuilder;
+import org.middleheaven.domain.DomainClasses;
+import org.middleheaven.domain.DomainModel;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
@@ -26,8 +28,7 @@ import org.middleheaven.sequence.service.FileSequenceStorageActivator;
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.DomainDataStorage;
 import org.middleheaven.storage.Query;
-import org.middleheaven.storage.StorableDomainModel;
-import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.WrappStorableReader;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.datasource.DataSourceService;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
@@ -35,8 +36,6 @@ import org.middleheaven.storage.datasource.DriverManagerDSProvider;
 import org.middleheaven.storage.db.DataBaseStoreKeeper;
 import org.middleheaven.test.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
-import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.identity.IntegerIdentity;
 
 
 public class DataStorageTest extends MiddleHeavenTestCase {
@@ -59,36 +58,26 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		// Configured
 
 		DataSourceService srv = ServiceRegistry.getService(DataSourceService.class);
-//		srv.addDataSource("test", new DriverDataSource(
-//				"org.postgresql.Driver" ,
-//				"jdbc:postgresql:test" ,
-//				"pguser",
-//				"pguser"
-//		));
+		//		srv.addDataSource("test", new DriverDataSource(
+		//				"org.postgresql.Driver" ,
+		//				"jdbc:postgresql:test" ,
+		//				"pguser",
+		//				"pguser"
+		//		));
 		srv.addDataSourceProvider("test", DriverManagerDSProvider.provider(
 				"org.hsqldb.jdbcDriver" ,
 				"jdbc:hsqldb:F:\\Workspace\\MiddleHeaven_Google\\XTest;shutdown=true" ,
 				"sa",
 				""
 		));
-		
-		final AnnotatedDomainModel model = AnnotatedDomainModel.model();
-		model.addEntity(TestSubject.class);
-		
+
+
+		final DomainModel model = new DomailModelBuilder().build(
+				new DomainClasses().add(TestSubject.class)
+		);
+
 		DataSource datasource = ServiceRegistry.getService(DataSourceService.class).getDataSource("test");
-		ds = new DomainDataStorage(new DataBaseStoreKeeper(datasource) , new StorableDomainModel(){
-
-			@Override
-			public StorableEntityModel getStorageModel(Class<?> type) {
-				return (StorableEntityModel) model.getEntityModelFor(type);
-			}
-
-			@Override
-			public Class<? extends Identity> indentityTypeFor(Class<?> entityType) {
-				return IntegerIdentity.class;
-			}
-
-		});
+		ds = new DomainDataStorage(new DataBaseStoreKeeper(datasource, new WrappStorableReader()) , model);
 
 		try{
 			datasource.getConnection();
@@ -118,7 +107,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 	public void testCriteriaDelete(){
 		if(runTest){
 			Criteria<Subject> all = search(Subject.class).all();
-			
+
 			// remove them
 			ds.remove(all);
 

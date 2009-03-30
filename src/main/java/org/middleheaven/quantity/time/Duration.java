@@ -172,11 +172,11 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		return d;
 	}
 
-	public org.middleheaven.quantity.math.Number amount() {
+	public org.middleheaven.quantity.math.Number<?> amount() {
 		return reduce();
 	}
 	
-	protected org.middleheaven.quantity.math.Number reduce (){
+	protected org.middleheaven.quantity.math.Number<?> reduce (){
 		int count =0;
 		DurationType field=null;
 		for (DurationType t : DurationType.values()){
@@ -194,7 +194,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 	}
 
 
-	public Duration times(org.middleheaven.quantity.math.Number other) {
+	public Duration times(org.middleheaven.quantity.math.Number<?> other) {
 		long factor = other.asNumber().longValue();
 		Duration d = new Duration(this);
 		for (Map.Entry<DurationType,Number> e : this.fields.entrySet()){
@@ -205,7 +205,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		return d;
 	}
 
-	public ElapsedTime over(org.middleheaven.quantity.math.Number other) {
+	public ElapsedTime over(org.middleheaven.quantity.math.Number<?> other) {
 		// TODO Implements Duration#over(Number); 
 		throw new UnimplementedMethodException();
 	}
@@ -288,7 +288,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 	 */
 	@Override
 	public int compareTo(Duration other) { 
-		// The underliing chronology is not important as t is a generic time point
+		// The underlying chronology is not important as t is a generic time point
 		TimePoint t1 = TimeContext.getTimeContext().getChronology().add(CalendarDateTime.origin(), this);
 		TimePoint t2 = TimeContext.getTimeContext().getChronology().add(CalendarDateTime.origin(), other);
 		

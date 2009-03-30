@@ -20,6 +20,7 @@ public class TridimensionalSeries<X extends Comparable<X>, Y extends Comparable<
 			this.y = y;
 		}
 		
+		@SuppressWarnings("unchecked")
 		public <T extends Comparable<T>> T get(int dimention){
 			if (dimention==0){
 				return (T)x;

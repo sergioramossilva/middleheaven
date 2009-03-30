@@ -191,7 +191,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 			applicationModuleFiles.addAll( f.listFiles(appModulesFilter));
 
 
-			URLClassLoader cloader ;
+		
 			for (ManagedFile jar : applicationModuleFiles){
 
 				loadModuleFromFile(jar);

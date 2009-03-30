@@ -31,6 +31,7 @@ public class BidimensionalSeries<X extends Comparable<X>, Y extends Comparable<Y
 			this.y = y;
 		}
 		
+		@SuppressWarnings("unchecked")
 		public <T extends Comparable<T>> T get(int dimention){
 			if (dimention==0){
 				return (T)x;

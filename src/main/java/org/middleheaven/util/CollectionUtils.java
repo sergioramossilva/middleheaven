@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.middleheaven.core.reflection.ReflectionUtils;
+
 public class CollectionUtils {
 
 
@@ -117,7 +119,6 @@ public class CollectionUtils {
 		
 		return result;
 	}
-
 
 
 

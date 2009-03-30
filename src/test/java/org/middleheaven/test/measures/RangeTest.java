@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.CalendarDateIncrementor;
 import org.middleheaven.quantity.time.Duration;
 import org.middleheaven.util.Range;
 
@@ -113,7 +114,10 @@ public class RangeTest {
 		List <CalendarDate> list = CalendarDate.date(2007,1,5).upTo(CalendarDate.date(2007,1,10)).toList();
 		assertEquals(6,list.size());
 
-		assertEquals(6,Range.over(CalendarDate.date(2007,1,5), CalendarDate.date(2007,1,10),Duration.of().days(1)).size());
+		assertEquals(6,Range.over(
+				CalendarDate.date(2007,1,5), 
+				CalendarDate.date(2007,1,10),
+				new CalendarDateIncrementor(Duration.of().days(1))).size());
 	}
 
 	@Test

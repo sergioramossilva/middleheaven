@@ -10,41 +10,40 @@ import org.middleheaven.quantity.unit.NonSI;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
 
+@SuppressWarnings("unchecked")
 public class UnitConversion {
 
 
+	
 	private static Map<MapKey , UnitConverter> converters = new HashMap<MapKey , UnitConverter>();
 	
-	
+
 	static {
-		
+	
 		addConverter(new AngleConverter());
-		addConverter(AditiveConverter.convert(SI.KELVIN, NonSI.CELSIUS,Real.valueOf("273.15")));
+		addConverter( AditiveConverter.convert(SI.KELVIN, NonSI.CELSIUS,Real.valueOf("273.15")));
 		addConverter(new FahrenheitCelciusConverter());
 	}
 	
-	private static void addConverter(UnitConverter<?> converter){
+
+	private static  void addConverter(UnitConverter converter){
 		
 		converters.put(new MapKey(converter.originalUnit(),converter.resultUnit()), converter);
 	}
 	
-	public static <E extends Measurable, S extends Scalable<E,S>> S convert(S value, Unit<E> to){
-		UnitConverter<E> converter =  getConverter(value.unit(), to);
-		return converter.convertFoward(value);
-	}
-	
-	private static <E extends Measurable> UnitConverter<E> getConverter(Unit<E> from , Unit<E> to){
-		
+	public static <E extends Measurable,T extends Scalable<E,T>> T convert(T value,Unit<E> to){
+		Unit<E> from = value.unit();
 		if (from.equals(to)){
-			return new IdentityConverter<E>(from);
+			return value;
 		}
 		
 		MapKey key = new MapKey(from ,to);
-		UnitConverter<E> converter = converters.get(key);
+		UnitConverter<E,T> converter = converters.get(key);
 		if (converter.resultUnit().equals(from)){
 			converter =  converter.inverse();
 		}
-		return converter;
+		
+		return converter.convertFoward(value);
 	}
 	
 	public static class MapKey {

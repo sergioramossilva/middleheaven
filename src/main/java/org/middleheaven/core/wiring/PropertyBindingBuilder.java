@@ -4,12 +4,12 @@ import java.lang.annotation.Annotation;
 
 public class PropertyBindingBuilder<T>  {
 
-	protected Binding<T> binding;
+	protected Binding binding;
 	protected EditableBinder binder;
 	protected String name;
 	protected T object;
 	
-	PropertyBindingBuilder (EditableBinder binder , Binding<T> binding){
+	PropertyBindingBuilder (EditableBinder binder , Binding binding){
 		this.binder = binder;
 		this.binding = binding;
 		this.binding.addAnnotation(Name.class);

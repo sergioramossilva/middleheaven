@@ -65,22 +65,22 @@ public abstract class DataBaseDialect {
 
 	protected void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
 		buffer.append(startDelimiter);
-		buffer.append(hardname.getTableName().toLowerCase());
+		buffer.append(hardname.getQualifier().toLowerCase());
 		buffer.append(endDelimiter);
 		buffer.append(fieldSeparator);
 		buffer.append(startDelimiter);
-		buffer.append(hardname.getColumnName().toLowerCase());
+		buffer.append(hardname.getName().toLowerCase());
 		buffer.append(endDelimiter);
 	}
 
 	protected void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
 		buffer.append(startDelimiter);
-		buffer.append(hardname.getTableName().toLowerCase());
+		buffer.append(hardname.getQualifier().toLowerCase());
 		buffer.append(endDelimiter);
-		if (!hardname.getColumnName().isEmpty()){
+		if (!hardname.getName().isEmpty()){
 		buffer.append(fieldSeparator);
 		buffer.append(startDelimiter);
-		buffer.append(hardname.getColumnName().toLowerCase());
+		buffer.append(hardname.getName().toLowerCase());
 		buffer.append(endDelimiter);
 		}
 	}
@@ -113,7 +113,7 @@ public abstract class DataBaseDialect {
 
 
 		for ( StorableFieldModel fm : model.fields()){
-			if (fm.isKey()){
+			if (fm.isIdentity()){
 				continue;
 			}
 			this.writeEditionHardname(names, fm.getHardName());

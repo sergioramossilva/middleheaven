@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * Provides mathematic interval semantics and operations 
  * 
- * @author Sergio M.M. Taborda
  */
 public class Range<T> extends Interval<T> implements Iterable<T> {
 
@@ -25,7 +24,7 @@ public class Range<T> extends Interval<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Compatability method to enable simple use with <code>Integer</code> and other <code>Number</code>
+	 * Comparability method to enable simple use with <code>Integer</code> and other <code>Number</code>
 	 * @param <N>
 	 * @param start start of the range
 	 * @param end end of the range
@@ -36,8 +35,7 @@ public class Range<T> extends Interval<T> implements Iterable<T> {
 		if (start == null || end == null || increment ==null){
 			throw new IllegalArgumentException("Argument cannot be null");
 		}
-
-		return over(start,end,new ComparableComparator<N>(),new NumberIncrementor(increment));
+		return new Range<N>(start,end,new ComparableComparator<N>(),new NumberIncrementor(increment));
 	}
 
 
@@ -47,7 +45,7 @@ public class Range<T> extends Interval<T> implements Iterable<T> {
 		if (start == null || end == null){
 			throw new IllegalArgumentException("Argument cannot be null");
 		}
-		return over(start,end,new ComparableComparator<N>(),new NumberIncrementor(new Long(1)));
+		return new Range<N>(start,end,new ComparableComparator<N>(),new NumberIncrementor(new Long(1)));
 	}
 	
 	/**
@@ -58,17 +56,12 @@ public class Range<T> extends Interval<T> implements Iterable<T> {
 	 * @param comparator <code>Comparator</code> encapsulating the rules of order for the passed object class
 	 * @return a <code>Range</code> from <code>start</code> to <code>end</code>
 	 */
-	@SuppressWarnings("unchecked")
-	public static <N,V extends Incrementable<N>> Range<V> over(V start, V end , Object increment){
+	public static <V extends Incrementable<V>> Range<V> over(V start, V end , V increment){
 		if (start == null || end == null || increment==null){
 			throw new IllegalArgumentException("Argument cannot be null");
 		}
-		Incrementor<V> incrementor;
-		if (Incrementable.class.isInstance(start)){
-			incrementor = new IncrementableIncrementor<V,N>((N)increment);
-		} else {
-			throw new IllegalStateException("Cannot define an Incrementor");
-		}
+		Incrementor<V> incrementor = new IncrementableIncrementor<V>(increment);
+	
 		return over(start,end,new ComparableComparator<V>(),incrementor);
 	
 	}
@@ -77,7 +70,7 @@ public class Range<T> extends Interval<T> implements Iterable<T> {
 		if (start == null || end == null || incrementor==null){
 			throw new IllegalArgumentException("Argument cannot be null");
 		}
-		return over(start,end,new ComparableComparator<V>(),incrementor);
+		return new Range<V>(start,end,new ComparableComparator<V>(),incrementor);
 	}
 	
 	/**
@@ -88,7 +81,7 @@ public class Range<T> extends Interval<T> implements Iterable<T> {
 	 * @param comparator <code>Comparator</code> encapsulating the rules of order for the passed object class
 	 * @return a <code>Range</code> from <code>start</code> to <code>end</code>
 	 */
-	public static <V> Range<V> over(V start, V end, Comparator<? super V> comparator, Incrementor<? super V> incrementor  ){
+	public static <V> Range<V> over(V start, V end, Comparator<V> comparator, Incrementor<V> incrementor  ){
 		if (comparator == null){
 			throw new NullPointerException("A comparator is required.");
 		}

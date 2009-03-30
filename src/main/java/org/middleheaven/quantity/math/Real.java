@@ -1,6 +1,5 @@
 package org.middleheaven.quantity.math;
 
-import org.middleheaven.quantity.math.structure.Field;
 import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.Range;
@@ -10,7 +9,7 @@ import org.middleheaven.util.Range;
  * Represents an element of |R  (the real numbers set) 
  * 
  */
-public abstract class Real extends Number<Real> implements Field<Real> ,  Comparable<Number> ,Incrementable <Real>{
+public abstract class Real extends Number<Real> implements  Comparable<Number<? super Real>> ,Incrementable <Real>{
 
 	public static Real fraction (int num , int den){
 		return valueOf(num).over(valueOf(den));
@@ -39,8 +38,8 @@ public abstract class Real extends Number<Real> implements Field<Real> ,  Compar
 	}
 
 	public static Real valueOf (Number<?> other) {
-		if (other instanceof Real){
-			return (Real)other;
+		if (Real.class.isInstance(other)){
+			return Real.class.cast(other);
 		} 
 		return MathStructuresFactory.getFactory().numberFor(Real.class, other.toString());
 	}

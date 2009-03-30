@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.storage.StorageException;
 
@@ -52,7 +53,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 		params[2] = "-dbname.0";
 		params[3] = catalog;
 
-		org.hsqldb.Server.main(params);
+		ReflectionUtils.invokeMain(ReflectionUtils.loadClass("org.hsqldb.Server"), params);
 	}
 	
 	public void stop(){

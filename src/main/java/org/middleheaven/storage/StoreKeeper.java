@@ -2,12 +2,17 @@ package org.middleheaven.storage;
 
 import java.util.Collection;
 
+import org.middleheaven.domain.EntityModel;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
 
 public interface StoreKeeper {
 
+	public StorableEntityModel storableModelOf(EntityModel model);
+	
+	public Identity getIdentityFor(Object object);
+	
 	/**
 	 * Included a new objects in the store
 	 * @param obj Collection of objects to include

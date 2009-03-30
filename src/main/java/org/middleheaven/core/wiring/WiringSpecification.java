@@ -2,10 +2,10 @@ package org.middleheaven.core.wiring;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 public class WiringSpecification<T> {
 
@@ -44,7 +44,7 @@ public class WiringSpecification<T> {
 					this.params.put("name", ((Name)a).value());
 				} catch (UnsupportedOperationException e){
 					// the map is not editable
-					this.params = new TreeMap<String,String>(params);
+					this.params = new HashMap<String,String>(params);
 					// try again
 					this.params.put("name", ((Name)a).value());
 				}

@@ -26,28 +26,28 @@ public class NodeStorable implements Storable{
 			Node field = fields.item(i);
 			data.put(field.getNodeName(), field.getTextContent());
 		}
-		String val = data.get(keyModel.getHardName().getColumnName());
+		String val = data.get(keyModel.getHardName().getName());
 
 		key = val ==null ? null : IntegerIdentity.valueOf(val);
 	}
 
 	@Override
 	public Object getFieldValue(StorableFieldModel model) {
-		if (model.isKey()){
+		if (model.isIdentity()){
 			return key;
 		}
 		if (model.getDataType().isTemporal()){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			Date date;
 			try {
-				date = format.parse(data.get(model.getHardName().getColumnName()));
+				date = format.parse(data.get(model.getHardName().getName()));
 			} catch (ParseException e) {
 				throw new RuntimeException(e);
 			}
 			
 			return date;
 		} else {
-			return TypeConvertions.convert(data.get(model.getHardName().getColumnName()), model.getValueClass());
+			return TypeConvertions.convert(data.get(model.getHardName().getName()), model.getValueClass());
 		}
 	}
 

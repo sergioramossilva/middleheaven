@@ -1,7 +1,7 @@
 package org.middleheaven.core.wiring;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Allows to retrieve instances form name-keyed , predetermined , values.
@@ -10,7 +10,7 @@ import java.util.TreeMap;
  */
 public class PropertyResolver<T> implements Resolver<T> {
 
-	Map<String, Object > map = new TreeMap<String, Object >();
+	private final Map<String, Object > map = new HashMap<String, Object >();
 
 	@Override
 	public T resolve(WiringSpecification<T> query) {

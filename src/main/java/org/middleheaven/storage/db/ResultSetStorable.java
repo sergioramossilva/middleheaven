@@ -50,7 +50,7 @@ public class ResultSetStorable implements Storable {
 	@Override
 	public Object getFieldValue(StorableFieldModel model) {
 		try {
-			return rs.getObject(model.getHardName().getColumnName());
+			return rs.getObject(model.getHardName().getName());
 		} catch (SQLException e) {
 			throw new StorageException(e); 
 		}

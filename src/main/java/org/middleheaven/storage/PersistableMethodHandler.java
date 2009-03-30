@@ -21,12 +21,12 @@ public class PersistableMethodHandler implements ProxyHandler  {
 		if (!delegator.hasSuper()){
 			if (methodName.equals("getFieldValue")){
 				StorableFieldModel model = (StorableFieldModel)args[0];
-				String name = model.getHardName().getColumnName();
+				String name = model.getHardName().getName();
 				
 				return ReflectionUtils.getPropertyAccessor(self.getClass(),name).getValue(self);
 			} else if (methodName.equals("setFieldValue")){
 				StorableFieldModel model = (StorableFieldModel)args[0];
-				String name = model.getHardName().getColumnName();
+				String name = model.getHardName().getName();
 				
 				ReflectionUtils.getPropertyAccessor(this.originalType,name).setValue(self,args[1]);
 				return null;

@@ -1,17 +1,20 @@
 package org.middleheaven.quantity.time;
 
+import org.middleheaven.core.reflection.ReflectionUtils;
+
 
 
 
 public abstract class AbstractChronology extends Chronology {
 
+	
 	@Override
 	public <T extends TimePoint> T add(T point, Period period) {
-		return reduce(timePointFor(point.milliseconds() + period.milliseconds()), point.getClass());
+		return reduce(timePointFor(point.milliseconds() + period.milliseconds()), ReflectionUtils.genericClass(point));
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends TimePoint> T reduce(CalendarDateTime d , Class resultClass){
+	protected <T extends TimePoint> T reduce(CalendarDateTime d , Class<T> resultClass){
 		if (resultClass.equals(CalendarDate.class)){
 			return (T)d.toDate();
 		} 

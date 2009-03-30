@@ -5,12 +5,12 @@ import org.middleheaven.core.reflection.ReflectionUtils;
 
 public class BindingBuilder<T> {
 
-	protected Binding<?> binding;
+	protected Binding binding;
 	protected EditableBinder binder;
 	
 	BindingBuilder (EditableBinder binder , Class<T> type){
 		this.binder = binder;
-		this.binding = new Binding<T>();
+		this.binding = new Binding();
 		binding.setStartType(type);
 		binder.addBinding(binding);
 	

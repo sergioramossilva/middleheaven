@@ -2,15 +2,13 @@ package org.middleheaven.core.wiring;
 
 import java.lang.annotation.Annotation;
 
-import org.middleheaven.core.wiring.service.Service;
-
 public class ScopeBindingBuilder<T> {
 
-	protected Binding<T> binding;
+	protected Binding binding;
 	protected EditableBinder binder;
 
 	
-	ScopeBindingBuilder (EditableBinder binder , Binding<T> binding){
+	ScopeBindingBuilder (EditableBinder binder , Binding binding){
 		this.binder = binder;
 		this.binding = binding;
 	}

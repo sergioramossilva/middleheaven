@@ -1,14 +1,14 @@
 package org.middleheaven.util;
 
-public class IncrementableIncrementor<T extends Incrementable<N>,N > implements Incrementor<T> {
+public final class IncrementableIncrementor<T> implements Incrementor<T> {
 
-	private N increment;
-	public IncrementableIncrementor(N increment){
+	private final T increment;
+	public IncrementableIncrementor(T increment){
 		this.increment = increment;
 	}
 
 	public T increment(T object) {
-		return object.incrementBy(increment);
+		return (T) ((Incrementable)object).incrementBy(increment);
 	}
 	
 

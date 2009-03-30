@@ -23,6 +23,7 @@ import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
@@ -34,7 +35,8 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 	private DataBaseDialect dialect;
 	private DataSource datasource;
 
-	public DataBaseStoreKeeper(DataSource datasource){
+	public DataBaseStoreKeeper(DataSource datasource, StorableModelReader reader){
+		super(reader);
 		this.datasource = datasource;
 		this.dialect = DatabaseDialectFactory.getDialect(datasource);
 	}
@@ -235,7 +237,7 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 	}
 
 	private ColumnModel columnModelFor(StorableFieldModel fm) {
-		ColumnModel column = new ColumnModel(fm.getHardName().getColumnName(), fm.getDataType());
+		ColumnModel column = new ColumnModel(fm.getHardName().getName(), fm.getDataType());
 		if(column.getType().equals(DataType.IDENTITY)){
 			column.setType(DataType.INTEGER); // TODO resolve correct field type
 		} else if (column.getType().equals(DataType.MANY_TO_ONE)){

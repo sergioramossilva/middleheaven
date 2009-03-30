@@ -8,7 +8,6 @@ import java.io.File;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
@@ -17,8 +16,6 @@ import org.middleheaven.io.repository.ManagedFileRepositories;
  * @author  Sergio M. M. Taborda 
  */
 public abstract class JBossContainer extends WebContainer {
-
-    ContextIdentifier identifier;
 
     public JBossContainer(ServletContext context){
        super(context);
@@ -41,7 +38,6 @@ public abstract class JBossContainer extends WebContainer {
     @Override
     public void init(ExecutionEnvironmentBootstrap bootstrap) {
  
-        identifier = bootstrap.getContextIdentifier();
         // Set JNDI default parameters
         System.setProperty("java.naming.factory.initial",  "org.jnp.interfaces.NamingContextFactory");
         System.setProperty("java.naming.provider.url", "localhost:1099");
