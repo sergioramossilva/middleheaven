@@ -92,13 +92,23 @@ public interface ManagedFile extends ManagedFileResolver{
 	public boolean delete();
 
 	/**
-	 * Create a file on the url pointed by this file
+	 * If {@ this} is of type {@link ManagedFileType#VIRTUAL} create and return a {@ ManagedFile} file on the URL pointed by {@code this}.
+	 * The new file substitutes {@code this} on its parent.
+	 * If {@ this} is not of type {@link ManagedFileType#VIRTUAL} and {@ this} is of type {@link ManagedFileType#FILE} {@ this } is returned.
+	 * Else an {@link UnsupportedOperationException} is thrown;
+	 * @return the created file
+	 * @throws UnsupportedOperationException if {@ this} is not of VIRTUAL or FILE type, or this operation is not implemented on the target class.
 	 */
-	public void createFile();
+	public ManagedFile createFile() throws UnsupportedOperationException;
     
 	/**
-	 * Create a folder on the url pointed by this file
+	 * If {@ this} is of type {@link ManagedFileType#VIRTUAL} create and return a {@ ManagedFile} folder on the URL pointed by {@code this}.
+	 * The new file substitutes {@code this} on its parent.
+	 * If {@ this} is not of type {@link ManagedFileType#VIRTUAL} and {@ this} is of type {@link ManagedFileType#FOLDER} {@ this } is returned.
+	 * Else an {@link UnsupportedOperationException} is thrown;
+	 * @return the created folder
+	 * @throws UnsupportedOperationException if {@ this} is not of VIRTUAL or FOLDER type, or this operation is not implemented on the target class.
 	 */
-	public void createFolder();
+	public ManagedFile createFolder() throws UnsupportedOperationException;
     
 }

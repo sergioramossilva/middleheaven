@@ -169,12 +169,12 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 
 
 	@Override
-	public void createFile() {
+	public ManagedFile doCreateFile() {
 		throw new UnsupportedOperationException("File creation is not supported");
 	}
 
 	@Override
-	public void createFolder() {
+	public ManagedFile doCreateFolder() {
 		throw new UnsupportedOperationException("Folder creation is not supported");
 	}
 

@@ -58,8 +58,8 @@ public abstract class StreamBasedManagedFile extends AbstractManagedFile impleme
 			}
 
 			@Override
-			public void setSize(long size) throws ManagedIOException {
-				StreamBasedManagedFile.this.setSize(size);
+			public boolean setSize(long size) throws ManagedIOException {
+				return StreamBasedManagedFile.this.setSize(size);
 			}
 			
 		};
@@ -70,7 +70,7 @@ public abstract class StreamBasedManagedFile extends AbstractManagedFile impleme
 
 	protected abstract OutputStream getOutputStream() throws ManagedIOException;
 	
-	protected abstract void setSize(long size);
+	protected abstract boolean setSize(long size);
 	
 	@Override
 	public abstract long getSize();
@@ -81,13 +81,13 @@ public abstract class StreamBasedManagedFile extends AbstractManagedFile impleme
 	}
 
 	@Override
-	public void createFile() {
-		// no-op
+	public ManagedFile doCreateFile() {
+		return this;
 	}
 
 	@Override
-	public void createFolder() {
-		// no-op
+	public ManagedFile doCreateFolder() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

@@ -11,7 +11,7 @@ public class VoidManagedFile implements ManagedFile {
 	private String name;
 	private ManagedFile parent;
 	
-	VoidManagedFile(ManagedFile parent, String name){
+	public VoidManagedFile(ManagedFile parent, String name){
 		this.name = name;
 		this.parent = parent;
 	}
@@ -26,20 +26,10 @@ public class VoidManagedFile implements ManagedFile {
 		// no-op
 	}
 
-	@Override
-	public void createFile() {
-
-	}
-
-	@Override
-	public void createFolder() {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public boolean delete() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -112,6 +102,16 @@ public class VoidManagedFile implements ManagedFile {
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public ManagedFile createFile() throws UnsupportedOperationException {
+		return this;
+	}
+
+	@Override
+	public ManagedFile createFolder() throws UnsupportedOperationException {
+		return this;
 	}
 
 }

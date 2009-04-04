@@ -3,58 +3,53 @@ package org.middleheaven.io.repository;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.middleheaven.io.ManagedIOException;
 
-public class VirtualFolder implements ManagedFile {
+public class UnexistantManagedFile implements ManagedFile {
 
-	private final Map<String,ManagedFile> files = new TreeMap<String,ManagedFile>();
-	private final ManagedFile parent;
+	
+	private ManagedFile parent;
 	private String name;
 	
-	public VirtualFolder(String name, ManagedFile parent){
+	protected UnexistantManagedFile(ManagedFile parent, String name){
 		this.parent = parent;
 		this.name = name;
 	}
 	
 	@Override
 	public boolean contains(ManagedFile other) {
-		return files.containsValue(other);
-	}
-
-	@Override
-	public void copyTo(ManagedFile other) throws ManagedIOException {
-		// TODO implement
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public ManagedFile createFile() {
-		// no-op
-		return this;
-	}
-
-	@Override
-	public ManagedFile createFolder() {
-		// no-op
-		return this;
-	}
-
-	@Override
-	public boolean delete() {
 		return false;
 	}
 
 	@Override
-	public boolean exists() {
+	public void copyTo(ManagedFile other) throws ManagedIOException {
+		// no-op
+	}
+
+	@Override
+	public ManagedFile createFile() {
+		return parent.createFile();
+	}
+
+	@Override
+	public ManagedFile createFolder() {
+		return parent.createFolder();
+	}
+
+	@Override
+	public boolean delete() {
 		return true;
 	}
 
 	@Override
+	public boolean exists() {
+		return false;
+	}
+
+	@Override
 	public ManagedFileContent getContent() {
-		return null;
+		return EmptyFileContent.getInstance();
 	}
 
 	@Override
@@ -64,16 +59,12 @@ public class VirtualFolder implements ManagedFile {
 
 	@Override
 	public ManagedFile getParent() {
-		return parent;
+		return this.parent;
 	}
 
 	@Override
 	public long getSize() throws ManagedIOException {
-		long sum =0;
-		for (ManagedFile file : this.files.values()){
-			sum+= file.getSize();
-		}
-		return sum;
+		return 0;
 	}
 
 	@Override
@@ -83,13 +74,12 @@ public class VirtualFolder implements ManagedFile {
 
 	@Override
 	public URL getURL() {
-		// TODO implement ManagedFile.getURL
 		return null;
 	}
 
 	@Override
 	public boolean isReadable() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -99,42 +89,27 @@ public class VirtualFolder implements ManagedFile {
 
 	@Override
 	public boolean isWriteable() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
-		return Collections.unmodifiableCollection(files.values());
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
-		return Collections.unmodifiableCollection(files.values());
-	}
-
-	@Override
-	public ManagedFile resolveFile(String filepath) {
-		return this.files.get(filepath);
-	}
-
-	public void add(ManagedFile file) {
-		this.files.put(file.getName(),file);
-		
-	}
-
-	public void remove(ManagedFile file) {
-		this.files.remove(file.getName());
-	}
-
-	public void clear() {
-		for (ManagedFile file : files.values()){
-			file.delete();
-		}
-		files.clear();
+		return Collections.emptySet();
 	}
 
 	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public ManagedFile resolveFile(String filepath) {
+		return new UnexistantManagedFile(this.parent,filepath);
+	}
+
 }

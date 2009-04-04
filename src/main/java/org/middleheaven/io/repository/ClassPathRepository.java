@@ -13,7 +13,7 @@ public class ClassPathRepository implements ManagedFileRepository{
 	 * @return a ClassPathRepository relative to the package of the class passed as argument.
 	 * 
 	 */
-	public static ClassPathRepository getRepository(Class<?> type){
+	public static ClassPathRepository repositoryFor(Class<?> type){
 		return new ClassPathRepository(type);
 	}
 
@@ -21,7 +21,7 @@ public class ClassPathRepository implements ManagedFileRepository{
 	 * 
 	 * @return a ClassPathRepository relative to the the package of the calling class.
 	 */
-	public static ClassPathRepository getRepository() {
+	public static ClassPathRepository repositoryFor() {
 		Exception e = new Exception();
 		StackTraceElement elm = e.getStackTrace()[1];
 

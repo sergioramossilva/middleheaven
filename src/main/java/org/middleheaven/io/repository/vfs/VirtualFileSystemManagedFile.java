@@ -24,8 +24,8 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 
 	final FileObject file;
 	final String finalPath;
-	 boolean isfilefolder;
-	
+	boolean isfilefolder;
+
 	public VirtualFileSystemManagedFile(FileObject file){
 		this.file = file;
 		try {	
@@ -50,7 +50,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	public String toString(){
 		return file.toString();
 	}
-	
+
 	/**
 	 *
 	 * @return list of the ManagedFile existing in the repository 
@@ -224,23 +224,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 		}
 	}
 
-	@Override
-	public void createFile() {
-		try{
-			this.file.createFile();
-		} catch (FileSystemException e) {
-			throw new VirtualFileSystemException(e);
-		}
-	}
 
-	@Override
-	public void createFolder() {
-		try{
-			this.file.createFolder();
-		} catch (FileSystemException e) {
-			throw new VirtualFileSystemException(e);
-		}
-	}
 
 	private class VirtualManagedFileContent implements  ManagedFileContent{
 
@@ -268,8 +252,8 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 		}
 
 		@Override
-		public void setSize(long size) throws ManagedIOException {
-			// not-supported , fail silently
+		public boolean setSize(long size) throws ManagedIOException {
+			return false;
 		}
 
 	}
@@ -308,9 +292,29 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 
 	@Override
 	public void setName(String name) {
-		// TODO implement ManagedFile.setName
-		
+		throw new UnsupportedOperationException();
 	}
 
-	
+	@Override
+	protected ManagedFile doCreateFile() {
+		try{
+			this.file.createFile();
+			return this;
+		} catch (FileSystemException e) {
+			throw new VirtualFileSystemException(e);
+		}
+
+	}
+
+	@Override
+	protected ManagedFile doCreateFolder() {
+		try{
+			this.file.createFolder();
+			return this;
+		} catch (FileSystemException e) {
+			throw new VirtualFileSystemException(e);
+		}
+	}
+
+
 }

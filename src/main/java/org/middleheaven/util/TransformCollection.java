@@ -12,9 +12,14 @@ public abstract class TransformCollection<O,T> extends AbstractCollection<T> {
 		this.original = original;
 	}
 	
+	
+	protected Iterator<O> getOriginalIterator(){
+		return original.iterator();
+	}
+	
 	@Override
-	public final Iterator<T> iterator() {
-		final Iterator<O> originalIt = original.iterator();
+	public Iterator<T> iterator() {
+		final Iterator<O> originalIt =getOriginalIterator();
 		return new Iterator <T>(){
 
 			@Override
@@ -38,7 +43,7 @@ public abstract class TransformCollection<O,T> extends AbstractCollection<T> {
 	protected abstract T transform(O object);
 	
 	@Override
-	public final int size() {
+	public int size() {
 		return original.size();
 	}
 

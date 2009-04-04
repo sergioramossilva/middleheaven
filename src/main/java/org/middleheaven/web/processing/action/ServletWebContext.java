@@ -77,11 +77,12 @@ public abstract class ServletWebContext extends WebContext {
 
 
 			@Override
-			public void setSize(long expectedSize)  {
+			public boolean setSize(long expectedSize)  {
 				if (streamIsOpen){
 					throw new ManagedIOException("Configuration must be made before opening streams");
 				}
 				getResponse().setContentLength((int)expectedSize);
+				return true;
 			}
 
 			@Override

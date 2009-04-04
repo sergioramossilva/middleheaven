@@ -23,7 +23,12 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 
 	private FileObject root;
 	
-	public VirtualFileSystemManagedRepository(FileObject root){
+	
+	public static VirtualFileSystemManagedRepository repositoryFor(FileObject root){
+		return new VirtualFileSystemManagedRepository(root);
+	}
+	
+	private VirtualFileSystemManagedRepository(FileObject root){
 		this.root = root;
 	}
 
