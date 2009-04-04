@@ -48,12 +48,12 @@ public class UploadManagedFile extends AbstractManagedFile implements MediaManag
 	}
 
 	@Override
-	public void createFile() {
+	public ManagedFile doCreateFile() {
 		throw new UnsupportedOperationException("File creation is not supported");
 	}
 
 	@Override
-	public void createFolder() {
+	public ManagedFile doCreateFolder() {
 		throw new UnsupportedOperationException("Folder creation is not supported");
 	}
 
@@ -152,8 +152,8 @@ public class UploadManagedFile extends AbstractManagedFile implements MediaManag
 		}
 
 		@Override
-		public void setSize(long size) throws ManagedIOException {
-			// not supported. fail silently
+		public boolean setSize(long size) throws ManagedIOException {
+			return false;
 		}
 
 		@Override

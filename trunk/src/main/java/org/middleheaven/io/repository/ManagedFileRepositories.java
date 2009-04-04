@@ -14,7 +14,7 @@ public class ManagedFileRepositories {
 		
 	}
 	
-	static RepositoryEngine engine = new CommonsVSFRepositoryEngine();
+	static RepositoryEngine engine = new ClasspathRepositoryEngine();
 	
 	public static void setDefaultEngine(RepositoryEngine defaultEngine){
 		engine = defaultEngine;

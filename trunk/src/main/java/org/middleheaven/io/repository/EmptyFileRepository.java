@@ -6,7 +6,7 @@ public class EmptyFileRepository implements ManagedFileRepository {
 
 	private static final EmptyFileRepository me = new EmptyFileRepository();
 	
-	public static EmptyFileRepository getRepository(){
+	public static EmptyFileRepository repository(){
 		return me;
 	}
 

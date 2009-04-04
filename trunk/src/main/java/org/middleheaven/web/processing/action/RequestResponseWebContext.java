@@ -35,7 +35,7 @@ public class RequestResponseWebContext extends ServletWebContext{
 			this.setAttribute(ContextScope.REQUEST, WebContext.UPLOADS_FILESYSTEM, vfs);
 		} else {
 			parameters = request.getParameterMap();
-			this.setAttribute(ContextScope.REQUEST, WebContext.UPLOADS_FILESYSTEM, EmptyFileRepository.getRepository());
+			this.setAttribute(ContextScope.REQUEST, WebContext.UPLOADS_FILESYSTEM, EmptyFileRepository.repository());
 		}
 	}
 

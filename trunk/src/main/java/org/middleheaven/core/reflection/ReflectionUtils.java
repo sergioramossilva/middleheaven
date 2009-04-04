@@ -141,7 +141,8 @@ public final class ReflectionUtils {
 	 * Loads a class from its name
 	 * @param className
 	 * @return
-	 * @throws InstantiationReflectionException
+	 * @throws NoSuchClassReflectionException if the class is not found in the classpath
+	 *  
 	 */
 	public static Class<?> loadClass(String className) throws InstantiationReflectionException{
 		try {
@@ -316,7 +317,8 @@ public final class ReflectionUtils {
 		try {
 			Method methodToInvoke = mainClass.getMethod("main", String[].class);
 			methodToInvoke.setAccessible(true);
-			methodToInvoke.invoke(null, params);
+			final Object[] args = params; 
+			methodToInvoke.invoke(null, args);
 		} catch (SecurityException e) {
 			throw new IllegalAccessReflectionException(e);
 		} catch (IllegalArgumentException e) {

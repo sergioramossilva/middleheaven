@@ -22,12 +22,13 @@ public interface ManagedFileContent {
     /**
      * Allow for establishing a start buffer size for the file contents.
      * This method is optional. Classes that do no support it must fail 
-     * silently , i.e. do nothing
+     * silently and return false.
      * 
      * @param size
+     * @return {@code true} if the size was changed, {@code false} otherwise;
      * @throws ManagedIOException
      */
-    public void setSize(long size) throws ManagedIOException ;
+    public boolean setSize(long size) throws ManagedIOException ;
     
     
 }

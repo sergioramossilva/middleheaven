@@ -53,11 +53,12 @@ public final class ByteBuffer {
 		return this.buffer.length;
 	}
 
-	public void setSize(int size) {
+	public boolean setSize(int size) {
 		byte[] newStream = new byte[size];
 		System.arraycopy(buffer, 0, newStream, 0, buffer.length);
 		synchronized (lock){ 
 			buffer = newStream;
 		}
+		return this.buffer.length == size;
 	}
 }

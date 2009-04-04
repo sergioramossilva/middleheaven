@@ -51,8 +51,8 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 			}
 
 			@Override
-			public void setSize(long size) throws ManagedIOException {
-				buffer.setSize((int)size);
+			public boolean setSize(long size) throws ManagedIOException {
+				return buffer.setSize((int)size);
 			}
 			
 		};
@@ -64,13 +64,12 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 	}
 
 	@Override
-	public void createFile() {
-		
+	public ManagedFile doCreateFile() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void createFolder() {
-		// TODO create specific exception: cannot create folder in a file
+	public ManagedFile doCreateFolder() {
 		throw new UnsupportedOperationException();
 	}
 

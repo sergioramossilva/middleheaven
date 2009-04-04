@@ -22,4 +22,35 @@ public abstract class AbstractManagedFile implements ManagedFile{
 			throw ManagedIOException.manage(ioe);
 		}
 	}
+	
+	@Override
+	public final ManagedFile createFile() {
+		switch (this.getType()){
+		case FILE:
+		case FILEFOLDER:
+			return this;
+		case VIRTUAL:
+			return doCreateFile();
+		default:
+			throw new UnsupportedOperationException();
+		}
+	}
+
+
+	@Override
+	public final ManagedFile createFolder() {
+		switch (this.getType()){
+		case FOLDER:
+		case FILEFOLDER:
+			return this;
+		case VIRTUAL:
+			return doCreateFolder();
+		default:
+			throw new UnsupportedOperationException();
+		}
+	}
+	
+	protected abstract ManagedFile doCreateFile();
+	protected abstract ManagedFile doCreateFolder();
+	
 }
