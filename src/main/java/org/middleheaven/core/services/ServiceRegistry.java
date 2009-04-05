@@ -65,7 +65,7 @@ public final class ServiceRegistry {
      */
     public static <T> T getService(Class<T> serviceClass, Map<String,String> properties){
     	if (context == null){
-    		
+    		// TODO throw exception when service context is null
     	}
     	T service = context.getService(serviceClass, properties);
     	if (service==null){

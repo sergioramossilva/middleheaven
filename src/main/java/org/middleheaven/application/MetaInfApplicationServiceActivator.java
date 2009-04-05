@@ -1,6 +1,8 @@
 package org.middleheaven.application;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
@@ -13,10 +15,13 @@ import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstapListener;
 import org.middleheaven.core.bootstrap.BootstrapEvent;
 import org.middleheaven.core.bootstrap.BootstrapService;
+import org.middleheaven.core.reflection.InstantiationReflectionException;
+import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.Wire;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
@@ -28,12 +33,12 @@ import org.middleheaven.logging.LoggingService;
 
 /**
  * Provides an {@link ApplicationLoadingService} for loading application modules present at the application configuration path
- * Application Modules are jar files with extension .apm that contain a manifest file
+ * Searches for a  a manifest file
  * with an {@code Application-Module} entry pointing to the {@link ApplicationModule} class.
  * 
  * 
  */
-public class DynamicLoadApplicationServiceActivator extends ServiceActivator implements BootstapListener  {
+public class MetaInfApplicationServiceActivator extends ServiceActivator implements BootstapListener  {
 
 
 	private LogBook log;
@@ -45,7 +50,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 	private WiringService wiringService;
 	
 	public static void setAppModulesFilter(ManagedFileFilter appModulesFilter) {
-		DynamicLoadApplicationServiceActivator.appModulesFilter = appModulesFilter;
+		MetaInfApplicationServiceActivator.appModulesFilter = appModulesFilter;
 	}
 
 	private static ManagedFileFilter appModulesFilter =  new ManagedFileFilter(){
@@ -56,7 +61,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 		}
 	};
 	
-	public DynamicLoadApplicationServiceActivator(){}
+	public MetaInfApplicationServiceActivator(){}
 	
 	@Require
 	public void setBootstrapService(BootstrapService bootstrapService) {
@@ -169,85 +174,45 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 
 		@Override
 		public void onChange(FileChangeEvent event) {
-			ManagedFile file = event.getFile();
-			if (appModulesFilter.classify(file)){
-				this.setState(ApplicationCycleState.PAUSED);
-				loadModuleFromFile(file);
-				this.setState(ApplicationCycleState.READY);
-			}
+			//no-op
 		}
 		
 
-		protected void loadPresentModules(){
-
-			// look for all files ending in .apm (Application Module)
-			// these must be jar files
-			Collection<ManagedFile> applicationModuleFiles = new HashSet<ManagedFile>();
+		protected void loadPresentModules() {
 
 			ManagedFile f =  bootstrapService.getEnvironmentBootstrap().getContainer().getAppConfigRepository();
 
-			if (f.isWatchable()){
-				WatchableContainer wr = (WatchableContainer)f;
-				wr.addFileChangelistener(cycle, f);
-			}
-
-			// filter apm only (apm are jar files)
-			applicationModuleFiles.addAll( f.listFiles(appModulesFilter));
-
-			for (ManagedFile jar : applicationModuleFiles){
-				loadModuleFromFile(jar);
-			}
-
-		}
-
-		private void loadModuleFromFile(ManagedFile jar) {
-
-			try{
-				URLClassLoader cloader = URLClassLoader.newInstance(new URL[]{jar.getURL()});
-
-				JarInputStream jis = new JarInputStream(jar.getContent().getInputStream());
-				Manifest manifest = jis.getManifest();
-				String className=null;
-				if (manifest!=null){
-					Attributes at = manifest.getMainAttributes();
-					className = at.getValue("Application-Module");
-				}
-
-				if(className!=null && !className.isEmpty()){
-					try{
-						ApplicationModule module = (ApplicationModule) cloader.loadClass(className).newInstance();
-						ApplicationModule older = context.getOlderModulePresent(module.getModuleID());
-						if (older!=null){
-							older.unload(context);
-							//module.load(context);
+			ManagedFile manifest = f.resolveFile("MANIFEST.MF");
+			
+			if (manifest.exists()){
+				BufferedReader reader = new BufferedReader(new InputStreamReader(manifest.getContent().getInputStream()));
+				String line;
+				try {
+					while (((line = reader.readLine())!=null)){
+						if (line.startsWith("Application-Module")){
+	
+							String className = line.substring(line.indexOf(":")+1).trim();
+							if(className!=null && !className.isEmpty()){
+								try{
+									ApplicationModule module =  ReflectionUtils.newInstance(className, ApplicationModule.class);
+									wiringService.getWiringContext().wireMembers(module);
+									ApplicationModule older = context.getOlderModulePresent(module.getModuleID());
+									if (older!=null){
+										older.unload(context);
+									}
+									context.addModule(module);
+								} catch (ClassCastException e){
+									log.warn(className + " is not a valid application module activator");
+								}
+							}
+							break;
 						}
-						context.addModule(module);
-					} catch (ClassCastException e){
-						log.warn(className + " is not a valid application module activator");
 					}
-				}else {
-					log.warn(jar.getName() + " does not present an application module.");
+				} catch (IOException e) {
+					throw ManagedIOException.manage(e);
 				}
-
-			}catch (IOException e) {
-				ManagedIOException.manage(e);
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 
 		}
-
-
 	}
-
-
-
-
 }
