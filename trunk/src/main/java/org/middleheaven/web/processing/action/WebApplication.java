@@ -13,7 +13,9 @@ import org.middleheaven.ui.Context;
  * 		<param-name>web-application-class</param-name>
  * 		<param-value>my.application.package.MyApplication</param-value>
 	</context-param>
+	@deprecated use  WEbApplicationModule 
  */
+@Deprecated 
 public abstract class WebApplication {
 
 	private final List<WebCommandMapping> mappings = new CopyOnWriteArrayList<WebCommandMapping>();

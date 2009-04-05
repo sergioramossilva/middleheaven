@@ -18,16 +18,19 @@ public abstract class WebContainer implements Container  {
 	
 	 /**
      * @return <code>ManagedFileRepository</code> representing the Repository where application configuration files are stored. 
-     * Normally this points to the WEB-INF folder for war applications
+     * Normally this points to the META-INF folder for war applications
      */
     public ManagedFile getAppConfigRepository() {
-        return ManagedFileRepositories.resolveFile(new File(context.getRealPath("./WEB-INF")));
+        return ManagedFileRepositories.resolveFile(new File(context.getRealPath("./META-INF")));
     }
     
-
+    /**
+     * @return <code>ManagedFileRepository</code> representing the Repository where environment configuration files are stored. 
+     * Normally this points to the WEB-INF folder for war applications
+     */
 	@Override
 	public ManagedFile getEnvironmentConfigRepository() {
-		return getAppConfigRepository();
+		return ManagedFileRepositories.resolveFile(new File(context.getRealPath("./WEB-INF")));
 	}
 
     /**

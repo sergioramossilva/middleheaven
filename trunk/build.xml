@@ -22,4 +22,12 @@
 
 	
 	</target>
+	
+	<target name="deploy" depends="jar" >
+		<copy file="middleheaven.jar"
+			tofile="F:/Workspace/MHTestSite/WebContent/WEB-INF/lib/middleheaven.jar"/>
+				
+
+	
+	</target>
 </project>
