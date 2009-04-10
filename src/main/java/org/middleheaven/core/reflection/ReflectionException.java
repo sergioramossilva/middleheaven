@@ -1,5 +1,7 @@
 package org.middleheaven.core.reflection;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class ReflectionException extends RuntimeException {
 
 
@@ -14,13 +16,28 @@ public class ReflectionException extends RuntimeException {
 	protected ReflectionException() {
 	}
 
-	public static RuntimeException manage(Throwable e) {
-		if (e instanceof SecurityException){
-			throw new IllegalAccessReflectionException(e);
-		} else if (e instanceof NoSuchMethodException){
-			throw new NoSuchMethodReflectionException(e);
+	public static RuntimeException manage(Exception t, Class<?> type) {
+		
+		try {
+			throw t;
+		} catch (SecurityException e) {
+			return new IllegalAccessReflectionException(e);
+		} catch (IllegalArgumentException e) {
+			return new IllegalAccessReflectionException(e);
+		} catch (InvocationTargetException e) {
+			return new InvocationTargetReflectionException(e.getCause());
+		} catch (InstantiationException e) {
+			return new InstantiationReflectionException(type.getName(), e.getMessage());
+		} catch (IllegalAccessException e) {
+			return new IllegalAccessReflectionException(e);
+		} catch(NoSuchMethodException e){
+			return new NoSuchMethodReflectionException(e);
+		}  catch (RuntimeException e) {
+			return e;
+		} catch (Exception e){
+			return new ReflectionException(e);
 		}
 		
-		return new RuntimeException(e);
+		
 	}
 }
