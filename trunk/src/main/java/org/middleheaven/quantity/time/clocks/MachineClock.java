@@ -70,15 +70,15 @@ public class MachineClock extends Clock {
 				translatingMethod = clock.getClass().getDeclaredMethod("calculateTimeFromReference", TimePoint.class);
 				translatingObject = clock;
 			} catch (SecurityException e) {
-				throw  ReflectionException.manage(e);
+				throw  ReflectionException.manage(e,clock.getClass());
 			} catch (NoSuchMethodException e) {
 				try {
 					translatingMethod = this.getClass().getDeclaredMethod("calculateTimeFromReference", TimePoint.class);
 					translatingObject = this;
 				} catch (SecurityException e1) {
-					throw  ReflectionException.manage(e1);
+					throw  ReflectionException.manage(e1,this.getClass());
 				} catch (NoSuchMethodException e1) {
-					throw  ReflectionException.manage(e1);
+					throw  ReflectionException.manage(e1,this.getClass());
 				}
 			
 			}
