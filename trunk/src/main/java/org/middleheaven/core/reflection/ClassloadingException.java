@@ -10,4 +10,8 @@ public class ClassloadingException extends ReflectionException {
         super(msg);
     }
 
+	public ClassloadingException(Exception e) {
+		super(e);
+	}
+
 }
