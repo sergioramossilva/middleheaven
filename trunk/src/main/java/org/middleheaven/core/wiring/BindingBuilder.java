@@ -18,7 +18,7 @@ public class BindingBuilder<T> {
 	
 	@SuppressWarnings("unchecked")
 	public BindingBuilder<T> to(Class<? extends T> type){
-		binding.setResolver(new DefaultResolver(type,binder));
+		binding.setResolver(FactoryResolver.instanceFor(type,binder));
 		return this;
 	}
 	
