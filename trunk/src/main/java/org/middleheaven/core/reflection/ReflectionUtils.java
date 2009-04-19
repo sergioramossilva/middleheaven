@@ -31,6 +31,22 @@ public final class ReflectionUtils {
 	
 	public ReflectionUtils(){}
 	
+	public static boolean isInClasspath(String className) {
+		try {
+			Class.forName(className);
+			return true;
+		} catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
+	
+	public static Object unproxy(Object proxy){
+		if (proxy instanceof WrapperProxy){
+			return ((WrapperProxy)proxy).getWrappedObject();
+		}
+		return null;
+	}
+	
 	public static <T> T proxy (Class<T> facadeClass , final ProxyHandler delegator){
 		return stategy.proxy(facadeClass, delegator);
 	}
@@ -39,8 +55,12 @@ public final class ReflectionUtils {
 		return stategy.proxy(delegationTarget, proxyInterface);
 	}
 
-	public static <I> I proxy (Object delegationTarget , Class<I> proxyInterface , final ProxyHandler delegator ){
-		return stategy.proxy(delegationTarget, proxyInterface, delegator);
+	public static <I> I proxy (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface ){
+		return stategy.proxy(delegationTarget, delegator, proxyInterface);
+	}
+	
+	public static <I> I proxy (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface , Class<?> adicionalInterfaces){
+		return stategy.proxy(delegationTarget, delegator, proxyInterface,adicionalInterfaces);
 	}
 
 	public static Set<Class<?>> getPackageClasses(Package classPackage) {
@@ -240,16 +260,25 @@ public final class ReflectionUtils {
 	}
 
 	public static Set<Method> allAnnotatedMethods(Class<?> type, Class<? extends Annotation> annotation) {
-		Method[] methods = type.getDeclaredMethods();
 
+		Set<Method> all = new HashSet<Method>();
+
+		// read all methods in the hierarchy
+		Class<?> superType = type;
+		while (!superType.equals(Object.class)){
+			all.addAll(Arrays.asList(superType.getDeclaredMethods())); // private , protected , public
+			all.addAll(Arrays.asList(superType.getMethods())); // super class inherit public
+			superType = superType.getSuperclass();
+		}
+		
 		Set<Method> annotated = new HashSet<Method>();
 
-		for (Method m : methods){
+		for (Method m : all){
 			if (m.isAnnotationPresent(annotation)){
 				annotated.add(m);
 			}
 		}
-
+		
 		return annotated;
 	}
 
@@ -468,6 +497,8 @@ public final class ReflectionUtils {
 	public static <T> Class<T> genericClass(T object) {
 		return (Class<T>) object.getClass();
 	}
+
+
 
 
 

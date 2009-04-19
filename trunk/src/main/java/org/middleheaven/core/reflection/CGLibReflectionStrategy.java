@@ -94,7 +94,7 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 		try{
 			return proxyInterface.cast(Enhancer.create(
 					delegationTarget.getClass(), 
-					new Class[]{proxyInterface},
+					new Class[]{proxyInterface, WrapperProxy.class},
 					new Dispatcher(){
 						public Object loadObject(){
 							return delegationTarget;
@@ -106,19 +106,28 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 		}
 	}
 
+	
 	@Override
-	public <I> I proxy(Object delegationTarget, Class<I> proxyInterface,ProxyHandler handler) {
+	public <I> I proxy(Object delegationTarget, ProxyHandler handler,Class<I> proxyInterface,Class<?> ... adicionalInterfaces) {
 		if (!proxyInterface.isInterface()){
 			throw new IllegalArgumentException("Proxy must be applied with an interface");
 		}
 
-		if (proxyInterface.isInstance(delegationTarget)){
+		if (adicionalInterfaces.length==0 && proxyInterface.isInstance(delegationTarget)){
 			return proxy(delegationTarget,proxyInterface);
 		} else {
 			try{
+				@SuppressWarnings("unchecked") Class[] newInterfaces = new Class[adicionalInterfaces.length+1];
+				newInterfaces[0] = proxyInterface;
+				for (int i=0; i < adicionalInterfaces.length ;i ++){
+					if (!adicionalInterfaces[i].isInterface()){
+						throw new IllegalArgumentException("Proxy must be applied with an interface");
+					}
+					newInterfaces[i+1] = adicionalInterfaces[i];
+				}
 				return proxyInterface.cast(Enhancer.create(
 						delegationTarget.getClass(), 
-						new Class[]{proxyInterface},
+						newInterfaces,
 						new ProxyHandlerInterceptor(delegationTarget.getClass(),handler))
 				);
 			}catch (RuntimeException e){

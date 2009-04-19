@@ -63,6 +63,8 @@ public abstract class ExecutionEnvironmentBootstrap {
 		serviceRegistryContext.register(BootstrapService.class, bootstrapService,null);
 		serviceRegistryContext.register(ServiceContextEngineConfigurationService.class, new UniqueServiceContextEngineConfigurationService(), null);
 		
+		doEnvironmentServiceRegistry();
+		
 		bootstrapService.fireBootupStart();
 		
 		log.debug("Inicialize service discovery engines");
@@ -85,6 +87,10 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 		log.info("Environment inicialized in " + (System.currentTimeMillis()-time) + " ms.");
 		bootstrapService.fireBootupEnd();
+	}
+
+	protected void doEnvironmentServiceRegistry() {
+		// no-op
 	}
 
 	public void configuate(ServiceContextConfigurator configurator){

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.core.services.ServiceRegistry;
 
-public final class FrontEndServlet extends HttpServlet {
+public class FrontEndServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6229608965293497721L;
 

@@ -5,14 +5,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-
 import org.middleheaven.util.CollectionUtils;
 
-public class Key {
+class Key {
 
 	private Class targetClass;
 	private Set specifications = new HashSet ();
 	
+
 	public String toString(){
 		return targetClass.getName() + "+" + specifications.toString();
 	}

@@ -11,8 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
+import org.middleheaven.web.processing.action.RequestResponseWebContext;
 
-// criated directly on the WebContainerBoostrap
+// created directly on the WebContainerBoostrap
 class ServletHttpServerService implements HttpServerService {
 
 	private final Map<String, HttpMapping> mappings = new TreeMap<String, HttpMapping>();
@@ -88,14 +89,24 @@ class ServletHttpServerService implements HttpServerService {
 		}
 		
 		try{
-			processor.process(request, response);
+			Outcome outcome = processor.process(new  RequestResponseWebContext(request,response));
+			
+			if (outcome.isTerminal()){
+				return; // do nothing. The response is already done
+			} else if (outcome.isError){
+				response.sendError(Integer.parseInt(outcome.getUrl()));
+			}else if (outcome.isDoRedirect()){
+				response.sendRedirect(outcome.getUrl());
+			} else {
+				request.getRequestDispatcher(outcome.getUrl()).include(request, response);
+			}
+			
 		}catch (HttpProcessIOException e){
 			throw e.getIOException();
 		}catch (HttpProcessServletException e){
 			throw e.getServletException();
 		}catch (Throwable e){
-			Logging.getBook("web").error("Unexpected error" , e);
-			response.sendError(HttpErrors.INTERNAL_SERVER_ERROR.errorCode()); // serve error
+			throw new ServletException(e);
 		} 
 	}
 

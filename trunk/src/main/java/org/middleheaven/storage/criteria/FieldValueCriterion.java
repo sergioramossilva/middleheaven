@@ -1,6 +1,5 @@
 package org.middleheaven.storage.criteria;
 
-import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 
 class FieldValueCriterion implements FieldCriterion {
@@ -8,17 +7,15 @@ class FieldValueCriterion implements FieldCriterion {
 	private static final long serialVersionUID = 7204559851317644625L;
 	
 	private QualifiedName fieldName;
-	private DataType dataType;
 	private CriterionOperator operator;
 	private FieldValueHolder valueHolder;
 	
 
 	
-	public FieldValueCriterion(QualifiedName fieldName, DataType dataType,
+	public FieldValueCriterion(QualifiedName fieldName,
 			CriterionOperator operator, FieldValueHolder valueHolder) {
 
 		this.fieldName = fieldName;
-		this.dataType = dataType;
 		this.operator = operator;
 		this.valueHolder = valueHolder;
 	}
@@ -27,12 +24,7 @@ class FieldValueCriterion implements FieldCriterion {
 	public QualifiedName getFieldName() {
 		return fieldName;
 	}
-
-	@Override
-	public DataType getFieldType() {
-		return dataType;
-	}
-
+	
 	@Override
 	public CriterionOperator getOperator() {
 		return operator;

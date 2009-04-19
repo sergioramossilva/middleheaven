@@ -3,7 +3,8 @@ package org.middleheaven.web;
 import org.middleheaven.application.ApplicationContext;
 import org.middleheaven.application.ApplicationID;
 import org.middleheaven.application.MainApplicationModule;
-import org.middleheaven.core.wiring.Wire;
+import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.web.processing.HttpServerService;
 
 public abstract class WebApplicationModule extends MainApplicationModule {
@@ -14,7 +15,7 @@ public abstract class WebApplicationModule extends MainApplicationModule {
 	}
 
 	@Wire
-	public void setHttpServerService(HttpServerService serverService){
+	public void setHttpServerService(@Service HttpServerService serverService){
 		this.serverService = serverService;
 	}
 	

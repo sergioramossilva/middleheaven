@@ -17,7 +17,7 @@ import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.sequence.Sequence;
-import org.middleheaven.storage.AbstractStoreKeeper;
+import org.middleheaven.storage.AbstractSequencialIdentityStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
@@ -30,7 +30,7 @@ import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IdentitySequence;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
 
-public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
+public final class DataBaseStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 
 	private DataBaseDialect dialect;
 	private DataSource datasource;
@@ -115,7 +115,7 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 				List<T> list = new LinkedList<T>();
 				ResultSetStorable s = new ResultSetStorable(rs,model);
 				while (rs.next()){
-					T t = merge(criteria.getTargetClass().cast(model.newInstance()));
+					T t = (T)merge(criteria.getTargetClass().cast(model.newInstance()));
 					this.copy(s, (Storable)t, model);
 
 					list.add(t);
@@ -279,6 +279,8 @@ public final class DataBaseStoreKeeper extends AbstractStoreKeeper {
 			}
 		}
 	}
+
+
 
 
 

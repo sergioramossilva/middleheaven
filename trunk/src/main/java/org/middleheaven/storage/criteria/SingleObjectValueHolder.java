@@ -1,6 +1,9 @@
 package org.middleheaven.storage.criteria;
 
+import java.util.Map;
+
 import org.middleheaven.domain.DataType;
+import org.middleheaven.util.ParamsMap;
 
 public class SingleObjectValueHolder implements FieldValueHolder {
 
@@ -37,6 +40,18 @@ public class SingleObjectValueHolder implements FieldValueHolder {
 	@Override
 	public boolean equalsValue(FieldValueHolder valueHolder) {
 		return value.equals(valueHolder.getValue());
+	}
+
+	Map<String,String> params = new ParamsMap();
+	
+	@Override
+	public String getParam(String name) {
+		return params.get(name);
+	}
+
+	@Override
+	public void setParam(String name, String value) {
+		params.put(name, value);
 	}
 
 }

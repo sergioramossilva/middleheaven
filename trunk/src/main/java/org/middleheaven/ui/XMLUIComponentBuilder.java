@@ -160,12 +160,12 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 							uiModel = new DesktopClientModel(){
 
 								@Override
-								public UIComponent defineMainWindow(UIClient client,Context context) {
+								public UIComponent defineMainWindow(UIClient client,AttributeContext context) {
 									return client.getChildrenComponents().get(client.getChildrenCount()-1);
 								}
 
 								@Override
-								public UIComponent defineSplashWindow(UIClient client,Context context) {
+								public UIComponent defineSplashWindow(UIClient client,AttributeContext context) {
 									return client.getChildrenCount() == 1 ? null : client.getChildrenComponents().get(0);
 								}
 

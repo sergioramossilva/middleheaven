@@ -1,7 +1,7 @@
 package org.middleheaven.demos.shrinkgrow;
 import org.middleheaven.application.ApplicationLoadingService;
 import org.middleheaven.core.bootstrap.client.DesktopStarter;
-import org.middleheaven.core.wiring.Wire;
+import org.middleheaven.core.wiring.annotations.Wire;
 
 
 public class TwoButtons extends DesktopStarter {

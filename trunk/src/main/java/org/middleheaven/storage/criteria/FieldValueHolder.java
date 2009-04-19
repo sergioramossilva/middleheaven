@@ -11,5 +11,8 @@ public interface FieldValueHolder extends Serializable{
 	public DataType getDataType();
 	public void setDataType(DataType type);
 	public boolean equalsValue(FieldValueHolder valueHolder);
+	
+	public String getParam(String string);
+	public void setParam(String string, String param);
 
 }

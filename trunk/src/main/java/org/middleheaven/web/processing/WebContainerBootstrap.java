@@ -27,20 +27,29 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 	protected ServletContext servletContext;
 
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-		servletContext =  servletContextEvent.getServletContext();
+		try{
+			servletContext =  servletContextEvent.getServletContext();
+
+
+			start(
+					new WritableLogBook("web container book",LoggingLevel.ALL)
+					.addWriter(new ServletContextLogBookWriter(servletContext))
+			);
+
+
+			HttpServerService httpService = ServiceRegistry.getService(HttpServerService.class);
+
+			httpService.start();
+		}catch (Throwable t){
+			servletContextEvent.getServletContext().log("Unexpected error", t);
+		}
+	}
+
+	protected void doEnvironmentServiceRegistry() {
 
 		HttpServerService httpService = new ServletHttpServerService();
-		
-		
-		start(
-				new WritableLogBook("web container book",LoggingLevel.ALL)
-				.addWriter(new ServletContextLogBookWriter(servletContext))
-		);
-		
 		ServiceRegistry.register(HttpServerService.class, httpService);
-		
-		
-		httpService.start();
+
 	}
 
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {
@@ -52,14 +61,14 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 	public Container getContainer() {
 		return new WebContainerSwitcher().getWebContainer(servletContext);
 	}
-	
+
 	public void configuate(ServiceContextConfigurator configurator){
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
 		.addActivator(MetaInfApplicationServiceActivator.class)
 		.addActivator(DynamicLoadApplicationServiceActivator.class)
 		.addActivator(UIServiceActivator.class)
 		;
-		
+
 		configurator.addEngine(engine);
 	}
 

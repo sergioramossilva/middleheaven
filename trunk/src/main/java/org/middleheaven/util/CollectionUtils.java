@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
-
 public class CollectionUtils {
 
 
@@ -49,6 +47,9 @@ public class CollectionUtils {
 	/**
 	 * Collections are equals if they contain the same elements 
 	 * independent of ordering.
+	 * To this to be true, they must have the same number of elements.
+	 * Empty collections are equal.
+	 * 
 	 * @param <T>
 	 * @param c1
 	 * @param c2

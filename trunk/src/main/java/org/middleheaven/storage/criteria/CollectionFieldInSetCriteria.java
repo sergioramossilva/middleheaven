@@ -2,7 +2,6 @@ package org.middleheaven.storage.criteria;
 
 import java.util.Collection;
 
-import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 
 public class CollectionFieldInSetCriteria implements FieldInSetCriteria {
@@ -52,12 +51,6 @@ public class CollectionFieldInSetCriteria implements FieldInSetCriteria {
 	public Criterion simplify() {
 		return this;
 	}
-
-	@Override
-	public DataType getFieldType() {
-		throw new UnsupportedOperationException();
-	}
-
 
 
 }

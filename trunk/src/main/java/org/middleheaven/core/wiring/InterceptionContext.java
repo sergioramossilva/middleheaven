@@ -3,7 +3,7 @@ package org.middleheaven.core.wiring;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-public class InterceptionContext <T>{
+public final class InterceptionContext <T>{
 
 	private T object;
 	private WiringSpecification<T> specification;

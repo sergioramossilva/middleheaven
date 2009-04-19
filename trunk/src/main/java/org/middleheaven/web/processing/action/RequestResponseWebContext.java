@@ -16,33 +16,38 @@ import org.middleheaven.ui.ContextScope;
 import org.middleheaven.web.processing.HttpProcessingUtils;
 import org.middleheaven.web.processing.HttpUserAgent;
 
-public class RequestResponseWebContext extends ServletWebContext{
+public class RequestResponseWebContext extends ServletWebContext {
 
 	private final HttpServletRequest request;
 	private final HttpServletResponse response;
 	private final Map<String,String> parameters;
+	private ManagedFileRepository uploadRepository;
 
 	@SuppressWarnings("unchecked")
 	public RequestResponseWebContext(HttpServletRequest request,HttpServletResponse response) {
 		this.request = request;
 		this.response = response;
 
-		
 		if (ServletFileUpload.isMultipartContent(request)){
 
 			parameters = new TreeMap<String,String>();
-			ManagedFileRepository vfs = UploadManagedFileRepository.repositoryOf(request,parameters);
-			this.setAttribute(ContextScope.REQUEST, WebContext.UPLOADS_FILESYSTEM, vfs);
+			uploadRepository = UploadManagedFileRepository.repositoryOf(request,parameters);
+
 		} else {
 			parameters = request.getParameterMap();
-			this.setAttribute(ContextScope.REQUEST, WebContext.UPLOADS_FILESYSTEM, EmptyFileRepository.repository());
+			uploadRepository = EmptyFileRepository.repository();
 		}
+	}
+
+	@Override
+	public ManagedFileRepository getUploadRepository() {
+		return uploadRepository;
 	}
 
 	public HttpUserAgent getAgent(){
 		return HttpProcessingUtils.parse(request);
 	}
-	
+
 	public HttpServletRequest getRequest() {
 		return request;
 	}
@@ -50,11 +55,9 @@ public class RequestResponseWebContext extends ServletWebContext{
 	public HttpServletResponse getResponse() {
 		return response;
 	}
-	
-	
-	
+
 	@Override
-	protected Map<String, String> getParameters() {
+	public Map<String, String> getParameters() {
 		return this.parameters;
 	}
 
@@ -69,11 +72,11 @@ public class RequestResponseWebContext extends ServletWebContext{
 
 	@Override
 	protected void setHeaderAttribute(ContextScope scope, String name,Object value) {
-		 if (!( value instanceof String)){
-			 throw new ClassCastException(value + " cannot be used as a header value");
-		 }
-		 
-		 response.setHeader(name, value.toString());
+		if (!( value instanceof String)){
+			throw new ClassCastException(value + " cannot be used as a header value");
+		}
+
+		response.setHeader(name, value.toString());
 	}
 
 	@Override
@@ -85,4 +88,16 @@ public class RequestResponseWebContext extends ServletWebContext{
 	public Culture getCulture() {
 		return Culture.valueOf(request.getLocale());
 	}
+
+	@Override
+	public StringBuilder getRequestUrl() {
+		return new StringBuilder(request.getRequestURL());
+	}
+
+	@Override
+	public String getContextPath() {
+		return request.getContextPath();
+	}
+
+
 }

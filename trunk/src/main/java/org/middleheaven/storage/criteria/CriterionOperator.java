@@ -3,6 +3,7 @@ package org.middleheaven.storage.criteria;
 import java.io.Serializable;
 
 public final class CriterionOperator implements Serializable{
+	private static final long serialVersionUID = -909911263154033813L;
 	
 	public static final CriterionOperator UNKOWN = new CriterionOperator("unkown"); 
 	public static final CriterionOperator EQUAL = new CriterionOperator("equals"); 
@@ -14,8 +15,10 @@ public final class CriterionOperator implements Serializable{
 	public static final CriterionOperator CONTAINS = new CriterionOperator("contains"); 
 	public static final CriterionOperator STARTS_WITH = new CriterionOperator("startsWith"); 
 	public static final CriterionOperator ENDS_WITH = new CriterionOperator("endsWith"); 
+	public static final CriterionOperator IS = new CriterionOperator("is");
+	public static final CriterionOperator IS_NULL =  new CriterionOperator("is_null");
 	
-	private static final long serialVersionUID = -909911263154033813L;
+	
 
 	private String name;
 	private boolean negated;

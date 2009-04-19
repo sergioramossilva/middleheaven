@@ -3,13 +3,20 @@ package org.middleheaven.storage;
 import java.util.Collection;
 
 import org.middleheaven.domain.EntityModel;
-import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
 
 public interface StoreKeeper {
 
 	public StorableEntityModel storableModelOf(EntityModel model);
+	
+	/**
+	 * Wraps the object with a {@code Storable} interface.
+	 * If the object is already a {@code Storable}, return the object as it is.
+	 * @param obj
+	 * @return
+	 */
+	public Storable merge(Object obj);
 	
 	public Identity getIdentityFor(Object object);
 	
@@ -47,13 +54,10 @@ public interface StoreKeeper {
 	 */
 	public <T> Query<T> createQuery(Criteria<T> criteria, StorableEntityModel model, ReadStrategy strategy);
 	
+
 	/**
-	 * Returns a sequence of longs under registered for a given name
-	 * This method is intended to provide universal support for
-	 * storage unique key generation in a store dependent manner.
-	 * DatabaseStorages can use native sequence support where available. 
-	 * @param name sequence name
-	 * @return Sequence of <code>Identity</code> sequence
+	 * 
+	 * @return {@code true} if this keeper is responsible for assigning the storable identity, {@code false} otherwise 
 	 */
-	public <I extends Identity> Sequence<I> getSequence(String name);
+	public Storable assignIdentity(Storable storable);
 }
