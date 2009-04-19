@@ -1,12 +1,9 @@
 package org.middleheaven.storage;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.sequence.DefaultToken;
 import org.middleheaven.sequence.Sequence;
@@ -14,17 +11,13 @@ import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IdentitySequence;
-import org.middleheaven.util.identity.IntegerIdentity;
-import org.middleheaven.util.identity.UUIDIdentity;
-import org.middleheaven.util.identity.UUIDIdentitySequence;
 
 public class DomainDataStorage implements DataStorage {
 
 	StoreKeeper storeKeeper;
 	DomainModel domainModel;
 	Set<DataStorageListener> listeners = new CopyOnWriteArraySet<DataStorageListener>();
-	private Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
-
+	
 	public DomainDataStorage(StoreKeeper storeManager,DomainModel domainModel) {
 		this.storeKeeper = storeManager;
 		this.domainModel = domainModel;
@@ -52,43 +45,10 @@ public class DomainDataStorage implements DataStorage {
 
 	@Override
 	public <T> T store(T obj) {
-		Storable p;
-		if (obj instanceof Storable){
-			p = (Storable)obj;
-		} else {
-			// not managed yet
-			p = ReflectionUtils.proxy(obj, Storable.class, new PersistableMethodHandler(obj.getClass()));
-			ReflectionUtils.copy(obj, p);
-		}
+	
+		Storable p = this.storeKeeper.merge(obj);
 		doStore(p);
 		return (T)p;
-	}
-
-	protected Identity nextID(Class<?> entityType) {
-		Class<? extends Identity> identityType = domainModel.getEntityModelFor(entityType).getIdentityType();
-		if (UUIDIdentity.class.isAssignableFrom(identityType)){
-			return new UUIDIdentitySequence().next().value();
-		} else {
-
-		}
-		return nextID(identityType , domainModel.getEntityModelFor(entityType).getEntityName());
-	}
-
-	protected <I extends Identity> I nextID(Class<I> identityType,String identifiableName) {
-		if (identityType.equals(IntegerIdentity.class)){
-
-			IdentitySequence<Identity> idSequence = sequences.get(identifiableName);
-			if (idSequence == null){
-				Sequence<Identity> dialectSequence = this.storeKeeper.getSequence(identifiableName); 
-				idSequence = new DataBaseIntegerIdentitySequence(dialectSequence);
-				sequences.put(identifiableName,idSequence);
-			} 
-
-			return identityType.cast(idSequence.next().value());
-
-		} else {
-			throw new StorageException("Identity of type " + identityType.getName() + " is not supported by " + this.getClass().getName());
-		}
 	}
 
 	private final void doStore(Storable p){
@@ -135,8 +95,9 @@ public class DomainDataStorage implements DataStorage {
 		}
 
 		// assign key
-		p.setIdentity(this.storeKeeper.getSequence(p.getPersistableClass().getName()).next().value());
+		this.storeKeeper.assignIdentity(p);
 
+		
 		this.storeKeeper.insert(
 				Collections.singleton(p),
 				storeKeeper.storableModelOf(domainModel.getEntityModelFor(p.getPersistableClass()))

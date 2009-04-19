@@ -15,6 +15,7 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;
 import org.middleheaven.io.xml.XMLObjectContructor;
 import org.middleheaven.sequence.Sequence;
+import org.middleheaven.storage.AbstractSequencialIdentityStoreKeeper;
 import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
@@ -27,7 +28,7 @@ import org.middleheaven.util.identity.Identity;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-public class XMLStoreKeeper extends AbstractStoreKeeper {
+public class XMLStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 
 	private static class XMLStoreContructor extends XMLObjectContructor<Document>{
 
@@ -107,7 +108,7 @@ public class XMLStoreKeeper extends AbstractStoreKeeper {
 			List<T> list = new ArrayList<T>(nodes.getLength());
 			
 			for (int i = 0; i < nodes.getLength(); i++) {
-				T t = merge((T)model.newInstance());
+				T t = (T)merge(model.newInstance());
 				NodeStorable s = new NodeStorable(nodes.item(i),model.identityFieldModel());
 				this.copy(s, (Storable)t, model);
 				

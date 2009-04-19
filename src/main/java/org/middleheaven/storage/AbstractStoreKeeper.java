@@ -24,7 +24,7 @@ public abstract class AbstractStoreKeeper implements StoreKeeper {
 		}
 		return sm;
 	}
-	
+
 	
 	@Override
 	public Identity getIdentityFor(Object object) {
@@ -43,18 +43,17 @@ public abstract class AbstractStoreKeeper implements StoreKeeper {
 		}
 	}
 	
-
-	protected final <T>  T merge(T obj){
+	@Override
+	public Storable merge(Object obj){
 		Storable p;
 		if (obj instanceof Storable){
 			p = (Storable)obj;
 		} else {
 			// not managed yet
-			p = ReflectionUtils.proxy(obj, Storable.class, new PersistableMethodHandler(obj.getClass()));
+			p = ReflectionUtils.proxy(obj, new PersistableMethodHandler(obj.getClass()), Storable.class);
 			ReflectionUtils.copy(obj, p);
 		}
-		@SuppressWarnings("unchecked") final T t = (T)p;
-		return t;
+		return p;
 	}
 
 	

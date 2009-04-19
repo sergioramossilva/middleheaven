@@ -1,7 +1,5 @@
 package org.middleheaven.web.processing;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.middleheaven.global.Culture;
 
 /**
@@ -10,6 +8,6 @@ import org.middleheaven.global.Culture;
  */
 public interface HttpCultureResolveStrategy {
 
-	public Culture resolveFrom(HttpServletRequest request);
+	public Culture resolveFrom(HttpContext context);
 	
 }

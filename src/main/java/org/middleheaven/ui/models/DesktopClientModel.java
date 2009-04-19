@@ -1,6 +1,6 @@
 package org.middleheaven.ui.models;
 
-import org.middleheaven.ui.Context;
+import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.desktop.swing.SwingRenderKit;
@@ -34,14 +34,14 @@ public abstract class DesktopClientModel extends AbstractUIClientModel{
 	 * 
 	 * @return Unrendered UIWindow
 	 */
-	public abstract UIComponent defineMainWindow(UIClient client,Context context);
+	public abstract UIComponent defineMainWindow(UIClient client,AttributeContext context);
 
 	/**
 	 * Splash window. If unrendered will be rendered 
 	 * @param client 
 	 * @return splash window.
 	 */
-	public abstract UIComponent defineSplashWindow(UIClient client, Context context);
+	public abstract UIComponent defineSplashWindow(UIClient client, AttributeContext context);
 
 
 }

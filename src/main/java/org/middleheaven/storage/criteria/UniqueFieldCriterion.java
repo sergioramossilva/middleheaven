@@ -1,6 +1,5 @@
 package org.middleheaven.storage.criteria;
 
-import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 
 public class UniqueFieldCriterion implements FieldCriterion {
@@ -41,10 +40,6 @@ public class UniqueFieldCriterion implements FieldCriterion {
 		return this;
 	}
 
-	@Override
-	public DataType getFieldType() {
-		return valueHolder.getDataType();
-	}
 
 
 

@@ -27,25 +27,6 @@ public final class CriteriaBuilder<T> {
 		this.criteria = new AbstractCriteria<T>(type);
 	}
 
-	protected Collection<T> filter(Collection<T> items){
-		Collection<T> results = new ArrayList<T>(items.size());
-
-		BooleanClassifier<T> filter = new CriteriaFilter<T> (all());
-
-		for (T item : items){
-			if (filter.classify(item)){
-				results.add(item);
-			}
-		}
-
-		// ordering and grouping
-
-
-		// projections
-
-		return results;
-	}
-
 	public Criteria<T> distinct(){
 		this.criteria.setDistinct(true);
 		return this.criteria;

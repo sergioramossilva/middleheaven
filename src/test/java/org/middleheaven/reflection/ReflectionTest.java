@@ -19,7 +19,7 @@ public class ReflectionTest {
 	public void testProxy(){
 		
 		
-		Object obj = ReflectionUtils.proxy(new Date() , Cloneable.class , new TestMethodHandler());
+		Object obj = ReflectionUtils.proxy(new Date() , new TestMethodHandler() , Cloneable.class);
 		
 		assertTrue(obj instanceof Cloneable);
 		assertTrue(obj instanceof Date);

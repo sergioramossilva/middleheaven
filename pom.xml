@@ -164,6 +164,11 @@
 			<version>1.8.0.7</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.neodatis</groupId>
+			<artifactId>neodatis-odb</artifactId>
+			<version>1.9-beta-1</version>
+		</dependency>
 	</dependencies>
 	<distributionManagement>
 		<site>

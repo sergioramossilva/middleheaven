@@ -5,11 +5,12 @@ import java.util.Enumeration;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.global.Culture;
-import org.middleheaven.ui.Context;
+import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.ui.CulturalAttributeContext;
 import org.middleheaven.util.conversion.TypeConvertions;
 
-public class WebConfigContext implements Context {
+public class WebConfigContext implements CulturalAttributeContext {
 
 	ServletContext ctx;
 	private Culture culture;

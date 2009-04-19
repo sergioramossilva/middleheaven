@@ -1,10 +1,10 @@
 package org.middleheaven.test.ui.web;
 
+import org.middleheaven.web.processing.HttpContext;
 import org.middleheaven.web.processing.action.Interceptor;
 import org.middleheaven.web.processing.action.InterceptorChain;
 import org.middleheaven.web.processing.action.OutcomeStatus;
 import org.middleheaven.web.processing.action.PresenterCommandMappingBuilder;
-import org.middleheaven.web.processing.action.WebContext;
 
 
 
@@ -37,7 +37,7 @@ public class TesteWriting {
 	private static class ProjectInterceptor implements Interceptor{
 
 		@Override
-		public void intercept(WebContext context, InterceptorChain chain) {
+		public void intercept(HttpContext context, InterceptorChain chain) {
 			// TODO implement ProjectInterceptor.intercept
 			
 		}

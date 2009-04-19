@@ -2,6 +2,8 @@ package org.middleheaven.web.processing.action;
 
 import java.util.Map;
 
+import org.middleheaven.web.processing.Outcome;
+
 public class URLOutcome extends Outcome {
 
 	Map<String,String> params;
@@ -16,10 +18,10 @@ public class URLOutcome extends Outcome {
 
 	public String getParameterizedURL(){
 		if (params.isEmpty()){
-			return url;
+			return this.getUrl();
 		}
 		
-		StringBuilder param = new StringBuilder(url).append("?");
+		StringBuilder param = new StringBuilder(getUrl()).append("?");
 	
 	    for (Map.Entry<String,String> parameter : params.entrySet()){
 	        

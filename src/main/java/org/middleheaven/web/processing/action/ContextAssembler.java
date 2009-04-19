@@ -5,15 +5,15 @@ import java.util.Collection;
 import org.middleheaven.core.reflection.BeanAssembler;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.ui.Context;
+import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;
 
 public class ContextAssembler implements BeanAssembler {
 
-	Context context;
+	AttributeContext context;
 	ContextScope scope;
 	
-	public ContextAssembler(Context context, ContextScope scope) {
+	public ContextAssembler(AttributeContext context, ContextScope scope) {
 		this.context = context;
 		this.scope = scope;
 	}

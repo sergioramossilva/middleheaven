@@ -6,6 +6,8 @@ import java.util.List;
 import org.middleheaven.aas.AccessDeniedException;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.web.processing.HttpContext;
+import org.middleheaven.web.processing.Outcome;
 
 public class ListInterceptorChain implements InterceptorChain{
 
@@ -19,7 +21,7 @@ public class ListInterceptorChain implements InterceptorChain{
 	}
 	
 	@Override
-	public void doChain(WebContext context) {
+	public void doChain(HttpContext context) {
 		if (current<interceptors.size()){
 			current++;
 			if(interrupted || doIntercept(interceptors.get(current-1) , context, this)){
@@ -37,7 +39,7 @@ public class ListInterceptorChain implements InterceptorChain{
 	 * @param chain
 	 * @return true if chain must be interrupted, false otherwise 
 	 */
-	protected boolean doIntercept(Interceptor interceptor, WebContext context, InterceptorChain chain) {
+	protected boolean doIntercept(Interceptor interceptor, HttpContext context, InterceptorChain chain) {
 		try {
 			// invoque interceptor
 			interceptor.intercept(context, chain);
@@ -63,7 +65,7 @@ public class ListInterceptorChain implements InterceptorChain{
 		return new Outcome(status,505);
 	}
 	
-	protected Outcome doFinal(WebContext context){ 
+	protected Outcome doFinal(HttpContext context){ 
 		return outcome;
 	}
 	

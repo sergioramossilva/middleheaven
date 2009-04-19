@@ -1,7 +1,7 @@
 package org.middleheaven.core.wiring;
 
 
-interface EditableBinder {
+interface EditableBinder extends Binder{
 
 	public WiringModel getWiringModel(Class<?> type);
 	public <T> T getInstance(WiringSpecification<T> query);

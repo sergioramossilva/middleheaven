@@ -14,7 +14,7 @@ public class CyclicProxy implements ProxyHandler{
 	@Override
 	public Object invoke(Object proxy, Object[] args, MethodDelegator delegator)throws Throwable {
 		if (realObject==null){
-			throw new InstantiationException("Cyclic Reference was not resolved");
+			throw new InstantiationException("Cyclic Reference was not resolved before invoking " + delegator.getInvoked().getName());
 		} else {
 			return delegator.invoke(realObject,args);
 		}

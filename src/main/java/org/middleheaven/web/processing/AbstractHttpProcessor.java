@@ -1,19 +1,16 @@
 package org.middleheaven.web.processing;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.middleheaven.global.Culture;
 
 public abstract class AbstractHttpProcessor implements HttpProcessor {
 
-	private HttpCultureResolveStrategy strategy;
+	private HttpCultureResolveStrategy strategy = new FromRequestHttpCultureResolveStrategy();
 	private Culture culture;
 	
 	@Override
-	public void process(HttpServletRequest request, HttpServletResponse response) throws HttpProcessException {
-		culture = strategy.resolveFrom(request);
-		doProcess(request,response);
+	public Outcome process(HttpContext context) throws HttpProcessException {
+		culture = strategy.resolveFrom(context);
+		return doProcess(context);
 	}
 	
 	@Override
@@ -22,7 +19,7 @@ public abstract class AbstractHttpProcessor implements HttpProcessor {
 	}
 
 	
-	public abstract void doProcess(HttpServletRequest request, HttpServletResponse response) throws HttpProcessException;
+	public abstract Outcome doProcess(HttpContext context) throws HttpProcessException;
 
 
 	@Override

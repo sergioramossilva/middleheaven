@@ -1,22 +1,36 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.middleheaven.core.reflection.ReflectionException;
-import org.middleheaven.core.reflection.ReflectionUtils;
 
 public class MethodWiringPoint implements AfterWiringPoint{
 
-	Method method;
+	private Method method;
+	private WiringSpecification<?> methodSpecification;
+	private WiringSpecification<?>[] paramsSpecifications;
 	
-	public MethodWiringPoint(Method method) {
+	public WiringSpecification<?> getMethodSpecification() {
+		return methodSpecification;
+	}
+
+	public WiringSpecification<?>[] getParamsSpecifications() {
+		return paramsSpecifications;
+	}
+
+	public int hashCode(){
+		return method.hashCode();
+	}
+	
+	public boolean equals(Object other){
+		return other instanceof MethodWiringPoint && this.method.equals(((MethodWiringPoint)other).method);
+	}
+	
+	public MethodWiringPoint(Method method,WiringSpecification<?> methodSpecification,WiringSpecification<?>[] paramsSpecifications) {
 		super();
 		this.method = method;
+		this.methodSpecification = methodSpecification;
+		this.paramsSpecifications = paramsSpecifications;
 	}
 
 	public <T> T writeAtPoint(EditableBinder binder, T object){
@@ -25,24 +39,11 @@ public class MethodWiringPoint implements AfterWiringPoint{
 		}
 		
 		method.setAccessible(true);
-
-		Annotation[][] annotations = method.getParameterAnnotations();
-		Class<?>[] types = method.getParameterTypes();
-		Set[] specs = new Set[types.length];
-		Object[] params = new Object[types.length];
-
-		for (int p =0; p< types.length;p++){
-			specs[p] = new HashSet();
-			for (Annotation a : annotations[p]){
-				if (a.annotationType().isAnnotationPresent(BindingSpecification.class) || 
-						a.annotationType().isAnnotationPresent(ScopeSpecification.class)){
-					specs[p].add(a);
-				}
-			}
-			params[p] = binder.getInstance(WiringSpecification.search(types[p], specs[p]));
+		Object[] params = new Object[paramsSpecifications.length];
+		for (int i=0;i<paramsSpecifications.length;i++){
+			params[i] = binder.getInstance(paramsSpecifications[i]);
 		}
-
-
+	
 		try {
 			method.invoke(object, params);
 		} catch (Exception e) {

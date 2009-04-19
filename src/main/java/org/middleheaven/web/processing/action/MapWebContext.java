@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.middleheaven.global.Culture;
 import org.middleheaven.io.repository.BufferedMediaVirtualFile;
+import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.MapContext;
@@ -21,7 +22,7 @@ public final class MapWebContext  extends WebContext{
 	
 	public MapWebContext(Culture culture, HttpMethod service) {
 		this.service = service;
-		this.mapContext = new MapContext(culture);
+		this.mapContext = new MapContext();
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public final class MapWebContext  extends WebContext{
 	}
 
 	@Override
-	protected Map<String, String> getParameters() {
+	public Map<String, String> getParameters() {
 		return mapContext.getScopeMap(ContextScope.PARAMETERS, String.class);
 	}
 
@@ -74,6 +75,24 @@ public final class MapWebContext  extends WebContext{
 
 	public void setCulture(Culture culture) {
 		this.culture = culture;
+	}
+
+	@Override
+	public String getContextPath() {
+		// TODO implement HttpContext.getContextPath
+		return null;
+	}
+
+	@Override
+	public StringBuilder getRequestUrl() {
+		// TODO implement HttpContext.getRequestUrl
+		return null;
+	}
+
+	@Override
+	public ManagedFileRepository getUploadRepository() {
+		// TODO implement HttpContext.getUploadRepository
+		return null;
 	}
 
 }

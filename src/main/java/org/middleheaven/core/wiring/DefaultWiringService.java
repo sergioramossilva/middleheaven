@@ -14,6 +14,9 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.wiring.annotations.Default;
+import org.middleheaven.core.wiring.annotations.Shared;
+import org.middleheaven.core.wiring.connectors.JavaEE5InjectonConnector;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
 
@@ -43,6 +46,14 @@ public class DefaultWiringService implements WiringService{
 		binder.bind(SharedScope.class).in(Shared.class).toInstance(sharedScope);
 		binder.bind(DefaultScope.class).in(Shared.class).toInstance(defaultScope);
 		binder.bind(ServiceScope.class).in(Shared.class);
+		
+		// add connector
+		
+		
+		if (ReflectionUtils.isInClasspath("javax.annotation.Resource")){
+			this.addConnector(new JavaEE5InjectonConnector());
+		}
+		
 	}
 
 
@@ -63,6 +74,7 @@ public class DefaultWiringService implements WiringService{
 		
 		public BinderImpl(){
 			parsers.add(new DefaultWiringModelParser());
+		
 		}
 		
 		@Override
@@ -96,6 +108,10 @@ public class DefaultWiringService implements WiringService{
 		@Override
 		public WiringModel getWiringModel(Class<?> type) {
 			WiringModel model = new WiringModel();
+			
+			if (String.class.isAssignableFrom(type) || Number.class.isAssignableFrom(type)){
+				return model;
+			}
 
 			for (WiringModelParser parser : this.parsers){
 				parser.parse(type, model);
@@ -201,18 +217,18 @@ public class DefaultWiringService implements WiringService{
 					final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(interceptors,resolver);
 					T obj = scopePool.scope(query, interceptorResolver);
 
-					CyclicProxy proxy = cyclicProxies.get(key);
-					if (proxy!=null){
-						proxy.setRealObject(obj);
-					}
-					stack.remove(key);
-					
 					WiringModel model = this.getWiringModel(obj.getClass());
 					
 					for (AfterWiringPoint a : model.getAfterPoints()){
 						obj = a.writeAtPoint(binder, obj);
 					}
 					
+					stack.remove(key);
+					// check if there is any proxy to complete
+					CyclicProxy proxy = cyclicProxies.get(key);
+					if (proxy!=null){
+						proxy.setRealObject(obj);
+					}
 					return  obj;
 				} catch (RuntimeException e){
 					stack.remove(key);

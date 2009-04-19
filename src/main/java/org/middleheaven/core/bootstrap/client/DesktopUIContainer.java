@@ -3,7 +3,6 @@ package org.middleheaven.core.bootstrap.client;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.global.Culture;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.ui.MapContext;
@@ -41,7 +40,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 			
 			final RenderKit renderKit = client.getUIModel().getRenderKit();
 			
-			this.renderedContext = new RenderingContext(new MapContext(Culture.defaultValue()),renderKit);
+			this.renderedContext = new RenderingContext(new MapContext(),renderKit);
 	
 			client = renderKit.renderComponent(renderedContext, null, client);
 			

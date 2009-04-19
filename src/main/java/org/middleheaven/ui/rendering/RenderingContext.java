@@ -2,20 +2,19 @@ package org.middleheaven.ui.rendering;
 
 import java.util.Enumeration;
 
-import org.middleheaven.global.Culture;
-import org.middleheaven.ui.Context;
+import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.MapContext;
 
-public class RenderingContext implements Context{
+public class RenderingContext implements AttributeContext{
 
 	public RenderingContext(RenderKit kit) {
-		this(new MapContext(null), kit);
+		this(new MapContext(), kit);
 	}
 	
-	Context context;
+	AttributeContext context;
 	RenderKit kit;
-	public RenderingContext(Context context, RenderKit kit) {
+	public RenderingContext(AttributeContext context, RenderKit kit) {
 		this.context = context;
 		this.kit = kit;
 	}
@@ -44,9 +43,5 @@ public class RenderingContext implements Context{
 		context.setAttribute(scope,name,value);
 	}
 
-	@Override
-	public Culture getCulture() {
-		return context.getCulture();
-	}
 
 }

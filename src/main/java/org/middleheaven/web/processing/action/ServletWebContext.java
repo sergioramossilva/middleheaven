@@ -14,14 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.io.repository.StreamBasedManagedFile;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.ui.CulturalAttributeContext;
 import org.middleheaven.util.conversion.TypeConvertions;
 
 
-public abstract class ServletWebContext extends WebContext {
+public abstract class ServletWebContext extends WebContext implements CulturalAttributeContext{
 
 	protected abstract ServletResponse getResponse();
 	protected abstract ServletRequest getRequest();
@@ -31,14 +31,8 @@ public abstract class ServletWebContext extends WebContext {
 
 	protected abstract void setHeaderAttribute(ContextScope scope, String name, Object value);
 
-	public ManagedFileRepository getUploadFileSystem(){
-		return this.getAttribute(ContextScope.REQUEST, WebContext.UPLOADS_FILESYSTEM,ManagedFileRepository.class);
-	}
 	
-	public ManagedFileRepository getApplicationContextFileSystem(){
-		return this.getAttribute(ContextScope.REQUEST, WebContext.APPLICATION_CONTEXT_FILESYSTEM,ManagedFileRepository.class);
-	}
-	
+
 	public MediaManagedFile responseMediaFile(){
 		
 		return new StreamBasedManagedFile("",null){

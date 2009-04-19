@@ -34,6 +34,8 @@ import org.middleheaven.web.annotations.In;
 import org.middleheaven.web.annotations.Post;
 import org.middleheaven.web.annotations.ProcessRequest;
 import org.middleheaven.web.annotations.Put;
+import org.middleheaven.web.processing.HttpContext;
+import org.middleheaven.web.processing.Outcome;
 
 /**
  * Delegates action execution to a Presenter class
@@ -174,11 +176,11 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	}
 
 	@Override
-	public Outcome execute(WebContext context) {
+	public Outcome execute(HttpContext context) {
 
 		ListInterceptorChain chain = new ListInterceptorChain(this.interceptors){
 
-			public Outcome doFinal(WebContext context){
+			public Outcome doFinal(HttpContext context){
 				return executeAction(context);
 			}
 
@@ -192,7 +194,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		return chain.getOutcome();
 	}
 
-	public Outcome executeAction(WebContext context){ 
+	public Outcome executeAction(HttpContext context){ 
 		Outcome outcome;
 
 		Method actionMethod=null;
@@ -276,7 +278,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		return outcome;
 	}
 
-	private Object[] inicilizeActionParameters(Method action,WebContext context){
+	private Object[] inicilizeActionParameters(Method action,HttpContext context){
 		Class<?>[] argClasses = action.getParameterTypes();
 		Object[] args = new Object[argClasses.length];
 
@@ -312,7 +314,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		return null;
 	}
 	
-	private <T> T loadBean(WebContext context, Class<T> type ,Annotation[] annotations) {
+	private <T> T loadBean(HttpContext context, Class<T> type ,Annotation[] annotations) {
 		try{
 			// set up timestamp formatters and converter
 			LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);

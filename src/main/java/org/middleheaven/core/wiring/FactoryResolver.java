@@ -27,8 +27,9 @@ public final class FactoryResolver<T> implements Resolver<T> {
 
 		WiringModel model = binder.getWiringModel(type);
 		
-		T instance = model.getConstructorPoint().construct(binder);
+		Object instance = model.getConstructorPoint().construct(binder);
 		
+
 		// TODO intercep // call PostCreate
 
 		return query.getContract().cast(instance);

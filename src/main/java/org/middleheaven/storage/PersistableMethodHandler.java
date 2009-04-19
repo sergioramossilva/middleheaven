@@ -11,7 +11,7 @@ public class PersistableMethodHandler implements ProxyHandler  {
 	private PersistableState state = PersistableState.FILLED;
 	Class<?> originalType;
 	
-	PersistableMethodHandler(Class<?> original){
+    PersistableMethodHandler(Class<?> original){
 		this.originalType = original;
 	}
 	

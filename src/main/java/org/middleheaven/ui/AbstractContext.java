@@ -1,7 +1,7 @@
 package org.middleheaven.ui;
 
 
-public abstract class AbstractContext implements Context {
+public abstract class AbstractContext implements AttributeContext {
 
 	@Override
 	public <T> T getAttribute(String name, Class<T> type) {

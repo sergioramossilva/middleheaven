@@ -26,7 +26,6 @@ public class Binding {
 		this.resolver = resolver;
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected <T> Resolver<T> getResolver() {
 		return resolver;
 	}

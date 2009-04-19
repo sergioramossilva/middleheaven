@@ -2,9 +2,6 @@ package org.middleheaven.web.processing;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.middleheaven.global.CultureResolver;
 
 /**
@@ -25,5 +22,5 @@ public interface HttpProcessor extends CultureResolver {
 	 * @param response
 	 * @throws IOException
 	 */
-	public void process(HttpServletRequest request ,HttpServletResponse response) throws HttpProcessException;
+	public Outcome process(HttpContext context) throws HttpProcessException;
 }

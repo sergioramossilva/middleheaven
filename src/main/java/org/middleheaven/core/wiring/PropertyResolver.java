@@ -12,6 +12,9 @@ public class PropertyResolver<T> implements Resolver<T> {
 
 	private final Map<String, Object > map = new HashMap<String, Object >();
 
+	
+	public PropertyResolver(){}
+	
 	@Override
 	public T resolve(WiringSpecification<T> query) {
 

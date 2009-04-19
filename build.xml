@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="compile">
+<project default="deploy">
     <target name="compile">
     	<delete dir="target/classes"/>
     	<mkdir dir="target/classes"/>
@@ -14,7 +14,7 @@
         	
     </target>
 	
-	<target name="jar" >
+	<target name="jar" depends="compile" >
 		<jar destfile="middleheaven.jar"
 		       basedir="target/classes"
 		       excludes="**/*Test.class"
