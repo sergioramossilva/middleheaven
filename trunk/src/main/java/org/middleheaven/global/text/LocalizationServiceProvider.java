@@ -10,10 +10,10 @@ import java.util.Map;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.Publish;
-import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.CultureModel;
 
@@ -29,7 +29,7 @@ public class LocalizationServiceProvider extends ServiceActivator{
 	LocalizationService service = new LocalizationServiceImpl();
 	private BootstrapService bootstrapService;
 	
-	@Require
+	@Wire
 	public void setBootstrapService(BootstrapService bootstrapService) {
 		this.bootstrapService = bootstrapService;
 	}
@@ -88,17 +88,19 @@ public class LocalizationServiceProvider extends ServiceActivator{
 		}
 
 		@Override
-		public TimestampFormatter getTimestampFormatter(Culture culture) {
-			// TODO implement LocalizationService.getTimestampFormatter
-			return null;
-		}
-
-		@Override
 		public Culture getExecutionEnvironmentCulture() {
 			return Culture.defaultValue();
 		}
 
-		
+		@Override
+		public QuantityFormatter getQuantityFormatter(Culture culture) {
+			return new QuantityFormatter(culture);
+		}
+
+		@Override
+		public TimepointFormatter getTimestampFormatter(Culture culture) {
+			return new TimepointFormatter(culture);
+		}
 
 		
 

@@ -4,16 +4,19 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Binding {
+public final class Binding {
 
 	private Class<?> startType;
 	private Class<?> scope;
 	private Resolver resolver;
 	private Set specifications = new HashSet();
 	
+	public Binding(){}
+	
 	public String toString(){
 		return startType.getName() + "+" + specifications.toString();
 	}
+	
 	protected Class<?> getAbstractType() {
 		return startType;
 	}

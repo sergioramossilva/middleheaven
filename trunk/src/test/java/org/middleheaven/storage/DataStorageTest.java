@@ -213,7 +213,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		assertEquals(3L , q.count());
 
 
-		some = some.clone()
+		some = some.duplicate()
 		.setRange(2,1);
 
 		q = ds.createQuery(some);
@@ -230,7 +230,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		Criteria<Subject> some = search(Subject.class).limit(3).all();
 
-		some = some.clone()
+		some = some.duplicate()
 		.setRange(2);
 
 		Query<Subject> q = ds.createQuery(some);

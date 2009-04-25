@@ -11,7 +11,8 @@ import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
 	ElementType.FIELD, 
-	ElementType.PARAMETER
+	ElementType.PARAMETER,
+	ElementType.TYPE
 	})
 @Documented
 @ScopeSpecification

@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
 
 /**
  * @author  Sergio M. M. Taborda 
@@ -42,6 +43,8 @@ public abstract class JBossContainer extends WebContainer {
         System.setProperty("java.naming.factory.initial",  "org.jnp.interfaces.NamingContextFactory");
         System.setProperty("java.naming.provider.url", "localhost:1099");
         
+        // TODO register
+        JNDINameDirectoryService service = new JNDINameDirectoryService();
     }
 
 

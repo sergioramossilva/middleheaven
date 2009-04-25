@@ -3,13 +3,13 @@ package org.middleheaven.util.conversion;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import org.middleheaven.global.text.TimestampFormatter;
+import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.quantity.time.CalendarDateTime;
 
 public class StringCalendarDateTimeConverter extends AbstractTypeConverter<String, CalendarDateTime>{
 
-	TimestampFormatter format;
-	public StringCalendarDateTimeConverter(TimestampFormatter format){
+	TimepointFormatter format;
+	public StringCalendarDateTimeConverter(TimepointFormatter format){
 		this.format = format;
 	}
 	
@@ -34,7 +34,7 @@ public class StringCalendarDateTimeConverter extends AbstractTypeConverter<Strin
 		if (value==null){
 			return null;
 		}
-		return type.cast(format.format(new Date(value.miliseconds())));
+		return type.cast(format.format(value));
 	}
 
 }

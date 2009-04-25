@@ -8,5 +8,9 @@ interface EditableBinder extends Binder{
 	
 	public void addBinding(Binding binding);
 	public void removeBinding(Binding binding);
+	
+	public ScopePool getScopePool(Binding binding);
+	
+
 
 }

@@ -4,10 +4,12 @@
 package org.middleheaven.core.services;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -73,7 +75,7 @@ public final class RegistryServiceContext implements ServiceContext{
 	@Override
 	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String,String> properties) {
 
-		ServiceBinding<I> b = new ServiceBinding<I>(properties,implementation);
+		ServiceBinding<I> b = new ServiceBinding<I>(properties,implementation,serviceClass);
 		List<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list==null ){
 			list = new CopyOnWriteArrayList<ServiceBinding>();
@@ -102,7 +104,7 @@ public final class RegistryServiceContext implements ServiceContext{
 
 	}
 
-	public <T> void unRegister(Class<T> serviceClass) {
+	public void unRegister(Class<?> serviceClass) {
 		
 		List<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list!=null){
@@ -114,14 +116,29 @@ public final class RegistryServiceContext implements ServiceContext{
 	
 	@Override
 	public <T, I extends T> void unRegister(Class<T> serviceClass,I implementation, Map<String,String> properties) {
-		ServiceBinding b = new ServiceBinding(properties,implementation);
+		ServiceBinding b = new ServiceBinding(properties,implementation,serviceClass);
 		List<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list!=null && list.remove(b) ){
 			registry.remove(serviceClass.getName());
 			this.fireServiceRemoved(serviceClass);
 		}
 	}
-
+	
+	@Override
+	public void unRegister(Object implementation) {
+		for (Iterator<Map.Entry<String,List<ServiceBinding>>> it= registry.entrySet().iterator(); it.hasNext();){
+			
+			Entry<String, List<ServiceBinding>> entry = it.next();
+			for (ServiceBinding binding : entry.getValue()){
+				if(binding.implementation.equals(implementation)){
+					it.remove();
+					this.fireServiceRemoved(binding.serviceClass);
+					return;
+				}
+			}
+		}
+	}
+	
 	@Override
 	public <T> T getService(Class<T> serviceClass, Map<String,String> properties) {
 		List<ServiceBinding> list = registry.get(serviceClass.getName());
@@ -162,15 +179,19 @@ public final class RegistryServiceContext implements ServiceContext{
 
 		Map<String,String> properties;
 		I implementation;
+		Class<?> serviceClass;
 
-		public ServiceBinding(Map<String,String> properties, I implementation) {
+		public ServiceBinding(Map<String,String> properties, I implementation, Class<?> serviceClass) {
 			super();
+			this.serviceClass = serviceClass;
+			this.implementation = implementation;
+			
 			if (properties==null || properties.isEmpty()){
 				this.properties = Collections.emptyMap();
 			} else {
 				this.properties = new TreeMap<String,String>(properties);
 			}
-			this.implementation = implementation;
+		
 		}
 
 		public boolean equals(Object other){
@@ -206,6 +227,14 @@ public final class RegistryServiceContext implements ServiceContext{
 			return count * 1d / properties.size();
 		}
 	}
+
+
+
+
+
+
+
+
 
 
 

@@ -13,6 +13,11 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 		super(c.getTargetClass());
 		filter = asFilter(c.restrictions(), model);
 	}
+	
+	private CriteriaFilter (CriteriaFilter other){
+		super(other);
+		this.filter = other.filter;
+	}
 
 	private BooleanClassifier<T> asFilter(Criterion c,StorableEntityModel model){
 		if ( c instanceof LogicCriterion){
@@ -60,6 +65,11 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 	@Override
 	public Boolean classify(T obj) {
 		return this.filter.classify(obj);
+	}
+
+	@Override
+	public Criteria<T> duplicate() {
+		return new CriteriaFilter<T>(this);
 	}
 
 

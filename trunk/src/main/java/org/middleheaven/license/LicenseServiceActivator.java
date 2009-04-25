@@ -11,13 +11,13 @@ import java.util.HashSet;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.core.services.Publish;
-import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileFilter;
@@ -42,7 +42,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 		return implementation;
 	}
 
-	@Require
+	@Wire
 	public void setFileRepositoryService(FileRepositoryService fileService){
 		this.frs = fileService;
 	}

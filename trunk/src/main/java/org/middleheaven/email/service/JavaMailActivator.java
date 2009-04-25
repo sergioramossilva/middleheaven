@@ -1,8 +1,8 @@
 package org.middleheaven.email.service;
 
-import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.email.EmailService;
 
 public class JavaMailActivator extends ServiceActivator {

@@ -6,10 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.core.services.Publish;
-import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.util.ParamsMap;
+import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.annotations.Params;
 
 
 public class ServiceActivatorInfo {
@@ -23,11 +22,11 @@ public class ServiceActivatorInfo {
 				continue;
 			}
 			
-			if ( m.isAnnotationPresent(Require.class) ){
+			if ( m.isAnnotationPresent(Params.class) ){
 				// requires 
 
 				ServiceInfo pinfo = new ServiceInfo(m.getParameterTypes()[0].getName(),m);
-				Require p = m.getAnnotation(Require.class);
+				Params p = m.getAnnotation(Params.class);
 				String [] params = p.value();
 				
 				for (String s : params){

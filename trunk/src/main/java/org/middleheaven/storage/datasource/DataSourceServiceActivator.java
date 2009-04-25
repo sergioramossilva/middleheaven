@@ -11,10 +11,10 @@ import javax.sql.DataSource;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.AtivationException;
-import org.middleheaven.core.services.Publish;
-import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileFilter;
@@ -48,12 +48,12 @@ public class DataSourceServiceActivator extends ServiceActivator {
 		return dataSourceService;
 	}
 
-	@Require
+	@Wire
 	public void setBootstrapService(BootstrapService bootstrapService) {
 		this.bootstrapService = bootstrapService;
 	}
 	
-	@Require
+	@Wire
 	public void setLoggingService(LoggingService loggingService) {
 		this.loggingService = loggingService;
 	}
@@ -92,7 +92,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 					if ("jdbc".equals(protocol)){
 						provider = DriverManagerDSProvider.provider(connectionParams);
 					} else if ("jndi".equals(protocol)){
-						provider = JNDIDSProvider.provider(connectionParams);
+						provider = NameDirectoryDSProvider.provider(connectionParams);
 					} else {
 						book.error("Error loading datasource file. Provider type not recognized");
 					}

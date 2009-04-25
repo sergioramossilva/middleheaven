@@ -2,12 +2,13 @@ package org.middleheaven.util.conversion;
 
 import java.util.Date;
 
-import org.middleheaven.global.text.TimestampFormatter;
+import org.middleheaven.global.text.TimepointFormatter;
+import org.middleheaven.quantity.time.TimeUtils;
 
 public class StringDateConverter extends AbstractTypeConverter<String, Date> {
 
-	TimestampFormatter format;
-	public StringDateConverter(TimestampFormatter format){
+	TimepointFormatter format;
+	public StringDateConverter(TimepointFormatter format){
 		this.format = format;
 	}
 	
@@ -30,7 +31,7 @@ public class StringDateConverter extends AbstractTypeConverter<String, Date> {
 		if (value==null){
 			return null;
 		}
-		return type.cast(format.format(value));
+		return type.cast(format.format(TimeUtils.from(value)));
 	}
 
 

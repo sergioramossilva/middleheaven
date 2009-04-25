@@ -45,17 +45,17 @@ public class ListInterceptorChain implements InterceptorChain{
 			interceptor.intercept(context, chain);
 			return false;
 		} catch (AccessDeniedException e){
-			outcome = new Outcome(OutcomeStatus.ERROR,501); // not implemented
+			outcome = new Outcome(BasicOutcomeStatus.ERROR,501); // not implemented
 		} catch (Exception e){
 			Logging.error("Exception found handling interceptor " + interceptor.getClass(), e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
-			outcome =  resolveOutcome(OutcomeStatus.FAILURE);
+			outcome =  resolveOutcome(BasicOutcomeStatus.FAILURE);
 		} catch (Error e){
 			Logging.fatal("Exception found handling interceptor " + interceptor.getClass(), e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
-			outcome =  resolveOutcome(OutcomeStatus.ERROR);
+			outcome =  resolveOutcome(BasicOutcomeStatus.ERROR);
 			if (outcome==null){
-				outcome =  resolveOutcome(OutcomeStatus.FAILURE);
+				outcome =  resolveOutcome(BasicOutcomeStatus.FAILURE);
 			}
 		}
 		return true;
@@ -72,13 +72,13 @@ public class ListInterceptorChain implements InterceptorChain{
 	@Override
 	public void interruptAndRedirect(String url) {
 		interrupted = true;
-		this.outcome = new Outcome(OutcomeStatus.TERMINATE,true,url);
+		this.outcome = new Outcome(BasicOutcomeStatus.TERMINATE,true,url);
 	}
 
 	@Override
 	public void interruptWithError(int errorCode) {
 		interrupted = true;
-		this.outcome = new Outcome(OutcomeStatus.ERROR,errorCode);
+		this.outcome = new Outcome(BasicOutcomeStatus.ERROR,errorCode);
 	}
 
 	public Outcome getOutcome() {

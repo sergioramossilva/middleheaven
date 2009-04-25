@@ -85,11 +85,6 @@ public class RequestResponseWebContext extends ServletWebContext {
 	}
 
 	@Override
-	public Culture getCulture() {
-		return Culture.valueOf(request.getLocale());
-	}
-
-	@Override
 	public StringBuilder getRequestUrl() {
 		return new StringBuilder(request.getRequestURL());
 	}

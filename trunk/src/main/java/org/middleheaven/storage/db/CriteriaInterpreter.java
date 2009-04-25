@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
@@ -60,11 +62,13 @@ public class CriteriaInterpreter {
 		StringBuilder sqlBuilder = new StringBuilder("SELECT ");
 		List<FieldValueHolder> params = new LinkedList<FieldValueHolder>();
 		
+		String alias = aliasFor(model.getEntityHardName(),false);
+		
 		// LIMITS: distinct and  top n 
 		writeStartLimitClause(sqlBuilder);
 
 		// RETURN CLAUSE
-		writeResultColumnsClause(sqlBuilder);
+		writeResultColumnsClause(alias,sqlBuilder);
 
 		// FROM CLAUSE 
 		writeFromClause(sqlBuilder);
@@ -85,7 +89,21 @@ public class CriteriaInterpreter {
 		return new SQLRetriveCommand(sqlBuilder.toString(),params);
 	}
 	
+	private Map<String , Character> aliases = new TreeMap<String,Character>();
 
+	protected String aliasFor(String name, boolean increment){
+
+		Character c = aliases.get(name);
+		if ( c==null){
+			c = new Character('a');
+			aliases.put(name,c);
+		} else if (increment){
+			c = Character.valueOf((char)(c.charValue()+1));
+			aliases.put(name,c);
+		}
+
+		return c.toString() + "_" + name;
+	}
 
 	public DataBaseCommand translateDelete(){
 		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ")
@@ -106,11 +124,29 @@ public class CriteriaInterpreter {
 	}
 
 
+	protected QualifiedName aliasFor(QualifiedName name, String aliasPrefix ){
+		if ( aliasPrefix ==null ){
+			return name;
+		}
 
-	protected void writeResultColumnsClause (StringBuilder queryBuffer){
+		QualifiedName aliasName = QualifiedName.qualify(aliasPrefix, name.getName());
+		aliasName.setAlias(true);
+
+		return aliasName;
+	}
+	
+	protected void writeResultColumnsClause (String alias, StringBuilder queryBuffer){
 
 		// if this is a projection criteria
-		if (this.criteria().projection() !=null){
+		if (this.criteria().isCountOnly()){
+
+			queryBuffer.append("COUNT(");
+
+			dialect().writeQueryHardname(queryBuffer,aliasFor(model().identityFieldModel().getHardName(), alias));
+
+			queryBuffer.append(")");
+
+		} else if (this.criteria().projection() !=null){
 
 			// add groupBy
 			Projection aggregation = this.criteria().projection();

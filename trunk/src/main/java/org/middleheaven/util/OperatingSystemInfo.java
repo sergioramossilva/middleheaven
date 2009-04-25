@@ -6,7 +6,16 @@ public final class OperatingSystemInfo {
 	private String operatingSystemVersion;
 	private String operatingSystemVersionBase;
 	
-	public OperatingSystemInfo(String operatingSystem, String operatingSystemVersion, String operatingSystemVersionBase) {
+	public static OperatingSystemInfo unkown() {
+		return new OperatingSystemInfo("","","");
+	}
+	
+	public static OperatingSystemInfo system(String operatingSystem, String operatingSystemVersion, String operatingSystemVersionBase) {
+		return new OperatingSystemInfo(operatingSystem,operatingSystemVersion,operatingSystemVersionBase);
+	}
+	
+	
+	private OperatingSystemInfo(String operatingSystem, String operatingSystemVersion, String operatingSystemVersionBase) {
 		this.operatingSystem = operatingSystem;
 		this.operatingSystemVersion = operatingSystemVersion;
 		this.operatingSystemVersionBase = operatingSystemVersionBase;
@@ -23,5 +32,6 @@ public final class OperatingSystemInfo {
 	public String getOperatingSystemVersionBase() {
 		return operatingSystemVersionBase;
 	}
-	
+
+
 }

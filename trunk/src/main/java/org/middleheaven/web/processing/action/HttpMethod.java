@@ -15,5 +15,6 @@ public enum HttpMethod {
 	OPTIONS,      
 	HEAD,                                                      
 	TRACE,              
-	CONNECT,
+	CONNECT, 
+	UNKOWN
 }

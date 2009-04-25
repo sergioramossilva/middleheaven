@@ -24,6 +24,7 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
+import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
@@ -99,8 +100,46 @@ public final class DataBaseStoreKeeper extends AbstractSequencialIdentityStoreKe
 			return list().isEmpty();
 		}
 
+		@Override
+		public Query<T> setRange(int startAt, int maxCount) {
+			Criteria<T> rangeCriteria = this.criteria.duplicate();
+			rangeCriteria.setRange(startAt, maxCount);
+			
+			return new DBStorageQuery<T>( rangeCriteria, this.model);
+		}
+
 	} 
 
+	<T> long countByCriteria(Criteria<T> criteria,StorableEntityModel model){
+
+		Connection con =null;
+		try {
+			con = this.datasource.getConnection();
+			criteria.setCountOnly(true);
+			RetriveDataBaseCommand command = dialect.createSelectCommand(criteria, model);
+			command.execute(con,model);
+			ResultSet rs = command.getResult();
+			
+			try{
+				if (rs.next()){
+					return rs.getInt(1);
+				} 
+				throw new StorageException("Count operation returned without result");
+			} finally {
+				rs.close();
+			}
+
+		} catch (SQLException e){
+			throw dialect.handleSQLException(e);
+		} finally {
+			try {
+				con.close();
+			} catch (SQLException e) {
+				throw dialect.handleSQLException(e);
+			}
+		}
+	}
+	
 	<T> List<T> findByCriteria(Criteria<T> criteria,StorableEntityModel model){
 
 		Connection con =null;
@@ -135,6 +174,7 @@ public final class DataBaseStoreKeeper extends AbstractSequencialIdentityStoreKe
 			}
 		}
 	}
+	
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
 

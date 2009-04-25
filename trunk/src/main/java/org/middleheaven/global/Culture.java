@@ -88,7 +88,12 @@ public final class Culture implements Serializable{
 	}
 	
 	public Locale toLocale(){
-		return new Locale(language,country,variant[0]);
+		if (variant.length>0){
+			return new Locale(language,country,variant[0]);
+		} else {
+			return new Locale(language,country);
+		}
+	
 	}
 	
 	

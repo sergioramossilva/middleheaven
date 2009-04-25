@@ -6,10 +6,7 @@ import java.util.List;
 import org.middleheaven.storage.QualifiedName;
 
 
-public interface Criteria<T> extends Cloneable{
-
-	
-	public Criteria<T> clone();
+public interface Criteria<T> {
 	
     /**
      * If set to <code>true</code> limits the search to distinct instances.
@@ -89,5 +86,15 @@ public interface Criteria<T> extends Cloneable{
 	public Criteria<T> add(OrderingCriterion order);
 
 	public Collection<QualifiedName> resultFields();
+
+	/**
+	 * Creates a duplicate of this criteria that can be edited idenpendently
+	 * @return  a duplicate of this criteria. 
+	 */
+	public Criteria<T> duplicate();
+
+	public void setCountOnly(boolean b);
+
+	public boolean isCountOnly();
 	
 }

@@ -14,9 +14,12 @@ import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.storage.AbstractStoreKeeper;
 import org.middleheaven.storage.DecoratorStorableEntityModel;
+import org.middleheaven.storage.ExecutableQuery;
 import org.middleheaven.storage.PersistableState;
 import org.middleheaven.storage.Query;
+import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
+import org.middleheaven.storage.SimpleExecutableQuery;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
@@ -31,7 +34,7 @@ import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.nq.NativeQuery;
 
-public class NeoDatisStoreKeeper extends AbstractStoreKeeper{
+public class NeoDatisStoreKeeper extends AbstractStoreKeeper {
 
 	private ManagedFile dataFile;
 
@@ -134,77 +137,65 @@ public class NeoDatisStoreKeeper extends AbstractStoreKeeper{
 
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
-		return new NeoDatisQuery<T>(criteria,model);
+		return new SimpleExecutableQuery<T>(criteria,model,neoDatisQueryExecuter);
 	}
-
-	private class NeoDatisQuery<I> implements Query<I> {
-
-		private Criteria<I> criteria;
-		private StorableEntityModel model;
-
-		public NeoDatisQuery(Criteria<I> criteria,StorableEntityModel model ){
-			this.criteria = criteria;
-			this.model= model;
-		}
-
-		@Override
-		public long count() {
-			return list().size();
-		}
-
-		@Override
-		public I find() {
-			if (list().isEmpty()){
-				return null;
-			}
-			return list().iterator().next();
-		}
-
-		@Override
-		public boolean isEmpty() {
-			return list().isEmpty();
-		}
-
-		@Override
-		public Collection<I> list() {
-			return execute(criteria,model);
-		}
-
-	}
-
-	private <T> Collection<T> execute (final Criteria<T> criteria,StorableEntityModel model){
-		final CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,model);
 	
-		ODB odb = getDataBase();
-		try{
-			IQuery query = new NativeQuery() {
-		
+	private QueryExecuter neoDatisQueryExecuter = new QueryExecuter() {
+
+		@Override
+		public <T> Collection<T> execute(final ExecutableQuery<T> query) {
+			final Criteria<T> criteria = query.getCriteria();
+			final CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,query.getModel());
 			
-				public boolean match(Object obj) {
-					return filter.classify((T)obj).booleanValue();
+			ODB odb = getDataBase();
+			try{
+				IQuery iquery = new NativeQuery() {
+			
+				
+					public boolean match(Object obj) {
+						return filter.classify((T)obj).booleanValue();
+					}
+
+					@Override
+					public Class getObjectType() {
+						return criteria.getTargetClass();
+					}
+				};
+
+				Objects result = odb.getObjects(iquery);
+
+				Collection<T> all = new LinkedList<T>();
+
+				final int START_AT = criteria.getStart();
+				final int MAX_COUNT = criteria.getCount();
+				int elapsed=0;
+				while (elapsed<START_AT && result.hasNext()){ // will not loop if startAt==-1
+					elapsed++;
+					result.next();
 				}
-
-				@Override
-				public Class getObjectType() {
-					return criteria.getTargetClass();
+				
+				if (MAX_COUNT>=0){
+					while (result.hasNext() && all.size() < MAX_COUNT) { // add just maxCount elements
+						all.add((T)merge(result.next()));
+					}
+				} else {
+					while (result.hasNext()) {
+						all.add((T)merge(result.next()));
+					}
 				}
-			};
+				
 
-			Objects result = odb.getObjects(query);
-
-			Collection<T> all = new LinkedList<T>();
-
-			while (result.hasNext()) {
-				all.add((T)merge(result.next()));
+				return all;
+			}  catch (Exception e) {
+				throw new StorageException(e);
+			} finally {
+				closeDataBase(odb);
 			}
-
-			return all;
-		}  catch (Exception e) {
-			throw new StorageException(e);
-		} finally {
-			closeDataBase(odb);
 		}
-	}
+		
+	};
+
+
 
 	@Override
 	public void insert(Collection<Storable> obj, StorableEntityModel model) {
@@ -266,5 +257,7 @@ public class NeoDatisStoreKeeper extends AbstractStoreKeeper{
 	public Storable assignIdentity(Storable storable) {
 		return storable;
 	}
+
+	
 
 }

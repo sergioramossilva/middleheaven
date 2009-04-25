@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.core.Container;
-import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.core.services.RegistryServiceContext;
 import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceContextEngineConfigurationService;
@@ -22,6 +21,7 @@ import org.middleheaven.global.atlas.modules.AtlasActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
+import org.middleheaven.storage.DataStorageServiceActivator;
 
 /**
  * This is the entry point for all applications
@@ -72,8 +72,8 @@ public abstract class ExecutionEnvironmentBootstrap {
 		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
 		.addActivator(AtlasActivator.class)
 		.addActivator(LoggingActivator.class)
-		.addActivator(FileRepositoryActivator.class);
-		
+		.addActivator(FileRepositoryActivator.class)
+		.addActivator(DataStorageServiceActivator.class);
 		
 		configurator.addEngine(engine);
 		configurator.addEngine(new LocalFileRepositoryDiscoveryEngine());

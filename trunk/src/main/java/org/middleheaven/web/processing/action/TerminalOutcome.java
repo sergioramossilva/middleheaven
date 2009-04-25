@@ -5,7 +5,7 @@ import org.middleheaven.web.processing.Outcome;
 public class TerminalOutcome extends Outcome {
 
 	public TerminalOutcome() {
-		super(OutcomeStatus.TERMINATE, false, null);
+		super(BasicOutcomeStatus.TERMINATE, false, null);
 	}
 
 }

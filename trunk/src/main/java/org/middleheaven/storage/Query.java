@@ -9,4 +9,5 @@ public interface Query<T> {
 	public Collection<T> list();
 	public long count();
 	public boolean isEmpty();
+	public Query<T> setRange(int startAt, int maxCount);
 }

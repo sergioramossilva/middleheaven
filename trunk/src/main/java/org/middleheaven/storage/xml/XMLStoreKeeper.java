@@ -2,6 +2,7 @@ package org.middleheaven.storage.xml;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.xpath.XPath;
@@ -17,14 +18,22 @@ import org.middleheaven.io.xml.XMLObjectContructor;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractSequencialIdentityStoreKeeper;
 import org.middleheaven.storage.AbstractStoreKeeper;
+import org.middleheaven.storage.ExecutableQuery;
 import org.middleheaven.storage.Query;
+import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
+import org.middleheaven.storage.SimpleExecutableQuery;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.storage.criteria.CriteriaFilter;
 import org.middleheaven.util.identity.Identity;
+import org.neodatis.odb.ODB;
+import org.neodatis.odb.Objects;
+import org.neodatis.odb.core.query.IQuery;
+import org.neodatis.odb.core.query.nq.NativeQuery;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -57,74 +66,50 @@ public class XMLStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 		}
 
 	}
-
-	
 	XMLCriteriaInterpreter interpreter = new XMLCriteriaInterpreter();
 
-	class XPathStorageQuery<T> implements Query<T>{
-		Criteria<T> criteria;
-		StorableEntityModel model;
-
-		public XPathStorageQuery(Criteria<T> criteria, StorableEntityModel model) {
-			super();
-			this.criteria = criteria;
-			this.model = model;
-		}
+	
+	private QueryExecuter xmlQueryExecuter = new QueryExecuter() {
 
 		@Override
-		public long count() {
-			return list().size();
-		}
+		public <T> Collection<T> execute(final ExecutableQuery<T> query) {
+			StorableEntityModel model = query.getModel();
+			String xpathStr = interpreter.Interpreter(model,query.getCriteria());
 
-		@Override
-		public T find() {
-			List<T> list = findByCriteria(criteria,model);
-			return list.isEmpty() ? null : list.get(0);
-		}
+			try {
+				XPathFactory factory = XPathFactory.newInstance();
+				XPath xpath = factory.newXPath();
+				XPathExpression expr = xpath.compile(xpathStr);
 
-		@Override
-		public Collection<T> list() {
-			return findByCriteria(criteria,model);
-		}
+				NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 
-		@Override
-		public boolean isEmpty() {
-			return list().isEmpty();
-		}
-
-	} 
-
-	<T> List<T> findByCriteria(Criteria<T> criteria,StorableEntityModel model){
-
-		String xpathStr = interpreter.Interpreter(model,criteria);
-
-		try {
-			XPathFactory factory = XPathFactory.newInstance();
-			XPath xpath = factory.newXPath();
-			XPathExpression expr = xpath.compile(xpathStr);
-
-			NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-
-			List<T> list = new ArrayList<T>(nodes.getLength());
-			
-			for (int i = 0; i < nodes.getLength(); i++) {
-				T t = (T)merge(model.newInstance());
-				NodeStorable s = new NodeStorable(nodes.item(i),model.identityFieldModel());
-				this.copy(s, (Storable)t, model);
+				List<T> list = new ArrayList<T>(nodes.getLength());
 				
-				list.add(t);
+				for (int i = 0; i < nodes.getLength(); i++) {
+					T t = (T)merge(model.newInstance());
+					NodeStorable s = new NodeStorable(nodes.item(i),model.identityFieldModel());
+					copy(s, (Storable)t, model);
+					
+					list.add(t);
+				}
+
+				return list;
+
+			} catch (XPathExpressionException e) {
+				throw new StorageException("Illegal expression " + xpathStr);
 			}
-
-			return list;
-
-		} catch (XPathExpressionException e) {
-			throw new StorageException("Illegal expression " + xpathStr);
 		}
+		
+	};
 
-	}
+	
+	
+
+
+	
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
-		return new XPathStorageQuery<T>(criteria,model);
+		return new SimpleExecutableQuery<T>(criteria,model, this.xmlQueryExecuter);
 
 	}
 

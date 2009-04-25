@@ -1,6 +1,7 @@
 package org.middleheaven.test.ui.web;
 
 import org.middleheaven.web.processing.HttpContext;
+import org.middleheaven.web.processing.action.BasicOutcomeStatus;
 import org.middleheaven.web.processing.action.Interceptor;
 import org.middleheaven.web.processing.action.InterceptorChain;
 import org.middleheaven.web.processing.action.OutcomeStatus;
@@ -17,15 +18,15 @@ public class TesteWriting {
 		.to("/projeto.*")
 		.with(new ProjectInterceptor())
 		.withAction("save")
-		.on(OutcomeStatus.SUCCESS).forwardTo("project.list.html")
-		.on(OutcomeStatus.FAILURE).forwardTo("genericfailure.html");
+		.on(BasicOutcomeStatus.SUCCESS).forwardTo("project.list.html")
+		.on(BasicOutcomeStatus.FAILURE).forwardTo("genericfailure.html");
 		
 		PresenterCommandMappingBuilder.map(ProjectPresenter.class)
 		.to("/projeto.*")
 		.with(new ProjectInterceptor())
 		.withAction("save")
-		.on(OutcomeStatus.SUCCESS).forwardTo("project.list.html")
-		.on(OutcomeStatus.FAILURE).redirectTo(404);
+		.on(BasicOutcomeStatus.SUCCESS).forwardTo("project.list.html")
+		.on(BasicOutcomeStatus.FAILURE).redirectTo(404);
 
 	}
 	

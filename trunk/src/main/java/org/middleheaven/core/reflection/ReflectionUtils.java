@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -28,9 +29,9 @@ import org.middleheaven.util.classification.BooleanClassifier;
 public final class ReflectionUtils {
 
 	private static ReflectionStrategy stategy = new CGLibReflectionStrategy();
-	
+
 	public ReflectionUtils(){}
-	
+
 	public static boolean isInClasspath(String className) {
 		try {
 			Class.forName(className);
@@ -39,14 +40,14 @@ public final class ReflectionUtils {
 			return false;
 		}
 	}
-	
+
 	public static Object unproxy(Object proxy){
 		if (proxy instanceof WrapperProxy){
 			return ((WrapperProxy)proxy).getWrappedObject();
 		}
 		return null;
 	}
-	
+
 	public static <T> T proxy (Class<T> facadeClass , final ProxyHandler delegator){
 		return stategy.proxy(facadeClass, delegator);
 	}
@@ -58,7 +59,7 @@ public final class ReflectionUtils {
 	public static <I> I proxy (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface ){
 		return stategy.proxy(delegationTarget, delegator, proxyInterface);
 	}
-	
+
 	public static <I> I proxy (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface , Class<?> adicionalInterfaces){
 		return stategy.proxy(delegationTarget, delegator, proxyInterface,adicionalInterfaces);
 	}
@@ -171,7 +172,7 @@ public final class ReflectionUtils {
 			throw new NoSuchClassReflectionException(className);
 		}
 	}
-	
+
 	public static <T> Class<? extends T> loadClass(String className, Class<T> superType) throws InstantiationReflectionException{
 		try {
 			return Class.forName(className).asSubclass(superType);
@@ -229,15 +230,17 @@ public final class ReflectionUtils {
 	 * @param class1
 	 * @param class2
 	 */
-	public static Set<Field> allAnnotatedFields(Class<?> type, Class<? extends Annotation> annotation) {
+	public static Set<Field> allAnnotatedFields(Class<?> type, Class<? extends Annotation> ... annotations) {
 
 		Field[] fields = type.getDeclaredFields();
 
 		Set<Field> annotated = new HashSet<Field>();
 
 		for (Field f : fields){
-			if (f.isAnnotationPresent(annotation)){
-				annotated.add(f);
+			for (Class<? extends Annotation> a : annotations){
+				if (f.isAnnotationPresent(a)){
+					annotated.add(f);
+				}
 			}
 		}
 
@@ -245,21 +248,23 @@ public final class ReflectionUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> List<Constructor<T>> allAnnotatedConstructors( Class<T> type, Class<? extends Annotation> annotation) {
+	public static <T> List<Constructor<T>> allAnnotatedConstructors( Class<T> type, Class<? extends Annotation> ... annotations) {
 		Constructor<T>[] constructors = (Constructor<T>[]) type.getDeclaredConstructors();
 
 		List<Constructor<T>> annotated = new ArrayList<Constructor<T>>(constructors.length);
 
 		for (Constructor<T> c : constructors){
-			if (c.isAnnotationPresent(annotation)){
-				annotated.add(c);
+			for (Class<? extends Annotation> a : annotations){
+				if (c.isAnnotationPresent(a)){
+					annotated.add(c);
+				}
 			}
 		}
 
 		return annotated;
 	}
 
-	public static Set<Method> allAnnotatedMethods(Class<?> type, Class<? extends Annotation> annotation) {
+	public static Set<Method> allAnnotatedMethods(Class<?> type, Class<? extends Annotation> ... annotations) {
 
 		Set<Method> all = new HashSet<Method>();
 
@@ -270,25 +275,25 @@ public final class ReflectionUtils {
 			all.addAll(Arrays.asList(superType.getMethods())); // super class inherit public
 			superType = superType.getSuperclass();
 		}
-		
+
 		Set<Method> annotated = new HashSet<Method>();
 
 		for (Method m : all){
-			if (m.isAnnotationPresent(annotation)){
-				annotated.add(m);
+			for (Class<? extends Annotation> a : annotations){
+				if (m.isAnnotationPresent(a)){
+					annotated.add(m);
+					break;
+				}
 			}
 		}
-		
+
 		return annotated;
 	}
-
-
-
 
 	public static boolean isAnnotadedWith(Class<?> candidate,Class<? extends Annotation> annotationClass) {
 		return candidate.isAnnotationPresent(annotationClass);
 	}
-	
+
 	public static <A extends Annotation> A getAnnotation(Class<?> annotated, Class<A> annotationClass){
 		return annotated.getAnnotation(annotationClass);
 	}
@@ -312,12 +317,24 @@ public final class ReflectionUtils {
 		return classes;
 	}
 
-	public static Annotation[] getAnnotations(Class<?> type) {
+	public static Set<Annotation> getAnnotations(Class<?> type) {
+		// read all methods in the hierarchy
+		Set<Annotation> all = new HashSet<Annotation>();
+		Class<?> superType = type;
+		while (!superType.equals(Object.class)){
+			all.addAll(Arrays.asList(superType.getAnnotations())); // pannotations in class
+			for (Class<?> in : superType.getInterfaces()){
+				// annotations in interfaces
+				all.addAll(Arrays.asList(in.getAnnotations()));
+			}
+			// up to super class
+			superType = superType.getSuperclass();
+		}
 
-		return type.getDeclaredAnnotations();
-	
+		return all;
+
 	}
-	
+
 	public static Set<Annotation> getAnnotations(Field f, Class<? extends Annotation> specificAnnotation) {
 
 		Set<Annotation> result = new HashSet<Annotation>(); 
@@ -374,7 +391,7 @@ public final class ReflectionUtils {
 			throw new IllegalAccessReflectionException(e);
 		}
 	}
-	
+
 	public static <T> T invoke(Class<T> returnType,Method methodToInvoke, Class<?> translatingObjectClass, Object ... params) {
 		return invoke(returnType, methodToInvoke, newInstance(translatingObjectClass), params);
 	}
@@ -423,39 +440,39 @@ public final class ReflectionUtils {
 
 
 	private static Map<String, Map<MethodKey , Method >> classMethods = new WeakHashMap<String, Map<MethodKey , Method >>();
-	
+
 	private final static class MethodKey {
 
 		String id;
 		int hash;
-		
+
 		public MethodKey(Class<?> type, String name, Class<?>[] parameterTypes) {
 			StringBuilder builder = new StringBuilder( type.getName())
 			.append('#').append(name).append('(');
-		
+
 			for (int i=0; i < parameterTypes.length;i++){
 				if (i>0){
 					builder.append(',');
 				}
 				builder.append(parameterTypes[i].getName());
 			}
-			
+
 			this.id = builder.toString();
 			hash = id.hashCode();
 		}
-		
+
 		public boolean equals(Object other){
 			return ((MethodKey)other).id.equals(this.id);
 		}
-		
+
 		public int hashCode(){
 			return hash;
 		}
 	}
-	
+
 	private static Map<MethodKey , Method> getClassMethods (Class<?> type){
 		Map<MethodKey , Method>  methods = classMethods.get(type.getName());
-		
+
 		if (methods == null){
 			methods = new HashMap<MethodKey , Method>();
 			classMethods.put(type.getName(), methods);
@@ -463,24 +480,24 @@ public final class ReflectionUtils {
 				methods.put(new MethodKey(type,m.getName(),m.getParameterTypes()), m);
 			}
 		}
-		
+
 		return methods;
 	}
-	
+
 	public static Method getMethod (Class<?> type , String name, Class<?>[] paramTypes){
 		MethodKey key = new MethodKey(type,name,paramTypes);
 		return getClassMethods(type).get(key);
 	}
-	
+
 	public static List<Method> getMethods(Class<?> type) {
 		return getMethods(type,null);
 	}
-	
+
 	public static List<Method> getMethods(Class<?> type, BooleanClassifier<Method> filter) {
-		
+
 
 		List<Method> result = new ArrayList<Method>(getClassMethods(type).values());
-		
+
 		if (filter!=null){
 			for (Iterator<Method> it = result.iterator();it.hasNext(); ){
 				if (!filter.classify(it.next())){
@@ -488,9 +505,9 @@ public final class ReflectionUtils {
 				}
 			}
 		}
-		
+
 		return result;
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
