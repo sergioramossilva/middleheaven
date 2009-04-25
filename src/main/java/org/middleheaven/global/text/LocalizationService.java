@@ -59,5 +59,7 @@ public interface LocalizationService  {
      * @param locale
      * @return
      */
-    public  TimestampFormatter getTimestampFormatter (Culture culture);
+    public TimepointFormatter getTimestampFormatter (Culture culture);
+
+	public QuantityFormatter getQuantityFormatter(Culture culture);
 }

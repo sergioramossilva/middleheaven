@@ -1,6 +1,7 @@
 package org.middleheaven.quantity.time;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -31,6 +32,24 @@ public final class TimeUtils {
 		return new Date(date.milliseconds());
 	}
 	
+	public static CalendarDateTime from(Object value) {
+		final long time;
+		
+		if (value instanceof Date) {
+			time = ((Date)value).getTime();				
+		} else if (value instanceof Calendar) {
+			time = ((Calendar)value).getTime().getTime();
+		} else if (value instanceof CalendarDate) {
+			time = ((CalendarDate)value).miliseconds();
+		} else if (value instanceof CalendarDateTime) {
+			time = ((CalendarDateTime)value).milliseconds();
+		} else {
+			throw new IllegalArgumentException(value.getClass()+ " does not represent a point in time");
+		}
+		
+		return new CalendarDateTime(TimeContext.getTimeContext(),time);
+	}
+	
 	public static java.sql.Date toSQLDate(TimePoint date){
 		return new java.sql.Date(date.milliseconds());
 	}
@@ -46,4 +65,6 @@ public final class TimeUtils {
 	public static int compare(Date a, TimePoint b){
 		return (int)(a.getTime() - b.milliseconds());
 	}
+
+
 }

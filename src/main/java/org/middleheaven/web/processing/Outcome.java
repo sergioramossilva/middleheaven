@@ -1,5 +1,6 @@
 package org.middleheaven.web.processing;
 
+import org.middleheaven.web.processing.action.BasicOutcomeStatus;
 import org.middleheaven.web.processing.action.OutcomeStatus;
 
 public class Outcome {
@@ -31,6 +32,7 @@ public class Outcome {
 	public boolean isDoRedirect() {
 		return doRedirect;
 	}
+	
 	public String getUrl() {
 		return url;
 	}
@@ -40,6 +42,10 @@ public class Outcome {
 	}
 
 	public boolean isTerminal() {
-		return OutcomeStatus.TERMINATE.equals(status);
+		return BasicOutcomeStatus.TERMINATE.equals(status);
+	}
+	
+	public String toString(){
+		return status.toString() + (this.isDoRedirect() ? "redirectTo" : "fowardTo") + url;
 	}
 }

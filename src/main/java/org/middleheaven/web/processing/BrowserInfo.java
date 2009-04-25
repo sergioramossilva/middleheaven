@@ -19,8 +19,15 @@ public class BrowserInfo {
 	String baseEngine;
 	Version version;
 	
-
-	public BrowserInfo(String name, String baseEngine, Version version) {
+	public static BrowserInfo unkownBrowser(){
+		return new BrowserInfo("","",Version.from(0, 0, 0));
+	}
+	
+	public static BrowserInfo browser(String name, String baseEngine, Version version){
+		return new BrowserInfo(name,baseEngine,version);
+	}
+	
+	private BrowserInfo(String name, String baseEngine, Version version) {
 		super();
 		this.name = name;
 		this.baseEngine = baseEngine;

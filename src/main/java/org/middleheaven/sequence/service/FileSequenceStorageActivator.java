@@ -6,10 +6,10 @@ import java.util.Properties;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.Publish;
-import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.sequence.SequenceState;
@@ -31,7 +31,7 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 	private SequenceStorageService sequenceStorageService;
 
 	
-	@Require
+	@Wire
 	public void setBootstrapService(BootstrapService bootstrapService) {
 		this.bootstrapService = bootstrapService;
 	}

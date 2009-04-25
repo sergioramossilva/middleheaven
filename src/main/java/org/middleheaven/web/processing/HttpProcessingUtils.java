@@ -19,10 +19,10 @@ public class HttpProcessingUtils {
 		
 		
 		String[] res = getBrowser(userAgent);
-		BrowserInfo binfo = new BrowserInfo(res[0],res[1],VersionReader.fromString(res[2]));
+		BrowserInfo binfo = BrowserInfo.browser(res[0],res[1],VersionReader.fromString(res[2]));
 		
 		res = getOS(userAgent);
-		OperatingSystemInfo osInfo = new OperatingSystemInfo(res[0],res[1],res[2]);
+		OperatingSystemInfo osInfo = OperatingSystemInfo.system(res[0],res[1],res[2]);
 		
 		return new HttpUserAgent(binfo, osInfo);
 	}

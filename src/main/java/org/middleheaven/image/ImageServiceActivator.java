@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
 
 public class ImageServiceActivator extends ServiceActivator {
 

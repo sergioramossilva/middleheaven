@@ -81,4 +81,13 @@ public final class ServiceRegistry {
 	public static <T, I extends T> void register(Class<T> serviceClass,I implementation, Map<String,String> properties) {
 		context.register(serviceClass, implementation, properties);
 	}
+
+	public static void unRegister(Object implementation) {
+		context.unRegister(implementation);
+	}
+	
+	public static void unRegister(Class<?> serviceType) {
+		context.unRegister(serviceType);
+	}
+
 }

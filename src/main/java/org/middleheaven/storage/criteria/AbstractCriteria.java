@@ -8,24 +8,24 @@ import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.classification.LogicOperator;
 
 
-public class AbstractCriteria <T> implements Criteria<T>{
+public abstract class AbstractCriteria <T> implements Criteria<T>{
 
 	private Class<T> targetClass;
 	private Class<T> fromClass;
 	
 	private boolean keyOnly = false;
+	private boolean countOnly = false;
 	private boolean distinct;
 	private int count = -1;
 	private int start = -1;
 	private LogicCriterion restrictions = new LogicCriterion(LogicOperator.and());
 	private List<OrderingCriterion> ordering = new LinkedList<OrderingCriterion>();
 	private Projection aggregation;
-	public List<QualifiedName> resultFields = new LinkedList<QualifiedName>();
+	private List<QualifiedName> resultFields = new LinkedList<QualifiedName>();
 	
-	public Criteria<T> clone(){
 	
-		return new AbstractCriteria<T>(this);
-		
+    AbstractCriteria(Class<T> targetClass){
+		this.targetClass = targetClass;
 	}
 	
 	protected AbstractCriteria(AbstractCriteria<T> other){
@@ -45,10 +45,9 @@ public class AbstractCriteria <T> implements Criteria<T>{
 		this.restrictions = restrictions;
 	}
 	
-    AbstractCriteria(Class<T> targetClass){
-		this.targetClass = targetClass;
-	}
-	
+
+
+    
 	public List<OrderingCriterion> ordering(){
 		return ordering;
 	}
@@ -124,5 +123,15 @@ public class AbstractCriteria <T> implements Criteria<T>{
 
 	public void add(ProjectionOperator operator) {
 		this.aggregation.add(operator);
+	}
+
+	@Override
+	public boolean isCountOnly() {
+		return countOnly;
+	}
+
+	@Override
+	public void setCountOnly(boolean countOnly) {
+		this.countOnly= countOnly;
 	}
 }

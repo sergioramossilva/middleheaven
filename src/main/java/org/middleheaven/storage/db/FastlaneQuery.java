@@ -45,6 +45,12 @@ class FastlaneQuery<T> implements Query<T> {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public Query<T> setRange(int startAt, int maxCount) {
+		// TODO implement Query<T>.setRange
+		return null;
+	}
 	
 
 }

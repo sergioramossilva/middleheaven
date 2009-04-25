@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.Resolver;
 import org.middleheaven.core.wiring.ScopePool;
 import org.middleheaven.core.wiring.WiringSpecification;
@@ -22,18 +23,22 @@ public class ServiceScope implements ScopePool {
 
 	Map<ServiceKey, Object> proxies = new HashMap<ServiceKey, Object>();
 	
+	public ServiceScope(){}
+	
 	@Override
-	public <T> T scope(WiringSpecification<T> query, Resolver<T> resolver) {
+	public <T> T getInScope(WiringSpecification<T> spec, Resolver<T> resolver) {
 
-		ServiceKey key = new ServiceKey(query.getContract().getName(),query.getParams());
+		ServiceKey key = new ServiceKey(spec.getContract(),spec.getParams());
 		T proxy = (T)proxies.get(key);
 		
+		//TODO read resolver
+		
 		if (proxy==null){
-			proxy = query.getContract().cast(
+			proxy = spec.getContract().cast(
 					Proxy.newProxyInstance(
 							this.getClass().getClassLoader(), 
-							new Class<?>[]{query.getContract()}, 
-							new ServiceProxy<T>(query.getContract(),query.getParams())
+							new Class<?>[]{spec.getContract()}, 
+							new ServiceProxy<T>(spec.getContract(),spec.getParams())
 					)
 			);
 			proxies.put(key,proxy);
@@ -47,8 +52,9 @@ public class ServiceScope implements ScopePool {
 
 		Map<String,String> properties;
 		String contractName;
+		private Class<?> contractClass;
 
-		public ServiceKey(String contractName , Map<String,String> properties) {
+		public ServiceKey(Class<?> contractClass , Map<String,String> properties) {
 			if (properties==null || properties.isEmpty()){
 				this.properties = Collections.emptyMap();
 			} else if (!(properties instanceof SortedMap)){
@@ -56,7 +62,8 @@ public class ServiceScope implements ScopePool {
 			} else {
 				this.properties = properties;
 			}
-			this.contractName = contractName;
+			this.contractName = contractClass.getName();
+			this.contractClass = contractClass;
 		}
 
 		public boolean equals(Object other){
@@ -72,4 +79,37 @@ public class ServiceScope implements ScopePool {
 		}
 
 	}
+
+	@Override
+	public <T> void add(WiringSpecification<T> spec, T object) {
+		ServiceRegistry.register(spec.getContract(), object);
+		
+		ServiceKey key = new ServiceKey(spec.getContract(),spec.getParams());
+		T proxy = (T)proxies.get(key);
+		
+		if (proxy==null){
+			proxy = spec.getContract().cast(
+					Proxy.newProxyInstance(
+							this.getClass().getClassLoader(), 
+							new Class<?>[]{spec.getContract()}, 
+							new ServiceProxy<T>(spec.getContract(),spec.getParams())
+					)
+			);
+			proxies.put(key,proxy);
+		}
+
+	}
+
+	@Override
+	public void clear() {
+		for (ServiceKey key : proxies.keySet()){
+			ServiceRegistry.unRegister(key.contractClass);
+		}
+	}
+
+	@Override
+	public void remove(Object object) {
+		ServiceRegistry.unRegister(object);
+	}
+
 }

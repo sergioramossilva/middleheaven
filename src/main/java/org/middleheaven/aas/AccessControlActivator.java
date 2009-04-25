@@ -1,8 +1,8 @@
 package org.middleheaven.aas;
 
-import org.middleheaven.core.services.Publish;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
 
 public class AccessControlActivator extends ServiceActivator {
 

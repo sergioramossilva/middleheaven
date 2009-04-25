@@ -9,7 +9,6 @@ import org.middleheaven.core.services.ServiceAtivatorContext;
  * 
  * The required and publish services will be used to determine dependencies witch will be automatically resolve at runtime.
  * 
- * @author Sérgio Taborda
  *
  */
 public abstract class ServiceActivator {

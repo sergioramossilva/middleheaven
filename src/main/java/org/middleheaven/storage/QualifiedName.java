@@ -6,6 +6,7 @@ public class QualifiedName implements Serializable{
 
 	private String qualifier;
 	private String name;
+	private boolean alias;
 	
 
 	public static QualifiedName qualify(String qualifier, String name){
@@ -37,5 +38,11 @@ public class QualifiedName implements Serializable{
 		return name.hashCode() ^ qualifier.hashCode();
 	}
 
+	public void setAlias(boolean alias) {
+		this.alias = alias;
+	}
 
+	public boolean isAlias() {
+		return this.alias;
+	}
 }

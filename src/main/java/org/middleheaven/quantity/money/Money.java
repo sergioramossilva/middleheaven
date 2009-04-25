@@ -276,4 +276,8 @@ public class Money implements Amount<Money, org.middleheaven.quantity.measurable
 	public Money zero() {
 		return new Money (0,this.currency);
 	}
+	
+	public Currency currency(){
+		return currency;
+	}
 }

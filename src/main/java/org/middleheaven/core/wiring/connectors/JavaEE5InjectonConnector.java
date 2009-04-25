@@ -15,9 +15,11 @@ import org.middleheaven.core.wiring.ConnectableBinder;
 import org.middleheaven.core.wiring.ConstructorWiringPoint;
 import org.middleheaven.core.wiring.FieldWiringPoint;
 import org.middleheaven.core.wiring.MethodWiringPoint;
+import org.middleheaven.core.wiring.ScoopingModel;
 import org.middleheaven.core.wiring.WiringConnector;
 import org.middleheaven.core.wiring.WiringModel;
 import org.middleheaven.core.wiring.WiringSpecification;
+import org.middleheaven.core.wiring.namedirectory.NameDirectoryScope;
 import org.middleheaven.util.classification.BooleanClassifier;
 
 public class JavaEE5InjectonConnector implements WiringConnector {
@@ -35,7 +37,7 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 	private static class JavaEE5InjectonParser extends AbstractAnnotationBasedWiringModelParser{
 
 		@Override
-		public <T> void parse(Class<T> type, WiringModel model) {
+		public <T> void readWiringModel(Class<T> type, WiringModel model) {
 
 			//if (model.getConstructorPoint()==null){
 				// constructor
@@ -108,6 +110,23 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 				
 				model.addAfterWiringPoint(new MethodWiringPoint(method,null,params));
 			}
+		}
+
+		@Override
+		public void readScoopingModel(Object obj, ScoopingModel model) {
+
+			Set<Annotation> all = ReflectionUtils.getAnnotations(obj.getClass());
+			
+			for (Annotation a : all){
+				if (a.annotationType().isAnnotationPresent(Resource.class)){
+					Resource resource = a.annotationType().getAnnotation(Resource.class);
+					model.addScope(NameDirectoryScope.class);
+					model.addParam("name", resource.name());
+					model.addParam("shareable",Boolean.valueOf(resource.shareable()).toString());
+					
+				}
+			}
+			
 		}
 
 	}

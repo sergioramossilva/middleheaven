@@ -12,7 +12,7 @@ public class URLOutcome extends Outcome {
 	}
 	
 	public URLOutcome(String url, Map<String,String> params,boolean doRedirect) {
-		super(OutcomeStatus.SUCCESS, doRedirect, url);
+		super(BasicOutcomeStatus.SUCCESS, doRedirect, url);
 		this.params = params;
 	}
 

@@ -1,6 +1,7 @@
 package org.middleheaven.validation;
 
 import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * Result of validating an object
@@ -19,8 +20,7 @@ public interface ValidationContext extends Serializable, Iterable<InvalidationRe
 	 * @return <code>true</code> if no invalidation messages, of any level, are present; <code>false</code> otherwise.
 	 */
 	public boolean isStrictlyValid();
-	
-	
+
 	/**
 	 * 
 	 * @return <code>true</code> if warning invalidation messages are present; <code>false</code> otherwise.
@@ -43,4 +43,6 @@ public interface ValidationContext extends Serializable, Iterable<InvalidationRe
 	 * Adds the invalidation reasons on <code>other</code> to <code>this</code> 
 	 */
 	public void merge(ValidationContext other);
+
+	public Iterator<InvalidationReason> iterator(InvalidationSeverity severity);
 }

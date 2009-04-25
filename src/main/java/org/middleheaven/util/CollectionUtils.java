@@ -1,15 +1,30 @@
 package org.middleheaven.util;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.RandomAccess;
 import java.util.Set;
+
+import org.middleheaven.core.wiring.annotations.Wire;
 
 public class CollectionUtils {
 
 
+	public static <T> List<T> toRandomAccessList(Collection<T> collection){
+		if(collection instanceof RandomAccess && collection instanceof List && !collection.getClass().getName().toLowerCase().contains("unmodifiable")){
+			return (List<T>)collection;
+		}
+		
+		return new ArrayList<T>(collection);
+	}
+	
 	public static <T> Iterator <T> singleIterator(T object){
 		return new SingleIterator<T>(object);
 	}
@@ -55,7 +70,7 @@ public class CollectionUtils {
 	 * @param c2
 	 * @return
 	 */
-	public static <T> boolean equalsIgnoreOrder(Collection<? extends T> c1,Collection<? extends T> c2) {
+	public static <T> boolean equalContents(Collection<? extends T> c1,Collection<? extends T> c2) {
 
 		if (c1==c2){
 			return true;
@@ -86,7 +101,7 @@ public class CollectionUtils {
 		if (a==b){
 			return true;
 		} else {
-			return equalsIgnoreOrder(a.entrySet(), b.entrySet());
+			return equalContents(a.entrySet(), b.entrySet());
 		}
 
 	}
@@ -119,6 +134,27 @@ public class CollectionUtils {
 		}
 		
 		return result;
+	}
+
+
+	
+	public static <T> T[] addToArray(T[] array,T element , T ... elements) {
+		
+		Class<?> componentType = array.getClass().getComponentType();
+		
+		Object newArray = Array.newInstance(componentType, array.length+1+elements.length);
+		
+		System.arraycopy(array, 0, newArray, 0, array.length);
+		Array.set(newArray, array.length , element);
+		System.arraycopy(elements, 0, newArray, array.length +1,elements.length);
+		
+		return (T[]) newArray;
+	}
+
+	public static <T> T[] newArray(Class<T> arrayType, int length) {
+		
+		Object newArray = Array.newInstance(arrayType, length);
+		return (T[]) newArray;
 	}
 
 

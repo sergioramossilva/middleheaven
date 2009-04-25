@@ -78,10 +78,7 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
     	return context.getChronology().add(this, Duration.of().days(-1));
     }
     
-    public CalendarDate toDate(){
-    	return new CalendarDate(this.context, this.milliseconds);
-    }
-    
+
     public CalendarDateTime plus (ElapsedTime elapsed){
     	return this.context.getChronology().add(this, elapsed);
     }
@@ -156,6 +153,15 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 	public long miliseconds() {
 		return this.milliseconds;
 	}
+
+	public CalendarTime toTime() {
+		return new CalendarTime(this.context, this.milliseconds);
+	}
+
+    public CalendarDate toDate(){
+    	return new CalendarDate(this.context, this.milliseconds);
+    }
+    
 	
 
 }

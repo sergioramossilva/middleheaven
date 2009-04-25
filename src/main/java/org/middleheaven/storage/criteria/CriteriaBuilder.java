@@ -1,12 +1,10 @@
 package org.middleheaven.storage.criteria;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.Interval;
-import org.middleheaven.util.classification.BooleanClassifier;
 
 /**
  * An implementation of the
@@ -24,9 +22,26 @@ public final class CriteriaBuilder<T> {
 	private AbstractCriteria<T> criteria;
 
 	private CriteriaBuilder(Class<T> type){
-		this.criteria = new AbstractCriteria<T>(type);
+		this.criteria = new BuildedCriteria<T>(type);
 	}
+	
+	private static class BuildedCriteria<T> extends AbstractCriteria<T>{
 
+		public BuildedCriteria(BuildedCriteria<T> other) {
+			super(other);
+		}
+
+		public BuildedCriteria(Class<T> type) {
+			super(type);
+		}
+
+		@Override
+		public Criteria<T> duplicate() {
+			return new BuildedCriteria<T>(this);
+		}
+		
+	}
+	
 	public Criteria<T> distinct(){
 		this.criteria.setDistinct(true);
 		return this.criteria;

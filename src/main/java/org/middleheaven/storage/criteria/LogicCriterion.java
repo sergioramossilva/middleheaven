@@ -172,7 +172,7 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 
 	public boolean equals(LogicCriterion other){
 		return this.operator.equals(other.operator) && 
-		CollectionUtils.equalsIgnoreOrder( this.criteria , other.criteria);
+		CollectionUtils.equalContents( this.criteria , other.criteria);
 
 	}
 

@@ -1,15 +1,15 @@
 package org.middleheaven.test.core.service;
 
-import org.middleheaven.core.services.Publish;
-import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.annotations.Wire;
 
 public class ActivatorB extends ServiceActivator {
 
 	A service;
 	
-	@Require 
+	@Wire 
 	public void setService(A service){
 		this.service = service;
 	}

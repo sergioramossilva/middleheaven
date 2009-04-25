@@ -178,6 +178,11 @@ public abstract class DataBaseDialect {
 			
 			return c;
 		}
+
+		@Override
+		public Criteria<T> duplicate() {
+			return new DBCriteria<T>(this);
+		}
 	}
 	
 	public <T> DataBaseCommand createDeleteCommand(Criteria<T> criteria, StorableEntityModel model){

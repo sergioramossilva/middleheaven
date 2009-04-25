@@ -24,12 +24,12 @@ public class DependencyResolver {
 		
 		// this is a very simplistic algorithm that does not 
 		// resolve dependencies explicitly. 
-		// A stack is filled with the dependencies in order given by the stater;
-		// dependencies are then starter in that order. 
+		// A stack is filled with the dependencies in order given by the starter;
+		// dependencies are then resolved in that order. 
 		// if a dependency fails, its moved to another stack.
 		//  at the end of iterating the main stack if the new stack has a different number of members 
 		// the process is repeated. 
-		// If the two stacks have the same itens this means those items have a ciclic dependencie.
+		// If the two stacks have the same items this means those items have a ciclic dependency.
 		// proxies will them be used in order to overcome the cycle.
 		
 		List<T> stack = starter.sort(dependables);

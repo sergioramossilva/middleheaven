@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.middleheaven.core.wiring.annotations.Name;
+import org.middleheaven.core.wiring.annotations.Params;
 
 /**
  * Maintains data about the wiring contract to be fulfill by the wiring context.  
@@ -20,7 +21,7 @@ public class WiringSpecification<T> {
 	private Set<Annotation> annotations;
 	private Map<String, String> params;
 	private boolean shareable = true;
-	
+
 	public static <C> WiringSpecification<C> search(Class<C> contract) {
 		final Map<String,String> params = Collections.emptyMap();
 		final Set<Annotation> empty = Collections.emptySet();
@@ -56,11 +57,21 @@ public class WiringSpecification<T> {
 					// try again
 					this.params.put("name", ((Name)a).value());
 				}
+			}  else if (a.annotationType().isAnnotationPresent(Params.class)){
+				Params name = a.annotationType().getAnnotation(Params.class);
+				String[] paramPairs = name.value();
+				for (String paramPair : paramPairs){
+					String[] values = paramPair.split("=");
+					if(values.length!=2){
+						throw new IllegalStateException("Param pair expected to be in format name=value bu found" + paramPair);
+					}
+					params.put(values[0], values[1]);
+				}
 			}
 		}
 	}
-	
-	
+
+
 
 	public Map<String, String > getParams(){
 		return Collections.unmodifiableMap(this.params);

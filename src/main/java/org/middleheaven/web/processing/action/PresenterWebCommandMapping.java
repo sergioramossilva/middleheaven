@@ -20,7 +20,7 @@ import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.global.text.LocalizationService;
-import org.middleheaven.global.text.TimestampFormatter;
+import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.ui.ContextScope;
@@ -63,8 +63,8 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		Map<OutcomeStatus, Outcome> actionOutcome = new HashMap<OutcomeStatus, Outcome>();
 		this.outcomes.put(null,actionOutcome );
 
-		for (OutcomeStatus status : OutcomeStatus.values()){
-			actionOutcome.put(status, new Outcome(status,500));
+		for (OutcomeStatus status : BasicOutcomeStatus.values()){
+			actionOutcome.put(status,new Outcome(status,500));
 		}
 
 		this.controllerClass = presenterClass;
@@ -168,7 +168,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 	private Outcome resolveOutcome(String action, OutcomeStatus status){
 		Map<OutcomeStatus, Outcome> actionOutcome = this.outcomes.get(action);
-		if (actionOutcome==null || status.equals(OutcomeStatus.TERMINATE)){
+		if (actionOutcome==null || status.equals(BasicOutcomeStatus.TERMINATE)){
 			return new TerminalOutcome();
 		} else {
 			return actionOutcome.get(status);
@@ -229,7 +229,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 				if (actionMethod==null){
 					if (context.getHttpService().equals(HttpMethod.GET)){
-						return resolveOutcome(null,OutcomeStatus.SUCCESS);
+						return resolveOutcome(null,BasicOutcomeStatus.SUCCESS);
 					} else {
 						throw new ActionHandlerNotFoundException();
 					}
@@ -247,32 +247,32 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 					return (Outcome)result;
 				} else {
 					Logging.error("Illegal outcome class. Use URLOutcome.");
-					outcome =  resolveOutcome(action,OutcomeStatus.FAILURE);
+					outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 				}
 			}else if (result==null || !(result instanceof OutcomeStatus)){
-				return resolveOutcome(action,OutcomeStatus.SUCCESS);
+				return resolveOutcome(action,BasicOutcomeStatus.SUCCESS);
 			} else {
 				return resolveOutcome(action,(OutcomeStatus)result);
 			}
 		} catch (ValidationException e){
-			outcome =  resolveOutcome(action,OutcomeStatus.INVALID);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID);
 		} catch (InvocationTargetReflectionException e){
 			Logging.error("Exception found invoking " + actionMethod.getName(), e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e.getCause());
-			outcome =  resolveOutcome(action,OutcomeStatus.FAILURE);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 		}catch (ActionHandlerNotFoundException e){
 			Logging.fatal("Action not found", e);
-			outcome =  resolveOutcome(action,OutcomeStatus.ERROR);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
 		}catch (Exception e){
 			Logging.error("Exception found handling request", e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
-			outcome =  resolveOutcome(action,OutcomeStatus.FAILURE);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 		} catch (Error e){
 			Logging.fatal("Exception found handling request", e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
-			outcome =  resolveOutcome(action,OutcomeStatus.ERROR);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
 			if (outcome==null){
-				outcome =  resolveOutcome(action,OutcomeStatus.FAILURE);
+				outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 			}
 		}
 		return outcome;
@@ -319,9 +319,9 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 			// set up timestamp formatters and converter
 			LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 
-			TimestampFormatter formatter = i18nService.getTimestampFormatter(context.getCulture());
+			TimepointFormatter formatter = i18nService.getTimestampFormatter(context.getCulture());
 			
-			formatter.setPattern(TimestampFormatter.Format.DATE_ONLY);
+			formatter.setPattern(TimepointFormatter.Format.DATE_ONLY);
 			
 			TypeConvertions.addConverter(String.class, Date.class, new StringDateConverter(formatter));
 			TypeConvertions.addConverter(String.class, CalendarDateTime.class, new StringCalendarDateTimeConverter(formatter));

@@ -8,8 +8,11 @@ import java.util.Map;
 
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractSequencialIdentityStoreKeeper;
+import org.middleheaven.storage.ExecutableQuery;
 import org.middleheaven.storage.Query;
+import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
+import org.middleheaven.storage.SimpleExecutableQuery;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.WrappStorableReader;
@@ -19,7 +22,7 @@ import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
 
 public class InMemoryStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
-	
+
 	public InMemoryStoreKeeper() {
 		super(new WrappStorableReader());
 	}
@@ -28,31 +31,15 @@ public class InMemoryStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 	final Map<String, Map<Identity,Storable> > data = new HashMap<String,Map<Identity,Storable> >();
 	final Map<String, Sequence<Identity>> sequences = new HashMap<String,Sequence<Identity>>();
 
-    Collection<Storable> getBulkData(String name){
-    	Map<Identity,Storable> col = data.get(name);
+	Collection<Storable> getBulkData(String name){
+		Map<Identity,Storable> col = data.get(name);
 		if (col==null){
 			return Collections.emptySet();
 		}
 		return col.values();
 	}
 
-    public <T> Collection<T> execute (Criteria<T> criteria,StorableEntityModel model){
-    	 Collection<Storable> all = getBulkData(criteria.getTargetClass().getName());
-    	 if (all.isEmpty()){
-    		 return Collections.emptySet();
-    	 }
-    	 
-    	 CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,model);
-    	 Collection<T> result = new LinkedList<T>();
-    	 for (Storable s : all){
-    		 T obj = criteria.getTargetClass().cast(s);
-			 if(filter.classify(obj)){
-    		 	 result.add(obj);
-    		 }
-    	 }
-    	 
-    	 return result;
-    }
+
 	private <T> void setBulkData(Collection<Storable> collection){
 		if (!collection.isEmpty()){
 			Storable s = collection.iterator().next();
@@ -65,12 +52,37 @@ public class InMemoryStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 			}
 			data.put(s.getPersistableClass().getName(),col);
 		}
-		
+
 	}
+
+	private QueryExecuter queryExecuter = new QueryExecuter() {
+
+		@Override
+		public <T> Collection<T> execute(final ExecutableQuery<T> query) {
+			Criteria<T> criteria = query.getCriteria();
+			Collection<Storable> all = getBulkData(criteria.getTargetClass().getName());
+			if (all.isEmpty()){
+				return Collections.emptySet();
+			}
+
+			CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,query.getModel());
+			Collection<T> result = new LinkedList<T>();
+			for (Storable s : all){
+				T obj = criteria.getTargetClass().cast(s);
+				if(filter.classify(obj)){
+					result.add(obj);
+				}
+			}
+
+			return result;
+
+		}
+
+	};
 
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
-		return new InMemoryCriteriaQuery<T>(criteria, model, this);
+		return new SimpleExecutableQuery<T>(criteria, model, queryExecuter);
 	}
 
 	@Override
@@ -85,7 +97,7 @@ public class InMemoryStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 	@Override
 	public void insert(Collection<Storable> collection,StorableEntityModel model) {
 		this.setBulkData(collection);
-		
+
 
 	}
 
@@ -108,8 +120,8 @@ public class InMemoryStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 
 	@Override
 	public void remove(Criteria<?> criteria, StorableEntityModel model) {
-		Query all = new InMemoryCriteriaQuery(criteria, model, this);
-		
+		Query all = this.createQuery(criteria, model, null);
+
 		this.remove(all.list(), model);
 	}
 

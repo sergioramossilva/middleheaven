@@ -68,9 +68,18 @@ public class DefaultValidationContext implements ValidationContext{
 
 	@Override
 	public Iterator<InvalidationReason> iterator() {
+		// TODO implement ValidationContext.iterator
+		// reason.values returns a list of list of reasons.
 		return new IteratorsIterator<InvalidationReason>(reasons.values());
 	}
 
+
+	@Override
+	public Iterator<InvalidationReason> iterator(InvalidationSeverity severity) {
+		// TODO implement ValidationContext.iterator
+		return null;
+	}
+	
 	@Override
 	public boolean isStrictlyValid() {
 		return reasons.isEmpty();
@@ -84,5 +93,6 @@ public class DefaultValidationContext implements ValidationContext{
 		}
 
 	}
+
 
 }

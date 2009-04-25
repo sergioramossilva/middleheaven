@@ -1,9 +1,9 @@
 package org.middleheaven.logging;
 
-import org.middleheaven.core.services.Publish;
-import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.service.CommonRepositories;
 import org.middleheaven.io.repository.service.FileRepositoryService;
@@ -18,7 +18,7 @@ public class LoggingActivator extends ServiceActivator {
 	
 	public LoggingActivator(){}
 
-	@Require
+	@Wire
 	public void setFileRepositoryService(FileRepositoryService fileRepositoryService) {
 		this.fileRepositoryService = fileRepositoryService;
 	}

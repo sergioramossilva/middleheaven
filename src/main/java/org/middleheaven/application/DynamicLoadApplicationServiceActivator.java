@@ -13,11 +13,11 @@ import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstapListener;
 import org.middleheaven.core.bootstrap.BootstrapEvent;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.Publish;
-import org.middleheaven.core.services.Require;
 import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.ManagedFile;
@@ -58,17 +58,17 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 	
 	public DynamicLoadApplicationServiceActivator(){}
 	
-	@Require
+	@Wire
 	public void setBootstrapService(BootstrapService bootstrapService) {
 		this.bootstrapService = bootstrapService;
 	}
 
-	@Require
+	@Wire
 	public void setLoggingService(LoggingService loggingService) {
 		this.loggingService = loggingService;
 	}
 	
-	@Require
+	@Wire
 	public void setWiringService(WiringService wiringService) {
 		this.wiringService = wiringService;
 	}

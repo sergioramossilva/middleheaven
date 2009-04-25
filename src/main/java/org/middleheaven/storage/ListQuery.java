@@ -39,4 +39,9 @@ public class ListQuery<T> implements Query<T> , Serializable{
 		return list.isEmpty();
 	}
 
+	@Override
+	public Query<T> setRange(int startAt, int maxCount) {
+		return new ListQuery(this.list.subList(startAt, Math.min(list.size(), list.size()-startAt+maxCount)));
+	}
+
 }

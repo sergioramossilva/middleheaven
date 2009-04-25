@@ -8,8 +8,7 @@ import java.util.Set;
 
 import org.middleheaven.util.classification.BooleanClassifier;
 
-public abstract class AbstractAnnotationBasedWiringModelParser implements
-WiringModelParser {
+public abstract class AbstractAnnotationBasedWiringModelParser implements WiringModelReader {
 
 	protected WiringSpecification[] readParamsSpecification(Constructor constructor, BooleanClassifier<Annotation> filter){
 		return parseAnnotations(

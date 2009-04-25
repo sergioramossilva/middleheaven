@@ -13,12 +13,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.middleheaven.global.Culture;
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.EmptyFileRepository;
+import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.io.repository.StreamBasedManagedFile;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.CulturalAttributeContext;
+import org.middleheaven.util.OperatingSystemInfo;
 import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.web.processing.BrowserInfo;
+import org.middleheaven.web.processing.HttpProcessingUtils;
+import org.middleheaven.web.processing.HttpUserAgent;
 
 
 public abstract class ServletWebContext extends WebContext implements CulturalAttributeContext{
@@ -31,7 +38,52 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 
 	protected abstract void setHeaderAttribute(ContextScope scope, String name, Object value);
 
+	@Override
+	public HttpMethod getHttpService() {
+		if (getRequest() instanceof HttpServletRequest){
+			return HttpMethod.valueOf(((HttpServletRequest)getRequest()).getMethod().toUpperCase());
+		} else {
+			return HttpMethod.UNKOWN;
+		}
+	}
 	
+	public HttpUserAgent getAgent(){
+		if (getRequest() instanceof HttpServletRequest){
+			return HttpProcessingUtils.parse((HttpServletRequest)getRequest());
+		} else {
+			return new HttpUserAgent(BrowserInfo.unkownBrowser(),OperatingSystemInfo.unkown());
+		}
+		
+	}
+	
+	@Override
+	public Culture getCulture() {
+		return Culture.valueOf(getRequest().getLocale());
+	}
+
+	@Override
+	public ManagedFileRepository getUploadRepository() {
+		return EmptyFileRepository.repository();
+	}
+	
+	@Override
+	public String getContextPath() {
+		if (getRequest() instanceof HttpServletRequest){
+			return ((HttpServletRequest)getRequest()).getContextPath();
+		} else {
+			return "";
+		}
+	}
+
+	@Override
+	public StringBuilder getRequestUrl() {
+		if (getRequest() instanceof HttpServletRequest){
+			return new StringBuilder(((HttpServletRequest)getRequest()).getRequestURL());
+		} else {
+			return new StringBuilder();
+		}
+		
+	}
 
 	public MediaManagedFile responseMediaFile(){
 		

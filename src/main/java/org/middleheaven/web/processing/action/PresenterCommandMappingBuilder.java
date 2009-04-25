@@ -65,19 +65,19 @@ public class PresenterCommandMappingBuilder {
 		}
 		
 		public OutcomeBuilder onSuccess (){
-			return on(OutcomeStatus.SUCCESS);
+			return on(BasicOutcomeStatus.SUCCESS);
 		}
 		
 		public OutcomeBuilder onFailure (){
-			return on(OutcomeStatus.FAILURE);
+			return on(BasicOutcomeStatus.FAILURE);
 		}
 		
 		public OutcomeBuilder onInvalid (){
-			return on(OutcomeStatus.INVALID);
+			return on(BasicOutcomeStatus.INVALID);
 		}
 		
 		public OutcomeBuilder onError (){
-			return on(OutcomeStatus.ERROR);
+			return on(BasicOutcomeStatus.ERROR);
 		}
 		public OutcomeBuilder on (OutcomeStatus status){
 			return new MyOutcomeBuilder(this,status);

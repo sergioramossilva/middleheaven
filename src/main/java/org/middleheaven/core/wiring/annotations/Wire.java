@@ -22,5 +22,6 @@ import java.lang.annotation.ElementType;
 @Documented
 public @interface Wire {
 
-	boolean optional() default false;
+	boolean required() default true;
+	boolean shareabled() default true;
 }

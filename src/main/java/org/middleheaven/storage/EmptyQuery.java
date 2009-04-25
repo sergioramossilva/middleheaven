@@ -25,4 +25,9 @@ public final class EmptyQuery<T> implements Query<T>{
 		return true;
 	}
 
+	@Override
+	public Query<T> setRange(int startAt, int maxCount) {
+		return this;
+	}
+
 }
