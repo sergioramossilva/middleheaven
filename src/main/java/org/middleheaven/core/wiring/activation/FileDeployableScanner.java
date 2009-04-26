@@ -22,7 +22,6 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.WatchableContainer;
 import org.middleheaven.logging.Logging;
-import org.middleheaven.util.ArrayMapKey;
 
 public class FileDeployableScanner extends AbstractDeployableScanner {
 
@@ -107,11 +106,11 @@ public class FileDeployableScanner extends AbstractDeployableScanner {
 
 			if(className!=null && !className.isEmpty()){
 				try{
-					// TODO must instanciate ? 
+					// TODO must instantiate ? 
 					Class<? extends UnitActivator> type = ReflectionUtils.loadClass(className , UnitActivator.class,cloader);
 					UnitActivator activator = context.getInstance(type);
 
-					UnitActivator older = activators.get(new ArrayMapKey(jar.getName() ,activator.getClass().getName()));
+					UnitActivator older = activators.get(activator.getClass().getName());
 					if (older!=null){
 						fireDeployableLost(older.getClass());
 						activators.remove(activator.getClass().getName());
