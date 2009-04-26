@@ -20,7 +20,6 @@ import org.middleheaven.core.dependency.InicializationNotPossibleException;
 import org.middleheaven.core.dependency.InicializationNotResolvedException;
 import org.middleheaven.core.dependency.Starter;
 import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.ActivatorDependencyResolver;
 import org.middleheaven.core.wiring.activation.AnnotationBasedDependencyResolver;
@@ -367,7 +366,7 @@ public class DefaultWiringService implements WiringService{
 
 		public void scan(){
 			for (DeployableScanner scanner : scanners){
-				scanner.scan();
+				scanner.scan(this);
 			}
 
 

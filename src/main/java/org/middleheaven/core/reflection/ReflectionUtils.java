@@ -13,7 +13,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -176,6 +175,14 @@ public final class ReflectionUtils {
 	public static <T> Class<? extends T> loadClass(String className, Class<T> superType) throws InstantiationReflectionException{
 		try {
 			return Class.forName(className).asSubclass(superType);
+		} catch (ClassNotFoundException e) {
+			throw new NoSuchClassReflectionException(className);
+		}
+	}
+	
+	public static <T> Class<? extends T> loadClass(String className, Class<T> superType, ClassLoader cloader) {
+		try {
+			return cloader.loadClass(className).asSubclass(superType);
 		} catch (ClassNotFoundException e) {
 			throw new NoSuchClassReflectionException(className);
 		}
@@ -514,6 +521,8 @@ public final class ReflectionUtils {
 	public static <T> Class<T> genericClass(T object) {
 		return (Class<T>) object.getClass();
 	}
+
+
 
 
 

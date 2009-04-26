@@ -16,7 +16,19 @@ public abstract class AbstractDeployableScanner implements DeployableScanner {
 	public void removeScannerListener(DeployableScannerListener listener) {
 		listeners.remove(listener);
 	}
-
 	
+	protected void fireDeployableFound(Class<? extends UnitActivator> type){
+		DeployableScanEvent event = new DeployableScanEvent(type);
+		for (DeployableScannerListener listener : listeners){
+			listener.onDeployableFound(event);
+		}
+	}
+
+	protected void fireDeployableLost(Class<? extends UnitActivator> type){
+		DeployableScanEvent event = new DeployableScanEvent(type);
+		for (DeployableScannerListener listener : listeners){
+			listener.onDeployableLost(event);
+		}
+	}
 
 }
