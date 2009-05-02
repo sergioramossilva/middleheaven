@@ -13,8 +13,6 @@ import java.util.Map;
 
 
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.email.Email;
-import org.middleheaven.email.EmailService;
 import org.middleheaven.io.network.NetUtils;
 import org.middleheaven.logging.LogBookWriter;
 import org.middleheaven.logging.LogWritingIOExcepiton;
@@ -22,6 +20,8 @@ import org.middleheaven.logging.LoggingEvent;
 import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.logging.writters.FormatableLogWriter;
 import org.middleheaven.logging.writters.LogFormat;
+import org.middleheaven.mail.MailMessage;
+import org.middleheaven.mail.MailSendingService;
 import org.middleheaven.util.StringUtils;
 
 /**
@@ -104,10 +104,10 @@ public class LogEmailWriter extends LogBookWriter implements FormatableLogWriter
     protected void sendEmail()  {
         if (emailTo!=null && buffer.size()>0){
 
-        	EmailService emailService = ServiceRegistry.getService(EmailService.class);
+        	MailSendingService emailService = ServiceRegistry.getService(MailSendingService.class);
         	
 
-            Email email = new Email();
+            MailMessage email = new MailMessage();
             String[] mails = emailTo.trim().split(",");
             email.addToAdress(mails);
 
@@ -124,7 +124,7 @@ public class LogEmailWriter extends LogBookWriter implements FormatableLogWriter
             format.writerFooter(message);
 
             email.setBody(message.toString());
-            emailService.sendEmail(email);
+            emailService.send(email);
             buffer.clear();
         }
 

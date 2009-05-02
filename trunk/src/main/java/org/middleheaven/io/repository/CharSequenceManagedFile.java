@@ -1,27 +1,51 @@
 package org.middleheaven.io.repository;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.middleheaven.io.ByteBuffer;
 import org.middleheaven.io.ManagedIOException;
 
-public class BufferedMediaVirtualFile extends AbstractManagedFile implements MediaManagedFile {
+public class CharSequenceManagedFile extends AbstractManagedFile implements MediaManagedFile {
 
-	ByteBuffer buffer = new ByteBuffer();
-	
-	String contentType = "octet-stream";
-
+	private CharSequence body;
 	private String name;
+	private String contentType;
 
-	
-	public BufferedMediaVirtualFile(String name){
+	public CharSequenceManagedFile(CharSequence body, String name, String contentType){
+		this.body = body;
 		this.name = name;
+		this.contentType = contentType;
 	}
 	
+	@Override
+	protected ManagedFile doCreateFile() {
+		return null;
+	}
+
+	@Override
+	protected ManagedFile doCreateFolder() {
+		return null;
+	}
+
+	@Override
+	public boolean contains(ManagedFile other) {
+		return false;
+	}
+
+	@Override
+	public boolean delete() {
+		return false;
+	}
+
+	@Override
+	public boolean exists() {
+		return true;
+	}
+
 	@Override
 	public MediaManagedFileContent getContent() {
 		return new MediaManagedFileContent(){
@@ -32,56 +56,32 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 			}
 
 			@Override
-			public void setContentType(String type) {
-				contentType = type;
+			public void setContentType(String newContentType) {
+				contentType = newContentType;
 			}
 
 			@Override
 			public InputStream getInputStream() throws ManagedIOException {
-				return buffer.getInputStream();
+				return new ByteArrayInputStream(body.toString().getBytes());
 			}
 
 			@Override
 			public OutputStream getOutputStream() throws ManagedIOException {
-				return buffer.getOutputStream();
+				throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public long getSize() throws ManagedIOException {
-				return buffer.getSize();
+				return body.toString().getBytes().length;
 			}
 
 			@Override
 			public boolean setSize(long size) throws ManagedIOException {
-				return buffer.setSize((int)size);
+				// not supported
+				return false;
 			}
 			
 		};
-	}
-
-	@Override
-	public boolean contains(ManagedFile other) {
-		return false;
-	}
-
-	@Override
-	public ManagedFile doCreateFile() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public ManagedFile doCreateFolder() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean delete() {
-		return false;
-	}
-
-	@Override
-	public boolean exists() {
-		return false;
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 
 	@Override
 	public long getSize() throws ManagedIOException {
-		return buffer.getSize();
+		return body.toString().getBytes().length;
 	}
 
 	@Override
@@ -121,24 +121,17 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 
 	@Override
 	public boolean isWriteable() {
-		return true;
+		return false;
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles()
-			throws ManagedIOException {
+	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
 		return Collections.emptySet();
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter)
-			throws ManagedIOException {
+	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
 		return Collections.emptySet();
-	}
-
-	@Override
-	public ManagedFile resolveFile(String filepath) {
-		return null;
 	}
 
 	@Override
@@ -146,4 +139,10 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 		this.name = name;
 	}
 
+	@Override
+	public ManagedFile resolveFile(String filepath) {
+		return new VoidManagedFile(this,filepath);
+	}
+
+	
 }

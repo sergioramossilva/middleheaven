@@ -34,11 +34,11 @@ import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.nq.NativeQuery;
 
-public class NeoDatisStoreKeeper extends AbstractStoreKeeper {
+public class ObjectStoreKeeper extends AbstractStoreKeeper {
 
 	private ManagedFile dataFile;
 
-	public NeoDatisStoreKeeper(ManagedFile dataFile) {
+	public ObjectStoreKeeper(ManagedFile dataFile) {
 		super(new StorableModelReader(){
 
 			@Override
