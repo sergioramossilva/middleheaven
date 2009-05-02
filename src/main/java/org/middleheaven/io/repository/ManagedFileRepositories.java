@@ -5,8 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.middleheaven.io.repository.vfs.CommonsVSFRepositoryEngine;
-
 public class ManagedFileRepositories {
 
 	

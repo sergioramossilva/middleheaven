@@ -17,7 +17,7 @@ public final class MapWebContext  extends WebContext{
 	private HttpUserAgent agent;
 	private HttpMethod service;
 	private MapContext mapContext;
-	private MediaManagedFile file = new BufferedMediaVirtualFile();
+	private MediaManagedFile file = new BufferedMediaVirtualFile("response");
 	private Culture culture= Culture.defaultValue();
 	
 	public MapWebContext(Culture culture, HttpMethod service) {

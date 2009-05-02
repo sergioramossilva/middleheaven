@@ -13,7 +13,7 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.odb.NeoDatisStoreKeeper;
+import org.middleheaven.storage.odb.ObjectStoreKeeper;
 
 
 public class TestODB {
@@ -22,7 +22,7 @@ public class TestODB {
 	@Test
 	public void testSimpleAdd(){
 		ManagedFile dataFile = ManagedFileRepositories.resolveFile(new File("./neodata.data"));
-		NeoDatisStoreKeeper keeper = new NeoDatisStoreKeeper(dataFile);
+		ObjectStoreKeeper keeper = new ObjectStoreKeeper(dataFile);
 		
 		final DomainModel model = new DomailModelBuilder().build(
 				new DomainClasses().add(Subject.class)

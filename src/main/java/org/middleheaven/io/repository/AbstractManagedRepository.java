@@ -22,8 +22,6 @@ public abstract class AbstractManagedRepository implements ManagedFileRepository
 		return file.delete();
 	}
 
-
-
 	@Override
 	public final boolean isQueriable() {
 		return QueryableRepository.class.isAssignableFrom(this.getClass());
@@ -43,7 +41,15 @@ public abstract class AbstractManagedRepository implements ManagedFileRepository
 		if (!myFile.exists()){
 			myFile = myFile.createFile();
 		}
+		
+		if (file instanceof MediaManagedFile && myFile instanceof MediaManagedFile){
+			((MediaManagedFile)myFile).getContent().setContentType(((MediaManagedFile)file).getContent().getContentType());
+			((MediaManagedFile)myFile).getContent().setSize(((MediaManagedFile)file).getContent().getSize());
+		}
+		
 		file.copyTo(myFile);
+		
+		
 	}
 
 	
