@@ -5,11 +5,22 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class StringUtils {
 
 
+    public static String join(Iterable<?> original, String separator){
+		StringBuilder builder = new StringBuilder();
+		for (Iterator<?> it = original.iterator();it.hasNext();){
+			builder.append(it.next().toString()).append(separator);
+		}
+		if(builder.length()>0){
+			builder.delete(builder.length()-separator.length(), builder.length());
+		}
+		return builder.toString();
+    }
     
     public static boolean isInArray(String candidate, String[] set){
         if (candidate==null) return false;

@@ -7,8 +7,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.util.classification.BooleanClassifier;
 
-public abstract class StreamBasedManagedFile extends AbstractManagedFile implements MediaManagedFile {
+public abstract class StreamBasedManagedFile extends AbstractContentManagedFile implements MediaManagedFile {
 
 
 	private String name;
@@ -75,10 +76,6 @@ public abstract class StreamBasedManagedFile extends AbstractManagedFile impleme
 	@Override
 	public abstract long getSize();
 	
-	@Override
-	public boolean contains(ManagedFile other) {
-		return false;
-	}
 
 	@Override
 	public ManagedFile doCreateFile() {
@@ -90,15 +87,6 @@ public abstract class StreamBasedManagedFile extends AbstractManagedFile impleme
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	public boolean delete() {
-		return false;
-	}
-
-	@Override
-	public boolean exists() {
-		return true;
-	}
 
 	@Override
 	public String getName() {
@@ -110,40 +98,6 @@ public abstract class StreamBasedManagedFile extends AbstractManagedFile impleme
 		return parent;
 	}
 
-	@Override
-	public ManagedFileType getType() {
-		return ManagedFileType.FILE;
-	}
-
-	@Override
-	public URL getURL() {
-		return null;
-	}
-
-	@Override
-	public boolean isReadable() {
-		return true;
-	}
-
-	@Override
-	public boolean isWatchable() {
-		return false;
-	}
-
-	@Override
-	public boolean isWriteable() {
-		return true;
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
-		return Collections.emptySet();
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
-		return Collections.emptySet();
-	}
 
 	@Override
 	public ManagedFile resolveFile(String filepath) {

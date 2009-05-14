@@ -2,78 +2,69 @@ package org.middleheaven.core.wiring.service;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
-import org.middleheaven.core.services.ServiceNotFoundException;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.ServiceUnavailableException;
+import org.middleheaven.util.Hash;
+import org.middleheaven.util.collections.CollectionUtils;
 
 public class ServiceProxy<T> implements ServiceListener, InvocationHandler {
 
 	Class<T> serviceClass;
-	T service;
-	Method lateBinder;
-	private Object lateBinderObject;
-	
-	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(Class<T> type,Object lateBinderObject, Method lateBinder,Map<String,String> params){
-		return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type}, new ServiceProxy<T>(type,lateBinderObject,lateBinder,params));
-	}
-	
+	private Map<String, String> params;
+	BlockingQueue<T> queue;
+
 	public ServiceProxy(Class<T> serviceClass,Map<String,String> params){
 		this(serviceClass,null,null,params);
 	}
 	
 	protected ServiceProxy(Class<T> serviceClass, Object lateBinderObject, Method lateBinder, Map<String,String> params){
 		this.serviceClass = serviceClass;
-		this.lateBinder = lateBinder;
-		this.lateBinderObject = lateBinderObject;
-		
-		// the service may already exist 
-		try{
-			service = ServiceRegistry.getService(serviceClass,params);
-		} catch (ServiceNotFoundException e){
-			// no-op : service is not yet available
-		}
-		// register a listener for further service alterations
-		ServiceRegistry.addServiceListener(this);
-
+		this.params = params;
 	}
 
 	@Override
 	public void onEvent(ServiceEvent event) {
+	
 		
-		// TODO read service params 
-		if (event.getServiceClass().equals(serviceClass)){
-			if (event.getType() == ServiceEvent.ServiceEventType.ADDED){
-				service = ServiceRegistry.getService(serviceClass);
-				if (this.lateBinder!=null &&  this.lateBinderObject!=null){
-					ReflectionUtils.invoke(Void.class, this.lateBinder, this.lateBinderObject, service);
-				}
-			} else if (event.getType() == ServiceEvent.ServiceEventType.REMOVED){
-				service = null;
+		if (event.getServiceClass().equals(serviceClass) && CollectionUtils.equalContents(this.params, event.getParams())){
+			if ( ServiceEvent.ServiceEventType.ADDED.equals(event.getType())){
+				queue = new ArrayBlockingQueue<T>(1);
+				queue.offer(serviceClass.cast(event.getImplementation()));
+			} else if (ServiceEvent.ServiceEventType.TEMPORARY_REMOVED.equals(event.getType())){
+				queue.clear();
+			} else if (ServiceEvent.ServiceEventType.REMOVED.equals(event.getType())){
+				queue.clear();
+				queue = null;
 			}
 		}
 	}
 
 	@Override
 	public Object invoke(Object obj, Method method, Object[] params)throws Throwable {
-		if (service==null){
+		if (queue==null){
 			throw new ServiceUnavailableException(serviceClass.getName());
 		}
-		return method.invoke(service, params);
+		
+		T implementation = queue.peek();
+		if (queue.peek()==null){
+			implementation = queue.take();
+		}
+	
+		return method.invoke(implementation, params);
 	}
 	
 	public boolean equals(Object other){
 		return other instanceof ServiceProxy && 
-		this.service != null && this.service.equals(((ServiceProxy)other).service);
+		this.serviceClass.getName().equals(((ServiceProxy)other).serviceClass.getName()) && 
+		CollectionUtils.equalContents(this.params, ((ServiceProxy)other).params);
 	}
 	
 	public int hashCode(){
-		return this.service == null ? null : service.hashCode();
+		return Hash.hash(this.serviceClass.getName()).hash(this.params).hashCode();
 	}
 }

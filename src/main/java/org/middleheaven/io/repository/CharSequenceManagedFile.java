@@ -3,13 +3,10 @@ package org.middleheaven.io.repository;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 
 import org.middleheaven.io.ManagedIOException;
 
-public class CharSequenceManagedFile extends AbstractManagedFile implements MediaManagedFile {
+public class CharSequenceManagedFile extends AbstractContentManagedFile implements MediaManagedFile {
 
 	private CharSequence body;
 	private String name;
@@ -21,31 +18,11 @@ public class CharSequenceManagedFile extends AbstractManagedFile implements Medi
 		this.contentType = contentType;
 	}
 	
-	@Override
-	protected ManagedFile doCreateFile() {
-		return null;
+	
+	public String getText(){
+		return body.toString();
 	}
-
-	@Override
-	protected ManagedFile doCreateFolder() {
-		return null;
-	}
-
-	@Override
-	public boolean contains(ManagedFile other) {
-		return false;
-	}
-
-	@Override
-	public boolean delete() {
-		return false;
-	}
-
-	@Override
-	public boolean exists() {
-		return true;
-	}
-
+	
 	@Override
 	public MediaManagedFileContent getContent() {
 		return new MediaManagedFileContent(){
@@ -99,40 +76,7 @@ public class CharSequenceManagedFile extends AbstractManagedFile implements Medi
 		return body.toString().getBytes().length;
 	}
 
-	@Override
-	public ManagedFileType getType() {
-		return ManagedFileType.VIRTUAL;
-	}
 
-	@Override
-	public URL getURL() {
-		return null;
-	}
-
-	@Override
-	public boolean isReadable() {
-		return true;
-	}
-
-	@Override
-	public boolean isWatchable() {
-		return false;
-	}
-
-	@Override
-	public boolean isWriteable() {
-		return false;
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
-		return Collections.emptySet();
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
-		return Collections.emptySet();
-	}
 
 	@Override
 	public void setName(String name) {
@@ -141,7 +85,7 @@ public class CharSequenceManagedFile extends AbstractManagedFile implements Medi
 
 	@Override
 	public ManagedFile resolveFile(String filepath) {
-		return new VoidManagedFile(this,filepath);
+		return new UnexistantManagedFile(this,filepath);
 	}
 
 	

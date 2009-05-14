@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 
-public class ImageServiceActivator extends ServiceActivator {
+public class ImageServiceActivator extends Activator {
 
 	ImageService service;
 	
@@ -17,16 +17,7 @@ public class ImageServiceActivator extends ServiceActivator {
 	public ImageService getImageService(){
 		return service;
 	}
-	
-	@Override
-	public void activate(ServiceAtivatorContext context) {
-		
-	}
 
-	@Override
-	public void inactivate(ServiceAtivatorContext context) {
-		
-	}
 
 	public static class MapImageService implements ImageService{
 
@@ -55,6 +46,20 @@ public class ImageServiceActivator extends ServiceActivator {
 		public void registerImage(String key, ImageSource source) {
 			sources.put(key, source);
 		}
+		
+	}
+
+
+	@Override
+	public void activate(ActivationContext context) {
+		// TODO implement Activator.activate
+		
+	}
+
+
+	@Override
+	public void inactivate(ActivationContext context) {
+		// TODO implement Activator.inactivate
 		
 	}
 

@@ -7,8 +7,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Walker;
 
-public class VirtualFolder implements ManagedFile {
+public class VirtualFolder extends AbstractContainerManagedFile  {
 
 	private final Map<String,ManagedFile> files = new TreeMap<String,ManagedFile>();
 	private final ManagedFile parent;
@@ -31,13 +34,13 @@ public class VirtualFolder implements ManagedFile {
 	}
 
 	@Override
-	public ManagedFile createFile() {
+	public ManagedFile doCreateFile() {
 		// no-op
 		return this;
 	}
 
 	@Override
-	public ManagedFile createFolder() {
+	public ManagedFile doCreateFolder() {
 		// no-op
 		return this;
 	}
@@ -103,12 +106,12 @@ public class VirtualFolder implements ManagedFile {
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
 		return Collections.unmodifiableCollection(files.values());
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
+	public Collection<? extends ManagedFile> listFiles(BooleanClassifier<ManagedFile> filter) throws ManagedIOException {
 		return Collections.unmodifiableCollection(files.values());
 	}
 
@@ -137,4 +140,8 @@ public class VirtualFolder implements ManagedFile {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+
+
+
 }

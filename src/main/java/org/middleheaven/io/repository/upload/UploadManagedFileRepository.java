@@ -4,10 +4,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,12 +19,13 @@ import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.AbstractManagedFile;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
 import org.middleheaven.io.repository.VirtualFolder;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedCollection;
 
 public class UploadManagedFileRepository extends AbstractManagedFile implements  ManagedFileRepository,QueryableRepository {
 
@@ -143,23 +142,8 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
-		return files.values();
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
-
-		Collection<ManagedFile> mfiles = new LinkedList<ManagedFile>();
-
-		for (ManagedFile file : files.values()){
-			if (filter.classify(file)){
-				mfiles.add(file);
-			}
-		}
-
-		return mfiles;
-
+	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
+		return CollectionUtils.enhance(files.values());
 	}
 
 	@Override

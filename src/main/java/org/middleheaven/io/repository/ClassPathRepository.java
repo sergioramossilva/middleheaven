@@ -77,7 +77,7 @@ public class ClassPathRepository implements ManagedFileRepository{
 	public ManagedFile retrive(String filename) throws ManagedIOException {
 		URL url =  type.getResource(filename);
 		if ( url ==null){
-			return new VoidManagedFile(null, filename);
+			return new UnexistantManagedFile(null, filename);
 		}
 
 		return ManagedFileRepositories.resolveFile(url);

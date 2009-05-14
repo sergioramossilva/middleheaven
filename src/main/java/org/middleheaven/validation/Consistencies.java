@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.util.Interval;
-import org.middleheaven.util.Range;
+import org.middleheaven.util.collections.Interval;
+import org.middleheaven.util.collections.Range;
 
 
 public class Consistencies {

@@ -1,11 +1,11 @@
 package org.middleheaven.global.atlas.modules;
 
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.global.atlas.AtlasService;
 
-public class AtlasActivator extends ServiceActivator {
+public class AtlasActivator extends Activator {
 
 	
 	private final ModularAtlasService service;
@@ -19,10 +19,12 @@ public class AtlasActivator extends ServiceActivator {
 		return service;
 	}
 	
-	@Override
-	public void activate(ServiceAtivatorContext context) {}
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {}
+	public void activate(ActivationContext context) {}
 
+	@Override
+	public void inactivate(ActivationContext context) {}
+
+	
 }

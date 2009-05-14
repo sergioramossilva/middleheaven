@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.middleheaven.util.IteratorsIterator;
+import org.middleheaven.util.collections.IteratorsIterator;
 
 public class DefaultValidationContext implements ValidationContext{
 

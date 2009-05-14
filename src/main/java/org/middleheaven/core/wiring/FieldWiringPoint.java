@@ -36,6 +36,9 @@ public class FieldWiringPoint implements AfterWiringPoint{
 			throw new BindingException(value.getClass().getName() + " can not be assigned to " + field.getType().getName());
 		}
 		try {
+			if (value==null && specs.isRequired()){
+				throw new BindingException("Value to bind with " + field.getDeclaringClass().getName() +"." + field.getName()+ "was not found ");
+			}
 			field.set( object, value );
 		} catch (Exception e) {
 			ReflectionException.manage(e, object.getClass());

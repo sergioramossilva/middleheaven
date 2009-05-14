@@ -1,14 +1,9 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.middleheaven.core.reflection.ReflectionException;
-import org.middleheaven.core.wiring.annotations.BindingSpecification;
-import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 
 public final class ConstructorWiringPoint {
 
@@ -42,6 +37,11 @@ public final class ConstructorWiringPoint {
 		Object[] params = new Object[paramsSpecifications.length];
 		for (int i=0;i<paramsSpecifications.length;i++){
 			params[i] = binder.getInstance(paramsSpecifications[i]);
+			if (params[i]==null){ // constructor params are always mandatory even if configured otherwise 
+				throw new BindingException("Value to bind with parameter of index " + i +  
+						" in constructor " + constructor.getDeclaringClass().getName() +"." + 
+						constructor.getName()+ " was not found ");
+			}
 		}
 
 		try {

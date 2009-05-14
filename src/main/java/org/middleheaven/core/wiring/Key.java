@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.middleheaven.util.CollectionUtils;
+import org.middleheaven.util.collections.CollectionUtils;
 
 class Key {
 

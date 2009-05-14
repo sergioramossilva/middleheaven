@@ -11,7 +11,7 @@ import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.components.UICommandSet;
 import org.middleheaven.ui.models.UICommandModel;
-import org.middleheaven.util.DelegatingList;
+import org.middleheaven.util.collections.DelegatingList;
 
 public class SToolbar extends JToolBar implements UICommandSet{
 

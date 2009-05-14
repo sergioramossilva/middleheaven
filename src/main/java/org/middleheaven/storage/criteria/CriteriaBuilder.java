@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.middleheaven.storage.QualifiedName;
-import org.middleheaven.util.Interval;
+import org.middleheaven.util.collections.Interval;
 
 /**
  * An implementation of the

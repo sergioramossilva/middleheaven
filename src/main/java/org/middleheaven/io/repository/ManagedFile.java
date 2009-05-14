@@ -8,18 +8,21 @@ import java.net.URL;
 import java.util.Collection;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.TreeWalkable;
 
 
 /**
  * A common abstract for all types of files : disk files, url addresses, uploaded files, email attachments, etc ...
  */
-public interface ManagedFile extends ManagedFileResolver{
+public interface ManagedFile extends ManagedFileResolver , TreeWalkable<ManagedFile>{
 
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException;
+	
+	public String getText();
+	
+	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException;
 
-	public Collection<? extends  ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException;
-	
-	
 	public void setName(String name);
 	
 	/**

@@ -4,8 +4,8 @@ package org.middleheaven.core.wiring;
 public class ProviderResolver<T> implements Resolver<T> {
 
 	Class<Provider<T>>  providerClass;
-	WiringContext injector;
-	ProviderResolver(WiringContext injector , Class<Provider<T>> providerClass){
+	ObjectPool injector;
+	ProviderResolver(ObjectPool injector , Class<Provider<T>> providerClass){
 		this.providerClass = providerClass;
 		this.injector = injector;
 	}

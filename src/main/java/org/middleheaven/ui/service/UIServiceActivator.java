@@ -6,15 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIEnvironmentType;
 import org.middleheaven.ui.UIException;
 
-public class UIServiceActivator extends ServiceActivator {
+public class UIServiceActivator extends Activator {
 
 	SimpleUIService service = new SimpleUIService();
 	
@@ -24,12 +23,12 @@ public class UIServiceActivator extends ServiceActivator {
 	}
 	
 	@Override
-	public void activate(ServiceAtivatorContext context) {
+	public void activate(ActivationContext context) {
 		
 	}
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
+	public void inactivate(ActivationContext context) {
 		
 	}
 

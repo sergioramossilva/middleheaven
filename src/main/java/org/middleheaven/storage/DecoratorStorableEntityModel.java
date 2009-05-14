@@ -6,7 +6,7 @@ import java.util.Collections;
 import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
-import org.middleheaven.util.TransformCollection;
+import org.middleheaven.util.collections.TransformCollection;
 import org.middleheaven.util.identity.Identity;
 
 public class DecoratorStorableEntityModel implements StorableEntityModel {

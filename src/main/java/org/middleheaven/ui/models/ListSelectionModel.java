@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.middleheaven.global.text.Formatter;
 import org.middleheaven.ui.AbstractUIModel;
-import org.middleheaven.util.Interval;
+import org.middleheaven.util.collections.Interval;
 
 public class ListSelectionModel extends AbstractUIModel implements UISelectionModel{
 

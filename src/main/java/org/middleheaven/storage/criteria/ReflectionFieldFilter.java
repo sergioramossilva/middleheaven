@@ -6,8 +6,8 @@ import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
-import org.middleheaven.util.Interval;
 import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.Interval;
 
 public class ReflectionFieldFilter<T> implements BooleanClassifier<T> {
 

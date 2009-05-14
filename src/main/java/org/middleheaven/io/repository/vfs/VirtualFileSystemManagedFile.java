@@ -16,9 +16,11 @@ import org.middleheaven.io.repository.AbstractManagedFile;
 import org.middleheaven.io.repository.FileChangeListener;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.WatchableContainer;
+import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedCollection;
 
 public final class VirtualFileSystemManagedFile extends AbstractManagedFile implements WatchableContainer {
 
@@ -55,10 +57,10 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	 *
 	 * @return list of the ManagedFile existing in the repository 
 	 */
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException{
+	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException{
 
 		if (this.getType() == ManagedFileType.FILE || !this.exists()){
-			return Collections.emptySet();
+			return CollectionUtils.emptyCollection();
 		}
 
 		try {
@@ -69,7 +71,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 				mfiles.add(new VirtualFileSystemManagedFile(fo));
 			}
 
-			return mfiles;
+			return CollectionUtils.enhance(mfiles);
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
@@ -78,7 +80,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 
 
 
-	public Collection<? extends  ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException{
+	public Collection<? extends  ManagedFile> listFiles(BooleanClassifier<ManagedFile> filter) throws ManagedIOException{
 		if (this.getType() == ManagedFileType.FILE || !this.exists()){
 			return Collections.emptySet();
 		}
@@ -112,19 +114,23 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	@Override
 	public ManagedFileType getType() {
 		try {
-			if (file.getType().equals(FileType.IMAGINARY)){
-				return ManagedFileType.VIRTUAL;
-			} else {
-				if (file.getType().hasContent()){
-					if (this.isfilefolder || file.getType().hasChildren()){
-						return ManagedFileType.FILEFOLDER;
-					} else {
-						return ManagedFileType.FILE;
-					}
+
+
+
+			if (file.getType().hasContent()){
+				if (this.isfilefolder || file.getType().hasChildren()){
+					return ManagedFileType.FILEFOLDER;
 				} else {
+					return ManagedFileType.FILE;
+				}
+			} else {
+				if(file.exists()){
 					return ManagedFileType.FOLDER;
+				} else {
+					return ManagedFileType.VIRTUAL;
 				}
 			}
+
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}

@@ -6,12 +6,12 @@ import java.util.Set;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.wiring.ConfigurationException;
 import org.middleheaven.core.wiring.DefaultWiringModelParser;
-import org.middleheaven.util.ParamsMap;
+import org.middleheaven.util.collections.ParamsMap;
 
 public class AnnotationBasedDependencyResolver implements ActivatorDependencyResolver{
 
 	@Override
-	public void resolveDependency(Class<? extends UnitActivator> activatorType,
+	public void resolveDependency(Class<? extends Activator> activatorType,
 			UnitActivatorDepedencyModel model) {
 		
 		new DefaultWiringModelParser().readWiringModel(activatorType, model);

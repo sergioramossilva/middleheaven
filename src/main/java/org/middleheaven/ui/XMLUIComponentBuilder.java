@@ -12,7 +12,7 @@ import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.BindingNotFoundException;
-import org.middleheaven.core.wiring.WiringContext;
+import org.middleheaven.core.wiring.ObjectPool;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;
@@ -33,9 +33,9 @@ import org.w3c.dom.NodeList;
 
 public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> implements UIComponentBuilder {
 
-	WiringContext wiringContext;
+	ObjectPool wiringContext;
 	
-	public XMLUIComponentBuilder(WiringContext wiringContext){
+	public XMLUIComponentBuilder(ObjectPool wiringContext){
 		this.wiringContext = wiringContext;
 	}
 

@@ -1,6 +1,6 @@
 package org.middleheaven.validation;
 
-import org.middleheaven.util.Interval;
+import org.middleheaven.util.collections.Interval;
 
 public class IntervalValidator<T extends Comparable<T>> implements Validator<T> {
 

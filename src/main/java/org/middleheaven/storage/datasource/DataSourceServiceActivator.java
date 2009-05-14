@@ -11,15 +11,15 @@ import javax.sql.DataSource;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.AtivationException;
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingService;
+import org.middleheaven.util.classification.BooleanClassifier;
 
 /**
  * 
@@ -34,7 +34,7 @@ import org.middleheaven.logging.LoggingService;
  * (for jndi)
  * datasource.url=jndi:java:/comp/env/jdbc/dsname
  */
-public class DataSourceServiceActivator extends ServiceActivator {
+public class DataSourceServiceActivator extends Activator {
 
 	Map <String , DataSourceProvider> sources = new TreeMap <String , DataSourceProvider>();
 	LogBook book;
@@ -58,7 +58,8 @@ public class DataSourceServiceActivator extends ServiceActivator {
 		this.loggingService = loggingService;
 	}
 
-	public void activate(ServiceAtivatorContext context){
+	@Override
+	public void activate(ActivationContext context) {
 
 		Container container =  bootstrapService.getEnvironmentBootstrap().getContainer();
 
@@ -69,7 +70,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 		ManagedFile folder = container.getAppConfigRepository();
 
 
-		Collection<? extends ManagedFile> configurations = folder.listFiles(new ManagedFileFilter(){
+		Collection<? extends ManagedFile> configurations = folder.listFiles(new BooleanClassifier<ManagedFile>(){
 
 			@Override
 			public Boolean classify(ManagedFile file) {
@@ -133,8 +134,10 @@ public class DataSourceServiceActivator extends ServiceActivator {
 		}
 	}
 
+
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
-		// no-op
+	public void inactivate(ActivationContext context) {
+		// TODO implement Activator.inactivate
+		
 	}
 }

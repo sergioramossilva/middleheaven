@@ -14,7 +14,7 @@ import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.components.UICommandSet;
 import org.middleheaven.ui.components.UILabel;
 import org.middleheaven.ui.models.UICommandModel;
-import org.middleheaven.util.DelegatingList;
+import org.middleheaven.util.collections.DelegatingList;
 
 public class SMenu extends JMenu implements UICommandSet {
 

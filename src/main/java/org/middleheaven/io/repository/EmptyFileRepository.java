@@ -45,7 +45,7 @@ public class EmptyFileRepository implements ManagedFileRepository {
 
 	@Override
 	public ManagedFile retrive(String filename) throws ManagedIOException {
-		return new VoidManagedFile(null,filename);
+		return new UnexistantManagedFile(null,filename);
 	}
 
 	@Override

@@ -11,29 +11,29 @@ import java.util.HashSet;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.core.services.ServiceAtivatorContext;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.service.FileRepositoryService;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.Logging;
+import org.middleheaven.util.classification.BooleanClassifier;
 
 
-public class LicenseServiceActivator extends ServiceActivator {
+public class LicenseServiceActivator extends Activator {
 
 	private LicenseService implementation;
 	private LicenseProvider provider = new VoidLicenseProvider();
 	private FileRepositoryService frs;
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
+	public void inactivate(ActivationContext context) {
 		implementation = null;
 	}
 
@@ -48,11 +48,11 @@ public class LicenseServiceActivator extends ServiceActivator {
 	}
 
 	@Override
-	public void activate(ServiceAtivatorContext context) {
+	public void activate(ActivationContext context) {
 
 		ManagedFile f = frs.getRepository("ENV_CONFIGURATION");
 		Collection<ManagedFile> licences = new HashSet<ManagedFile>();
-		licences.addAll( f.listFiles(new ManagedFileFilter(){
+		licences.addAll( f.listFiles(new BooleanClassifier<ManagedFile>(){
 
 			@Override
 			public Boolean classify(ManagedFile file) {
@@ -61,7 +61,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 
 		}));
 		f = frs.getRepository("APP_CONFIGURATION");
-		licences.addAll( f.listFiles(new ManagedFileFilter(){
+		licences.addAll( f.listFiles(new BooleanClassifier<ManagedFile>(){
 
 			@Override
 			public Boolean classify(ManagedFile file) {
@@ -71,7 +71,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 		}));
 
 		Collection<ManagedFile> certifcates = new HashSet<ManagedFile>();
-		certifcates.addAll( f.listFiles(new ManagedFileFilter(){
+		certifcates.addAll( f.listFiles(new BooleanClassifier<ManagedFile>(){
 
 			@Override
 			public Boolean classify(ManagedFile file) {
@@ -88,7 +88,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 
 		implementation = new LicenceServiceImpl();
 
-		context.addServiceListener(new ServiceLock());
+		//context.addServiceListener(new ServiceLock());
 	}
 
 	private class ServiceLock implements ServiceListener{

@@ -23,11 +23,11 @@ import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.ActivatorDependencyResolver;
 import org.middleheaven.core.wiring.activation.AnnotationBasedDependencyResolver;
-import org.middleheaven.core.wiring.activation.DeployableScanEvent;
-import org.middleheaven.core.wiring.activation.DeployableScanner;
-import org.middleheaven.core.wiring.activation.DeployableScannerListener;
+import org.middleheaven.core.wiring.activation.ActivatorScannerEvent;
+import org.middleheaven.core.wiring.activation.ActivatorScanner;
+import org.middleheaven.core.wiring.activation.ActivatorScannerListener;
 import org.middleheaven.core.wiring.activation.PublishPoint;
-import org.middleheaven.core.wiring.activation.UnitActivator;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.UnitActivatorDepedencyModel;
 import org.middleheaven.core.wiring.annotations.Default;
 import org.middleheaven.core.wiring.annotations.Shared;
@@ -40,13 +40,34 @@ import org.middleheaven.logging.Logging;
 public class DefaultWiringService implements WiringService{
 
 
-	PropertyResolver<Object> propertyResolver = new PropertyResolver<Object>();
+	private final PropertyResolver<Object> propertyResolver = new PropertyResolver<Object>();
+	private final Set<ActivatorDependencyResolver> resolvers = new CopyOnWriteArraySet<ActivatorDependencyResolver>();
 
-	DefaultWiringContext wiringContext = new DefaultWiringContext();
-	BinderImpl binder = new BinderImpl();
-	List<Interceptor> interceptors = new ArrayList<Interceptor>();
-	Map<String,Class<? extends ScopePool>> scopes = new TreeMap<String,Class<? extends ScopePool>>();
-	Map<String, ScopePool> scopePools = new TreeMap<String,ScopePool>();
+	private final List<Class<? extends Activator>> activatorsTypes = new ArrayList<Class<? extends Activator>>();
+	private final List<Activator> activators = new ArrayList<Activator>();
+
+	private final Set<ActivatorScanner> scanners = new HashSet<ActivatorScanner>();
+	private final DefaultObjectPool wiringContext = new DefaultObjectPool();
+	private final BinderImpl binder = new BinderImpl();
+	private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
+	private final Map<String,Class<? extends ScopePool>> scopes = new TreeMap<String,Class<? extends ScopePool>>();
+	private final Map<String, ScopePool> scopePools = new TreeMap<String,ScopePool>();
+
+	private ActivatorScannerListener listener = new ActivatorScannerListener(){
+
+		@Override
+		public void onActivatorLost(ActivatorScannerEvent event) {
+			// TODO implement DeployableScannerListener.onDeployableLost
+
+		}
+
+		@Override
+		public void onActivatorFound(ActivatorScannerEvent event) {
+			activatorsTypes.add(event.getActivatorType());
+		}
+
+	};
+
 
 	public DefaultWiringService(){
 		scopes.put(Shared.class.getName(), SharedScope.class);
@@ -65,7 +86,6 @@ public class DefaultWiringService implements WiringService{
 
 		// add connector
 
-
 		if (ReflectionUtils.isInClasspath("javax.annotation.Resource")){
 			this.addConnector(new JavaEE5InjectonConnector());
 		}
@@ -74,13 +94,11 @@ public class DefaultWiringService implements WiringService{
 
 
 	@Override
-	public WiringContext getWiringContext() {
+	public ObjectPool getObjectPool() {
 		return wiringContext;
 	}
 
-	public 
-
-	Map<Key , Binding> bindings = new HashMap<Key , Binding>();
+	private Map<Key , Binding> bindings = new HashMap<Key , Binding>();
 
 	private class BinderImpl implements Binder,EditableBinder,ConnectableBinder{
 
@@ -283,14 +301,14 @@ public class DefaultWiringService implements WiringService{
 
 	}
 
-	private class DefaultWiringContext implements WiringContext{
+	private class DefaultObjectPool implements ObjectPool{
 
-		private DefaultWiringContext(){
+		private DefaultObjectPool(){
 			resolvers.add(new AnnotationBasedDependencyResolver());
 		}
 
 		@Override
-		public WiringContext addConfiguration(BindConfiguration... modules) {
+		public ObjectPool addConfiguration(BindConfiguration... modules) {
 			for (BindConfiguration m : modules){
 				m.configure(binder);
 			}
@@ -307,145 +325,108 @@ public class DefaultWiringService implements WiringService{
 			return binder.getInstance(WiringSpecification.search(type, params));
 		}
 
-		@Override
-		public void wireMembers(Object obj) {
-			wireMembers(obj,binder.getWiringModel(obj.getClass()));
-		}
-
-		private void wireMembers(Object obj,WiringModel model ) {
-
-			for (AfterWiringPoint a : model.getAfterPoints()){
-				a.writeAtPoint(binder, obj);
-			}
-
-		}
-
-
-		private DeployableScannerListener listener = new DeployableScannerListener(){
-
-			@Override
-			public void onDeployableFound(DeployableScanEvent event) {
-				activatorsTypes.add(event.getActivatorType());
-			}
-
-			@Override
-			public void onDeployableLost(DeployableScanEvent event) {
-				// TODO implement DeployableScannerListener.onDeployableLost
-
-			}
-
-		};
-
-
-
-		private List<Class<? extends UnitActivator>> activatorsTypes = new ArrayList<Class<? extends UnitActivator>>();
-		private List<UnitActivator> activators = new ArrayList<UnitActivator>();
-
-		private Set<DeployableScanner> scanners = new HashSet<DeployableScanner>();
-
-		public void addDeployableScanner(DeployableScanner scanner){
-			scanners.add(scanner);
-			scanner.addScannerListener(listener);
-		}
-
-		public void removeDeployableScanner(DeployableScanner scanner){
-			scanners.remove(scanner);
-			scanner.removeScannerListener(listener);
-		}
-
-		private Set<ActivatorDependencyResolver> resolvers = new CopyOnWriteArraySet<ActivatorDependencyResolver>();
-
-		public void addActivatorDependencyResolver(ActivatorDependencyResolver listener) {
-			resolvers.add(listener);
-		}
-
-		public void removeActivatorDependencyResolver(ActivatorDependencyResolver listener) {
-			resolvers.remove(listener);
-		}
-
-
-		public void scan(){
-			for (DeployableScanner scanner : scanners){
-				scanner.scan(this);
-			}
-
-
-			List<UnitActivatorDepedencyModel> models = new ArrayList<UnitActivatorDepedencyModel>(activatorsTypes.size());
-
-			for (Class<? extends UnitActivator> activatorType : activatorsTypes){
-				UnitActivatorDepedencyModel model = new UnitActivatorDepedencyModel();
-				for (ActivatorDependencyResolver resolver : this.resolvers){
-					resolver.resolveDependency(activatorType, model);
-				}
-				models.add(model);
-			}
-			new DependencyResolver(Logging.getBook(this.getClass())).resolve(models, new StarterMy());
-		}
-
-
-		private class StarterMy implements Starter<UnitActivatorDepedencyModel>{
-
-
-			@Override
-			public void inicialize(UnitActivatorDepedencyModel model)
-			throws InicializationNotResolvedException,
-			InicializationNotPossibleException {
-
-				try{
-					UnitActivator activator = model.getConstructorPoint().construct(binder);
-
-					// fill requirements
-					wireMembers(activator, model);
-
-					// activate
-					activator.activate(new ActivationContext(){});
-
-					// publish services 
-					for (PublishPoint pp : model.getPublishPoints()){
-						Object object = pp.getObject(activator);
 	
-						ScoopingModel scoopingModel = binder.getScoopingModel(object);
-						scoopingModel.addParams(pp.getParams());
-						
-						scoopingModel.addToScope(binder,object);
 
-					}
 
-					// add activator to context for future inactivation
-					activators.add(activator);
 
-				}catch (RuntimeException e){
-					throw new InicializationNotPossibleException(e);
+
+	}
+	
+
+
+	public void addActivatorDependencyResolver(ActivatorDependencyResolver listener) {
+		resolvers.add(listener);
+	}
+
+	public void removeActivatorDependencyResolver(ActivatorDependencyResolver listener) {
+		resolvers.remove(listener);
+	}
+
+
+	public void scan(){
+		for (ActivatorScanner scanner : scanners){
+			scanner.scan(this);
+		}
+
+
+		List<UnitActivatorDepedencyModel> models = new ArrayList<UnitActivatorDepedencyModel>(activatorsTypes.size());
+
+		for (Class<? extends Activator> activatorType : activatorsTypes){
+			UnitActivatorDepedencyModel model = new UnitActivatorDepedencyModel();
+			for (ActivatorDependencyResolver resolver : this.resolvers){
+				resolver.resolveDependency(activatorType, model);
+			}
+			models.add(model);
+		}
+		new DependencyResolver(Logging.getBook(this.getClass())).resolve(models, new StarterMy());
+	}
+
+	
+	class StarterMy implements Starter<UnitActivatorDepedencyModel>{
+
+
+		@Override
+		public void inicialize(UnitActivatorDepedencyModel model)
+		throws InicializationNotResolvedException,
+		InicializationNotPossibleException {
+
+			try{
+				Activator activator = model.getConstructorPoint().construct(binder);
+
+				// fill requirements
+
+				for (AfterWiringPoint a : model.getAfterPoints()){
+					a.writeAtPoint(binder, activator);
 				}
-			}
-
-			@Override
-			public void inicializeWithProxy(
-					UnitActivatorDepedencyModel dependableProperties)
-			throws InicializationNotResolvedException,
-			InicializationNotPossibleException {
-				// TODO implement Starter<UnitActivatorDepedencyModel>.inicializeWithProxy
-
-			}
-
-			@Override
-			public List<UnitActivatorDepedencyModel> sort(List<UnitActivatorDepedencyModel> dependencies) {
 				
-				Collections.sort(dependencies, new Comparator<UnitActivatorDepedencyModel>(){
+				// activate
+				activator.activate(new ActivationContext(){});
 
-					@Override
-					public int compare(UnitActivatorDepedencyModel a,
-							UnitActivatorDepedencyModel b) {
-						return a.getAfterPoints().size() - b.getAfterPoints().size();
-					}
+				// publish services 
+				for (PublishPoint pp : model.getPublishPoints()){
+					Object object = pp.getObject(activator);
+
+					ScoopingModel scoopingModel = binder.getScoopingModel(object);
+					scoopingModel.addParams(pp.getParams());
 					
-				});
-				
-				return dependencies;
-			}
+					scoopingModel.addToScope(binder,object);
 
+				}
+
+				// add activator to context for future inactivation
+				activators.add(activator);
+
+			}catch (RuntimeException e){
+				throw new InicializationNotPossibleException(e);
+			}
+		}
+
+		@Override
+		public void inicializeWithProxy(
+				UnitActivatorDepedencyModel dependableProperties)
+		throws InicializationNotResolvedException,
+		InicializationNotPossibleException {
+			// TODO implement Starter<UnitActivatorDepedencyModel>.inicializeWithProxy
 
 		}
+
+		@Override
+		public List<UnitActivatorDepedencyModel> sort(List<UnitActivatorDepedencyModel> dependencies) {
+			
+			Collections.sort(dependencies, new Comparator<UnitActivatorDepedencyModel>(){
+
+				@Override
+				public int compare(UnitActivatorDepedencyModel a,
+						UnitActivatorDepedencyModel b) {
+					return a.getAfterPoints().size() - b.getAfterPoints().size();
+				}
+				
+			});
+			
+			return dependencies;
+		}
+
+
 	}
 
 	@Override
@@ -453,6 +434,19 @@ public class DefaultWiringService implements WiringService{
 		for (WiringConnector c : connectors){
 			c.connect(binder);
 		}
+	}
+
+	@Override
+	public void addActivatorScanner(ActivatorScanner scanner) {
+		scanners.add(scanner);
+		scanner.addScannerListener(listener);
+	}
+
+
+	@Override
+	public void removeActivatorScanner(ActivatorScanner scanner) {
+		scanners.remove(scanner);
+		scanner.removeScannerListener(listener);
 	}
 
 
