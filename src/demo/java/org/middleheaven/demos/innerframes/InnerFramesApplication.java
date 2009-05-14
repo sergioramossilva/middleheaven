@@ -35,7 +35,7 @@ public class InnerFramesApplication extends MainApplicationModule{
 	
 	@Override
 	public void load(ApplicationContext context) {
-		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(wiringService.getWiringContext());
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(wiringService.getObjectPool());
 		UIEnvironment root = xmlBuilder.buildFrom(new File("./src/demo/java/org/middleheaven/demos/innerframes/ui.xml"));
 		
 		uiService.registerEnvironment(root, true);
