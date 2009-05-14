@@ -1,11 +1,11 @@
 package org.middleheaven.test.core.service;
 
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 
-public class ActivatorB extends ServiceActivator {
+public class ActivatorB extends Activator {
 
 	A service;
 	
@@ -27,17 +27,16 @@ public class ActivatorB extends ServiceActivator {
 	}
 	
 	@Override
-	public void activate(ServiceAtivatorContext context) {
-
+	public void activate(ActivationContext context) {
 		if (service == null){
 			 throw new IllegalArgumentException();
 		}
 	}
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
-		// TODO Auto-generated method stub
-
+	public void inactivate(ActivationContext context) {
+		// TODO implement Activator.inactivate
+		
 	}
 
 }

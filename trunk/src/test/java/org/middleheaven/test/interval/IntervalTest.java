@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.util.Interval;
+import org.middleheaven.util.collections.Interval;
 
 
 public class IntervalTest {
