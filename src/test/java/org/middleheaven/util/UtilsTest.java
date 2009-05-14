@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
-import org.middleheaven.util.CollectionUtils;
-import org.middleheaven.util.IteratorsIterator;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.IteratorsIterator;
 
 
 public class UtilsTest {

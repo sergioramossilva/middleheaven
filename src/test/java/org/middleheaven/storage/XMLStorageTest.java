@@ -5,13 +5,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
-import org.middleheaven.core.services.ServiceContextConfigurator;
-import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
+import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.domain.DomailModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
@@ -20,10 +18,6 @@ import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.sequence.service.FileSequenceStorageActivator;
-import org.middleheaven.storage.DataStorage;
-import org.middleheaven.storage.DomainDataStorage;
-import org.middleheaven.storage.Query;
-import org.middleheaven.storage.WrappStorableReader;
 import org.middleheaven.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.datasource.DataSourceServiceActivator;
@@ -35,8 +29,8 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 
 	static DataStorage ds;
 	
-	@Before
-	public void setUp(){
+	protected void configurateTest(SetActivatorScanner scanner) {
+
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));

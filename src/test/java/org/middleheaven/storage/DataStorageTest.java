@@ -10,14 +10,12 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
-import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
+import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.domain.DomailModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
@@ -25,10 +23,6 @@ import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.sequence.service.FileSequenceStorageActivator;
-import org.middleheaven.storage.DataStorage;
-import org.middleheaven.storage.DomainDataStorage;
-import org.middleheaven.storage.Query;
-import org.middleheaven.storage.WrappStorableReader;
 import org.middleheaven.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.datasource.DataSourceService;
@@ -42,9 +36,9 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 	static DataStorage ds;
 	static boolean runTest=true;
+	
+	protected void configurateTest(SetActivatorScanner scanner) {
 
-	@Before
-	public void setUp(){
 		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));

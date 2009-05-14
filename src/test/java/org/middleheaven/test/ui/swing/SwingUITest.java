@@ -27,7 +27,7 @@ public class SwingUITest extends MiddleHeavenTestCase {
 
 	@Test
 	public void testXMLBuilder(){
-		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWriringContext());
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWiringService().getObjectPool());
 		UIEnvironment root = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
 		assertNotNull(root);
 		// one client
@@ -42,7 +42,7 @@ public class SwingUITest extends MiddleHeavenTestCase {
 	@Test
 	public void testSwingRenderKit(){
 
-		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWriringContext());
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWiringService().getObjectPool());
 		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
 
 		UIClient client = env.getClients().iterator().next();
@@ -74,7 +74,7 @@ public class SwingUITest extends MiddleHeavenTestCase {
 	@Test
 	public void textUIQuery(){
 
-		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWriringContext());
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWiringService().getObjectPool());
 		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
 
 		UIClient client = env.getClients().iterator().next();

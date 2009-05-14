@@ -3,35 +3,27 @@ package org.middleheaven.licence;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
+import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.license.CertificatedLicense;
-import org.middleheaven.license.LicenseServiceActivator;
 import org.middleheaven.license.License;
 import org.middleheaven.license.LicenseException;
 import org.middleheaven.license.LicenseService;
+import org.middleheaven.license.LicenseServiceActivator;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 
 public class LicenceTeste extends MiddleHeavenTestCase{
 
-	@Before
-	public void setUp(){
-		super.setUp();
-		
-		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
-		engine.addActivator(LicenseServiceActivator.class);
-		new ServiceContextConfigurator().addEngine(engine);
+	protected void configurateTest(SetActivatorScanner scanner) {
+		scanner.addActivator(LicenseServiceActivator.class);
 	}
-
-
+	
 	@Test(expected=SecurityException.class)
 	public void testSecureService(){
 
-		// The License Service is not changeable one defined
+		// The License Service is not changeable once defined
 		LicenseService ls = ServiceRegistry.getService(LicenseService.class);
 		ServiceRegistry.register(LicenseService.class, ls);
 

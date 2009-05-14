@@ -3,10 +3,7 @@ package org.middleheaven.test.core.service;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
-import org.middleheaven.core.services.engine.LocalFileRepositoryDiscoveryEngine;
 import org.middleheaven.logging.LoggingService;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 

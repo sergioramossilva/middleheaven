@@ -15,7 +15,7 @@ import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateIncrementor;
 import org.middleheaven.quantity.time.Duration;
-import org.middleheaven.util.Range;
+import org.middleheaven.util.collections.Range;
 
 public class RangeTest {
 

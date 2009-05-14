@@ -5,12 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.WiringContext;
+import org.middleheaven.core.wiring.ObjectPool;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.core.wiring.mock.C;
@@ -25,13 +26,15 @@ import org.middleheaven.core.wiring.mock.MockDisplay;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
-import org.middleheaven.util.ParamsMap;
+import org.middleheaven.util.collections.ParamsMap;
 
 public class WiringTestCase extends MiddleHeavenTestCase {
 
+
+	
 	@Test
 	public void testInheritanceWiring(){
-		WiringContext ctx = ServiceRegistry.getService(WiringService.class).getWiringContext();
+		ObjectPool ctx = ServiceRegistry.getService(WiringService.class).getObjectPool();
 		
 		C c = ctx.getInstance(C.class);
 		
@@ -43,7 +46,7 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 	public void simpleTest(){
 		final MockDisplay md = new MockDisplay();
 		
-		ServiceRegistry.getService(WiringService.class).getWiringContext()
+		ServiceRegistry.getService(WiringService.class).getObjectPool()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -60,11 +63,12 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 		
 		assertEquals("Hello, World", md.getSaing());
 	}
+	
 	@Test
 	public void testWiringServiceWithParams(){
 		
 
-		WiringContext inj = this.getWriringContext()
+		ObjectPool inj = this.getWiringService().getObjectPool()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -74,7 +78,6 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 			}
 			
 		});
-		
 
 		ServiceContext serviceContext = inj.getInstance(ServiceContext.class);
 		
@@ -107,7 +110,7 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 		
 		// obtain the service it self from wiring
 		
-		WiringContext context = this.getWriringContext()
+		ObjectPool context = this.getWiringService().getObjectPool()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -129,7 +132,7 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 		assertSame(inj1 , inj2);
 		
 		// the context is also the same
-		WiringContext context2 = inj1.getWiringContext();
+		ObjectPool context2 = inj1.getObjectPool();
 		
 		assertSame(context, context2);
 		
@@ -140,7 +143,7 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 	public void sharedInstanceTest(){
 		final MockDisplay md = new MockDisplay();
 		
-		WiringContext inj = this.getWriringContext()
+		ObjectPool inj = this.getWiringService().getObjectPool()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -163,7 +166,7 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 	@Test
 	public void cyclicTest(){
 
-		WiringContext inj = this.getWriringContext()
+		ObjectPool inj = this.getWiringService().getObjectPool()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
@@ -184,7 +187,7 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 	@Test
 	public void cyclicSharedTest(){
 
-		WiringContext inj = this.getWriringContext()
+		ObjectPool inj = this.getWiringService().getObjectPool()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
