@@ -8,15 +8,13 @@ import org.middleheaven.application.ApplicationLoadingCycle;
 import org.middleheaven.application.ApplicationLoadingService;
 import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
 import org.middleheaven.core.Container;
-import org.middleheaven.core.ContextIdentifier;
-import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
 import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.activation.ActivatorScanner;
+import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.logging.Logging;
-import org.middleheaven.ui.UIServiceActivator;
-
+import org.middleheaven.ui.service.UIServiceActivator;
 
 /**
  * @author  Sergio M. M. Taborda 
@@ -31,22 +29,19 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 		this.starter = starter;
 	}
 
-	public void configuate(ServiceContextConfigurator configurator){
-		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
+	public void configuate(WiringService wiringService){
+		ActivatorScanner scanner = new SetActivatorScanner()
 		.addActivator(DynamicLoadApplicationServiceActivator.class)
 		.addActivator(UIServiceActivator.class)
 		;
 		
-		configurator.addEngine(engine);
+		wiringService.addActivatorScanner(scanner);
 	}
 
 	ApplicationLoadingCycle appCycle;
 
 	protected void doAfterStart(){
 		
-		 
-        ServiceRegistry.getService(WiringService.class).getWiringContext().wireMembers(starter);
-        
 		try{
 			ApplicationLoadingService app = ServiceRegistry.getService(ApplicationLoadingService.class);
 			if (app!=null){

@@ -2,7 +2,7 @@ package org.middleheaven.chart;
 
 import java.util.Iterator;
 
-import org.middleheaven.util.CollectionUtils;
+import org.middleheaven.util.collections.CollectionUtils;
 
 public class DataSets {
 

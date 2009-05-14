@@ -1,10 +1,10 @@
 package org.middleheaven.aas;
 
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 
-public class AccessControlActivator extends ServiceActivator {
+public class AccessControlActivator extends Activator {
 
 	
 	AccessControlService controler;
@@ -13,14 +13,14 @@ public class AccessControlActivator extends ServiceActivator {
 	public AccessControlService getAccessControlService(){
 		return this.controler;
 	}
-	
+
 	@Override
-	public void activate(ServiceAtivatorContext context) {
+	public void activate(ActivationContext context) {
 		controler = new AccessController();
 	}
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
+	public void inactivate(ActivationContext context) {
 		controler = null;
 	}
 
