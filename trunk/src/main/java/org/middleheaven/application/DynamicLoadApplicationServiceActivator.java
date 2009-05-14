@@ -13,18 +13,18 @@ import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstapListener;
 import org.middleheaven.core.bootstrap.BootstrapEvent;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
 import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.WatchableContainer;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingService;
+import org.middleheaven.util.classification.BooleanClassifier;
 
 /**
  * Provides an {@link ApplicationLoadingService} for loading application modules present at the application configuration path
@@ -33,7 +33,7 @@ import org.middleheaven.logging.LoggingService;
  * 
  * 
  */
-public class DynamicLoadApplicationServiceActivator extends ServiceActivator implements BootstapListener  {
+public class DynamicLoadApplicationServiceActivator extends Activator implements BootstapListener  {
 
 
 	private LogBook log;
@@ -44,11 +44,11 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 
 	private WiringService wiringService;
 	
-	public static void setAppModulesFilter(ManagedFileFilter appModulesFilter) {
+	public static void setAppModulesFilter(BooleanClassifier<ManagedFile> appModulesFilter) {
 		DynamicLoadApplicationServiceActivator.appModulesFilter = appModulesFilter;
 	}
 
-	private static ManagedFileFilter appModulesFilter =  new ManagedFileFilter(){
+	private static BooleanClassifier<ManagedFile> appModulesFilter =  new BooleanClassifier<ManagedFile>(){
 
 		@Override
 		public Boolean classify(ManagedFile file) {
@@ -79,7 +79,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 	}
 
 	@Override
-	public void activate(ServiceAtivatorContext context) {
+	public void activate(ActivationContext context) {
 		log = loggingService.getLogBook(this.getClass().getName());
 	
 		bootstrapService.addListener(this);
@@ -87,7 +87,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 	}
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
+	public void inactivate(ActivationContext context) {
 		cycle.stop();
 		log=null;
 	}
@@ -109,7 +109,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 		TransientApplicationContext context;
 		
 		public DynamicLoadApplicationService(Container container) {
-			context = new TransientApplicationContext(wiringService.getWiringContext(),container);
+			context = new TransientApplicationContext(wiringService.getObjectPool(),container);
 			cycle = new DinamicLoadingCycle(context);
 		}
 		
@@ -246,6 +246,7 @@ public class DynamicLoadApplicationServiceActivator extends ServiceActivator imp
 
 
 	}
+
 
 
 

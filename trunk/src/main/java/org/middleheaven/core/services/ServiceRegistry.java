@@ -1,47 +1,14 @@
 package org.middleheaven.core.services;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
-import org.middleheaven.core.services.discover.ServiceDiscoveryEngine;
 
 public final class ServiceRegistry {
 
 	private ServiceRegistry(){}
 	
     static ServiceContext context;
-	private static Set<ServiceDiscoveryEngine> engines = new HashSet<ServiceDiscoveryEngine>();
-	
 
-    protected static void addEngine(ServiceDiscoveryEngine engine){
-    	engines.add(engine);
-    	engine.init(context);
-    }
-    
-    protected static void removeEngine(ServiceDiscoveryEngine engine){
-    	if (engines.contains(engine)){
-			engine.stop(context);
-			engines.remove(engine);
-		}
-    }
-    
-    protected static void removeAllEngines(){
-    	for (ServiceDiscoveryEngine engine : engines){
-    		engine.stop(context);
-		}
-    	engines.clear();
-    }
-
-    
-    public static void addServiceListener (ServiceListener listener){
-    	context.addServiceListener(listener);
-    }
-    
-    public static void removeServiceListener (ServiceListener listener){
-    	context.removeServiceListener(listener);
-    }
     
     /**
      * Returns a service implementation compatible with <code>serviceClass</code>
@@ -65,7 +32,7 @@ public final class ServiceRegistry {
      */
     public static <T> T getService(Class<T> serviceClass, Map<String,String> properties){
     	if (context == null){
-    		// TODO throw exception when service context is null
+    		throw new ServiceContextUndefinedException();
     	}
     	T service = context.getService(serviceClass, properties);
     	if (service==null){

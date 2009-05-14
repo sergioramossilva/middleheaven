@@ -486,6 +486,9 @@ public final class ReflectionUtils {
 			for (Method m : type.getMethods()){
 				methods.put(new MethodKey(type,m.getName(),m.getParameterTypes()), m);
 			}
+			for (Method m : type.getDeclaredMethods()){
+				methods.put(new MethodKey(type,m.getName(),m.getParameterTypes()), m);
+			}
 		}
 
 		return methods;

@@ -4,19 +4,16 @@
  */
 package org.middleheaven.core.bootstrap;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.services.RegistryServiceContext;
-import org.middleheaven.core.services.ServiceContextConfigurator;
-import org.middleheaven.core.services.ServiceContextEngineConfigurationService;
-import org.middleheaven.core.services.discover.ServiceActivatorDiscoveryEngine;
-import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
-import org.middleheaven.core.services.engine.LocalFileRepositoryDiscoveryEngine;
 import org.middleheaven.core.wiring.DefaultWiringService;
 import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.activation.ActivatorScanner;
+import org.middleheaven.core.wiring.activation.FileActivatorScanner;
+import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.global.atlas.modules.AtlasActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.logging.LogBook;
@@ -29,13 +26,12 @@ import org.middleheaven.storage.DataStorageServiceActivator;
  * bootstrap in different execution environments and allow
  * the applications execution to be environment independent.
  * 
- * @author Sergio M. M. Taborda 
  *
  */
 public abstract class ExecutionEnvironmentBootstrap {
 
 	
-	private ListServiceContextConfigurator configurator = new ListServiceContextConfigurator();
+	//private ListServiceContextConfigurator configurator = new ListServiceContextConfigurator();
 	private SimpleBootstrapService bootstrapService;
 	private RegistryServiceContext serviceRegistryContext;
 	
@@ -51,35 +47,46 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 		doBeforeStart();
 
-		log.debug("Resolving container");
+		log.trace("Resolving container");
 		
 		Container container = getContainer();
 		
-		log.trace("Container resolved: " + container.getEnvironmentName());
+		log.info("Container resolved: " + container.getEnvironmentName());
 		
 		log.debug("Register bootstrap services");
 
-		serviceRegistryContext.register(WiringService.class, new DefaultWiringService(),null);
+		WiringService wiringService = new DefaultWiringService();
+		serviceRegistryContext.register(WiringService.class, wiringService,null);
 		serviceRegistryContext.register(BootstrapService.class, bootstrapService,null);
-		serviceRegistryContext.register(ServiceContextEngineConfigurationService.class, new UniqueServiceContextEngineConfigurationService(), null);
-		
-		doEnvironmentServiceRegistry();
+
+		doEnvironmentServiceRegistry(wiringService);
 		
 		bootstrapService.fireBootupStart();
 		
 		log.debug("Inicialize service discovery engines");
 		
-		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
+		// default scanner
+		ActivatorScanner scanner = new SetActivatorScanner()
 		.addActivator(AtlasActivator.class)
 		.addActivator(LoggingActivator.class)
 		.addActivator(FileRepositoryActivator.class)
 		.addActivator(DataStorageServiceActivator.class);
 		
-		configurator.addEngine(engine);
-		configurator.addEngine(new LocalFileRepositoryDiscoveryEngine());
-		configuate(configurator);
+		wiringService.addActivatorScanner(scanner);
 		
+		// file aware scannaer
+		ActivatorScanner fileScanner = new FileActivatorScanner(container.getAppClasspathRepository(), ".jar$");
+		wiringService.addActivatorScanner(fileScanner);
+
+		// call configuration
+		configuate(wiringService);
+		
+		// can and activate all
+		wiringService.scan();
+		
+		// call container configuration
 		container.init(this);
+
 
 		doAfterStart();
 		
@@ -89,19 +96,14 @@ public abstract class ExecutionEnvironmentBootstrap {
 		bootstrapService.fireBootupEnd();
 	}
 
-	protected void doEnvironmentServiceRegistry() {
+	protected void doEnvironmentServiceRegistry(WiringService wiringService) {
 		// no-op
 	}
 
-	public void configuate(ServiceContextConfigurator configurator){
+	public void configuate(WiringService wiringService){
 		
 	}
-	
-	public ServiceContextConfigurator getServiceContextConfigurator(){
-		return this.configurator;
-	}
-	
-	
+
 	private class SimpleBootstrapService implements BootstrapService{
 		
 		private ExecutionEnvironmentBootstrap executionEnvironmentBootstrap;
@@ -156,9 +158,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 	public final void stop(){
 		bootstrapService.fireBootdownStart();
 		doBeforeStop();
-		configurator.removeAllEngines();
-		
-		serviceRegistryContext.unRegister(ServiceContextEngineConfigurationService.class);
+	
 		serviceRegistryContext.unRegister(BootstrapService.class);
 		serviceRegistryContext.unRegister(WiringService.class);
 	
@@ -174,25 +174,8 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 	public abstract Container getContainer();
 
-	private class ListServiceContextConfigurator extends ServiceContextConfigurator {
-		
-		ArrayList<ServiceActivatorDiscoveryEngine> engines = new ArrayList<ServiceActivatorDiscoveryEngine>();
-		public void addEngine(ServiceActivatorDiscoveryEngine engine){
-			engines.add(engine);
-			engines.trimToSize();
-			super.addEngine(engine);
-		}
-		
-	}
+
 	
 		
-	private class UniqueServiceContextEngineConfigurationService implements ServiceContextEngineConfigurationService{
 
-
-		@Override
-		public ServiceContextConfigurator getServiceContextConfigurator() {
-			return configurator;
-		}
-		
-	}
 }
