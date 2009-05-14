@@ -13,8 +13,8 @@ import org.middleheaven.core.wiring.annotations.Name;
 import org.middleheaven.core.wiring.annotations.Params;
 import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 import org.middleheaven.core.wiring.annotations.Wire;
-import org.middleheaven.util.CollectionUtils;
 import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.CollectionUtils;
 
 public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModelParser{
 
@@ -68,21 +68,28 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 		Set<Field> fields = ReflectionUtils.allAnnotatedFields(type, annotations);
 
 		for (Field f : fields){
-			Set<Annotation> specs = ReflectionUtils.getAnnotations(f, BindingSpecification.class);
+			Set<Annotation> specs = ReflectionUtils.getAnnotations(f, Wire.class);
 
-			model.addAfterWiringPoint(new FieldWiringPoint(f,WiringSpecification.search(f.getType(), specs)));
+			WiringSpecification<?> spec = WiringSpecification.search(f.getType(), specs);
+			
+			Wire wire = ReflectionUtils.getAnnotation(f, Wire.class);
+			
+			spec.setRequired(wire.required());
+			spec.setShareable(wire.shareabled());
+			
+			model.addAfterWiringPoint(new FieldWiringPoint(f,spec));
 		}
 
 		Set<Method> methods = ReflectionUtils.allAnnotatedMethods(type, annotations);
 
 		for (Method method : methods){
 
-
+			
 			WiringSpecification[] params = readParamsSpecification(method, new BooleanClassifier<Annotation>(){
 
 				@Override
 				public Boolean classify(Annotation a) {
-					return a.annotationType().isAnnotationPresent(BindingSpecification.class) ||
+					return a.annotationType().isAnnotationPresent(Wire.class) ||
 					a.annotationType().isAnnotationPresent(ScopeSpecification.class);
 				}
 

@@ -97,7 +97,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		}
 
 		// singleton per mapper
-		controllerObject = ServiceRegistry.getService(WiringService.class).getWiringContext().getInstance(presenterClass);
+		controllerObject = ServiceRegistry.getService(WiringService.class).getObjectPool().getInstance(presenterClass);
 	}
 
 	public void addPathMatcher(String regex){

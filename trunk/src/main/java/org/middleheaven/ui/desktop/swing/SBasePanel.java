@@ -9,7 +9,7 @@ import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
-import org.middleheaven.util.DelegatingList;
+import org.middleheaven.util.collections.DelegatingList;
 
 public abstract class SBasePanel extends JPanel implements UIComponent{
 

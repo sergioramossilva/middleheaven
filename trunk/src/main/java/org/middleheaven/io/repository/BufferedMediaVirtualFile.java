@@ -3,13 +3,11 @@ package org.middleheaven.io.repository;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 
 import org.middleheaven.io.ByteBuffer;
 import org.middleheaven.io.ManagedIOException;
 
-public class BufferedMediaVirtualFile extends AbstractManagedFile implements MediaManagedFile {
+public class BufferedMediaVirtualFile extends AbstractContentManagedFile implements MediaManagedFile {
 
 	ByteBuffer buffer = new ByteBuffer();
 	
@@ -60,31 +58,6 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 	}
 
 	@Override
-	public boolean contains(ManagedFile other) {
-		return false;
-	}
-
-	@Override
-	public ManagedFile doCreateFile() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public ManagedFile doCreateFolder() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean delete() {
-		return false;
-	}
-
-	@Override
-	public boolean exists() {
-		return false;
-	}
-
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -99,42 +72,6 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 		return buffer.getSize();
 	}
 
-	@Override
-	public ManagedFileType getType() {
-		return ManagedFileType.VIRTUAL;
-	}
-
-	@Override
-	public URL getURL() {
-		return null;
-	}
-
-	@Override
-	public boolean isReadable() {
-		return true;
-	}
-
-	@Override
-	public boolean isWatchable() {
-		return false;
-	}
-
-	@Override
-	public boolean isWriteable() {
-		return true;
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles()
-			throws ManagedIOException {
-		return Collections.emptySet();
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter)
-			throws ManagedIOException {
-		return Collections.emptySet();
-	}
 
 	@Override
 	public ManagedFile resolveFile(String filepath) {
@@ -145,5 +82,7 @@ public class BufferedMediaVirtualFile extends AbstractManagedFile implements Med
 	public void setName(String name) {
 		this.name = name;
 	}
+
+
 
 }

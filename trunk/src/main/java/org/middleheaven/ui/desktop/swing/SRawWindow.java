@@ -12,7 +12,7 @@ import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.components.UIWindow;
 import org.middleheaven.ui.models.UIWindowModel;
-import org.middleheaven.util.DelegatingList;
+import org.middleheaven.util.collections.DelegatingList;
 
 public class SRawWindow extends JWindow implements UIWindow{
 

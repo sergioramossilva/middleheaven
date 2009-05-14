@@ -9,8 +9,10 @@ import java.io.File;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
 
 /**
@@ -45,6 +47,10 @@ public abstract class JBossContainer extends WebContainer {
         
         // TODO register
         JNDINameDirectoryService service = new JNDINameDirectoryService();
+        
+        ServiceRegistry.register(NameDirectoryService.class, new JNDINameDirectoryService());
+        
+        
     }
 
 

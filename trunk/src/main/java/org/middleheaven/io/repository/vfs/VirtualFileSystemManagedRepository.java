@@ -11,13 +11,14 @@ import org.middleheaven.io.IOUtils;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeListener;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotQueriableException;
 import org.middleheaven.io.repository.RepositoryNotRedableException;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
 import org.middleheaven.io.repository.WatchableContainer;
+import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.EnhancedCollection;
 
 public class VirtualFileSystemManagedRepository implements ManagedFileRepository,QueryableRepository,WatchableContainer{
 
@@ -148,7 +149,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 		}
 	}
 
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
 		/*
 		if (!this.isQueriable()){
 			throw new RepositoryNotQueriableException(this.getClass().getName() + "(" +  this.root.getName().getBaseName() + ")");
@@ -172,7 +173,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 
 	}
 
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter)
+	public Collection<? extends ManagedFile> listFiles(BooleanClassifier<ManagedFile> filter)
 	throws ManagedIOException {
 		if (!this.isQueriable()){
 			throw new RepositoryNotQueriableException(this.getClass().getName() + "(" +  this.root.getName().getBaseName() + ")");

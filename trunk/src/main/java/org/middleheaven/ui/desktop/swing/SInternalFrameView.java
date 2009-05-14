@@ -20,8 +20,8 @@ import org.middleheaven.ui.components.UIView;
 import org.middleheaven.ui.events.UIFocusEvent;
 import org.middleheaven.ui.events.UIPrespectiveEvent;
 import org.middleheaven.ui.models.UIViewModel;
-import org.middleheaven.util.DelegatingList;
 import org.middleheaven.util.bean.BeanBinding;
+import org.middleheaven.util.collections.DelegatingList;
 
 public class SInternalFrameView extends JInternalFrame implements UIView{
 

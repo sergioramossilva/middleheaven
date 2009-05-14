@@ -6,8 +6,8 @@ import java.util.Properties;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
@@ -23,7 +23,7 @@ import org.middleheaven.util.conversion.TypeConvertions;
  * 
  * @author  Sergio M. M. Taborda
  */
-public class FileSequenceStorageActivator extends ServiceActivator  {
+public class FileSequenceStorageActivator extends Activator  {
 
 	private Properties properties = new Properties();
 	private ManagedFile file;
@@ -42,7 +42,7 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 	}
 	
 	@Override
-	public void activate(ServiceAtivatorContext context) {
+	public void activate(ActivationContext context) {
 
 		Container container = bootstrapService.getEnvironmentBootstrap().getContainer();
 
@@ -64,7 +64,7 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
+	public void inactivate(ActivationContext context) {
 		// no-op
 	}
 

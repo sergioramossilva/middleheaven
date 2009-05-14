@@ -42,9 +42,15 @@ public class MethodWiringPoint implements AfterWiringPoint{
 		Object[] params = new Object[paramsSpecifications.length];
 		for (int i=0;i<paramsSpecifications.length;i++){
 			params[i] = binder.getInstance(paramsSpecifications[i]);
+			if (params[i]==null && paramsSpecifications[i].isRequired()){
+				throw new BindingException("Value to bind with parameter of index " + i +  
+						" in method " + method.getDeclaringClass().getName() +"." + 
+						method.getName()+ " was not found ");
+			}
 		}
 	
 		try {
+			
 			method.invoke(object, params);
 		} catch (Exception e) {
 			ReflectionException.manage(e, object.getClass());

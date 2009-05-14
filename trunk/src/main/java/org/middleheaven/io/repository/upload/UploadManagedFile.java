@@ -5,19 +5,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 
 import org.apache.commons.fileupload.FileItem;
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.AbstractContentManagedFile;
 import org.middleheaven.io.repository.AbstractManagedFile;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.io.repository.MediaManagedFileContent;
 
-public class UploadManagedFile extends AbstractManagedFile implements MediaManagedFile {
+public class UploadManagedFile extends AbstractContentManagedFile implements MediaManagedFile {
 
 	private final FileItem fileItem;
 	private final ManagedFile parent;
@@ -37,24 +35,6 @@ public class UploadManagedFile extends AbstractManagedFile implements MediaManag
 	
 	public int hashCode(){
 		return this.fileItem.hashCode();
-	}
-
-	/**
-	 * @return <code>false</code> as this file is not a directory
-	 */
-	@Override
-	public boolean contains(ManagedFile other) {
-		return false;
-	}
-
-	@Override
-	public ManagedFile doCreateFile() {
-		throw new UnsupportedOperationException("File creation is not supported");
-	}
-
-	@Override
-	public ManagedFile doCreateFolder() {
-		throw new UnsupportedOperationException("Folder creation is not supported");
 	}
 
 	@Override
@@ -83,10 +63,7 @@ public class UploadManagedFile extends AbstractManagedFile implements MediaManag
 		return parent;
 	}
 
-	@Override
-	public ManagedFileType getType() {
-		return ManagedFileType.VIRTUAL;
-	}
+
 
 	@Override
 	public URL getURL() {
@@ -97,27 +74,6 @@ public class UploadManagedFile extends AbstractManagedFile implements MediaManag
 		}
 	}
 
-	@Override
-	public boolean isReadable() {
-		return true;
-	}
-
-	@Override
-	public boolean isWriteable() {
-		return false;
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles()
-	throws ManagedIOException {
-		return Collections.emptySet();
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter)
-	throws ManagedIOException {
-		return Collections.emptySet();
-	}
 
 	@Override
 	public ManagedFile resolveFile(String filepath) {
@@ -169,11 +125,6 @@ public class UploadManagedFile extends AbstractManagedFile implements MediaManag
 	}
 
 	@Override
-	public boolean isWatchable() {
-		return false;
-	}
-
-	@Override
 	public long getSize() throws ManagedIOException {
 		return fileItem.getSize();
 	}
@@ -182,4 +133,6 @@ public class UploadManagedFile extends AbstractManagedFile implements MediaManag
 	public void setName(String name) {
 		throw new ManagedIOException("unsuppported operation");
 	}
+
+
 }

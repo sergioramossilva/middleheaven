@@ -9,21 +9,19 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.AbstractManagedFile;
 import org.middleheaven.io.repository.EmptyFileContent;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
-import org.middleheaven.util.FiltrableTransformationCollection;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedCollection;
 
 public class DiskManagedFile  extends AbstractManagedFile implements ManagedFileRepository , QueryableRepository{
 
@@ -168,41 +166,16 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
 		File[] children = root.listFiles();
-
-		if (children.length==0){
-			return Collections.emptySet();
-		}
 
 		Collection<ManagedFile> all = new ArrayList<ManagedFile>(children.length);
 		for (File f : children){
 			all.add(new DiskManagedFile(DiskManagedFile.this,f));	
 		}
-		return all;
+		return CollectionUtils.enhance(all);
 	}
 
-	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
-		File[] children = root.listFiles();
-
-		if (children.length==0){
-			return Collections.emptySet();
-		}
-
-		Collection<File> files = Arrays.asList(children);
-
-		return new FiltrableTransformationCollection<File, ManagedFile>(files, filter){
-
-			@Override
-			protected ManagedFile transform(File f) {
-				return new DiskManagedFile(DiskManagedFile.this,f);
-			}
-
-		};
-
-
-	}
 
 	@Override
 	public void setName(String name) {

@@ -2,14 +2,14 @@ package org.middleheaven.io.repository;
 
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.repository.service.CommonRepositories;
 import org.middleheaven.io.repository.service.FileRepositoryService;
 
-public class FileRepositoryActivator extends ServiceActivator {
+public class FileRepositoryActivator extends Activator {
 
 	private MapFileRepositoryService fileRepositoryService = new MapFileRepositoryService();
 	
@@ -30,7 +30,7 @@ public class FileRepositoryActivator extends ServiceActivator {
 	}
 
 	@Override
-	public void activate(ServiceAtivatorContext context) {
+	public void activate(ActivationContext context) {
 		Container container = bootstrapService.getEnvironmentBootstrap().getContainer(); 
 
 		fileRepositoryService.registerRepository(CommonRepositories.DATA, container.getAppDataRepository());
@@ -42,7 +42,7 @@ public class FileRepositoryActivator extends ServiceActivator {
 	}
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
+	public void inactivate(ActivationContext context) {
 
 		// no-op
 		fileRepositoryService = null;

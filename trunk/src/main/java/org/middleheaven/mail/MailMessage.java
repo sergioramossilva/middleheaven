@@ -31,7 +31,16 @@ public class MailMessage implements Serializable {
     private Map<MailRecipientType,List<String>> recipients = new EnumMap<MailRecipientType, List<String>>(MailRecipientType.class);
     private Date sendDate;
 	private SetManagedFileRepository attachments = SetManagedFileRepository.repository(); 
+	private MailPriority priority = MailPriority.NORMAL; 
 	
+	public MailPriority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(MailPriority priority) {
+		this.priority = priority;
+	}
+
 	/**
      * Message Sender
 	 * @param senderEmailAddress

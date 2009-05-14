@@ -3,7 +3,7 @@ package org.middleheaven.io.repository;
 public enum ManagedFileType {
 
 	 /**
-	  * This type of file does not physically exist
+	  * This type of file does not physically exist. It neither a File or a Folder.
 	  */
 	 VIRTUAL (false,false),
 	 /**
@@ -12,13 +12,13 @@ public enum ManagedFileType {
 	  */
 	 FILE (true,false),
 	 /**
-	  * This type of file exists as a container for other files and as
+	  * This type of file exists as a container for other files and has
 	  * no proper content
 	  */
 	 FOLDER (false,true),
 	 /**
-	  * This type of file exists as a container for other files and as
-	  * content. the content is the description of the container files.
+	  * This type of file exists as a container for other files and has
+	  * content. The content is the description of the contained files.
 	  * ZIP and Jar files are examples of the FILEFOLDER type
 	  */
 	 FILEFOLDER (true,true);

@@ -1,11 +1,11 @@
 package org.middleheaven.mail.service;
 
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.mail.MailSendingService;
 
-public class JavaMailActivator extends ServiceActivator {
+public class JavaMailActivator extends Activator {
 
 	JavaMailSendingService service = new JavaMailSendingService();
 	
@@ -15,13 +15,13 @@ public class JavaMailActivator extends ServiceActivator {
 	}
 	
 	@Override
-	public void activate(ServiceAtivatorContext context) {
+	public void activate(ActivationContext context) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
+	public void inactivate(ActivationContext context) {
 		// TODO Auto-generated method stub
 
 	}

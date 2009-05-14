@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.EnhancedCollection;
 
 public class SetManagedFileRepository extends AbstractManagedRepository implements QueryableRepository {
 
@@ -43,12 +45,12 @@ public class SetManagedFileRepository extends AbstractManagedRepository implemen
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
 		return this.files.values();
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
+	public Collection<? extends ManagedFile> listFiles(BooleanClassifier<ManagedFile> filter) throws ManagedIOException {
 		
 		Set<ManagedFile> result = new HashSet<ManagedFile>();
 		

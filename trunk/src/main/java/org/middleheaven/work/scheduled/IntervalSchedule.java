@@ -2,7 +2,7 @@ package org.middleheaven.work.scheduled;
 
 import org.middleheaven.quantity.time.Period;
 import org.middleheaven.quantity.time.TimePoint;
-import org.middleheaven.util.Interval;
+import org.middleheaven.util.collections.Interval;
 
 public class IntervalSchedule implements Schedule{
 

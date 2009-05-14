@@ -9,11 +9,12 @@ import java.util.Collections;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.AbstractManagedRepository;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileFilter;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.QueryableRepository;
-import org.middleheaven.io.repository.VoidManagedFile;
-import org.middleheaven.util.FiltrableTransformationCollection;
+import org.middleheaven.io.repository.UnexistantManagedFile;
+import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.FiltrableTransformationCollection;
 
 public class DiskFileManagedRepository extends AbstractManagedRepository implements QueryableRepository{
 
@@ -40,7 +41,7 @@ public class DiskFileManagedRepository extends AbstractManagedRepository impleme
 			}
 		}
 		// TODO iner search
-		return new VoidManagedFile(null, filename);
+		return new UnexistantManagedFile(null, filename);
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public class DiskFileManagedRepository extends AbstractManagedRepository impleme
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles()throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> listFiles()throws ManagedIOException {
 		File[] roots = File.listRoots();
 		Collection<ManagedFile> result = new ArrayList<ManagedFile>(roots.length);
 
@@ -66,7 +67,7 @@ public class DiskFileManagedRepository extends AbstractManagedRepository impleme
 	}
 
 	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
+	public Collection<? extends ManagedFile> listFiles(BooleanClassifier<ManagedFile> filter) throws ManagedIOException {
 
 		File[] roots = File.listRoots();
 

@@ -1,10 +1,10 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.core.services.ServiceAtivatorContext;
-import org.middleheaven.core.services.discover.ServiceActivator;
+import org.middleheaven.core.wiring.activation.ActivationContext;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 
-public class DataStorageServiceActivator extends ServiceActivator {
+public class DataStorageServiceActivator extends Activator {
 
 	 DataStorageService service = new HashDataStorageService();
 	 
@@ -14,12 +14,12 @@ public class DataStorageServiceActivator extends ServiceActivator {
 	}
 
 	@Override
-	public void activate(ServiceAtivatorContext context) {
-
+	public void activate(ActivationContext context) {
+		
 	}
 
 	@Override
-	public void inactivate(ServiceAtivatorContext context) {
+	public void inactivate(ActivationContext context) {
 		
 	} 
 

@@ -8,14 +8,14 @@ package org.middleheaven.util.classification;
  * Filter that returns the opposite result  of a underlying filter.
  * @author  Sergio M. M. Taborda
  */
-public class NegationClassifier<T> implements BooleanClassifier<T> {
+public class NegationClassifier<T> implements Classifier<Boolean,T> {
 
 
-	private BooleanClassifier<T> original;
+	private Classifier<Boolean,T>  original;
 
 	public NegationClassifier(){};
 
-	public NegationClassifier(BooleanClassifier<T> original){
+	public NegationClassifier(Classifier<Boolean,T>  original){
 		this.original = original;
 	}
 
@@ -23,7 +23,7 @@ public class NegationClassifier<T> implements BooleanClassifier<T> {
 		this.original = filter;
 	}
 
-	public BooleanClassifier<T> getFilter(){
+	public Classifier<Boolean,T>  getFilter(){
 		return original;
 	}
 

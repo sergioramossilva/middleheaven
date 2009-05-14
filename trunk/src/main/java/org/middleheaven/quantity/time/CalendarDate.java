@@ -3,9 +3,9 @@
  */
 package org.middleheaven.quantity.time;
 
-import org.middleheaven.util.ComparableComparator;
 import org.middleheaven.util.Incrementable;
-import org.middleheaven.util.Range;
+import org.middleheaven.util.collections.ComparableComparator;
+import org.middleheaven.util.collections.Range;
 
 
 

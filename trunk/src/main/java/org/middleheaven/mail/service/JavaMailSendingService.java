@@ -39,7 +39,7 @@ public class JavaMailSendingService implements MailSendingService {
 	}
 
 	@Override
-	public void sendEmailAsynchronously(MailMessage email, MailAsynchrounsCallbak callback) {
+	public void send(MailMessage email, MailAsynchrounsCallbak callback) {
 		new EmailSenderThread(email,callback).start();
 	}
 

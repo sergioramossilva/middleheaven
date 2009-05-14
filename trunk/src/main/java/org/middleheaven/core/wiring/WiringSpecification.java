@@ -21,6 +21,7 @@ public class WiringSpecification<T> {
 	private Set<Annotation> annotations;
 	private Map<String, String> params;
 	private boolean shareable = true;
+	private boolean required = true;
 
 	public static <C> WiringSpecification<C> search(Class<C> contract) {
 		final Map<String,String> params = Collections.emptyMap();
@@ -92,6 +93,10 @@ public class WiringSpecification<T> {
 	public void setShareable(boolean shareable) {
 		this.shareable = shareable;
 	}
+	
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
 
 	/**
 	 * Indicated if the resolved object can be shared. If not the context will create another object of the same type.
@@ -100,5 +105,9 @@ public class WiringSpecification<T> {
 	 */
 	public boolean isShareable() {
 		return shareable;
+	}
+
+	public boolean isRequired() {
+		return required;
 	}
 }

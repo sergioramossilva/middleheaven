@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.middleheaven.util.ParamsMap;
+import org.middleheaven.util.collections.ParamsMap;
 
 
 public class ScoopingModel {

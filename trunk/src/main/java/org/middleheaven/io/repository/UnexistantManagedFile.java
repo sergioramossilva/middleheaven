@@ -1,39 +1,30 @@
 package org.middleheaven.io.repository;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.middleheaven.io.ManagedIOException;
 
-public class UnexistantManagedFile implements ManagedFile {
+public class UnexistantManagedFile extends AbstractContentManagedFile{
 
 	
 	private ManagedFile parent;
 	private String name;
 	
-	protected UnexistantManagedFile(ManagedFile parent, String name){
+	public UnexistantManagedFile(ManagedFile parent, String name){
 		this.parent = parent;
 		this.name = name;
 	}
 	
-	@Override
-	public boolean contains(ManagedFile other) {
-		return false;
-	}
-
 	@Override
 	public void copyTo(ManagedFile other) throws ManagedIOException {
 		// no-op
 	}
 
 	@Override
-	public ManagedFile createFile() {
+	public ManagedFile doCreateFile() {
 		return parent.createFile();
 	}
 
 	@Override
-	public ManagedFile createFolder() {
+	public ManagedFile doCreateFolder() {
 		return parent.createFolder();
 	}
 
@@ -72,35 +63,6 @@ public class UnexistantManagedFile implements ManagedFile {
 		return ManagedFileType.VIRTUAL;
 	}
 
-	@Override
-	public URL getURL() {
-		return null;
-	}
-
-	@Override
-	public boolean isReadable() {
-		return false;
-	}
-
-	@Override
-	public boolean isWatchable() {
-		return false;
-	}
-
-	@Override
-	public boolean isWriteable() {
-		return false;
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles() throws ManagedIOException {
-		return Collections.emptySet();
-	}
-
-	@Override
-	public Collection<? extends ManagedFile> listFiles(ManagedFileFilter filter) throws ManagedIOException {
-		return Collections.emptySet();
-	}
 
 	@Override
 	public void setName(String name) {

@@ -12,13 +12,14 @@ import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
 import org.middleheaven.application.MetaInfApplicationServiceActivator;
 import org.middleheaven.core.Container;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
-import org.middleheaven.core.services.ServiceContextConfigurator;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.services.engine.ActivatorBagServiceDiscoveryEngine;
+import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.activation.ActivatorScanner;
+import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.ServletContextLogBookWriter;
 import org.middleheaven.logging.WritableLogBook;
-import org.middleheaven.ui.UIServiceActivator;
+import org.middleheaven.ui.service.UIServiceActivator;
 import org.middleheaven.web.container.WebContainerSwitcher;
 
 public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap implements ServletContextListener{
@@ -45,7 +46,7 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 		}
 	}
 
-	protected void doEnvironmentServiceRegistry() {
+	protected void doEnvironmentServiceRegistry(WiringService wiringService) {
 
 		HttpServerService httpService = new ServletHttpServerService();
 		ServiceRegistry.register(HttpServerService.class, httpService);
@@ -62,14 +63,14 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 		return new WebContainerSwitcher().getWebContainer(servletContext);
 	}
 
-	public void configuate(ServiceContextConfigurator configurator){
-		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine()
+	public void configuate(WiringService wiringService){
+		ActivatorScanner scanner = new SetActivatorScanner()
 		.addActivator(MetaInfApplicationServiceActivator.class)
 		.addActivator(DynamicLoadApplicationServiceActivator.class)
 		.addActivator(UIServiceActivator.class)
 		;
 
-		configurator.addEngine(engine);
+		wiringService.addActivatorScanner(scanner);
 	}
 
 
