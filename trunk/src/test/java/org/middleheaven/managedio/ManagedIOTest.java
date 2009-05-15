@@ -48,7 +48,7 @@ public class ManagedIOTest {
 	    
 	    assertFalse(testJar.exists());
 	    
-	    assertFalse(junitJar.listFiles().isEmpty());
+	    assertFalse(junitJar.children().isEmpty());
 	}
 	
 
@@ -64,7 +64,7 @@ public class ManagedIOTest {
 		    assertTrue(junitJar.isReadable());
 		    assertTrue(junitJar.isWriteable());
 		    
-		   assertFalse(junitJar.listFiles().isEmpty());
+		   assertFalse(junitJar.children().isEmpty());
 		   
 		   // Extract
 		   ManagedFile manifest = junitJar.resolveFile("META-INF/MANIFEST.MF");
@@ -119,7 +119,7 @@ public class ManagedIOTest {
 		ManagedFile http = ManagedFileRepositories.resolveFile(url);
 		
 		// cannot be listed
-		assertFalse(!http.listFiles().isEmpty());
+		assertFalse(!http.children().isEmpty());
 
 
 	}
