@@ -70,7 +70,7 @@ public class DataSourceServiceActivator extends Activator {
 		ManagedFile folder = container.getAppConfigRepository();
 
 
-		Collection<? extends ManagedFile> configurations = folder.listFiles(new BooleanClassifier<ManagedFile>(){
+		Collection<? extends ManagedFile> configurations = folder.children().findAll(new BooleanClassifier<ManagedFile>(){
 
 			@Override
 			public Boolean classify(ManagedFile file) {

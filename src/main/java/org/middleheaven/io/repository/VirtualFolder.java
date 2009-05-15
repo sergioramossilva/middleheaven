@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.Walker;
 
@@ -106,14 +107,10 @@ public class VirtualFolder extends AbstractContainerManagedFile  {
 	}
 
 	@Override
-	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
-		return Collections.unmodifiableCollection(files.values());
+	public EnhancedCollection<ManagedFile> children() throws ManagedIOException {
+		return CollectionUtils.enhance(files.values()).asUnmodifiable();
 	}
 
-	@Override
-	public Collection<? extends ManagedFile> listFiles(BooleanClassifier<ManagedFile> filter) throws ManagedIOException {
-		return Collections.unmodifiableCollection(files.values());
-	}
 
 	@Override
 	public ManagedFile resolveFile(String filepath) {

@@ -2,9 +2,7 @@ package org.middleheaven.io.repository.simple;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.AbstractManagedRepository;
@@ -12,9 +10,8 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.UnexistantManagedFile;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.FiltrableTransformationCollection;
 
 public class DiskFileManagedRepository extends AbstractManagedRepository implements QueryableRepository{
 
@@ -55,7 +52,7 @@ public class DiskFileManagedRepository extends AbstractManagedRepository impleme
 	}
 
 	@Override
-	public EnhancedCollection<ManagedFile> listFiles()throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> children()throws ManagedIOException {
 		File[] roots = File.listRoots();
 		Collection<ManagedFile> result = new ArrayList<ManagedFile>(roots.length);
 
@@ -63,32 +60,10 @@ public class DiskFileManagedRepository extends AbstractManagedRepository impleme
 			result.add(new DiskManagedFile(null,root));
 		}
 
-		return result;
+		return CollectionUtils.enhance(result);
 	}
 
-	@Override
-	public Collection<? extends ManagedFile> listFiles(BooleanClassifier<ManagedFile> filter) throws ManagedIOException {
-
-		File[] roots = File.listRoots();
-
-
-		if (roots.length==0){
-			return Collections.emptySet();
-		}
-
-		Collection<File> files = Arrays.asList(roots);
-
-		return new FiltrableTransformationCollection<File, ManagedFile>(files, filter){
-
-			@Override
-			protected ManagedFile transform(File f) {
-				return new DiskManagedFile(null,f);
-			}
-
-		};
-
-	}
-
+	
 
 
 

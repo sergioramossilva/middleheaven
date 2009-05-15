@@ -52,7 +52,7 @@ public class LicenseServiceActivator extends Activator {
 
 		ManagedFile f = frs.getRepository("ENV_CONFIGURATION");
 		Collection<ManagedFile> licences = new HashSet<ManagedFile>();
-		licences.addAll( f.listFiles(new BooleanClassifier<ManagedFile>(){
+		licences.addAll( f.children().findAll(new BooleanClassifier<ManagedFile>(){
 
 			@Override
 			public Boolean classify(ManagedFile file) {
@@ -61,7 +61,7 @@ public class LicenseServiceActivator extends Activator {
 
 		}));
 		f = frs.getRepository("APP_CONFIGURATION");
-		licences.addAll( f.listFiles(new BooleanClassifier<ManagedFile>(){
+		licences.addAll( f.children().findAll(new BooleanClassifier<ManagedFile>(){
 
 			@Override
 			public Boolean classify(ManagedFile file) {
@@ -71,7 +71,7 @@ public class LicenseServiceActivator extends Activator {
 		}));
 
 		Collection<ManagedFile> certifcates = new HashSet<ManagedFile>();
-		certifcates.addAll( f.listFiles(new BooleanClassifier<ManagedFile>(){
+		certifcates.addAll( f.children().findAll(new BooleanClassifier<ManagedFile>(){
 
 			@Override
 			public Boolean classify(ManagedFile file) {

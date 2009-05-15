@@ -192,7 +192,7 @@ public class DynamicLoadApplicationServiceActivator extends Activator implements
 			}
 
 			// filter apm only (apm are jar files)
-			applicationModuleFiles.addAll( f.listFiles(appModulesFilter));
+			applicationModuleFiles.addAll( f.children().findAll(appModulesFilter));
 
 			for (ManagedFile jar : applicationModuleFiles){
 				loadModuleFromFile(jar);

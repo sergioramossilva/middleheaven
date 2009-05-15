@@ -166,7 +166,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 	}
 
 	@Override
-	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> children() throws ManagedIOException {
 		File[] children = root.listFiles();
 
 		Collection<ManagedFile> all = new ArrayList<ManagedFile>(children.length);

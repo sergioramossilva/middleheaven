@@ -61,7 +61,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 		
 		if(root.getType().isFolder()){
 
-			root.listFiles().findAll(new BooleanClassifier<ManagedFile>(){
+			root.children().findAll(new BooleanClassifier<ManagedFile>(){
 
 				@Override
 				public Boolean classify(ManagedFile file) {

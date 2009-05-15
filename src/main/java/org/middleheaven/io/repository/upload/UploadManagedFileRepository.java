@@ -5,9 +5,9 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +24,7 @@ import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
 import org.middleheaven.io.repository.VirtualFolder;
-import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedArrayList;
 import org.middleheaven.util.collections.EnhancedCollection;
 
 public class UploadManagedFileRepository extends AbstractManagedFile implements  ManagedFileRepository,QueryableRepository {
@@ -53,7 +53,7 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 
 		final boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		if (isMultipart) {  
-			repository.files = new TreeMap<String, VirtualFolder>();
+			repository.folders = new HashMap<String, VirtualFolder>();
 
 			// Create a factory for disk-based file items
 
@@ -69,7 +69,7 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 						// is a file
 					
 						VirtualFolder folder = new VirtualFolder(item.getFieldName(), repository);
-						repository.files.put(folder.getName(), folder);
+						repository.folders.put(folder.getName(), folder);
 						folder.add(new UploadManagedFile(item, repository));
 						
 					} else if (parameters!=null){
@@ -81,13 +81,16 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 				throw new ManagedIOException(e);
 			}  
 		} else {
-			repository.files = Collections.emptyMap();
+			repository.folders = Collections.emptyMap();
 		}
 
 		return repository;
 	}
 	
-	private Map<String, VirtualFolder> files;
+	/**
+	 * each file is put into a folder with the field name
+	 */
+	private Map<String, VirtualFolder> folders;
 	private HttpServletRequest request;
 	DiskFileItemFactory factory;
 	private String name = "upload repository";
@@ -96,10 +99,10 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	
 	public void dispose(){
 		// remove all files
-		for (VirtualFolder folder : this.files.values()){
+		for (VirtualFolder folder :  folders.values()){
 			folder.clear();
 		}
-		this.files.clear();
+		this.folders.clear();
 	}
 	
 	@Override
@@ -128,12 +131,12 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 
 	@Override
 	public boolean exists(String filename) throws ManagedIOException {
-		return files.containsKey(filename);
+		return folders.containsKey(filename);
 	}
 
 	@Override
 	public ManagedFile retrive(String filename) throws ManagedIOException {
-		return files.get(filename);
+		return folders.get(filename);
 	}
 
 	@Override
@@ -142,13 +145,13 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	}
 
 	@Override
-	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
-		return CollectionUtils.enhance(files.values());
+	public EnhancedCollection<ManagedFile> children() throws ManagedIOException {
+		return new EnhancedArrayList<ManagedFile> (folders.values()); 
 	}
 
 	@Override
 	public boolean contains(ManagedFile other) {
-		return files.values().contains(other);
+		return folders.values().contains(other);
 	}
 
 
@@ -214,7 +217,7 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	@Override
 	public long getSize() throws ManagedIOException {
 		long sum = 0;
-		for (ManagedFile file  : this.files.values()){
+		for (ManagedFile file  : this.folders.values()){
 			sum += file.getSize();
 		}
 		return sum;

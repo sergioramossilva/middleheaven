@@ -95,7 +95,7 @@ public abstract class AbstractManagedFile implements ManagedFile{
 
 	@Override
 	public void eachRecursive(Walker<ManagedFile> walker) {
-		for (ManagedFile file  : this.listFiles()){
+		for (ManagedFile file  : this.children()){
 			walker.doWith(file);
 			file.eachRecursive(walker);
 		}
@@ -103,7 +103,7 @@ public abstract class AbstractManagedFile implements ManagedFile{
 
 	@Override
 	public void each(Walker<ManagedFile> walker) {
-		for (ManagedFile file  : this.listFiles()){
+		for (ManagedFile file  : this.children()){
 			walker.doWith(file);
 		}
 	}

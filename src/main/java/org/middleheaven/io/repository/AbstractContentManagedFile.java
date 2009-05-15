@@ -43,7 +43,7 @@ public abstract class AbstractContentManagedFile extends AbstractManagedFile {
 	}
 	
 	@Override
-	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> children() throws ManagedIOException {
 		return CollectionUtils.emptyCollection();
 	}
 
