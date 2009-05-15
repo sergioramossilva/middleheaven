@@ -57,7 +57,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	 *
 	 * @return list of the ManagedFile existing in the repository 
 	 */
-	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException{
+	public EnhancedCollection<ManagedFile> children() throws ManagedIOException{
 
 		if (this.getType() == ManagedFileType.FILE || !this.exists()){
 			return CollectionUtils.emptyCollection();

@@ -194,7 +194,7 @@ public class EnhancedCollectionAdapter<T> extends AbstractAdapter<T> implements 
 	}
 
 	@Override
-	public EnhancedCollection<T> asUnmodified() {
+	public EnhancedCollection<T> asUnmodifiable() {
 		return new EnhancedCollectionAdapter<T>(Collections.unmodifiableCollection(this.original));
 	}
 }

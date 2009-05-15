@@ -18,6 +18,7 @@ import org.middleheaven.io.repository.RepositoryNotRedableException;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
 import org.middleheaven.io.repository.WatchableContainer;
 import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
 public class VirtualFileSystemManagedRepository implements ManagedFileRepository,QueryableRepository,WatchableContainer{
@@ -149,7 +150,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 		}
 	}
 
-	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException {
+	public EnhancedCollection<ManagedFile> children() throws ManagedIOException {
 		/*
 		if (!this.isQueriable()){
 			throw new RepositoryNotQueriableException(this.getClass().getName() + "(" +  this.root.getName().getBaseName() + ")");
@@ -165,7 +166,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 				mfiles.add(new VirtualFileSystemManagedFile(fo));
 			}
 
-			return mfiles;
+			return CollectionUtils.enhance(mfiles);
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}

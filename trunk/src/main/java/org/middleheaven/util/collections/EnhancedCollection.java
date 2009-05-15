@@ -8,7 +8,7 @@ import org.middleheaven.util.classification.Classifier;
 
 public interface EnhancedCollection<T> extends Collection<T> , Enumerable<T> {
 
-	public EnhancedCollection<T> asUnmodified();
+	public EnhancedCollection<T> asUnmodifiable();
 	
 	public EnhancedCollection<T> asSynchronized();
 	

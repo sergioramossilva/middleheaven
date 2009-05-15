@@ -9,6 +9,6 @@ public interface QueryableRepository extends ManagedFileRepository{
 	 * Must return true, to correctly implement this interface.
 	 */
 	public boolean isQueriable();
-	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException;
+	public EnhancedCollection<ManagedFile> children() throws ManagedIOException;
 	
 }

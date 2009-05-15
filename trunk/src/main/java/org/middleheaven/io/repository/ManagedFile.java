@@ -5,10 +5,8 @@
 package org.middleheaven.io.repository;
 
 import java.net.URL;
-import java.util.Collection;
 
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.TreeWalkable;
 
@@ -21,7 +19,7 @@ public interface ManagedFile extends ManagedFileResolver , TreeWalkable<ManagedF
 	
 	public String getText();
 	
-	public EnhancedCollection<ManagedFile> listFiles() throws ManagedIOException;
+	public EnhancedCollection<ManagedFile> children() throws ManagedIOException;
 
 	public void setName(String name);
 	

@@ -132,7 +132,7 @@ public class JavaMailSendingService implements MailSendingService {
 
         // add attachments
         MimeBodyPart part;
-        for (ManagedFile attachment : email.getAttachments().listFiles()){
+        for (ManagedFile attachment : email.getAttachments().children()){
                 part = new MimeBodyPart();
                 part.setDataHandler(new DataHandler(new ManagedFileDataSource((MediaManagedFile)attachment)));
                 mp.addBodyPart(part);
