@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title> Wiring Toolbox </title>
+	</properties>
+	<body>
+	<section name="Wiring Toolbox">
+	<p>
+	A toolbox de injeção automática de dependências  do MiddleHaven é chamado Wiring Toolbox.
+	</p>
+	<p>O conceito de injeção automática de dependências já é bastante conhecido graças a frameworks 
+	como o PicoContainer e o Spring. Recentemente este conceito foi incluído na especificação EJB 3.0.
+	O conceito, é simples; um objecto de uma certa classe normalmente precisa de objetos de outras 
+	classes para funcionar. Isso cria uma dependência entre eles.  
+	Normalmente esta dependência é satisfeita passando uma instancia do objecto, manualmente, 
+	no construtor ou num método modificador (um método set). 
+	Este ato de atribuir as dependências ao objeto é conhecido como injeção ou wiring ("unir com fiação"). 
+	O nome "injeção" estabelece que ha um objeto injetado, um injetando e um objecto injetor. 
+	O nome "wiring" estabelece a ideia de dois objetos que são associados.  
+	Na prática ambos dão o mesmo resultado e trata-se apenas de uma diferença na nomenclatura.
+	</p>
+	<p>
+	A ideia da injeção automática é que seja o sistema a descobrir e instanciar o objeto certo em runtime 
+	e não o programador em tempo de codificação. Isto porque, a injeção manual leva ao uso de padrões de 
+	projeto como <pattern>Factory</pattern> e <pattern>ServiceLocator</pattern> que usados em demasia 
+	tornam o codigo dificil de manter já que a injeção não está centralizada e pior que isso, 
+	é controlada pelo proprio objeto que precisa das dependencias. 
+	Ele assume responsabilidade de saber e encontrar as suas dependencias e isso viola o 
+	<principle>Principio de Inversão de Controle</principle> (IoC).
+	</p>
+	<p>  
+	Para que o sistema sera OO e respeite o<principle>Principio de Inversão de Controle</principle> precisamos 
+	de um outro objeto que controle a injeção das dependencias : o injetor.
+	</p>
+	<p>
+	O MiddleHeaven usa os termos "wiring" e "wire" em vez de injeção. Para o MiddleHeaven o Injetor é uma peça fundamental
+	mas que funciona por detrás dos panos. Não existe uma classe "injetor" e o programador final não mexe diretamente com ele.
+	</p>
+	</section>
+	<section name="Arquitetura" >
+	<p>
+	Um sistema de Injeção Automática de Dependência é composto por várias partes. 
+	O controlador do processo normalmente chamado de Injetor é a parte que sabe como procurar as 
+	dependências e injetá-las. No MiddleHeaven o injetor está escondido e o papel de fornecer acesso às suas funcionalidades
+	case ao <code>WiringService</code>. O <code>WiringService</code> é o serviço central da Wiring Toolbox.
+	</p>
+	<p>
+	Se os objetos já existem em outros contextos  ( por exemplo, objetos que existem num contexto JNDI)  
+	precisamos de objetos saibam onde e como obter os objetos. Quando o objeto necessário não é encontrado 
+	ele tem que ser construído. Para isso precisamos de objetos que implementem saibam criar os objetos. 
+	No MiddleHeaven os objetos <code>Resolver</code> podem ter ambos os papeis de criador e localizador. 
+	Para que o MiddleHeaven possa encontrar os objetos os <code>Resolver</code>s têm que ser registrados 
+	junto ao <code>WiringService</code>.
+	</p>
+	<p>
+	Quando um objeto é criado, as suas dependências têm que ser resolvidas, primeiro as do construtor e 
+	depois aquelas associadas via um método modificador. Contudo, obtetos da mesma classe A, que dependem de 
+	objetos da classe B, não necessáriamente dependem da mesma instancia da classe B. 
+	O exemplo clássico é um corretor ortográfico. O corretor precisa de um dicionário, mas nem todos os 
+	corretores usam o mesmo dicionário, uns podem usar português, enquanto outros usam o dicionário inglês. 
+	Para conseguir distinguir os vários casos precisamos ter controle sobre o vinculo (<code>Binding</code>) 
+	entre o objeto e dependência em que estamos interessados.
+	</p>
+	<p>
+	O vinculo pode ser definido por outro objeto ou pelo próprio objeto. Ao ser definido pelo próprio objeto 
+	não é possível que ele especifique exatamente qual outro objeto ele quer, já que isso seria uma violação
+	do <principle>Principio de Inversão de Controle</principle> que estamos tentado respeitar ao máximo. 
+	Então , a informação contida no objeto é lida pelo injetor como uma dica de qual objeto deve ser injetado
+	naquele ponto. Os vários vínculos (Binding) também devem ser registrados junto ao <code>WiringService</code>.
+	</p>
+	</section>
+	<section name="ObjectPool">
+	<p>
+	O WiringService tem vários tipos de configuração e permite ter acesso ao <code>ObjectPool</code>. 
+	O <code>ObjectPool</code> (piscina de objetos) representa o local onde os objetos estão, prontos a 
+	serem obtidos e injetados em outros objetos. O objeto é obtido pelos métodos <code>getInstance()</code> de <code>ObjectPool</code>. 
+	De certa forma o <code>ObjectPool</code> funciona como um objecto <pattern>Factory</pattern>/<pattern>ServiceLocator</pattern>, 
+	inteligente que consegue determinar as dependencias sozinho e carregar os objetos sozinho (apenas com configuração e não com programação).
+	</p>
+	<section name="Escopos">
+	<p>
+	Uma vez criado e devidamente injetado o objeto é devolvido a quem o requisitou. 
+	Pode ser interessante guardar esse objeto para uso futuro evitando ter que passar de novo 
+	pelo processo de procura e criação seguindo o padrão <pattern>Shared Object</pattern>
+	( apenas uma instancia do objeto existe, e todo o mundo usa a mesma). Ou pode ser interessante recuperar 
+	o objeto de um outro lugar, por exemplo, de um contexto JNDI.  
+	Para permitir a implementação destas regras o <code>ObjectPool</code> é dividido em regiões chamadas 
+	escopos (<code>Scope</code>).Todos os objetos existem realmente dentro de um escopo e não no
+	<code>ObjectPool</code> diretamente.
+	
+	</p>
+	<p> 
+	Os escopos permitem ter um grau de controle de como os objetos são resolvidos antes que o <code>Resolver</code> 
+	seja invocado. Cada escopo conta com um <code>ScopePool</code> (piscina de escopo) onde os objetos são mantidos.
+	Sendo o <code>ScopePool</code> um objeto, ele também passa pelo ciclo de injeção, sendo possível injetar um 
+	<code>ScopePool</code> com outros objetos. O MiddleHeaven conta com alguns escopos <estrang>out-of-the-box</estrang>:
+	<ul>
+	<li> 
+	Default - este é o escopo  principal. Este escopo não guarda os objetos de forma alguma. 
+	Cada vez que um objeto é requisitado deste escopo, ele é criado do zero. 
+	Este é o comportamento padrão.</li>
+	<li>
+	Shared - este escopo guarda os objetos de forma que se um objeto é requisitado várias vezes, 
+	sempre a mesma instancia é retornada. Em outros frameworks isto é chamado erramente de singleton. 
+	Os objetos no escopo shared não têm que implementar o padrão singleton (embora possam). 
+	O escopo Shared não torna os objetos "singleton" os torna Shared Object (Objeto Partilhado).
+	</li>
+	<li>
+	Service - este é um escopo especial relacionado à Service Toolbox. Os objetos guardados neste 
+	escopo são realmente serviços ( no sentido definido pela Service Toolbox). Os serviços são parecidos 
+	com objetos shared, mas têm  um ciclo de vida que permite que uma vez injetados em outro objetos, 
+	possam ser modificados em runtime. Isto é util para o redeploy de serviços em que o serviço está 
+	indisponível durante um breve período de tempo, enquanto a implementação real é trocada. 
+	Este é um escopo muito usado, então o MiddleHeaven dá um suporte especial para ele. 
+	O <code>WiringService</code> está registrado neste escopo, o que permite injetar o <code>WiringService</code> 
+	em qualquer outro objeto. Isto permite utilizá-lo no sem modo semelhante a uma fábrida de objetos.
+	</li>
+	<li>
+    Property - este escopo está associado, normalmente, a um arquivo de internacionalização,
+     mas pode ser um simples arquivo de propriedades para configuração ( endereço do banco de dados, por exemplo). 
+     É principalmente uma forma de injetar Strings.
+    </li>
+	</ul>
+	
+	</p>
+	</section>
+	<section name="Escopo Local">
+	<p>
+	Em algumas situações a injeção tem que ser feita baseada em um contexto local.
+	O exemplo clássico é a injeção de um <estrang>controller</estrang> web com informações presentes 
+	no <code>request</code> ou no <code>session</code>.  O MiddleHeaven suporta este tipo de injeção em objetos espeficios (como os controlers).
+	</p>
+	<p>
+	Por enquanto o suporte a escopos locais é nativo ao MiddleHeaven ( i.e. não pode ser configurado ou alterado pelo programador final).
+	O único escopo local suportado neste momento é o contexto web utilizado exatamente para a injeção de controlers.
+	</p>
+	<p>
+	Mais sobre esse assunto é discutido no toolbox web.
+	</p>
+	</section>
+	
+	<section name="Pontos de Injeção">
+	<p>
+	Para que o processo de injeção funcione o injetor precisa conhecer quais dependências satisfazer e como 
+	as satisfazer. Essa informação o MiddleHeaven chama ponto de injeção. Existem, básicamente, três categorias 
+	de pontos de injeção.  No construtor, em métodos e em atributos.  A injeção pelo construtor é a mais 
+	importante, já que, se o objeto não pode ser criado sem que que esse objetos sejam passados corretamente 
+	(passar null não vai adiantar).Após ser criado o objeto conta com métodos e atributos que também podem ser 
+	usados como pontos de injeção após a criação do objeto. Normalmente a injeção via construtor é usada para 
+	dependências obrigtórias ( o objeto não funciona sem elas) e a injeção por métodos/atributos é usada para 
+	dependências opcionais.
+	</p>
+	<p>
+	O MiddleHeaven não encoraja o uso de inejção por atributos que não sejam publico , embora o suporte, 
+	porque isso viola o <principle>Principio de Encapsulamento</principle>. Alguns toolboxes precisam fazer 
+	esse tipo de injção devido ao seu dominio de atuação, mas isso é feito sob o controle desse toolbox e 
+	não a mando do programador final. Como programador final é aconselhável que use apenas a injeção por 
+	construtor e método modificador de forma a seguir boas práticas de programação orientada a objetos.
+	</p>
+	</section>
+	</section>
+	<section name="Binding">
+	<p>
+	Como colocar objetos no <code>ObjectPool</code> para que sejam encontrados pelo <code>WiringService</code> 
+	durante a injeção ?  Existem várias formas para fazer isso. Como foi dito, objetos que estejam associados
+	a um escopo estão acessivel ao <code>ObjectPool</code>. Então uma forma é colocar o objeto no escopo.
+	Isso é independente de como os objetos chegarama a esse escopo. No exemplo do escopo de JNDI o objeto 
+	já existe no escopo ou é colocado por meio externos ao MiddleHeaven ( por exemplo, pelo próprio servidor 
+	de aplicaão). Ao usar o escopo de serviços os objetos são disponibilizados porque foram registrados
+	o <code>ServiceRegistry</code> do Service Toolbox. Para o escopo padrão o objeto nem sequer precisa existir. 
+	O único requisito é que exista um vinculo definido e a classe do objeto esteja no classpath.
+	</p>
+	<p>
+	A vinculação ao objeto pode dar-se de três formas:
+	<ul>
+	<li>Pela Classe - o ponto de injeção é vinculado a uma classe. Essa classe tem que ser compativel com o ponto de estensão.
+	O MiddleHeaven irá criar um objeto dessa classe quando a injeção for requisitada. Se esse objeto depende de outros os vinculos são 
+	seguindo num ciclo recursivo até que o objeto requisitado possa ser devolvido ou se determine que alguma dependencia está faltando.
+	</li>
+	<li>Pela instancia - o ponto de injeção é vinculado a uma instancia de uma classe compativel com o ponto de injeção. Essa instancia
+	será injetada sempre que aquele vinculo for invocado.
+	</li>
+	<li>Por um Resolver - o ponto de injeção é vinculado a um objeto Resolver que irá obter o objeto a ser injetado.
+	</li>
+	</ul>
+	</p>
+	</section>
+	<section name="Ativação">
+	<p>
+	O MiddleHeaven utiliza o conceito de ativador. Um ativador é um objeto responsável por obter todas as 
+	dependencias necessárias para a criação de um objeto e disponibilizar o objeto já construido. 
+	Ele atua como uma <pattern>Factory</pattern>. A diferença essencial do activador é a resolução de 
+	dependencias. Os ativadores são recolhidos as suas inter-dependencias são analizadas e só depois os 
+	ativadores são invocados garantido desta forma que os objetos que precisam ser injetados foram criados
+	anteriormente.  Após esse processo inicial, novos ativadores podem ser detetados e invocados adicionando
+	objetos ao <code>ObjectPool</code> em runtime. De forma demelhante os ativadores podem ser desabilitados
+	retirando os objetos do <code>ObjectPool</code>.
+	</p>
+	<p>
+	Este mecanismo de ativação é essencial a diferentes funcionalidades do MiddleHeaven. 
+	Ele é a base para a funcionalidade de instalação/desinstalação de modulos de aplicação e serviços "a quente". 
+	O processo de ativação é fundido ao processo de bootstrap permitindo que o Container forneça seus próprios 
+	ativadores. Por exemplo, quando o MiddleHeaven rodar dentro do Tomcat um serviço de JNDI pode estar 
+	opcionalmente disponivel, enquanto que se rodar num JBoss o serviço de JNDI estará obrigatoriamente 
+	disponivel assim como o de envio de email. 
+	</p>
+	</section>
+	<section name="Uso">
+	<p>
+	A Wiring Toolbox é mais dificil de explicar do que de exemplificar, mas os exemplos são extensos.
+	</p>
+	<p>
+	Sendo que ha suporte a qualquer modelo de definição de pontos de injeção existem muitas mais opções 
+	reais que as demonstradas ( usar anotações do Java ou de outro framework que não do do MiddleHeaven). 
+	Aqui ficam exemplos usando apenas os recursos nativos ao MiddleHeaven.
+	</p>
+	<p>
+	Para definir um ponto de injeção basta anotá-lo com <code>@Wire</code>. Para construtores a anotação 
+	é dispensável se apenas existir um construtor definido. Para métodos e atributos a anotação é 
+	obrigatória para definir o ponto de injeção. A injeção sempre é obrigatória por padrão.
+	A anotação <code>@Wire</code> conta com um parametro <code>required</code> que alterado para <code>false</code> 
+	torna a injeção opcional (Se o objeto não for encontrado o processo continua assim mesmo). Conta inda como o parametro
+	<code>shareable</code> que quando colocado <code>false</code> obriga o injetor a criar uma instancia diferente (não partilhada)
+	para ser injetada nesse ponto. O MiddleHeaven já cria uma nova instancia diferente por padrão, mas apenas no escolo padrão.
+	Se o objeto exige ser injetado com uma instancia diferente e isso não for possivel, devido ao escopo requisitado ou qualquer outro impedimento
+	uma exceção será lançada.
+	</p>
+	<p></p>
+	<p>A anotação <code>@Wire</code> pode ser utilzada ainda nos parametros, para alterar a obrigatoriedade ou a partilha</p>
+	<p>
+	Para criar o ponto de injeção é só isso que precisa. Agora, para configurar o ponto de injeção. 
+	Se nada mais for dito o injeto irá procurar um objeto, no escopo padrão, da classe do parametro/attributo 
+	e a primeira encontrada será retornada.  Para escolher o escopo basta anotar com annotação atrelada 
+	ao escopo (isso também é configurado como um vinculo). Por exemplo, para dizer que o objeto tem 
+	que ser obtido do escopo de serviço é só anotar também com <code>@Service</code>. Para o escopo de objetos 
+	partilhados é <code>@Shared</code>. A associação entre a anotação e o ScopePool também é determinada por um vinculo e portanto,
+	pode ser configurada.
+	</p> 
+	<p>
+	Acontece que é possivel precisar especificar parametros do serviço - por exemplo,  escolher o dicionário 
+	em inglês - para isso basta usar <code>@Params</code> que recebe um array de strings to tipo 
+	"chave=valor" - por exemplo, <code>@Params("lang=en")</code>.
+	Imagine agora que está tentando injetar uma String. Este é um dos objetos mais usados em Java, portanto 
+	qual delas usar ? O injetor  irá procurar no escopo de propriedades e poderia usar 
+	<code>@Params("name=chaveDaMensagem")</code> para escolher a chave. Para simplificar, use 
+	<code>@Name(chaveDaMensagem")</code>. 
+	O <code>@Name</code> pode ser ainda usado para o escopo de nomes e diretórios, no escopo web ou para 
+	destinguir dois objetos que mapeiam a mesma classe.  Repare que não existem ids como no Spring. 
+	O <code>@Name</code> apenas precisa ser usado em caso de ambiguidade. No caso padrão não haverá problema.
+	</p>
+	<p>
+	<source>
+	public void simpleTest(){
+		final MockDisplay md = new MockDisplay();
+		
+		// obter diretamente do ServiceRegistry para comodidade de teste
+		ServiceRegistry.getService(WiringService.class).getObjectPool()
+		.addConfiguration(new BindConfiguration(){ // configura vinculos
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(Displayer.class).toInstance(md);
+				binder.bind(Message.class).to(HelloMessage.class);
+				binder.bindProperty(String.class).named("hello.message").toInstance("Hello");
+				binder.bindProperty(String.class).named("hello.name").toInstance("World");
+			}
+			
+		})
+		.getInstance(Greeter.class) // obtem objeto
+		.sayHello(); // invoca método no objeto
+		
+		assertEquals("Hello, World", md.getSaing());
+	}
+	</source>
+	Neste exemplo podemos ver como vincular classes a instancias e classes de implementação.
+	também podemos ver como vincular instancias a classes usando o argumento named.
+	<source>
+	
+	public void testWiringServiceWithParams(){
+		
+
+		ObjectPool pool = this.getWriringContext()
+		.addConfiguration(new BindConfiguration(){
+
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(DictionaryService.class).in(Service.class);
+				binder.bindScope(Service.class, ServiceScope.class);
+			}
+			
+		});
+		
+
+		ServiceContext serviceContext = pool.getInstance(ServiceContext.class);
+		
+		ParamsMap paramsEn = new ParamsMap();
+		paramsEn.put("lang", "en");
+		serviceContext.register(DictionaryService.class, new HashDictionaryService("en"),paramsEn);
+		
+		ParamsMap paramsPT = new ParamsMap();
+		paramsPT.put("lang", "pt");
+		serviceContext.register(DictionaryService.class, new HashDictionaryService("pt"),paramsPT);
+		
+		
+		DictionaryService enDic = pool.getInstance(DictionaryService.class, paramsEn);
+		
+		assertEquals("en", enDic.getLang());
+		
+		DictionaryService ptDic = pool.getInstance(DictionaryService.class, paramsPT);
+		
+		assertEquals("pt", ptDic.getLang());
+		
+		// with no params the service scope will choose one of the existing implementations
+		DictionaryService eDic = pool.getInstance(DictionaryService.class);
+		
+		assertNotNull(eDic);
+		
+	}
+	</source>
+	Neste exemplo podemos ver como vincular escopos e como usar parametros para diferenciar entre implementações.
+	</p>
+	</section>
+	
+	<section name="Por detrás dos panos" >
+	<p>
+	Este toolbox é completamente implementado com recursos da plataforma Java sem utilizar nenhuma API externa. 
+	Isto é proposital. Primeiro por causa da diretiva principal de isolar tecnologias. Segundo porque as API que existem
+	não são suficientemente genéricas. Afinal anotações amarram o seu código aos frameworks tanto quanto implementar
+	interfaces ou extender classes. É uma questão de quanto amarram, e não se amarram ou não. Isto é um grande problema.
+	Imagine que você já tem um conjunto de classes que quer injetar e ver injetadas no seu novo sistema construido como 
+	MiddleHeaven. O MiddleHeaven não pode lhe exigir que coloque anotações em todas elas. Isso implica em alterar o codigo 
+	original. Por isto o MiddleHeaven tem que permitir extender-se até às suas necessidades. 
+	</p>
+	</section>
+	</body>
+</document>
