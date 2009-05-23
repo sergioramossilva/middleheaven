@@ -81,7 +81,8 @@ public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implem
 	
 	public DecimalMeasure<E> plus(DecimalMeasure<E> other) throws IncompatibleUnitsException {
 		assertCompatible (other);
-		return new DecimalMeasure<E>(other.amount().plus(this.amount), this.uncertainty.plus(other.uncertainty) , this.unit.plus(other.unit()));
+		DecimalMeasure<E> convertedOther = other.convertTo(this.unit);
+		return new DecimalMeasure<E>(convertedOther.amount().plus(this.amount), this.uncertainty.plus(convertedOther.uncertainty) , this.unit.plus(convertedOther.unit()));
 	}
 	
 	public DecimalMeasure<E> minus(DecimalMeasure<E> other) throws IncompatibleUnitsException {

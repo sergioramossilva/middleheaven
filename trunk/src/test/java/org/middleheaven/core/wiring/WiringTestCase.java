@@ -5,14 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.wiring.BindConfiguration;
-import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.ObjectPool;
-import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.core.wiring.mock.C;
 import org.middleheaven.core.wiring.mock.CyclicDisplayer;
@@ -110,17 +105,7 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 		
 		// obtain the service it self from wiring
 		
-		ObjectPool context = this.getWiringService().getObjectPool()
-		.addConfiguration(new BindConfiguration(){
-
-			@Override
-			public void configure(Binder binder) {
-				binder.bindScope(Service.class , ServiceScope.class);
-				binder.bind(WiringService.class).in(Service.class);
-			
-			}
-			
-		});
+		ObjectPool context = this.getWiringService().getObjectPool();
 		
 		WiringService inj1 =  context.getInstance(WiringService.class);
 		

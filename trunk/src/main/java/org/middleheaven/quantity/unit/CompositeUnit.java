@@ -1,5 +1,6 @@
 package org.middleheaven.quantity.unit;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,16 +17,18 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 			return SI.DIMENTIONLESS.cast();
 		} else if (exponent>0){
 			 Unit<T> a = unit.cast();
+			 Unit<T> s = unit.cast();
 			 for (int i = 1 ; i < exponent ; i++){
-				 a = a.times(a);
+				 s = s.times(a);
 			 }
-			 return a;
+			 return s;
 		} else {
 			Unit<T> a = unit.cast();
-			 for (int i = 1 ; i < -exponent ; i++){
-				 a = a.over(a);
+			Unit<T> s = unit.cast();
+			 for (int i = 0 ; i <= -exponent ; i++){
+				 s = s.over(a);
 			 }
-			 return a;
+			 return s;
 		}
 	}
 	
@@ -68,14 +71,14 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 	}
 	
 
-	private TreeMap<String,UnitPower> units = new TreeMap<String,UnitPower>();
+	private HashMap<String,UnitPower> units = new HashMap<String,UnitPower>();
 	
 	private Dimension<E> currentDimention = Dimension.DIMENTIONLESS.simplify();
 	
 	CompositeUnit(){}
 	CompositeUnit(CompositeUnit<E> other){
 		//	clone 
-		this.units = (TreeMap) other.units.clone();
+		this.units = (HashMap) other.units.clone();
 		this.currentDimention = other.currentDimention;
 
 	}
@@ -126,7 +129,7 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 	}
 
 	@Override
-	public boolean equals(Unit<E> other) {
+	public boolean equals(Unit<?> other) {
 		return other instanceof CompositeUnit && equals((CompositeUnit<?>)other);
 	}
 	

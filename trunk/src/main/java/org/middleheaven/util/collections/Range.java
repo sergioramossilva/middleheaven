@@ -19,7 +19,7 @@ import org.middleheaven.util.classification.NegationClassifier;
  * Provides mathematic interval semantics and operations 
  * 
  */
-public class Range<T> extends Interval<T> implements Enumerable<T> {
+public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnumerable<T> {
 
 
 	private Incrementor<? super T> incrementor;

@@ -19,19 +19,18 @@ import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
 import org.middleheaven.storage.DataStorageServiceActivator;
+import org.middleheaven.util.StopWatch;
 
 /**
  * This is the entry point for all applications
  * Subclasses of <code>ExecutionEnvironmentBootstrap</code> implement
  * bootstrap in different execution environments and allow
- * the applications execution to be environment independent.
+ * for the application's execution to be environment independent.
  * 
  *
  */
 public abstract class ExecutionEnvironmentBootstrap {
 
-	
-	//private ListServiceContextConfigurator configurator = new ListServiceContextConfigurator();
 	private SimpleBootstrapService bootstrapService;
 	private RegistryServiceContext serviceRegistryContext;
 	
@@ -41,8 +40,8 @@ public abstract class ExecutionEnvironmentBootstrap {
 	public final void start(LogBook log){
 		bootstrapService = new SimpleBootstrapService(this);
 		
-		long time = System.currentTimeMillis();
-		
+		StopWatch watch = StopWatch.start();
+
 		serviceRegistryContext = new RegistryServiceContext(log);
 
 		doBeforeStart();
@@ -71,7 +70,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 		.addActivator(LoggingActivator.class)
 		.addActivator(FileRepositoryActivator.class)
 		.addActivator(DataStorageServiceActivator.class);
-		
+
 		wiringService.addActivatorScanner(scanner);
 		
 		// file aware scannaer
@@ -92,7 +91,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 		
 		container.start(this);
 
-		log.info("Environment inicialized in " + (System.currentTimeMillis()-time) + " ms.");
+		log.info("Environment inicialized in " + watch.mark().toString() + ".");
 		bootstrapService.fireBootupEnd();
 	}
 
@@ -150,9 +149,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 		public ExecutionEnvironmentBootstrap getEnvironmentBootstrap() {
 			return executionEnvironmentBootstrap;
 		}
-
-
-		
+	
 	}
 	
 	public final void stop(){

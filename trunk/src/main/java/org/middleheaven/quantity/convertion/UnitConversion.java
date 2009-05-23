@@ -5,10 +5,15 @@ import java.util.Map;
 
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measurables.Measurable;
+import org.middleheaven.quantity.measurables.Volume;
+import org.middleheaven.quantity.measure.DecimalMeasure;
 import org.middleheaven.quantity.measure.Scalable;
+import org.middleheaven.quantity.unit.IncompatibleUnitsException;
+import org.middleheaven.quantity.unit.MultipleUnit;
 import org.middleheaven.quantity.unit.NonSI;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
+import org.middleheaven.util.conversion.ConvertionException;
 
 @SuppressWarnings("unchecked")
 public class UnitConversion {
@@ -23,6 +28,8 @@ public class UnitConversion {
 		addConverter(new AngleConverter());
 		addConverter( AditiveConverter.convert(SI.KELVIN, NonSI.CELSIUS,Real.valueOf("273.15")));
 		addConverter(new FahrenheitCelciusConverter());
+		addConverter( MultipltyConverter.convert(SI.CUBIC_METER, NonSI.LITRE,Real.valueOf("1000"))); // 1m3 = 1000L
+		
 	}
 	
 
@@ -37,13 +44,42 @@ public class UnitConversion {
 			return value;
 		}
 		
-		MapKey key = new MapKey(from ,to);
-		UnitConverter<E,T> converter = converters.get(key);
-		if (converter.resultUnit().equals(from)){
-			converter =  converter.inverse();
+		if (from instanceof MultipleUnit && to instanceof MultipleUnit){
+
+			DecimalMeasure<E> df = ((MultipleUnit)from).reduceToUnit();
+			DecimalMeasure<E> dto = ((MultipleUnit)to).reduceToUnit();
+			
+			return value.times(dto.times(df).amount(), df.unit());
+		
+		} else if (from instanceof MultipleUnit && !(to instanceof MultipleUnit)){
+			MultipleUnit mfrom = (MultipleUnit)from;
+			if(mfrom.getBaseUnit().equals(to)){
+				DecimalMeasure<E> df = ((MultipleUnit)from).reduceToUnit();
+				return value.times(df.amount(), df.unit());
+			} else {
+				throw new ConvertionException(new IncompatibleUnitsException(from, to));
+			}
+			
+		} else if (!(from instanceof MultipleUnit) && to instanceof MultipleUnit){
+			MultipleUnit mto = (MultipleUnit)to;
+			if(mto.getBaseUnit().equals(from)){
+				DecimalMeasure<E> dto = ((MultipleUnit)to).reduceToUnit();
+				return value.over(dto.amount(), to);
+			} else {
+				throw new ConvertionException(new IncompatibleUnitsException(from, to));
+			}
+		}else {
+			MapKey key = new MapKey(from ,to);
+			UnitConverter<E,T> converter = converters.get(key);
+			if (converter.resultUnit().equals(from)){
+				converter =  converter.inverse();
+			}
+			
+			return converter.convertFoward(value);
 		}
 		
-		return converter.convertFoward(value);
+		
+		
 	}
 	
 	public static class MapKey {

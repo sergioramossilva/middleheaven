@@ -61,7 +61,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 		
 		if(root.getType().isFolder()){
 
-			root.children().findAll(new BooleanClassifier<ManagedFile>(){
+			allFiles.addAll(root.children().findAll(new BooleanClassifier<ManagedFile>(){
 
 				@Override
 				public Boolean classify(ManagedFile file) {
@@ -73,8 +73,8 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 					return Boolean.FALSE;
 				}
 
-			});
-		} else {
+			}));
+		} else if(root.exists()){
 			allFiles.add(root);
 		}
 

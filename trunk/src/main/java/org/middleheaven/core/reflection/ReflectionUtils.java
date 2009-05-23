@@ -328,7 +328,7 @@ public final class ReflectionUtils {
 		// read all methods in the hierarchy
 		Set<Annotation> all = new HashSet<Annotation>();
 		Class<?> superType = type;
-		while (!superType.equals(Object.class)){
+		while (superType!=null && !superType.equals(Object.class)){
 			all.addAll(Arrays.asList(superType.getAnnotations())); // pannotations in class
 			for (Class<?> in : superType.getInterfaces()){
 				// annotations in interfaces

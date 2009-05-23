@@ -29,7 +29,7 @@ public class PropertyResolver<T> implements Resolver<T> {
 			}
 		}
 
-		throw new CannotResolveException(query.getContract());
+		throw new CannotResolveException(query.getContract(), name);
 	}
 
 	public void setProperty(String name, Object value){

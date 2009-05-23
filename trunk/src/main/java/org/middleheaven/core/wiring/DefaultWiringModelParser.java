@@ -54,8 +54,10 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 				@Override
 				public Boolean classify(Annotation a) {
-					return a.annotationType().isAnnotationPresent(BindingSpecification.class) ||
-					a.annotationType().isAnnotationPresent(ScopeSpecification.class);
+					return a.annotationType().equals(BindingSpecification.class) ||
+					a.annotationType().equals(ScopeSpecification.class) ||
+					a.annotationType().equals(Name.class) || 
+					a.annotationType().equals(Params.class); 
 				}
 
 			});
@@ -68,14 +70,19 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 		Set<Field> fields = ReflectionUtils.allAnnotatedFields(type, annotations);
 
 		for (Field f : fields){
-			Set<Annotation> specs = ReflectionUtils.getAnnotations(f, Wire.class);
+		
+			
+			WiringSpecification spec = readParamsSpecification(f, new BooleanClassifier<Annotation>(){
 
-			WiringSpecification<?> spec = WiringSpecification.search(f.getType(), specs);
-			
-			Wire wire = ReflectionUtils.getAnnotation(f, Wire.class);
-			
-			spec.setRequired(wire.required());
-			spec.setShareable(wire.shareabled());
+				@Override
+				public Boolean classify(Annotation a) {
+					return a.annotationType().equals(Wire.class) ||
+					a.annotationType().equals(ScopeSpecification.class) ||
+					a.annotationType().equals(Name.class) || 
+					a.annotationType().equals(Params.class); 
+				}
+
+			});
 			
 			model.addAfterWiringPoint(new FieldWiringPoint(f,spec));
 		}
@@ -89,8 +96,10 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 				@Override
 				public Boolean classify(Annotation a) {
-					return a.annotationType().isAnnotationPresent(Wire.class) ||
-					a.annotationType().isAnnotationPresent(ScopeSpecification.class);
+					return a.annotationType().equals(Wire.class) ||
+					a.annotationType().equals(ScopeSpecification.class) ||
+					a.annotationType().equals(Name.class) || 
+					a.annotationType().equals(Params.class); 
 				}
 
 			});

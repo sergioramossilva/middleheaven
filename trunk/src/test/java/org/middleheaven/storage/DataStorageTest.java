@@ -39,16 +39,11 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 	
 	protected void configurateTest(SetActivatorScanner scanner) {
 
-		Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
-		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
-		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
-
+	
 		// Activator
-		ActivatorBagServiceDiscoveryEngine engine = new ActivatorBagServiceDiscoveryEngine();
-		engine.addActivator(DataSourceServiceActivator.class);
-		engine.addActivator(FileSequenceStorageActivator.class);
-		new ServiceContextConfigurator().addEngine(engine);
-
+		scanner.addActivator(DataSourceServiceActivator.class);
+		scanner.addActivator(FileSequenceStorageActivator.class);
+	
 		// Configured
 
 		DataSourceService srv = ServiceRegistry.getService(DataSourceService.class);

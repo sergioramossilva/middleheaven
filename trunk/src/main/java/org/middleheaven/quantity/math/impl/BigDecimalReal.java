@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.middleheaven.quantity.math.Real;
+import org.middleheaven.util.Hash;
 import org.middleheaven.util.Incrementable;
 
 public class BigDecimalReal extends Real{
@@ -218,6 +219,10 @@ public class BigDecimalReal extends Real{
 	@Override
 	protected boolean equalsSame(Real other) {
 		return equals((BigDecimalReal)other);
+	}
+	
+	public int hashCode(){
+		return Hash.hash(numerator).hash(denominator).hashCode();
 	}
 
 	@Override

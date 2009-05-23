@@ -19,7 +19,7 @@ public abstract class TimeZone {
 	}
 	
 	public final Period getRawOffsetPeriod(){
-		return  new Period(getRawOffset());
+		return  Period.miliseconds(getRawOffset());
 	}
 	
 	public abstract long getRawOffset();

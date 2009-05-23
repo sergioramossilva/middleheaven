@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.middleheaven.core.exception.UnimplementedMethodException;
+import org.middleheaven.quantity.measurables.Time;
 import org.middleheaven.quantity.unit.Dimension;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.SI;
@@ -17,7 +18,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		HOURS(MINUTES),
 		DAYS(HOURS), 
 		MONTHS(DAYS),
-		YEARS(MONTHS);
+		YEARS(MONTHS), ;
 
 		private DurationType next;
 		private DurationType(DurationType next){
@@ -57,8 +58,6 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		return new Duration ( this ).add(DurationType.DAYS, 7*weeks);
 	}
 	
-
-
 	public Duration days(int days){
 		return new Duration ( this ).add( DurationType.DAYS, days);
 	}
@@ -100,7 +99,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 	public Duration miliseconds(long ammount){
 		return new Duration ( this ).add(DurationType.MILISECONDS,ammount);
 	}
-
+	
 	public int years(){
 		return fields.get(DurationType.YEARS).intValue();
 	}
@@ -130,7 +129,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 	}
 
 	@Override
-	public Unit unit() {
+	public Unit<Time> unit() {
 		int count =0;
 		for (DurationType t : DurationType.values()){
 			if (fields.get(t)==null){
@@ -153,7 +152,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 					case MINUTES:
 						return Unit.unit(Dimension.TIME,"minute");
 					case MILISECONDS:
-						return SI.MILISECOND;
+						return SI.MILI(SI.SECOND);
 					}
 				}
 			}
@@ -233,7 +232,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 
 	public Duration plus(Period other) throws IncompatibleUnitsException {
 		Duration r = new Duration(this);
-		Long p = new Long(other.miliseconds);
+		Long p = new Long(other.milliseconds());
 		for (DurationType t : DurationType.values()){
 			if (fields.get(t)==null){
 				r.fields.put(t, sum(this.fields.get(t) , p ));
@@ -246,7 +245,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
 		for (DurationType t : DurationType.values()){
-			if (this.fields.get(t)!=null){
+			if (this.fields.get(t)!=null && fields.get(t).longValue()>0){
 				builder.append(fields.get(t)).append(' ');
 				switch (t){
 				case YEARS:
@@ -294,6 +293,8 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		
 		return (int)(t2.milliseconds()-t1.milliseconds());
 	}
+
+
 
 	
 
