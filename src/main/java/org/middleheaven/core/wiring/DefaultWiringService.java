@@ -36,7 +36,7 @@ import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
 import org.middleheaven.logging.Logging;
 
-
+@Service
 public class DefaultWiringService implements WiringService{
 
 
@@ -395,7 +395,8 @@ public class DefaultWiringService implements WiringService{
 
 				// add activator to context for future inactivation
 				activators.add(activator);
-
+			}catch (BindingException e){
+					throw new InicializationNotResolvedException();
 			}catch (RuntimeException e){
 				throw new InicializationNotPossibleException(e);
 			}

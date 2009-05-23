@@ -54,6 +54,7 @@ public class DependencyResolver {
 					it.remove();
 					newStack.addLast(dependable);
 				}  catch (InicializationNotPossibleException e){
+					log.warn("Impossible to inicialize " + dependable, e);
 					// dependencies will never be available
 					failedDependencies.add(dependable);
 					

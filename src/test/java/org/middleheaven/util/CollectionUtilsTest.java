@@ -16,6 +16,7 @@ import org.middleheaven.util.collections.Range;
 
 public class CollectionUtilsTest {
 
+
 	@Test
 	public void addToArray(){
 		String[] sample = {"a","b"};

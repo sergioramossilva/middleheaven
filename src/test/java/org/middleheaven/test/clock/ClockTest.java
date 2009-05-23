@@ -25,6 +25,16 @@ import org.middleheaven.work.scheduled.IntervalSchedule;
 public class ClockTest {
 
 	@Test
+	public void testPeriod() {
+		
+		Period p = Period.miliseconds(1000);
+		
+		assertEquals(1,p.seconds());
+		assertEquals(1000,p.milliseconds());
+		assertEquals(1000000000,p.nanoseconds());
+	}
+	
+	@Test
 	public void testStaticClock() {
 		long now = System.currentTimeMillis();
 		Clock clock = StaticClock.forTime(now);

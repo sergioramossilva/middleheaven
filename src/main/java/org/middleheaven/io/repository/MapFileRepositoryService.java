@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.repository.service.FileRepositoryService;
 
+
+@Service
 public class MapFileRepositoryService implements FileRepositoryService {
 
     private final Map<String,ManagedFile >  repositories = new HashMap<String,ManagedFile>();

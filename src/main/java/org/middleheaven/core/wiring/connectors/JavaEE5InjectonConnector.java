@@ -93,13 +93,7 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 			for (Field f : fields){
 				Set<Annotation> specs = ReflectionUtils.getAnnotations(f, Resource.class);
 				
-				model.addAfterWiringPoint(new FieldWiringPoint(f, WiringSpecification.search(f.getType(), specs)));
-			}
-
-			Set<Method> methods = ReflectionUtils.allAnnotatedMethods(type, Resource.class);
-
-			for (Method method : methods){
-				WiringSpecification[] params = readParamsSpecification(method, new BooleanClassifier<Annotation>(){
+				WiringSpecification spec = readParamsSpecification(f, new BooleanClassifier<Annotation>(){
 
 					@Override
 					public Boolean classify(Annotation a) {
@@ -108,7 +102,22 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 				
 				});
 				
-				model.addAfterWiringPoint(new MethodWiringPoint(method,null,params));
+				model.addAfterWiringPoint(new FieldWiringPoint(f, spec));
+			}
+
+			Set<Method> methods = ReflectionUtils.allAnnotatedMethods(type, Resource.class);
+
+			for (Method method : methods){
+				WiringSpecification[] spec = readParamsSpecification(method, new BooleanClassifier<Annotation>(){
+
+					@Override
+					public Boolean classify(Annotation a) {
+						return a.annotationType().equals(Resource.class);
+					}
+				
+				});
+				
+				model.addAfterWiringPoint(new MethodWiringPoint(method,null,spec));
 			}
 		}
 

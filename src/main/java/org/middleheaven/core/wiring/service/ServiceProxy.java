@@ -27,14 +27,19 @@ public class ServiceProxy<T> implements ServiceListener, InvocationHandler {
 		this.params = params;
 	}
 
+	
+	public void setImplementation(T implementation){
+		queue = new ArrayBlockingQueue<T>(1);
+		queue.offer(implementation);
+	}
+	
 	@Override
 	public void onEvent(ServiceEvent event) {
 	
 		
 		if (event.getServiceClass().equals(serviceClass) && CollectionUtils.equalContents(this.params, event.getParams())){
 			if ( ServiceEvent.ServiceEventType.ADDED.equals(event.getType())){
-				queue = new ArrayBlockingQueue<T>(1);
-				queue.offer(serviceClass.cast(event.getImplementation()));
+				setImplementation(serviceClass.cast(event.getImplementation()));
 			} else if (ServiceEvent.ServiceEventType.TEMPORARY_REMOVED.equals(event.getType())){
 				queue.clear();
 			} else if (ServiceEvent.ServiceEventType.REMOVED.equals(event.getType())){

@@ -17,11 +17,13 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceProxy;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.ParamsMap;
 
 public final class RegistryServiceContext implements ServiceContext{
 
@@ -117,7 +119,7 @@ public final class RegistryServiceContext implements ServiceContext{
 		}
 
 		// create and registry a proxy for the service
-		proxify(b);
+		proxify(b,implementation);
 		
 		try{
 			list.add(b); // add new binding
@@ -130,6 +132,9 @@ public final class RegistryServiceContext implements ServiceContext{
 				@Override
 				public void configure(Binder binder) {
 					binder.bind(serviceClass).in(Service.class).toInstance(implementation);
+					// register the ServiceContext 
+					binder.bind(ServiceContext.class).in(Service.class).toInstance(RegistryServiceContext.this);
+					binder.bind(ServiceContext.class).in(Shared.class).toInstance(RegistryServiceContext.this);
 				}
 
 			});
@@ -218,7 +223,7 @@ public final class RegistryServiceContext implements ServiceContext{
 		ServiceBinding<T> selected = selectedServiceBinding(serviceClass, properties);
 
 		if (selected !=null){
-			return proxify(selected);
+			return proxify(selected,null);
 		}
 
 		throw new ServiceNotFoundException(serviceClass.getName());
@@ -226,12 +231,16 @@ public final class RegistryServiceContext implements ServiceContext{
 
 	Map<ServiceKey, Object> proxies = new HashMap<ServiceKey, Object>();
 	
-	private <T> T proxify(ServiceBinding<T> binding){
+	private <T> T proxify(ServiceBinding<T> binding, T implementation){
 		ServiceKey key = new ServiceKey(binding.serviceClass,binding.properties);
 		T proxy = (T)proxies.get(key);
 		
 		if (proxy==null){
 			ServiceProxy<T> handler = new ServiceProxy<T>(binding.serviceClass,binding.properties);
+			
+			if(implementation!=null){
+				handler.setImplementation(implementation);
+			}
 			
 			this.addServiceListener(handler);
 			
@@ -258,7 +267,7 @@ public final class RegistryServiceContext implements ServiceContext{
 			if (properties==null || properties.isEmpty()){
 				this.properties = Collections.emptyMap();
 			} else if (!(properties instanceof SortedMap)){
-				this.properties = new TreeMap<String,String>(properties);
+				this.properties = new ParamsMap(properties);
 			} else {
 				this.properties = properties;
 			}

@@ -7,10 +7,12 @@ import org.middleheaven.quantity.unit.Unit;
 
 public final class MultipltyConverter<E extends Measurable,T extends Scalable<E,T>> extends AbstractUnitConverter<E,T>{
 
+
 	private Real factor;
 	
-	public static <E extends Measurable,I extends Scalable<E,I>> MultipltyConverter<E,I> convert(Unit<E> originalUnit, Unit<E> resultUnit,Real factor){
-		return new MultipltyConverter<E,I>(originalUnit, resultUnit, factor);
+	@SuppressWarnings("unchecked")
+	public static <E extends Measurable> MultipltyConverter<E,?> convert(Unit<E> originalUnit, Unit<E> resultUnit,Real factor){
+		return new MultipltyConverter(originalUnit, resultUnit, factor);
 	}
 
 	private MultipltyConverter(Unit<E> originalUnit, Unit<E> resultUnit,Real factor) {

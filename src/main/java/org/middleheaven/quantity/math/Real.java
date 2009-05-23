@@ -1,6 +1,8 @@
 package org.middleheaven.quantity.math;
 
 import org.middleheaven.quantity.math.structure.MathStructuresFactory;
+import org.middleheaven.quantity.unit.SI;
+import org.middleheaven.quantity.unit.Unit;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.collections.Range;
 
@@ -61,8 +63,12 @@ public abstract class Real extends Number<Real> implements  Comparable<Number<? 
 		return 1;
 	}
 	
+	public Range<Real> upTo(double other){
+		return Range.over(this, Real.valueOf(other), one());
+	}
+	
 	public Range<Real> upTo(Real other){
-		return Range.over(this, other, other.over(other));
+		return Range.over(this, other, one());
 	}
 	
 	public Range<Real> upTo(Real other, Real increment){
@@ -74,6 +80,26 @@ public abstract class Real extends Number<Real> implements  Comparable<Number<? 
 	 * @return real square root
 	 */
 	public abstract Real sqrt();
+
+	public Real raise(int exponent) {
+		if (exponent==0){
+			return Real.ONE();
+		} else if (exponent>0){
+			 Real a = this;
+			 Real s = this;
+			 for (int i = 1 ; i < exponent ; i++){
+				 s = s.times(a);
+			 }
+			 return s;
+		} else {
+			 Real a = this;
+			 Real s = this;
+			 for (int i = 0 ; i <= -exponent ; i++){
+				 s = s.over(a);
+			 }
+			 return s;
+		}
+	}
 	
 
 }

@@ -4,6 +4,8 @@ import org.middleheaven.util.classification.Classifier;
 
 public interface Enumerable<T> extends Iterable<T>, Walkable<T>{
 	
+	public int size();
+	public boolean isEmpty();
 	
 	public Enumerable<T> reject(Classifier<Boolean, T> classifier); 
 	

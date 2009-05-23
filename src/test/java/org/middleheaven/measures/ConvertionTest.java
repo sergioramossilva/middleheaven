@@ -1,4 +1,4 @@
-package org.middleheaven.test.measures;
+package org.middleheaven.measures;
 
 import static org.junit.Assert.*;
 

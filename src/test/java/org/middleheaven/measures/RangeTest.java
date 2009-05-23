@@ -1,4 +1,4 @@
-package org.middleheaven.test.measures;
+package org.middleheaven.measures;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -58,6 +58,13 @@ public class RangeTest {
 		assertFalse(S.intersects(R));
 		assertFalse(S.intersects(E));
 		
+	}
+	
+	@Test
+	public void testRaise() {
+		assertEquals(Real.valueOf(1),Real.valueOf(2).raise(0));
+		assertEquals(Real.valueOf(8),Real.valueOf(2).raise(3));
+		assertEquals(Real.valueOf("0.1"),Real.valueOf(10).raise(-1));
 	}
 	
 	@Test

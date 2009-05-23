@@ -1,4 +1,4 @@
-package org.middleheaven.test.measures;
+package org.middleheaven.measures;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -7,29 +7,83 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.middleheaven.quantity.math.Integer;
-import org.middleheaven.quantity.math.Matrix;
 import org.middleheaven.quantity.math.Real;
-import org.middleheaven.quantity.math.Vector;
-import org.middleheaven.quantity.math.impl.LUDecomposition;
 import org.middleheaven.quantity.measurables.Aceleration;
 import org.middleheaven.quantity.measurables.Area;
 import org.middleheaven.quantity.measurables.Distance;
 import org.middleheaven.quantity.measurables.Energy;
 import org.middleheaven.quantity.measurables.Force;
 import org.middleheaven.quantity.measurables.Mass;
+import org.middleheaven.quantity.measurables.Measurable;
 import org.middleheaven.quantity.measurables.Time;
 import org.middleheaven.quantity.measurables.Velocity;
+import org.middleheaven.quantity.measurables.Volume;
 import org.middleheaven.quantity.measure.AngularMeasure;
 import org.middleheaven.quantity.measure.DecimalMeasure;
+import org.middleheaven.quantity.measure.Measure;
 import org.middleheaven.quantity.money.Money;
 import org.middleheaven.quantity.unit.Dimension;
 import org.middleheaven.quantity.unit.IncompatibleDimentionException;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
+import org.middleheaven.quantity.unit.NonSI;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
 
 public class MeasuresTestSuit {
 
+	@Test
+	public void testUnitOperation(){
+		
+		SI.METER.plus(SI.METER);
+		SI.SECOND.plus(SI.SECOND);
+		
+	}
+	
+	@Test(expected=IncompatibleUnitsException.class)
+	public void testFailUnitOperation(){
+		Unit<Distance> meter = SI.METER;
+		Unit<Distance> milimeter = SI.MILI(SI.METER);
+		
+		meter.plus(milimeter);
+	}
+	
+	@Test
+	public void testMeasureOperations(){
+		
+		DecimalMeasure<Distance> threeM = DecimalMeasure.exact(Real.valueOf(3), SI.METER);
+		DecimalMeasure<Distance> sixM = DecimalMeasure.exact(Real.valueOf(6), SI.METER);
+		
+		assertEquals(sixM , threeM.plus(threeM));
+		
+		DecimalMeasure<Distance> mM = DecimalMeasure.exact(Real.valueOf("0.001"), SI.METER);
+		DecimalMeasure<Distance> threemM = DecimalMeasure.exact(Real.valueOf("3.001"), SI.METER);
+		
+		assertEquals(threemM , threeM.plus(mM));
+		
+		mM = DecimalMeasure.exact(Real.valueOf("1"), SI.MILI(SI.METER));
+		
+		assertEquals(threemM , threeM.plus(mM));
+		
+		// assume the first operand unit
+		assertEquals( SI.METER , threeM.plus(mM).unit());
+		assertEquals( SI.MILI(SI.METER) , mM.plus(threeM).unit());
+		
+	}
+	
+	@Test
+	public void testDifferentCompatibleUnits(){
+		DecimalMeasure<Volume> litres = DecimalMeasure.exact(Real.valueOf("5"), NonSI.LITRE);
+		DecimalMeasure<Volume> resultA = DecimalMeasure.exact(Real.valueOf("1005"), NonSI.LITRE);
+		Unit<Volume> d = SI.METER.raise(3);
+		DecimalMeasure<Volume> meters = DecimalMeasure.exact(Real.valueOf("1"), d);
+		DecimalMeasure<Volume> resultB = DecimalMeasure.exact(Real.valueOf("1.005"), d);
+		
+		assertEquals(resultA , litres.plus(meters) );
+		assertEquals(resultB , meters.plus(litres) );
+		
+		
+	}
+	
 	@Test
 	public void testAngularPosition(){
 		

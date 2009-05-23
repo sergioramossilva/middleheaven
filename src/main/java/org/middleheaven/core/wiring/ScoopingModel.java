@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.middleheaven.core.wiring.annotations.Default;
 import org.middleheaven.util.collections.ParamsMap;
 
 
@@ -34,7 +35,7 @@ public class ScoopingModel {
 
 		if (scopes.isEmpty()){
 			// add to default
-			scopes.add(DefaultScope.class);
+			scopes.add(Default.class);
 		} 
 		
 		for (Class<?> scope : scopes){
@@ -43,8 +44,9 @@ public class ScoopingModel {
 			binding.setTargetScope(scope);
 			binding.setResolver(new InstanceResolver<T>(t));
 		
+			Class<?> i =  type.getInterfaces()[0];
 			
-			WiringSpecification<T> spec = WiringSpecification.search(type,params);
+			WiringSpecification spec = WiringSpecification.search(i,params);
 
 			binder.getScopePool(binding).add(spec, t);
 		}

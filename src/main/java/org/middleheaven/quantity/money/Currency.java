@@ -2,10 +2,8 @@ package org.middleheaven.quantity.money;
 
 import java.util.Locale;
 
-import org.middleheaven.quantity.measurables.Measurable;
 import org.middleheaven.quantity.unit.CompositeUnit;
 import org.middleheaven.quantity.unit.Dimension;
-import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.Unit;
 
 public abstract class Currency extends Unit<org.middleheaven.quantity.measurables.Currency>{
@@ -35,25 +33,12 @@ public abstract class Currency extends Unit<org.middleheaven.quantity.measurable
 		return Dimension.CURRENCY;
 	}
 	
-	@Override
-	public Unit<org.middleheaven.quantity.measurables.Currency> minus(Unit<org.middleheaven.quantity.measurables.Currency> other) throws IncompatibleUnitsException {
-		return plus(other);
-	}
-	
-	@Override
-	public Unit<org.middleheaven.quantity.measurables.Currency> plus(Unit<org.middleheaven.quantity.measurables.Currency> other) throws IncompatibleUnitsException {
-		if (this.isCompatible(other)){
-			return this;
-		}
-		throw new IncompatibleUnitsException(this,other);
-	}
-	
 	public boolean equals (Object other){
 		return other instanceof Currency && equals((Currency)other);
 	}
 	
 	@Override
-	public boolean equals(Unit<org.middleheaven.quantity.measurables.Currency> other) {
+	public boolean equals(Unit<?> other) {
 		return other.dimension().equals(Dimension.CURRENCY) && equals((Currency)other);
 	}
 	
@@ -62,29 +47,10 @@ public abstract class Currency extends Unit<org.middleheaven.quantity.measurable
 	}
 	
 	@Override
-	public String toString() {
-		return this.symbol();
-	}
-	
-	@Override
 	public boolean isCompatible(Unit<?> other) {
 		return this.equals(other);
 	}
 	
-	@Override
-	public <C extends Measurable> Unit<C> cast() {
-		return (Unit<C>) this;
-	}
-
-	@Override
-	public <T extends Measurable> Unit<T> over(Unit<?> other) {
-		return CompositeUnit.over(this,other);
-	}
-
-	@Override
-	public <T extends Measurable> Unit<T> times(Unit<?> other) {
-		return CompositeUnit.times(this,other);
-	}
 
 	@Override
 	public Unit<org.middleheaven.quantity.measurables.Currency> raise(int value) {
