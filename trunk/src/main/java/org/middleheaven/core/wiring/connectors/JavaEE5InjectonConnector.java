@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.wiring.AbstractAnnotationBasedWiringModelParser;
 import org.middleheaven.core.wiring.ConnectableBinder;
@@ -41,8 +42,9 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 
 			//if (model.getConstructorPoint()==null){
 				// constructor
-				List<Constructor<T>> constructors =  ReflectionUtils.constructors( type);
-
+				List<Constructor<T>> constructors = Introspector.of(type).inspect()
+				.constructors().retrive().asList();
+				
 				if (constructors.size()==1){
 					Constructor constructor = constructors.get(0);
 					//ok, use this one

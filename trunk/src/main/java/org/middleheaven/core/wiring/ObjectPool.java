@@ -20,13 +20,16 @@ public interface ObjectPool {
 	 * Inspects the passed object and wire the correct dependencies defined for this object class
 	 * @param object whose dependencies are to be provided
 	 */
-	//public void wireMembers(Object object);
+	public void wireMembers(Object object);
 	
 	/**
 	 * Adds one or more <code>BindingConfiguration</code>s to this context. 
 	 * @param configuration one or more <code>BindingConfiguration</code> to be added to the context
 	 * @return this WiringContext correctly configurated.
 	 */
-	public ObjectPool addConfiguration(BindConfiguration ... configuration); 
+	public ObjectPool addConfiguration(BindConfiguration ... configuration);
+
+	
+
 
 }

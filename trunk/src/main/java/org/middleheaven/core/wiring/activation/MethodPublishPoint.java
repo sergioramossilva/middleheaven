@@ -30,6 +30,8 @@ public final class MethodPublishPoint implements PublishPoint {
 		return params;
 	}
 
-
+	public String toString(){
+		return method.getDeclaringClass().getName() + "#" + method.getName();
+	}
 
 }

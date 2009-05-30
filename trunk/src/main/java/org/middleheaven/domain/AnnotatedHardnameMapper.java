@@ -12,7 +12,7 @@ public class AnnotatedHardnameMapper extends HardnameMapper {
 	public String getFieldHardname(Class<?> type,	String logicFieldName) {
 		String hardName =null;
 		PropertyAccessor pa = ReflectionUtils.getPropertyAccessor(type,logicFieldName);
-		if(pa.isAnnotatedWith(Column.class)){
+		if(pa.isAnnotadedWith(Column.class)){
 			Column column = pa.getAnnotation(Column.class);
 			String columnName = column.value();
 			if (columnName.trim().isEmpty()){

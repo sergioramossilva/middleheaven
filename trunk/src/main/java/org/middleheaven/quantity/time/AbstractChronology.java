@@ -1,16 +1,19 @@
 package org.middleheaven.quantity.time;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 
 
 
 
 public abstract class AbstractChronology extends Chronology {
 
-	
+
 	@Override
 	public <T extends TimePoint> T add(T point, Period period) {
-		return reduce(timePointFor(point.milliseconds() + period.milliseconds()), ReflectionUtils.genericClass(point));
+		return reduce(
+				timePointFor(point.milliseconds() + period.milliseconds()),
+				Introspector.of(point).getType()
+		);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -19,26 +22,26 @@ public abstract class AbstractChronology extends Chronology {
 			return (T)d.toDate();
 		} 
 		return (T)d;
-		
+
 	}
-	
+
 	protected TimePoint now(){
 		return this.referenceClock.getTime();
 	}
-	
+
 	protected CalendarDateTime timePointFor(long milliseconds){
 		return new CalendarDateTime(TimeContext.getTimeContext(), milliseconds);
 	}
-	
+
 	protected Month month(int year, int month , int maxDaysInMonth){
-		 return new Month(year,month,maxDaysInMonth);
+		return new Month(year,month,maxDaysInMonth);
 	}
-	
+
 	protected Year year(int year,  int maxMonths){
-		 return new Year(this,year,maxMonths);
+		return new Year(this,year,maxMonths);
 	}
-	
+
 	protected DayOfWeek weekDay(int ordinal){
-		 return DayOfWeek.valueOf(ordinal);
+		return DayOfWeek.valueOf(ordinal);
 	}
 }

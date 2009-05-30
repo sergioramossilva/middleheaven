@@ -22,8 +22,19 @@ public class ClockTicked {
 	}
 
 	public void tick(TimePoint point ) {
+		RuntimeException firstException = null;
 		for (ClockTickListener c : listeners){
-			c.onTick(point);
+			try{
+				c.onTick(point);
+			} catch (RuntimeException e){
+				if(firstException==null){
+					firstException = e;
+				}
+			}
+		}
+		
+		if(firstException!=null){
+			throw firstException;
 		}
 	}
 }

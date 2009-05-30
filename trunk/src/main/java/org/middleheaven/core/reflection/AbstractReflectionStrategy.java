@@ -20,13 +20,13 @@ public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 		Collection<PropertyAccessor> result = new ArrayList<PropertyAccessor> ();
 		for (Method m : ReflectionUtils.getMethods(type)){
 			
-			if (!m.getName().startsWith("getClass") ){
-				if (m.getName().startsWith("get")){
+			if (!m.getName().startsWith("getClass") && m.getParameterTypes().length==0){
+				if (m.getName().startsWith("get") ){
 					result.add(getPropertyAccessor(type, m.getName().substring(3)));
 				} else if (m.getName().startsWith("is")){
 					result.add(getPropertyAccessor(type, m.getName().substring(2)));
 				}
-				
+
 			}
 
 		}

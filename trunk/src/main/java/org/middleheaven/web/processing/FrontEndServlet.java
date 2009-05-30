@@ -32,7 +32,8 @@ public class FrontEndServlet extends HttpServlet {
 	private void doService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
 		try{
-			ServletHttpServerService serverService = (ServletHttpServerService) ServiceRegistry.getService(HttpServerService.class);
+
+			ServletHttpServerService serverService = (ServletHttpServerService) this.getServletContext().getAttribute("httpService");
 		
 			serverService.processRequest(request, response);
 			

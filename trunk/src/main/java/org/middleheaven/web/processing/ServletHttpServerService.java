@@ -91,7 +91,9 @@ class ServletHttpServerService implements HttpServerService {
 		try{
 			Outcome outcome = processor.process(new  RequestResponseWebContext(request,response));
 			
-			if (outcome.isTerminal()){
+			if(outcome ==null){
+				response.sendError(HttpErrors.INTERNAL_SERVER_ERROR.errorCode());
+			} if (outcome.isTerminal()){
 				return; // do nothing. The response is already done
 			} else if (outcome.isError){
 				response.sendError(Integer.parseInt(outcome.getUrl()));

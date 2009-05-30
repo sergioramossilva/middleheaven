@@ -10,6 +10,7 @@ import javax.servlet.ServletContext;
 
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.namedirectory.NameDirectoryService;
@@ -32,14 +33,9 @@ public abstract class JBossContainer extends WebContainer {
         return "JBoss";
     }
 
-    @Override
-	public void stop(ExecutionEnvironmentBootstrap bootstrap) {
-		// TODO Auto-generated method stub
-		
-	}
     
     @Override
-    public void init(ExecutionEnvironmentBootstrap bootstrap) {
+    public void init(WiringService wiringService) {
  
         // Set JNDI default parameters
         System.setProperty("java.naming.factory.initial",  "org.jnp.interfaces.NamingContextFactory");

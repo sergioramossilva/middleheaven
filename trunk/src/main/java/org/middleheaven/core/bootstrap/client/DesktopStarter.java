@@ -6,7 +6,7 @@ package org.middleheaven.core.bootstrap.client;
 
 import java.io.File;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
@@ -25,7 +25,7 @@ public abstract class DesktopStarter {
 	
     public void execute(String[] args){
     	
-    	Container container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
+    	BootstrapContainer container = new DesktopUIContainer(ManagedFileRepositories.resolveFile(new File(".")));
         StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
         bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
        

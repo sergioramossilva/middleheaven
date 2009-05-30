@@ -32,21 +32,21 @@ public final class SimpleExecutableQuery<T> implements ExecutableQuery<T> {
 	
 	@Override
 	public long count() {
-		return list().size();
+		return findAll().size();
 	}
 
 	@Override
 	public T find() {
-		if (list().isEmpty()){
+		if (findAll().isEmpty()){
 			return null;
 		}
-		return list().iterator().next();
+		return findAll().iterator().next();
 	}
 	
 
 	@Override
 	public boolean isEmpty() {
-		return list().isEmpty();
+		return findAll().isEmpty();
 	}
 	
 
@@ -59,7 +59,7 @@ public final class SimpleExecutableQuery<T> implements ExecutableQuery<T> {
 	}
 
 	@Override
-	public Collection<T> list() {
+	public Collection<T> findAll() {
 		return executer.execute(this);
 	}
 

@@ -7,8 +7,7 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.core.Container;
-import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.StandaloneContainer;
 import org.middleheaven.domain.DomailModelBuilder;
@@ -18,9 +17,6 @@ import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.quantity.time.CalendarDate;
-import org.middleheaven.storage.DomainDataStorage;
-import org.middleheaven.storage.Query;
-import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.inmemory.InMemoryStoreKeeper;
 import org.middleheaven.util.identity.Identity;
@@ -35,19 +31,7 @@ public class NaiveStorageManagerTeste {
 	@Before
 	public void setUp(){
 		// bootstrap
-		Container container = new StandaloneContainer(ManagedFileRepositories.resolveFile(new File("."))){
-
-			@Override
-			public void start(ExecutionEnvironmentBootstrap bootstrap) {
-				// TODO implement Container.start
-				
-			}
-
-			@Override
-			public void stop(ExecutionEnvironmentBootstrap bootstrap) {
-				// TODO implement Container.stop
-				
-			}};
+		BootstrapContainer container = new StandaloneContainer(ManagedFileRepositories.resolveFile(new File("."))){};
 			
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));

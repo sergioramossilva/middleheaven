@@ -16,7 +16,7 @@ public final class EmptyQuery<T> implements Query<T>{
 	}
 
 	@Override
-	public Collection<T> list() {
+	public Collection<T> findAll() {
 		return Collections.emptyList();
 	}
 

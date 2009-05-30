@@ -25,7 +25,7 @@ class FastlaneQuery<T> implements Query<T> {
 	}
 
 	@Override
-	public Collection<T> list() {
+	public Collection<T> findAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

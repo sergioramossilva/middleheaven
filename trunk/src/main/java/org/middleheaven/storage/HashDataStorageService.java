@@ -9,6 +9,9 @@ package org.middleheaven.storage;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.middleheaven.core.wiring.service.Service;
+
+@Service
 public class HashDataStorageService implements DataStorageService{
 
 	private Map<String, DataStorage> storages = new TreeMap<String, DataStorage>();

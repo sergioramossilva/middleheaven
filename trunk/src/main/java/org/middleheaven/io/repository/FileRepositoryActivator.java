@@ -1,6 +1,6 @@
 package org.middleheaven.io.repository;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
@@ -31,7 +31,7 @@ public class FileRepositoryActivator extends Activator {
 
 	@Override
 	public void activate(ActivationContext context) {
-		Container container = bootstrapService.getEnvironmentBootstrap().getContainer(); 
+		BootstrapContainer container = bootstrapService.getEnvironmentBootstrap().getContainer(); 
 
 		fileRepositoryService.registerRepository(CommonRepositories.DATA, container.getAppDataRepository());
 		fileRepositoryService.registerRepository(CommonRepositories.APP_CONFIGURATION, container.getAppConfigRepository());

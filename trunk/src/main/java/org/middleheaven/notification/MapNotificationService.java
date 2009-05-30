@@ -6,8 +6,10 @@ package org.middleheaven.notification;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.events.EventListenersSet;
 
+@Service
 class MapNotificationService implements NotificationService,NotificationBroadcaster{
 
 	EventListenersSet<NotificationListener> listeners = EventListenersSet.newSet(NotificationListener.class);

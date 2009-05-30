@@ -43,7 +43,7 @@ public class MachineClock extends Clock {
 
 	Map<Schedule, ClockTicked> timers = new  HashMap<Schedule, ClockTicked>();
 	
-	Timer timer = new Timer();
+	final Timer timer = new Timer();
 	
 	
 	@Override

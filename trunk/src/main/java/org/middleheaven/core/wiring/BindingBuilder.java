@@ -1,7 +1,7 @@
 package org.middleheaven.core.wiring;
 import java.lang.annotation.Annotation;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.wiring.annotations.BindingSpecification;
 import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 
@@ -25,7 +25,7 @@ public class BindingBuilder<T> {
 	}
 	
 	public BindingBuilder<T> in(Class<? extends Annotation> scope){
-		if (!ReflectionUtils.isAnnotadedWith(scope, ScopeSpecification.class)){
+		if (!Introspector.of(scope).isAnnotadedWith(ScopeSpecification.class)){
 			throw new IllegalArgumentException(scope.getName() + " is not a " + ScopeSpecification.class.getName());
 		}
 		binding.setTargetScope(scope);

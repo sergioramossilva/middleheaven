@@ -4,14 +4,14 @@
  */
 package org.middleheaven.core.bootstrap.client;
 
-import org.middleheaven.core.Container;
-import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
 
 /**
- * @author  Sergio M. M. Taborda 
+ *
  */
-public abstract class StandaloneContainer implements Container {
+public class StandaloneContainer implements BootstrapContainer {
 
 	private ManagedFile repository;
 
@@ -49,7 +49,11 @@ public abstract class StandaloneContainer implements Container {
         return repository.resolveFile("bin");
     }
     
-    public void init(ExecutionEnvironmentBootstrap bootstrap){}
+    public void init(WiringService wiringService){}
 
+    @Override
+	public void start() {}
 
+	@Override
+	public void stop() {}
 }

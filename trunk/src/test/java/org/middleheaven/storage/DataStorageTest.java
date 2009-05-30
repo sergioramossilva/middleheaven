@@ -11,7 +11,7 @@ import java.util.Date;
 import javax.sql.DataSource;
 
 import org.junit.Test;
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.core.services.ServiceRegistry;
@@ -138,7 +138,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		assertNotNull(q.find());
 
 		int count=0;
-		for (Subject t : q.list()){
+		for (Subject t : q.findAll()){
 			count++;
 			assertTrue(t instanceof Subject);
 			assertNotNull(t.getName());

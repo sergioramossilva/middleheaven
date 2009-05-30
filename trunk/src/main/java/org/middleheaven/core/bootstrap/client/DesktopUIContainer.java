@@ -1,6 +1,5 @@
 package org.middleheaven.core.bootstrap.client;
 
-import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.io.repository.ManagedFile;
@@ -25,7 +24,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 		super(repository);
 	}
 
-	public void start(ExecutionEnvironmentBootstrap bootstrap){
+	public void start(){
 
 		try{
 			UIService uiService=ServiceRegistry.getService(UIService.class);
@@ -66,7 +65,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 	}
 
 	@Override
-	public void stop(ExecutionEnvironmentBootstrap bootstrap) {
+	public void stop() {
 		try{
 			UIService uiService=ServiceRegistry.getService(UIService.class);
 			

@@ -122,7 +122,7 @@ public class InMemoryStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 	public void remove(Criteria<?> criteria, StorableEntityModel model) {
 		Query all = this.createQuery(criteria, model, null);
 
-		this.remove(all.list(), model);
+		this.remove(all.findAll(), model);
 	}
 
 

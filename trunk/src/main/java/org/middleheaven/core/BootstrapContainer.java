@@ -6,19 +6,20 @@ package org.middleheaven.core;
 
 
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
 
 /**
- * @author  Sergio M.M. Taborda
+ * 
  */
-public interface  Container  {
+public interface  BootstrapContainer  {
 
 
     public String getEnvironmentName();
     
-    public void init(ExecutionEnvironmentBootstrap bootstrap);
-    public void start(ExecutionEnvironmentBootstrap bootstrap);
-    public void stop(ExecutionEnvironmentBootstrap bootstrap);
+    public void init(WiringService wiringService);
+    public void start();
+    public void stop();
     
     /**
      * 
@@ -50,6 +51,8 @@ public interface  Container  {
      * @return ManagedFile representing a folder where to read application classapth
      */
     public ManagedFile getAppClasspathRepository();
+
+
     
   
 }

@@ -1,5 +1,7 @@
 package org.middleheaven.work.scheduled;
 
+import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.logging.Logging;
 import org.middleheaven.quantity.time.Clock;
 import org.middleheaven.quantity.time.TimeContext;
 import org.middleheaven.quantity.time.TimePoint;
@@ -7,13 +9,15 @@ import org.middleheaven.quantity.time.clocks.ClockTickListener;
 import org.middleheaven.quantity.time.clocks.StaticClock;
 import org.middleheaven.work.Work;
 
+@Service
 public class AlarmClockScheduleWorkExecutionService implements ScheduleWorkExecutorService {
 
 	AlarmClock clock;
+
 	public AlarmClockScheduleWorkExecutionService(){
 		this(TimeContext.getTimeContext().getReferenceClock());
 	}
-	
+
 	public AlarmClockScheduleWorkExecutionService(Clock clock){
 		this.clock = new AlarmClock(clock);
 	}
@@ -26,7 +30,7 @@ public class AlarmClockScheduleWorkExecutionService implements ScheduleWorkExecu
 	private static class AlarmScheduledWorkContext implements ScheduledWorkContext{
 
 		Clock clock;
-		
+
 		public AlarmScheduledWorkContext(Clock clock) {
 			super();
 			this.clock = clock;
@@ -41,22 +45,30 @@ public class AlarmClockScheduleWorkExecutionService implements ScheduleWorkExecu
 		public Clock clock() {
 			return clock; 
 		}
-		
+
+		@Override
+		public ScheduledWorkContext getScheduledWorkContext() {
+			return this;
+		}
+
 	}
-	
+
 	private static class WorkTask implements ClockTickListener{
 
 		Work work;
-		
+
 		public WorkTask(Work work) {
 			this.work = work;
 		}
 
 		@Override
 		public void onTick(TimePoint point) {
-			
-			work.execute(new AlarmScheduledWorkContext(StaticClock.forTime(point)));
+			try{
+				work.execute(new AlarmScheduledWorkContext(StaticClock.forTime(point)));
+			}catch (Exception e){
+				Logging.getBook("Schedule work").error("Unexpected exception executing " + work.getClass(),e);
+			}
 		}
-		
+
 	}
 }

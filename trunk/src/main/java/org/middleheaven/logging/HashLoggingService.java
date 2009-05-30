@@ -4,12 +4,14 @@ package org.middleheaven.logging;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.logging.config.LoggingConfigurator;
 
 /**
  * @author  Sergio M. M. Taborda 
  */
+@Service
 public class HashLoggingService  implements LoggingService{
 
 

@@ -6,7 +6,7 @@ import java.io.File;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.global.Culture;

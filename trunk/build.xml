@@ -15,9 +15,15 @@
     </target>
 	
 	<target name="jar" depends="compile" >
+		
+		<copy  todir="target/classes/META-INF" >
+			<fileset dir="META-INF"/>
+		</copy>
+		
 		<jar destfile="middleheaven.jar"
 		       basedir="target/classes"
 		       excludes="**/*Test.class"
+			filesetmanifest="merge"
 		/>
 
 	

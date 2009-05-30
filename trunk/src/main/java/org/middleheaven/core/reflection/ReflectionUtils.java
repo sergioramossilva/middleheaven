@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -33,7 +32,7 @@ public final class ReflectionUtils {
 
 	public static boolean isInClasspath(String className) {
 		try {
-			Class.forName(className);
+			Class.forName(className, false, ReflectionUtils.class.getClassLoader());
 			return true;
 		} catch (ClassNotFoundException e) {
 			return false;
@@ -110,6 +109,7 @@ public final class ReflectionUtils {
 		}
 	}
 
+	/*
 	public static <T> T copy(T original , T copy ){
 
 		for (PropertyAccessor fa :  getPropertyAccessors(original.getClass())){
@@ -117,6 +117,7 @@ public final class ReflectionUtils {
 		}
 		return copy;
 	}
+	*/
 
 	public static PropertyAccessor getPropertyAccessor(Class<?> type, String fieldName){
 		return stategy.getPropertyAccessor(type, fieldName);
@@ -188,13 +189,21 @@ public final class ReflectionUtils {
 		}
 	}
 
+	public static <T> T newInstance(String className , Class<T> type, ClassLoader cloader) {
+		try {
+			return  type.cast(newInstance(Class.forName(className, true, cloader)));
+		} catch (ClassNotFoundException e) {
+			throw new ClassNotFoundReflectionException("Class " + className  + " has not found");
+		}
+	}
+	
 	public static <T> T newInstance(String className, Class<T> type) throws ClassNotFoundReflectionException {
-
 		try {
 			return  type.cast(newInstance(Class.forName(className)));
 		} catch (ClassNotFoundException e) {
 			throw new ClassNotFoundReflectionException("Class " + className  + " has not found");
 		}
+	
 	}
 
 	public static <T> T newInstance(Class<T> klass, Object ... args) throws ReflectionException{
@@ -296,11 +305,13 @@ public final class ReflectionUtils {
 
 		return annotated;
 	}
-
+	
+	/*
 	public static boolean isAnnotadedWith(Class<?> candidate,Class<? extends Annotation> annotationClass) {
 		return candidate.isAnnotationPresent(annotationClass);
 	}
 
+	
 	public static <A extends Annotation> A getAnnotation(Class<?> annotated, Class<A> annotationClass){
 		return annotated.getAnnotation(annotationClass);
 	}
@@ -308,13 +319,16 @@ public final class ReflectionUtils {
 	public static <A extends Annotation> A getAnnotation(AccessibleObject obj, Class<A> annotationClass){
 		return obj.getAnnotation(annotationClass);
 	}
+	*/
 
+	/*
 	public static <A extends Annotation> A getAnnotation(Field field, Class<A> annotationClass) {
 		if (field.isAnnotationPresent(annotationClass)){
 			return field.getAnnotation(annotationClass);
 		}
 		return null;
 	}
+	*/
 
 	public static Class<?>[] typesOf (Object[] objs ){
 		Class<?>[] classes = new Class<?>[objs.length];
@@ -430,6 +444,7 @@ public final class ReflectionUtils {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
+	/*
 	public static <T> List<Constructor<T>> constructors(Class<T> type){
 		Constructor<T>[] constructors = (Constructor<T>[])type.getConstructors();
 
@@ -444,6 +459,7 @@ public final class ReflectionUtils {
 
 		return Arrays.asList(constructors);
 	}
+	*/
 
 
 	private static Map<String, Map<MethodKey , Method >> classMethods = new WeakHashMap<String, Map<MethodKey , Method >>();
@@ -520,10 +536,13 @@ public final class ReflectionUtils {
 
 	}
 
+	/*
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> genericClass(T object) {
 		return (Class<T>) object.getClass();
 	}
+	*/
+
 
 
 

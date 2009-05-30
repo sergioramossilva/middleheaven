@@ -36,7 +36,7 @@ public class LogicComposedClassifier<T> implements BooleanClassifier<T>{
         return filters.size();
     }
 
-    public LogicComposedClassifier<T> addFilter(BooleanClassifier<T> filter){
+    public LogicComposedClassifier<T> add(BooleanClassifier<T> filter){
         filters.add(filter);
         return this;
     }

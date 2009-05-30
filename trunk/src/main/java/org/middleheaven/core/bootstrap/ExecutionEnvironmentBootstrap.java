@@ -7,7 +7,7 @@ package org.middleheaven.core.bootstrap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.services.RegistryServiceContext;
 import org.middleheaven.core.wiring.DefaultWiringService;
 import org.middleheaven.core.wiring.WiringService;
@@ -15,11 +15,13 @@ import org.middleheaven.core.wiring.activation.ActivatorScanner;
 import org.middleheaven.core.wiring.activation.FileActivatorScanner;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.global.atlas.modules.AtlasActivator;
+import org.middleheaven.global.text.LocalizationServiceActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
 import org.middleheaven.storage.DataStorageServiceActivator;
 import org.middleheaven.util.StopWatch;
+import org.middleheaven.work.scheduled.AlarmClockScheduleWorkExecutionServiceActivator;
 
 /**
  * This is the entry point for all applications
@@ -48,7 +50,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 		log.trace("Resolving container");
 		
-		Container container = getContainer();
+		BootstrapContainer container = getContainer();
 		
 		log.info("Container resolved: " + container.getEnvironmentName());
 		
@@ -78,18 +80,23 @@ public abstract class ExecutionEnvironmentBootstrap {
 		wiringService.addActivatorScanner(fileScanner);
 
 		// call configuration
-		configuate(wiringService);
+		configurate(wiringService);
+		
+		// call container configuration
+		container.init(wiringService);
+
+		// activate services that can be overrriden by the container or final environment
+		SetActivatorScanner overrridableScanner = new SetActivatorScanner()
+		.addActivator(AlarmClockScheduleWorkExecutionServiceActivator.class)
+		.addActivator(LocalizationServiceActivator.class);
+		wiringService.addActivatorScanner(overrridableScanner);
 		
 		// can and activate all
 		wiringService.scan();
 		
-		// call container configuration
-		container.init(this);
-
-
 		doAfterStart();
 		
-		container.start(this);
+		container.start();
 
 		log.info("Environment inicialized in " + watch.mark().toString() + ".");
 		bootstrapService.fireBootupEnd();
@@ -99,7 +106,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 		// no-op
 	}
 
-	public void configuate(WiringService wiringService){
+	public void configurate(WiringService wiringService){
 		
 	}
 
@@ -169,7 +176,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 	protected void doBeforeStop(){};
 	protected void doAfterStop(){}; 
 
-	public abstract Container getContainer();
+	public abstract BootstrapContainer getContainer();
 
 
 	

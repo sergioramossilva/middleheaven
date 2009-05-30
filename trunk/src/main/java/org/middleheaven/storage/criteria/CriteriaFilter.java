@@ -35,7 +35,7 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 	private BooleanClassifier<T> logicCriterionAsFilter(LogicCriterion lc, StorableEntityModel model){
 		LogicComposedClassifier<T> lf =  new LogicComposedClassifier<T>(lc.getOperator());
 		for (Criterion c : lc ){
-			lf.addFilter(asFilter(c, model));
+			lf.add(asFilter(c, model));
 		}
 		return lf;
 	}

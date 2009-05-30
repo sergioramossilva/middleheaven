@@ -3,9 +3,9 @@ package org.middleheaven.events;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
-import org.middleheaven.core.reflection.ReflectionUtils;
 
 /**
  * 
@@ -18,7 +18,7 @@ public class EventListenersSet<L> {
 	
 	public static <T> EventListenersSet<T> newSet(Class<T> listenerType){
 		EventListenersSet<T> set = new EventListenersSet<T>();
-		set.listener  = ReflectionUtils.proxy(listenerType, new EventMethodHandler(set));
+		set.listener  = Introspector.of(listenerType).newProxyInstance(new EventMethodHandler(set));
 		return set;
 	}
 	

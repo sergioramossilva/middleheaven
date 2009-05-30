@@ -1,10 +1,10 @@
 package org.middleheaven.tool.test;
 
-import org.middleheaven.core.Container;
-import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
 
-public class TestContainer implements Container {
+public class TestContainer implements BootstrapContainer {
 
 	private ManagedFile repository;
 
@@ -42,17 +42,21 @@ public class TestContainer implements Container {
         return repository;
     }
     
-    public void init(ExecutionEnvironmentBootstrap bootstrap){}
-
 	@Override
-	public void start(ExecutionEnvironmentBootstrap bootstrap) {
+	public void start() {
 		// TODO implement Container.start
 		
 	}
 
 	@Override
-	public void stop(ExecutionEnvironmentBootstrap bootstrap) {
+	public void stop() {
 		// TODO implement Container.stop
+		
+	}
+
+	@Override
+	public void init(WiringService wiringService) {
+		// TODO implement BootstrapContainer.init
 		
 	}
 

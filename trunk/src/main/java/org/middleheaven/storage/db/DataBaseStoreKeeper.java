@@ -81,7 +81,7 @@ public final class DataBaseStoreKeeper extends AbstractSequencialIdentityStoreKe
 
 		@Override
 		public long count() {
-			return list().size();
+			return findAll().size();
 		}
 
 		@Override
@@ -91,13 +91,13 @@ public final class DataBaseStoreKeeper extends AbstractSequencialIdentityStoreKe
 		}
 
 		@Override
-		public Collection<T> list() {
+		public Collection<T> findAll() {
 			return findByCriteria(criteria,model);
 		}
 
 		@Override
 		public boolean isEmpty() {
-			return list().isEmpty();
+			return findAll().isEmpty();
 		}
 
 		@Override

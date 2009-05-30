@@ -3,6 +3,7 @@ package org.middleheaven.storage;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.util.identity.Identity;
@@ -51,7 +52,7 @@ public abstract class AbstractStoreKeeper implements StoreKeeper {
 		} else {
 			// not managed yet
 			p = ReflectionUtils.proxy(obj, new PersistableMethodHandler(obj.getClass()), Storable.class);
-			ReflectionUtils.copy(obj, p);
+			Introspector.of(obj).copyTo(p);
 		}
 		return p;
 	}

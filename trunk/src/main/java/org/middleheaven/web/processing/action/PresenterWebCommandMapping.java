@@ -365,7 +365,10 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				if (object==null){
 
 					// try to load from parameters
-					object =  new ContextAssembler(context, ContextScope.PARAMETERS).assemble(type);
+					object =  new ContextAssembler(
+							ServiceRegistry.getService(WiringService.class).getObjectPool(), 
+							context,
+							ContextScope.PARAMETERS).assemble(type);
 				}
 			}
 			return object;

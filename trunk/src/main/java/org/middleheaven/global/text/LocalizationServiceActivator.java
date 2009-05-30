@@ -8,12 +8,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.CultureModel;
 
@@ -21,7 +22,7 @@ import org.middleheaven.global.CultureModel;
 /**
  *
  */
-public class LocalizationServiceProvider extends Activator{
+public class LocalizationServiceActivator extends Activator{
 
 	RepositoryDomainBundle masterBundle;
 
@@ -41,7 +42,7 @@ public class LocalizationServiceProvider extends Activator{
 	
 	@Override
 	public void activate(ActivationContext context) {
-		Container environment = bootstrapService.getEnvironmentBootstrap().getContainer();
+		BootstrapContainer environment = bootstrapService.getEnvironmentBootstrap().getContainer();
 
 		RepositoryDomainBundle masterBundle = new RepositoryDomainBundle();
 		masterBundle.setRepository(environment.getEnvironmentConfigRepository());
@@ -59,6 +60,7 @@ public class LocalizationServiceProvider extends Activator{
 		service = null;
 	}
 
+	@Service
 	private class LocalizationServiceImpl implements LocalizationService{
 
 		public CultureModel getApplicationCultureModel(Object applicationID) {
