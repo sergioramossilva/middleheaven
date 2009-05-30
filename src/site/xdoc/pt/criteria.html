@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<body>
+<body>
+	<h2>Criteria Toolbox</h2>
+	<p align="justify">
+	Será raro o software de negócio que não trabalhe com algum tipo de dado. Uma das operações mais comuns 
+	neste tipo de sistema é concerteza a de procurar dados conforme alguma critério. A <toolbox>Criteria Tooblox</toolbox> é a
+	resposta do MiddleHeaven a como definir, de forma independente, um critério de busca de dados.
+	</p>
+	<p align="justify">
+	A <toolbox>Criteria Tooblox</toolbox> especializa-se em construir objectos <font face="courier">Criteria</font>. "Criteria" é o plural de "Criterion" (critério), portanto,
+	um objecto de criteria é uma conjunto de objectos criterion. O objecto <font face="courier">Criteria</font> segue o padrão <b>QueryObject</b>
+	em que um objecto unico contém toda a informação necessária para definir uma pesquisa contra um repositorio de dados. 
+	</p>
+	<p align="justify">
+	A construção de um objecto <font face="courier">Criteria</font> é mediada por um <font face="courier">CriteriaBuilder</font> que segue o padrão <b>Builder</b>
+	Isso torna a construção simples, fluente e fortemente tipada.
+	</p>
+	<p align="justify">
+	A <toolbox>Criteria Tooblox</toolbox> constroi critérios de pesquisa baseados em objectos.
+	</p>
+	
+	<h2>Pesquisas</h2>
+	<h3>Todos</h3>
+	<p align="justify">
+	A primeira pesquisa que queremos conseguir é obter todas as instancias
+	de uma certa classe que possam existir no repositorio. Para uma classe <font face="courier">Subject</font>
+	teriamos:
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">  </font>
+<font color="#000000">Criteria&lt;Subject&gt; all = CriteriaBuilder.search</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<font color="#000000">.all</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 1: </td>
+</tr>
+</table>
+	Que se pode ler como "Pesquisa (<i class="estrang">search</i>) por objecto da classe Subject e obtém todos (<i class="estrang">all</i>)".
+	</p>
+	O método <font face="courier">search</font> é estático, portanto, se desejar pode usar o recurso de importe estático (<i class="estrang">import static</i>)
+	e simplificar o codigo :
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">  </font>
+<font color="#000000">Criteria&lt;Subject&gt; all = search</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<font color="#000000">.all</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 2: </td>
+</tr>
+</table>
+	Contudo, esta opção não é recomendada já que as Boas Práticas indicam que métodos estáticos devem ser chamados explicitamente
+	na interface que os define. Você decide.
+	<p align="justify">
+	Esta pesquisa é simples, mas normalmente gostariamos de mais algum refinamento.
+	</p>
+	
+	<h3>Por atributos</h3>
+	<p align="justify">
+	Como o critério apenas será aplicado a objetos a forma de refinar a pesquisa é estabelecendo
+	restrições para os seus atributos. Imaginemos que Subject tem um atributo "name". A pesquisa
+	sequinte encontrará "Todos os Subject cujo <i class="estrang">name</i> <i>não é</i> exactamente <i>Brian</i>"
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">  </font>
+<font color="#000000">Criteria&lt;Subject&gt; brians = search</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">    </font>
+<font color="#000000">.and</font>
+<font color="#000000">(</font>
+<font color="#990000">"name"</font>
+<font color="#000000">)</font>
+<font color="#000000">.not</font>
+<font color="#000000">()</font>
+<font color="#000000">.eq</font>
+<font color="#000000">(</font>
+<font color="#990000">"Brian"</font>
+<font color="#000000">)</font>
+<br/>
+<font color="#808080">4</font> <font color="#ffffff">    </font>
+<font color="#000000">.all</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">5</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 3: </td>
+</tr>
+</table>
+	O operador <font face="courier">and</font> adiciona a restrição pelo nome à pesquisa original que sempre encontra todos.
+	O operador <font face="courier">not</font> nega o operador seguinte, no caso o operado de igualdade, gerando o operador "diferente de".
+	</p>
+	<p align="justify">
+	Podemos restringir a pesquisa o quanto quisermos:
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">  </font>
+<font color="#000000">Criteria&lt;Subject&gt; danielAtivos = CriteriaBuilder.search</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">        </font>
+<font color="#000000">.and</font>
+<font color="#000000">(</font>
+<font color="#990000">"name"</font>
+<font color="#000000">)</font>
+<font color="#000000">.not</font>
+<font color="#000000">()</font>
+<font color="#000000">.startsWith</font>
+<font color="#000000">(</font>
+<font color="#990000">"Daniel"</font>
+<font color="#000000">)</font>
+<br/>
+<font color="#808080">4</font> <font color="#ffffff">        </font>
+<font color="#000000">.and</font>
+<font color="#000000">(</font>
+<font color="#990000">"active"</font>
+<font color="#000000">)</font>
+<font color="#000000">.not</font>
+<font color="#000000">()</font>
+<font color="#000000">.eq</font>
+<font color="#000000">(</font>
+<font color="#0000c0">
+<b>false</b>
+</font>
+<font color="#000000">)</font>
+<br/>
+<font color="#808080">5</font> <font color="#ffffff">        </font>
+<font color="#000000">.all</font>
+<font color="#000000">()</font>
+<br/>
+<font color="#808080">6</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 4: </td>
+</tr>
+</table>
+	O operador "and" pode ser utilizado repetidamente. Note-se que escrevemos
+	uma dupla negação procurando pelos Subject cujo atributo "active" não é falso.
+	Isto pode parecer que é o mesmo que procurar aqueles cujo atributo "active" é verdadeiro.
+	Isso só é verdade se o atributo "active" só tiver dois estados. Se ele puder conter o valor <font face="courier">null</font>
+	as duas pesquisas não são mais equivalente.
+	</p>
+	<p align="justify">
+	Uma outra diferença é o uso de "startsWith" que procura por objectos cujo valor do atributo começa com um
+	certo texto. Este operador só funciona para atributos textuais.
+	</p>
+	<p align="justify">
+	Uma visita à interface <font face="courier">Constraint</font> irá mostrar todos os operadores que podem ser utilizados:
+	<ul>
+	<li>eq -igual a</li>
+	<li>lt - menor que</li>
+	<li>gt - maior que</li>
+	<li>le - menor ou igual a</li>
+	<li>ge - maior ou igual a</li>
+	<li>startsWith - começa com</li>
+	<li>endsWith - acaba com</li>
+	<li>contains - contém</li>
+	<li>in - está contido em um intervalo ou conjunto de valores</li>
+	<li>bewteen - está contido entre dois valores</li>
+	<li>not - nega a condição de restrição seguinte. Usado para negar todos os outros operadores</li>
+	</ul>
+	</p>
+	
+	<h3>Ordenação</h3>
+	<p align="justify">
+	Restringir a pesquisa é capacidade importante, mas também o é, ser capaz de ordenar o resultado da pesquisa.
+	A <toolbox>Criteria Tooblox</toolbox> permite isso de uma forma muito simples:
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">  </font>
+<font color="#000000">Criteria&lt;Subject&gt; bornInXXcentury = CriteriaBuilder.search</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">        </font>
+<font color="#000000">.and</font>
+<font color="#000000">(</font>
+<font color="#990000">"birthday"</font>
+<font color="#000000">)</font>
+<font color="#000000">.bewteen</font>
+<font color="#000000">( </font>
+<br/>
+<font color="#808080">4</font> <font color="#ffffff">          </font>
+<font color="#000000">CalendarDate.date</font>
+<font color="#000000">(</font>
+<font color="#990000">1900</font>
+<font color="#000000">,</font>
+<font color="#990000">1</font>
+<font color="#000000">,</font>
+<font color="#990000">1</font>
+<font color="#000000">)</font>
+<font color="#000000">, </font>
+<br/>
+<font color="#808080">5</font> <font color="#ffffff">          </font>
+<font color="#000000">CalendarDate.date</font>
+<font color="#000000">(</font>
+<font color="#990000">2000</font>
+<font color="#000000">,</font>
+<font color="#990000">12</font>
+<font color="#000000">,</font>
+<font color="#990000">31</font>
+<font color="#000000">)</font>
+<br/>
+<font color="#808080">6</font> <font color="#ffffff">          </font>
+<font color="#000000">)</font>
+<br/>
+<font color="#808080">7</font> <font color="#ffffff">        </font>
+<font color="#000000">.orderBy</font>
+<font color="#000000">(</font>
+<font color="#990000">"birthday"</font>
+<font color="#000000">)</font>
+<font color="#000000">.asc</font>
+<font color="#000000">()</font>
+<br/>
+<font color="#808080">8</font> <font color="#ffffff">        </font>
+<font color="#000000">.all</font>
+<font color="#000000">()</font>
+<br/>
+<font color="#808080">9</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 5: </td>
+</tr>
+</table> 
+	O operador <font face="courier">orderBy</font> permite escolher por qual atributo queremos ordenar e em qual direção queremos
+	que a ordenação seja feita (asc - ascendente ou desc - descendente). Não pode ser mais simples que isto.
+	O operador <font face="courier">orderBy</font> pode ser utilizado repetidamente para criar ordenação por multiplos atributos.
+	Contudo é preciso notar que a sequencia em que os critérios de ordenação são adicionados é relevante para o resultado
+	já que o MiddleHeaven irá ordenar os dados primeiro pelo primeiro critério adicionado, depois pelo segundo, etc...
+	</p>
+	
+	<h3>Fluência</h3>
+	<p align="justify">
+	Escrever um critério de pesquisa pode ser extenso. A fluência do <font face="courier">CriteriaBuilder</font> permite que se
+	escreva o critário como se em lingua natural o que facilita tanto a escrita como a leitura posterior. 
+	Obter fluência na escrita do critério é um dos objetivos principais da <toolbox>Criteria Tooblox</toolbox> e conseguido através
+	de diferentes tecnicas de encadeamento de métodos e encadeamento de construtores. Experimente. Verá que, por exemplo,
+	após escrever "orderBy" as unicas opções possiveis a seguir são escrever "asc" ou "desc" o builder controla as suas opções
+	à medida que escreve evitando erros. 
+	</p>
+	<p align="justify">
+	Comparemos um critério criado como a <toolbox>Criteria Tooblox</toolbox> com um criado como 
+	o <a href="https://www.hibernate.org/hib_docs/v3/api/org/hibernate/Criteria.html" target="_new">Hibernate</a> ( 
+	que também suporta o padrão <b>QueryObject</b>)
+    e o tradicional SQL
+    <table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">  </font>
+<font color="#000000">SELECT *</font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">  </font>
+<font color="#000000">FROM Subject </font>
+<br/>
+<font color="#808080">4</font> <font color="#ffffff">  </font>
+<font color="#000000">WHERE name LIKE </font>
+<font color="#ff6100">'%d</font>
+<font color="#000000">e%</font>
+<font color="#ff6100">'</font>
+<br/>
+<font color="#808080">5</font> <font color="#ffffff">  </font>
+<font color="#000000">ORDER BY birthday ASC</font>
+<br/>
+<font color="#808080">6</font> <font color="#ffffff">  </font>
+<font color="#000000">SQL equivalente</font>
+<br/>
+<font color="#808080">7</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 6: SQL equivalente</td>
+</tr>
+</table>
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">    </font>
+<font color="#000000">Criteria criteria = hibernatesession.createCriteria</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<font color="#000000">;  </font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">     </font>
+<font color="#000000">.add</font>
+<font color="#000000">(</font>
+<font color="#000000">Restrictions.like</font>
+<font color="#000000">(</font>
+<font color="#990000">"name"</font>
+<font color="#000000">,</font>
+<font color="#990000">"%de%"</font>
+<font color="#000000">) )</font>
+<br/>
+<font color="#808080">4</font> <font color="#ffffff">     </font>
+<font color="#000000">.addOrder</font>
+<font color="#000000">(</font>
+<font color="#000000">Order.asc</font>
+<font color="#000000">(</font>
+<font color="#990000">"birthday"</font>
+<font color="#000000">))</font>
+<font color="#000000">;  </font>
+<br/>
+<font color="#808080">5</font> <font color="#ffffff">     </font>
+<font color="#000000">Código com Hibernate</font>
+<br/>
+<font color="#808080">6</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 7: Código com Hibernate</td>
+</tr>
+</table> 
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">1</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">2</font> <font color="#ffffff">    </font>
+<font color="#000000">Criteria&lt;Subject&gt; criteria = CriteriaBuilder.search</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<font color="#000000">;  </font>
+<br/>
+<font color="#808080">3</font> <font color="#ffffff">     </font>
+<font color="#000000">.and</font>
+<font color="#000000">(</font>
+<font color="#990000">"name"</font>
+<font color="#000000">)</font>
+<font color="#000000">.contains</font>
+<font color="#000000">(</font>
+<font color="#990000">"de"</font>
+<font color="#000000">) </font>
+<br/>
+<font color="#808080">4</font> <font color="#ffffff">     </font>
+<font color="#000000">.orderBy</font>
+<font color="#000000">(</font>
+<font color="#990000">"birthday"</font>
+<font color="#000000">)</font>
+<font color="#000000">.asc</font>
+<font color="#000000">()</font>
+<br/>
+<font color="#808080">5</font> <font color="#ffffff">     </font>
+<font color="#000000">.all</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">6</font> <font color="#ffffff">     </font>
+<font color="#000000">Código com MiddleHeaven Criteria Toolbox</font>
+<br/>
+<font color="#808080">7</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 8: Código com MiddleHeaven Criteria Toolbox</td>
+</tr>
+</table> 
+	Semelhante, mas as diferenças são importantes. O principal problema com outras API de criterios é que para criar 
+	o criério é preciso ter acesso a algum objecto especial da API que não diz respeito 
+	a critérios. No caso do Hibernate é necessário ter acesso ao objecto Session. 
+	A <toolbox>Criteria Tooblox</toolbox> é totalmente indepenente. Desta forma, o critério pode ser criado
+	em qualquer ponto do sistema e até serializado se necessário. 
+	</p>
+	<p align="justify">
+	Embora pareça que a API do Hibernate é fluente, ela não o é realmente
+	porque necessita de vários métodos estáticos - especialmente os existentes em Restrictions e Order -
+	para construir o critério. Além disso a sintaxe é amarrada a banco de dados já que "like" é um operador
+	de banco de dados e o uso do sinal de porcentagem (<i>%</i>) é necessário para a API JDBC.
+	A <toolbox>Criteria Tooblox</toolbox> não contém nenhuma dependencia com bancos de dados ou a API JDBC.
+	Isto permite que o critério seja aplicado a qualquer tipo de repositorio de dados ( inclusive os que usam JDBC)
+	e permite trocar o repositorio sem mudar o critério. Sendo que o critério de pesquisa é onde está a logica do negocio/dominio
+	a preservação do critério é muito importante para não introduzir erros no sistema.  
+	</p>
+	<p align="justify">
+	A <toolbox>Criteria Tooblox</toolbox> permite escrever critérios de uma forma muito próxima da tradicional SQL que 
+	a maioria dos desenvolvedores domina, facilitando a transição. Para os novatos, o controle que a Criteria Toolbox
+	impõe na sintaxe elimina erros de quem está aprendendo, além do que os permite escrever critérios
+	que podem ser executados não apenas sobre bancos de dados, mas sobre muitos outros suportes de dados. 
+	</p>
+	
+	
+	<h2>Por detrás dos panos</h2>
+	<p align="justify">
+	O poder da <toolbox>Criteria Tooblox</toolbox> advém completamente da capacidade de orientação a objetos e generics 
+	da linguagem Java, do padrão Builder , da tecnica de encadeamento de metodos (<i class="estrang">method channing</i>)
+	e da tecnica de encadeamento de builders (não ha um nome para isso ainda no mainstream, mas o Martin Fowler batizou uma ideia
+	semelhante com o nome <a href="http://martinfowler.com/dslwip/MethodChaining.html" target="_new">"Progressive Interface"</a>). 
+	</p>
+	<p align="justify">
+	Ou seja, o poder da MiddleHeaven <toolbox>Criteria Tooblox</toolbox> adém de orientação a objectos pura. Em um tempo
+	em que ferramentas e API de manipulação de código são comuns é bom saber que ainda podemos ir longe se o uso 
+	dessas tecnicas de <i class="estrang">tunning</i> envenenadas. 
+	</p>
+	<p align="justify">
+	A completa independencia da <toolbox>Criteria Tooblox</toolbox> do repositorio em que o critério seja executado permite 
+	que o mesmo critério possa ser usado para diferentes repositorios. Contudo isso também significa que a 
+	Criteria Toolbox não pode utilizar informação do modelo para ajudar a criar os critérios e validar
+	as restrições. Isso é feito apenas no momento em que o critério é submetido ao repositorio de dados. 
+	</p>
+	
+	<h2>Execução</h2>
+	<p align="justify">
+	Neste momento deve se estar perguntando como executar a pesquisa. Isso é feito por outra toolbox, mas aqui fica uma ideia de
+	como funciona
+	</p>
+	<p align="justify">
+	No MiddleHeaven os dados são guardados em objectos <font face="courier">DataStorage</font> que pertencem à <toolbox>Storage Toolbox</toolbox>.
+	A execução é feita através de objecto <font face="courier">Query</font> que são criados pelo próprio <font face="courier">DataStorage</font>:
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">01</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">02</font> <font color="#ffffff">    </font>
+<font color="#008000">// define a pesquisa</font>
+<br/>
+<font color="#808080">03</font> <font color="#ffffff">     </font>
+<font color="#000000">Criteria&lt;Subject&gt; criteria = CriteriaBuilder.search</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<font color="#000000">;  </font>
+<br/>
+<font color="#808080">04</font> <font color="#ffffff">       </font>
+<font color="#000000">.and</font>
+<font color="#000000">(</font>
+<font color="#990000">"name"</font>
+<font color="#000000">)</font>
+<font color="#000000">.contains</font>
+<font color="#000000">(</font>
+<font color="#990000">"de"</font>
+<font color="#000000">) </font>
+<br/>
+<font color="#808080">05</font> <font color="#ffffff">       </font>
+<font color="#000000">.orderBy</font>
+<font color="#000000">(</font>
+<font color="#990000">"birthday"</font>
+<font color="#000000">)</font>
+<font color="#000000">.asc</font>
+<font color="#000000">()</font>
+<br/>
+<font color="#808080">06</font> <font color="#ffffff">       </font>
+<font color="#000000">.all</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">07</font> <font color="#ffffff">       </font>
+<br/>
+<font color="#808080">08</font> <font color="#ffffff">      </font>
+<font color="#008000">// define a forma de execução</font>
+<br/>
+<font color="#808080">09</font> <font color="#ffffff">    </font>
+<font color="#000000">Query&lt;Subject&gt; query = dataStorage.createQuery</font>
+<font color="#000000">(</font>
+<font color="#000000">criteria</font>
+<font color="#000000">)</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">10</font> <font color="#ffffff">    </font>
+<br/>
+<font color="#808080">11</font> <font color="#ffffff">    </font>
+<font color="#008000">// executa realmente</font>
+<br/>
+<font color="#808080">12</font> <font color="#ffffff">    </font>
+<font color="#000000">List&lt;Subject&gt; subjects = query.findAll</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">13</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 9: </td>
+</tr>
+</table>
+	ou simplesmente :
+	<table align="center" border="0">
+<tr align="center">
+<td>
+<source>
+
+
+
+
+
+<div align="left" class="java">
+<table bgcolor="#ffffff" border="0" cellpadding="3" cellspacing="0">
+   <tr>
+  
+   <td align="left" nowrap="nowrap" valign="top">
+    
+<font color="#808080">01</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">02</font> <font color="#ffffff"/>
+<br/>
+<font color="#808080">03</font> <font color="#ffffff">    </font>
+<font color="#000000">List&lt;Subject&gt; subjects = dataStorage.createQuery</font>
+<font color="#000000">(</font>
+<br/>
+<font color="#808080">04</font> <font color="#ffffff">      </font>
+<font color="#000000">CriteriaBuilder.search</font>
+<font color="#000000">(</font>
+<font color="#000000">Subject.</font>
+<font color="#0000c0">
+<b>class</b>
+</font>
+<font color="#000000">)</font>
+<font color="#000000">;  </font>
+<br/>
+<font color="#808080">05</font> <font color="#ffffff">         </font>
+<font color="#000000">.and</font>
+<font color="#000000">(</font>
+<font color="#990000">"name"</font>
+<font color="#000000">)</font>
+<font color="#000000">.contains</font>
+<font color="#000000">(</font>
+<font color="#990000">"de"</font>
+<font color="#000000">) </font>
+<br/>
+<font color="#808080">06</font> <font color="#ffffff">         </font>
+<font color="#000000">.orderBy</font>
+<font color="#000000">(</font>
+<font color="#990000">"birthday"</font>
+<font color="#000000">)</font>
+<font color="#000000">.asc</font>
+<font color="#000000">()</font>
+<br/>
+<font color="#808080">07</font> <font color="#ffffff">         </font>
+<font color="#000000">.all</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">08</font> <font color="#ffffff">    </font>
+<font color="#000000">)</font>
+<font color="#000000">.findAll</font>
+<font color="#000000">()</font>
+<font color="#000000">;</font>
+<br/>
+<font color="#808080">09</font> <font color="#ffffff">    </font>
+<br/>
+<font color="#808080">10</font> <font color="#ffffff">  </font>
+    
+   </td>
+  
+   </tr>
+</table>
+</div>
+
+
+
+</source>
+</td>
+</tr>
+<tr>
+<td class="legend">
+<hr/>
+		Código 10: </td>
+</tr>
+</table>
+	O objecto intermediário <font face="courier">Query</font> permite executar o mesmo critério contra o mesmo repositorio de dados
+	repetidas vezes sem passar pelo objecto de dataStorage todas as vezes. Desta forma o objecto <font face="courier">Query</font>
+	pode ser criado apenas uma unica vez, guardado, e depois executado quando necessário. Por outro lado, a execução só
+	acontece quando os métodos de <font face="courier">Query</font> são chamados. Diferentes métodos resultam em diferentes
+	estratégias e é isso que dá flexibilidade e performance ao mecanismo. Mais detalhes disso
+	na descrição da <toolbox>Storage Toolbox</toolbox>. 
+	</p>
+	
+	</body>
+<h2>Licença</h2>
+<table align="center" width="70%">
+<tr>
+<td align="center" valign="center">
+<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/" rel="license">
+<img alt="Creative Commons License" src="http://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png" style="border-width:0"/>
+</a>
+</td>
+<td align="left" valign="top">  Sérgio Taborda<br/>
+				      Este trabalho é licenciado sob a <br/>
+<a href="http://creativecommons.org/licenses/by-nc-nd/3.0/deed.pt" rel="license" target="_new">
+						Licença Creative Commons Atribuição-Uso Não-Comercial-Não a obras derivadas 3.0 Genérica
+						</a>.
+						
+				      </td>
+</tr>
+</table>
+</body>
