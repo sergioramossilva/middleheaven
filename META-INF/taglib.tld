@@ -7,25 +7,25 @@
   
 	<tlibversion>1.0</tlibversion>
 	<jspversion>1.2</jspversion>
-	<shortname>j4btags</shortname>
-	<info>J4Brisa Tag library</info>
-	<uri>http://www.brisa.org.br/taglibs/j4brisa</uri>
+	<shortname>coremhtags</shortname>
+	<info>MiddleHeaven Tag library</info>
+	<uri>http://www.middleheaven.org/taglibs/core</uri>
 
 	<tag>
 	    <name>hello</name>
-	    <tagclass>org.brisa.j4b.web.tags.HelloTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.HelloTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	</tag>
 	
 	<tag>
 	    <name>jsnotpresent</name>
-	    <tagclass>org.brisa.j4b.web.tags.JavaScriptEnabledTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.JavaScriptEnabledTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	</tag>
 	
 	<tag>
 	    <name>out</name>
-	    <tagclass>org.brisa.j4b.web.tags.OutTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.OutTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	     <attribute>
 	      <name>value</name>
@@ -36,7 +36,7 @@
 	
 	<tag>
 	    <name>isAgent</name>
-	    <tagclass>org.brisa.j4b.web.tags.AgentTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.AgentTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>agent</name>
@@ -47,18 +47,18 @@
 	
 	<tag>
 	    <name>body</name>
-	    <tagclass>org.brisa.j4b.web.tags.BodyTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.BodyTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	</tag>
 	<tag>
 	    <name>head</name>
-	    <tagclass>org.brisa.j4b.web.tags.HeadTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.HeadTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	</tag>
 	
 	<tag>
 	    <name>inrole</name>
-	    <tagclass>org.brisa.j4b.web.tags.InRoleTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.InRoleTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>role</name>
@@ -74,7 +74,7 @@
 	
 	<tag>
 	    <name>message</name>
-	    <tagclass>org.brisa.j4b.web.tags.MessageLocalizationTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.MessageLocalizationTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>key</name>
@@ -90,7 +90,7 @@
 	
 	<tag>
 	    <name>param</name>
-	    <tagclass>org.brisa.j4b.web.tags.MessageLocationParamTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.MessageLocationParamTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>value</name>
@@ -103,8 +103,8 @@
 	<!--  Deprecated use forEach -->
 	<tag>
 	    <name>foreach</name>
-	    <tagclass>org.brisa.j4b.web.tags.ForEachTag</tagclass>
-	    <teiclass>org.brisa.j4b.web.tags.ForEachTagExtraInfo</teiclass>
+	    <tagclass>org.middleheaven.ui.web.tags.ForEachTag</tagclass>
+	    <teiclass>org.middleheaven.ui.web.tags.ForEachTagExtraInfo</teiclass>
 	    <bodycontent>JSP</bodycontent>
 	    
 	    <attribute>
@@ -121,8 +121,8 @@
 	
 	<tag>
 	    <name>forEach</name>
-	    <tagclass>org.brisa.j4b.web.tags.ForEachTag</tagclass>
-	    <teiclass>org.brisa.j4b.web.tags.ForEachTagExtraInfo</teiclass>
+	    <tagclass>org.middleheaven.ui.web.tags.ForEachTag</tagclass>
+	    <teiclass>org.middleheaven.ui.web.tags.ForEachTagExtraInfo</teiclass>
 	    <bodycontent>JSP</bodycontent>
 	    
 	    <attribute>
@@ -139,7 +139,7 @@
 	
 	<tag>
 	    <name>tbody</name>
-	    <tagclass>org.brisa.j4b.web.tags.TBodyTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.TBodyTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	    
 	    <attribute>
@@ -166,7 +166,7 @@
 	
 	<tag> 
 		<name>dateformat</name>
-		<tagclass>org.brisa.j4b.web.tags.DateTag</tagclass>
+		<tagclass>org.middleheaven.ui.web.tags.DateTag</tagclass>
 		<bodycontent>empty</bodycontent>
 		<attribute>
 			<name>value</name>
@@ -177,7 +177,7 @@
 	</tag> 
 	<tag> 
 		<name>timeformat</name>
-		<tagclass>org.brisa.j4b.web.tags.TimeTag</tagclass>
+		<tagclass>org.middleheaven.ui.web.tags.TimeTag</tagclass>
 		<bodycontent>empty</bodycontent>
 		<attribute>
 			<name>value</name>
@@ -189,7 +189,7 @@
 	
 	<tag> 
 		<name>datetimeformat</name>
-		<tagclass>org.brisa.j4b.web.tags.DateTimeTag</tagclass>
+		<tagclass>org.middleheaven.ui.web.tags.DateTimeTag</tagclass>
 		<bodycontent>empty</bodycontent>
 		<attribute>
 			<name>value</name>
@@ -201,8 +201,8 @@
 	
 	<tag>
 	    <name>invalidationReasons</name>
-	    <tagclass>org.brisa.j4b.web.tags.InvalidationReasonsListTag</tagclass>
-	    <teiclass>org.brisa.j4b.web.tags.InvalidationReasonsListTagExtraInfo</teiclass>
+	    <tagclass>org.middleheaven.ui.web.tags.InvalidationReasonsListTag</tagclass>
+	    <teiclass>org.middleheaven.ui.web.tags.InvalidationReasonsListTagExtraInfo</teiclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>severity</name>
@@ -228,8 +228,8 @@
 	
 	<tag>
 	    <name>checkedList</name>
-	    <tagclass>org.brisa.j4b.web.tags.CkeckedListTag</tagclass>
-	    <teiclass>org.brisa.j4b.web.tags.CheckedListTagExtraInfo</teiclass>
+	    <tagclass>org.middleheaven.ui.web.tags.CkeckedListTag</tagclass>
+	    <teiclass>org.middleheaven.ui.web.tags.CheckedListTagExtraInfo</teiclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -255,8 +255,8 @@
 	
 	<tag>
 	    <name>comboList</name>
-	    <tagclass>org.brisa.j4b.web.tags.ComboTag</tagclass>
-	    <teiclass>org.brisa.j4b.web.tags.ComboTagExtraInfo</teiclass>
+	    <tagclass>org.middleheaven.ui.web.tags.ComboTag</tagclass>
+	    <teiclass>org.middleheaven.ui.web.tags.ComboTagExtraInfo</teiclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -297,7 +297,7 @@
 	
 	<tag>
 	    <name>comboItem</name>
-	    <tagclass>org.brisa.j4b.web.tags.ComboItemTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.ComboItemTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>value</name>
@@ -308,14 +308,14 @@
 	
 	<tag>
 	    <name>submenu</name>
-	    <tagclass>org.brisa.j4b.web.tags.SubMenuTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.SubMenuTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	</tag>
 	
 	<tag>
 	    <name>menu</name>
-	    <tagclass>org.brisa.j4b.web.tags.MenuTag</tagclass>
-	    <teiclass>org.brisa.j4b.web.tags.MenuTagExtraInfo</teiclass>
+	    <tagclass>org.middleheaven.ui.web.tags.MenuTag</tagclass>
+	    <teiclass>org.middleheaven.ui.web.tags.MenuTagExtraInfo</teiclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>id</name>
@@ -341,7 +341,7 @@
 	
 	<tag>
 	    <name>form</name>
-	    <tagclass>org.brisa.j4b.web.tags.FormTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.FormTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>action</name>
@@ -357,7 +357,7 @@
 	
 	<tag>
 	    <name>command</name>
-	    <tagclass>org.brisa.j4b.web.tags.CommandTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.CommandTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>caption</name>
@@ -388,7 +388,7 @@
 	
 	<tag>
 	    <name>text</name>
-	    <tagclass>org.brisa.j4b.web.tags.TextInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.TextInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -429,7 +429,7 @@
 	
 	<tag>
 	    <name>integer</name>
-	    <tagclass>org.brisa.j4b.web.tags.IntegerInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.IntegerInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -460,7 +460,7 @@
 	
 	<tag>
 	    <name>decimal</name>
-	    <tagclass>org.brisa.j4b.web.tags.DecimalInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.DecimalInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -491,7 +491,7 @@
 	
 	<tag>
 	    <name>hidden</name>
-	    <tagclass>org.brisa.j4b.web.tags.HiddenInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.HiddenInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -512,7 +512,7 @@
 		
 	<tag>
 	    <name>checked</name>
-	    <tagclass>org.brisa.j4b.web.tags.CheckedInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.CheckedInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	   	  <name>enabled</name>
@@ -543,7 +543,7 @@
 	
 	<tag>
 	    <name>date</name>
-	    <tagclass>org.brisa.j4b.web.tags.DateInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.DateInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>id</name>
@@ -574,7 +574,7 @@
 	
 	<tag>
 	    <name>email</name>
-	    <tagclass>org.brisa.j4b.web.tags.EmailInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.EmailInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -605,7 +605,7 @@
 	
 	<tag>
 	    <name>url</name>
-	    <tagclass>org.brisa.j4b.web.tags.URLInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.URLInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -636,7 +636,7 @@
 	
 	<tag>
 	    <name>secret</name>
-	    <tagclass>org.brisa.j4b.web.tags.SecretInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.SecretInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>name</name>
@@ -667,7 +667,7 @@
 	
 	<tag>
 	    <name>upload</name>
-	    <tagclass>org.brisa.j4b.web.tags.UploadInputTag</tagclass>
+	    <tagclass>org.middleheaven.ui.web.tags.UploadInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
 	      <name>name</name>

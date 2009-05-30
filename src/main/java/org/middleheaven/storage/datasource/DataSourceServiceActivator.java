@@ -8,13 +8,14 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.AtivationException;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.LogBook;
@@ -61,7 +62,7 @@ public class DataSourceServiceActivator extends Activator {
 	@Override
 	public void activate(ActivationContext context) {
 
-		Container container =  bootstrapService.getEnvironmentBootstrap().getContainer();
+		BootstrapContainer container =  bootstrapService.getEnvironmentBootstrap().getContainer();
 
 		book = loggingService.getLogBook(null);
 
@@ -116,7 +117,7 @@ public class DataSourceServiceActivator extends Activator {
 	}
 	
 
-
+	@Service
 	private class HashDataSourceService implements DataSourceService{
 
 		@Override

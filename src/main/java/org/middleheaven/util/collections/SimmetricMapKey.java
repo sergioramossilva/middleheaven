@@ -1,4 +1,4 @@
-package org.middleheaven.util;
+package org.middleheaven.util.collections;
 
 
 public class SimmetricMapKey<T> {

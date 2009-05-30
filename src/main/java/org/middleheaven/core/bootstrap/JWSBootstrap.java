@@ -1,6 +1,6 @@
 package org.middleheaven.core.bootstrap;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.ContextIdentifier;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
@@ -13,7 +13,7 @@ public class JWSBootstrap extends ExecutionEnvironmentBootstrap{
 	}
 	
 	@Override
-	public Container getContainer() {
+	public BootstrapContainer getContainer() {
 		// TODO Auto-generated method stub
 		return null;
 	}

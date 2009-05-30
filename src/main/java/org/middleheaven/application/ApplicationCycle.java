@@ -3,9 +3,7 @@ package org.middleheaven.application;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.middleheaven.io.repository.FileChangeListener;
-
-abstract class  DefaultApplicationLoadingCycle implements ApplicationLoadingCycle, FileChangeListener {
+abstract class  DefaultApplicationLoadingCycle implements ApplicationLoadingCycle {
 
 	private Set<ApplicationCycleListener> listeners = new CopyOnWriteArraySet<ApplicationCycleListener>(); 
 	

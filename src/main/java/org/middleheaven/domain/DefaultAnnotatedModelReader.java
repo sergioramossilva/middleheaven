@@ -35,12 +35,12 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 	private <E> FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<E> em){
 
 		FieldModelBuilder fm = em.getField(pa.getName())
-		.setTransient(pa.isAnnotatedWith(Transient.class))
-		.setVersion( pa.isAnnotatedWith(Version.class))
-		.setUnique( pa.isAnnotatedWith(Unique.class))
+		.setTransient(pa.isAnnotadedWith(Transient.class))
+		.setVersion( pa.isAnnotadedWith(Version.class))
+		.setUnique( pa.isAnnotadedWith(Unique.class))
 		.setValueType(pa.getValueType());
 
-		if(pa.isAnnotatedWith(Key.class)){
+		if(pa.isAnnotadedWith(Key.class)){
 			Key key = pa.getAnnotation(Key.class);
 
 			fm.setIdentity(true);
@@ -49,7 +49,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 		}
 
-		if (pa.isAnnotatedWith(ManyToOne.class)){
+		if (pa.isAnnotadedWith(ManyToOne.class)){
 			fm.setDataType(DataType.MANY_TO_ONE);
 			ManyToOne ref = pa.getAnnotation(ManyToOne.class);
 			String fieldName = ref.targetIdentityField();
@@ -58,7 +58,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			}
 			fm.putParam("targetField", fieldName);
 
-		} else if (pa.isAnnotatedWith(OneToOne.class)){
+		} else if (pa.isAnnotadedWith(OneToOne.class)){
 			fm.setDataType(DataType.ONE_TO_ONE);
 			OneToOne ref = pa.getAnnotation(OneToOne.class);
 			String fieldName = ref.targetIdentityField();
@@ -66,12 +66,12 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				fieldName = fm.getName();
 			}
 			fm.putParam("targetField", fieldName);
-		} else if (pa.isAnnotatedWith(OneToMany.class)){
+		} else if (pa.isAnnotadedWith(OneToMany.class)){
 			fm.setDataType( DataType.ONE_TO_MANY);
 			OneToMany ref = pa.getAnnotation(OneToMany.class);
 			Class target = ref.target();
 
-		} else if (pa.isAnnotatedWith(ManyToMany.class)){
+		} else if (pa.isAnnotadedWith(ManyToMany.class)){
 			fm.setDataType(DataType.MANY_TO_MANY);
 			ManyToMany ref = pa.getAnnotation(ManyToMany.class);
 			Class target = ref.target();
@@ -91,11 +91,11 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				fm.setDataType(DataType.DATE);
 			} else if (matchTypes(valueType,CalendarDateTime.class)){
 				fm.setDataType(DataType.DATETIME);
-				if (pa.isAnnotatedWith(Temporal.class)){
+				if (pa.isAnnotadedWith(Temporal.class)){
 					fm.setDataType(pa.getAnnotation(Temporal.class).value());
 				} 
 			} else if (matchTypes(valueType, Date.class,Calendar.class)){
-				if (pa.isAnnotatedWith(Temporal.class)){
+				if (pa.isAnnotadedWith(Temporal.class)){
 					fm.setDataType(pa.getAnnotation(Temporal.class).value());
 				} else {
 					Logging.warn(valueType.getName() + 

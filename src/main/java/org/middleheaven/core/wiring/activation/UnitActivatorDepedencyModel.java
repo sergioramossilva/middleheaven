@@ -9,17 +9,21 @@ import org.middleheaven.core.wiring.WiringModel;
 public class UnitActivatorDepedencyModel extends WiringModel{
 
 	
-	private Collection<PublishPoint> PublishPoints = new LinkedList<PublishPoint>();
+	private Collection<PublishPoint> publishPoints = new LinkedList<PublishPoint>();
 
 	public Collection<PublishPoint> getPublishPoints() {
-		return Collections.unmodifiableCollection(PublishPoints);
+		return Collections.unmodifiableCollection(publishPoints);
 	}
 
 	public void addPublishPoint(PublishPoint element) {
-		this.PublishPoints.add(element);
+		this.publishPoints.add(element);
 	}
 
 	public void removePublishPoint(PublishPoint element) {
-		this.PublishPoints.remove(element);
+		this.publishPoints.remove(element);
+	}
+	
+	public String toString(){
+		return publishPoints.toString();
 	}
 }

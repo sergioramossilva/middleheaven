@@ -1,6 +1,8 @@
 package org.middleheaven.util.collections;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -96,6 +98,14 @@ public class EncancedListAdapter<T> extends EnhancedCollectionAdapter<T> impleme
 	@Override
 	public T random(Random random) {
 		return this.get(random.nextInt(this.size()));
+	}
+	
+	public EnhancedList<T> asList(){
+		return this;
+	}
+	
+	public EnhancedSet<T> asSet(){
+		return new EnhancedCollectionAdapter<T>(new HashSet<T>(this.original()));
 	}
 
 }

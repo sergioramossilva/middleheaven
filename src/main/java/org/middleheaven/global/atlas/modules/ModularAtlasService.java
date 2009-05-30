@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.global.atlas.AtlasLocale;
 import org.middleheaven.global.atlas.AtlasModule;
 import org.middleheaven.global.atlas.AtlasService;
@@ -12,7 +13,7 @@ import org.middleheaven.global.atlas.Country;
 import org.middleheaven.global.atlas.CountryNotFoundException;
 import org.middleheaven.global.atlas.Town;
 
-
+@Service
 public class ModularAtlasService implements AtlasService {
 
 	

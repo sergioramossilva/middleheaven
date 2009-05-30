@@ -3,6 +3,7 @@ package org.middleheaven.core.wiring;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class DefaultWiringService implements WiringService{
 	private final PropertyResolver<Object> propertyResolver = new PropertyResolver<Object>();
 	private final Set<ActivatorDependencyResolver> resolvers = new CopyOnWriteArraySet<ActivatorDependencyResolver>();
 
-	private final List<Class<? extends Activator>> activatorsTypes = new ArrayList<Class<? extends Activator>>();
+	private final Collection<Class<? extends Activator>> activatorsTypes = new HashSet<Class<? extends Activator>>();
 	private final List<Activator> activators = new ArrayList<Activator>();
 
 	private final Set<ActivatorScanner> scanners = new HashSet<ActivatorScanner>();
@@ -248,12 +249,8 @@ public class DefaultWiringService implements WiringService{
 					final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(interceptors,resolver);
 					T obj = scopePool.getInScope(query, interceptorResolver);
 
-					WiringModel model = this.getWiringModel(obj.getClass());
-
-					for (AfterWiringPoint a : model.getAfterPoints()){
-						obj = a.writeAtPoint(binder, obj);
-					}
-
+					wireMembers(obj);
+	
 					stack.remove(key);
 					// check if there is any proxy to complete
 					CyclicProxy proxy = cyclicProxies.get(key);
@@ -269,6 +266,14 @@ public class DefaultWiringService implements WiringService{
 
 		}
 
+		public void wireMembers(Object obj) {
+			WiringModel model = this.getWiringModel(obj.getClass());
+
+			for (AfterWiringPoint a : model.getAfterPoints()){
+				obj = a.writeAtPoint(binder, obj);
+			}
+		}
+		
 		@Override
 		public void removeBinding(Binding binding) {
 			bindings.remove(binding.getKey());
@@ -325,6 +330,11 @@ public class DefaultWiringService implements WiringService{
 			return binder.getInstance(WiringSpecification.search(type, params));
 		}
 
+		@Override
+		public void wireMembers(Object obj) {
+			binder.wireMembers(obj);
+		}
+
 	
 
 
@@ -365,33 +375,39 @@ public class DefaultWiringService implements WiringService{
 	class StarterMy implements Starter<UnitActivatorDepedencyModel>{
 
 
+		private Activator startActivator(UnitActivatorDepedencyModel model){
+			Activator activator = model.getConstructorPoint().construct(binder);
+
+			// fill requirements
+
+			for (AfterWiringPoint a : model.getAfterPoints()){
+				a.writeAtPoint(binder, activator);
+			}
+			
+			// activate
+			activator.activate(new ActivationContext(){});
+
+			// publish services 
+			for (PublishPoint pp : model.getPublishPoints()){
+				Object object = pp.getObject(activator);
+
+				ScoopingModel scoopingModel = binder.getScoopingModel(object);
+				scoopingModel.addParams(pp.getParams());
+				
+				scoopingModel.addToScope(binder,object);
+
+			}
+			
+			return activator;
+		}
+		
 		@Override
 		public void inicialize(UnitActivatorDepedencyModel model)
 		throws InicializationNotResolvedException,
 		InicializationNotPossibleException {
 
 			try{
-				Activator activator = model.getConstructorPoint().construct(binder);
-
-				// fill requirements
-
-				for (AfterWiringPoint a : model.getAfterPoints()){
-					a.writeAtPoint(binder, activator);
-				}
-				
-				// activate
-				activator.activate(new ActivationContext(){});
-
-				// publish services 
-				for (PublishPoint pp : model.getPublishPoints()){
-					Object object = pp.getObject(activator);
-
-					ScoopingModel scoopingModel = binder.getScoopingModel(object);
-					scoopingModel.addParams(pp.getParams());
-					
-					scoopingModel.addToScope(binder,object);
-
-				}
+				Activator activator = startActivator(model); 
 
 				// add activator to context for future inactivation
 				activators.add(activator);
@@ -403,12 +419,19 @@ public class DefaultWiringService implements WiringService{
 		}
 
 		@Override
-		public void inicializeWithProxy(
-				UnitActivatorDepedencyModel dependableProperties)
-		throws InicializationNotResolvedException,
-		InicializationNotPossibleException {
-			// TODO implement Starter<UnitActivatorDepedencyModel>.inicializeWithProxy
+		public void inicializeWithProxy(UnitActivatorDepedencyModel model)
+		throws InicializationNotResolvedException,InicializationNotPossibleException {
 
+			try{
+				// try for the last time
+				Activator activator = startActivator(model); 
+
+				// add activator to context for future inactivation
+				activators.add(activator);
+			}catch (RuntimeException e){
+				// will never work
+				throw new InicializationNotPossibleException(e);
+			}
 		}
 
 		@Override

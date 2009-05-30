@@ -111,9 +111,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 		}
 	}
 
-
-
-	public <A extends Annotation> boolean isAnnotatedWith(Class<A> annotationClass) {
+	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass) {
 		return (field!=null && field.isAnnotationPresent(annotationClass)) || 
 		(acessor!=null && acessor.isAnnotationPresent(annotationClass)) || 
 		(modifier!=null && modifier.isAnnotationPresent(annotationClass));
@@ -122,11 +120,11 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		A a=null;
 		if (field!=null){
-			a =  ReflectionUtils.getAnnotation(field,annotationClass);
+			a = Introspector.of(field).getAnnotation(annotationClass);
 		} 
 		
 		if (a==null){
-			a = ReflectionUtils.getAnnotation(acessor,annotationClass);
+			a = Introspector.of(acessor).getAnnotation(annotationClass);
 		}
 		return a;
 

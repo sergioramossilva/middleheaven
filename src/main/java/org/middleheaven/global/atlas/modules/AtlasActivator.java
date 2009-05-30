@@ -8,10 +8,9 @@ import org.middleheaven.global.atlas.AtlasService;
 public class AtlasActivator extends Activator {
 
 	
-	private final ModularAtlasService service;
+	private final AtlasService service = new ModularAtlasService();
 	
 	public AtlasActivator(){
-		service = new ModularAtlasService();
 	}
 	
 	@Publish 

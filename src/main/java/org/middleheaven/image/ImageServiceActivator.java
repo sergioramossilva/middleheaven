@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.service.Service;
 
 public class ImageServiceActivator extends Activator {
 
@@ -18,7 +19,7 @@ public class ImageServiceActivator extends Activator {
 		return service;
 	}
 
-
+	@Service
 	public static class MapImageService implements ImageService{
 
 		Map<String, ImageSource> sources = new TreeMap<String, ImageSource>();

@@ -10,11 +10,11 @@ public interface FieldAcessor {
 
 	public String getName();
 
-	public Class<?> getParentClass();
+	public Class<?> getDeclaringClass();
 
 	public Class<?> getValueType();
 
-	public <A extends Annotation> boolean isAnnotatedWith(Class<A> annotationClass);
+	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass);
 
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 

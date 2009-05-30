@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIEnvironmentType;
 import org.middleheaven.ui.UIException;
@@ -32,7 +33,7 @@ public class UIServiceActivator extends Activator {
 		
 	}
 
-	
+	@Service
 	private class SimpleUIService implements UIService{
 
 		Map<String, UIEnvironment> envs = new TreeMap<String, UIEnvironment>();

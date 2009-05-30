@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
+import org.middleheaven.core.reflection.ClassIntrospector;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.wiring.annotations.BindingSpecification;
 import org.middleheaven.core.wiring.annotations.Name;
@@ -34,13 +36,15 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 		// TODO implement WiringModelReader.readWiringModel
 
 		if (model.getConstructorPoint()==null){
-
+			ClassIntrospector<T> introspector = Introspector.of(type);
+			
 			// constructor
-			List<Constructor<T>> constructors =  ReflectionUtils.allAnnotatedConstructors( type, annotations);
+			List<Constructor<T>> constructors = introspector.inspect()
+			.constructors().annotathedWith(annotations).retrive().asList();
 
 			if (constructors.isEmpty()){
-				// search not annotated constructors
-				constructors = ReflectionUtils.constructors(type);
+				// search all constructors
+				constructors = Introspector.of(type).inspect().constructors().retrive().asList();
 				if (constructors.size()>1){
 					throw new ConfigurationException("Multiple constructors found for " + type + ". Annotate only one with @" + Wire.class.getSimpleName());
 				}

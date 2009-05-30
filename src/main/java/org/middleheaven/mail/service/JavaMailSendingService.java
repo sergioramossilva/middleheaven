@@ -18,6 +18,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.mail.MailMessage;
@@ -26,6 +27,12 @@ import org.middleheaven.mail.MailException;
 import org.middleheaven.mail.MailRecipientType;
 import org.middleheaven.mail.MailSendingService;
 
+/**
+ * Implementation of {@link MailSendingService} that uses standard JavaMail API
+ * for sending email 
+ * 
+ */
+@Service
 public class JavaMailSendingService implements MailSendingService {
 
 	boolean debug = false;

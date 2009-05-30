@@ -30,7 +30,7 @@ public class ListQuery<T> implements Query<T> , Serializable{
 	}
 
 	@Override
-	public Collection<T> list() {
+	public Collection<T> findAll() {
 		return Collections.unmodifiableList(list);
 	}
 

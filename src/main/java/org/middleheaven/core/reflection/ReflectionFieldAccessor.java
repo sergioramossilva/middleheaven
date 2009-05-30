@@ -68,7 +68,7 @@ public  class ReflectionFieldAccessor implements FieldAcessor{
 		return name;
 	}
 
-	public Class<?> getParentClass(){
+	public Class<?> getDeclaringClass(){
 		return type;
 	}
 
@@ -76,11 +76,11 @@ public  class ReflectionFieldAccessor implements FieldAcessor{
 		return field.getType();
 	}
 
-	public <A extends Annotation> boolean isAnnotatedWith(Class<A> annotationClass) {
+	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass) {
 		return (field!=null && field.isAnnotationPresent(annotationClass));
 	}
 
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		return ReflectionUtils.getAnnotation(field,annotationClass);
+		return Introspector.of(field).getAnnotation(annotationClass);
 	}
 }

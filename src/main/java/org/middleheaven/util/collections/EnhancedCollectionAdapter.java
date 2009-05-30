@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
 import org.middleheaven.util.classification.Classification;
 import org.middleheaven.util.classification.Classifier;
@@ -20,6 +22,10 @@ public class EnhancedCollectionAdapter<T> extends AbstractAdapter<T> implements 
 		this.original = original;
 	}
 
+	public String toString(){
+		return original.toString();
+	}
+	
 	@Override
 	public EnhancedCollection<T> reject(Classifier<Boolean, T> classifier){
 		return findAll(new NegationClassifier<T>(classifier));
@@ -142,7 +148,7 @@ public class EnhancedCollectionAdapter<T> extends AbstractAdapter<T> implements 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public EnhancedList<T> sort(Comparable<? super T> comparator) {
+	public EnhancedList<T> sort(Comparator<? super T> comparator) {
 		if(isEmpty()){
 			return CollectionUtils.enhance(new ArrayList<T>());
 		} 
@@ -196,5 +202,16 @@ public class EnhancedCollectionAdapter<T> extends AbstractAdapter<T> implements 
 	@Override
 	public EnhancedCollection<T> asUnmodifiable() {
 		return new EnhancedCollectionAdapter<T>(Collections.unmodifiableCollection(this.original));
+	}
+	
+	public EnhancedList<T> asList(){
+		return new EncancedListAdapter<T>(new ArrayList<T>(this.original()));
+	}
+	
+	public EnhancedSet<T> asSet(){
+		if (this.original instanceof Set){
+			return this;
+		}
+		return new EnhancedCollectionAdapter<T>( new HashSet<T>(this.original()));
 	}
 }

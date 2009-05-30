@@ -78,6 +78,6 @@ public class Paginator<E> {
 		
 		Query<E> pageQuery = query.setRange(startAt, this.itemsPerPage);
 		
-		return pageQuery.list();
+		return pageQuery.findAll();
 	}
 }

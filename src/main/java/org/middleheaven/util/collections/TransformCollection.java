@@ -4,12 +4,16 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
-public abstract class TransformCollection<O,T> extends AbstractCollection<T> {
+import org.middleheaven.util.classification.Classifier;
+
+public class TransformCollection<O,T> extends AbstractCollection<T> {
 
 	private Collection<O> original;
+	private Classifier<T, O> classifier;
 	
-	public TransformCollection(Collection<O> original){
+	public TransformCollection(Collection<O> original, Classifier<T,O> classifier){
 		this.original = original;
+		this.classifier = classifier;
 	}
 	
 	
@@ -29,7 +33,7 @@ public abstract class TransformCollection<O,T> extends AbstractCollection<T> {
 
 			@Override
 			public T next() {
-				return transform(originalIt.next());
+				return classifier.classify(originalIt.next());
 			}
 
 			@Override
@@ -40,8 +44,6 @@ public abstract class TransformCollection<O,T> extends AbstractCollection<T> {
 		};
 	}
 
-	protected abstract T transform(O object);
-	
 	@Override
 	public int size() {
 		return original.size();

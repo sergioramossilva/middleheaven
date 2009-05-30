@@ -3,6 +3,7 @@ package org.middleheaven.web.container;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.wiring.WiringService;
 
 public class StandardSevletContainer extends WebContainer{
 
@@ -15,14 +16,11 @@ public class StandardSevletContainer extends WebContainer{
 		return "Standard Servlet Container";
 	}
 
+
 	@Override
-	public void init(ExecutionEnvironmentBootstrap bootstrap) {
+	public void init(WiringService wiringService) {
 		// no-op
 	}
 
-	@Override
-	public void stop(ExecutionEnvironmentBootstrap bootstrap) {
-		 this.context = null; 
-	}
 
 }

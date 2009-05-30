@@ -8,9 +8,9 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
@@ -145,7 +145,8 @@ public class LicenseServiceActivator extends Activator {
 
 				Object obj = cloader.loadClass(className).newInstance();
 
-				SerializableLicenseProvider p = ReflectionUtils.proxy(SerializableLicenseProvider.class, LicenceProviderHandler.wrapp(obj));
+				SerializableLicenseProvider p = Introspector.of(SerializableLicenseProvider.class)
+														.newProxyInstance(LicenceProviderHandler.wrapp(obj));
 
 				String data = buffer.substring(buffer.indexOf("<data>")+ "<data>".length(), buffer.indexOf("</data>"));
 

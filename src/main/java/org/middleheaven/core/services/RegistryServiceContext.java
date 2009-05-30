@@ -3,7 +3,6 @@
  */
 package org.middleheaven.core.services;
 
-import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,6 +13,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.WiringService;
@@ -244,13 +244,8 @@ public final class RegistryServiceContext implements ServiceContext{
 			
 			this.addServiceListener(handler);
 			
-			proxy = binding.serviceClass.cast(
-					Proxy.newProxyInstance(
-							this.getClass().getClassLoader(),
-							new Class[]{binding.serviceClass},
-							handler
-					)
-			);
+			proxy = Introspector.of(binding.serviceClass).newProxyInstance(handler);
+			
 			proxies.put(key,proxy);
 		}
 		

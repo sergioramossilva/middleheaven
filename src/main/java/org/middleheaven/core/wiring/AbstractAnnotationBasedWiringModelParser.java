@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.wiring.annotations.Name;
 import org.middleheaven.core.wiring.annotations.Params;
@@ -30,7 +31,7 @@ public abstract class AbstractAnnotationBasedWiringModelParser implements Wiring
 		boolean required =true;
 		boolean shareable = true;
 		if(method.isAnnotationPresent(Wire.class)){
-			Wire wire = ReflectionUtils.getAnnotation(method, Wire.class);
+			Wire wire = Introspector.of(method).getAnnotation(Wire.class);
 			required = wire.required();
 			shareable = wire.shareabled();
 		}
@@ -45,7 +46,7 @@ public abstract class AbstractAnnotationBasedWiringModelParser implements Wiring
 		boolean required =true;
 		boolean shareable = true;
 		if(field.isAnnotationPresent(Wire.class)){
-			Wire wire = ReflectionUtils.getAnnotation(field, Wire.class);
+			Wire wire = Introspector.of(field).getAnnotation(Wire.class);
 			required = wire.required();
 			shareable = wire.shareabled();
 		}

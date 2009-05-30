@@ -4,12 +4,13 @@ package org.middleheaven.sequence.service;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.sequence.SequenceState;
@@ -21,8 +22,8 @@ import org.middleheaven.util.conversion.TypeConvertions;
  * Activates  <code>SequenceStorageService</code> for sequence storing. 
  * This implementation stores all sequences in a local properties file named <code>sequences.properties</code>
  * 
- * @author  Sergio M. M. Taborda
  */
+@Service
 public class FileSequenceStorageActivator extends Activator  {
 
 	private Properties properties = new Properties();
@@ -44,7 +45,7 @@ public class FileSequenceStorageActivator extends Activator  {
 	@Override
 	public void activate(ActivationContext context) {
 
-		Container container = bootstrapService.getEnvironmentBootstrap().getContainer();
+		BootstrapContainer container = bootstrapService.getEnvironmentBootstrap().getContainer();
 
 		if (!container.getAppDataRepository().isWriteable()){
 			throw new IllegalArgumentException("Data repository must be writable");

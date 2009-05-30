@@ -3,6 +3,9 @@ package org.middleheaven.aas;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.wiring.service.Service;
+
+@Service
 public final class AccessController implements AccessControlService {
 
 	private Set<AccessRule> rules = new CopyOnWriteArraySet<AccessRule>();

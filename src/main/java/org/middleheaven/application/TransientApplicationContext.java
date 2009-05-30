@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.wiring.ObjectPool;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.util.Version;
@@ -15,22 +15,12 @@ public class TransientApplicationContext implements ApplicationContext {
 	Map<String, ApplicationModule> modules = new HashMap<String, ApplicationModule>();
 	Collection<ApplicationModule> all = new LiveCollection<ApplicationModule>();
 	
-	private Container container;
+	private BootstrapContainer container;
 	private ObjectPool wcontext;
 	
-	public TransientApplicationContext(ObjectPool wcontext, Container configContext) {
+	public TransientApplicationContext(ObjectPool wcontext, BootstrapContainer configContext) {
 		this.container = configContext;
 		this.wcontext = wcontext;
-	}
-
-	public ApplicationModule getOlderModulePresent(ModuleID moduleID) {
-		ApplicationModule currentModule = modules.get(moduleID.getIdentifier());
-		
-		if (currentModule!=null && currentModule.getModuleID().getVersion().compareTo(moduleID.getVersion())<=0){
-			return currentModule;
-		} else { 
-			return null;
-		}
 	}
 	
 	public Collection<ApplicationModule> modules(){
@@ -40,18 +30,24 @@ public class TransientApplicationContext implements ApplicationContext {
 	@Override
 	public void addModule(ApplicationModule module) {
 		
-		//wcontext.wireMembers(module);
+		// inject after creation
+		wcontext.wireMembers(module);
 		
 		ApplicationModule currentModule = modules.get(module.getModuleID().getIdentifier());
 		if (currentModule==null){
+			// new module
 			modules.put(module.getModuleID().getIdentifier(),module);
 			all.add(module);
 		} else {
+			
 			Version candidate = module.getModuleID().getVersion();
 			Version current = currentModule.getModuleID().getVersion();
 			
 			// if it is a newer version
 			if (candidate.compareTo(current)>0){
+				// unload older
+				currentModule.unload(this);
+				// install newer
 				modules.put(module.getModuleID().getIdentifier(),module);
 				all.add(module);
 			}

@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Map;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.util.collections.Interval;
 import org.middleheaven.util.collections.Range;
@@ -97,7 +98,10 @@ public class Consistencies {
 			
 			if (isNotConsistent(object)){
 				if (message==null){
-					Constructor<E> c=  ReflectionUtils.constructors(exceptionType).get(0);
+					Constructor<E> c=  Introspector.of(exceptionType)
+					.inspect().constructors()
+					.sortedByQuantityOfParameters().retrive().asList().get(0);
+					
 					Object[] initargs = new Object[c.getParameterTypes().length];
 					int i=0;
 					for (Class<?> type : c.getParameterTypes()){

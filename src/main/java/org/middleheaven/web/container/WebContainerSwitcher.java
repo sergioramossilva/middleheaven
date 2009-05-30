@@ -2,12 +2,12 @@ package org.middleheaven.web.container;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 
 public class WebContainerSwitcher {
 
 	
-	public Container getWebContainer(ServletContext servletContext){
+	public BootstrapContainer getWebContainer(ServletContext servletContext){
 		// if there exists a property "jboss.server.home.url"
 		// we are inside jboss; else assume we are in Tomcat only
 		String jbossHome = System.getProperty("jboss.server.home.url");
@@ -18,7 +18,7 @@ public class WebContainerSwitcher {
 				// cannot
 				return new StandardSevletContainer(servletContext);
 			} else {
-				return new TomcatContainer(servletContext);
+				return new CatalinaContainer(servletContext);
 			}
 		} else {
 			// inside JBoss

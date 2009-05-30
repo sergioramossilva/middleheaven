@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.ReflectionUtils;
@@ -58,7 +59,7 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 		} else {
 			// not managed yet
 			p = ReflectionUtils.proxy(obj, new NeoDatisMethodHandler(obj), Storable.class, WrapperProxy.class);
-			ReflectionUtils.copy(obj, p);
+			Introspector.of(obj).copyTo(p);
 		}
 		return p;
 	}

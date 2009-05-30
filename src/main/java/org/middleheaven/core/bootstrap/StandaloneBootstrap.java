@@ -7,7 +7,7 @@ package org.middleheaven.core.bootstrap;
 import org.middleheaven.application.ApplicationLoadingCycle;
 import org.middleheaven.application.ApplicationLoadingService;
 import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
-import org.middleheaven.core.Container;
+import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
@@ -21,15 +21,15 @@ import org.middleheaven.ui.service.UIServiceActivator;
  */
 public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 
-	Container env;
+	BootstrapContainer env;
 	private Object starter;
 
-	public StandaloneBootstrap(Object starter , Container env){
+	public StandaloneBootstrap(Object starter , BootstrapContainer env){
 		this.env = env;
 		this.starter = starter;
 	}
 
-	public void configuate(WiringService wiringService){
+	public void configurate(WiringService wiringService){
 		ActivatorScanner scanner = new SetActivatorScanner()
 		.addActivator(DynamicLoadApplicationServiceActivator.class)
 		.addActivator(UIServiceActivator.class)
@@ -64,7 +64,7 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 	}
 
 	@Override
-	public Container getContainer() {
+	public BootstrapContainer getContainer() {
 		return env;
 	}
 

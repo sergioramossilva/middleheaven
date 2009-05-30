@@ -1,31 +1,38 @@
 package org.middleheaven.web.processing.action;
 
-import java.util.Collection;
-
 import org.middleheaven.core.reflection.BeanAssembler;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.wiring.ObjectPool;
 import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.util.collections.Walker;
 
 public class ContextAssembler implements BeanAssembler {
 
 	AttributeContext context;
 	ContextScope scope;
+	private ObjectPool pool;
 	
-	public ContextAssembler(AttributeContext context, ContextScope scope) {
+	public ContextAssembler(ObjectPool pool,AttributeContext context, ContextScope scope) {
 		this.context = context;
 		this.scope = scope;
+		this.pool = pool;
 	}
 
 	@Override
 	public <B> B assemble(Class<B> type) {
 		
-		B instance = ReflectionUtils.newInstance(type);
+		final B instance = pool.getInstance(type);
 		
-		for (PropertyAccessor acessor:ReflectionUtils.getPropertyAccessors(type)){
-			acessor.setValue(instance,context.getAttribute(scope,acessor.getName().toLowerCase(), acessor.getValueType()));
-		}
+		Introspector.of(type).properties().each(new Walker<PropertyAccessor>(){
+
+			@Override
+			public void doWith(PropertyAccessor acessor) {
+				acessor.setValue(instance,context.getAttribute(scope,acessor.getName().toLowerCase(), acessor.getValueType()));
+			}
+			
+		});
 
 		return instance;
 	}

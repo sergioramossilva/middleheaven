@@ -68,7 +68,8 @@ public class MultipleUnit<E extends Measurable> extends Unit<E> {
 
 	@Override
 	public String symbol() {
-		return prefixes.get(scale) + base.symbol();
+		String prefix = prefixes.get(scale);
+		return (prefix == null ?"" : prefix )+ base.symbol();
 	}
 
 	@Override
