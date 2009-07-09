@@ -105,7 +105,7 @@ public class PresenterCommandMappingBuilder {
 		
 		@Override
 		public ActionMappingBuilder forwardTo(String url) {
-			Outcome outcome = new Outcome(status, false, GlobalMappings.getViewBase().concat("/").concat(url));
+			Outcome outcome = new Outcome(status, false, url);
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
 			return actionBuilder;
 		}

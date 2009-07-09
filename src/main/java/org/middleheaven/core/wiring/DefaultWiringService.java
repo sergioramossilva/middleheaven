@@ -20,15 +20,16 @@ import org.middleheaven.core.dependency.DependencyResolver;
 import org.middleheaven.core.dependency.InicializationNotPossibleException;
 import org.middleheaven.core.dependency.InicializationNotResolvedException;
 import org.middleheaven.core.dependency.Starter;
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.ClassIntrospector;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.wiring.activation.ActivationContext;
-import org.middleheaven.core.wiring.activation.ActivatorDependencyResolver;
-import org.middleheaven.core.wiring.activation.AnnotationBasedDependencyResolver;
-import org.middleheaven.core.wiring.activation.ActivatorScannerEvent;
-import org.middleheaven.core.wiring.activation.ActivatorScanner;
-import org.middleheaven.core.wiring.activation.ActivatorScannerListener;
-import org.middleheaven.core.wiring.activation.PublishPoint;
 import org.middleheaven.core.wiring.activation.Activator;
+import org.middleheaven.core.wiring.activation.ActivatorDependencyResolver;
+import org.middleheaven.core.wiring.activation.ActivatorScanner;
+import org.middleheaven.core.wiring.activation.ActivatorScannerEvent;
+import org.middleheaven.core.wiring.activation.ActivatorScannerListener;
+import org.middleheaven.core.wiring.activation.AnnotationBasedDependencyResolver;
+import org.middleheaven.core.wiring.activation.PublishPoint;
 import org.middleheaven.core.wiring.activation.UnitActivatorDepedencyModel;
 import org.middleheaven.core.wiring.annotations.Default;
 import org.middleheaven.core.wiring.annotations.Shared;
@@ -87,7 +88,7 @@ public class DefaultWiringService implements WiringService{
 
 		// add connector
 
-		if (ReflectionUtils.isInClasspath("javax.annotation.Resource")){
+		if (ClassIntrospector.isInClasspath("javax.annotation.Resource")){
 			this.addConnector(new JavaEE5InjectonConnector());
 		}
 
@@ -192,7 +193,7 @@ public class DefaultWiringService implements WiringService{
 				}
 
 				// try understand from wich scope could be readed
-				Set<Annotation> annotations = ReflectionUtils.getAnnotations(query.getContract());
+				Set<Annotation> annotations = Introspector.of(query.getContract()).inspect().annotations().retrive();
 
 				if (annotations.isEmpty()){
 					annotations.addAll(query.getSpecifications());
@@ -231,7 +232,7 @@ public class DefaultWiringService implements WiringService{
 					proxy = new CyclicProxy();
 					cyclicProxies.put(key, proxy);
 				}
-				return  ReflectionUtils.proxy(query.getContract(), proxy);
+				return  Introspector.of(query.getContract()).newProxyInstance(proxy);
 
 			} else {
 				stack.offer(key);

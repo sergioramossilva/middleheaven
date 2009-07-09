@@ -84,6 +84,7 @@ public class FFTTest {
 	        Complex[] z = ft.reverseTransform(y);
 	        show(z, "z = ifft(y)");
 
+	        // TODO define MathContext
 	        assertTrue(Arrays.equals(x,z));
 	        
 	        // circular convolution of x with itself

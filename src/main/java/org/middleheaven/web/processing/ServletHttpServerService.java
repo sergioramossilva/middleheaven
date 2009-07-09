@@ -8,7 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.middleheaven.logging.Logging;
+import org.middleheaven.aas.old.AccessDeniedException;
 import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
 import org.middleheaven.web.processing.action.RequestResponseWebContext;
@@ -16,19 +16,48 @@ import org.middleheaven.web.processing.action.RequestResponseWebContext;
 // created directly on the WebContainerBoostrap
 class ServletHttpServerService implements HttpServerService {
 
-	private final Map<String, HttpMapping> mappings = new TreeMap<String, HttpMapping>();
+	private final Map<String, HttpMapping> processorsMappings = new TreeMap<String, HttpMapping>();
+	private final Map<String, HttpRenderingMapping> renderingMappings = new TreeMap<String, HttpRenderingMapping>();
 
 	private boolean available = false;
 	private boolean stopped = false;
 
-
 	public ServletHttpServerService(){
+		renderingMappings.put("jsp", new HttpRenderingMapping(new DefaultJspRenderingProcessorResolver(),new UrlMapping(){
 
+			@Override
+			public boolean match(String url) {
+				return true;
+			}
+			
+		} ));
+	}
+	
+	@Override
+	public void removeRenderingProcessorResolver(String resolverID) {
+		renderingMappings.remove(resolverID);
+	}
+	
+	@Override
+	public void addRenderingProcessorResolver(String resolverID, RenderingProcessorResolver resolver, UrlMapping mapping) {
+		renderingMappings.put(resolverID, new HttpRenderingMapping(resolver,mapping));
 	}
 
 	@Override
-	public HttpProcessor processorFor(String url) {
-		for (HttpMapping mapping : mappings.values()){
+	public RenderingProcessor resolverRenderingProcessor(String url) {
+		for (HttpRenderingMapping mapping : renderingMappings.values()){
+			if (mapping.mapping.match(url)){
+				return mapping.processor.resolve(url);
+			}
+		}
+		return null;
+	}
+
+
+
+	@Override
+	public ControlProcessor resolveControlProcessor(String url) {
+		for (HttpMapping mapping : processorsMappings.values()){
 			if (mapping.mapping.match(url)){
 				return mapping.processor;
 			}
@@ -37,14 +66,14 @@ class ServletHttpServerService implements HttpServerService {
 	}
 
 	@Override
-	public void register(String processorID, HttpProcessor processor,UrlMapping mapping) {
-		mappings.put(processorID, new HttpMapping(processor,mapping));
+	public void registerHttpProcessor(String processorID, ControlProcessor processor,UrlMapping mapping) {
+		processorsMappings.put(processorID, new HttpMapping(processor,mapping));
 
 	}
 
 	@Override
-	public void unRegister(String processorID) {
-		mappings.remove(processorID);
+	public void unRegisterHttpProcessor(String processorID) {
+		processorsMappings.remove(processorID);
 	}
 
 	@Override
@@ -81,16 +110,20 @@ class ServletHttpServerService implements HttpServerService {
 			return;
 		}
 
-		HttpProcessor processor = processorFor(request.getRequestURI());
+		ControlProcessor processor = resolveControlProcessor(request.getRequestURI());
 
 		if (processor == null){
 			response.sendError(HttpErrors.NOT_IMPLEMENTED.errorCode()); 
 			return;
 		}
-		
+
+
+		// TODO apply filter
+
 		try{
-			Outcome outcome = processor.process(new  RequestResponseWebContext(request,response));
-			
+			RequestResponseWebContext context = new  RequestResponseWebContext(request,response);
+			Outcome outcome = processor.process(context);
+
 			if(outcome ==null){
 				response.sendError(HttpErrors.INTERNAL_SERVER_ERROR.errorCode());
 			} if (outcome.isTerminal()){
@@ -100,9 +133,13 @@ class ServletHttpServerService implements HttpServerService {
 			}else if (outcome.isDoRedirect()){
 				response.sendRedirect(outcome.getUrl());
 			} else {
-				request.getRequestDispatcher(outcome.getUrl()).include(request, response);
+				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl());
+
+				render.process(context, outcome);
 			}
-			
+
+		}catch (AccessDeniedException e){
+			response.sendError(HttpErrors.FORBIDDEN.errorCode());
 		}catch (HttpProcessIOException e){
 			throw e.getIOException();
 		}catch (HttpProcessServletException e){
@@ -110,17 +147,34 @@ class ServletHttpServerService implements HttpServerService {
 		}catch (Throwable e){
 			throw new ServletException(e);
 		} 
+
+		// TODO apply filter
 	}
 
 	private class HttpMapping{
 
-		public HttpProcessor processor;
+		public ControlProcessor processor;
 		public UrlMapping mapping;
 
-		public HttpMapping(HttpProcessor processor, UrlMapping mapping) {
+		public HttpMapping(ControlProcessor processor, UrlMapping mapping) {
 			this.processor = processor;
 			this.mapping = mapping;
 		}
 
 	}
+
+	private class HttpRenderingMapping{
+
+		public RenderingProcessorResolver processor;
+		public UrlMapping mapping;
+
+		public HttpRenderingMapping(RenderingProcessorResolver resolver, UrlMapping mapping) {
+			this.processor = resolver;
+			this.mapping = mapping;
+		}
+
+	}
+
+
+
 }

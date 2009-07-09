@@ -13,7 +13,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
@@ -108,7 +108,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 			if(className!=null && !className.isEmpty()){
 				try{
 					// TODO must instantiate ? 
-					Class<? extends Activator> type = ReflectionUtils.loadClass(className , Activator.class,cloader);
+					Class<? extends Activator> type = Introspector.of(Activator.class).load(className,cloader).getIntrospected();
 					Activator activator = wiringService.getObjectPool().getInstance(type);
 
 					Activator older = activators.get(activator.getClass().getName());

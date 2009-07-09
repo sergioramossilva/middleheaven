@@ -3,7 +3,7 @@ package org.middleheaven.web.processing.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.middleheaven.aas.AccessDeniedException;
+import org.middleheaven.aas.old.AccessDeniedException;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.web.processing.HttpContext;
@@ -44,8 +44,6 @@ public class ListInterceptorChain implements InterceptorChain{
 			// invoque interceptor
 			interceptor.intercept(context, chain);
 			return false;
-		} catch (AccessDeniedException e){
-			outcome = new Outcome(BasicOutcomeStatus.ERROR,501); // not implemented
 		} catch (Exception e){
 			Logging.error("Exception found handling interceptor " + interceptor.getClass(), e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
@@ -69,13 +67,13 @@ public class ListInterceptorChain implements InterceptorChain{
 		return outcome;
 	}
 	
-	@Override
+	@Deprecated
 	public void interruptAndRedirect(String url) {
 		interrupted = true;
 		this.outcome = new Outcome(BasicOutcomeStatus.TERMINATE,true,url);
 	}
 
-	@Override
+	@Deprecated
 	public void interruptWithError(int errorCode) {
 		interrupted = true;
 		this.outcome = new Outcome(BasicOutcomeStatus.ERROR,errorCode);
@@ -83,6 +81,12 @@ public class ListInterceptorChain implements InterceptorChain{
 
 	public Outcome getOutcome() {
 		return outcome;
+	}
+
+	@Override
+	public void interruptWithOutcome(Outcome outcome) {
+		interrupted = true;
+		this.outcome = outcome;
 	}
 	
 

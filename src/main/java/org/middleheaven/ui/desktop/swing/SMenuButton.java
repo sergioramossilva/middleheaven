@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 
+import org.middleheaven.core.reflection.bean.BeanBinding;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
@@ -15,7 +16,6 @@ import org.middleheaven.ui.components.UICommand;
 import org.middleheaven.ui.components.UILabel;
 import org.middleheaven.ui.events.UIActionEvent;
 import org.middleheaven.ui.models.UICommandModel;
-import org.middleheaven.util.bean.BeanBinding;
 
 public class SMenuButton extends JMenuItem implements UICommand {
 

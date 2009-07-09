@@ -1,5 +1,7 @@
 package org.middleheaven.web.processing.action;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -8,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.middleheaven.global.Culture;
 import org.middleheaven.io.repository.EmptyFileRepository;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.upload.UploadManagedFileRepository;
@@ -92,6 +93,15 @@ public class RequestResponseWebContext extends ServletWebContext {
 	@Override
 	public String getContextPath() {
 		return request.getContextPath();
+	}
+
+	@Override
+	public InetAddress getRemoteAddress(){
+		try{
+			return InetAddress.getByName(request.getRemoteAddr());
+		}catch (UnknownHostException e){
+			return null;
+		}
 	}
 
 

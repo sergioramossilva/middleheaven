@@ -2,12 +2,17 @@ package org.middleheaven.core.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedCollection;
 
 public class FieldIntrospector extends Introspector implements FieldAcessor {
 
 	private Field field;
 
-	public FieldIntrospector(Field field) {
+	FieldIntrospector(Field field) {
 		this.field = field;
 	}
 
@@ -54,6 +59,19 @@ public class FieldIntrospector extends Introspector implements FieldAcessor {
 
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		return field.getAnnotation(annotationClass);
+	}
+
+	public EnhancedCollection<Annotation> getAnnotatedAnnotations(Class<? extends Annotation>  metaAnnotation) {
+		Set<Annotation> result = new HashSet<Annotation>(); 
+
+		Annotation[] all = field.getDeclaredAnnotations();
+		for (Annotation a : all){
+			if (a.annotationType().isAnnotationPresent(metaAnnotation)){
+				result.add(a);
+			}
+		}
+		
+		return CollectionUtils.enhance(result);
 	}
 
 }

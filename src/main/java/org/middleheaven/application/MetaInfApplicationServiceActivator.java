@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.middleheaven.core.bootstrap.BootstapListener;
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 
@@ -37,7 +37,8 @@ public class MetaInfApplicationServiceActivator extends AbstractDynamicLoadAppli
 						String className = line.substring(line.indexOf(":")+1).trim();
 						if(className!=null && !className.isEmpty()){
 							try{
-								ApplicationModule module =  ReflectionUtils.newInstance(className, ApplicationModule.class);
+								ApplicationModule module = Introspector.of(ApplicationModule.class)
+																.load(className).newInstance();
 							
 								getAppContext().addModule(module);
 							} catch (ClassCastException e){

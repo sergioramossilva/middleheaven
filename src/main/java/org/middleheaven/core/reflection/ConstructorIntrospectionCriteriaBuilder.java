@@ -2,90 +2,79 @@ package org.middleheaven.core.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Comparator;
+import java.util.Arrays;
 
 import org.middleheaven.util.classification.BooleanClassifier;
-import org.middleheaven.util.classification.LogicComposedClassifier;
-import org.middleheaven.util.classification.LogicOperator;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
-public class ConstructorIntrospectionCriteriaBuilder<T>{
+public class ConstructorIntrospectionCriteriaBuilder<T> extends ParameterizableMemberIntrospectionCriteriaBuilder<T,Constructor<T>>{
 
-	private IntrospectionCriteriaBuilder<T> builder;
-	private Comparator<Constructor<T>> comparator;
-	private BooleanClassifier<Constructor<T>> annotationPresent;
-	private final LogicComposedClassifier<Constructor<T>> logicClassifier =
-		new LogicComposedClassifier<Constructor<T>>(LogicOperator.and());
-	
 	ConstructorIntrospectionCriteriaBuilder(IntrospectionCriteriaBuilder<T> builder){
-		this.builder = builder;
+		super(builder);
 	}
 
 	public ConstructorIntrospectionCriteriaBuilder<T> annotathedWith(final Class<? extends Annotation> ... annotations) {
 
-		annotationPresent = new BooleanClassifier<Constructor<T>>(){
-
-			@Override
-			public Boolean classify(Constructor<T> c) {
-				for (Class<? extends Annotation> a : annotations){
-					if (c.isAnnotationPresent(a)){
-						return true;
-					}
-				}
-				return false;
-			}
-
-		};
+		super.addAnnotatedWithFilter(annotations);
 		return this;
 	}
 
 	public ConstructorIntrospectionCriteriaBuilder<T> withAccess(final MemberAccess ... acesses){
 
-		logicClassifier.add(new BooleanClassifier<Constructor<T>>(){
-
-			@Override
-			public Boolean classify(Constructor<T> obj) {
-				boolean result = false;
-				for (MemberAccess a : acesses){
-					result = result | a.is(obj.getModifiers());
-				}
-				return result;
-			}
-
-		});
+		super.addWithAccessFilter(acesses);
 		return this;
+		
 	}
 
 	public ConstructorIntrospectionCriteriaBuilder<T> sortedByQuantityOfParameters(){
-		this.comparator = new Comparator<Constructor<T>>(){
-
-			@Override
-			public int compare(Constructor<T> a, Constructor<T> b) {
-				return a.getParameterTypes().length - b.getParameterTypes().length;
-			}
-
-		};
+		
+		super.addSortingByQuantityOfParameters();
 		return this;
+
 	}
 
+	public ConstructorIntrospectionCriteriaBuilder<T> named(final String name) {
+		super.addNameFilter(name);
+		return this;
+	}
+	
+	public ConstructorIntrospectionCriteriaBuilder<T> match(BooleanClassifier<Constructor<T>> filter) {
+		add(filter);
+		return this;
+	}
+	
+	@Override
+	protected EnhancedCollection<Constructor<T>> getAllMembersInType(Class<T> type) {
+		// the constructors are directly taken from type T
+		@SuppressWarnings("unchecked") Constructor<T>[] constructors = (Constructor<T>[]) type.getConstructors();
+		return CollectionUtils.enhance(constructors);
+	}
 
-	public EnhancedCollection<Constructor<T>> retrive() {
-		@SuppressWarnings("unchecked") Constructor<T>[] constructors = (Constructor<T>[])builder.type.getConstructors();
+	@Override
+	protected int getModifiers(Constructor<T> obj) {
+		return obj.getModifiers();
+	}
 
-		EnhancedCollection<Constructor<T>> result = CollectionUtils.enhance(constructors);
+	@Override
+	protected boolean isAnnotationPresent(Constructor<T> obj,
+			Class<? extends Annotation> annotationType) {
+		return obj.isAnnotationPresent(annotationType);
+	}
 
-		if(annotationPresent!=null){
-			result = result.findAll(annotationPresent);
-		} 
+	@Override
+	protected int getParameterCount(Constructor<T> member) {
+		return member.getTypeParameters().length;
+	}
 
-		if (comparator!=null){
-			result = result.sort(comparator);
-		}
+	@Override
+	protected String getName(Constructor<T> obj) {
+		return obj.getName();
+	}
 
-		return result;
-
+	@Override
+	protected boolean hasParameterTypes(Constructor<T> obj, Class<?>[] parameterTypes) {
+		return Arrays.equals(obj.getParameterTypes(), parameterTypes);
 	}
 
 }

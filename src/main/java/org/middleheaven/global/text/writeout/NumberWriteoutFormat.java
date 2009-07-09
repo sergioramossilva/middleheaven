@@ -2,7 +2,7 @@ package org.middleheaven.global.text.writeout;
 
 import java.util.Locale;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.global.Culture;
 
 public abstract class NumberWriteoutFormat {
@@ -28,7 +28,7 @@ public abstract class NumberWriteoutFormat {
 			}
 
 			String name = NumberWriteoutFormat.class.getPackage().getName() + "."+ country + lang + NumberWriteoutFormat.class.getSimpleName();
-			return ReflectionUtils.newInstance(name,NumberWriteoutFormat.class);
+			return Introspector.of(NumberWriteoutFormat.class).newInstance(name);
 		} catch (Exception e){
 			throw new FormatNotFoundException("Cannot find format class for culture " + culture);
 		}

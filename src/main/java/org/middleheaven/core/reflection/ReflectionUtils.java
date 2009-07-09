@@ -12,7 +12,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +23,7 @@ import java.util.WeakHashMap;
 
 import org.middleheaven.util.classification.BooleanClassifier;
 
-public final class ReflectionUtils {
+class ReflectionUtils {
 
 	private static ReflectionStrategy stategy = new CGLibReflectionStrategy();
 
@@ -58,7 +57,7 @@ public final class ReflectionUtils {
 		return stategy.proxy(delegationTarget, delegator, proxyInterface);
 	}
 
-	public static <I> I proxy (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface , Class<?> adicionalInterfaces){
+	public static <I> I proxy (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface , Class<?> ... adicionalInterfaces){
 		return stategy.proxy(delegationTarget, delegator, proxyInterface,adicionalInterfaces);
 	}
 
@@ -193,15 +192,15 @@ public final class ReflectionUtils {
 		try {
 			return  type.cast(newInstance(Class.forName(className, true, cloader)));
 		} catch (ClassNotFoundException e) {
-			throw new ClassNotFoundReflectionException("Class " + className  + " has not found");
+			throw new NoSuchClassReflectionException(className);
 		}
 	}
 	
-	public static <T> T newInstance(String className, Class<T> type) throws ClassNotFoundReflectionException {
+	public static <T> T newInstance(String className, Class<T> type) throws NoSuchClassReflectionException {
 		try {
 			return  type.cast(newInstance(Class.forName(className)));
 		} catch (ClassNotFoundException e) {
-			throw new ClassNotFoundReflectionException("Class " + className  + " has not found");
+			throw new NoSuchClassReflectionException(className);
 		}
 	
 	}
@@ -369,6 +368,7 @@ public final class ReflectionUtils {
 		return result;
 	}
 
+	/*
 	public static Set<Field> getAllFields(Class<?> type) {
 		Set<Field> fields = new HashSet<Field>();
 
@@ -379,6 +379,7 @@ public final class ReflectionUtils {
 
 		return fields;
 	}
+
 
 	public static void invokeMain(Class<?> mainClass,  String ... params) {
 		try {
@@ -398,6 +399,7 @@ public final class ReflectionUtils {
 			throw new NoSuchMethodReflectionException(e);
 		}
 	}
+	*/
 	public static <T> T invokeStatic(Class<T> returnType,Method methodToInvoke, Object ... params) {
 		try {
 			methodToInvoke.setAccessible(true);

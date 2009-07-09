@@ -7,18 +7,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class StringUtils {
 
-	public static String join(String[] original, String separator){
-		return join(original, separator,0, original.length);
+	public static String join(String separator, String ... original){
+		return join(separator, 0,original.length, original);
 	}
 
-	public static String join(String[] original, String separator, int start){
-		return join(original, separator, start, original.length);
+	public static String join(String separator, int start, String ... original){
+		return join(separator, start, original.length, original);
 	}
 
-	public static String join(String[] original, String separator, int start, int end){
+	public static String join(String separator, int start, int end, String ... original){
 		StringBuilder builder = new StringBuilder();
 		for (int i=start; i < end;i++){
 			builder.append(original[i].toString()).append(separator);
@@ -29,7 +30,7 @@ public class StringUtils {
 		return builder.toString();
 	}
 	
-	public static String join(Iterable<?> original, String separator){
+	public static String join(String separator, Iterable<?> original){
 		StringBuilder builder = new StringBuilder();
 		for (Iterator<?> it = original.iterator();it.hasNext();){
 			builder.append(it.next().toString()).append(separator);
@@ -40,7 +41,7 @@ public class StringUtils {
 		return builder.toString();
 	}
 
-	public static boolean isInArray(String candidate, String[] set){
+	public static boolean isInArray(String candidate, String ... set){
 		if (candidate==null) return false;
 
 		for (String s: set){
@@ -143,5 +144,34 @@ public class StringUtils {
 		StringBuilder builder  = new StringBuilder(text);
 		builder.replace(0, 1, builder.substring(0,1).toUpperCase());
 		return builder.toString();
+	}
+	
+	
+	public static boolean simplePatternMatch(String simplePattern, CharSequence text){
+		return compile(simplePattern).matcher(text).find();
+	}
+	
+	/**
+	 * Compiles a simplified pattern string into a Pattern.
+	 * A simplified pattern only uses '*' for matching "all" and "one" 
+	 * respectively
+	 * @param simplePattern
+	 * @return
+	 */
+	public static Pattern compile(String simplePattern){
+
+		if (simplePattern.startsWith("*") && simplePattern.endsWith("*")){
+			return Pattern.compile(simplePattern.replaceAll("\\*", ""));
+		} else if (simplePattern.startsWith("*")){
+			// end with text
+			return Pattern.compile(simplePattern.replaceAll("\\*", "") + "$");
+		} else if (simplePattern.endsWith("*")){
+			// starts with
+			return Pattern.compile("^" + simplePattern.replaceAll("\\*", ""));
+		} else {
+			// is exactly
+			return Pattern.compile("^" + simplePattern + "$");
+		}
+
 	}
 }

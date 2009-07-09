@@ -31,7 +31,7 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 		
 		ActionBasedProcessor processor = new ActionBasedProcessor(mappingService);
 		
-		serverService.register(this.getApplicationID().toString() + "_processor", processor, new UrlMapping(){
+		serverService.registerHttpProcessor(this.getApplicationID().toString() + "_processor", processor, new UrlMapping(){
 
 			@Override
 			public boolean match(String url) {
@@ -92,7 +92,7 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 	protected void doUnload(ApplicationContext context,
 			HttpServerService serverService) {
 
-		serverService.unRegister("id");
+		serverService.unRegisterHttpProcessor("id");
 	}
 	
 	protected abstract void configurate(ApplicationContext context);

@@ -1,7 +1,7 @@
 package org.middleheaven.domain;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.storage.model.Column;
 import org.middleheaven.storage.model.Table;
 
@@ -11,7 +11,8 @@ public class AnnotatedHardnameMapper extends HardnameMapper {
 	@Override
 	public String getFieldHardname(Class<?> type,	String logicFieldName) {
 		String hardName =null;
-		PropertyAccessor pa = ReflectionUtils.getPropertyAccessor(type,logicFieldName);
+		PropertyAccessor pa = Introspector.of(type).inspect().properties().named(logicFieldName).retrive();
+
 		if(pa.isAnnotadedWith(Column.class)){
 			Column column = pa.getAnnotation(Column.class);
 			String columnName = column.value();

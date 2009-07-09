@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * An autentication or autorization credential.
- * Is recomended taht <code>Credentials</code>  implement equals and hashCode methods correctly.
+ * Is recomended that <code>Credentials</code>  implement equals and hashCode methods correctly.
  */
 public interface Credential extends Serializable{
 

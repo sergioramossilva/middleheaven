@@ -2,13 +2,13 @@ package org.middleheaven.ui;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Iterator;
 
+import org.middleheaven.core.reflection.ClassIntrospector;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.PropertyBagProxyHandler;
 import org.middleheaven.core.reflection.ReflectionException;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.BindingNotFoundException;
@@ -84,14 +84,14 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 		this.setConstructedObject(env);
 	}
 
-	private <T extends UIComponent > Class<T> resolveClass(String type){
+	private Class<UIComponent> resolveClass(String type){
 		if (type.equals("commandset")){
 			type = "CommandSet";
 		}
 		try {
-			return (Class<T>) ReflectionUtils.loadClass("org.middleheaven.ui.UI" + StringUtils.capitalize(type));
+			return Introspector.of(UIComponent.class).load("org.middleheaven.ui.UI" + StringUtils.capitalize(type)).getIntrospected();
 		} catch (NoSuchClassReflectionException e) {
-			return (Class<T>) ReflectionUtils.loadClass("org.middleheaven.ui.components.UI" + StringUtils.capitalize(type));
+			return Introspector.of(UIComponent.class).load("org.middleheaven.ui.components.UI" + StringUtils.capitalize(type)).getIntrospected();
 		}
 	}
 
@@ -128,11 +128,12 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			// if class attribute is defined
 			String modelClass = XMLUtils.getStringAttribute("class", modelNode, "");
 			if (!modelClass.isEmpty()){
-				uiModelClass = ReflectionUtils.loadClass(modelClass, UIModel.class);
+				ClassIntrospector<UIModel> modelIntrospector = Introspector.of(UIModel.class).load(modelClass);
+				uiModelClass = modelIntrospector.getIntrospected();
 				try{
 					uiModel = wiringContext.getInstance(uiModelClass);
 				} catch (BindingNotFoundException e){
-					uiModel = ReflectionUtils.newInstance(modelClass, UIModel.class);
+					uiModel = modelIntrospector.newInstance();
 					wiringContext.addConfiguration(new ModelBinderConfiguration(uiModelClass, uiModel));
 				}
 				
@@ -178,7 +179,7 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 					} else if (UIFieldInputModel.class.isAssignableFrom(uiModelClass)){
 						uiModel = new AbstractUIFieldInputModel();
 					} else {
-						uiModel = ReflectionUtils.proxy(uiModelClass, new PropertyBagProxyHandler());
+						uiModel = Introspector.of(uiModelClass).newProxyInstance(new PropertyBagProxyHandler());
 					}
 					
 			
@@ -191,8 +192,7 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 
 		// inject attributes
 
-
-		Iterable<PropertyAccessor> properties = ReflectionUtils.getPropertyAccessors(uiModelClass);
+		Collection<PropertyAccessor> properties = Introspector.of(uiModelClass).inspect().properties().retriveAll();
 
 		for (PropertyAccessor p : properties){
 			Node pnode = XMLUtils.getChildNode(p.getName().toString(), modelNode);

@@ -1,10 +1,13 @@
 package org.middleheaven.web.processing.action;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Map;
 
 import org.middleheaven.global.Culture;
 import org.middleheaven.io.repository.BufferedMediaVirtualFile;
+import org.middleheaven.io.repository.EmptyFileRepository;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.ui.ContextScope;
@@ -19,12 +22,32 @@ public final class MapWebContext  extends WebContext{
 	private MapContext mapContext;
 	private MediaManagedFile file = new BufferedMediaVirtualFile("response");
 	private Culture culture= Culture.defaultValue();
+	private InetAddress address;
+	private String url;
+	private String contextPath;
 	
-	public MapWebContext(Culture culture, HttpMethod service) {
+	public MapWebContext(String url , String contextPath, Culture culture, HttpMethod service) {
 		this.service = service;
+		this.url = url;
+		this.contextPath = contextPath;
 		this.mapContext = new MapContext();
+		try {
+			this.address = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			this.address = null;
+		}
+
 	}
 
+	@Override
+	public InetAddress getRemoteAddress() {
+		return address;
+	}
+	
+	public void setRemote(InetAddress address){
+		this.address = address;
+	}
+	
 	@Override
 	public HttpUserAgent getAgent() {
 		return agent;
@@ -79,20 +102,19 @@ public final class MapWebContext  extends WebContext{
 
 	@Override
 	public String getContextPath() {
-		// TODO implement HttpContext.getContextPath
-		return null;
+		return this.contextPath;
 	}
 
 	@Override
 	public StringBuilder getRequestUrl() {
-		// TODO implement HttpContext.getRequestUrl
-		return null;
+		// return a copy every time
+		return new StringBuilder(this.url);
 	}
 
 	@Override
 	public ManagedFileRepository getUploadRepository() {
-		// TODO implement HttpContext.getUploadRepository
-		return null;
+		return EmptyFileRepository.repository();
 	}
+
 
 }

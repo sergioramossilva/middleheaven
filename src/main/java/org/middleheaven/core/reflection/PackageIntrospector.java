@@ -11,7 +11,7 @@ public class PackageIntrospector extends Introspector {
 
 	private Package typePackage;
 
-	public PackageIntrospector(Package typePackage) {
+	PackageIntrospector(Package typePackage) {
 		this.typePackage = typePackage;
 	}
 
@@ -20,7 +20,7 @@ public class PackageIntrospector extends Introspector {
 	}
 
 
-	public EnhancedCollection<ClassIntrospector> getClasses(){
+	public EnhancedCollection<ClassIntrospector> getClassesIntrospectors(){
 		return CollectionUtils.enhance(
 				new TransformCollection<Class<?>, ClassIntrospector>(
 						ReflectionUtils.getPackageClasses(typePackage) , 
@@ -35,6 +35,10 @@ public class PackageIntrospector extends Introspector {
 		);
 	}
 
+	public EnhancedCollection<Class<?>> getClasses(){
+		return CollectionUtils.enhance(ReflectionUtils.getPackageClasses(typePackage));
+	}
+	
 	@Override
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		return this.typePackage.getAnnotation(annotationClass);

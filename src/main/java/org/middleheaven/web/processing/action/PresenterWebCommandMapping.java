@@ -14,9 +14,9 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.core.reflection.MethodFilters;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.global.text.LocalizationService;
@@ -24,6 +24,7 @@ import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.util.collections.Walker;
 import org.middleheaven.util.conversion.StringCalendarDateTimeConverter;
 import org.middleheaven.util.conversion.StringDateConverter;
 import org.middleheaven.util.conversion.TypeConvertions;
@@ -71,30 +72,32 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 		// each method on the presenter that is not a getter or a setter is an action
 		// only public not property methods
-		List<Method> methods = ReflectionUtils.getMethods(presenterClass , MethodFilters.publicInstanceNonProperty());
+		Introspector.of(presenterClass).inspect().methods().match(MethodFilters.publicInstanceNonProperty())
+		.each(new Walker<Method>(){
 
-		for (Method m : methods ){
-
-			// a method can have multiple bindings (not chain ifs)
-			if (m.isAnnotationPresent(Post.class)){
-				serviceMethods.put(HttpMethod.POST,m);
-			} 
-			if (m.isAnnotationPresent(Get.class)){
-				serviceMethods.put(HttpMethod.GET,m);
-			} 
-			if (m.isAnnotationPresent(Delete.class)){
-				serviceMethods.put(HttpMethod.DELETE,m);
-			} 
-			if (m.isAnnotationPresent(Put.class)){
-				serviceMethods.put(HttpMethod.PUT,m);
-			} 
-			if (m.isAnnotationPresent(ProcessRequest.class)){
-				doService = m;
-			} else {
-				actions.put(m.getName().toLowerCase(),m);
+			@Override
+			public void doWith(Method m) {
+				// a method can have multiple bindings (not chain ifs)
+				if (m.isAnnotationPresent(Post.class)){
+					serviceMethods.put(HttpMethod.POST,m);
+				} 
+				if (m.isAnnotationPresent(Get.class)){
+					serviceMethods.put(HttpMethod.GET,m);
+				} 
+				if (m.isAnnotationPresent(Delete.class)){
+					serviceMethods.put(HttpMethod.DELETE,m);
+				} 
+				if (m.isAnnotationPresent(Put.class)){
+					serviceMethods.put(HttpMethod.PUT,m);
+				} 
+				if (m.isAnnotationPresent(ProcessRequest.class)){
+					doService = m;
+				} else {
+					actions.put(m.getName().toLowerCase(),m);
+				}
 			}
-
-		}
+			
+		});
 
 		// singleton per mapper
 		controllerObject = ServiceRegistry.getService(WiringService.class).getObjectPool().getInstance(presenterClass);
@@ -240,7 +243,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 			Object[] args = inicilizeActionParameters(actionMethod, context);
 
 
-			Object result = ReflectionUtils.invoke(actionMethod.getReturnType(), actionMethod, controllerObject, args);
+			Object result = Introspector.of(actionMethod).invoke(actionMethod.getReturnType(), controllerObject, args);
 
 			if (result instanceof Outcome){
 				if (result instanceof URLOutcome ){

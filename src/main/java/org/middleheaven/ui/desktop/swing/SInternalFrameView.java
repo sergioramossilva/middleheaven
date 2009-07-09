@@ -12,6 +12,7 @@ import javax.swing.JMenuBar;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
+import org.middleheaven.core.reflection.bean.BeanBinding;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
@@ -20,7 +21,6 @@ import org.middleheaven.ui.components.UIView;
 import org.middleheaven.ui.events.UIFocusEvent;
 import org.middleheaven.ui.events.UIPrespectiveEvent;
 import org.middleheaven.ui.models.UIViewModel;
-import org.middleheaven.util.bean.BeanBinding;
 import org.middleheaven.util.collections.DelegatingList;
 
 public class SInternalFrameView extends JInternalFrame implements UIView{

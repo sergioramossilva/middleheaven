@@ -7,15 +7,25 @@ package org.middleheaven.web.processing;
 public interface HttpServerService {
 
 	
-	public void register(String processorID, HttpProcessor procesor, UrlMapping mapping);
-	public void unRegister(String processorID);
+	public void registerHttpProcessor(String processorID, ControlProcessor procesor, UrlMapping mapping);
+	public void unRegisterHttpProcessor(String processorID);
+	
+	public void addRenderingProcessorResolver(String resolverID, RenderingProcessorResolver resolver, UrlMapping mapping);
+	public void removeRenderingProcessorResolver(String resolverID);
+	
+	/**
+	 * Discovers and returns the ViewProcessor that can, according to it's registred UrlMapping, render the given url 
+	 * @param url
+	 * @return or <code>null</code> if none matches 
+	 */
+	public RenderingProcessor resolverRenderingProcessor(String url);
 	
 	/**
 	 * Discovers and returns the HttpProcessor that can, according to it's registred UrlMapping, process the given url 
 	 * @param url
 	 * @return or <code>null</code> if none matches 
 	 */
-	public HttpProcessor processorFor(String url);
+	public ControlProcessor resolveControlProcessor(String url);
 	
 	/**
 	 * Set the availability state of this service.

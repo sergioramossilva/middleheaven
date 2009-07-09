@@ -84,7 +84,7 @@ public class BigDecimalReal extends Real{
 	private BigDecimalReal simplify() {
 
 		if (denominator.equals(BigDecimal.ONE) || numerator.signum()==0){
-			return this; // is zero ou divided by 1
+			return this; // is zero or divided by 1
 		}
 		BigDecimal min = denominator.min(numerator);
 
@@ -213,7 +213,8 @@ public class BigDecimalReal extends Real{
 	}
 
 	public boolean equals(BigDecimalReal other){
-		return  this.minus(other).isZero();
+		return (this.denominator.compareTo(other.denominator)==0 &&  this.numerator.compareTo(other.numerator) ==0)
+		|| this.numerator.multiply(other.denominator).compareTo(this.denominator.multiply(other.numerator))==0;
 	}
 
 	@Override
@@ -226,7 +227,7 @@ public class BigDecimalReal extends Real{
 	}
 
 	@Override
-	public int compareTo(org.middleheaven.quantity.math.Number<? super Real> o) {
+	public int compareTo(org.middleheaven.quantity.math.Numeral<? super Real> o) {
 		return this.asNumber().compareTo(o.asNumber());
 	}
 

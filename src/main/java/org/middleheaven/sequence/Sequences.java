@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 
 public class Sequences {
 
@@ -21,7 +21,7 @@ public class Sequences {
 		if (sequenceType==null){
 			throw new RuntimeException("Sequence not found for type " + elementType);
 		}
-		return (Sequence<T>) ReflectionUtils.newInstance(sequenceType,Sequence.class);
+		return Introspector.of(Sequence.class).load(sequenceType).newInstance();
 	}
 	
 	public static <T, S extends Sequence<T>> void setSequence(Class<T> elementType,Class<S> sequenceType){

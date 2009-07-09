@@ -2,74 +2,40 @@ package org.middleheaven.core.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Comparator;
+import java.util.Arrays;
 
 import org.middleheaven.util.classification.BooleanClassifier;
-import org.middleheaven.util.classification.LogicComposedClassifier;
-import org.middleheaven.util.classification.LogicOperator;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
-public class MethodIntrospectionCriteriaBuilder<T>{
+public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMemberIntrospectionCriteriaBuilder<T,Method>{
 
-	private IntrospectionCriteriaBuilder<T> builder;
-	private Comparator<Method> comparator;
-	private final LogicComposedClassifier<Method> logicClassifier =
-		new LogicComposedClassifier<Method>(LogicOperator.and());
-	
+
 	MethodIntrospectionCriteriaBuilder(IntrospectionCriteriaBuilder<T> builder){
-		this.builder = builder;
+		super(builder);
 	}
 	
-	public MethodIntrospectionCriteriaBuilder<T> annotathedWith(final Class<? extends Annotation> ... annotations) {
+	public MethodIntrospectionCriteriaBuilder<T> annotatedWith(final Class<? extends Annotation> ... annotations) {
 
-		logicClassifier.add(new BooleanClassifier<Method>(){
-			
-			@Override
-			public Boolean classify(Method c) {
-				for (Class<? extends Annotation> a : annotations){
-					if (c.isAnnotationPresent(a)){
-						return true;
-					}
-				}
-				return false;
-			}
-		
-		});
+		super.addAnnotatedWithFilter(annotations);
 		return this;
 	}
 	
 	public MethodIntrospectionCriteriaBuilder<T> sortedByQuantityOfParameters(){
-		this.comparator = new Comparator<Method>(){
-
-			@Override
-			public int compare(Method a, Method b) {
-				return a.getParameterTypes().length - b.getParameterTypes().length;
-			}
-
-		};
+		
+		super.addSortingByQuantityOfParameters();
 		return this;
 	}
 
 	public MethodIntrospectionCriteriaBuilder<T> withAccess(final MemberAccess ... acesses){
 		
-		logicClassifier.add(new BooleanClassifier<Method>(){
-
-			@Override
-			public Boolean classify(Method obj) {
-				boolean result = false;
-				for (MemberAccess a : acesses){
-					result = result | a.is(obj.getModifiers());
-				}
-				return result;
-			}
-			
-		});
+		super.addWithAccessFilter(acesses);
+		
 		return this;
 	}
 	
 	public MethodIntrospectionCriteriaBuilder<T> notInheritFromObject() {
-		logicClassifier.add(new BooleanClassifier<Method>(){
+		add(new BooleanClassifier<Method>(){
 
 			@Override
 			public Boolean classify(Method obj) {
@@ -80,23 +46,55 @@ public class MethodIntrospectionCriteriaBuilder<T>{
 		return this;
 	}
 	
-	
-	public EnhancedCollection<Method> retrive() {
-		
 
-		EnhancedCollection<Method> result = CollectionUtils.enhance(ReflectionUtils.getMethods(builder.type));
-		
-		if(logicClassifier!=null){
-			result = result.findAll(logicClassifier);
-		} 
-		
-		if (comparator!=null){
-			result = result.sort(comparator);
-		}
-		
-		return result;
-		
+
+	
+	public MethodIntrospectionCriteriaBuilder<T> named(final String name) {
+		super.addNameFilter(name);
+		return this;
 	}
+	
+	public MethodIntrospectionCriteriaBuilder<T> withParametersType(Class<?>[] parameterTypes) {
+		super.addParamterTypeFilter(parameterTypes);
+		return null;
+	}
+	
+	public MethodIntrospectionCriteriaBuilder<T> match(BooleanClassifier<Method> filter) {
+		add(filter);
+		return this;
+	}
+	
+	@Override
+	protected int getParameterCount(Method member) {
+		return member.getParameterTypes().length;
+	}
+
+	@Override
+	protected EnhancedCollection<Method> getAllMembersInType(Class<T> type) {
+		return CollectionUtils.enhance(ReflectionUtils.getMethods(type));
+	}
+
+	@Override
+	protected int getModifiers(Method method) {
+		return method.getModifiers();
+	}
+
+	@Override
+	protected boolean isAnnotationPresent(Method obj,Class<? extends Annotation> annotationType) {
+		return obj.isAnnotationPresent(annotationType);
+	}
+
+	@Override
+	protected String getName(Method obj) {
+		return obj.getName();
+	}
+
+	@Override
+	protected boolean hasParameterTypes(Method obj, Class<?>[] parameterTypes) {
+		return Arrays.equals(obj.getParameterTypes(), parameterTypes);
+	}
+
+
 
 
 

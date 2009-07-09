@@ -11,7 +11,7 @@ public class NoSuchClassReflectionException extends ClassloadingException {
 
     protected final String className;
     public NoSuchClassReflectionException(String className){
-        super(className + " could not be found");
+        super(className + " could not be found on the classpath");
         this.className =  className;
     }
 

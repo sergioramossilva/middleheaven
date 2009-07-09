@@ -1,14 +1,16 @@
 package org.middleheaven.web.processing.action;
 
 import org.middleheaven.web.processing.HttpContext;
+import org.middleheaven.web.processing.Outcome;
 
 public interface InterceptorChain {
 
 	
 	public void doChain(HttpContext context);
 	
-	public void interruptWithError(int errorCode);
-	public void interruptAndRedirect(String url);
+	
+	public void interruptWithOutcome(Outcome outcome);
+
 	
 	
 }

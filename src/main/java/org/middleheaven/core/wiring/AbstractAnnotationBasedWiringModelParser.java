@@ -8,10 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.middleheaven.core.reflection.Introspector;
-import org.middleheaven.core.reflection.ReflectionUtils;
-import org.middleheaven.core.wiring.annotations.Name;
-import org.middleheaven.core.wiring.annotations.Params;
-import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.util.classification.BooleanClassifier;
 

@@ -3,7 +3,7 @@ package org.middleheaven.core.wiring.activation;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.MethodIntrospector;
 
 public final class MethodPublishPoint implements PublishPoint {
 
@@ -17,7 +17,7 @@ public final class MethodPublishPoint implements PublishPoint {
 
 	@Override
 	public Object getObject(Object target) {
-		return ReflectionUtils.invoke(Object.class, method, target);
+		return MethodIntrospector.of(method).invoke(Object.class, target);
 	}
 
 	@Override

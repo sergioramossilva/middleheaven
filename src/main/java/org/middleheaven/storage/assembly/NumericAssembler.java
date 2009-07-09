@@ -5,7 +5,7 @@ public class NumericAssembler implements Assembler{
 
 	@Override
 	public Class<?> getAssembleType() {
-		return org.middleheaven.quantity.math.Number.class;
+		return org.middleheaven.quantity.math.Numeral.class;
 	}
 
 	@Override
@@ -19,7 +19,7 @@ public class NumericAssembler implements Assembler{
 	public void unAssemble(AssemblyLineService service,
 			AssemblyContext context, Data data) {
 	
-		org.middleheaven.quantity.math.Number number = (org.middleheaven.quantity.math.Number)data.getValue();
+		org.middleheaven.quantity.math.Numeral number = (org.middleheaven.quantity.math.Numeral)data.getValue();
 		
 		context.put(data.getName(), number.asNumber());
 	}

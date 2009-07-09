@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.Introspector;
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.ObjectInstrospector;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.util.identity.Identity;
 
@@ -51,8 +51,10 @@ public abstract class AbstractStoreKeeper implements StoreKeeper {
 			p = (Storable)obj;
 		} else {
 			// not managed yet
-			p = ReflectionUtils.proxy(obj, new PersistableMethodHandler(obj.getClass()), Storable.class);
-			Introspector.of(obj).copyTo(p);
+			ObjectInstrospector<Object> instrospector = Introspector.of(obj);
+			p = instrospector.newProxyInstance(new PersistableMethodHandler(obj.getClass()),  Storable.class);
+
+			instrospector.copyTo(p);
 		}
 		return p;
 	}

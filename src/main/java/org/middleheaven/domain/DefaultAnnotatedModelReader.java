@@ -2,10 +2,11 @@ package org.middleheaven.domain;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.domain.annotations.Key;
 import org.middleheaven.domain.annotations.ManyToMany;
 import org.middleheaven.domain.annotations.ManyToOne;
@@ -120,9 +121,9 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 	public void read(Class<?> type, ModelBuilder builder) {
 		EntityModelBuilder em = builder.getEntity(type);
 
-		Iterable<PropertyAccessor> propertyAccessors = ReflectionUtils.getPropertyAccessors(type);
-
-		if (!propertyAccessors.iterator().hasNext()){
+		Collection<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
+		
+		if (propertyAccessors.isEmpty()){
 			throw new ModelingException("No public fields found for entity " + type.getName() + ".");
 		} else {
 		

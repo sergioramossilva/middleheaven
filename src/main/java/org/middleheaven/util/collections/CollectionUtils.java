@@ -16,7 +16,7 @@ import java.util.Set;
 public class CollectionUtils {
 
 	public static <T> EnhancedList<T> enhance(T ... elements){
-    	return new EncancedListAdapter<T>(Arrays.asList(elements));
+		return new EnhancedArrayList<T>(Arrays.asList(elements));
 	}
 	
 	public static <K,V> EnhancedMap<K,V> enhance(Map<K,V> map){
@@ -25,6 +25,15 @@ public class CollectionUtils {
     	}
     	
     	return new EnhancedMapAdapter<K,V>(map);
+	}
+	
+	public static <T> EnhancedCollection<T> enhance(Iterable<T> collection){
+		if (collection instanceof EnhancedCollection){
+    		return (EnhancedCollection<T>)collection;
+    	}
+    	
+		return new EnhancedArrayList<T>(collection);
+
 	}
 	
 	public static <T> EnhancedCollection<T> enhance(Collection<T> collection){

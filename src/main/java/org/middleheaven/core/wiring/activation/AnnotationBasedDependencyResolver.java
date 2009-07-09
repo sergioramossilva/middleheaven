@@ -1,9 +1,9 @@
 package org.middleheaven.core.wiring.activation;
 
 import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.Collection;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.wiring.ConfigurationException;
 import org.middleheaven.core.wiring.DefaultWiringModelParser;
 import org.middleheaven.util.collections.ParamsMap;
@@ -18,7 +18,7 @@ public class AnnotationBasedDependencyResolver implements ActivatorDependencyRes
 		
 		// find publish points
 		
-		Set<Method> methods = ReflectionUtils.allAnnotatedMethods(activatorType, Publish.class);
+		Collection<Method> methods =  Introspector.of(activatorType).inspect().methods().annotatedWith(Publish.class).retriveAll();
 
 		for (Method method : methods){
 			if (method.getParameterTypes().length!=0){

@@ -5,7 +5,7 @@ import java.util.List;
 import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Integer;
 import org.middleheaven.quantity.math.Matrix;
-import org.middleheaven.quantity.math.Number;
+import org.middleheaven.quantity.math.Numeral;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.math.Vector;
 import org.middleheaven.quantity.math.structure.Field;
@@ -15,10 +15,10 @@ public class StandardMathStructuresFactory extends MathStructuresFactory {
 
 
 	@Override
-	public <T extends Number<?>> T numberFor(Class<T> superclass , Object ... values) {
+	public <T extends Numeral<?>> T numberFor(Class<T> superclass , Object ... values) {
 		if (values.length==1){
 			if (superclass.equals(Complex.class)){
-				return superclass.cast(new BigComplex(values[0].toString()));
+				return superclass.cast(new RealPairComplex(values[0].toString()));
 			} else if (superclass.equals(Real.class)){
 				return superclass.cast(new BigDecimalReal(values[0].toString()));
 			} else if (superclass.equals(Integer.class)){
@@ -28,7 +28,7 @@ public class StandardMathStructuresFactory extends MathStructuresFactory {
 			}
 		} else if (values.length==2){
 			if (superclass.equals(Complex.class)){
-				return superclass.cast(new BigComplex((Real)values[0], (Real)values[1]));
+				return superclass.cast(new RealPairComplex((Real)values[0], (Real)values[1]));
 			} 
 		} 
 		throw new IllegalArgumentException("Array bigger than 1 is not supported for type " + superclass.getName());
