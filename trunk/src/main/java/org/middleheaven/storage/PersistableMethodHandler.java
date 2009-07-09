@@ -1,8 +1,8 @@
 package org.middleheaven.storage;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
-import org.middleheaven.core.reflection.ReflectionUtils;
 
 public class PersistableMethodHandler implements ProxyHandler  {
 
@@ -23,15 +23,19 @@ public class PersistableMethodHandler implements ProxyHandler  {
 				StorableFieldModel model = (StorableFieldModel)args[0];
 				String name = model.getHardName().getName();
 				
-				return ReflectionUtils.getPropertyAccessor(self.getClass(),name).getValue(self);
+				return Introspector.of(self.getClass()).inspect().properties()
+							.named(name).retrive().getValue(self);
+				
 			} else if (methodName.equals("setFieldValue")){
 				StorableFieldModel model = (StorableFieldModel)args[0];
 				String name = model.getHardName().getName();
 				
-				ReflectionUtils.getPropertyAccessor(this.originalType,name).setValue(self,args[1]);
+				Introspector.of(this.originalType).inspect().properties()
+						.named(name).retrive().setValue(self,args[1]);
 				return null;
 			} else {
-				return ReflectionUtils.getMethod(this.getClass(), methodName, delegator.getInvoked().getParameterTypes()).invoke(this, args);
+				return Introspector.of(this.getClass()).inspect().methods().named(methodName).withParametersType(delegator.getInvoked().getParameterTypes())
+				.retrive().invoke(this, args);
 			}
 		} else {
 			if (methodName.startsWith("set")){

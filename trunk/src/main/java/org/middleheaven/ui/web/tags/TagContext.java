@@ -1,5 +1,7 @@
 package org.middleheaven.ui.web.tags;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -48,6 +50,15 @@ public class TagContext extends ServletWebContext {
 	@Override
 	protected ServletResponse getResponse() {
 		return pageContex.getResponse();
+	}
+
+	@Override
+	public InetAddress getRemoteAddress() {
+		try{
+			return InetAddress.getByName(pageContex.getRequest().getRemoteAddr());
+		}catch (UnknownHostException e){
+			return null;
+		}
 	}
 
 

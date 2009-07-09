@@ -1,5 +1,6 @@
 package org.middleheaven.web.processing;
 
+import java.net.InetAddress;
 import java.util.Map;
 
 import org.middleheaven.global.Culture;
@@ -26,4 +27,10 @@ public interface HttpContext extends CulturalAttributeContext{
 
 	// TODO redo model
 	public String getContextPath();
+
+	/**
+	 * 
+	 * @return the address of the remote caller or null if its not available
+	 */
+	public InetAddress getRemoteAddress();
 }

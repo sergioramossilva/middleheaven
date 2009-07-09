@@ -9,7 +9,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.FileChangeListener;
@@ -89,7 +89,8 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 			if(className!=null && !className.isEmpty()){
 				TransientApplicationContext appContext = getAppContext();
 				try{
-					ApplicationModule module = ReflectionUtils.newInstance(className, ApplicationModule.class ,cloader);
+					ApplicationModule module = Introspector.of(ApplicationModule.class)
+													.load(className,cloader).newInstance();
 
 					appContext.addModule(module);
 				} catch (ClassCastException e){

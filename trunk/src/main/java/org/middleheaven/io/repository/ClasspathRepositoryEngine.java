@@ -1,7 +1,6 @@
 package org.middleheaven.io.repository;
 
-import org.middleheaven.core.reflection.NoSuchClassReflectionException;
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.ClassIntrospector;
 import org.middleheaven.io.repository.simple.SystemDrivesRepositoryEngine;
 import org.middleheaven.io.repository.vfs.CommonsVSFRepositoryEngine;
 
@@ -13,11 +12,10 @@ public class ClasspathRepositoryEngine implements RepositoryEngine {
 	public ManagedFileResolver getManagedFileResolver() throws RepositoryCreationException {
 		
 		if (resolver == null){
-			try{
-				ReflectionUtils.loadClass("org.apache.commons.vfs.FileObject");
+			if (ClassIntrospector.isInClasspath("org.apache.commons.vfs.FileObject")){
 				// ok, load 
 				resolver = new CommonsVSFRepositoryEngine().getManagedFileResolver();
-			} catch (NoSuchClassReflectionException e){
+			} else {
 				resolver = new SystemDrivesRepositoryEngine().getManagedFileResolver();
 			}
 		}

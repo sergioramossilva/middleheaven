@@ -11,7 +11,7 @@ import org.middleheaven.util.collections.Range;
  * Represents an element of |R  (the real numbers set) 
  * 
  */
-public abstract class Real extends Number<Real> implements  Comparable<Number<? super Real>> ,Incrementable <Real>{
+public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<? super Real>> ,Incrementable <Real>{
 
 	public static Real fraction (int num , int den){
 		return valueOf(num).over(valueOf(den));
@@ -39,7 +39,7 @@ public abstract class Real extends Number<Real> implements  Comparable<Number<? 
 		return MathStructuresFactory.getFactory().numberFor( Real.class, value);
 	}
 
-	public static Real valueOf (Number<?> other) {
+	public static Real valueOf (Numeral<?> other) {
 		if (Real.class.isInstance(other)){
 			return Real.class.cast(other);
 		} 
@@ -55,7 +55,7 @@ public abstract class Real extends Number<Real> implements  Comparable<Number<? 
 	}
 
 	@Override
-	public Number<Real> promote(Number<?> other) {
+	public Numeral<Real> promote(Numeral<?> other) {
 		return MathStructuresFactory.getFactory().promote(other, Real.class); 
 	}
 

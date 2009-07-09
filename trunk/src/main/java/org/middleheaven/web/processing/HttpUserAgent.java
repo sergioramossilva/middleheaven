@@ -1,5 +1,6 @@
 package org.middleheaven.web.processing;
 
+import org.middleheaven.aas.UserAgent;
 import org.middleheaven.util.OperatingSystemInfo;
 
 

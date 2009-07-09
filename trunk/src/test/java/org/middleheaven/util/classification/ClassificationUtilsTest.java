@@ -39,7 +39,7 @@ public class ClassificationUtilsTest {
 			
 		});
 		
-		assertEquals(4,r);
+		assertEquals(Integer.valueOf(4),r);
 		
 		Collection<Integer> ra = c.findAll(new Classifier<Boolean,Integer>(){
 

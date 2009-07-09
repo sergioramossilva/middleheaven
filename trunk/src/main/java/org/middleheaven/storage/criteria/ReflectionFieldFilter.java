@@ -2,8 +2,8 @@ package org.middleheaven.storage.criteria;
 
 import java.util.Collection;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.util.classification.BooleanClassifier;
@@ -33,13 +33,16 @@ public class ReflectionFieldFilter<T> implements BooleanClassifier<T> {
 		if(valueHolder.getDataType().isReference()){
 			
 			String targetField = valueHolder.getParam("targetField");
-			// TODO acessar o campo directamente
-			PropertyAccessor acessor =  ReflectionUtils.getPropertyAccessor(s.getPersistableClass(), targetField );
+	
+			PropertyAccessor acessor = Introspector.of(s.getPersistableClass())
+			.inspect().properties().named(targetField).retrive();
 			
+
 			realValue = acessor.getValue(obj);
 			
 		} else if (obj!=null){
-			PropertyAccessor acessor =  ReflectionUtils.getPropertyAccessor(s.getPersistableClass(), fieldName.getName() );
+			PropertyAccessor acessor =  Introspector.of(s.getPersistableClass())
+			.inspect().properties().named(fieldName.getName()).retrive();
 			
 			realValue = acessor.getValue(obj);
 	

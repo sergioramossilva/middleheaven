@@ -3,7 +3,7 @@ package org.middleheaven.aas;
 import java.io.Serializable;
 
 /**
- * Condition with with the ResourceAccessor must comply 
+ * Condition that the Subject must comply 
  * in order to access a resource.
  *
  */
@@ -19,18 +19,18 @@ public interface Permission extends Serializable{
     
     /**
      * 
-     * @return <code>true</code> if the <code>ResourceAcessor</code> does not 
+     * @return <code>true</code> if the <code>Subject</code> does not 
      * need any special permission to satisfy this permission, i.e.
-     * all <code>ResourceAcessor</code> have access to the resource protected by this permission.
+     * all <code>Subject</code> have access to the resource protected by this permission.
      * 
      */
     public boolean isLenient();
     
     /**
      * 
-     * @return  <code>true</code> if no <code>ResourceAcessor</code> permission
-     * can satisfy this permissions independently of witch permissions the <code>ResourceAcessor</code> has,
-     * i.e. no <code>ResourceAcessor</code> can have acess to the resouce protected by this permission.
+     * @return  <code>true</code> if no <code>Subject</code> permission
+     * can satisfy this permissions independently of witch permissions the <code>Subject</code> has,
+     * i.e. no <code>Subject</code> can have access to the resouce protected by this permission.
      * 
      */
     public boolean isStrict();

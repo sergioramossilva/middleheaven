@@ -7,8 +7,8 @@ import java.util.LinkedList;
 
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
+import org.middleheaven.core.reflection.ObjectInstrospector;
 import org.middleheaven.core.reflection.ProxyHandler;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.reflection.WrapperProxy;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.io.ManagedIOException;
@@ -58,8 +58,10 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 			p = (Storable)obj;
 		} else {
 			// not managed yet
-			p = ReflectionUtils.proxy(obj, new NeoDatisMethodHandler(obj), Storable.class, WrapperProxy.class);
-			Introspector.of(obj).copyTo(p);
+			ObjectInstrospector<Object> introspector = Introspector.of(obj);
+			p = introspector.newProxyInstance(new NeoDatisMethodHandler(obj),Storable.class, WrapperProxy.class );
+
+			introspector.copyTo(p);
 		}
 		return p;
 	}
@@ -84,15 +86,21 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 					StorableFieldModel model = (StorableFieldModel)args[0];
 					String name = model.getHardName().getName();
 
-					return ReflectionUtils.getPropertyAccessor(self.getClass(),name).getValue(self);
+					return Introspector.of(self.getClass()).inspect().properties()
+									.named(name).retrive().getValue(self);
+					
 				} else if (methodName.equals("setFieldValue")){
 					StorableFieldModel model = (StorableFieldModel)args[0];
 					String name = model.getHardName().getName();
 
-					ReflectionUtils.getPropertyAccessor(this.obj.getClass(),name).setValue(self,args[1]);
+					Introspector.of(self.getClass()).inspect().properties()
+					.named(name).retrive().setValue(self,args[1]);
+					
 					return null;
 				} else {
-					return ReflectionUtils.getMethod(this.getClass(), methodName, delegator.getInvoked().getParameterTypes()).invoke(this, args);
+					return Introspector.of(this.getClass()).inspect().methods()
+					.named(methodName).withParametersType(delegator.getInvoked().getParameterTypes()).retrive()
+					.invoke(this, args);
 				}
 			} else {
 				return delegator.invokeSuper(self, args);
@@ -204,7 +212,7 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 		ODB odb = getDataBase();
 		try{
 			for (Storable s : obj){
-				Object object = ReflectionUtils.unproxy(s);
+				Object object = Introspector.of(s).unproxy();
 				OID id = odb.store(object);
 				OIDIdentity identity = new OIDIdentity(id);
 				s.setIdentity(identity);
@@ -222,7 +230,7 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 		ODB odb = getDataBase();
 		try{
 			for (Storable s : obj){
-				Object object = ReflectionUtils.unproxy(s);
+				Object object = Introspector.of(s).unproxy();
 				odb.delete(object);
 			}
 		}  catch (Exception e) {
@@ -243,7 +251,7 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 		ODB odb = getDataBase();
 		try{
 			for (Storable s : obj){
-				Object object = ReflectionUtils.unproxy(s);
+				Object object = Introspector.of(s).unproxy();
 				odb.store(object);
 			}
 		}  catch (Exception e) {

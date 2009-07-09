@@ -292,7 +292,7 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 
 	@Override
 	public String join(String separator) {
-		return StringUtils.join(this, separator);
+		return StringUtils.join(separator, this);
 	}
 
 	@Override

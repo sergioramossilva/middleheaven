@@ -20,13 +20,10 @@ import org.middleheaven.core.wiring.mock.Message;
 import org.middleheaven.core.wiring.mock.MockDisplay;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
-import org.middleheaven.mail.MailSendingService;
-import org.middleheaven.mail.service.JavaMailSendingService;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 import org.middleheaven.util.collections.ParamsMap;
 
 public class WiringTestCase extends MiddleHeavenTestCase {
-
 
 	
 	@Test

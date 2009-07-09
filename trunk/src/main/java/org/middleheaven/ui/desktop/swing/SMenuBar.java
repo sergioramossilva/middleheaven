@@ -5,13 +5,13 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
 
+import org.middleheaven.core.reflection.bean.BeanBinding;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.components.UICommandSet;
 import org.middleheaven.ui.models.UICommandModel;
-import org.middleheaven.util.bean.BeanBinding;
 import org.middleheaven.util.collections.DelegatingList;
 
 public class SMenuBar extends JMenuBar implements UICommandSet {

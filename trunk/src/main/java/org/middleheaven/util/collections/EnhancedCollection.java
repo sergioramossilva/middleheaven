@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Random;
 
+import org.middleheaven.core.reflection.MethodFilters;
 import org.middleheaven.util.classification.Classification;
 import org.middleheaven.util.classification.Classifier;
 
@@ -34,4 +35,6 @@ public interface EnhancedCollection<T> extends Collection<T> , Enumerable<T> {
 
 	public EnhancedList<T> asList();
 	public EnhancedSet<T> asSet();
+
+	public T getFist();
 }

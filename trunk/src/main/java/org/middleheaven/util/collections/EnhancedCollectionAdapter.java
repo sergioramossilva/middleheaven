@@ -214,4 +214,9 @@ public class EnhancedCollectionAdapter<T> extends AbstractAdapter<T> implements 
 		}
 		return new EnhancedCollectionAdapter<T>( new HashSet<T>(this.original()));
 	}
+
+	@Override
+	public T getFist() {
+		return original.isEmpty() ? null : original.iterator().next();
+	}
 }

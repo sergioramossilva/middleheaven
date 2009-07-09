@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.ReflectionException;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.quantity.time.Clock;
 import org.middleheaven.quantity.time.EpocTimePoint;
 import org.middleheaven.quantity.time.TimePoint;
@@ -42,10 +42,10 @@ public class MachineClock extends Clock {
 	}
 
 	Map<Schedule, ClockTicked> timers = new  HashMap<Schedule, ClockTicked>();
-	
+
 	final Timer timer = new Timer();
-	
-	
+
+
 	@Override
 	protected ClockTicked schedule(Schedule chronogram,Clock clock) {
 		ClockTicked ticked = timers.get(chronogram);
@@ -55,13 +55,13 @@ public class MachineClock extends Clock {
 		}
 		return ticked;
 	}
-	
 
-	
+
+
 	private class TimerClockTicked extends ClockTicked{
 
 		Schedule chronogram;
-	
+
 		public TimerClockTicked(Schedule chronogram,Clock clock) {
 			this.chronogram = chronogram;
 			Method translatingMethod=null;
@@ -80,24 +80,24 @@ public class MachineClock extends Clock {
 				} catch (NoSuchMethodException e1) {
 					throw  ReflectionException.manage(e1,this.getClass());
 				}
-			
+
 			}
-	
+
 			if (chronogram.getStartTime()==null){
 				timer.schedule(new TickTimerTask(translatingMethod, translatingObject), 0, chronogram.repetitionPeriod().milliseconds());
 			} else {
 				timer.schedule(new TickTimerTask(translatingMethod, translatingObject), new Date(chronogram.getStartTime().milliseconds()), chronogram.repetitionPeriod().milliseconds());
 			}
 		}
-		
+
 		protected TimePoint calculateTimeFromReference(TimePoint referenceTime) {
 			return referenceTime;
 		}
-		
+
 		private class TickTimerTask extends TimerTask {
 			Method translatingMethod;
 			Object translatingObject;
-			
+
 			public TickTimerTask(Method translatingMethod, Object translatingObject) {
 				this.translatingMethod = translatingMethod;
 				this.translatingObject = translatingObject;
@@ -105,9 +105,13 @@ public class MachineClock extends Clock {
 
 			@Override
 			public void run() {
-				
-				TimePoint t = ReflectionUtils.invoke(TimePoint.class, this.translatingMethod , this.translatingObject , new EpocTimePoint(this.scheduledExecutionTime()));
-				
+
+				TimePoint t = Introspector.of(translatingMethod).invoke(
+						TimePoint.class,
+						this.translatingObject, 
+						new EpocTimePoint(this.scheduledExecutionTime())
+				);
+
 				if (chronogram.include(t)){
 					tick(t);
 				}
@@ -117,7 +121,7 @@ public class MachineClock extends Clock {
 					this.cancel();
 				}
 			}
-			
+
 		}
 	}
 

@@ -3,7 +3,9 @@ package org.middleheaven.ui.web.tags;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.middleheaven.aas.User;
+import org.middleheaven.aas.AccessRequest;
+import org.middleheaven.aas.RolePermission;
+import org.middleheaven.aas.Subject;
 import org.middleheaven.ui.ContextScope;
 
 
@@ -21,14 +23,15 @@ public class InRoleTag extends AbstractBodyTagSupport{
 		this.subjectReference = reference;
 	}
 	
-	private User getSubject(){
-	
-		return  new TagContext(this.pageContext).getAttribute(ContextScope.SESSION, subjectReference, User.class);
+	private Subject getSubject(){
+
+		AccessRequest ar =  new TagContext(this.pageContext).getAttribute(ContextScope.REQUEST, subjectReference, AccessRequest.class);
 		
+		return ar.getSubject();
 	}
 	
 	public int doStartTag() throws JspException {
-		if (getSubject()==null || !getSubject().isInRole(roleName)){
+		if (getSubject()==null || !getSubject().hasPermission(RolePermission.of(roleName))){
 			return SKIP_BODY;
 		}else {
 			return EVAL_BODY_BUFFERED;

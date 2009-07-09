@@ -61,11 +61,11 @@ public class Period extends ElapsedTime implements Comparable<Period>{
 		return this; // imutable
 	}
 	
-	public ElapsedTime over(org.middleheaven.quantity.math.Number other) {
+	public ElapsedTime over(org.middleheaven.quantity.math.Numeral other) {
 		return new Period (this.measure.over(Real.valueOf(other)));
 	}
 
-	public ElapsedTime times(org.middleheaven.quantity.math.Number other) {
+	public ElapsedTime times(org.middleheaven.quantity.math.Numeral other) {
 		return new Period (this.measure.times(Real.valueOf(other)));
 	}
 

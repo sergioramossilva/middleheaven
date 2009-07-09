@@ -3,7 +3,7 @@ package org.middleheaven.quantity.math.impl;
 import java.math.BigDecimal;
 
 import org.middleheaven.quantity.math.Integer;
-import org.middleheaven.quantity.math.Number;
+import org.middleheaven.quantity.math.Numeral;
 import org.middleheaven.util.Incrementable;
 
 public class LongInteger extends Integer {
@@ -143,7 +143,7 @@ public class LongInteger extends Integer {
 	}
 
 	@Override
-	public int compareTo(Number<? super Integer> o) {
+	public int compareTo(Numeral<? super Integer> o) {
 		return this.asNumber().compareTo(o.asNumber());
 	}
 

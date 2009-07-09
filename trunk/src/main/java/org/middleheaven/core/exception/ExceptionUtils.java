@@ -1,6 +1,6 @@
 package org.middleheaven.core.exception;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 
 public abstract class ExceptionUtils {
 
@@ -19,7 +19,7 @@ public abstract class ExceptionUtils {
 		if (t instanceof RuntimeException){
 			return (RuntimeException)t;
 		} else {
-			return ReflectionUtils.newInstance(runtimeClass, t);
+			return Introspector.of(runtimeClass).newInstance(t);
 		}
 	}
 }

@@ -4,12 +4,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.middleheaven.core.reflection.ClassIntrospector;
 import org.middleheaven.core.reflection.Introspector;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.core.wiring.annotations.BindingSpecification;
 import org.middleheaven.core.wiring.annotations.Name;
 import org.middleheaven.core.wiring.annotations.Params;
@@ -17,6 +16,8 @@ import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Walker;
 
 public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModelParser{
 
@@ -32,19 +33,20 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 	}
 
 	@Override
-	public <T> void readWiringModel(Class<T> type, WiringModel model) {
+	public <T> void readWiringModel(Class<T> type, final WiringModel model) {
 		// TODO implement WiringModelReader.readWiringModel
 
+		ClassIntrospector<T> introspector = Introspector.of(type);
+		
 		if (model.getConstructorPoint()==null){
-			ClassIntrospector<T> introspector = Introspector.of(type);
-			
+		
 			// constructor
-			List<Constructor<T>> constructors = introspector.inspect()
-			.constructors().annotathedWith(annotations).retrive().asList();
+			EnhancedCollection<Constructor<T>> constructors = introspector.inspect()
+			.constructors().annotathedWith(annotations).retriveAll();
 
 			if (constructors.isEmpty()){
 				// search all constructors
-				constructors = Introspector.of(type).inspect().constructors().retrive().asList();
+				constructors = introspector.inspect().constructors().retriveAll();
 				if (constructors.size()>1){
 					throw new ConfigurationException("Multiple constructors found for " + type + ". Annotate only one with @" + Wire.class.getSimpleName());
 				}
@@ -52,7 +54,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 				throw new ConfigurationException("Only one constructor may be annotated with @" + Wire.class.getSimpleName());
 			} 
 
-			Constructor<T> constructor  = constructors.get(0);
+			Constructor<T> constructor  = constructors.getFist();
 
 			WiringSpecification[] params = readParamsSpecification(constructor, new BooleanClassifier<Annotation>(){
 
@@ -71,53 +73,58 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 		// injection points
 
-		Set<Field> fields = ReflectionUtils.allAnnotatedFields(type, annotations);
+		introspector.inspect().fields().annotatedWith(annotations).retriveAll()
+		.each(new Walker<Field>(){
 
-		for (Field f : fields){
-		
+			@Override
+			public void doWith(Field f) {
+				WiringSpecification spec = readParamsSpecification(f, new BooleanClassifier<Annotation>(){
+
+					@Override
+					public Boolean classify(Annotation a) {
+						return a.annotationType().equals(Wire.class) ||
+						a.annotationType().equals(ScopeSpecification.class) ||
+						a.annotationType().equals(Name.class) || 
+						a.annotationType().equals(Params.class); 
+					}
+
+				});
+				
+				model.addAfterWiringPoint(new FieldWiringPoint(f,spec));
+			}
 			
-			WiringSpecification spec = readParamsSpecification(f, new BooleanClassifier<Annotation>(){
+		} );
 
-				@Override
-				public Boolean classify(Annotation a) {
-					return a.annotationType().equals(Wire.class) ||
-					a.annotationType().equals(ScopeSpecification.class) ||
-					a.annotationType().equals(Name.class) || 
-					a.annotationType().equals(Params.class); 
-				}
+		introspector.inspect().methods().annotatedWith(annotations).retriveAll()
+		.each(new Walker<Method>(){
 
-			});
+			@Override
+			public void doWith(Method method) {
+				WiringSpecification[] params = readParamsSpecification(method, new BooleanClassifier<Annotation>(){
+
+					@Override
+					public Boolean classify(Annotation a) {
+						return a.annotationType().equals(Wire.class) ||
+						a.annotationType().equals(ScopeSpecification.class) ||
+						a.annotationType().equals(Name.class) || 
+						a.annotationType().equals(Params.class); 
+					}
+
+				});
+
+				// TODO read method specification
+				model.addAfterWiringPoint(new MethodWiringPoint(method, null, params));
+			}
 			
-			model.addAfterWiringPoint(new FieldWiringPoint(f,spec));
-		}
+		});
 
-		Set<Method> methods = ReflectionUtils.allAnnotatedMethods(type, annotations);
-
-		for (Method method : methods){
-
-			
-			WiringSpecification[] params = readParamsSpecification(method, new BooleanClassifier<Annotation>(){
-
-				@Override
-				public Boolean classify(Annotation a) {
-					return a.annotationType().equals(Wire.class) ||
-					a.annotationType().equals(ScopeSpecification.class) ||
-					a.annotationType().equals(Name.class) || 
-					a.annotationType().equals(Params.class); 
-				}
-
-			});
-
-			// TODO read method specification
-			model.addAfterWiringPoint(new MethodWiringPoint(method, null, params));
-		}
 
 
 	}
 
 	@Override
 	public void readScoopingModel(Object obj, ScoopingModel model) {
-		Set<Annotation> annotations = ReflectionUtils.getAnnotations(obj.getClass());
+		Collection<Annotation> annotations = Introspector.of(obj.getClass()).inspect().annotations().retrive();
 		
 		for (Annotation a: annotations){
 			if (a.annotationType().isAnnotationPresent(ScopeSpecification.class)){

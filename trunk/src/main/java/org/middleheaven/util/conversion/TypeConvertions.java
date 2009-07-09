@@ -1,10 +1,9 @@
 package org.middleheaven.util.conversion;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentityConverter;
 import org.middleheaven.util.identity.StringIdentityConverter;
@@ -56,7 +55,7 @@ public class TypeConvertions {
 			if (to.getSimpleName().equals("int")){
 				wrapper = "Integer";
 			}
-			to = (Class<R>) ReflectionUtils.loadClass("java.lang."+wrapper);
+			to = (Class<R>)Introspector.of(Object.class).load("java.lang."+wrapper).getIntrospected();
 			
 		}
 		Key key = new Key(from,to);

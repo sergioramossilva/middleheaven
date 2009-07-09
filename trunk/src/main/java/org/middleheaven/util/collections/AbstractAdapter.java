@@ -82,7 +82,7 @@ public abstract class AbstractAdapter<T> implements Enumerable<T>{
 
 	@Override
 	public String join(String separator) {
-		return StringUtils.join(this, separator);
+		return StringUtils.join(separator, this);
 
 	}
 

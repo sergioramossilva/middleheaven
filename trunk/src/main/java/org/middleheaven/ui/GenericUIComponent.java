@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.ui.components.UIContainer;
 import org.middleheaven.ui.components.UILayout;
 
@@ -29,7 +29,7 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	private int width;
 	
 	public static <T extends UIComponent>  T getInstance(Class<T> renderType, String familly){
-		return ReflectionUtils.proxy(new GenericUIComponent(renderType, familly), renderType);
+		return Introspector.of(new GenericUIComponent(renderType, familly)).newProxyInstance(renderType);
 	}
 	
 	public GenericUIComponent(Class<T> renderType, String familly){

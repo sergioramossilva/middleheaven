@@ -11,7 +11,7 @@ import org.middleheaven.util.collections.Range;
  * 
  *
  */
-public abstract class Integer extends Number<Integer> implements Field<Integer> ,  Comparable<Number<? super Integer>>, Enumerable<Integer> , Incrementable <Integer>{
+public abstract class Integer extends Numeral<Integer> implements Field<Integer> ,  Comparable<Numeral<? super Integer>>, Enumerable<Integer> , Incrementable <Integer>{
 
 
 	private static final long serialVersionUID = 8636156681654308959L;
@@ -24,7 +24,7 @@ public abstract class Integer extends Number<Integer> implements Field<Integer> 
 		}
 	}
 	
-	public static Integer valueOf (Number<?> other) {
+	public static Integer valueOf (Numeral<?> other) {
 		if (Integer.class.isInstance(other)){
 			return Integer.class.cast(other);
 		} 
@@ -50,7 +50,7 @@ public abstract class Integer extends Number<Integer> implements Field<Integer> 
 	public abstract boolean isEven();
 	
 	@Override
-	public Number<Integer> promote(Number<?> other) {
+	public Numeral<Integer> promote(Numeral<?> other) {
 		return valueOf(other);
 	}
 	

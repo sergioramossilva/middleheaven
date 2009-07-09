@@ -5,7 +5,7 @@ import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.quantity.measure.AngularMeasure;
 
 
-public abstract class Complex extends Number<Complex> implements Field<Complex> ,Conjugatable<Complex> {
+public abstract class Complex extends Numeral<Complex> implements Field<Complex> ,Conjugatable<Complex> {
 
 	private static final long serialVersionUID = 5580549238295872790L;
 	
@@ -41,7 +41,7 @@ public abstract class Complex extends Number<Complex> implements Field<Complex> 
 	}
 	
 	@Override
-	public Number<Complex> promote(Number<?> other) {
+	public Numeral<Complex> promote(Numeral<?> other) {
 		return MathStructuresFactory.getFactory().promote(other, Complex.class); 
 	}
 	

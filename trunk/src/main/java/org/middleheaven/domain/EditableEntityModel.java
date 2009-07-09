@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.identity.Identity;
 
@@ -54,7 +54,7 @@ public final class EditableEntityModel implements EntityModel {
 
 	@Override
 	public Object newInstance() {
-		return ReflectionUtils.newInstance(type);
+		return Introspector.of(type).newInstance();
 	}
 
 	public void setIdentityType(Class<? extends Identity> type) {

@@ -4,14 +4,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.middleheaven.core.reflection.ReflectionUtils;
+import org.middleheaven.core.reflection.Introspector;
 
 public final class DomainClasses implements Iterable<Class<?>>{
 
 	Set<Class<?>> entities = new HashSet<Class<?>>();
 	
 	public DomainClasses add(Package entitiesPackage){
-		entities.addAll(ReflectionUtils.getPackageClasses(entitiesPackage));
+		entities.addAll(Introspector.of(entitiesPackage).getClasses());
 
 		return this;
 	}

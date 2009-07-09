@@ -1,7 +1,7 @@
 package org.middleheaven.storage.criteria;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.core.reflection.ReflectionUtils;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
@@ -27,8 +27,9 @@ public class JuntionFilter<T> implements BooleanClassifier<T> {
 		Object realValue = null;
 
 		
-		PropertyAccessor acessor =  ReflectionUtils.getPropertyAccessor(((Storable)obj).getPersistableClass(), fieldName.getName() );
-
+		PropertyAccessor acessor =  Introspector.of(((Storable)obj).getPersistableClass())
+		.inspect().properties().named(fieldName.getName()).retrive();
+			
 		realValue = acessor.getValue(obj);
 
 		return realValue!=null && subCriteria.classify((T)realValue);

@@ -3,7 +3,7 @@ package org.middleheaven.quantity.math.structure;
 import java.util.List;
 
 import org.middleheaven.quantity.math.Matrix;
-import org.middleheaven.quantity.math.Number;
+import org.middleheaven.quantity.math.Numeral;
 import org.middleheaven.quantity.math.Vector;
 import org.middleheaven.quantity.math.impl.StandardMathStructuresFactory;
 
@@ -22,10 +22,10 @@ public abstract class MathStructuresFactory {
 	
 	protected MathStructuresFactory(){};
 	
-	public abstract <T extends Number<?>> T numberFor (Class<T> superclass,Object ... value);
+	public abstract <T extends Numeral<?>> T numberFor (Class<T> superclass,Object ... value);
 
 
-	public <T extends Number<T>>T promote(Number<?> other, Class<T> targetType) {
+	public <T extends Numeral<T>>T promote(Numeral<?> other, Class<T> targetType) {
 		Class<?> originType = other.getClass();
 		if (originType.equals(targetType)){
 			return targetType.cast(other);
