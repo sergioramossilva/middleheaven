@@ -3,7 +3,7 @@ package org.middleheaven.quantity.math.impl;
 import java.util.List;
 
 import org.middleheaven.quantity.math.Complex;
-import org.middleheaven.quantity.math.Integer;
+import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.quantity.math.Matrix;
 import org.middleheaven.quantity.math.Numeral;
 import org.middleheaven.quantity.math.Real;
@@ -21,7 +21,7 @@ public class StandardMathStructuresFactory extends MathStructuresFactory {
 				return superclass.cast(new RealPairComplex(values[0].toString()));
 			} else if (superclass.equals(Real.class)){
 				return superclass.cast(new BigDecimalReal(values[0].toString()));
-			} else if (superclass.equals(Integer.class)){
+			} else if (superclass.equals(BigInt.class)){
 				return superclass.cast(new LongInteger(values[0].toString()));
 			} else {
 				throw new IllegalArgumentException(superclass.getName() + " is not a recognized Number");

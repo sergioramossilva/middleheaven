@@ -7,36 +7,36 @@ import org.middleheaven.util.collections.Range;
 
 
 /**
- * Represents an integer number
+ * Represents an integer number that ranges from Long.MIN_VALUE to Long.MAX_VALUE
  * 
  *
  */
-public abstract class Integer extends Numeral<Integer> implements Field<Integer> ,  Comparable<Numeral<? super Integer>>, Enumerable<Integer> , Incrementable <Integer>{
+public abstract class BigInt extends Numeral<BigInt> implements Field<BigInt> ,  Comparable<Numeral<? super BigInt>>, Enumerable<BigInt> , Incrementable <BigInt>{
 
 
 	private static final long serialVersionUID = 8636156681654308959L;
 
-	public static Integer valueOf (String value) {
+	public static BigInt valueOf (String value) {
 		try{
-		return MathStructuresFactory.getFactory().numberFor(Integer.class , value);
+		return MathStructuresFactory.getFactory().numberFor(BigInt.class , value);
 		}catch (NumberFormatException e){
 			throw new NumberFormatException(value + " is not an integer");
 		}
 	}
 	
-	public static Integer valueOf (Numeral<?> other) {
-		if (Integer.class.isInstance(other)){
-			return Integer.class.cast(other);
+	public static BigInt valueOf (Numeral<?> other) {
+		if (BigInt.class.isInstance(other)){
+			return BigInt.class.cast(other);
 		} 
 		return valueOf(other.asNumber().longValue());
 	}
 	
-	public static Integer valueOf (java.lang.Number other) {
+	public static BigInt valueOf (Number other) {
 		return valueOf(other.longValue());
 	}
 	
-	public static Integer valueOf (long other) {
-		return (Integer)MathStructuresFactory.getFactory().numberFor(Integer.class, Long.toString(other));
+	public static BigInt valueOf (long other) {
+		return (BigInt)MathStructuresFactory.getFactory().numberFor(BigInt.class, Long.toString(other));
 	}
    
 	protected final int rank(){
@@ -50,15 +50,15 @@ public abstract class Integer extends Numeral<Integer> implements Field<Integer>
 	public abstract boolean isEven();
 	
 	@Override
-	public Numeral<Integer> promote(Numeral<?> other) {
+	public Numeral<BigInt> promote(Numeral<?> other) {
 		return valueOf(other);
 	}
 	
-	public Range<Integer> upTo(Integer other){
+	public Range<BigInt> upTo(BigInt other){
 		return Range.over(this, other, other.over(other));
 	}
 	
-	public Range<Integer> upTo(Integer other, Integer increment){
+	public Range<BigInt> upTo(BigInt other, BigInt increment){
 		return Range.over(this, other, increment);
 	}
 }

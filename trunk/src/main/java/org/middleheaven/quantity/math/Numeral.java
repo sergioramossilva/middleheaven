@@ -30,6 +30,10 @@ public abstract class Numeral<T extends Numeral<T>> implements Field<T> , Quanti
 	
 	protected abstract Numeral<?> promote (Numeral<?> other);
 	
+	public abstract BigInt toBigInt();
+	public abstract Real toReal();
+	public abstract Complex toComplex();
+	
 	public Numeral<?> plus (Numeral<?> other){
 		return Real.valueOf(this).plus(Real.valueOf(other));
 	}

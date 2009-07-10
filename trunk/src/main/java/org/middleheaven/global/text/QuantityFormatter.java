@@ -22,8 +22,8 @@ public class QuantityFormatter implements Formatter<Quantity<?>>{
 	public String format(Quantity<?> object) {
 		if (object instanceof Money){
 			return formatMoney((Money)object);
-		} else if (object instanceof org.middleheaven.quantity.math.Integer ){
-			return formatInteger((org.middleheaven.quantity.math.Integer)object);
+		} else if (object instanceof org.middleheaven.quantity.math.BigInt ){
+			return formatInteger((org.middleheaven.quantity.math.BigInt)object);
 		} else if (object instanceof Real ){
 			return formatReal((Real)object);
 		} else if (object instanceof DecimalMeasure ){
@@ -47,7 +47,7 @@ public class QuantityFormatter implements Formatter<Quantity<?>>{
 		return format.format(object.asNumber());
 	}
 
-	private String formatInteger(org.middleheaven.quantity.math.Integer object) {
+	private String formatInteger(org.middleheaven.quantity.math.BigInt object) {
 		NumberFormat format = NumberFormat.getIntegerInstance(culture.toLocale());
 		
 		return format.format(object.asNumber());

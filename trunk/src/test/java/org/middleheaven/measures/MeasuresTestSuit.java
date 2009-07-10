@@ -6,7 +6,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.quantity.math.Integer;
+import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measurables.Aceleration;
 import org.middleheaven.quantity.measurables.Area;
@@ -166,10 +166,10 @@ public class MeasuresTestSuit {
 		assertEquals (DecimalMeasure.measure(15, 1.30, SI.METER.raise(2)) , D);
 		
 		
-		Integer cem =  Integer.valueOf(100);
-		Integer tres =  Integer.valueOf(3);
-		Integer seis =  Integer.valueOf(6);
-		Integer tresentos =  Integer.valueOf(300);
+		BigInt cem =  BigInt.valueOf(100);
+		BigInt tres =  BigInt.valueOf(3);
+		BigInt seis =  BigInt.valueOf(6);
+		BigInt tresentos =  BigInt.valueOf(300);
 		
 		assertEquals(seis,tres.plus(tres));
 		

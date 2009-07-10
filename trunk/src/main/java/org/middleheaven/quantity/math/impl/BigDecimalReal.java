@@ -3,6 +3,8 @@ package org.middleheaven.quantity.math.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.middleheaven.quantity.math.BigInt;
+import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.Incrementable;
@@ -229,6 +231,21 @@ public class BigDecimalReal extends Real{
 	@Override
 	public int compareTo(org.middleheaven.quantity.math.Numeral<? super Real> o) {
 		return this.asNumber().compareTo(o.asNumber());
+	}
+
+	@Override
+	public BigInt toBigInt() {
+		return BigInt.valueOf(this.asNumber().longValue());
+	}
+
+	@Override
+	public Complex toComplex() {
+		return Complex.valueOf(this, Real.ZERO());
+	}
+
+	@Override
+	public Real toReal() {
+		return this;
 	}
 
 
