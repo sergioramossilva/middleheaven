@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.quantity.math.Integer;
+import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.quantity.math.Matrix;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.math.Vector;
@@ -21,8 +21,8 @@ public class StructuresTest {
 
 		assertEquals(c, a.plus(b));
 
-		Integer i = Integer.valueOf(10);
-		Integer j = Integer.valueOf(12);
+		BigInt i = BigInt.valueOf(10);
+		BigInt j = BigInt.valueOf(12);
 
 		assertEquals(Real.valueOf(11.2), a.plus(i));
 		assertEquals(j, i.times(a));

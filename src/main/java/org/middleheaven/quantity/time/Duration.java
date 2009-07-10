@@ -186,7 +186,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		}
 		
 		if (count==1){
-			return  org.middleheaven.quantity.math.Integer.valueOf(fields.get(field).longValue());
+			return  org.middleheaven.quantity.math.BigInt.valueOf(fields.get(field).longValue());
 		} else {
 			throw new IllegalStateException("Cannot reduce a multipart duration");
 		}

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.middleheaven.global.Culture;
 import org.middleheaven.quantity.math.Real;
-import org.middleheaven.quantity.math.Integer;
+import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.quantity.measure.DecimalMeasure;
 import org.middleheaven.quantity.money.Money;
 import org.middleheaven.quantity.unit.SI;
@@ -71,21 +71,21 @@ public class TestFormatter {
 	public void quantityIntegerFormatter(){
 		QuantityFormatter formatterPtBR = new QuantityFormatter(Culture.valueOf("pt", "BR"));
 		
-		assertEquals("3.000" ,formatterPtBR.format(Integer.valueOf("3000")));
-		assertEquals("3.012" ,formatterPtBR.format(Integer.valueOf("3012")));
-		assertEquals("300" ,formatterPtBR.format(Integer.valueOf("300")));
+		assertEquals("3.000" ,formatterPtBR.format(BigInt.valueOf("3000")));
+		assertEquals("3.012" ,formatterPtBR.format(BigInt.valueOf("3012")));
+		assertEquals("300" ,formatterPtBR.format(BigInt.valueOf("300")));
 	
 		QuantityFormatter formatterPtPT = new QuantityFormatter(Culture.valueOf("pt", "PT"));
 		
-		assertEquals("3.000" ,formatterPtPT.format(Integer.valueOf("3000")));
-		assertEquals("3.000" ,formatterPtPT.format(Integer.valueOf("3000")));
-		assertEquals("300" ,formatterPtPT.format(Integer.valueOf("300")));
+		assertEquals("3.000" ,formatterPtPT.format(BigInt.valueOf("3000")));
+		assertEquals("3.000" ,formatterPtPT.format(BigInt.valueOf("3000")));
+		assertEquals("300" ,formatterPtPT.format(BigInt.valueOf("300")));
 		
 		QuantityFormatter formatterEnUS = new QuantityFormatter(Culture.valueOf("en", "US"));
 		
-		assertEquals("3,000" ,formatterEnUS.format(Integer.valueOf("3000")));
-		assertEquals("3,000" ,formatterEnUS.format(Integer.valueOf("3000")));
-		assertEquals("300" ,formatterEnUS.format(Integer.valueOf("300")));
+		assertEquals("3,000" ,formatterEnUS.format(BigInt.valueOf("3000")));
+		assertEquals("3,000" ,formatterEnUS.format(BigInt.valueOf("3000")));
+		assertEquals("300" ,formatterEnUS.format(BigInt.valueOf("300")));
 		
 	}
 }

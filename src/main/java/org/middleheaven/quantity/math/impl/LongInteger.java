@@ -2,11 +2,13 @@ package org.middleheaven.quantity.math.impl;
 
 import java.math.BigDecimal;
 
-import org.middleheaven.quantity.math.Integer;
+import org.middleheaven.quantity.math.BigInt;
+import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Numeral;
+import org.middleheaven.quantity.math.Real;
 import org.middleheaven.util.Incrementable;
 
-public class LongInteger extends Integer {
+public class LongInteger extends BigInt {
 
 
 	private static final long serialVersionUID = 7891405602158515389L;
@@ -15,7 +17,6 @@ public class LongInteger extends Integer {
 	private static final LongInteger ZERO = new LongInteger(0);
 	
     private long value = 0;
-	
 	
 	public LongInteger(String value) {
 		this.value = Long.parseLong(value);
@@ -26,12 +27,12 @@ public class LongInteger extends Integer {
 	}
 
 	@Override
-	public Integer next() {
+	public BigInt next() {
 		return new LongInteger(value+1);
 	}
 
 	@Override
-	public Integer previous() {
+	public BigInt previous() {
 		return new LongInteger(value-1);
 	}
 	
@@ -46,17 +47,17 @@ public class LongInteger extends Integer {
 	}
 
 	@Override
-	public Integer inverse() {
+	public BigInt inverse() {
 		return new LongInteger(1/value);
 	}
 
 	@Override
-	public Integer negate() {
+	public BigInt negate() {
 		return new LongInteger(-value);
 	}
 
 	@Override
-	public Integer plus(Integer other) {
+	public BigInt plus(BigInt other) {
 		if (other instanceof LongInteger){
 			return new LongInteger(this.value + ((LongInteger)other).value);
 		} else {
@@ -65,7 +66,7 @@ public class LongInteger extends Integer {
 	}
 
 	@Override
-	public Integer times(Integer other) {
+	public BigInt times(BigInt other) {
 		if (other instanceof LongInteger){
 			return new LongInteger(this.value * ((LongInteger)other).value);
 		} else {
@@ -81,13 +82,13 @@ public class LongInteger extends Integer {
 
 	
 	@Override
-	public Integer over(Integer other) {
+	public BigInt over(BigInt other) {
 		return new LongInteger(this.value/other.asNumber().longValue());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Incrementable<Integer>> T incrementBy(Integer increment) {
+	public <T extends Incrementable<BigInt>> T incrementBy(BigInt increment) {
 		return (T)this.plus(increment);
 	}
 
@@ -98,32 +99,32 @@ public class LongInteger extends Integer {
 
 
 	@Override
-	public Integer one() {
+	public BigInt one() {
 	    return ONE;
 	}
 
 	@Override
-	public Integer zero() {
+	public BigInt zero() {
 		return ZERO;
 	}
 
 	@Override
-	public Integer minus(java.lang.Number n) {
+	public BigInt minus(java.lang.Number n) {
 		return this.minus(new LongInteger(n.longValue()));
 	}
 
 	@Override
-	public Integer over(java.lang.Number n) {
+	public BigInt over(java.lang.Number n) {
 		return this.over(new LongInteger(n.longValue()));
 	}
 
 	@Override
-	public Integer plus(java.lang.Number n) {
+	public BigInt plus(java.lang.Number n) {
 		return this.plus(new LongInteger(n.longValue()));
 	}
 
 	@Override
-	public Integer times(java.lang.Number n) {
+	public BigInt times(java.lang.Number n) {
 		return this.times(new LongInteger(n.longValue()));
 	}
 
@@ -138,13 +139,28 @@ public class LongInteger extends Integer {
 	}
 
 	@Override
-	protected boolean equalsSame(Integer other) {
+	protected boolean equalsSame(BigInt other) {
 		return equals( (LongInteger) other);
 	}
 
 	@Override
-	public int compareTo(Numeral<? super Integer> o) {
+	public int compareTo(Numeral<? super BigInt> o) {
 		return this.asNumber().compareTo(o.asNumber());
+	}
+
+	@Override
+	public BigInt toBigInt() {
+		return this;
+	}
+
+	@Override
+	public Complex toComplex() {
+		return Complex.valueOf(toReal(), Real.ZERO());
+	}
+
+	@Override
+	public Real toReal() {
+		return Real.valueOf(Long.valueOf(this.value));
 	}
 
 

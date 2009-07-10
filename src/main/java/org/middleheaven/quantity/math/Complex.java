@@ -55,13 +55,13 @@ public abstract class Complex extends Numeral<Complex> implements Field<Complex>
 	 * 
 	 * @return the real part of this complex
 	 */
-	public abstract Real real();
+	public abstract Real toReal();
 	
 	/**
 	 * 
-	 * @return the imaginary part of this complex
+	 * @return the imaginary part of this complex as a Real number
 	 */
-	public abstract Real imaginary();
+	public abstract Real toImaginary();
 	
 	/**
 	 * Returns the magnitude of this complex. The magnitude of c= a +ib is 

@@ -2,6 +2,7 @@ package org.middleheaven.quantity.math.impl;
 
 import java.math.BigDecimal;
 
+import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Real;
 
@@ -76,8 +77,8 @@ public class RealPairComplex extends Complex {
 	public Complex times(Complex other) {
 		// (a+ib) * (c+di) = (ac-db) + (bc+ad)i
 		return  new RealPairComplex(
-				this.real.times(other.real()).minus(other.imaginary().times(this.imaginary)) , 
-				this.imaginary.times(other.real()).plus(this.real.times(other.imaginary()))
+				this.real.times(other.toReal()).minus(other.toImaginary().times(this.imaginary)) , 
+				this.imaginary.times(other.toReal()).plus(this.real.times(other.toImaginary()))
 		);
 	}
 	
@@ -109,12 +110,12 @@ public class RealPairComplex extends Complex {
 
 	@Override
 	public Complex plus(Complex other) {
-		return  new RealPairComplex(this.real.plus(other.real()) , this.imaginary.plus(other.imaginary()));
+		return  new RealPairComplex(this.real.plus(other.toReal()) , this.imaginary.plus(other.toImaginary()));
 	}
 
 	@Override
 	public Complex minus(Complex other) {
-		return  new RealPairComplex(this.real.minus(other.real()) , this.imaginary.minus(other.imaginary()));
+		return  new RealPairComplex(this.real.minus(other.toReal()) , this.imaginary.minus(other.toImaginary()));
 	}
 
 	@Override
@@ -123,12 +124,12 @@ public class RealPairComplex extends Complex {
 	}
 
 	@Override
-	public Real imaginary() {
+	public Real toImaginary() {
 		return imaginary;
 	}
 
 	@Override
-	public Real real() {
+	public Real toReal() {
 		return real;
 	}
 
@@ -162,6 +163,18 @@ public class RealPairComplex extends Complex {
 	protected boolean equalsSame(Complex other) {
 		return equals( (RealPairComplex) other);
 	}
+
+	@Override
+	public BigInt toBigInt() {
+		return toReal().toBigInt();
+	}
+
+	@Override
+	public Complex toComplex() {
+		return this;
+	}
+
+
 
 
 }
