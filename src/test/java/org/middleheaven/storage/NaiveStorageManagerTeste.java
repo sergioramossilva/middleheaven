@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.StandaloneContainer;
-import org.middleheaven.domain.DomailModelBuilder;
+import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.io.repository.ManagedFileRepositories;
@@ -18,15 +18,15 @@ import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.inmemory.InMemoryStoreKeeper;
+import org.middleheaven.storage.inmemory.InMemoryStorage;
 import org.middleheaven.util.identity.Identity;
 
 
 public class NaiveStorageManagerTeste {
 
-	DomainDataStorage manager;
+	DomainStore manager;
 	TestSubject subj = new TestSubject();
-	InMemoryStoreKeeper store = new InMemoryStoreKeeper();
+	InMemoryStorage store = new InMemoryStorage();
 	
 	@Before
 	public void setUp(){
@@ -37,11 +37,11 @@ public class NaiveStorageManagerTeste {
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 		
 		// create model
-		final DomainModel model = new DomailModelBuilder().build(
+		final DomainModel model = new DomainModelBuilder().build(
 				new DomainClasses().add(TestSubject.class)
 		);
 		
-		manager = new DomainDataStorage(store , model);
+		manager = new DomainStore(store , model);
 		
 		subj.setNascimento(CalendarDate.today());
 		subj.setName("Alberto");

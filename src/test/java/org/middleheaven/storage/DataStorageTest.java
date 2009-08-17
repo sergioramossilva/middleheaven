@@ -3,170 +3,193 @@ package org.middleheaven.storage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.middleheaven.storage.criteria.CriteriaBuilder.search;
 
-import java.io.File;
 import java.util.Date;
-
-import javax.sql.DataSource;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
-import org.middleheaven.core.BootstrapContainer;
-import org.middleheaven.core.bootstrap.StandaloneBootstrap;
-import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
+import org.middleheaven.core.bootstrap.BootstapListener;
+import org.middleheaven.core.bootstrap.BootstrapEvent;
+import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
-import org.middleheaven.domain.DomailModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
-import org.middleheaven.io.repository.ManagedFileRepositories;
-import org.middleheaven.logging.ConsoleLogBook;
-import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.sequence.service.FileSequenceStorageActivator;
-import org.middleheaven.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.datasource.DataSourceService;
-import org.middleheaven.storage.datasource.DataSourceServiceActivator;
-import org.middleheaven.storage.datasource.DriverManagerDSProvider;
-import org.middleheaven.storage.db.DataBaseStoreKeeper;
+import org.middleheaven.storage.criteria.CriteriaBuilder;
+import org.middleheaven.storage.db.DataBaseStorage;
+import org.middleheaven.storage.db.datasource.DataSourceServiceActivator;
+import org.middleheaven.storage.db.datasource.EmbeddedDSProvider;
+import org.middleheaven.storage.testdomain.TestSubject;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 
 public class DataStorageTest extends MiddleHeavenTestCase {
 
-	static DataStorage ds;
-	static boolean runTest=true;
-	
+	static EntityStore ds;
+	static Query<TestSubject> query;
+
 	protected void configurateTest(SetActivatorScanner scanner) {
 
-	
+
 		// Activator
 		scanner.addActivator(DataSourceServiceActivator.class);
 		scanner.addActivator(FileSequenceStorageActivator.class);
-	
+
 		// Configured
 
-		DataSourceService srv = ServiceRegistry.getService(DataSourceService.class);
-		//		srv.addDataSource("test", new DriverDataSource(
-		//				"org.postgresql.Driver" ,
-		//				"jdbc:postgresql:test" ,
-		//				"pguser",
-		//				"pguser"
-		//		));
-		srv.addDataSourceProvider("test", DriverManagerDSProvider.provider(
-				"org.hsqldb.jdbcDriver" ,
-				"jdbc:hsqldb:F:\\Workspace\\MiddleHeaven_Google\\XTest;shutdown=true" ,
-				"sa",
-				""
-		));
+		String catalog = "unit_test_data";
 
+		final EmbeddedDSProvider provider;
 
-		final DomainModel model = new DomailModelBuilder().build(
+		provider = EmbeddedDSProvider.provider(catalog);
+
+		provider.start();
+
+		final DomainModel model = new DomainModelBuilder().build(
 				new DomainClasses().add(TestSubject.class)
 		);
 
-		DataSource datasource = ServiceRegistry.getService(DataSourceService.class).getDataSource("test");
-		ds = new DomainDataStorage(new DataBaseStoreKeeper(datasource, new WrappStorableReader()) , model);
+		//	DataSource datasource = ServiceRegistry.getService(DataSourceService.class).getDataSource("test");
+		DataBaseStorage storeManager = new DataBaseStorage(provider, new WrappStorableReader());
 
-		try{
-			datasource.getConnection();
-		}catch (Exception e){
-			e.printStackTrace();
-			runTest = false;	
-		}
+		storeManager.updateMetadata(model, catalog);
+
+		ds = new DomainStore(storeManager , model);
+
+		final AtomicInteger counter = new AtomicInteger(9);
+		ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){
+
+			@Override
+			public void onBoostapEvent(BootstrapEvent event) {
+				if (event.isBootdown()){
+					counter.decrementAndGet();
+					if( counter.intValue() == 0){
+						provider.stop();
+					}
+				}
+			}
+
+		});
+
+		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
+		query = ds.createQuery(all);
+
+	}
+
+	private void assetStoreIsEmpty(){
+		assertTrue("Store is not empty. Remaining " + query.count(), query.count() == 0);
+	}
+
+	private void assetStoreHasElements(int count){
+		assertTrue("Store does not have " + count + " elements", query.count() == count);
 	}
 
 	@Test
-	public void testDelete(){
-		if(runTest){
-			Subject to = new Subject();
-			to.setName("Name");
-			to.setBirthdate(new Date());
-			// store it
-			to = ds.store(to);
+	public void testInsertDelete(){
 
-			// remove it
-			ds.remove(to);
-		}
+		TestSubject to = new TestSubject();
+		to.setName("Name");
+		to.setBirthdate(new Date());
 
+		assetStoreIsEmpty();
+
+		// store it
+		to = ds.store(to);
+
+		assetStoreHasElements(1);
+
+		// remove it
+		ds.remove(to);
+
+		assetStoreIsEmpty();
 
 	}
 
 	@Test
 	public void testCriteriaDelete(){
-		if(runTest){
-			Criteria<Subject> all = search(Subject.class).all();
 
-			// remove them
-			ds.remove(all);
-
-			Query<Subject> q = ds.createQuery(all);
-
-			assertEquals(0L,q.count());
-		}
-	}
-
-	@Test
-	public void testInsert(){
-
-		Subject to = new Subject();
+		TestSubject to = new TestSubject();
 		to.setName("Name");
 		to.setBirthdate(new Date());
+
+		assetStoreIsEmpty();
+
+		// store it
 		ds.store(to);
+		assetStoreHasElements(1);
+
+		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
+
+		// remove them
+		ds.remove(all);
+
+		assetStoreIsEmpty();
+
+
 	}
 
-	@Test
-	public void testUpdate(){
-		if(runTest){
-			Subject to = new Subject();
-			to.setName("Name");
-			to = ds.store(to);
-
-			to.setName("Name 4");
-			to = ds.store(to);
-		}
-	}
 
 	@Test
-	public void testSelectAll(){
+	public void testInsertUpdate(){
 
-		Criteria<Subject> all = search(Subject.class).all();
-		Query<Subject> q = ds.createQuery(all);
+		assetStoreIsEmpty();
+		
+		TestSubject to = new TestSubject();
+		to.setName("Name");
+		to = ds.store(to);
+		
+		assetStoreHasElements(1);
 
-		assertTrue(q.count()>0);
+		to.setName("Name 4");
+		to = ds.store(to);
 
-		assertNotNull(q.find());
+		assetStoreHasElements(1);
+		
+		TestSubject to2 = query.find();
+		
+		assertEquals("Name 4", to2.getName());
+		
+		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
 
-		int count=0;
-		for (Subject t : q.findAll()){
-			count++;
-			assertTrue(t instanceof Subject);
-			assertNotNull(t.getName());
-		}
-		assertTrue(count == q.count());
+		// remove them
+		ds.remove(all);
+		
+		assetStoreIsEmpty();
 	}
 
 	@Test
 	public void testSelectCriteria(){
 
-		Subject toA = new Subject();
+		assetStoreIsEmpty();
+		
+		TestSubject toA = new TestSubject();
 		toA.setName("Name A");
 		toA = ds.store(toA);
 
-		Subject toB = new Subject();
+		TestSubject toB = new TestSubject();
 		toB.setName("Name B");
 		toB = ds.store(toB);
 
-		Criteria<Subject> some = search(Subject.class)
+		TestSubject toC = new TestSubject();
+		toC.setName("Name C");
+		toC = ds.store(toC);
+		
+		assetStoreHasElements(3);
+		
+		// select all not named Name C
+		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class)
 		.and("name").not().eq("Name A")
 		.orderBy("name").asc()
 		.all();
 
-		Query<Subject> q = ds.createQuery(some);
+		Query<TestSubject> q = ds.createQuery(some);
 
-		assertEquals(3L, q.count());
+		assertEquals(2L, q.count());
 
-		some = search(Subject.class)
+		some = CriteriaBuilder.search(TestSubject.class)
 		.and("name").eq("Name A")
 		.orderBy("name").asc()
 		.all();
@@ -175,31 +198,38 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		assertEquals(1L, q.count());
 
+		assetStoreHasElements(3);
 		ds.remove(toA);
+		assetStoreHasElements(2);
 		ds.remove(toB);
+		assetStoreHasElements(1);
+		
+		ds.remove(toC);
+		
+		assetStoreIsEmpty();
 	}
 
 	@Test
 	public void testSelectLimit(){
 
-		Subject toA = new Subject();
+		TestSubject toA = new TestSubject();
 		toA.setName("Name A");
 		toA = ds.store(toA);
 
-		Subject toB = new Subject();
+		TestSubject toB = new TestSubject();
 		toB.setName("Name B");
 		toB = ds.store(toB);
 
-		Subject toc = new Subject();
+		TestSubject toc = new TestSubject();
 		toc.setName("Name C");
 		toc = ds.store(toc);
 
 
-		Criteria<Subject> some = search(Subject.class).limit(3).all();
+		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class).limit(2).all();
 
-		Query<Subject> q = ds.createQuery(some);
+		Query<TestSubject> q = ds.createQuery(some);
 
-		assertEquals(3L , q.count());
+		assertEquals(Integer.valueOf(2) , q.findAll().size());
 
 
 		some = some.duplicate()
@@ -207,35 +237,50 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		q = ds.createQuery(some);
 
-		assertEquals(1L ,  q.count());
+		assertEquals(1 ,  q.findAll().size());
 
 		ds.remove(toA);
 		ds.remove(toB);
 		ds.remove(toc);
+		
+		assetStoreIsEmpty();
 	}
 
 	@Test
 	public void testCriteriaClone(){
 
-		Criteria<Subject> some = search(Subject.class).limit(3).all();
+		TestSubject toA = new TestSubject();
+		toA.setName("Name A");
+		toA = ds.store(toA);
+
+		TestSubject toB = new TestSubject();
+		toB.setName("Name B");
+		toB = ds.store(toB);
+
+		TestSubject toc = new TestSubject();
+		toc.setName("Name C");
+		toc = ds.store(toc);
+		
+		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class).limit(3).all();
 
 		some = some.duplicate()
 		.setRange(2);
 
-		Query<Subject> q = ds.createQuery(some);
+		Query<TestSubject> q = ds.createQuery(some);
 
-		assertEquals(2L , q.count());
+		assertEquals(3L , q.count());
+		assertEquals(2 , q.findAll().size());
 	}
 
 	@Test
 	public void testQueryReuse(){
 
-		Criteria<Subject> all = search(Subject.class).all();
-		Query<Subject> q = ds.createQuery(all);
+		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
+		Query<TestSubject> q = ds.createQuery(all);
 
 		long count = q.count(); 
 
-		Subject to = new Subject();
+		TestSubject to = new TestSubject();
 		to.setName("Name");
 		to.setBirthdate(new Date());
 		to = ds.store(to);

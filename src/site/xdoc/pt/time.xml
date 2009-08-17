@@ -20,9 +20,8 @@
 		  para o toolbox de tempos e datas. A unidade, no SI, é o segundo.
 		  </p>
     </section>
-		  
-Referencial Temporal
-
+		  <section name="Referencial Temporal" >
+<p>
 Embora o tempo é realmente mensurável em interválos, na prática nós precisamos referir-nos a pontos na linha do tempo de forma destinguivel e univoca. Porque, fisicamente, nenhum ponto é destinguivel de outro, é necessário escolher um desses pontos como referencia e medir todo o tempo que passou em relação a esse ponto de referencia. Este ponto de referencia recebe o nome de Época (epoch). O Java usa a epoca definida pelo Unix ( 1 de Janeiro de 1970 às 00:00:00 horas ) e mantém o numero de milisegundos desde então. Em Java é possivel obter esse numero invocando System.currentTimeMillis().
 Relogios e o "tempo atual"
 

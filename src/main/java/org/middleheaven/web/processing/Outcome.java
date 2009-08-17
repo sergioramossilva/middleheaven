@@ -9,6 +9,7 @@ public class Outcome {
 	boolean doRedirect = false;
 	boolean isError;
 	private String url;
+	private int error = 0;
 	
 	public Outcome(OutcomeStatus status, boolean doRedirect, String url) {
 		super();
@@ -24,6 +25,11 @@ public class Outcome {
 		this.doRedirect = true;
 		this.url = Integer.toString(error);
 		this.isError = true;
+		this.error = error;
+	}
+	
+	public int getErrorCode(){
+		return error;
 	}
 	
 	public OutcomeStatus getStatus() {

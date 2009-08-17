@@ -6,14 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 
 import org.junit.Test;
-import org.middleheaven.domain.DomailModelBuilder;
+import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.odb.ObjectStoreKeeper;
+import org.middleheaven.storage.odb.ObjectDataStorage;
+import org.middleheaven.storage.testdomain.TestSubject;
 
 
 public class TestODB {
@@ -22,25 +23,25 @@ public class TestODB {
 	@Test
 	public void testSimpleAdd(){
 		ManagedFile dataFile = ManagedFileRepositories.resolveFile(new File("./neodata.data"));
-		ObjectStoreKeeper keeper = new ObjectStoreKeeper(dataFile);
+		ObjectDataStorage keeper = new ObjectDataStorage(dataFile);
 		
-		final DomainModel model = new DomailModelBuilder().build(
-				new DomainClasses().add(Subject.class)
+		final DomainModel model = new DomainModelBuilder().build(
+				new DomainClasses().add(TestSubject.class)
 		);
 		
-		DataStorage ds = new DomainDataStorage(keeper , model);
+		EntityStore ds = new DomainStore(keeper , model);
 
 		// read all
-		Criteria<Subject> c = CriteriaBuilder.search(Subject.class).all();
+		Criteria<TestSubject> c = CriteriaBuilder.search(TestSubject.class).all();
 		
-		Query<Subject> q=  ds.createQuery(c);
+		Query<TestSubject> q=  ds.createQuery(c);
 		
 		long previous = q.count();
 		
-		Subject to = new Subject();
+		TestSubject to = new TestSubject();
 		to.setName("Name");
 		
-		Subject to2 = ds.store(to);
+		TestSubject to2 = ds.store(to);
 		
 		assertNotNull(to2.getIdentity());
 		assertEquals(previous+1,q.count());

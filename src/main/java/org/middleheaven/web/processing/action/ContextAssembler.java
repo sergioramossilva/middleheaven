@@ -25,7 +25,7 @@ public class ContextAssembler implements BeanAssembler {
 		
 		final B instance = pool.getInstance(type);
 		
-		Introspector.of(type).properties().each(new Walker<PropertyAccessor>(){
+		Introspector.of(type).inspect().properties().each(new Walker<PropertyAccessor>(){
 
 			@Override
 			public void doWith(PropertyAccessor acessor) {

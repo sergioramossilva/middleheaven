@@ -101,19 +101,19 @@ class ServletHttpServerService implements HttpServerService {
 	void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
 		if (stopped){
-			response.sendError(HttpErrors.NOT_FOUND.errorCode()); 
+			response.sendError(HttpError.NOT_FOUND.errorCode()); 
 			return;
 		}
 
 		if (!available){
-			response.sendError(HttpErrors.SERVICE_UNAVAILABLE.errorCode()); 
+			response.sendError(HttpError.SERVICE_UNAVAILABLE.errorCode()); 
 			return;
 		}
 
 		ControlProcessor processor = resolveControlProcessor(request.getRequestURI());
 
 		if (processor == null){
-			response.sendError(HttpErrors.NOT_IMPLEMENTED.errorCode()); 
+			response.sendError(HttpError.NOT_IMPLEMENTED.errorCode()); 
 			return;
 		}
 
@@ -125,8 +125,8 @@ class ServletHttpServerService implements HttpServerService {
 			Outcome outcome = processor.process(context);
 
 			if(outcome ==null){
-				response.sendError(HttpErrors.INTERNAL_SERVER_ERROR.errorCode());
-			} if (outcome.isTerminal()){
+				response.sendError(HttpError.INTERNAL_SERVER_ERROR.errorCode());
+			} else if (outcome.isTerminal()){
 				return; // do nothing. The response is already done
 			} else if (outcome.isError){
 				response.sendError(Integer.parseInt(outcome.getUrl()));
@@ -139,7 +139,7 @@ class ServletHttpServerService implements HttpServerService {
 			}
 
 		}catch (AccessDeniedException e){
-			response.sendError(HttpErrors.FORBIDDEN.errorCode());
+			response.sendError(HttpError.FORBIDDEN.errorCode());
 		}catch (HttpProcessIOException e){
 			throw e.getIOException();
 		}catch (HttpProcessServletException e){
