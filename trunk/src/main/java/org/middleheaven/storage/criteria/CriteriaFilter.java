@@ -59,7 +59,8 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 	private BooleanClassifier<T> fieldJuntionCriterionAsFilter(FieldJuntionCriterion c,StorableEntityModel model) {
 		
 	
-		return new JuntionFilter( c.getFieldName(), c.getTargetEntityModel(),c.getSubCriteria());
+		//return new JuntionFilter( c.getFieldName(), c.getTargetEntityModel(),c.getSubCriteria());
+		return new JuntionFilter( c.getFieldName(), model,c.getSubCriteria());
 	}
 	
 	@Override

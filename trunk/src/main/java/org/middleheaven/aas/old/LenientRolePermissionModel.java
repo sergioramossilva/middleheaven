@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.middleheaven.aas.Permission;
+import org.middleheaven.aas.PermissionSet;
+import org.middleheaven.aas.ResourcePermission;
 import org.middleheaven.aas.Role;
 
 

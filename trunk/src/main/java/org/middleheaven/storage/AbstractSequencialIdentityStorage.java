@@ -3,9 +3,9 @@ package org.middleheaven.storage;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.util.identity.Identity;
 
-public abstract class AbstractSequencialIdentityStoreKeeper extends AbstractStoreKeeper {
+public abstract class AbstractSequencialIdentityStorage extends AbstractDataStorage {
 
-	public AbstractSequencialIdentityStoreKeeper(StorableModelReader reader) {
+	public AbstractSequencialIdentityStorage(StorableModelReader reader) {
 		super(reader);
 	}
 

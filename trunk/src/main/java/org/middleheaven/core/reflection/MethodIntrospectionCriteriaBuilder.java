@@ -56,7 +56,7 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 	
 	public MethodIntrospectionCriteriaBuilder<T> withParametersType(Class<?>[] parameterTypes) {
 		super.addParamterTypeFilter(parameterTypes);
-		return null;
+		return this;
 	}
 	
 	public MethodIntrospectionCriteriaBuilder<T> match(BooleanClassifier<Method> filter) {
@@ -91,6 +91,7 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 
 	@Override
 	protected boolean hasParameterTypes(Method obj, Class<?>[] parameterTypes) {
+		// equals already compares array length.
 		return Arrays.equals(obj.getParameterTypes(), parameterTypes);
 	}
 

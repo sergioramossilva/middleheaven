@@ -186,11 +186,6 @@ public class BigDecimalReal extends Real{
 	}
 
 	@Override
-	public Real sqrt() {
-		return new BigDecimalReal(new BigDecimal(Math.sqrt(this.numerator.doubleValue())), new BigDecimal(Math.sqrt(this.denominator.doubleValue()))).simplify();
-	}
-
-	@Override
 	public Real minus(Number n) {
 		return this.minus(Real.valueOf(n));
 	}
@@ -210,18 +205,16 @@ public class BigDecimalReal extends Real{
 		return this.times(Real.valueOf(n));
 	}
 
-	public boolean equals(Object other){
-		return other instanceof BigDecimalReal && equals((BigDecimalReal)other);
-	}
-
+/*
 	public boolean equals(BigDecimalReal other){
 		return (this.denominator.compareTo(other.denominator)==0 &&  this.numerator.compareTo(other.numerator) ==0)
 		|| this.numerator.multiply(other.denominator).compareTo(this.denominator.multiply(other.numerator))==0;
 	}
-
+*/
+	
 	@Override
 	protected boolean equalsSame(Real other) {
-		return equals((BigDecimalReal)other);
+		return compareTo((BigDecimalReal)other)==0;
 	}
 	
 	public int hashCode(){
@@ -247,6 +240,55 @@ public class BigDecimalReal extends Real{
 	public Real toReal() {
 		return this;
 	}
+
+	
+	@Override
+	public Real arctan() {
+		return new BigDecimalReal(
+				BigDecimalMath.arctan(this.asNumber(), 20), BigDecimal.ONE);
+	}
+
+
+
+	@Override
+	public Real sqrt() {
+		return new BigDecimalReal(
+				BigDecimalMath.sqrt(this.asNumber() , 20), 
+				BigDecimal.ONE
+		).simplify();
+	}
+	
+	@Override
+	public Real cos() {
+		return new BigDecimalReal(
+				BigDecimalMath.cos(this.asNumber(), 15), BigDecimal.ONE);
+	}
+
+	
+	@Override
+	public Real sin() {
+		return new BigDecimalReal(
+				BigDecimalMath.sin(this.asNumber(), 15), BigDecimal.ONE);
+	}
+
+	@Override
+	public Real exp() {
+		return new BigDecimalReal(
+				BigDecimalMath.exp(this.asNumber(), 20), BigDecimal.ONE);
+	}
+
+	@Override
+	public Real ln() {
+		return new BigDecimalReal(
+				BigDecimalMath.ln(this.asNumber(), 20), BigDecimal.ONE);
+	}
+
+
+	@Override
+	public Real tan() {
+		return sin().over(cos());
+	}
+
 
 
 }

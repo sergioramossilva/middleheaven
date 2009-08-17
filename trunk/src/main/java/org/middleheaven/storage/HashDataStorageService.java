@@ -14,10 +14,10 @@ import org.middleheaven.core.wiring.service.Service;
 @Service
 public class HashDataStorageService implements DataStorageService{
 
-	private Map<String, DataStorage> storages = new TreeMap<String, DataStorage>();
+	private Map<String, EntityStore> storages = new TreeMap<String, EntityStore>();
 	
 	@Override
-	public void addDataStorage(String storageID, DataStorage storage) {
+	public void addDataStorage(String storageID, EntityStore storage) {
 		storages.put(storageID,storage);
 	}
 
@@ -27,12 +27,12 @@ public class HashDataStorageService implements DataStorageService{
 	}
 	
 	@Override
-	public DataStorage getStorage(String storageID) {
+	public EntityStore getStorage(String storageID) {
 		return storages.get(storageID);
 	}
 
 	@Override
-	public DataStorage getStorage() {
+	public EntityStore getStorage() {
 		if (storages.isEmpty()){
 			throw new DataStorageNotFoundException();
 		}

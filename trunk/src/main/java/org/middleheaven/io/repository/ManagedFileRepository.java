@@ -55,7 +55,7 @@ public interface ManagedFileRepository{
 
     /**
      * Retrives a ManagedFile representing the file with the specified name
-     * @param filename o nome do arquivo (apenas o nome do arquivo e a extensão)
+     * @param the file name (name and extention)
      * @return 
      */
     public abstract ManagedFile retrive(String filename) throws ManagedIOException;

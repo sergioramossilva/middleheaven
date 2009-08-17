@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 import org.middleheaven.util.conversion.TypeConvertions;
 
@@ -34,8 +35,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 			}
 
 
-			// find assessor and modifier method
-			
+			// find assessor , modifier, adder and remover methods
 			
 			for (Method method : type.getMethods()){
 				if (method.getParameterTypes().length==1 && method.getName().equalsIgnoreCase("set" + name)){
@@ -43,9 +43,10 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 				} else if (method.getParameterTypes().length==0 && (method.getName().equalsIgnoreCase("get" + name) || 
 						method.getName().equalsIgnoreCase("is" + name)) ){
 					acessor = method;
-				}
-				if (modifier !=null && acessor != null){
-					break;
+				} 
+				
+				if(modifier !=null && acessor !=null){ // we have what we need
+					break; 
 				}
 			}
 			
@@ -99,7 +100,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 				modifier.invoke(target, TypeConvertions.convert(value,modifier.getParameterTypes()[0]));
 			} else if (modifyByField && field!=null){
 				field.setAccessible(true);
-				@SuppressWarnings("unchecked") Object obj = TypeConvertions.convert(value,(Class)field.getGenericType());
+				Object obj = TypeConvertions.convert(value,field.getType());
 				field.set(target,obj);
 			} // else is read only. not an exception
 		}catch (IllegalArgumentException e) {
@@ -129,5 +130,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 		return a;
 
 	}
+
+	
 }
 

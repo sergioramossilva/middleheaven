@@ -8,12 +8,12 @@ public class BRptNumberWriteoutFormat extends PTptNumberWriteoutFormat{
 			switch (group){
 			case 0: return "zero";
 			case 2: return "mil";
-			case 3: return value == 1 ? "milh„o" : "milhıes";
-			case 4: return value == 1 ? "bilh„o" : "bilhıes";
-			case 5: return value == 1 ? "trilh„o" : "trilhıes";
-			case 6: return value == 1 ? "quadrilh„o" : "quadrilhıes";
-			case 7: return value == 1 ? "quintilh„o" : "quintilhıes";
-			case 8: return value == 1 ? "sextilh„o"  : "sextilhıes";
+			case 3: return value == 1 ? "milh√£o" : "milh√µes";
+			case 4: return value == 1 ? "bilh√£o" : "bilh√µes";
+			case 5: return value == 1 ? "trilh√£o" : "trilh√µes";
+			case 6: return value == 1 ? "quadrilh√£o" : "quadrilh√µes";
+			case 7: return value == 1 ? "quintilh√£o" : "quintilh√µes";
+			case 8: return value == 1 ? "sextilh√£o"  : "sextilh√µes";
 			default :
 				throw new NumberOutOfRangeException();
 			}

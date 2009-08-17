@@ -34,7 +34,7 @@ public class GlobalLabel implements Serializable{
 	}
 
 	public GlobalLabel(String domainlabel){
-		if (domainlabel.indexOf(":")==0){
+		if (domainlabel.indexOf(":")<0){
 			throw new IllegalArgumentException("Label is not qualified in a domain");
 		}
 		String[] str = StringUtils.split(domainlabel, ":");

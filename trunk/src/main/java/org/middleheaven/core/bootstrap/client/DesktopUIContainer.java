@@ -1,6 +1,6 @@
 package org.middleheaven.core.bootstrap.client;
 
-import org.middleheaven.core.services.ServiceNotFoundException;
+import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.Logging;
@@ -58,7 +58,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 
 			renderKit.show(mainWindow);
 			
-		} catch (ServiceNotFoundException e){
+		} catch (ServiceNotAvailableException e){
 			Logging.getBook(this.getClass()).warn("Executing without UI client");
 		}
 
@@ -84,7 +84,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 
 			renderKit.dispose(mainWindow);
 			
-		} catch (ServiceNotFoundException e){
+		} catch (ServiceNotAvailableException e){
 			Logging.getBook(this.getClass()).trace("Stopping without UI client");
 		}
 	}

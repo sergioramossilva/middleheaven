@@ -3,9 +3,9 @@ package org.middleheaven.storage;
 public interface DataStorageService {
 
 	
-	public DataStorage getStorage(String storageID);
-	public DataStorage getStorage();
+	public EntityStore getStorage(String storageID);
+	public EntityStore getStorage();
 	
-	public void addDataStorage(String storageID , DataStorage storage);
+	public void addDataStorage(String storageID , EntityStore storage);
 	public void removeDataStorage(String storageID);
 }

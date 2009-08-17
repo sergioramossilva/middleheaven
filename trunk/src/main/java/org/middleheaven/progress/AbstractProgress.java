@@ -9,7 +9,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 
 /**
- * @author Sérgio M.M. Taborda
  */
 public abstract class AbstractProgress implements Progress {
 

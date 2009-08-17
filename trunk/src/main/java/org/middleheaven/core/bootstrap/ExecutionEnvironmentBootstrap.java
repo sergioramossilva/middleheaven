@@ -19,6 +19,7 @@ import org.middleheaven.global.text.LocalizationServiceActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
+import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.storage.DataStorageServiceActivator;
 import org.middleheaven.util.StopWatch;
 import org.middleheaven.work.scheduled.AlarmClockScheduleWorkExecutionServiceActivator;
@@ -98,7 +99,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 		
 		container.start();
 
-		log.info("Environment inicialized in " + watch.mark().toString() + ".");
+		log.info("Environment inicialized in " + watch.mark().asMeasure().convertTo(SI.MILI(SI.SECOND)).toString() + ".");
 		bootstrapService.fireBootupEnd();
 	}
 

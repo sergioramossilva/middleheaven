@@ -4,11 +4,17 @@ import org.middleheaven.util.identity.Identity;
 
 public interface Storable {
 
-	public PersistableState getPersistableState();
-	public void setPersistableState(PersistableState state);
+
+	public Class<?> getPersistableClass();
+	
+	public StorableState getStorableState();
+	public void setStorableState(StorableState state);
+	
 	public Identity getIdentity();
 	public void setIdentity(Identity id);
-	public Class<?> getPersistableClass();
+	
 	public Object getFieldValue(StorableFieldModel model);
 	public void setFieldValue(StorableFieldModel model, Object fieldValue);
+	public void addFieldElement(StorableFieldModel model, Object element);
+	public void removeFieldElement(StorableFieldModel model, Object element);
 }

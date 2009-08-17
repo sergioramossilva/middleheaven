@@ -7,7 +7,7 @@ import org.middleheaven.logging.Logging;
  * Adpater class for Apache Commons Logging.
  * This class implements <code>org.apache.commons.logging.Log</code>.
  * This class only responds to FATAL and ERROR events
- *
+ * TODO provide by proxy
  */
 public class CommonsLogAdapter implements Log {
 

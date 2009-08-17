@@ -26,12 +26,13 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 	}
 	
 	
-	public static AngularMeasure arctan(Real value){
-		return radians(Math.atan(value.asNumber().doubleValue()));
-	}
-	
+	/**
+	 * 
+	 * @param value a decimal value for the tangent
+	 * @return the correspondent angular value 
+	 */
 	public static AngularMeasure arctan(DecimalMeasure<?> value){
-		return arctan(value.amount);
+		return AngularMeasure.radians(value.amount.arctan());
 	}
 
 	/**
@@ -59,7 +60,7 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 	}
 
 	/**
-	 * Creates a <code>AngularMeasure</code> from a degrees amount expressed in ddºmm'ss'' notation
+	 * Creates a <code>AngularMeasure</code> from a degrees amount expressed in dd mm'ss'' notation
 	 *
 	 * @param degree integer degrees part of angle
 	 * @param minutes minute part of angle in degrees
@@ -140,15 +141,15 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 	}
 
 	public Real sin(){
-		return Real.valueOf(Math.sin(this.amount.asNumber().doubleValue()));
+		return this.amount.sin();
 	}
 
 	public Real cos(){
-		return Real.valueOf(Math.cos(this.amount.asNumber().doubleValue()));
+		return this.amount.cos();
 	}
 
 	public Real tan(){
-		return Real.valueOf(Math.tan(this.amount.asNumber().doubleValue()));
+		return this.amount.tan();
 	}
 
 	public int compareTo(AngularMeasure other) {

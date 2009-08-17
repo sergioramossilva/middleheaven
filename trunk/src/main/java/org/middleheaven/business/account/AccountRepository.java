@@ -5,19 +5,19 @@ import java.util.List;
 
 import org.middleheaven.quantity.measure.Amount;
 import org.middleheaven.quantity.time.DateHolder;
-import org.middleheaven.storage.DataStorage;
+import org.middleheaven.storage.EntityStore;
 import org.middleheaven.util.collections.Interval;
 
 public abstract class AccountRepository<A extends Amount<A,?>> {
 
-	private DataStorage ds;
+	private EntityStore ds;
 	private A zero;
 	
 	public AccountRepository(A zero){
 		this.zero = zero;
 	}
 	
-	protected void setDataStorage (DataStorage ds){
+	protected void setDataStorage (EntityStore ds){
 		this.ds = ds;
 	}
 	

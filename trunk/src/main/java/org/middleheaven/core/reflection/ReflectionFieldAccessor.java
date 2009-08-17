@@ -61,7 +61,7 @@ public  class ReflectionFieldAccessor implements FieldAcessor{
 	}
 
 	public String toString(){
-		return this.getName();
+		return getDeclaringClass().getName() + "." + this.getName();
 	}
 	
 	public String getName() {

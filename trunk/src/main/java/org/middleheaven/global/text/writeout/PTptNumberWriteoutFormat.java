@@ -24,7 +24,7 @@ class PTptNumberWriteoutFormat extends NumberWriteoutFormat{
 		switch (value){
 		case 1: return "um";
 		case 2: return "dois";
-		case 3: return "três";
+		case 3: return "trï¿½s";
 		case 4: return "quatro";
 		case 5: return "cinco";
 		case 6: return "seis";
@@ -89,20 +89,20 @@ class PTptNumberWriteoutFormat extends NumberWriteoutFormat{
 	@Override
 	public String getFractionUnitName(int exponent) {
 		switch (exponent){
-		case 1: return "décimos";
-		case 2: return "centésimos";
-		case 3: return "milésimos";
-		case 4: return "décimos milésimos";
-		case 5: return "centésimos milésimos";
-		case 6: return "milionésimos";
-		case 7: return "décimos milionésimos";
-		case 8: return "centésimos milionésimos";
-		case 9: return "bilionésimos";
-		case 10: return "décimos bilionésimos";
-		case 11: return "centésimos bilionésimos";
-		case 12: return "trilionésimos";
-		case 13: return "décimos trilionésimos";
-		case 14: return "centésimos trilionésimos";
+		case 1: return "dÃ©cimos";
+		case 2: return "centÃ©simos";
+		case 3: return "milÃ©simos";
+		case 4: return "dÃ©cimos milÃ©simos";
+		case 5: return "centÃ©simos milÃ©simos";
+		case 6: return "milionÃ©simos";
+		case 7: return "dÃ©cimos milionÃ©simos";
+		case 8: return "centÃ©simos milionÃ©simos";
+		case 9: return "bilionÃ©simos";
+		case 10: return "dÃ©cimos bilionÃ©simos";
+		case 11: return "centÃ©simos bilionÃ©simos";
+		case 12: return "trilionÃ©simos";
+		case 13: return "dÃ©cimos trilionÃ©simos";
+		case 14: return "centÃ©simos trilionÃ©simos";
 		default : 
 			throw new NumberOutOfRangeException();
 		}
@@ -114,14 +114,14 @@ class PTptNumberWriteoutFormat extends NumberWriteoutFormat{
 			switch (group){
 			case 0: return "zero";
 			case 2: return "mil";
-			case 3: return value == 1 ? "milhão" : "milhões";
-			case 4: return value == 1 ? "milhar de milhão" : "milhares de milhão";
-			case 5: return value == 1 ? "bilhão" : "bilhões";
-			case 6: return value == 1 ? "milhar de bilhão" : "milhares de bilhão";
-			case 7: return value == 1 ? "trilhão" : "trilhões";
-			case 8: return value == 1 ? "milhar de trilhão"  : "milhares de trilhão";
-			case 9: return value == 1 ? "quadrilhão"  : "quadrilhões";
-			case 10: return value == 1 ? "milhar de quadrilhão"  : "milhares de quadrilhão";
+			case 3: return value == 1 ? "milhÃ£o" : "milhÃµes";
+			case 4: return value == 1 ? "milhar de milhÃ£o" : "milhares de milhÃ£o";
+			case 5: return value == 1 ? "bilhÃ£o" : "bilhï¿½es";
+			case 6: return value == 1 ? "milhar de bilhÃ£o" : "milhares de bilhÃ£o";
+			case 7: return value == 1 ? "trilhÃ£o" : "trilhï¿½es";
+			case 8: return value == 1 ? "milhar de trilhÃ£o"  : "milhares de trilhÃ£o";
+			case 9: return value == 1 ? "quadrilhÃ£o"  : "quadrilhï¿½es";
+			case 10: return value == 1 ? "milhar de quadrilhÃ£o"  : "milhares de quadrilhÃ£o";
 			default :
 				throw new NumberOutOfRangeException();
 			}

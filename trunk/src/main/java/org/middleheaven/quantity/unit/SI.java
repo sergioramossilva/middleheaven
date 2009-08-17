@@ -41,7 +41,7 @@ public final class SI extends UnitSystem{
 
 	public static final Unit<Time> HOUR = Unit.unit(Dimension.TIME,"h");
 	
-	public static final Unit<Angle> DEGREE = Unit.unit(Dimension.ANGLE,"º");
+	public static final Unit<Angle> DEGREE = Unit.unit(Dimension.ANGLE,"\u00BA");
 	
 	public static <E extends Measurable> Unit<E> MEGA(Unit<E> other){
 		return MultipleUnit.multipleOf(other,Real.valueOf(1000000));

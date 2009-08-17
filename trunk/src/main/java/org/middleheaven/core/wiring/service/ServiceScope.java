@@ -1,7 +1,9 @@
 package org.middleheaven.core.wiring.service;
 
-import org.middleheaven.core.services.ServiceNotFoundException;
+import javax.management.ServiceNotFoundException;
+
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.wiring.Resolver;
 import org.middleheaven.core.wiring.ScopePool;
 import org.middleheaven.core.wiring.WiringSpecification;
@@ -23,7 +25,7 @@ public class ServiceScope implements ScopePool {
 		try{
 			return  ServiceRegistry.getService(spec.getContract(), spec.getParams());
 
-		} catch (ServiceNotFoundException e){
+		} catch (ServiceNotAvailableException e){
 			T object = resolver.resolve(spec);
 			if(object ==null){
 				return null;

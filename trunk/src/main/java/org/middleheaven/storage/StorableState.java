@@ -3,7 +3,7 @@ package org.middleheaven.storage;
 /**
  * Storable persistance states
  */
-public enum PersistableState {
+public enum StorableState {
 
 	/**
 	 * The object has just been created. It is not persisted
@@ -34,7 +34,7 @@ public enum PersistableState {
 	ERASED
 	;
 
-	public PersistableState edit(){
+	public StorableState edit(){
 		if (this==BLANK){
 			return FILLED;
 		} else if(this==RETRIVED) {
@@ -44,7 +44,7 @@ public enum PersistableState {
 		return this;
 	}
 
-	public PersistableState delete(){
+	public StorableState delete(){
 		switch (this){
 		case BLANK:
 		case ERASED:	

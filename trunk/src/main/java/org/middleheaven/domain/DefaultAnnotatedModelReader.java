@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
@@ -33,21 +34,50 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 		return false;
 	}
 
-	private <E> FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<E> em){
+	@Override
+	public void read(Class<?> type, ModelBuilder builder) {
+		EntityModelBuilder<?> em = builder.getEntity(type);
+
+		Collection<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
+		
+		if (propertyAccessors.isEmpty()){
+			throw new ModelingException("No public fields found for entity " + type.getName() + ".");
+		} else {
+		
+			for (PropertyAccessor pa : propertyAccessors){
+
+				processField(pa,em);
+				
+			}
+
+		}
+
+	}
+	
+	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em){
 
 		FieldModelBuilder fm = em.getField(pa.getName())
 		.setTransient(pa.isAnnotadedWith(Transient.class))
 		.setVersion( pa.isAnnotadedWith(Version.class))
-		.setUnique( pa.isAnnotadedWith(Unique.class))
-		.setValueType(pa.getValueType());
+		.setUnique( pa.isAnnotadedWith(Unique.class));
+		
+		Class<?> valueType = pa.getValueType();
 
+		
 		if(pa.isAnnotadedWith(Key.class)){
 			Key key = pa.getAnnotation(Key.class);
 
 			fm.setIdentity(true);
-			
+			fm.setUnique(true);
 			em.setIdentityType(key.type());
 
+		} else if ( fm.isIdentity() || valueType.isAssignableFrom(Identity.class) ){
+			
+			fm.setIdentity(true);
+			fm.setUnique(true);
+			
+			em.setIdentityType(valueType.asSubclass(Identity.class));
+			
 		}
 
 		if (pa.isAnnotadedWith(ManyToOne.class)){
@@ -58,6 +88,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				fieldName = fm.getName();
 			}
 			fm.putParam("targetField", fieldName);
+			fm.setValueType(valueType);
 
 		} else if (pa.isAnnotadedWith(OneToOne.class)){
 			fm.setDataType(DataType.ONE_TO_ONE);
@@ -67,20 +98,24 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				fieldName = fm.getName();
 			}
 			fm.putParam("targetField", fieldName);
+			fm.setValueType(valueType);
+
 		} else if (pa.isAnnotadedWith(OneToMany.class)){
 			fm.setDataType( DataType.ONE_TO_MANY);
 			OneToMany ref = pa.getAnnotation(OneToMany.class);
-			Class target = ref.target();
+
+			fm.setValueType(ref.target());
+			fm.setAggregationType(valueType);
 
 		} else if (pa.isAnnotadedWith(ManyToMany.class)){
 			fm.setDataType(DataType.MANY_TO_MANY);
 			ManyToMany ref = pa.getAnnotation(ManyToMany.class);
-			Class target = ref.target();
-
+			
+			fm.setValueType(ref.target());
+			fm.setAggregationType(valueType);
 		}
 
-		Class<?> valueType = pa.getValueType();
-
+		
 		if ( fm.getDataType() == null){
 			if (matchTypes(valueType, String.class) ){
 				fm.setDataType(DataType.TEXT);
@@ -100,7 +135,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 					fm.setDataType(pa.getAnnotation(Temporal.class).value());
 				} else {
 					Logging.warn(valueType.getName() + 
-							" is to a too generic timestamp type. Consider annotated " + 
+							" is to a too generic timestamp type. Consider annotate property " + 
 							fm.getName() + " with @Temporal or use an instance of " + 
 							TimePoint.class.getName()
 					);
@@ -110,6 +145,15 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				fm.setDataType(DataType.LOGIC);
 			} else if ( matchTypes(valueType,Double.class , double.class , Float.class , float.class, BigDecimal.class)){
 				fm.setDataType(DataType.DECIMAL);
+			} else if (matchTypes(valueType, Collection.class, Map.class)){
+				fm.setDataType( DataType.ONE_TO_MANY);
+			} else if (matchTypes(valueType, Identity.class)){
+				fm.setDataType( DataType.IDENTITY);
+				fm.setIdentity(true);
+				em.setIdentityType(valueType.asSubclass(Identity.class));
+			} else {
+				fm.setDataType(DataType.MANY_TO_ONE);
+				fm.setValueType(valueType);
 			}
 		}
 		
@@ -117,25 +161,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 	}
 
 
-	@Override
-	public void read(Class<?> type, ModelBuilder builder) {
-		EntityModelBuilder em = builder.getEntity(type);
 
-		Collection<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
-		
-		if (propertyAccessors.isEmpty()){
-			throw new ModelingException("No public fields found for entity " + type.getName() + ".");
-		} else {
-		
-			for (PropertyAccessor pa : propertyAccessors){
-
-				processField(pa,em);
-				
-			}
-
-
-		}
-	}
 
 
 

@@ -1,7 +1,7 @@
 package org.middleheaven.domain.repository;
 
 import org.middleheaven.domain.DomainModel;
-import org.middleheaven.storage.DataStorage;
+import org.middleheaven.storage.EntityStore;
 import org.middleheaven.storage.DataStorageListener;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.StorageChangeEvent;
@@ -14,14 +14,14 @@ public class DomainStorageRepository<E> extends AbstractRepository<E>  {
 	private Class<E> entityType;
 	private DomainModel domainModel;
 	private DataStorageListener storageListener;
-	private DataStorage dataStorage;
+	private EntityStore dataStorage;
 
-	public DomainStorageRepository(Class<E> entityType,DataStorage dataStorage){
+	public DomainStorageRepository(Class<E> entityType,EntityStore dataStorage){
 		this.entityType = entityType;
 		this.dataStorage = dataStorage;
 	}
 
-	public DataStorage getDataStorage(){
+	public EntityStore getDataStorage(){
 		return dataStorage;
 	}
 

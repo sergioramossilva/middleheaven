@@ -4,12 +4,14 @@
  */
 package org.middleheaven.core.bootstrap;
 
+import javax.management.ServiceNotFoundException;
+
 import org.middleheaven.application.ApplicationLoadingCycle;
 import org.middleheaven.application.ApplicationLoadingService;
 import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
 import org.middleheaven.core.BootstrapContainer;
-import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.activation.ActivatorScanner;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
@@ -48,7 +50,7 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 				appCycle = app.getApplicationLoadingCycle();
 				appCycle.start();
 			}
-		} catch (ServiceNotFoundException e){
+		} catch (ServiceNotAvailableException e){
 			Logging.getBook(this.getClass()).warn("Executing without Application Cycle Service");
 		}
 	}

@@ -39,7 +39,7 @@ public class Constants {
 	public static final	DecimalMeasure<?> G = DecimalMeasure.measure(6.67428e-11, 1.0e-4, SI.METER.raise(3).over(SI.SECOND.raise(2)).over(SI.KILOGRAM) );
 	
 	/**
-	 *  Electric constant, also known as permitivity of vacuum. (1/(µ0·c²)) 
+	 *  Electric constant, also known as permitivity of vacuum. (1/(miu_zero*c^2)) 
 	 */
 	public static final	DecimalMeasure<?> epslion_zero = miu_zero.times(c_square).inverse();
 }

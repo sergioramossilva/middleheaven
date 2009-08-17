@@ -10,7 +10,6 @@ import org.middleheaven.util.classification.BooleanClassifier;
 public class JuntionFilter<T> implements BooleanClassifier<T> {
 
 	QualifiedName fieldName;
-	StorableEntityModel target;
 	CriteriaFilter<T> subCriteria;
 	
 	public JuntionFilter(QualifiedName fieldName,StorableEntityModel target , Criteria<T> criteria) {
@@ -18,7 +17,6 @@ public class JuntionFilter<T> implements BooleanClassifier<T> {
 		subCriteria = new CriteriaFilter<T>(criteria, target);
 		
 		this.fieldName = fieldName;
-		this.target = target;
 	}
 
 	@SuppressWarnings("unchecked")

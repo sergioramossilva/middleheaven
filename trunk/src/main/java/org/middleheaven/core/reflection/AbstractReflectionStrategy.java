@@ -8,7 +8,7 @@ import java.util.Collections;
 public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 
 	public PropertyAccessor getPropertyAccessor(Class<?> type, String fieldName){
-		return new ReflectionPropertyAccessor(type,fieldName);
+		return new ReflectionPropertyAccessor(this.getRealType(type),fieldName);
 	}
 	
 	@Override
@@ -16,6 +16,8 @@ public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 		if (type==null){
 			return Collections.emptySet();
 		}
+		
+		type = getRealType(type);
 		
 		Collection<PropertyAccessor> result = new ArrayList<PropertyAccessor> ();
 		for (Method m : ReflectionUtils.getMethods(type)){
@@ -32,5 +34,6 @@ public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 		}
 		return result;
 	}
+
 	
 }

@@ -12,7 +12,9 @@ public interface EntityModel {
 	public Class<?> getEntityClass();
 	
 	public EntityFieldModel fieldModel(QualifiedName logicName);
+	
 	public EntityFieldModel identityFieldModel();
+	
 	public Class<? extends Identity> getIdentityType();
 	
 	public Collection<? extends EntityFieldModel> fields();

@@ -57,7 +57,7 @@ public class MethodIntrospector extends Introspector{
 		try {
 			this.method.setAccessible(true);
 			Object obj = this.method.invoke(target, params);
-			if (returnType!=null){
+			if (obj != null && !Void.class.isInstance(returnType)){
 				return returnType.cast(obj);
 			} else {
 				return null;

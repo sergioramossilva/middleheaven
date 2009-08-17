@@ -25,7 +25,7 @@ public class WaitProgress extends AbstractProgress implements ControlableProgres
     }
 
     public int stepsCount() {
-        return -1; // duração indeterminada
+        return -1; // indeterminated duration 
     }
 
     public void increment() {}

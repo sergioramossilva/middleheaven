@@ -11,7 +11,7 @@ import org.middleheaven.util.collections.Range;
  * 
  *
  */
-public abstract class BigInt extends Numeral<BigInt> implements Field<BigInt> ,  Comparable<Numeral<? super BigInt>>, Enumerable<BigInt> , Incrementable <BigInt>{
+public abstract class BigInt extends Numeral<BigInt> implements Field<BigInt> ,  Comparable<Numeral<? super BigInt>>, DiscreetOrderable<BigInt> , Incrementable <BigInt>{
 
 
 	private static final long serialVersionUID = 8636156681654308959L;

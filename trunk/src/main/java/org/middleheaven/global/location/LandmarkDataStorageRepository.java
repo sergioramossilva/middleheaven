@@ -5,13 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.middleheaven.quantity.measure.AngularMeasure;
-import org.middleheaven.storage.DataStorage;
+import org.middleheaven.storage.EntityStore;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 
 public class LandmarkDataStorageRepository extends LandmarkRepository {
 
 
-	private DataStorage storage;
+	private EntityStore storage;
 
 
 	private class CategorizedLandmark {

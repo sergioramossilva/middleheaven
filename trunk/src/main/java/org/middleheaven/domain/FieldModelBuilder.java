@@ -23,4 +23,6 @@ public interface FieldModelBuilder {
 
 	boolean  isIdentity();
 
+	FieldModelBuilder setAggregationType(Class<?> aggregationType);
+
 }

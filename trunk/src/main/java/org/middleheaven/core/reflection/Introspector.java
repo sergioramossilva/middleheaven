@@ -19,15 +19,15 @@ public abstract class Introspector {
 	}
 
 	public static PackageIntrospector of(Package typePackage) {
-		return new PackageIntrospector(typePackage);
+		return typePackage == null ? null : new PackageIntrospector(typePackage);
 	}
 	
 	public static MethodIntrospector of(Method method) {
-		return new MethodIntrospector(method);
+		return method == null ? null : new MethodIntrospector(method);
 	}
 	
 	public static FieldIntrospector of(Field field) {
-		return new FieldIntrospector(field);
+		return field == null ? null : new FieldIntrospector(field);
 	}
 	
 	// package

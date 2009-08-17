@@ -36,7 +36,7 @@ public final class ServiceRegistry {
     	}
     	T service = context.getService(serviceClass, properties);
     	if (service==null){
-    		throw new ServiceNotFoundException(serviceClass.getName());
+    		throw new ServiceNotAvailableException(serviceClass.getName());
     	}
     	return service;
     }

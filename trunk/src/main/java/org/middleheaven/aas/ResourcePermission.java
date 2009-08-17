@@ -1,8 +1,7 @@
-package org.middleheaven.aas.old;
+package org.middleheaven.aas;
 
 import java.util.Iterator;
 
-import org.middleheaven.aas.Permission;
 
 /**
  * Condition with with the ResourceAccessor must comply 
@@ -28,7 +27,7 @@ public class ResourcePermission implements Permission {
     
     /**
      *
-     * @return o nome do recurso ao qual esta permissão diz respeito
+     * @return the resource name
      */
 	public String getResourceName() {
 		return resourceName;
@@ -73,7 +72,7 @@ public class ResourcePermission implements Permission {
 
            ResourcePermission other = (ResourcePermission)threshold;
            if (other.permissionLevel == PermissionLevel.NONE){
-               return true; // se não é requerido nenhum nivel, aceita
+               return true; // no level is required, accept it
            }
            return other.resourceName.equals(this.resourceName) && PermissionLevel.levelIncludes(this.permissionLevel, other.permissionLevel);
         }

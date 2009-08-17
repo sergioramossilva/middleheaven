@@ -100,25 +100,6 @@
 	</tag>
 	
 	
-	<!--  Deprecated use forEach -->
-	<tag>
-	    <name>foreach</name>
-	    <tagclass>org.middleheaven.ui.web.tags.ForEachTag</tagclass>
-	    <teiclass>org.middleheaven.ui.web.tags.ForEachTagExtraInfo</teiclass>
-	    <bodycontent>JSP</bodycontent>
-	    
-	    <attribute>
-	      <name>var</name>
-	      <required>true</required>
-	      <rtexprvalue>false</rtexprvalue>
-	    </attribute>
-	   <attribute>
-	      <name>items</name>
-	      <required>true</required>
-	      <rtexprvalue>true</rtexprvalue>
-	    </attribute>
-	</tag>
-	
 	<tag>
 	    <name>forEach</name>
 	    <tagclass>org.middleheaven.ui.web.tags.ForEachTag</tagclass>

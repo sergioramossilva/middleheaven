@@ -10,6 +10,7 @@ public interface EntityFieldModel {
 	public boolean isVersion();
 	public boolean isIdentity();
 	public Class<?> getValueClass();
+	public Class<?> getAggregationClass();
 	public boolean isUnique();
 	
 	public String getParam(String key);
