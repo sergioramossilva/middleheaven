@@ -12,16 +12,22 @@ public abstract class SQLConditionableCommand implements ConditionableDataBaseCo
 
 	private final String sql;
 	private final Collection<FieldValueHolder> data;
+	private DataBaseDialect dialect;
 
-	protected SQLConditionableCommand(String sql,Collection<FieldValueHolder> data){
+	protected SQLConditionableCommand(DataBaseDialect dialect,String sql,Collection<FieldValueHolder> data){
+		this.dialect = dialect;
 		this.data = data;
 		this.sql = sql;
 	}
 
-	protected final PreparedStatement prepareStatement(Connection con) throws SQLException{
+	public DataBaseDialect getDialect(){
+		return dialect;
+	}
+	
+	protected final PreparedStatement prepareStatement(DataBaseStorage keeper, Connection con) throws SQLException{
 		PreparedStatement ps = con.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
 
-		PreparedStatementStorable pss = new PreparedStatementStorable(ps);
+		PreparedStatementStorable pss = new PreparedStatementStorable(keeper,ps);
 
 		int param = 1;
 		for (FieldValueHolder vh : data){

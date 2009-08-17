@@ -14,7 +14,7 @@ public class DecimalInputTag extends InputTag{
 	
 	protected void writeInputOption() throws JspTagException {
 		
-		// sinaliza o formulário que se trata de um formulario com campos decimais
+		// sinals the form that this is a decimal field capable form
 		FormTag form = this.findAncestorTag(FormTag.class);
 		form.setHasDecimalFields(true);
 		

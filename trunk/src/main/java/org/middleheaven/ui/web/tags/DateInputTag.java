@@ -20,7 +20,7 @@ public class DateInputTag extends TextInputTag{
 
 	protected void writeInputOption() throws JspTagException {
 		
-		// sinaliza o formulário que se trata de um formulario de upload
+		// sinals the form that that his is an upload capacle form
 		FormTag form = this.findAncestorTag(FormTag.class);
 		form.addDatePickedFieldID(this.getWritableId());
 		

@@ -3,7 +3,6 @@ package org.middleheaven.storage.db.dialects;
 import java.util.Collection;
 import java.util.Collections;
 
-
 import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
@@ -31,13 +30,13 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 		sequencesTable.addColumn(new ColumnModel("name",DataType.TEXT));
 		sequencesTable.addColumn(new ColumnModel("lastUsed",DataType.INTEGER));
 
-		dbModel.addTable(sequencesTable);
+		dbModel.addDataBaseObjectModel(sequencesTable);
 	}
 
 	@Override
 	protected RetriveDataBaseCommand createSequenceStateReadCommand(String sequenceName) {
 		final Collection<FieldValueHolder> none = Collections.emptySet();
-		return new SQLRetriveCommand(
+		return new SQLRetriveCommand(this,
 				new StringBuilder("SELECT lastUsed FROM tb_sequences WHERE name ='")
 				.append(sequenceName)
 				.append("'")
@@ -57,7 +56,7 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 		.append(name)
 		.append("'");
 
-		return new SQLStoreCollectionCommand(data,sql.toString(),fields);
+		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
 
 	@Override
@@ -69,7 +68,7 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 		.append(name)
 		.append("',0)");
 
-		return new SQLStoreCollectionCommand(data,sql.toString(),fields);
+		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
 
 	@Override
@@ -107,6 +106,8 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 	public boolean supportsOffSet() {
 		return false;
 	}
+
+
 
 
 

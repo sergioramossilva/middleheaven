@@ -3,7 +3,7 @@ package org.middleheaven.storage.db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.middleheaven.storage.PersistableState;
+import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
@@ -33,7 +33,7 @@ public class ResultSetStorable implements Storable {
 	
 
 	@Override
-	public void setPersistableState(PersistableState state) {
+	public void setStorableState(StorableState state) {
 		throw new UnsupportedOperationException();
 	}
 	
@@ -43,8 +43,8 @@ public class ResultSetStorable implements Storable {
 	}
 
 	@Override
-	public PersistableState getPersistableState() {
-		return PersistableState.RETRIVED;
+	public StorableState getStorableState() {
+		return StorableState.RETRIVED;
 	}
 
 	@Override
@@ -58,7 +58,17 @@ public class ResultSetStorable implements Storable {
 
 	@Override
 	public void setFieldValue(StorableFieldModel model, Object fieldValue) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("This storable is read only");
+	}
+
+	@Override
+	public void addFieldElement(StorableFieldModel model, Object element) {
+		throw new UnsupportedOperationException("This storable is read only");
+	}
+
+	@Override
+	public void removeFieldElement(StorableFieldModel model, Object element) {
+		throw new UnsupportedOperationException("This storable is read only");
 	}
 
 }

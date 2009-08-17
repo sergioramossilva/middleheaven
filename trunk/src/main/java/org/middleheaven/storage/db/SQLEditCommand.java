@@ -9,14 +9,16 @@ import org.middleheaven.storage.StorableEntityModel;
 
 public class SQLEditCommand implements EditionDataBaseCommand {
 
-	String sql;
-	public SQLEditCommand(String sql) {
-		super();
+	final private String sql;
+	final private DataBaseDialect dialect;
+	
+	public SQLEditCommand(DataBaseDialect dialect , String sql) {
+		this.dialect = dialect;
 		this.sql = sql;
 	}
 	
 	@Override
-	public boolean execute(Connection con, StorableEntityModel model) throws SQLException {
+	public boolean execute(DataBaseStorage keeper, Connection con, StorableEntityModel model) throws SQLException {
 		
 		PreparedStatement ps = con.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
 		return ps.executeUpdate()>0;
@@ -24,6 +26,11 @@ public class SQLEditCommand implements EditionDataBaseCommand {
 	
 	public String toString(){
 		return sql;
+	}
+
+	@Override
+	public DataBaseDialect getDialect() {
+		return dialect;
 	}
 
 }

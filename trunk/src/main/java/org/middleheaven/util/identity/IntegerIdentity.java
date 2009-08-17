@@ -44,7 +44,7 @@ public class IntegerIdentity extends Identity implements Serializable {
 	}
 	
 	public IntegerIdentity next(){
-		return new IntegerIdentity(++this.value);
+		return new IntegerIdentity(this.value+1);
 	}
 
 

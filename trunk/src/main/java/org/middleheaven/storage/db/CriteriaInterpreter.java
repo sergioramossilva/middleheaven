@@ -86,7 +86,7 @@ public class CriteriaInterpreter {
 		// LIMITS: Limit and offset
 		writeEndLimitClause(sqlBuilder);
 
-		return new SQLRetriveCommand(sqlBuilder.toString(),params);
+		return new SQLRetriveCommand(dialect(),sqlBuilder.toString(),params);
 	}
 	
 	private Map<String , Character> aliases = new TreeMap<String,Character>();
@@ -114,7 +114,7 @@ public class CriteriaInterpreter {
 		// WHERE CLAUSE
 		writeWhereClause(sqlBuilder,params,false);
 
-		return new SQLDeleteCommand(sqlBuilder.toString(),params);
+		return new SQLDeleteCommand(dialect(),sqlBuilder.toString(),params);
 	}
 
 	protected void writeStartLimitClause(StringBuilder selectBuffer) {
@@ -267,8 +267,9 @@ public class CriteriaInterpreter {
 
 	protected void writeWhereClause(StringBuilder queryBuffer, List<FieldValueHolder> params, boolean isQuery ){
 		// WHERE CLAUSE
-		// Cria primeiro a sentença. 
-		// Se não houver nenhum o where não é adicionado
+		// First create the clause
+		// if no where clause is needed, none will be added
+
 		if ( criteria().restrictions().criteriaCount()==0){
 			return;
 		}

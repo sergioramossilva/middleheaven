@@ -16,8 +16,8 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;
 import org.middleheaven.io.xml.XMLObjectContructor;
 import org.middleheaven.sequence.Sequence;
-import org.middleheaven.storage.AbstractSequencialIdentityStoreKeeper;
-import org.middleheaven.storage.AbstractStoreKeeper;
+import org.middleheaven.storage.AbstractSequencialIdentityStorage;
+import org.middleheaven.storage.AbstractDataStorage;
 import org.middleheaven.storage.ExecutableQuery;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.QueryExecuter;
@@ -37,7 +37,7 @@ import org.neodatis.odb.core.query.nq.NativeQuery;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-public class XMLStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
+public class XMLStorage extends AbstractSequencialIdentityStorage {
 
 	private static class XMLStoreContructor extends XMLObjectContructor<Document>{
 
@@ -52,12 +52,12 @@ public class XMLStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
 	}
 
 
-	public static XMLStoreKeeper manage(ManagedFile source,StorableModelReader reader){
-		return new XMLStoreKeeper(source, reader);
+	public static XMLStorage manage(ManagedFile source,StorableModelReader reader){
+		return new XMLStorage(source, reader);
 	}
 
 	Document doc;
-	public XMLStoreKeeper(ManagedFile source , StorableModelReader reader){
+	public XMLStorage(ManagedFile source , StorableModelReader reader){
 		super(reader);
 		if (source.getType().isFile()){
 			XMLStoreContructor c = new XMLStoreContructor();

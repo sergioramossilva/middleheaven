@@ -9,14 +9,14 @@ import org.middleheaven.storage.criteria.FieldValueHolder;
 
 public class SQLDeleteCommand extends SQLConditionableCommand {
 
-	protected SQLDeleteCommand(String sql, Collection<FieldValueHolder> data) {
-		super(sql, data);
+	protected SQLDeleteCommand(DataBaseDialect dialect,String sql, Collection<FieldValueHolder> data) {
+		super(dialect,sql, data);
 	}
 
 	@Override
-	public boolean execute(Connection con,StorableEntityModel model) throws SQLException {
+	public boolean execute(DataBaseStorage keeper,Connection con, StorableEntityModel model) throws SQLException {
 
-		return prepareStatement(con).execute();
+		return prepareStatement(keeper,con).execute();
 
 
 	}

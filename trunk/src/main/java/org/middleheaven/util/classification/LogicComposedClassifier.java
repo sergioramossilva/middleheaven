@@ -61,7 +61,7 @@ public class LogicComposedClassifier<T> implements BooleanClassifier<T>{
             boolean accept = filters.get(0).classify(object);
             int size = filters.size();
             for (int i = 1 ; !this.logicOperator.isBreakValue(accept) && i < size; i++){
-                this.logicOperator.operate(accept, filters.get(i).classify(object));
+                accept = this.logicOperator.operate(accept, filters.get(i).classify(object));
             }
             return accept;
 

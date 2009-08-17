@@ -13,9 +13,8 @@ public interface RenderTheme extends Serializable, Parameterizable{
     public void installTheme (RenderKit renderKit);
     
     /**
-     * Aplica o tema ao componente. Todos os componentes
-     * são componentes gráficos excepto para o root.
-     * 
+     * Apply the theme to the component. All component are graphical except
+     * for the root component.
      * @param component
      */
     public void applyTheme(UIComponent component);

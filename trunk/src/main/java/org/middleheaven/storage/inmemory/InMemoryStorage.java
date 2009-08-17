@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.middleheaven.sequence.Sequence;
-import org.middleheaven.storage.AbstractSequencialIdentityStoreKeeper;
+import org.middleheaven.storage.AbstractSequencialIdentityStorage;
 import org.middleheaven.storage.ExecutableQuery;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.QueryExecuter;
@@ -21,9 +21,9 @@ import org.middleheaven.storage.criteria.CriteriaFilter;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
 
-public class InMemoryStoreKeeper extends AbstractSequencialIdentityStoreKeeper {
+public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 
-	public InMemoryStoreKeeper() {
+	public InMemoryStorage() {
 		super(new WrappStorableReader());
 	}
 

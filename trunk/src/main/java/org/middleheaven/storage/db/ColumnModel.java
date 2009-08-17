@@ -1,20 +1,21 @@
 package org.middleheaven.storage.db;
 
 import org.middleheaven.domain.DataType;
+import org.middleheaven.util.Hash;
 
 
-public class ColumnModel {
+public class ColumnModel implements Cloneable{
 
 	String name;
 	DataType type;
-	boolean indexed;
-	boolean unique;
-	boolean nullable;
-	boolean key;
+	boolean indexed = false;
+	boolean unique = false;
+	boolean nullable = true;
+	boolean key = false;
 	int size;
 	int precision;
 	TableModel model;
-	
+
 	public TableModel getTableModel() {
 		return model;
 	}
@@ -24,11 +25,11 @@ public class ColumnModel {
 		this.name = name;
 		this.type = type;
 	}
-	
+
 	public void setSize(int size){
 		this.size =  size;
 	}
-	
+
 	public boolean isIndexed() {
 		return indexed;
 	}
@@ -46,7 +47,7 @@ public class ColumnModel {
 	}
 
 
-	
+
 	public String getName() {
 		return name;
 	}
@@ -90,7 +91,27 @@ public class ColumnModel {
 	public void setKey(boolean key) {
 		this.key = key;
 	}
-	
-	
 
+	public ColumnModel copy(TableModel tableModel) {
+		ColumnModel nc = (ColumnModel) this.clone();
+		nc.model = tableModel;
+		return nc;
+	}
+
+	public ColumnModel clone(){
+		try {
+			return (ColumnModel)super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public int hashCode(){
+		return Hash.hash(this.name).hashCode();
+	}
+
+	public boolean equals(Object other){
+		return other instanceof ColumnModel && ((ColumnModel)other).name.equals(name) && 
+		this.model.equals(((ColumnModel)other).model);
+	}
 }

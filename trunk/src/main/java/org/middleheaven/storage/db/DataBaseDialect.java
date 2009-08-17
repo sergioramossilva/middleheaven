@@ -50,6 +50,13 @@ public abstract class DataBaseDialect {
 	 */
 	protected abstract boolean supportsOffSet();
 
+	/**
+	 * 
+	 * @return <code>true</code> if this dialect supports Batch sotrage, <code>false</code> otherwise.
+	 */
+	protected  boolean supportsBatch(){
+		return true;
+	}
 
 	protected String startDelimiter() {
 		return startDelimiter;
@@ -78,10 +85,10 @@ public abstract class DataBaseDialect {
 		buffer.append(hardname.getQualifier().toLowerCase());
 		buffer.append(endDelimiter);
 		if (!hardname.getName().isEmpty()){
-		buffer.append(fieldSeparator);
-		buffer.append(startDelimiter);
-		buffer.append(hardname.getName().toLowerCase());
-		buffer.append(endDelimiter);
+			buffer.append(fieldSeparator);
+			buffer.append(startDelimiter);
+			buffer.append(hardname.getName().toLowerCase());
+			buffer.append(endDelimiter);
 		}
 	}
 
@@ -90,7 +97,7 @@ public abstract class DataBaseDialect {
 		buffer.append(hardname);
 		buffer.append(endDelimiter);
 	}
-	
+
 	public StorageException handleSQLException(SQLException e) {
 		return new StorageException(e.getMessage());
 	}
@@ -100,6 +107,33 @@ public abstract class DataBaseDialect {
 		return newCriteriaInterpreter(merge(criteria,model),model).translateRetrive();
 	}
 
+	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel dbtype) {
+
+		throw new UnsupportedOperationException(this.getClass().getName() + " does not support native sequence objects");
+	}
+
+	/**
+	 * Only creates, does not remove
+	 * @param tm
+	 * @return
+	 */
+	public EditionDataBaseCommand createAlterTableCommand(TableModel tm) {
+
+		StringBuilder sql = new StringBuilder("ALTER TABLE ");
+		writeEnclosureHardname(sql, tm.getName());
+		sql.append("\n");
+		for (ColumnModel cm : tm ){
+			sql.append("ADD ");
+			writeEnclosureHardname(sql,cm.getName());
+			sql.append(" ");
+			appendNativeTypeFor(sql , cm);
+			sql.append(",\n");
+		}
+
+		sql.delete(sql.length()-2, sql.length());
+
+		return new SQLEditCommand(this,sql.toString());
+	}
 
 	public  DataBaseCommand createInsertCommand(Collection<Storable> data,StorableEntityModel model){
 		StringBuilder names = new StringBuilder();
@@ -113,7 +147,7 @@ public abstract class DataBaseDialect {
 
 
 		for ( StorableFieldModel fm : model.fields()){
-			if (fm.isIdentity()){
+			if (fm.isIdentity() || fm.getDataType().isToManyReference()){
 				continue;
 			}
 			this.writeEditionHardname(names, fm.getHardName());
@@ -133,9 +167,9 @@ public abstract class DataBaseDialect {
 		.append(values)
 		.append(")");
 
-		return new SQLStoreCollectionCommand(data,sql.toString(),fields);
+		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
-	
+
 	protected <T> Criteria<T> merge(Criteria<T> criteria, StorableEntityModel model){
 		if (criteria instanceof DBCriteria){
 			final DBCriteria<T> dbCriteria = (DBCriteria<T>)criteria;
@@ -144,38 +178,38 @@ public abstract class DataBaseDialect {
 		DBCriteria<T> merged = new DBCriteria<T>((AbstractCriteria<T>)criteria);
 		merged.restrictAll(model);
 		return merged;
-		
+
 	}
-	
+
 	private class DBCriteria<T> extends AbstractCriteria<T>{
 
 		public DBCriteria(AbstractCriteria<T> other) {
 			super(other);
 		}
-		
+
 		public void restrictAll(StorableEntityModel model){
-			
+
 			this.setRestrictions(restrictLogic(restrictions(),model));
 		}
-		
+
 		private LogicCriterion restrictLogic(LogicCriterion l , StorableEntityModel model){
-			
+
 			LogicCriterion n = new LogicCriterion(l.getOperator());
 			for (Criterion c : l){
 				n.add(restrict(c,model));
 			}
-			
+
 			return n;
 		}
-		
+
 		private Criterion restrict(Criterion c , StorableEntityModel model){
-			
+
 			if (c instanceof FieldCriterion){
 				FieldCriterion fc = (FieldCriterion)c;
 				fc.valueHolder().setDataType(model.fieldModel(fc.getFieldName()).getDataType());
 				return fc;
 			}
-			
+
 			return c;
 		}
 
@@ -184,14 +218,14 @@ public abstract class DataBaseDialect {
 			return new DBCriteria<T>(this);
 		}
 	}
-	
+
 	public <T> DataBaseCommand createDeleteCommand(Criteria<T> criteria, StorableEntityModel model){
-		
+
 		return newCriteriaInterpreter(merge(criteria,model), model).translateDelete();
 
 	}
 
-	
+
 	public DataBaseCommand createUpdateCommand(Collection<Storable> data,StorableEntityModel model){
 		StringBuilder sql = new StringBuilder("UPDATE ")
 		.append(model.getEntityHardName())
@@ -212,8 +246,8 @@ public abstract class DataBaseDialect {
 
 		sql.append("=?");
 		fields.add(model.identityFieldModel());
-		
-		return new SQLStoreCollectionCommand(data,sql.toString(),fields);
+
+		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
 
 	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,StorableEntityModel model) {
@@ -268,7 +302,7 @@ public abstract class DataBaseDialect {
 						tm.addColumn(col);
 					}
 
-					dbm.addTable(tm);
+					dbm.addDataBaseObjectModel(tm);
 				}
 			}
 
@@ -330,7 +364,7 @@ public abstract class DataBaseDialect {
 		}
 		sql.delete(sql.length()-2, sql.length());
 		sql.append(")");
-		return new SQLEditCommand(sql.toString());
+		return new SQLEditCommand(this,sql.toString());
 	}
 
 
@@ -347,7 +381,7 @@ public abstract class DataBaseDialect {
 		.append(cm.getTableModel().getName()).append("_").append(cm.getName())
 		.append(" ON ").append(cm.getTableModel().getName());
 
-		return new SQLEditCommand(sql.toString());
+		return new SQLEditCommand(this,sql.toString());
 	}
 
 
