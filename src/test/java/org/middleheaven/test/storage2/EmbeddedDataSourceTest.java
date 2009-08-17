@@ -6,7 +6,7 @@ import java.io.File;
 import org.junit.Test;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
-import org.middleheaven.storage.datasource.EmbeddedDSProvider;
+import org.middleheaven.storage.db.datasource.EmbeddedDSProvider;
 
 
 public class EmbeddedDataSourceTest {
@@ -21,7 +21,7 @@ public class EmbeddedDataSourceTest {
 			dataFolder.createFolder();
 		}
 		
-		EmbeddedDSProvider eds = EmbeddedDSProvider.provider( dataFolder.getURL(), "testdb", "sa", "");
+		EmbeddedDSProvider eds = EmbeddedDSProvider.provider( "testdb", dataFolder.getURL(), "sa", "");
 		
 		eds.start();
 
