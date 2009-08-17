@@ -26,7 +26,7 @@ public class CatalinaContainer extends WebContainer  {
 
     @Override
     public String getEnvironmentName() {
-        // TODO pegar detalhes, versão OS ,etc..
+        // TODO get detais, version, OS , etc..
         return "Tomcat";
     }
 

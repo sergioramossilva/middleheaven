@@ -3,7 +3,7 @@ package org.middleheaven.web.processing.action;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.web.processing.AbstractHttpProcessor;
 import org.middleheaven.web.processing.HttpContext;
-import org.middleheaven.web.processing.HttpErrors;
+import org.middleheaven.web.processing.HttpError;
 import org.middleheaven.web.processing.HttpProcessException;
 import org.middleheaven.web.processing.Outcome;
 
@@ -23,18 +23,19 @@ public class ActionBasedProcessor extends AbstractHttpProcessor{
 			// resolve mapped WebCommand from url
 
 			WebCommandMapping webCommandMapping = mapper.resolve(stripedRequestPath(context));
-
+			
+			Outcome outcome;
+			
 			if (webCommandMapping==null){
 				// resource not found
-				return new Outcome(BasicOutcomeStatus.ERROR, HttpErrors.NOT_FOUND.errorCode());
-			}
-
-
+				return new Outcome(BasicOutcomeStatus.ERROR, HttpError.NOT_FOUND.errorCode());
+			} 
+			
+			
 			return webCommandMapping.execute(context);
-
-
+			
 		} catch ( ActionHandlerNotFoundException e ){
-			return new Outcome(BasicOutcomeStatus.ERROR, HttpErrors.NOT_IMPLEMENTED.errorCode());
+			return new Outcome(BasicOutcomeStatus.ERROR, HttpError.NOT_IMPLEMENTED.errorCode());
 		}
 
 	}

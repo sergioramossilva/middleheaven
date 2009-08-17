@@ -5,22 +5,22 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
-import org.middleheaven.domain.DomailModelBuilder;
+import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepositories;
 import org.middleheaven.sequence.service.FileSequenceStorageActivator;
-import org.middleheaven.storage.StorageManagerTeste.TestSubject;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.datasource.DataSourceServiceActivator;
-import org.middleheaven.storage.xml.XMLStoreKeeper;
+import org.middleheaven.storage.db.datasource.DataSourceServiceActivator;
+import org.middleheaven.storage.testdomain.TestSubject;
+import org.middleheaven.storage.xml.XMLStorage;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 
 public class XMLStorageTest extends MiddleHeavenTestCase{
 
-	static DataStorage ds;
+	static EntityStore ds;
 	
 	protected void configurateTest(SetActivatorScanner scanner) {
 
@@ -30,39 +30,39 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		
 		// Configured
 		
-		final DomainModel model = new DomailModelBuilder().build(
+		final DomainModel model = new DomainModelBuilder().build(
 				new DomainClasses().add(TestSubject.class)
 		);
 		
 		ManagedFile source = ManagedFileRepositories.resolveFile(this.getClass().getResource("data.xml"));
-		ds = new DomainDataStorage(XMLStoreKeeper.manage(source, new WrappStorableReader()) , model);
+		ds = new DomainStore(XMLStorage.manage(source, new WrappStorableReader()) , model);
 	}
 	
 	@Test 
 	public void test(){
-		Query<Subject> q = ds.createQuery(CriteriaBuilder.search(Subject.class).all());
+		Query<TestSubject> q = ds.createQuery(CriteriaBuilder.search(TestSubject.class).all());
 		
 		assertTrue(q.count()>1);
 		
-		Subject a = q.find();
+		TestSubject a = q.find();
 		
 		assertTrue(a.getName().equals("Ana"));
 		assertTrue(a.getBirthdate()!=null);
 		
-		q = ds.createQuery(CriteriaBuilder.search(Subject.class)
-				.and("name").not().startsWith("João")
+		q = ds.createQuery(CriteriaBuilder.search(TestSubject.class)
+				.and("name").not().startsWith("Joï¿½o")
 				.and("activo").not().eq(false)
 				.all()
 		);
 		
 		assertTrue(q.count()==1);
 		
-		Subject b = q.find();
+		TestSubject b = q.find();
 		
 		assertFalse(a==b);
 		assertTrue(b.getName().equals("Ana"));
 		
-		q = ds.createQuery(CriteriaBuilder.search(Subject.class)
+		q = ds.createQuery(CriteriaBuilder.search(TestSubject.class)
 				.and("name").eq("Ana")
 				.and("activo").eq(false)
 				.all()

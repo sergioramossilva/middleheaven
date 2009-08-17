@@ -52,16 +52,6 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 		this.mappingService = mappingService;
 	}
 	
-	public static class Index{}
-
-	/**
-	 * Maps the specified internal URL to all requests coming from the context root.   
-	 * @param targetUrl
-	 */
-	protected void mapIndex(String targetUrl) {
-		map(Index.class).to("").withNoAction().onSuccess().redirectTo(targetUrl);
-	}
-	
 	/**
 	 * Maps all requests directed to the specified internal URL to be handle by the specified presenter class
 	 * @param url

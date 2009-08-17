@@ -5,7 +5,7 @@ package org.middleheaven.web.processing;
  * 
  * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
  */
-public enum HttpErrors {
+public enum HttpError {
 	
 	/**
 	 * The server has not found anything matching the Request-URI.
@@ -72,14 +72,25 @@ public enum HttpErrors {
 	SERVICE_UNAVAILABLE(503);
 
 	
+	public static HttpError valueOf(int errorCode) {
+		for (HttpError error : HttpError.values()){
+			if (error.errorCode == errorCode){
+				return error;
+			}
+		}
+		return null;
+	}
+	
 	
 	private int errorCode;
 
-	private HttpErrors(int errorCode){
+	private HttpError(int errorCode){
 		this.errorCode = errorCode;
 	}
 	
 	public int errorCode(){
 		return errorCode;
 	}
+
+
 }

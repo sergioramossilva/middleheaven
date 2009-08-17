@@ -34,7 +34,9 @@ public class PresenterCommandMappingBuilder {
 	
 	private class MyURLMappingBuilder implements URLMappingBuilder {
 
+		String url;
 		public MyURLMappingBuilder(String url) {
+			this.url = url;
 			mapping.addPathMatcher(url);
 		}
 
@@ -53,8 +55,17 @@ public class PresenterCommandMappingBuilder {
 		public ActionMappingBuilder withNoAction() {
 			return new MyActionMappingBuilder(null);
 		}
+
+		@Override
+		public URLMappingBuilder asIndex() {
+			PresenterCommandMappingBuilder.this.to("").withNoAction().onSuccess().redirectTo(url);
+			return this;
+		}
 		
+	
 	}
+	
+	public static class Index{};
 	
 	private class MyActionMappingBuilder implements ActionMappingBuilder{
 		
