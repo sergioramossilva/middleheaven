@@ -31,7 +31,6 @@ import javax.swing.plaf.ActionMapUIResource;
 /**
  * Swing related utility methods
  *  
- * @author Sérgio M.M. Taborda
  */
 public class SwingUtils {
     
@@ -60,18 +59,18 @@ public class SwingUtils {
     }
     
     public static void enableArrowTransversal(JButton button){
-        // TAB avança transversalmente
+        // TAB foward transversal
         SwingUtils.setComponentTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, button,KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0));
 
-        // SHIFT+TAB retorna transversalmente
+        // SHIFT+TAB previous transversal
         SwingUtils.setComponentTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, button,KeyStroke.getKeyStroke(KeyEvent.VK_TAB, java.awt.event.InputEvent.SHIFT_MASK));
 
-        // coloca Arrow_Left e down com mesma funcionalidade de TAB
+        //  Arrow_Left and Down as same as TAB
         SwingUtils.setComponentTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, button,KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
         SwingUtils.setComponentTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, button,KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
         
 
-        // coloca Arrow_Right e up com a mesma funcionalidade de SHIFT+TAB
+        // Arrow_Right e Up as sames as SHIFT+TAB
         SwingUtils.setComponentTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, button,KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
         SwingUtils.setComponentTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, button,KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
         

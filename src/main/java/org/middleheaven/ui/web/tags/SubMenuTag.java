@@ -3,6 +3,8 @@ package org.middleheaven.ui.web.tags;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
+import org.middleheaven.ui.components.MenuItem;
+
 
 public class SubMenuTag extends AbstractTagSupport {
 

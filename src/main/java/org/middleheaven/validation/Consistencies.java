@@ -3,10 +3,12 @@ package org.middleheaven.validation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.ClassIntrospector;
 import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.Interval;
 import org.middleheaven.util.collections.Range;
 
@@ -110,7 +112,30 @@ public class Consistencies {
 					}
 					throw introspector.newInstance(initargs);
 				}
-				throw introspector.newInstance(new Object[]{message});
+				E exception = introspector.newInstance(new Object[]{message});
+				
+				StackTraceElement[] trace = exception.getStackTrace();
+				
+				boolean flag = false;
+				int index = -1;
+				for (int i = 0; i < trace.length ; i++){
+					String className = trace[i].getClassName();
+					if (className.contains(Consistencies.class.getName())){
+						flag = true;
+					} else if (flag){
+						index = i;
+						break;
+					}
+				}
+				
+				if (index>=0){
+					StackTraceElement[] ntrace = new StackTraceElement[trace.length - index];
+					System.arraycopy(trace, index, ntrace, 0, ntrace.length);
+					exception.setStackTrace(ntrace);
+				}
+				
+				
+				throw exception;
 			}
 		}
 
@@ -145,16 +170,22 @@ public class Consistencies {
 		@Override
 		protected boolean isNotConsistent(Object object) {
 			
-			if (object instanceof CharSequence){
+			if(object == null){
+				return true;
+			} else if (object instanceof CharSequence){
 				return ((CharSequence)object).length()==0;
-			}else if (object instanceof Collection){
+			} else if (object instanceof Collection){
 				return ((Collection<?>)object).isEmpty();
-			}else if (object instanceof Map){
+			} else if (object instanceof Enumeration){
+				return ((Enumeration<?>)object).hasMoreElements();
+			} else if (object instanceof Enumerable){
+				return ((Enumerable<?>)object).isEmpty();
+			} else if (object instanceof Map){
 				return ((Map<?,?>)object).isEmpty();
 			} else if (object!=null && object.getClass().isArray()){
 				return Array.getLength(object)==0;
 			} else {
-				return object==null;
+				return false; // any other object is not supported
 			}
 		}
 		

@@ -12,6 +12,8 @@ public class TestBootstrap extends ExecutionEnvironmentBootstrap{
 	public TestBootstrap(File root){
 		container = new TestContainer(ManagedFileRepositories.resolveFile(root));
 	}
+	
+	
 	@Override
 	public BootstrapContainer getContainer() {
 		return container;

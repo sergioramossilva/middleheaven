@@ -11,8 +11,7 @@ import org.middleheaven.ui.UIComponent;
 
 
 /**
- * 
- * @author Sérgio M.M. Taborda
+ * A set of render used to render the final UI
  */
 public abstract class RenderKit implements Serializable{
 
@@ -57,14 +56,14 @@ public abstract class RenderKit implements Serializable{
     public abstract  <T extends UIComponent> T renderComponent(UIRender render, RenderingContext context,UIComponent parent, T component);
     
     /**
-     * Encontra o <code>Render</code> apropriado para o tipo de componente pedido
-     * A procura é feita da seguinte forma:<BR>
-     * 1) Localiza a famillia de componentes, se a familia for nula ou string vazia, 
-     * a familia padrão é usada. 
-     * 2) Procura na familia de renderizadores, o renderizador do tipo escolhido
+     * Find the appropriate  <code>Render</code> for the given component type
+     * The search is made in this order:<BR>
+     * 1) Find the component's familly. If its null or and empty string 
+     * the default familly is used 
+     * 2) Look in the renders familly the choosen render
      * 
      * @param renderType
-     * @return Render apropriado para o tipo de componente ou <code>null</code> se nenhum foi encontrado.
+     * @return the appropriate  <code>Render</code> for the given component type or {@code null} is none is found.
      */
     public  abstract <T extends UIComponent>  UIRender getRender(Class<T> componentType, String familly);
     

@@ -10,12 +10,16 @@ import java.util.Date;
 import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.util.identity.Identity;
 
 public class PreparedStatementStorable {
 
 	PreparedStatement ps;
-	public PreparedStatementStorable(PreparedStatement ps) {
+	DataBaseStorage keeper;
+	
+	public PreparedStatementStorable(DataBaseStorage keeper, PreparedStatement ps) {
 		this.ps = ps; 
+		this.keeper = keeper;
 
 	}
 	public void copy(Storable s,Iterable<StorableFieldModel> fields) throws SQLException {
@@ -47,10 +51,15 @@ public class PreparedStatementStorable {
 	}
 
 	public void setField(int i, Object value, DataType dataType ) throws SQLException {
-
-
+		
 		if (value == null){
 			ps.setNull(i, infereSQLType(dataType)); 
+		} else if (dataType.isToOneReference()){
+			final Identity id = keeper.getIdentityFor(value);
+			setField(i, id , DataType.IDENTITY);
+			
+		} else if (dataType.isToManyReference()){
+			return;
 		} else if (dataType.isTemporal()){ 
 			if (value instanceof Date ) {
 				ps.setTimestamp(i, new Timestamp(((Date)value).getTime()));
@@ -64,6 +73,7 @@ public class PreparedStatementStorable {
 				break;
 			case INTEGER:
 			case IDENTITY:
+				// TODO identity can be another type other than long
 				ps.setLong(i, Long.parseLong(value.toString()));
 				break;
 			case LOGIC:

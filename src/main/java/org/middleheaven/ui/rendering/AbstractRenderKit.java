@@ -13,7 +13,6 @@ import org.middleheaven.ui.components.UILayout;
 
 /**
  * 
- * @author Sérgio M.M. Taborda
  */
 public abstract class AbstractRenderKit extends RenderKit {
 

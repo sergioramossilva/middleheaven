@@ -11,7 +11,7 @@ public class UploadInputTag extends InputTag{
 
 	protected void writeInputOption() throws JspTagException {
 
-		// sinaliza o formulário que se trata de um formulario de upload
+		// signals this is a upload enabled form
 		FormTag form = this.findAncestorTag(FormTag.class);
 		form.isUpload= true;
 	}

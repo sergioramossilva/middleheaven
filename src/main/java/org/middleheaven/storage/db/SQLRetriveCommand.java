@@ -14,8 +14,8 @@ public class SQLRetriveCommand extends SQLConditionableCommand implements Retriv
 
     private PreparedStatement ps;
 	
-	public SQLRetriveCommand(String sql,Collection<FieldValueHolder> data){
-		super(sql,data);
+	public SQLRetriveCommand(DataBaseDialect dialect,String sql,Collection<FieldValueHolder> data){
+		super(dialect,sql,data);
 	}
 
 	@Override
@@ -24,9 +24,9 @@ public class SQLRetriveCommand extends SQLConditionableCommand implements Retriv
 	}
 
 	@Override
-	public boolean execute(Connection con,StorableEntityModel model) throws SQLException {
+	public boolean execute(DataBaseStorage keeper,Connection con, StorableEntityModel model) throws SQLException {
 
-	    ps = super.prepareStatement(con);
+	    ps = super.prepareStatement(keeper,con);
 	   
 	    return true;
 	}

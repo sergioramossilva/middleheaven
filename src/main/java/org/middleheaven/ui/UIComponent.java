@@ -6,10 +6,9 @@ import java.util.List;
 /**
  * Abstract base visual component.  
  *
- * @author Sérgio M.M. Taborda
  */
 public interface UIComponent extends  Displayable {
-
+	
     /**
      * @return ID that uniquely identifies this component
      */

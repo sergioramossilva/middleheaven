@@ -7,7 +7,11 @@ public class OIDIdentity extends Identity {
 
 	private OID oid;
 
-	public OIDIdentity(OID oid){
+	public static OIDIdentity valueOf(OID objectId) {
+		return objectId ==null ? null : new OIDIdentity(objectId);
+	}
+	
+	private OIDIdentity(OID oid){
 		this.oid = oid;
 	}
 	
@@ -30,5 +34,6 @@ public class OIDIdentity extends Identity {
 	public int compareTo(Identity other) {
 		return oid.compareTo(((OIDIdentity)other).oid);
 	}
+
 
 }

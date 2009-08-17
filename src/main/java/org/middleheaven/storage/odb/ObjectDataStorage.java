@@ -13,10 +13,10 @@ import org.middleheaven.core.reflection.WrapperProxy;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.storage.AbstractStoreKeeper;
+import org.middleheaven.storage.AbstractDataStorage;
 import org.middleheaven.storage.DecoratorStorableEntityModel;
 import org.middleheaven.storage.ExecutableQuery;
-import org.middleheaven.storage.PersistableState;
+import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
@@ -28,6 +28,7 @@ import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaFilter;
+import org.middleheaven.util.identity.Identity;
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
 import org.neodatis.odb.OID;
@@ -35,11 +36,12 @@ import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.nq.NativeQuery;
 
-public class ObjectStoreKeeper extends AbstractStoreKeeper {
+public class ObjectDataStorage extends AbstractDataStorage {
 
 	private ManagedFile dataFile;
+	private File file;
 
-	public ObjectStoreKeeper(ManagedFile dataFile) {
+	public ObjectDataStorage(ManagedFile dataFile) {
 		super(new StorableModelReader(){
 
 			@Override
@@ -49,8 +51,27 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 
 		});
 		this.dataFile = dataFile;
+		this.file = new File(dataFile.getURL().getFile());
 	}
 
+	private ODB getDataBase(){
+		try {
+			return ODBFactory.open(file.getAbsolutePath());
+		} catch (Exception e) {
+			throw new StorageException(e);
+		}
+	}
+
+	private void closeDataBase(ODB odb){
+		try {
+			odb.close();
+		} catch (IOException e) {
+			throw new StorageException(ManagedIOException.manage(e));
+		} catch (Exception e) {
+			throw new StorageException(e);
+		}
+	}
+	
 	@Override
 	public Storable merge(Object obj){
 		Storable p;
@@ -59,7 +80,7 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 		} else {
 			// not managed yet
 			ObjectInstrospector<Object> introspector = Introspector.of(obj);
-			p = introspector.newProxyInstance(new NeoDatisMethodHandler(obj),Storable.class, WrapperProxy.class );
+			p = introspector.newProxyInstance(new NeoDatisMethodHandler(this,obj),Storable.class, WrapperProxy.class );
 
 			introspector.copyTo(p);
 		}
@@ -70,10 +91,13 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 
 		private Object obj;
 	
-		private PersistableState state = PersistableState.FILLED;
+		private StorableState state = StorableState.FILLED;
 
-		public NeoDatisMethodHandler(Object obj) {
+		private ObjectDataStorage keeper;
+
+		public NeoDatisMethodHandler(ObjectDataStorage keeper , Object obj) {
 			this.obj = obj;
+			this.keeper = keeper;
 		}
 
 		@Override
@@ -107,6 +131,10 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 			}
 		}
 
+		public Identity getIdentity(){
+			return null; //OIDIdentity.valueOf(keeper.getDataBase().getObjectId(obj));
+		}
+		
 		public String getName() {
 			return obj.getClass().getSimpleName();
 		}
@@ -115,34 +143,16 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 			return obj.getClass();
 		}
 
-
-		public PersistableState getPersistableState() {
+		public StorableState getPersistableState() {
 			return state;
 		}
 
-		public void setPersistableState(PersistableState state) {
+		public void setPersistableState(StorableState state) {
 			this.state = state;
 		}
 	}
 
-	private ODB getDataBase(){
-		try {
-			File file = new File(dataFile.getURL().getFile());
-			return ODBFactory.open(file.getAbsolutePath());
-		} catch (Exception e) {
-			throw new StorageException(e);
-		}
-	}
 
-	private void closeDataBase(ODB odb){
-		try {
-			odb.close();
-		} catch (IOException e) {
-			throw new StorageException(ManagedIOException.manage(e));
-		} catch (Exception e) {
-			throw new StorageException(e);
-		}
-	}
 
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
@@ -214,7 +224,7 @@ public class ObjectStoreKeeper extends AbstractStoreKeeper {
 			for (Storable s : obj){
 				Object object = Introspector.of(s).unproxy();
 				OID id = odb.store(object);
-				OIDIdentity identity = new OIDIdentity(id);
+				OIDIdentity identity = OIDIdentity.valueOf(id);
 				s.setIdentity(identity);
 			}
 		}  catch (Exception e) {

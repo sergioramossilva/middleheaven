@@ -1,13 +1,8 @@
-package org.middleheaven.ui.web.tags;
+package org.middleheaven.ui.components;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.global.text.LocalizationService;
-import org.middleheaven.util.classification.BooleanClassifier;
 
 public class MenuItem {
 	
@@ -51,7 +46,7 @@ public class MenuItem {
 		return label;
 	}
 
-	void setLabel(String label) {
+	public void setLabel(String label) {
 		this.label = label;
 	}
 
@@ -59,7 +54,7 @@ public class MenuItem {
 		return title; 
 	}
 	
-	protected boolean isTitleLocalized(){
+	public boolean isTitleLocalized(){
 		return this.isTitleLocalized;
 	}
 	

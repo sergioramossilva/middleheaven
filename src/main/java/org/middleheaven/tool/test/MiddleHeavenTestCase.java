@@ -12,7 +12,6 @@ import org.middleheaven.logging.LoggingLevel;
 
 public abstract class MiddleHeavenTestCase {
 
-
 	private TestBootstrap bootstrap = new TestBootstrap(new File("."));
 	
 	@Before

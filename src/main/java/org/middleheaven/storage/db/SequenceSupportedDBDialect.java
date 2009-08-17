@@ -39,12 +39,12 @@ public abstract class SequenceSupportedDBDialect extends DataBaseDialect {
 
 		@Override
 		public SequenceToken<Long> next() {
-			Connection con =null;
+			Connection con = null;
 			try {
 				con = ds.getConnection();
 				RetriveDataBaseCommand command = dialect.createNextSequenceValueCommand(identifiableName);
 				
-				command.execute(con, null);
+				command.execute(null, con, null);
 				ResultSet rs = command.getResult();
 				
 				if (rs.next()){

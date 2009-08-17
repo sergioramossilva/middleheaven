@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.storage.PersistableState;
+import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.conversion.TypeConvertions;
@@ -63,8 +63,8 @@ public class NodeStorable implements Storable{
 	}
 
 	@Override
-	public PersistableState getPersistableState() {
-		return PersistableState.RETRIVED;
+	public StorableState getStorableState() {
+		return StorableState.RETRIVED;
 	}
 
 	@Override
@@ -80,9 +80,22 @@ public class NodeStorable implements Storable{
 	}
 
 	@Override
-	public void setPersistableState(PersistableState state) {
+	public void setStorableState(StorableState state) {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void addFieldElement(StorableFieldModel model, Object element) {
+		// TODO implement Storable.addFieldElement
+		
+	}
+
+	@Override
+	public void removeFieldElement(StorableFieldModel model, Object element) {
+		// TODO implement Storable.removeFieldElement
+		
+	}
+
 
 }

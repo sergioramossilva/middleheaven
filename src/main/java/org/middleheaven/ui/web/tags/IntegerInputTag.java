@@ -13,7 +13,7 @@ public class IntegerInputTag extends InputTag{
 	
 	protected void writeInputOption() throws JspTagException {
 		
-		// sinaliza o formulário que se trata de um formulario com campos inteiros
+		// signals to the form that this is a integer field enabled form
 		FormTag form = this.findAncestorTag(FormTag.class);
 		form.setHasIntegerFields(true);
 		

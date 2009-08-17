@@ -23,6 +23,7 @@ import org.middleheaven.storage.db.EditionDataBaseCommand;
 import org.middleheaven.storage.db.RetriveDataBaseCommand;
 import org.middleheaven.storage.db.SQLEditCommand;
 import org.middleheaven.storage.db.SQLRetriveCommand;
+import org.middleheaven.storage.db.SequenceModel;
 import org.middleheaven.storage.db.SequenceSupportedDBDialect;
 import org.middleheaven.storage.db.TableAlreadyExistsException;
 import org.middleheaven.storage.db.TableModel;
@@ -31,6 +32,10 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 
 	public HSQLDialect() {
 		super("'", "'", ".");
+	}
+	
+	protected  boolean supportsBatch(){
+		return false;
 	}
 	
 	// storedProcedures
@@ -55,7 +60,18 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		return new HSQLCriteriaInterpreter(this, criteria, model);
 	}
 
+	@Override
+	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel sequence) {
 
+		StringBuilder sql = new StringBuilder("CREATE SEQUENCE ")
+		.append(sequence.getName()) 
+		.append(" AS INTEGER ")
+		.append(" START WITH " ).append(sequence.getStartWith())
+		.append(" INCREMENT BY ").append(sequence.getIncrementBy());
+
+		return new SQLEditCommand(this,sql.toString());
+	}
+	
 	@Override
 	public StorageException handleSQLException(SQLException e) {
 		if (e.getMessage().startsWith("Table already exists")){
@@ -94,14 +110,34 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 
 		}
 		
-		protected void writeEndLimitClause(StringBuffer selectBuffer){
-			if (criteria().getCount()>0){
-				selectBuffer.append(" LIMIT ").append(criteria().getCount());
+		protected void writeStartLimitClause(StringBuilder selectBuffer){
+			if (criteria().isDistinct()){
+				selectBuffer.append(" DISTINCT ");
+			} 
+			
+			if (!criteria().isCountOnly() && criteria().getCount()>0){
+				int offset = 0;
 				if (criteria().getStart()>1){
-					selectBuffer.append(" OFFSET ").append(criteria().getStart()-1);
-				}
+					offset = criteria().getStart()-1;
+				} 
+				
+				selectBuffer.append(" LIMIT ").append(offset).append(" ").append(criteria().getCount());
+				
 			}
 		}
+		/*
+		protected void writeEndLimitClause(StringBuilder selectBuffer){
+			if (criteria().getCount()>0){
+				int offset = 0;
+				if (criteria().getStart()>1){
+					offset = criteria().getStart()-1;
+				} 
+				
+				selectBuffer.append(" LIMIT ").append(offset).append(" ").append(criteria().getCount());
+				
+			}
+		}
+		*/
 		
 	}
 	
@@ -109,7 +145,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	@Override
 	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
 		final Collection<FieldValueHolder> none = Collections.emptySet();
-		return new SQLRetriveCommand(
+		return new SQLRetriveCommand( this,
 				new StringBuilder("SELECT NEXT VALUE FOR ")
 				.append(sequenceName)
 				.toString(),
@@ -147,7 +183,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		}
 		sql.delete(sql.length()-2, sql.length());
 		sql.append(")");
-		return new SQLEditCommand(sql.toString());
+		return new SQLEditCommand(this,sql.toString());
 	}
 	
 	@Override
@@ -209,7 +245,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 						tm.addColumn(col);
 					}
 
-					dbm.addTable(tm);
+					dbm.addDataBaseObjectModel(tm);
 				
 			}
 

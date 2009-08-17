@@ -15,7 +15,8 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.text.GlobalLabel;
 import org.middleheaven.global.text.LocalizationService;
-
+import org.middleheaven.ui.components.MenuItem;
+import org.middleheaven.ui.web.tags.TagContext;
 
 public class MenuTag extends AbstractBodyTagSupport {
 
@@ -24,6 +25,7 @@ public class MenuTag extends AbstractBodyTagSupport {
 
 	LinkedList<Iterator<MenuItem>> iteratorStack = new LinkedList<Iterator<MenuItem>>();
 	private String rootClass;
+	private String selectedItemClass;
 
 	public void setVar(String varName){
 		this.varName = varName;
@@ -31,6 +33,10 @@ public class MenuTag extends AbstractBodyTagSupport {
 
 	public void setRootClass(String rootClass){
 		this.rootClass = rootClass;
+	}
+	
+	public void setSelectedItemClass(String selectedItemClass){
+		this.selectedItemClass = selectedItemClass;
 	}
 
 	public MenuItem getCurrent(){
@@ -73,7 +79,7 @@ public class MenuTag extends AbstractBodyTagSupport {
 	}
 
 	private void exposeMenu(MenuItem item){
-		if(item.isTitleLocalized()){
+		if(!item.isTitleLocalized()){
 			Culture culture = new TagContext(pageContext).getCulture();
 			localizationService.getMessage(culture, new GlobalLabel(item.getTitle()), false);
 		} else {
@@ -104,18 +110,18 @@ public class MenuTag extends AbstractBodyTagSupport {
 
 			}
 
-			// enquanto o stack de iteradores não está vazio
+			// while the iterators stack is not empty
 			while (!iteratorStack.isEmpty()){
 				Iterator<MenuItem> top = iteratorStack.getFirst();
 
 				if (top.hasNext()){
-					// processa proximo item do mesmo menu
+					// process next item of same menu
 					current = top.next();
 					exposeMenu(current);
 					return EVAL_BODY_BUFFERED;
 
 				} else {
-					// menu não tem mais itens. termina menu
+					// menu has no more items. terminate menu
 					buffer.append("</ul>");
 					// remove iterador 
 					iteratorStack.removeFirst();
