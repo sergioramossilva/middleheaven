@@ -33,7 +33,9 @@
 		<copy file="middleheaven.jar"
 			tofile="F:/Workspace/MHTestSite/WebContent/WEB-INF/lib/middleheaven.jar"/>
 				
-
+		<copy file="middleheaven.jar"
+			tofile="F:/Workspace/JavaBuilding/WebContent/WEB-INF/lib/middleheaven.jar"/>
+						
 	
 	</target>
 </project>
