@@ -4,15 +4,14 @@
 	<groupId>MiddleHeaven</groupId>
 	<artifactId>MiddleHeaven</artifactId>
 	<name>MiddleHeaven</name>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<description>MiddleHeaven aims to be a full-featured
 		business application framework that:
 		Minimize all effort concerning non-functional requirements. Maximize
 		reusability of business code and logics Minimize dependency of
 		third-party libraries (but used them under the hood) Maximize
 		extensibility</description>
-	<url>http://middleheaven.sourceforge.net/
-	</url>
+	<url>http://middleheaven.sourceforge.net/</url>
 	<issueManagement>
 		<system>sourceforge</system>
 		<url>http://sourceforge.net/tracker/?group_id=211558
@@ -60,6 +59,7 @@
 			<plugin>
 		        <groupId>org.apache.maven.plugins</groupId>
 		        <artifactId>maven-compiler-plugin</artifactId>
+		        <version>2.0.2</version>
 		        <configuration>
 		            <source>1.6</source>
 		            <target>1.6</target>
@@ -68,6 +68,7 @@
 		    <plugin>
 		        <groupId>org.codehaus.mojo</groupId>
 		        <artifactId>xml-maven-plugin</artifactId>
+		        <version>1.0-beta-2</version>
 		        <executions>
 		          <execution>
 		            <goals>
@@ -173,7 +174,15 @@
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
 			<version>2.1</version>
+			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+			<scope>compile</scope>
+		</dependency>
+
 	</dependencies>
 	<distributionManagement>
 		<site>
@@ -183,8 +192,20 @@
 			</url>
 		</site>
 	</distributionManagement>
+	
 	<reporting>
 		<plugins>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-site-plugin</artifactId>
+			  <version>2.0-beta-6</version>
+			  <configuration>
+					<templateDirectory>
+						${basedir}/src/site/resources
+					</templateDirectory>
+					<template>maven-site.vm</template>
+			  </configuration>
+			</plugin> 
 			
 			<plugin> 
 				<groupId>org.apache.maven.plugins</groupId>
@@ -215,28 +236,17 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.2</version> 
 			</plugin>
-			<!--
+			
+			<!--  
 			<plugin>
 				<artifactId>maven-surefire-report-plugin</artifactId>
 				<configuration>
 					<testFailureIgnore>true</testFailureIgnore>
 				</configuration>
 			</plugin>
-			-->
+-->
 			<plugin>
-				<artifactId>maven-site-plugin</artifactId>
-				<configuration>
-					<templateDirectory>
-						${basedir}/src/site/resources
-					</templateDirectory>
-					<template>maven-site.vm</template>
-				</configuration>
-				<version>2.0-beta-6</version>
-			</plugin>
-			<plugin>
-				<artifactId>
-					maven-project-info-reports-plugin
-				</artifactId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -252,10 +262,11 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
+				<version>2.3</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-changes-plugin</artifactId>
-				<version>2.0-beta-2</version>
+				<version>2.0</version>
 				<configuration>
 					<xmlPath>${basedir}/src/site/changes.xml
 					</xmlPath>
@@ -281,6 +292,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
+						<version>2.0.2</version>
 						<configuration>
 							<source>1.6</source>
 							<target>1.6</target>
@@ -293,19 +305,6 @@
 								<id>attach-sources</id>
 								<goals>
 									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>sample.plugin</groupId>
-						<artifactId>maven-hello-plugin</artifactId>
-						<version>0.0.1</version>
-						<executions>
-							<execution>
-								<phase>site</phase>
-								<goals>
-									<goal>sayhi</goal>
 								</goals>
 							</execution>
 						</executions>
