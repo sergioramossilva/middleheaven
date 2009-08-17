@@ -9,17 +9,20 @@ import org.middleheaven.domain.EntityModel;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.TransformCollection;
 import org.middleheaven.util.identity.Identity;
+import org.middleheaven.validation.Consistencies;
 
 public class DecoratorStorableEntityModel implements StorableEntityModel {
 
 	
-	private final  EntityModel model;
+	private final EntityModel model;
 
 	public DecoratorStorableEntityModel(EntityModel model){
 		this.model = model;
 	}
 	
 	private StorableFieldModel convertField(final EntityFieldModel fModel) {
+		Consistencies.consistNotNull(fModel);
+		
 		return new StorableFieldModel(){
 
 			@Override
@@ -71,6 +74,11 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 			public boolean isVersion() {
 				return fModel.isVersion();
 			}
+
+			@Override
+			public Class<?> getAggregationClass() {
+				return fModel.getAggregationClass();
+			}
 			
 		};
 	}
@@ -114,8 +122,6 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 		return convertField(model.identityFieldModel());
 	}
 
-
-
 	@Override
 	public Object newInstance() {
 		return model.newInstance();
@@ -135,6 +141,18 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 	@Override
 	public Class<? extends Identity> getIdentityType() {
 		return model.getIdentityType();
+	}
+
+	@Override
+	public StorableFieldModel fieldReferenceTo(Class<?> type) {
+		for (EntityFieldModel tfm : this.model.fields()){
+			StorableFieldModel sf = this.convertField(tfm);
+			
+			if (sf.getDataType().isToOneReference() && sf.getValueClass().equals(type)){
+				return sf;
+			}
+		}
+		return null;
 	}
 
 }

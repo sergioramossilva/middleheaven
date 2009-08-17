@@ -6,14 +6,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.logging.Logging;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentity;
 
 public final class EditableEntityModel implements EntityModel {
 
 	private Class<?> type;
 	private Map<String, EntityFieldModel> fields = new HashMap<String, EntityFieldModel>();
-	private EntityFieldModel keyModel;
+	private EntityFieldModel identityFieldModel;
 	private Class<? extends Identity> identityType;
 	
 	public EditableEntityModel(Class<?> type) {
@@ -22,12 +24,30 @@ public final class EditableEntityModel implements EntityModel {
 
 	@Override
 	public EntityFieldModel identityFieldModel() {
-		return keyModel;
+		if (identityFieldModel == null){
+			for (EntityFieldModel fieldModel : this.fields.values()){
+				if(fieldModel.isIdentity()){
+					this.identityFieldModel = fieldModel;
+					break;
+				}
+			}
+			Logging.warn(this.type + " had no identity field defined");
+			EditableEntityFieldModel eidentityFieldModel = new EditableEntityFieldModel(this.getEntityName(), "identity");
+			eidentityFieldModel.setIsIdentity(true);
+			eidentityFieldModel.setDataType(DataType.IDENTITY);
+			eidentityFieldModel.setUnique(true);
+			eidentityFieldModel.setValueType(IntegerIdentity.class);
+			
+			addField(eidentityFieldModel);
+			
+			identityFieldModel = eidentityFieldModel;
+		}
+		return identityFieldModel;
 	}
 
 	public void addField(EntityFieldModel fieldModel) {
 		if(fieldModel.isIdentity()){
-			this.keyModel = fieldModel;
+			this.identityFieldModel = fieldModel;
 		}
 		fields.put(fieldModel.getLogicName().getName(), fieldModel);
 	}
@@ -59,6 +79,7 @@ public final class EditableEntityModel implements EntityModel {
 
 	public void setIdentityType(Class<? extends Identity> type) {
 		this.identityType = type;
+		
 	}
 	
 	public Class<? extends Identity> getIdentityType(){

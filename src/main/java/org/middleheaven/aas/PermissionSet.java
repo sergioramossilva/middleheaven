@@ -1,9 +1,8 @@
-package org.middleheaven.aas.old;
+package org.middleheaven.aas;
 
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.middleheaven.aas.Permission;
 
 public class PermissionSet implements Permission {
 
@@ -35,13 +34,15 @@ public class PermissionSet implements Permission {
         } else if (threshold.isStrict()){
             return false;
         } else if (threshold instanceof PermissionSet){
-            // verifica que todos os recursos no threshold estão inclusos nos
-            // recursos deste
 
+        	// verify all resources on the threshold are included in the 
+        	// resources of this one
+        	
             for (Iterator<ResourcePermission> it = ((PermissionSet)threshold).iterator();it.hasNext();){
                 ResourcePermission t = (ResourcePermission) it.next();
                 ResourcePermission r = (ResourcePermission)this.permissions.get(t.resourceName);
-                if (r==null && t.permissionLevel!=PermissionLevel.NONE){ // faltou um recuro e é requerido
+                if (r==null && t.permissionLevel!=PermissionLevel.NONE){ 
+                	// a required resource is messing
                     return false;
                 }
                 if (!PermissionLevel.levelIncludes(r.permissionLevel , t.permissionLevel)){
@@ -51,7 +52,7 @@ public class PermissionSet implements Permission {
             return true;
         } else {
             if (((ResourcePermission)threshold).permissionLevel == PermissionLevel.NONE){
-                return true; // se não é requerido nenhum nivel, aceita
+                return true; // no level is required. accept it
             }
             
             for (ResourcePermission r : permissions.values()){

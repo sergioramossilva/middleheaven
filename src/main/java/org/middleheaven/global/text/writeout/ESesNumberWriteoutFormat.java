@@ -114,9 +114,9 @@ class ESesNumberWriteoutFormat extends NumberWriteoutFormat{
 			switch (group){
 			case 0: return "cero";
 			case 2: return "mil";
-			case 3: return value == 1 ? "millón" : "millones";
-			case 4: return value == 1 ? "billón" : "billones";
-			case 5: return value == 1 ? "trillón" : "trllones";
+			case 3: return value == 1 ? "millÃ³n" : "millones";
+			case 4: return value == 1 ? "billÃ³n" : "billones";
+			case 5: return value == 1 ? "trillÃ³n" : "trllones";
 			default :
 				throw new NumberOutOfRangeException();
 			}

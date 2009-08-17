@@ -6,7 +6,6 @@ import java.io.Serializable;
 /**
  * Tracks a process progress.
  * 
- * @author Sérgio M.M. Taborda
  */
 public interface Progress extends Serializable{
 

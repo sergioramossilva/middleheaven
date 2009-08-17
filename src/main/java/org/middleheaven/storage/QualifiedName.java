@@ -45,4 +45,8 @@ public class QualifiedName implements Serializable{
 	public boolean isAlias() {
 		return this.alias;
 	}
+	
+	public String toString(){
+		return this.qualifier + "." + this.name;
+	}
 }

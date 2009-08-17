@@ -1,7 +1,7 @@
 package org.middleheaven.logging;
 
-import org.middleheaven.core.services.ServiceNotFoundException;
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.services.ServiceNotAvailableException;
 
 
 public class Logging {
@@ -16,7 +16,7 @@ public class Logging {
 	public static LogBook getBook(String bookName){
 		try{
 			return ServiceRegistry.getService(LoggingService.class).getLogBook(bookName);
-		} catch (ServiceNotFoundException e){
+		} catch (ServiceNotAvailableException e){
 			System.err.println("Please inicialize the logging service properly. Using Console.");
 			return new ConsoleLogBook(LoggingLevel.ALL);
 		}

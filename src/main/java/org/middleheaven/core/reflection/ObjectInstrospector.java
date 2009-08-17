@@ -11,7 +11,7 @@ public class ObjectInstrospector<T> {
 	
 	public T copyTo(T copy ){
 
-		for (PropertyAccessor fa : introspectClass().properties()){
+		for (PropertyAccessor fa : introspectClass().inspect().properties().retriveAll()){
 			fa.setValue(copy, fa.getValue(object));
 		}
 		return copy;
@@ -28,6 +28,10 @@ public class ObjectInstrospector<T> {
 	@SuppressWarnings("unchecked")
 	public Class<T> getType() {
 		return (Class<T>) object.getClass();
+	}
+	
+	public Class<?> getRealType(){
+		return ReflectionUtils.getRealType(getType());
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -73,7 +73,7 @@ public abstract class Numeral<T extends Numeral<T>> implements Field<T> , Quanti
 	}
 	*/
 
-	public boolean equals(Object other){
+	public final boolean equals(Object other){
 		return other instanceof Numeral && equals((Numeral<?>)other);
 	}
 	

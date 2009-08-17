@@ -7,28 +7,29 @@ import org.middleheaven.storage.StorableEntityModel;
 public class FieldJuntionCriterion implements JuntionCriterion {
 
 	QualifiedName fieldName;
-	StorableEntityModel targetEntityModel;
+	Class<?> targetType;
+	Class<?> sourceType;
 	Criteria<?> subCriteria;
 	private String alias;
-	StorableEntityModel sourceEntityModel;
-	
-	public FieldJuntionCriterion(QualifiedName fieldName, StorableEntityModel targetModel, StorableEntityModel  sourceModel){
-		if (targetModel == null){
-			throw new IllegalArgumentException("Model is required");
+
+
+	public FieldJuntionCriterion(QualifiedName fieldName, Class<?> targetType, Class<?>  sourceType){
+		if (targetType == null){
+			throw new IllegalArgumentException("Target type is required");
 		}
 		this.fieldName = fieldName;
-		this.targetEntityModel = targetModel;
-		this.sourceEntityModel = sourceModel;
+		this.targetType = targetType;
+		this.sourceType = sourceType;
 	}
-	
+
 	public void setSubCriteria(Criteria subCriteria){
 		this.subCriteria = subCriteria;
 	}
-	
+
 	public Criteria getSubCriteria(){
 		return this.subCriteria;
 	}
-	
+
 	@Override
 	public QualifiedName getFieldName() {
 		return fieldName;
@@ -44,10 +45,6 @@ public class FieldJuntionCriterion implements JuntionCriterion {
 		return null;
 	}
 
-	public StorableEntityModel getTargetEntityModel() {
-		return targetEntityModel;
-	}
-
 	public void setAlias(String targetAlias) {
 		this.alias = targetAlias;
 	}
@@ -56,9 +53,13 @@ public class FieldJuntionCriterion implements JuntionCriterion {
 	public String getAlias() {
 		return alias;
 	}
-
-	public StorableEntityModel getSourceEntityModel() {
-		return sourceEntityModel;
+	
+	public Class<?> getTargetType() {
+		return this.targetType;
+	}
+	
+	public Class<?> getSourceType() {
+		return this.sourceType;
 	}
 
 	@Override

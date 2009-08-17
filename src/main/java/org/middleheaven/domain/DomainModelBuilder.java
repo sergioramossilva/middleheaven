@@ -4,30 +4,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.domain.repository.Repository;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.identity.Identity;
 
-public final class DomailModelBuilder {
+public final class DomainModelBuilder {
 
-	private CompositeModelReader masterReader = new CompositeModelReader();
+	private final CompositeModelReader modelReader = new CompositeModelReader();
 	
-	public DomailModelBuilder(){
-		masterReader.add(new DefaultAnnotatedModelReader());
+	public DomainModelBuilder(){
+		modelReader.add(new DefaultAnnotatedModelReader());
 	}
 	
 	public void addReader(ModelReader reader){
-		masterReader.add(reader);
+		modelReader.add(reader);
 	}
 	
 	public void removeReader(ModelReader reader){
-		masterReader.remove(reader);
+		modelReader.remove(reader);
 	}
 	
 	public DomainModel build(DomainClasses classes){
 		
-		SimpleModelBuilder builder = new SimpleModelBuilder();
+		final SimpleModelBuilder builder = new SimpleModelBuilder();
 		
 		for (Class<?> type : classes){
-			masterReader.read(type, builder);
+			modelReader.read(type, builder);
 		}
 		
 		return builder.getModel();
@@ -46,7 +48,6 @@ public final class DomailModelBuilder {
 				em = new SimpleEntityModelBuilder<E>(model);
 				entities.put(type.getName(), em);
 				domainModel.addEntityModel(type, model);
-				
 			}
 			return em;
 		}
@@ -58,7 +59,6 @@ public final class DomailModelBuilder {
 		public class SimpleEntityModelBuilder<E> implements EntityModelBuilder<E> {
 
 			private EditableEntityModel model;
-			private String name;
 			private Map<String, FieldModelBuilder> fields = new HashMap<String, FieldModelBuilder>();
 			
 			public SimpleEntityModelBuilder(EditableEntityModel model) {
@@ -89,6 +89,11 @@ public final class DomailModelBuilder {
 			public EntityModelBuilder<E> setIdentityType(Class<? extends Identity> type) {
 				model.setIdentityType(type);
 				return this;
+			}
+
+			@Override
+			public EnhancedCollection<FieldModelBuilder> fields() {
+				return CollectionUtils.enhance(fields.values());
 			}
 			
 		}
@@ -138,8 +143,6 @@ public final class DomailModelBuilder {
 			return this;
 		}
 
-	
-
 
 		@Override
 		public FieldModelBuilder setTransient(boolean isTransient) {
@@ -162,6 +165,12 @@ public final class DomailModelBuilder {
 		@Override
 		public FieldModelBuilder setVersion(boolean isVersion) {
 			fm.setVersion(isVersion);
+			return this;
+		}
+
+		@Override
+		public FieldModelBuilder setAggregationType(Class<?> aggregationType) {
+			fm.setAggregationClass(aggregationType);
 			return this;
 		}
 		

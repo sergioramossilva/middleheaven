@@ -45,12 +45,12 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 	private void addCriterion(Criterion c){
 
 		if (c instanceof JuntionCriterion){
-			// coloca o JuntionRestriction no topo da lista,
-			// mas respeita a ordem se insersão dos critérios a this
+			// put JuntionRestriction on top of the list
+			// but respect order of insertion of Criterion
 
 
-			// procura o primeiro item que não é um JuntionRestriction
-			// e insere antes dele.
+			// Find the first item that is not a JuntionRestriction
+			// and insert before it
 			for (ListIterator<Criterion> it = criteria.listIterator();it.hasNext();){
 				Object o = it.next();
 				if (!(o instanceof JuntionCriterion)){
@@ -59,8 +59,9 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 					return;
 				}
 			}
-			// se nenhum item é diferente de um JuntionRestriction
-			// ( ou a lista está vazia)
+
+			// if no item is differente form JuntionRestriction
+			// (or the list is empty)
 			criteria.addLast(c);
 
 		} else {

@@ -5,8 +5,8 @@ import org.middleheaven.quantity.measurables.Volume;
 
 public final class NonSI extends UnitSystem{
 
-	public static final Unit<Temperature> CELSIUS = Unit.unit(Dimension.TEMPERATURE,"ºC");
-	public static final Unit<Temperature> FAHRENHEIT = Unit.unit(Dimension.TEMPERATURE,"ºF");
+	public static final Unit<Temperature> CELSIUS = Unit.unit(Dimension.TEMPERATURE,"\u00BAC");
+	public static final Unit<Temperature> FAHRENHEIT = Unit.unit(Dimension.TEMPERATURE,"\u00BAF");
 	public static final Unit<Temperature> RANKINE = Unit.unit(Dimension.TEMPERATURE,"R");
 	public static final Unit<Volume> LITRE = Unit.unit(Dimension.VOLUME,"L");
 	

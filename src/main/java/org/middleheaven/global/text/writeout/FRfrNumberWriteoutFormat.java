@@ -95,7 +95,7 @@ class FRfrNumberWriteoutFormat extends NumberWriteoutFormat{
 	public String getGroupSufix(int value, int group, int indice) {
 		
 			switch (group){
-			case 0: return "zéro";
+			case 0: return "zero";
 			case 2: return "mile";
 			case 3: return "million";
 			case 4: return "billion";

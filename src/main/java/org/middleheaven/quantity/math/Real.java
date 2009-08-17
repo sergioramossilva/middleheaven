@@ -80,7 +80,25 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 	 * @return real square root
 	 */
 	public abstract Real sqrt();
+	
+	/**
+	 * 
+	 * @return real arctang 
+	 */
+	public abstract Real arctan();
+	
+	
+	public abstract Real sin();
 
+	public abstract Real cos();
+	
+	public abstract Real tan();
+
+	public abstract Real exp();
+	
+	public abstract Real ln();
+
+	
 	public Real raise(int exponent) {
 		if (exponent==0){
 			return Real.ONE();

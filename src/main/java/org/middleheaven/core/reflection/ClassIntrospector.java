@@ -4,12 +4,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedArrayList;
-import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.TransformCollection;
-
 /**
  * 
  *
@@ -118,25 +112,8 @@ public class ClassIntrospector<T> extends Introspector{
 		return ReflectionUtils.proxy(type, handler, proxyInterface, adicionalInterfaces);
 	} 
 
-	public EnhancedCollection<PropertyAccessor> properties(){
-		return new EnhancedArrayList<PropertyAccessor>(ReflectionUtils.getPropertyAccessors(type));
-	}
-
 	public boolean isInstance (Object obj){
 		return type.isInstance(obj);
-	}
-
-	public EnhancedCollection<MethodIntrospector> methods(){
-		return CollectionUtils.enhance(new TransformCollection<Method, MethodIntrospector>(
-				ReflectionUtils.getMethods(type) , 
-				new Classifier< MethodIntrospector,Method>(){
-
-					@Override
-					public MethodIntrospector classify(Method obj) {
-						return Introspector.of(obj);
-					}
-				}
-		));
 	}
 
 	@Override
@@ -153,7 +130,7 @@ public class ClassIntrospector<T> extends Introspector{
 		try {
 			Method methodToInvoke = type.getMethod("main", String[].class);
 			methodToInvoke.setAccessible(true);
-			final Object[] args = params; 
+			final Object args = params; 
 			methodToInvoke.invoke(null, args);
 		} catch (SecurityException e) {
 			throw new IllegalAccessReflectionException(e);

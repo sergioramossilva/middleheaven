@@ -27,7 +27,8 @@ public class EditableDomainModel implements DomainModel {
 		return repositories.get(entityType.getName());
 	}
 	
-	@Override
+	
+	@Override @SuppressWarnings("unchecked") // controlled by addEntity
 	public <T extends EntityModel> Collection<T> entitiesModels() {
 		return (Collection<T>) Collections.unmodifiableCollection(models.values());
 	}

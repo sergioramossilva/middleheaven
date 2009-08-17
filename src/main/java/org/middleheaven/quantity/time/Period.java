@@ -3,6 +3,7 @@ package org.middleheaven.quantity.time;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measurables.Time;
 import org.middleheaven.quantity.measure.DecimalMeasure;
+import org.middleheaven.quantity.measure.Measure;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
@@ -16,6 +17,18 @@ public class Period extends ElapsedTime implements Comparable<Period>{
 	
 	public static Period seconds (long seconds){
 		return new Period(DecimalMeasure.measure(seconds, 1, SI.SECOND));
+	}
+	
+	public static Period hours (long hours){
+		return new Period(DecimalMeasure.measure(hours, 1, SI.HOUR));
+	}
+	
+	public static Period days (int days){
+		return new Period(DecimalMeasure.measure(days*24, 1, SI.HOUR));
+	}
+	
+	public static Period weeks (int weeks){
+		return new Period(DecimalMeasure.measure(weeks*24*7, 1, SI.HOUR));
 	}
 	
 	public static Period nanoseconds (long nanoseconds){
@@ -76,6 +89,10 @@ public class Period extends ElapsedTime implements Comparable<Period>{
 	@Override
 	public int compareTo(Period other) {
 		return this.measure.compareTo(other.measure);
+	}
+
+	public DecimalMeasure<Time> asMeasure() {
+		return this.measure;
 	}
 	
 }

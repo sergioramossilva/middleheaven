@@ -1,9 +1,7 @@
 package org.middleheaven.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.util.collections.ParamsMap;
 
 public class EditableEntityFieldModel implements EntityFieldModel{
 
@@ -15,8 +13,11 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 	private boolean isVersion;
 	private boolean isUnique;
 	
-	private final Map<String, String> params = new HashMap<String,String>();
+	private final ParamsMap params = new ParamsMap();
+	private Class<?> aggregationClass;
 	
+
+
 	public EditableEntityFieldModel(String entityName, String name) {
 		this.name = QualifiedName.qualify(entityName, name);
 	}
@@ -87,6 +88,15 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 	@Override
 	public String getParam(String key) {
 		return params.get(key);
+	}
+
+	@Override
+	public Class<?> getAggregationClass() {
+		return aggregationClass;
+	}
+	
+	public void setAggregationClass(Class<?> aggregationClass) {
+		this.aggregationClass = aggregationClass;
 	}
 
 }

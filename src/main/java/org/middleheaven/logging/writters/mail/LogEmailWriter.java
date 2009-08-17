@@ -41,7 +41,7 @@ public class LogEmailWriter extends LogBookWriter implements FormatableLogWriter
 
         public void writerHeader(OutputStream stream) throws LogWritingIOExcepiton {
             PrintWriter message = new PrintWriter(new OutputStreamWriter(stream));
-            message.println("Esta é uma mensagem automática, por favor não responda.");
+            message.println("This is an automatic message. Please do not respond to it.");
         }
 
         public void format(LoggingEvent event, OutputStream stream) throws LogWritingIOExcepiton {

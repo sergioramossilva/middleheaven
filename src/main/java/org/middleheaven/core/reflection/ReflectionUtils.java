@@ -108,6 +108,9 @@ class ReflectionUtils {
 		}
 	}
 
+	public static Class<?> getRealType(Class<?> type){
+		return stategy.getRealType(type);
+	}
 	/*
 	public static <T> T copy(T original , T copy ){
 

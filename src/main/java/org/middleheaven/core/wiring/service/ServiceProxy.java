@@ -9,7 +9,7 @@ import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
-import org.middleheaven.core.services.ServiceUnavailableException;
+import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.collections.CollectionUtils;
 
@@ -37,7 +37,6 @@ public class ServiceProxy<T> implements ServiceListener, ProxyHandler {
 	@Override
 	public void onEvent(ServiceEvent event) {
 	
-		
 		if (event.getServiceClass().equals(serviceClass) && CollectionUtils.equalContents(this.params, event.getParams())){
 			if ( ServiceEvent.ServiceEventType.ADDED.equals(event.getType())){
 				setImplementation(serviceClass.cast(event.getImplementation()));
@@ -64,14 +63,15 @@ public class ServiceProxy<T> implements ServiceListener, ProxyHandler {
 	@Override
 	public Object invoke(Object proxy, Object[] params, MethodDelegator delegator) throws Throwable {
 		if (queue==null){
-			throw new ServiceUnavailableException(serviceClass.getName());
+			throw new ServiceNotAvailableException(serviceClass.getName());
 		}
 		
 		T implementation = queue.peek();
-		if (queue.peek()==null){
+		if (implementation == null){
 			implementation = queue.take();
 		}
 	
 		return delegator.invoke(implementation, params);
+		
 	}
 }

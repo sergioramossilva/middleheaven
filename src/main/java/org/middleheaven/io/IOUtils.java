@@ -4,6 +4,7 @@
  */
 package org.middleheaven.io;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,7 +20,22 @@ public final class IOUtils {
 
 	private IOUtils(){}
 
-	private static void doStreamCopy(InputStream in,OutputStream out) throws IOException{
+	/**
+	 * Closes an I/O resource. Possible IOException is encapsulated in 
+	 * an ManagedIOException
+	 * @param closeable
+	 * @throws ManagedIOException if an IOEXception is throwned by the closeable
+	 */
+	public static void close(Closeable closeable){
+		try {
+			closeable.close();
+		} catch (IOException e) {
+			throw ManagedIOException.manage(e);
+		}
+
+	}
+
+	private static void doStreamCopy(InputStream in,OutputStream out) throws IOException {
 
 		byte[] buffer = new byte[1024 * 4]; //4 Kb
 		int n = 0;
@@ -27,12 +43,12 @@ public final class IOUtils {
 			out.write(buffer, 0, n);
 		}
 		out.flush();
-		
+
 		out.close();
 		in.close();
 	}
 
-	private static void doCopyFile(FileInputStream in , FileOutputStream out) throws IOException{
+	private static void doCopyFile(FileInputStream in , FileOutputStream out)  {
 		FileChannel inChannel = null, outChannel = null;
 
 		try {
@@ -42,13 +58,38 @@ public final class IOUtils {
 
 			inChannel.transferTo(0, inChannel.size(), outChannel);
 
+		} catch (IOException e) {
+			throw ManagedIOException.manage(e);
 		} finally {
-			if (inChannel != null)  inChannel.close();
-			if (outChannel != null) outChannel.close();
+			if (inChannel != null) {
+				close(inChannel);
+			}
+			if (outChannel != null) {
+				close(outChannel);
+			}
 		}
 
 	}
 
+	/**
+	 * The copy does not closes the steams.
+	 * @param data - the data to write to the output stream
+	 * @param out
+	 * 
+	 * @see IOUtils#close(Closeable)
+	 */
+	public static void copy(byte[] data,OutputStream out) {
+		if(out == null){
+			throw new IllegalArgumentException("Cannot copy a non existent stream");
+		}
+		try {
+			out.write(data);
+		} catch (IOException e) {
+			ManagedIOException.manage(e);
+		}
+		
+	}
+	
 	/**
 	 * The copy does not closes the steams.
 	 * @param in
@@ -67,7 +108,13 @@ public final class IOUtils {
 
 	}
 
-	public static void move(File in,File out) throws IOException{
+	/**
+	 * Moves a file, i.e. copies the content to another file and deletes the original
+	 * @param in
+	 * @param out
+	 * @throws IOException
+	 */
+	public static void move(File in,File out){
 		if (!in.isFile()){
 			throw new IllegalArgumentException("Can only move a file");
 		}
@@ -80,7 +127,12 @@ public final class IOUtils {
 		in.delete();
 	}
 
-	public static void copy(File in,File out) throws IOException{
+	/**
+	 * Copies the data in one file to another existing file. 
+	 * @param in
+	 * @param out
+	 */
+	public static void copy(File in,File out) {
 		FileInputStream fis =null;
 		FileOutputStream fos =null;
 

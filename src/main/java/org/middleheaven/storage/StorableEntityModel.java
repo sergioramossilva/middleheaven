@@ -7,7 +7,6 @@ import org.middleheaven.domain.EntityModel;
 
 public interface StorableEntityModel extends EntityModel{
 
-	public <E> Class<E> getEntityClass();
 	public String getEntityHardName();
 	public String getEntityLogicName();
 	
@@ -18,6 +17,7 @@ public interface StorableEntityModel extends EntityModel{
 
 	public Object newInstance();
 	Collection<StorableFieldModel> uniqueFields();
+	public StorableFieldModel fieldReferenceTo(Class<?> type);
 	
 
 	

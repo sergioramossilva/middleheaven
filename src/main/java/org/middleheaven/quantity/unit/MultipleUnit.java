@@ -14,10 +14,15 @@ public class MultipleUnit<E extends Measurable> extends Unit<E> {
 	private final static Map<Real, String> prefixes = new HashMap<Real,String>();
 	
 	static {
-		
+		prefixes.put(Real.valueOf("1000000000"), "G"); // giga
+		prefixes.put(Real.valueOf("1000000"), "M"); // mega
 		prefixes.put(Real.valueOf("1000"), "K"); // kilo
+		prefixes.put(Real.valueOf("100"), "h"); // hecto
+		prefixes.put(Real.valueOf("0.1"), "d"); // deci
+		prefixes.put(Real.valueOf("0.01"), "c"); // centi
 		prefixes.put(Real.valueOf("0.001"), "m"); // mili
-		
+		prefixes.put(Real.valueOf("0.000001"), "u"); // micro
+		prefixes.put(Real.valueOf("0.000000001"), "n"); // nano
 	}
 	private Real scale;
 	private Unit<E> base;

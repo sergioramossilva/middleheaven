@@ -1,5 +1,6 @@
 package org.middleheaven.core.reflection;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import net.sf.cglib.proxy.Dispatcher;
@@ -67,7 +68,11 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 
 		@Override
 		public Object intercept(Object proxy, Method invoked, Object[] args,MethodProxy methodProxy) throws Throwable {
-			return handler.invoke(proxy, args, new ProxyMethodDelegator(originalType,invoked,methodProxy));
+			try{
+				return handler.invoke(proxy, args, new ProxyMethodDelegator(originalType,invoked,methodProxy));
+			} catch (InvocationTargetException e){
+				throw e.getTargetException();
+			}
 		}
 
 	}
@@ -138,5 +143,20 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 
 
 	}
+
+	@Override
+	public Class<?> getRealType(Class<?> type) {
+		int pos = type.getName().indexOf("$$");
+		if (pos >=0){
+			 try {
+				return Class.forName(type.getName().substring(0, pos));
+			} catch (ClassNotFoundException e) {
+				throw ReflectionException.manage(e, type);
+			}
+		}
+		return type;
+	}
+
+
 
 }

@@ -10,12 +10,20 @@ public interface ReflectionStrategy {
 	public <I> I proxy (Object delegationTarget , Class<I> proxyInterface);
 	
 	/**
+	 * Determine the real class type. 
+	 * Removes all proxies created by this strategy and determines the real class.
+	 * @param type
+	 * @return
+	 */
+	public Class<?> getRealType(Class<?> type);
+	
+	/**
 	 * 
 	 * @param <I>
 	 * @param delegationTarget
 	 * @param handler
 	 * @param proxyInterface
-	 * @return an object that is intanceof {@code delegationTarget} and {@code proxyInterface}. Also this object implements {@code WrapperProxy} interface
+	 * @return an object that is instanceof {@code delegationTarget} and {@code proxyInterface}. Also this object implements {@code WrapperProxy} interface
 	 */
 	public <I> I proxy (Object delegationTarget , final ProxyHandler handler , Class<I> proxyInterface , Class<?> ... adicionalInterfaces);
 }

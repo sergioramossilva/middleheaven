@@ -5,7 +5,6 @@ import java.io.Serializable;
 /**
  * Memento pattern implementation to store and recover sequence state 
  * 
- * @author Sérgio Taborda
  *
  */
 public final class SequenceState implements Serializable{

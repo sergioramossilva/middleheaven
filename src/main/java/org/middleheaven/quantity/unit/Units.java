@@ -12,10 +12,10 @@ public class Units {
 	private static Map<String,Unit> units= new HashMap<String,Unit>(); 
 	
 	static {
-		addUnit(Unit.unit(Dimension.TEMPERATURE , "ºC")); // Celcius
+		addUnit(Unit.unit(Dimension.TEMPERATURE , "\u00BAC")); // Celcius
 		addUnit(Unit.unit(Dimension.TEMPERATURE , "K")); // Kelvin
 		addUnit(Unit.unit(Dimension.TEMPERATURE , "R")); // Rankine
-		addUnit(Unit.unit(Dimension.TEMPERATURE , "ºF")); // Fareihight
+		addUnit(Unit.unit(Dimension.TEMPERATURE , "\u00BAF")); // Fareihight
 	}
 
 	private static <E extends Measurable> void addUnit(Unit<E> unit){

@@ -42,7 +42,7 @@ public enum CountryDivisionType {
 				return CountryDivisionType.GROUPS_OF_ISLANDS;
 			} else if (description.startsWith("PROVINCE")){
 				return CountryDivisionType.PROVINCE;
-			}else if (description.startsWith("REGION") || description.startsWith("RÉGION")){
+			}else if (description.startsWith("REGION") || description.startsWith("RÃ‰GION")){
 				return CountryDivisionType.REGION;
 			} 
 			return null;

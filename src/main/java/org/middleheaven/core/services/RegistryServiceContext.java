@@ -226,7 +226,7 @@ public final class RegistryServiceContext implements ServiceContext{
 			return proxify(selected,null);
 		}
 
-		throw new ServiceNotFoundException(serviceClass.getName());
+		throw new ServiceNotAvailableException(serviceClass.getName());
 	}
 
 	Map<ServiceKey, Object> proxies = new HashMap<ServiceKey, Object>();
