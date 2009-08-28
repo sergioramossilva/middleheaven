@@ -15,13 +15,14 @@ import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.PropertyNotFoundException;
 import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
-import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.criteria.FieldValueHolder;
 import org.middleheaven.storage.db.ColumnModel;
+import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.CriteriaInterpreter;
 import org.middleheaven.storage.db.DataBaseModel;
 import org.middleheaven.storage.db.DataBaseObjectAlreadyExistsException;
@@ -41,9 +42,10 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 		super("\"", "\"", ".");
 	}
 
+	@Override
 	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,
-			StorableEntityModel model) {
-		return new OracleCriteriaInterpreter(criteria, model);
+			StorableModelReader reader ) {
+		return new OracleCriteriaInterpreter(criteria, reader);
 
 	}
 
@@ -201,8 +203,8 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 
 	private  class OracleCriteriaInterpreter extends CriteriaInterpreter{
 
-		public OracleCriteriaInterpreter(Criteria<?> criteria, StorableEntityModel model) {
-			super(Oracle10gDialect.this, criteria, model);
+		public OracleCriteriaInterpreter(Criteria<?> criteria, StorableModelReader reader) {
+			super(Oracle10gDialect.this, criteria, reader);
 		}
 
 		protected void writeAliasSeparator(StringBuilder queryBuffer){
@@ -263,7 +265,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 				.append("seq_").append(sequenceName) //avoid name colision
 				.append(".nextval FROM dual")
 				.toString() ,
-				Collections.<FieldValueHolder>emptySet()
+				Collections.<ColumnValueHolder>emptySet()
 		);
 	}
 

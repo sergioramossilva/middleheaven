@@ -100,8 +100,6 @@ public final class DomainModelBuilder {
 		
 	}
 	
-
-
 	public static class SimpleFieldModelBuilder implements FieldModelBuilder {
 
 		EditableEntityFieldModel fm;

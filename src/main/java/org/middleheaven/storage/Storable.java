@@ -4,7 +4,6 @@ import org.middleheaven.util.identity.Identity;
 
 public interface Storable {
 
-
 	public Class<?> getPersistableClass();
 	
 	public StorableState getStorableState();

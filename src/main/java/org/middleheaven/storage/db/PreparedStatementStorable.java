@@ -8,9 +8,13 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.middleheaven.domain.DataType;
+import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.identity.Identity;
+import org.middleheaven.util.identity.IntegerIdentity;
+import org.middleheaven.util.identity.LongIdentity;
 
 public class PreparedStatementStorable {
 
@@ -65,6 +69,10 @@ public class PreparedStatementStorable {
 				ps.setTimestamp(i, new Timestamp(((Date)value).getTime()));
 			} else if (value instanceof Calendar ) {
 				ps.setTimestamp(i, new Timestamp(((Calendar)value).getTimeInMillis()));
+			} else if (value instanceof CalendarDate){
+				ps.setTimestamp(i, new Timestamp(((CalendarDate)value).miliseconds()));
+			} else if (value instanceof CalendarDateTime){
+				ps.setTimestamp(i, new Timestamp(((CalendarDateTime)value).miliseconds()));
 			}
 		} else {
 			switch (dataType){
@@ -72,9 +80,21 @@ public class PreparedStatementStorable {
 				ps.setString(i, value.toString());
 				break;
 			case INTEGER:
+				if (value instanceof Long){
+					ps.setLong(i,((Long)value).longValue());
+				} else if (value instanceof Integer){
+					ps.setInt(i, ((Integer)value).intValue());
+				}
+
+				break;
 			case IDENTITY:
-				// TODO identity can be another type other than long
-				ps.setLong(i, Long.parseLong(value.toString()));
+				// TODO identity can be another type, came up with an universal mechanis
+				if (value instanceof LongIdentity){
+					ps.setLong(i,((LongIdentity)value).longValue());
+				} else if (value instanceof IntegerIdentity){
+					ps.setInt(i, ((IntegerIdentity)value).intValue());
+				}
+				
 				break;
 			case LOGIC:
 				ps.setBoolean(i, Boolean.parseBoolean(value.toString()));

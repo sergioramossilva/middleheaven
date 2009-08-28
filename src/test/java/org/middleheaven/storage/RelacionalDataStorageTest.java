@@ -1,5 +1,6 @@
 package org.middleheaven.storage;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -42,7 +43,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 
 		// Configured
 
-		String catalog = "unit_test_data";
+		String catalog = "utest_data";
 
 		final EmbeddedDSProvider provider;
 
@@ -54,7 +55,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 				new DomainClasses().add(TestSubject.class.getPackage())
 		);
 
-		DataBaseStorage storeManager = new DataBaseStorage(provider, new WrappStorableReader());
+		DataBaseStorage storeManager = new DataBaseStorage(provider, new WrappStorableReader(model));
 
 		storeManager.updateMetadata(model, catalog);
 
@@ -88,43 +89,84 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 		assertTrue("Store does not have " + count + " elements", query.count() == count);
 	}
 
+	private void assertIdentical(Object a, Object b){
+		assertEquals("Objects are not identical" , ds.getIdentityFor(a),ds.getIdentityFor(b));
+	}
+	
 	@Test
 	public void testInsertDelete(){
 
-		TestFamillyMember m = new TestFamillyMember();
-		m.setName("Member a");
+		TestFamillyMember familly = new TestFamillyMember();
+		familly.setName("Member a");
+		
 		TestRelation relation = new TestRelation();
 		relation.setName("brother");
-		m.setRelation(relation);
+		familly.setRelation(relation);
 		
 		TestSubject to = new TestSubject();
 		to.setName("Name");
 		to.setBirthdate(new Date());
 		
-		to.addFamillyMember(m);
+		to.addFamillyMember(familly);
 		
 		assetSubjectStoreIsEmpty();
 
 		// store it
 		to = ds.store(to);
+
+		// assert was stored
+		assetSubjectStoreHasElements(1);
+
+		Query<TestRelation> qr = ds.createQuery(CriteriaBuilder.search(TestRelation.class).all());
+		
+		// relation is stored by aggregation
+		assertTrue(qr.count() == 1 );
+		
+		// find it
+		TestRelation relation2 = qr.find();
+		
+		assertNotNull(relation2);
+		
+		// search it by identity
+		qr = ds.createQuery(CriteriaBuilder.search(TestRelation.class)
+				.and("identity").eq(ds.getIdentityFor(relation2))
+				.all());
+		
+		TestRelation relation3 = qr.find();
+		assertNotNull(relation3);
+		
+		// is the same as before
+		assertIdentical(relation2,relation3);
+
+		// assert the members where merged
 		TestFamillyMember tm = to.getTestFamillyMembers().iterator().next();
 		
 		assertNotNull(ds.getIdentityFor(tm));
 		
-		assetSubjectStoreHasElements(1);
-
+		// members where stored by aggregation
 		Query<TestFamillyMember> q1 = ds.createQuery(CriteriaBuilder.search(TestFamillyMember.class).all());
+		
+		// find it
 		TestFamillyMember tfm = q1.find();
 		
-		assertNotNull(tfm.getRelation());
+		assertNotNull(tfm);
+		assertNotNull("Relation is null" , tfm.getRelation());
 		
+		// the relation is the same as before
+		assertIdentical(relation2,tfm.getRelation());
+		
+		// the parent is set
 		assertNotNull(tfm.getParent());
 		
+		// and is the one we stored
+		assertIdentical(to,tfm.getParent());
 		
+		// read the stored object
 		Query<TestSubject> q2 = ds.createQuery(CriteriaBuilder.search(TestSubject.class).all());
 		TestSubject tor = q2.find();
 		
-		assertFalse(tor.getTestFamillyMembers().isEmpty());
+		// members are loaded
+		assertFalse("Members are empty", tor.getTestFamillyMembers().isEmpty());
 		
 		tm = tor.getTestFamillyMembers().iterator().next();
 		
@@ -139,10 +181,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 
 	}
 
-	private void assertNotEmpty(TestRelation relation) {
-		// TODO implement RelacionalDataStorageTest.assertNotEmpty
-		
-	}
+
 
 
 }

@@ -34,6 +34,14 @@ public enum StorableState {
 	ERASED
 	;
 
+	/**
+	 * 
+	 * @return {@code true} if this state does not cause any change on the stored data.
+	 */
+	public boolean isNeutral(){
+		return this == BLANK || this == RETRIVED;
+	}
+	
 	public StorableState edit(){
 		if (this==BLANK){
 			return FILLED;

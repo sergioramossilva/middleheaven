@@ -6,15 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import org.middleheaven.storage.StorableEntityModel;
-import org.middleheaven.storage.criteria.FieldValueHolder;
-
 public class SQLRetriveCommand extends SQLConditionableCommand implements RetriveDataBaseCommand {
 
 
     private PreparedStatement ps;
 	
-	public SQLRetriveCommand(DataBaseDialect dialect,String sql,Collection<FieldValueHolder> data){
+	public SQLRetriveCommand(DataBaseDialect dialect,String sql,Collection<ColumnValueHolder> data){
 		super(dialect,sql,data);
 	}
 
@@ -24,9 +21,9 @@ public class SQLRetriveCommand extends SQLConditionableCommand implements Retriv
 	}
 
 	@Override
-	public boolean execute(DataBaseStorage keeper,Connection con, StorableEntityModel model) throws SQLException {
+	public boolean execute(DataBaseStorage storage, Connection connection) throws SQLException {
 
-	    ps = super.prepareStatement(keeper,con);
+	    ps = super.prepareStatement(storage,connection);
 	   
 	    return true;
 	}

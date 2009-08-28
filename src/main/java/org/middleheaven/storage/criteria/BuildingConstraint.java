@@ -10,18 +10,18 @@ import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.collections.Interval;
 
-class BuildingConstraint<T> implements Constraint<T, CriteriaBuilder<T>> {
+class BuildingConstraint<T,B extends AbstractCriteriaBuilder<T, B>> implements Constraint<T, B> {
 
 	private QualifiedName qname;
-	private CriteriaBuilder<T> builder;
+	private B builder;
 	private boolean negateFlag = false;
 
-	public BuildingConstraint (CriteriaBuilder<T> builder,QualifiedName qualifiedFileName){
+	public BuildingConstraint (B builder,QualifiedName qualifiedFileName){
 		this.qname = qualifiedFileName;
 		this.builder = builder;
 	}
 
-	private CriteriaBuilder<T> constrainField(CriterionOperator op, Object value){
+	private B constrainField(CriterionOperator op, Object value){
 		if (negateFlag){
 			negateFlag=false;
 			op = op.negate();
@@ -38,7 +38,7 @@ class BuildingConstraint<T> implements Constraint<T, CriteriaBuilder<T>> {
 	}
 
 	@Override
-	public <V> CriteriaBuilder<T> in(Collection<V> values) {
+	public <V> B in(Collection<V> values) {
 		CriterionOperator op = CriterionOperator.IN;
 		if (negateFlag){
 			negateFlag=false;
@@ -57,90 +57,90 @@ class BuildingConstraint<T> implements Constraint<T, CriteriaBuilder<T>> {
 	}
 
 	@Override
-	public Constraint<T,CriteriaBuilder<T>> not() {
+	public Constraint<T,B> not() {
 		this.negateFlag = !this.negateFlag;
 		return this;
 	}
 
 	@Override
-	public CriteriaBuilder<T> eq(Object value) {
+	public B eq(Object value) {
 		return constrainField(CriterionOperator.EQUAL,value);
 	}
 
 	@Override
-	public CriteriaBuilder<T> ge(Object value) {
+	public B ge(Object value) {
 		return constrainField(CriterionOperator.GREATER_THAN_OR_EQUAL,value);
 	}
 
 	@Override
-	public CriteriaBuilder<T> gt(Object value) {
+	public B gt(Object value) {
 		return constrainField(CriterionOperator.GREATER_THAN,value);
 	}
 
 	@Override
-	public CriteriaBuilder<T> le(Object value) {
+	public B le(Object value) {
 		return constrainField(CriterionOperator.LESS_THAN_OR_EQUAL,value);
 	}
 
 	@Override
-	public CriteriaBuilder<T> lt(Object value) {
+	public B lt(Object value) {
 		return constrainField(CriterionOperator.LESS_THAN,value);
 	}
 
 	@Override
-	public CriteriaBuilder<T> isNull() {
+	public B isNull() {
 		return eq(null);
 	}
 
 	@Override
-	public <V> CriteriaBuilder<T> in(V... values) {
+	public <V> B in(V... values) {
 		return in(Arrays.asList(values));
 	}
 
 
 	@Override
-	public <V extends Comparable<? super V>> CriteriaBuilder<T> bewteen(V min, V max) {
+	public <V extends Comparable<? super V>> B bewteen(V min, V max) {
 		return in(Interval.between(min, max));
 	}
 
 
 	@Override
-	public <V extends Comparable<? super V>> CriteriaBuilder<T> in(Interval<V> interval) {
+	public <V extends Comparable<? super V>> B in(Interval<V> interval) {
 		return constrainField(CriterionOperator.IN, interval);
 
 	}
 
 	@Override
-	public CriteriaBuilder<T> contains(CharSequence text) {
+	public B contains(CharSequence text) {
 		return constrainField(CriterionOperator.CONTAINS, text);
 	}
 
 	@Override
-	public CriteriaBuilder<T> endsWith(CharSequence text) {
+	public B endsWith(CharSequence text) {
 		return constrainField(CriterionOperator.ENDS_WITH, text);
 	}
 
 	@Override
-	public CriteriaBuilder<T> startsWith(CharSequence text) {
+	public B startsWith(CharSequence text) {
 		return constrainField(CriterionOperator.STARTS_WITH, text);
 	}
 
 	@Override
-	public <O> CriteriaBuilder<T> is(O candidate) {
+	public <O> B is(O candidate) {
 		if (candidate == null){
 			return this.isNull();
 		} else {
-			return navigateTo(Introspector.of(candidate).getType())
+			return navigateTo(Introspector.of(candidate).getRealType())
 			.isEqual(candidate)
 			.back();
 		}
 	}
 
 	@Override
-	public <N> ReferenceCriteriaBuilder<N, T , CriteriaBuilder<T>> navigateTo(Class<N> referencedEntityType) {
-
-		builder.criteria.add(new FieldJuntionCriterion(qname,referencedEntityType,builder.criteria.getFromClass()));
-		return new ReferenceCriteriaBuilder<N,T,CriteriaBuilder<T>>(referencedEntityType,builder);
+	public <N> JunctionCriteriaBuilder<N, T , B> navigateTo(Class<N> referencedEntityType) {
+		FieldJuntionCriterion criterion = new FieldJuntionCriterion(qname,referencedEntityType,builder.getCurrentType());
+		builder.addCriterion(criterion);
+		return new JunctionCriteriaBuilder<N,T,B>(criterion,referencedEntityType,builder);
 	}
 
 

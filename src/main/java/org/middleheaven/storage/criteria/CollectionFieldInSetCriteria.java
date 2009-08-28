@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.middleheaven.storage.QualifiedName;
 
-public class CollectionFieldInSetCriteria implements FieldInSetCriteria {
+public class CollectionFieldInSetCriteria implements FieldInSetCriterion {
 
 	Collection<?> values;
 	private QualifiedName name;

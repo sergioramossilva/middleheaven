@@ -20,6 +20,11 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 		this.model = model;
 	}
 	
+	
+	public String toString(){
+		return model.toString();
+	}
+	
 	private StorableFieldModel convertField(final EntityFieldModel fModel) {
 		Consistencies.consistNotNull(fModel);
 		

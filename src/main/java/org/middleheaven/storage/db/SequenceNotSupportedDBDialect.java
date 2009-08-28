@@ -44,7 +44,7 @@ public abstract class SequenceNotSupportedDBDialect extends DataBaseDialect impl
 			con = ds.getConnection();
 			RetriveDataBaseCommand command = createSequenceStateReadCommand(sequence.getName());
 			
-			command.execute(null, con, null);
+			command.execute(null,con);
 			ResultSet rs = command.getResult();
 			
 			if (rs.next()){
@@ -69,12 +69,13 @@ public abstract class SequenceNotSupportedDBDialect extends DataBaseDialect impl
 		try {
 			con = ds.getConnection();
 			DataBaseCommand command = createUpdateSequenceValueCommand(sequence.getName(), sequence.getLastUsed());
-			if (!command.execute(null, con, null)){
+			
+			if (!command.execute(null, con)){
 				//sequence does not exist 
 				DataBaseCommand insertCommand = createInsertSequenceValueCommand(sequence.getName());
-				insertCommand.execute(null, con, null);
+				insertCommand.execute(null, con);
 			}
-			command.execute(null, con, null);
+			command.execute(null, con);
 		} catch (SQLException e){
 			throw handleSQLException(e);
 		} finally {

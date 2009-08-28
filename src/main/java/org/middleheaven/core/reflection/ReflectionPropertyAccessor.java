@@ -40,9 +40,11 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 			for (Method method : type.getMethods()){
 				if (method.getParameterTypes().length==1 && method.getName().equalsIgnoreCase("set" + name)){
 					modifier = method;
+					modifier.setAccessible(true);
 				} else if (method.getParameterTypes().length==0 && (method.getName().equalsIgnoreCase("get" + name) || 
 						method.getName().equalsIgnoreCase("is" + name)) ){
 					acessor = method;
+					acessor.setAccessible(true);
 				} 
 				
 				if(modifier !=null && acessor !=null){ // we have what we need
@@ -69,13 +71,12 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 	}
 
 	public Class<?> getValueType(){
-		return acessor!=null ? acessor.getReturnType() : field.getType();
+		return acessor != null ? acessor.getReturnType() : field.getType();
 	}
 
 	public Object getValue(Object target) throws ReflectionException{
 		try {
 			if (acessor!=null){
-				acessor.setAccessible(true);
 				return acessor.invoke(target, new Object[0]);
 			} else if (field !=null){
 				field.setAccessible(true);
@@ -83,33 +84,30 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 			} else {
 				throw new PropertyNotFoundException("Property does not exist");
 			}
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionException(e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException(e);
-		} catch (InvocationTargetException e) {
-			throw new ReflectionException(e);
-		}
+		} catch (Exception e) {
+			throw ReflectionException.manage(e, this.type);
+		} 
 	}
-
 	
 	public void  setValue(Object target, Object value ){
 		try {
-
-			if (modifier != null){
-				modifier.invoke(target, TypeConvertions.convert(value,modifier.getParameterTypes()[0]));
-			} else if (modifyByField && field!=null){
-				field.setAccessible(true);
-				Object obj = TypeConvertions.convert(value,field.getType());
-				field.set(target,obj);
-			} // else is read only. not an exception
-		}catch (IllegalArgumentException e) {
-			throw new ReflectionException(e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionException(e);
-		} catch (InvocationTargetException e) {
-			throw new ReflectionException(e);
-		}
+			
+			if( value == null && getValueType().isPrimitive()){
+				return; // does not set it
+			} else {
+				value = TypeConvertions.convert(value,getValueType());
+				if (modifier != null){
+					
+					modifier.invoke(target, new Object[]{value});
+				} else if (modifyByField && field!=null){
+					field.setAccessible(true);
+					field.set(target,value);
+				} // else is read only. not an exception
+			}
+		
+		}catch (Exception e) {
+			throw ReflectionException.manage(e, this.type);
+		} 
 	}
 
 	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass) {

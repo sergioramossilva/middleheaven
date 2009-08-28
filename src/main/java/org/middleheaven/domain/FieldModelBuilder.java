@@ -25,4 +25,5 @@ public interface FieldModelBuilder {
 
 	FieldModelBuilder setAggregationType(Class<?> aggregationType);
 
+
 }

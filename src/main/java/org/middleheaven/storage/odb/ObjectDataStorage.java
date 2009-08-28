@@ -16,7 +16,6 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.storage.AbstractDataStorage;
 import org.middleheaven.storage.DecoratorStorableEntityModel;
 import org.middleheaven.storage.ExecutableQuery;
-import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
@@ -25,6 +24,7 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
+import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaFilter;
@@ -42,14 +42,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 	private File file;
 
 	public ObjectDataStorage(ManagedFile dataFile) {
-		super(new StorableModelReader(){
-
-			@Override
-			public StorableEntityModel read(EntityModel model) {
-				return new DecoratorStorableEntityModel(model);
-			}
-
-		});
+		super(null);
 		this.dataFile = dataFile;
 		this.file = new File(dataFile.getURL().getFile());
 	}
@@ -155,8 +148,8 @@ public class ObjectDataStorage extends AbstractDataStorage {
 
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
-		return new SimpleExecutableQuery<T>(criteria,model,neoDatisQueryExecuter);
+	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+		return new SimpleExecutableQuery<T>(criteria,null,neoDatisQueryExecuter);
 	}
 	
 	private QueryExecuter neoDatisQueryExecuter = new QueryExecuter() {
@@ -217,7 +210,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 
 
 	@Override
-	public void insert(Collection<Storable> obj, StorableEntityModel model) {
+	public void insert(Collection<Storable> obj) {
 
 		ODB odb = getDataBase();
 		try{
@@ -236,7 +229,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 	}
 
 	@Override
-	public void remove(Collection<Storable> obj, StorableEntityModel model) {
+	public void remove(Collection<Storable> obj) {
 		ODB odb = getDataBase();
 		try{
 			for (Storable s : obj){
@@ -251,13 +244,13 @@ public class ObjectDataStorage extends AbstractDataStorage {
 	}
 
 	@Override
-	public void remove(Criteria<?> criteria, StorableEntityModel model) {
+	public void remove(Criteria<?> criteria) {
 		// TODO implement StoreKeeper.remove
 
 	}
 
 	@Override
-	public void update(Collection<Storable> obj, StorableEntityModel model) {
+	public void update(Collection<Storable> obj) {
 		ODB odb = getDataBase();
 		try{
 			for (Storable s : obj){

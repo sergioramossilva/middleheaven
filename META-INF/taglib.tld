@@ -111,9 +111,16 @@
 	      <required>true</required>
 	      <rtexprvalue>false</rtexprvalue>
 	    </attribute>
+	    
 	   <attribute>
 	      <name>items</name>
 	      <required>true</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	    
+	    <attribute>
+	      <name>first</name>
+	      <required>false</required>
 	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>
 	</tag>

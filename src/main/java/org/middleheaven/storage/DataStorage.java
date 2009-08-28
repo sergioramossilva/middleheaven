@@ -1,15 +1,18 @@
 package org.middleheaven.storage;
 
 import java.util.Collection;
+import java.util.Set;
 
-import org.middleheaven.domain.EntityModel;
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.storage.db.StoreQuerySession;
 import org.middleheaven.util.identity.Identity;
 
+/**
+ * Abstraction for a real physical data storage.
+ * {@ DataStorage} object encapsulate persistence technology related translations.  
+ */
 public interface DataStorage {
 
-	public StorableEntityModel storableModelOf(EntityModel model);
-	
 	/**
 	 * Wraps the object with a {@code Storable} interface.
 	 * If the object is already a {@code Storable}, return the object as it is.
@@ -18,29 +21,40 @@ public interface DataStorage {
 	 */
 	public Storable merge(Object obj);
 	
+	/**
+	 * Determine the object's identity token.
+	 * @param object
+	 * @return
+	 */
 	public Identity getIdentityFor(Object object);
 	
 	/**
-	 * Included a new objects in the store
+	 * Assign identity token for the object , if it has none
+	 * @return storable after assigning identity
+	 */
+	public Storable assignIdentity(Storable storable);
+	
+	/**
+	 * Include new objects in the storage
 	 * @param obj Collection of objects to include
 	 */
-	public void insert(Collection<Storable> obj,StorableEntityModel model);
+	public void insert(Collection<Storable> obj);
 	
 	/**
-	 * Updates the state of objects in the store
+	 * Update the state of objects in the storage
 	 * @param obj Collection of objects to update
 	 */
-	public void update(Collection<Storable> obj,StorableEntityModel model);
+	public void update(Collection<Storable> obj);
 	
 	/**
-	 * Removes the objects in the collection from the store
+	 * Removes the objects, in the collection, from the storage
 	 */
-	public void remove(Collection<Storable> obj,StorableEntityModel model);
+	public void remove(Collection<Storable> obj);
 	
 	/**
-	 * Removes all object that match the criteria from the store
+	 * Removes all object, that match the criteria, from the store
 	 */
-	public void remove(Criteria<?> criteria,StorableEntityModel model);
+	public void remove(Criteria<?> criteria);
 	
 	/**
 	 * Creates a store-specific <code>Query</code> object using a <code>Criteria</code>
@@ -52,12 +66,10 @@ public interface DataStorage {
 	 * @param <code>ReadStrategy</code> read strategy
 	 * @return
 	 */
-	public <T> Query<T> createQuery(Criteria<T> criteria, StorableEntityModel model, ReadStrategy strategy);
-	
+	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy);
 
-	/**
-	 * 
-	 * @return {@code true} if this keeper is responsible for assigning the storable identity, {@code false} otherwise 
-	 */
-	public Storable assignIdentity(Storable storable);
+	public void flatten(Storable p, Set<Storable> all);
+
+
+
 }

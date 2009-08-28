@@ -1,6 +1,6 @@
 package org.middleheaven.storage.criteria;
 
-public interface OrderingConstrain<T , B extends CriteriaBuilderStrategy<T,B>> {
+public interface OrderingConstrain<T , B extends AbstractCriteriaBuilder<T,B>> {
 
 	/**
 	 * Add ascending order criterion

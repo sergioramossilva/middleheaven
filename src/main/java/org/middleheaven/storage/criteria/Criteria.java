@@ -32,7 +32,7 @@ public interface Criteria<T> {
      * Retrieves a <code>LogicCriterion</code> of restrictions
      * @return
      */
-	public LogicCriterion restrictions();
+	public LogicCriterion constraints();
 	
 	/**
 	 * Returns target entity class. Target entity is the one resulting from the query

@@ -6,15 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import org.middleheaven.storage.criteria.FieldValueHolder;
-
 public abstract class SQLConditionableCommand implements ConditionableDataBaseCommand {
 
 	private final String sql;
-	private final Collection<FieldValueHolder> data;
+	private final Collection<ColumnValueHolder> data;
 	private DataBaseDialect dialect;
 
-	protected SQLConditionableCommand(DataBaseDialect dialect,String sql,Collection<FieldValueHolder> data){
+	protected SQLConditionableCommand(DataBaseDialect dialect,String sql,Collection<ColumnValueHolder> data){
 		this.dialect = dialect;
 		this.data = data;
 		this.sql = sql;
@@ -24,13 +22,13 @@ public abstract class SQLConditionableCommand implements ConditionableDataBaseCo
 		return dialect;
 	}
 	
-	protected final PreparedStatement prepareStatement(DataBaseStorage keeper, Connection con) throws SQLException{
-		PreparedStatement ps = con.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
+	protected final PreparedStatement prepareStatement(DataBaseStorage storage, Connection connection) throws SQLException{
+		PreparedStatement ps = connection.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
 
-		PreparedStatementStorable pss = new PreparedStatementStorable(keeper,ps);
+		PreparedStatementStorable pss = new PreparedStatementStorable(storage,ps);
 
 		int param = 1;
-		for (FieldValueHolder vh : data){
+		for (ColumnValueHolder vh : data){
 			pss.setField(param, vh.getValue(), vh.getDataType());
 			param++;
 		}

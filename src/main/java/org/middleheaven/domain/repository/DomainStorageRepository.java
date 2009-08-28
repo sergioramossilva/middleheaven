@@ -77,8 +77,8 @@ public class DomainStorageRepository<E> extends AbstractRepository<E>  {
 	}
 
 	@Override
-	public Query<E> findSame(E instance) {
-		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).isSame(instance).all());
+	public Query<E> findIdentical(E instance) {
+		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).isIdentical(instance).all());
 	}
 
 	@Override

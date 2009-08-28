@@ -1,7 +1,7 @@
 package org.middleheaven.storage.criteria;
 
 
-public interface FieldInSetCriteria extends FieldCriterion{
+public interface FieldInSetCriterion extends FieldCriterion{
 
 	boolean isIncluded();
 

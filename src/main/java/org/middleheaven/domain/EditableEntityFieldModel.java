@@ -99,4 +99,15 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 		this.aggregationClass = aggregationClass;
 	}
 
+	@Override
+	public String toString() {
+		return "EditableEntityFieldModel [aggregationClass=" + aggregationClass
+				+ ", dataType=" + dataType + ", isIdentity=" + isIdentity
+				+ ", isTransient=" + isTransient + ", isUnique=" + isUnique
+				+ ", isVersion=" + isVersion + ", name=" + name + ", params="
+				+ params + ", valueType=" + valueType + "]";
+	}
+	
+	
+
 }

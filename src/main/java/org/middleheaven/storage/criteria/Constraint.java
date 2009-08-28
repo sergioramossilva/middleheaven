@@ -10,7 +10,7 @@ import org.middleheaven.util.collections.Interval;
  *
  * @param <T>
  */
-public interface Constraint<T, B extends CriteriaBuilderStrategy<T,B> > {
+public interface Constraint<T, B extends AbstractCriteriaBuilder<T,B> > {
 
 	/**
 	 * The attribute value equals {@code value}. . 
@@ -119,6 +119,6 @@ public interface Constraint<T, B extends CriteriaBuilderStrategy<T,B> > {
 	 * @param referencedEntityType
 	 * @return
 	 */
-	public <N> ReferenceCriteriaBuilder<N,T, B> navigateTo(Class<N> referencedEntityType);
+	public <N> JunctionCriteriaBuilder<N,T, B> navigateTo(Class<N> referencedEntityType);
 	
 }

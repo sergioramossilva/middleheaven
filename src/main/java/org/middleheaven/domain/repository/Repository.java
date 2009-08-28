@@ -5,7 +5,7 @@ import org.middleheaven.storage.Query;
 import org.middleheaven.util.identity.Identity;
 
 /**
- * Logic reservatoire for object of a certain class.
+ * Logic deposit for object of a certain entity class.
  *
  * @param <E> Repository's entity
  */
@@ -17,7 +17,7 @@ public interface Repository<E> {
 	
 	public Query<E> findByIdentity(Identity id );
 	
-	public Query<E> findSame(E instance);
+	public Query<E> findIdentical(E instance);
 
 	public Query<E> findEquals(E instance);
 	

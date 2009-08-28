@@ -46,7 +46,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 		
 			for (PropertyAccessor pa : propertyAccessors){
 
-				processField(pa,em);
+				processField(pa,em,builder);
 				
 			}
 
@@ -54,7 +54,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 	}
 	
-	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em){
+	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em,ModelBuilder builder){
 
 		FieldModelBuilder fm = em.getField(pa.getName())
 		.setTransient(pa.isAnnotadedWith(Transient.class))
@@ -63,7 +63,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 		
 		Class<?> valueType = pa.getValueType();
 
-		
+		fm.setValueType(valueType);
 		if(pa.isAnnotadedWith(Key.class)){
 			Key key = pa.getAnnotation(Key.class);
 
@@ -89,7 +89,9 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			}
 			fm.putParam("targetField", fieldName);
 			fm.setValueType(valueType);
-
+			
+	
+			
 		} else if (pa.isAnnotadedWith(OneToOne.class)){
 			fm.setDataType(DataType.ONE_TO_ONE);
 			OneToOne ref = pa.getAnnotation(OneToOne.class);

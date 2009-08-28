@@ -7,8 +7,8 @@ import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.criteria.FieldValueHolder;
 import org.middleheaven.storage.db.ColumnModel;
+import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.DataBaseCommand;
 import org.middleheaven.storage.db.DataBaseModel;
 import org.middleheaven.storage.db.RetriveDataBaseCommand;
@@ -35,13 +35,12 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 
 	@Override
 	protected RetriveDataBaseCommand createSequenceStateReadCommand(String sequenceName) {
-		final Collection<FieldValueHolder> none = Collections.emptySet();
 		return new SQLRetriveCommand(this,
 				new StringBuilder("SELECT lastUsed FROM tb_sequences WHERE name ='")
 				.append(sequenceName)
 				.append("'")
 				.toString(),
-				none
+				Collections.<ColumnValueHolder>emptySet()
 		);
 	}
 
@@ -81,6 +80,9 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 			break;
 		case TEXT:
 			sql.append("nvarchar (").append(column.getSize()).append(")");
+			break;
+		case MEMO:
+			sql.append("ntext");
 			break;
 		case INTEGER:
 		case LOGIC:

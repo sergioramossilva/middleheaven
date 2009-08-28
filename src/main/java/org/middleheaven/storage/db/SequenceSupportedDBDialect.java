@@ -44,7 +44,7 @@ public abstract class SequenceSupportedDBDialect extends DataBaseDialect {
 				con = ds.getConnection();
 				RetriveDataBaseCommand command = dialect.createNextSequenceValueCommand(identifiableName);
 				
-				command.execute(null, con, null);
+				command.execute(null,con);
 				ResultSet rs = command.getResult();
 				
 				if (rs.next()){

@@ -16,7 +16,7 @@ public class XMLCriteriaInterpreter {
 		String hardname = model.getEntityHardName();
 		
 		StringBuilder predicate = new StringBuilder();
-		addPredicate(predicate, criteria.restrictions());
+		addPredicate(predicate, criteria.constraints());
 		
 		StringBuilder builder = new StringBuilder("//").append( hardname.toLowerCase());
 		if (predicate.length()>0){

@@ -11,7 +11,7 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 	
 	public CriteriaFilter(Criteria<T> c,StorableEntityModel model) {
 		super(c.getTargetClass());
-		filter = asFilter(c.restrictions(), model);
+		filter = asFilter(c.constraints(), model);
 	}
 	
 	private CriteriaFilter (CriteriaFilter other){

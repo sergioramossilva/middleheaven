@@ -20,6 +20,7 @@ public  class ReflectionFieldAccessor implements FieldAcessor{
 		this.type = type;
 		this.name = field.getName().toLowerCase();
 		this.field = field;
+		this.field.setAccessible(true);
 	}
 	
 	protected void load(){

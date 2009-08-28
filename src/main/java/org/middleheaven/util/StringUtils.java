@@ -3,14 +3,52 @@ package org.middleheaven.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtils {
 
+	StringUtils(){}
+	
+	public static int countMatches(CharSequence text, String pattern){
+		Pattern p = Pattern.compile(pattern);
+		int count=0;
+		final Matcher matcher = p.matcher(text);
+		while (matcher.find()){
+			count++;
+		}
+		return count;
+	}
+	
+	public static String repeat(String pattern, int count){
+		return repeat(pattern,count,"");
+	}
+	
+	public static String repeat(String pattern, int count , String separator){
+		String[] res = new String[count];
+		Arrays.fill(res, pattern);
+		return join(separator,res);
+	}
+
+	public static String ensureEndsWith(String text, String suffix){
+		if (!text.endsWith(suffix)){
+			return text.concat(suffix);
+		} 
+		return text;
+	}
+	
+	public static String ensureStartsWith(String text, String prefix){
+		if (!text.startsWith(prefix)){
+			return prefix.concat(text);
+		} 
+		return text;
+	}
+	
 	public static String join(String separator, String ... original){
 		return join(separator, 0,original.length, original);
 	}
@@ -41,10 +79,12 @@ public class StringUtils {
 		return builder.toString();
 	}
 
-	public static boolean isInArray(String candidate, String ... set){
-		if (candidate==null) return false;
+	public static boolean isInArray(CharSequence candidate, CharSequence ... set){
+		if (candidate==null || set.length == 0){
+			return false;
+		}
 
-		for (String s: set){
+		for (CharSequence s: set){
 			if (candidate.equals(s)){
 				return true;
 			}
@@ -52,14 +92,14 @@ public class StringUtils {
 		return false;
 	}
 
-	public static Boolean booleanValueOf (String value){
-		if (value==null || value.trim().length()==0) {
+	public static Boolean booleanValueOf (CharSequence value){
+		if (value==null || value.toString().trim().isEmpty()) {
 			return null;
 		}
 		return new Boolean(logicValueOf(value,false));
 	}
 
-	public static Boolean booleanValueOf (String value, boolean defaultValue){
+	public static Boolean booleanValueOf (CharSequence value, boolean defaultValue){
 		return new Boolean(logicValueOf(value,defaultValue));
 	}
 
@@ -67,20 +107,64 @@ public class StringUtils {
 		return objectToString(obj,"");
 	}
 
+	/**
+	 * Removes all occurrences of {@code textToRemove} from {@code text} 
+	 * @param text
+	 * @param textToRemove
+	 * @return
+	 */
+	public static String removeAll(CharSequence text, CharSequence textToRemove){
+		return text.toString().replaceAll(textToRemove.toString(), "");
+	}
+	
+	/**
+	 * Removes the first ocurrence of {@code textToRemove} in {@code text} an all the text
+	 * before it. 
+	 * @param text
+	 * @param textToRemove
+	 * @return
+	 */
+	public static String removeStart(CharSequence text, CharSequence textToRemove){
+		final String textString = text.toString();
+		int pos = textString.indexOf(textToRemove.toString());
+		if (textToRemove.length() != 0 && pos>=0){
+			return textString.substring(pos+1+textToRemove.length());
+		} else {
+			return textString;
+		}
+	}
+	
+	/**
+	 * Removes the first ocurrence of {@code textToRemove} in {@code text} an all the text
+	 * after it. 
+	 * @param text
+	 * @param textToRemove
+	 * @return
+	 */
+	public static String removeEnd(CharSequence text, CharSequence textToRemove){
+		final String textString = text.toString();
+		int pos = textString.indexOf(textToRemove.toString());
+		if (textToRemove.length() != 0 && pos>=0){
+			return textString.substring(0,pos);
+		} else {
+			return textString;
+		}
+	}
+	
 	public static String objectToString(Object obj, String defaultValue){
 		return obj == null ? defaultValue : obj.toString(); 
 	}
 
-	public static boolean logicValueOf (final String value, boolean defaultValue){
+	public static boolean logicValueOf (final CharSequence value, boolean defaultValue){
 		if (value==null) return defaultValue;
-		String v = value.trim();
+		String v = value.toString().trim();
 		return v.indexOf("y")==0 || v.indexOf("t")==0 || v.indexOf("on")==0;
 	}
 
-	public static long longValueOf (final String value, long defaultValue){
-		if (value==null || value.trim().length()==0) return defaultValue;
+	public static long longValueOf (final CharSequence value, long defaultValue){
+		if (value==null || value.toString().trim().isEmpty()) return defaultValue;
 		try {
-			return Long.parseLong(value.trim());
+			return Long.parseLong(value.toString().trim());
 		} catch (NumberFormatException e){
 			return defaultValue;
 		}
@@ -140,7 +224,8 @@ public class StringUtils {
 
 	}
 
-	public static String capitalize(String text) {
+	// TODO put in a StringFormat
+	public static String capitalizeFirst(String text) {
 		StringBuilder builder  = new StringBuilder(text);
 		builder.replace(0, 1, builder.substring(0,1).toUpperCase());
 		return builder.toString();
