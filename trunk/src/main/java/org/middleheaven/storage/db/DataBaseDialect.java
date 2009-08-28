@@ -17,19 +17,22 @@ import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.AbstractCriteria;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.Criterion;
 import org.middleheaven.storage.criteria.FieldCriterion;
+import org.middleheaven.storage.criteria.JunctionCriterion;
 import org.middleheaven.storage.criteria.LogicCriterion;
 
-public abstract class DataBaseDialect {
+public abstract class DataBaseDialect implements AliasResolver{
 
 	private final String startDelimiter;
 	private final String endDelimiter;
 	private final String fieldSeparator;
-
+	private final AliasResolver aliasResolver = new DefaultAliasResolver(); 
+	
 
 	protected DataBaseDialect(String startDelimiter, String endDelimiter,String fieldSeparator) {
 
@@ -37,6 +40,15 @@ public abstract class DataBaseDialect {
 		this.endDelimiter = endDelimiter;
 		this.fieldSeparator = fieldSeparator;
 	}
+	
+	public String aliasFor(String name, boolean increment){
+		return aliasResolver.aliasFor(name, increment);
+	}
+
+	public  QualifiedName aliasFor(QualifiedName name, String aliasPrefix){
+		return aliasResolver.aliasFor(name, aliasPrefix);
+	}
+
 
 	/**
 	 * 
@@ -70,7 +82,7 @@ public abstract class DataBaseDialect {
 		return fieldSeparator;
 	}
 
-	protected void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
+	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
 		buffer.append(startDelimiter);
 		buffer.append(hardname.getQualifier().toLowerCase());
 		buffer.append(endDelimiter);
@@ -102,9 +114,9 @@ public abstract class DataBaseDialect {
 		return new StorageException(e.getMessage());
 	}
 
-	public final <T> RetriveDataBaseCommand createSelectCommand (Criteria<T> criteria, StorableEntityModel model ){
+	public final <T> RetriveDataBaseCommand createSelectCommand (Criteria<T> criteria, StorableModelReader reader){
 
-		return newCriteriaInterpreter(merge(criteria,model),model).translateRetrive();
+		return newCriteriaInterpreter(merge(criteria,reader.read(criteria.getTargetClass())),reader).translateRetrive();
 	}
 
 	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel dbtype) {
@@ -189,7 +201,7 @@ public abstract class DataBaseDialect {
 
 		public void restrictAll(StorableEntityModel model){
 
-			this.setRestrictions(restrictLogic(restrictions(),model));
+			this.setRestrictions(restrictLogic(constraints(),model));
 		}
 
 		private LogicCriterion restrictLogic(LogicCriterion l , StorableEntityModel model){
@@ -204,9 +216,12 @@ public abstract class DataBaseDialect {
 
 		private Criterion restrict(Criterion c , StorableEntityModel model){
 
-			if (c instanceof FieldCriterion){
+			if (c instanceof JunctionCriterion){
+				
+			} else if (c instanceof FieldCriterion){
 				FieldCriterion fc = (FieldCriterion)c;
-				fc.valueHolder().setDataType(model.fieldModel(fc.getFieldName()).getDataType());
+				DataType dataType = model.fieldModel(fc.getFieldName()).getDataType();
+				fc.valueHolder().setDataType(dataType);
 				return fc;
 			}
 
@@ -219,9 +234,9 @@ public abstract class DataBaseDialect {
 		}
 	}
 
-	public <T> DataBaseCommand createDeleteCommand(Criteria<T> criteria, StorableEntityModel model){
+	public <T> DataBaseCommand createDeleteCommand(Criteria<T> criteria, StorableModelReader reader ){
 
-		return newCriteriaInterpreter(merge(criteria,model), model).translateDelete();
+		return newCriteriaInterpreter(merge(criteria,reader.read(criteria.getTargetClass())), reader).translateDelete();
 
 	}
 
@@ -234,9 +249,11 @@ public abstract class DataBaseDialect {
 		List<StorableFieldModel> fields = new ArrayList<StorableFieldModel>();
 
 		for ( StorableFieldModel fm : model.fields()){
-			this.writeEditionHardname(sql, fm.getHardName());
-			sql.append("=? ,");
-			fields.add(fm);
+			if( !fm.isTransient() && !fm.getDataType().isToManyReference()){
+				this.writeEditionHardname(sql, fm.getHardName());
+				sql.append("=? ,");
+				fields.add(fm);
+			}
 		}
 
 		sql.delete(sql.length()-1, sql.length());
@@ -250,8 +267,8 @@ public abstract class DataBaseDialect {
 		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
 
-	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,StorableEntityModel model) {
-		return new CriteriaInterpreter(this, criteria, model);
+	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,StorableModelReader reader) {
+		return new CriteriaInterpreter(this, criteria, reader);
 
 	}
 
@@ -280,33 +297,41 @@ public abstract class DataBaseDialect {
 			}
 			DataBaseModel dbm = new DataBaseModel();
 
+
 			ResultSet tables = md.getTables(catalog , null,null,null);
 			while (tables.next()) {
-				if ( tables.getString(4).equals("TABLE")){
+				if ("TABLE".equals(tables.getString(4))){
 					TableModel tm = new TableModel(tables.getString(3));
 
 					ResultSet columns = md.getColumns(catalog, null, tm.getName(), null);
-					while (columns.next()) {
+					try{
+						while (columns.next()) {
 
-						DataType type = this.typeFromNative(columns.getInt(5));
-						ColumnModel col = new ColumnModel(columns.getString(4), type);
-						if (type.isTextual()){
-							col.setSize(columns.getInt(7));
-						}
-						if (type.isDecimal()){
-							col.setPrecision((columns.getInt(7)));
-							col.setSize(columns.getInt(9));
+							DataType type = this.typeFromNative(columns.getInt(5));
+							ColumnModel col = new ColumnModel(columns.getString(4), type);
+							if (type.isTextual()){
+								col.setSize(columns.getInt(7));
+							}
+							if (type.isDecimal()){
+								col.setPrecision((columns.getInt(7)));
+								col.setSize(columns.getInt(9));
+							}
+
+							col.setNullable("YES".equals(columns.getString(18)));
+							tm.addColumn(col);
 						}
 
-						col.setNullable(columns.getString(18).equals("YES"));
-						tm.addColumn(col);
+					} finally {
+						columns.close();
 					}
-
 					dbm.addDataBaseObjectModel(tm);
+				} else if ("SEQUENCE".equals(tables.getString(4))){
+					dbm.addDataBaseObjectModel(new SequenceModel(tables.getString(3),1,1));
 				}
 			}
 
 			tables.close();
+
 			return dbm;
 		} catch (SQLException e) {
 			throw this.handleSQLException(e);
@@ -382,6 +407,23 @@ public abstract class DataBaseDialect {
 		.append(" ON ").append(cm.getTableModel().getName());
 
 		return new SQLEditCommand(this,sql.toString());
+	}
+
+	public void writeJoinTableHardname(StringBuilder joinClause, String hardNameForEntity) {
+		joinClause.append(startDelimiter())
+		.append(hardNameForEntity)
+		.append(endDelimiter());
+	}
+
+
+	public void writeJoinField(StringBuilder joinClause, String alias ,String fieldName) {
+		joinClause.append(startDelimiter())
+		.append(alias)
+		.append(endDelimiter())
+		.append(fieldSeparator())
+		.append(startDelimiter())
+		.append(fieldName)
+		.append(endDelimiter());
 	}
 
 

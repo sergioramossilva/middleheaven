@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.middleheaven.storage.StorableEntityModel;
 
 public class SQLEditCommand implements EditionDataBaseCommand {
 
@@ -18,9 +17,9 @@ public class SQLEditCommand implements EditionDataBaseCommand {
 	}
 	
 	@Override
-	public boolean execute(DataBaseStorage keeper, Connection con, StorableEntityModel model) throws SQLException {
+	public boolean execute(DataBaseStorage storage, Connection connection) throws SQLException {
 		
-		PreparedStatement ps = con.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
+		PreparedStatement ps = connection.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
 		return ps.executeUpdate()>0;
 	}
 	

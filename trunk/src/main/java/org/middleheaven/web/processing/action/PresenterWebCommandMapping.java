@@ -156,9 +156,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		return false;
 	}
 
-	public void addInterceptor(Interceptor interceptor) {
-		interceptors.add(interceptor);
-	}
+
 
 	public void addOutcome(String action, Outcome outcome){
 		Map<OutcomeStatus, Outcome> actionOutcome = this.outcomes.get(action);
@@ -203,7 +201,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		Method actionMethod=null;
 		String action = null;
 		try {
-			// Determine action using different stategies
+			// Determine action using different strategies
 
 			// try the name match from url
 			String actionNameFromURL = context.getAttribute(ContextScope.REQUEST, "action", String.class);
@@ -329,7 +327,6 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 			TypeConvertions.addConverter(String.class, Date.class, new StringDateConverter(formatter));
 			TypeConvertions.addConverter(String.class, CalendarDateTime.class, new StringCalendarDateTimeConverter(formatter));
 
-			T object = null;
 			
 			String name = "";
 			ContextScope inScope =null;
@@ -343,10 +340,12 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				return context.getAttribute(inScope, name, type);
 
 			} else {
-				if (isPrimitive(object)){
-					throw new IllegalArgumentException("Use @In for instanceof " + object.getClass());
+				if (isPrimitive(type)){
+					throw new IllegalArgumentException("Use @In for instances of " + type);
 				}
 
+				T object = null;
+				
 				// search in the contexts in reverse order to find an object of class type
 				ContextScope[] scopes = new ContextScope[]{
 						ContextScope.APPLICATION,
@@ -373,8 +372,10 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 							context,
 							ContextScope.PARAMETERS).assemble(type);
 				}
+				
+				return object;
 			}
-			return object;
+		
 		} finally {
 			TypeConvertions.removeConverter(String.class, Date.class);
 			TypeConvertions.removeConverter(String.class, CalendarDateTime.class);
@@ -385,12 +386,17 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 	}
 
-	private boolean isPrimitive(Object obj){
-		return obj!=null && (obj.getClass().isPrimitive() || 
-				obj instanceof String || 
-				obj instanceof Date || 
-				obj instanceof Number);
+	private boolean isPrimitive(Class<?> type){
+		return type.isPrimitive() || 
+		String.class.isAssignableFrom(type) || 
+		Date.class.isAssignableFrom(type)|| 
+		Number.class.isAssignableFrom(type);
 	}
+
+	void addInterceptor(Interceptor interceptor) {
+		this.interceptors.add(interceptor);
+	}
+
 
 
 

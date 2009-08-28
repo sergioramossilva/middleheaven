@@ -1,25 +1,21 @@
 package org.middleheaven.web;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.middleheaven.application.ApplicationContext;
 import org.middleheaven.application.ApplicationID;
 import org.middleheaven.web.processing.HttpServerService;
 import org.middleheaven.web.processing.UrlMapping;
 import org.middleheaven.web.processing.action.ActionBasedProcessor;
-import org.middleheaven.web.processing.action.Interceptor;
+import org.middleheaven.web.processing.action.BuildableWebCommandMappingService;
 import org.middleheaven.web.processing.action.PresenterCommandMappingBuilder;
 import org.middleheaven.web.processing.action.URLMappingBuilder;
-import org.middleheaven.web.processing.action.WebCommandMapping;
-import org.middleheaven.web.processing.action.WebCommandMappingService;
 
 /**
  * Represent an action based application running the the web container.
  */
 public abstract class WebActionApplicationModule  extends WebApplicationModule{
 
-	private final List<WebCommandMapping> mappings = new CopyOnWriteArrayList<WebCommandMapping>();
+
+	private BuildableWebCommandMappingService mappingService  = new BuildableWebCommandMappingService();
 
 	public WebActionApplicationModule(ApplicationID applicationID) {
 		super(applicationID);
@@ -44,25 +40,21 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 	}
 	
 	
-	public WebCommandMappingService getMappingService() {
-		return mappingService;
+	public BuildableWebCommandMappingService getBuildableMappingService() {
+		return mappingService  ;
 	}
 
-	public void setMappingService(WebCommandMappingService mappingService) {
+	public void setBuildableMappingService(BuildableWebCommandMappingService mappingService) {
 		this.mappingService = mappingService;
 	}
 	
 	/**
-	 * Maps all requests directed to the specified internal URL to be handle by the specified presenter class
-	 * @param url
+	 * utility method
 	 * @param presenter
 	 * @return
 	 */
-	public <P> PresenterCommandMappingBuilder map(Class<P> presenter){
-		
-		PresenterCommandMappingBuilder builder = PresenterCommandMappingBuilder.map(presenter);
-		this.mappings.add(builder.getMapping());
-		return builder;
+	public PresenterCommandMappingBuilder map(Class<?> presenter){
+		return this.mappingService.map(presenter);
 	}
 	
 	protected void setDefaults(URLMappingBuilder builder ,String url ){
@@ -87,25 +79,5 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 	
 	protected abstract void configurate(ApplicationContext context);
 	
-	
-	private WebCommandMappingService mappingService = new WebCommandMappingService(){
-
-		@Override
-		public void addInterceptor(Interceptor interceptor, CharSequence url) {
-			// TODO implement .addInterceptor
-			
-		}
-
-		@Override
-		public WebCommandMapping resolve(CharSequence url) {
-			for (WebCommandMapping m : mappings){
-				if (m.matches(url)){
-					return m;
-				}
-			}
-			return null;
-		}
-		
-	};
 	
 }

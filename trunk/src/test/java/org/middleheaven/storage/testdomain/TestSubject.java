@@ -31,6 +31,8 @@ public class TestSubject {
 	
 	@Column("aniversario")
 	private Date birthdate;
+
+	private int number;
 	
 	public Identity getIdentity() {
 		return identity;
@@ -75,5 +77,13 @@ public class TestSubject {
 		if (member.getParent().equals(this)){
 			this.familly.remove(member);
 		}
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+	
+	public int getNumber() {
+		return this.number;
 	}
 }

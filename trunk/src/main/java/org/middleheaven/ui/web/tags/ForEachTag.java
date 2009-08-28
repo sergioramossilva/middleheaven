@@ -11,7 +11,12 @@ public class ForEachTag extends AbstractBodyTagSupport {
 
 	private Iterator<?> iterator;
 	private String varName = "item"; 
-
+	private int first = 0;
+	
+	public void setFirst(int first){
+		this.first = first;
+	}
+	
 	public void setVar(String varName){
 		this.varName = varName;
 	}
@@ -21,8 +26,14 @@ public class ForEachTag extends AbstractBodyTagSupport {
 	}
 	
 	public int doStartTag() throws JspException{
-		
+	
 		if (iterator!=null && iterator.hasNext()){
+			
+			// bias iteration
+			for (int i=0; i < first && iterator.hasNext(); i++){
+				iterator.next();
+			}
+			
 			return EVAL_BODY_BUFFERED;
 		}
 		return SKIP_BODY;

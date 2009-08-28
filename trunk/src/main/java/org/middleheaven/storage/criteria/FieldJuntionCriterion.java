@@ -1,10 +1,9 @@
 package org.middleheaven.storage.criteria;
 
 import org.middleheaven.storage.QualifiedName;
-import org.middleheaven.storage.StorableEntityModel;
 
 
-public class FieldJuntionCriterion implements JuntionCriterion {
+public class FieldJuntionCriterion implements JunctionCriterion {
 
 	QualifiedName fieldName;
 	Class<?> targetType;
@@ -21,12 +20,14 @@ public class FieldJuntionCriterion implements JuntionCriterion {
 		this.targetType = targetType;
 		this.sourceType = sourceType;
 	}
-
-	public void setSubCriteria(Criteria subCriteria){
+	
+	@Override
+	public void setSubCriteria(Criteria<?> subCriteria){
 		this.subCriteria = subCriteria;
 	}
-
-	public Criteria getSubCriteria(){
+	
+	@Override
+	public Criteria<?> getSubCriteria(){
 		return this.subCriteria;
 	}
 
@@ -45,19 +46,20 @@ public class FieldJuntionCriterion implements JuntionCriterion {
 		return null;
 	}
 
+	@Override
 	public void setAlias(String targetAlias) {
 		this.alias = targetAlias;
 	}
 
-
+	@Override
 	public String getAlias() {
 		return alias;
 	}
-	
+	@Override
 	public Class<?> getTargetType() {
 		return this.targetType;
 	}
-	
+	@Override
 	public Class<?> getSourceType() {
 		return this.sourceType;
 	}

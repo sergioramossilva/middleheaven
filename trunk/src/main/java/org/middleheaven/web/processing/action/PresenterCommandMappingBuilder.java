@@ -5,12 +5,14 @@ import org.middleheaven.web.processing.Outcome;
 
 public class PresenterCommandMappingBuilder {
 
+	
 	public static PresenterCommandMappingBuilder map(Class<?> presenterClass){
 		return new PresenterCommandMappingBuilder(presenterClass);
 	}
 	
-	private PresenterWebCommandMapping mapping;
 	
+	private PresenterWebCommandMapping mapping;
+
 	private PresenterCommandMappingBuilder (Class<?> presenterClass){
 		this.mapping = new PresenterWebCommandMapping(presenterClass);
 	}

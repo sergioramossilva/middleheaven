@@ -14,17 +14,16 @@ import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.SimpleExecutableQuery;
 import org.middleheaven.storage.Storable;
-import org.middleheaven.storage.StorableEntityModel;
-import org.middleheaven.storage.WrappStorableReader;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaFilter;
+import org.middleheaven.storage.db.StoreQuerySession;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
 
 public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 
 	public InMemoryStorage() {
-		super(new WrappStorableReader());
+		super(null);
 	}
 
 	// Map<entity_name , Map<identity, Storable>
@@ -81,8 +80,8 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 	};
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
-		return new SimpleExecutableQuery<T>(criteria, model, queryExecuter);
+	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+		return new SimpleExecutableQuery<T>(criteria, null, queryExecuter);
 	}
 
 	@Override
@@ -95,22 +94,15 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 	}
 
 	@Override
-	public void insert(Collection<Storable> collection,StorableEntityModel model) {
+	public void insert(Collection<Storable> collection) {
 		this.setBulkData(collection);
 
 
 	}
 
-	@Override
-	public void remove(Collection<Storable> collection,StorableEntityModel model) {
-		if (!collection.isEmpty()){
-			Storable s = collection.iterator().next();
-			this.getBulkData(s.getPersistableClass().getName()).removeAll(collection);
-		}
-	}
 
 	@Override
-	public void update(Collection<Storable> collection,StorableEntityModel model) {
+	public void update(Collection<Storable> collection) {
 		if (!collection.isEmpty()){
 			Storable s = collection.iterator().next();
 			this.getBulkData(s.getPersistableClass().getName()).removeAll(collection);
@@ -118,14 +110,21 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 		}
 	}
 
+	@SuppressWarnings("unchecked") // all objects in collection are Storable
 	@Override
-	public void remove(Criteria<?> criteria, StorableEntityModel model) {
-		Query all = this.createQuery(criteria, model, null);
+	public void remove(Criteria<?> criteria) {
+		Query all = this.createQuery(criteria, null);
 
-		this.remove(all.findAll(), model);
+		this.remove(all.findAll());
 	}
 
-
+	@Override
+	public void remove(Collection<Storable> collection) {
+		if (!collection.isEmpty()){
+			Storable s = collection.iterator().next();
+			this.getBulkData(s.getPersistableClass().getName()).removeAll(collection);
+		}
+	}
 
 
 

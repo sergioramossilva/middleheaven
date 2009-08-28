@@ -86,5 +86,10 @@ public final class EditableEntityModel implements EntityModel {
 		return this.identityType;
 	}
 
+	@Override
+	public String toString() {
+		return "EditableEntityModel [type=" + type + "]";
+	}
+
 
 }

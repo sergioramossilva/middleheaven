@@ -3,12 +3,15 @@ package org.middleheaven.storage.db;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.middleheaven.storage.StorableEntityModel;
 
 public interface DataBaseCommand {
 
+	/**
+	 * 
+	 * @return dialect object that created this command
+	 */
 	public DataBaseDialect getDialect();
 	
-	public boolean execute(DataBaseStorage keeper,Connection con, StorableEntityModel model)  throws SQLException;
+	public boolean execute(DataBaseStorage storage, Connection connection)  throws SQLException;
 
 }

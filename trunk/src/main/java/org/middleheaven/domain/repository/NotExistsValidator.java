@@ -17,7 +17,7 @@ public class NotExistsValidator<T> implements org.middleheaven.validation.Valida
 	@Override
 	public void validate(ValidationContext context, T object) {
 
-		Query<T> query = repository.findSame(object);
+		Query<T> query = repository.findIdentical(object);
 
 		if (!query.isEmpty()) {
 			context.add(MessageInvalidationReason.error("invalid.instance.exists"));

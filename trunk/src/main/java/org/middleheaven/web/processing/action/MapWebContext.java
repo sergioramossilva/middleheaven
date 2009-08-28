@@ -1,6 +1,7 @@
 package org.middleheaven.web.processing.action;
 
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Map;

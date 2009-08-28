@@ -4,21 +4,24 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
-import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.FieldValueHolder;
 import org.middleheaven.storage.db.ColumnModel;
+import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.CriteriaInterpreter;
 import org.middleheaven.storage.db.DataBaseDialect;
 import org.middleheaven.storage.db.DataBaseModel;
+import org.middleheaven.storage.db.DataBaseObjectModel;
+import org.middleheaven.storage.db.DataBaseObjectType;
 import org.middleheaven.storage.db.EditionDataBaseCommand;
 import org.middleheaven.storage.db.RetriveDataBaseCommand;
 import org.middleheaven.storage.db.SQLEditCommand;
@@ -55,11 +58,44 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	}
 	// end stored procedures
 	
+	@Override
 	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,
-			StorableEntityModel model) {
+			StorableModelReader model) {
 		return new HSQLCriteriaInterpreter(this, criteria, model);
 	}
+		
+	@Override
+	public StorageException handleSQLException(SQLException e) {
+		if (e.getMessage().startsWith("Table already exists")){
+			return new TableAlreadyExistsException();
+		}
+		return new StorageException(e);
+	}
+	
+	public void updateDatabaseModel(DataBaseModel model){
 
+		List<SequenceModel> sequences = new LinkedList<SequenceModel>();
+		
+		for (DataBaseObjectModel table : model){
+			if(table.getType().equals(DataBaseObjectType.TABLE)){
+				sequences.add(new SequenceModel(table.getName() , 0,1));
+			}
+		}
+		
+		for (SequenceModel seq : sequences){
+			model.addDataBaseObjectModel(seq);
+		}
+	}
+	
+	public void writeJoinTableHardname(StringBuilder joinClause, String hardNameForEntity) {
+		joinClause.append(hardNameForEntity);
+	}
+
+
+	public void writeJoinField(StringBuilder joinClause, String alias ,String fieldName) {
+		joinClause.append(alias).append(fieldSeparator()).append(fieldName);
+	}
+	
 	@Override
 	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel sequence) {
 
@@ -71,44 +107,51 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 
 		return new SQLEditCommand(this,sql.toString());
 	}
-	
+
 	@Override
-	public StorageException handleSQLException(SQLException e) {
-		if (e.getMessage().startsWith("Table already exists")){
-			return new TableAlreadyExistsException();
-		}
-		return new StorageException(e);
-	}
-
 	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
-
 		if (!hardname.getName().isEmpty()){
 			buffer.append(hardname.getName().toLowerCase());
 		}
 	}
-
 	
-
+	@Override
+	public void writeEnclosureHardname(StringBuilder buffer , String hardname){
+		buffer.append(hardname);
+	}
+	
+	@Override
 	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
-		buffer.append(hardname.getName().toLowerCase());
+		if (hardname.isAlias()){
+			buffer.append(hardname.getQualifier().toLowerCase())
+			.append(fieldSeparator())
+			.append(hardname.getName().toLowerCase());
+		} else {
+			buffer.append(hardname.getName().toLowerCase());
+		}
 	}
 
 
 	private static class HSQLCriteriaInterpreter extends CriteriaInterpreter{
 
 		public HSQLCriteriaInterpreter(DataBaseDialect dataBaseDialect,
-				Criteria<?> criteria, StorableEntityModel model) {
-			super(dataBaseDialect, criteria, model);
+				Criteria<?> criteria, StorableModelReader reader) {
+			super(dataBaseDialect, criteria, reader);
 		}
 		
-		protected void writeFromClause(StringBuilder queryBuffer){
+		@Override
+		protected void writeFromClause(String alias , StringBuilder queryBuffer){
 
 			// FROM ClAUSE
 			queryBuffer.append(" FROM ");
 			queryBuffer.append(model().getEntityHardName().toLowerCase());
 
-
+			if (alias!=null){
+				queryBuffer.append(" AS ") 
+				.append(alias);
+			}
 		}
+		
 		
 		protected void writeStartLimitClause(StringBuilder selectBuffer){
 			if (criteria().isDistinct()){
@@ -125,31 +168,17 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 				
 			}
 		}
-		/*
-		protected void writeEndLimitClause(StringBuilder selectBuffer){
-			if (criteria().getCount()>0){
-				int offset = 0;
-				if (criteria().getStart()>1){
-					offset = criteria().getStart()-1;
-				} 
-				
-				selectBuffer.append(" LIMIT ").append(offset).append(" ").append(criteria().getCount());
-				
-			}
-		}
-		*/
-		
 	}
 	
 
 	@Override
 	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
-		final Collection<FieldValueHolder> none = Collections.emptySet();
 		return new SQLRetriveCommand( this,
 				new StringBuilder("SELECT NEXT VALUE FOR ")
 				.append(sequenceName)
+				.append(" FROM INFORMATION_SCHEMA.SYSTEM_SEQUENCES")
 				.toString(),
-				none
+				Collections.<ColumnValueHolder>emptySet()
 		);
 	}
 
@@ -197,8 +226,14 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		case TEXT:
 			sql.append("varchar (").append(column.getSize()).append(")");
 			break;
+		case MEMO:
+			sql.append("varchar");
+			break;
 		case INTEGER:
+			sql.append("bigint");
+			break;
 		case LOGIC:
+		case ENUM:
 			sql.append("int");
 			break;
 		case DECIMAL:
@@ -251,6 +286,16 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 
 			tables.close();
 
+			PreparedStatement psSequences = con.prepareStatement("SELECT  sequence_name , start_with , increment  FROM INFORMATION_SCHEMA.SYSTEM_SEQUENCES WHERE SEQUENCE_SCHEMA = 'PUBLIC'");
+			
+			ResultSet sequences = psSequences.executeQuery();
+			while (sequences.next()) {
+				SequenceModel sm = new SequenceModel(sequences.getString(1) , sequences.getInt(2), sequences.getInt(3));
+				dbm.addDataBaseObjectModel(sm);
+			}
+			
+			psSequences.close();
+			
 			return dbm;
 		} catch (SQLException e) {
 			throw this.handleSQLException(e);

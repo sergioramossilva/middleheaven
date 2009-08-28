@@ -17,7 +17,7 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 
 
 	private static final long serialVersionUID = 6060765610996634126L;
-	
+
 	private final LogicOperator operator;
 	protected final LinkedList<Criterion> criteria;
 
@@ -44,7 +44,7 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 
 	private void addCriterion(Criterion c){
 
-		if (c instanceof JuntionCriterion){
+		if (c instanceof JunctionCriterion){
 			// put JuntionRestriction on top of the list
 			// but respect order of insertion of Criterion
 
@@ -53,7 +53,7 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 			// and insert before it
 			for (ListIterator<Criterion> it = criteria.listIterator();it.hasNext();){
 				Object o = it.next();
-				if (!(o instanceof JuntionCriterion)){
+				if (!(o instanceof JunctionCriterion)){
 					it.previous();
 					it.add(c);
 					return;
@@ -67,6 +67,27 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 		} else {
 			criteria.addLast(c);
 		}
+
+	}
+
+	public LogicCriterion reduce() {
+		LogicCriterion lc = new LogicCriterion(this);
+
+		if (lc.criteria.size() <= 1){
+			return lc;
+		} 
+
+		// 2 or more
+		Set<Criterion> set = new LinkedHashSet<Criterion>();
+		for ( Criterion c  : this.criteria){
+			if (!c.isEmpty()){
+				set.add(c);
+			} 
+		}
+
+		lc.criteria.clear();
+		lc.criteria.addAll(set);
+		return lc;
 
 	}
 
@@ -116,7 +137,7 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 		return addSimpleCriterion(a,LogicOperator.and());
 
 	}
-	
+
 	public BooleanCriterion or(LogicCriterion a){
 		return addComposedCriterion(a,LogicOperator.or());
 	}
@@ -129,7 +150,7 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 		return addSimpleCriterion(a,LogicOperator.or());
 
 	}
-	
+
 	public LogicCriterion add(Criterion criterion){
 		if (!criterion.isEmpty()){
 			addCriterion(criterion);
@@ -161,7 +182,7 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 			}
 		}
 
-		
+
 		return  new LogicCriterion(op).add(this).add(a);
 
 	}
@@ -190,27 +211,29 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 		return Collections.unmodifiableList(criteria);
 	}
 
-	 public String toString(){
-		 StringBuffer buffer = new StringBuffer("(");
-		 for (int i=0;i<criteria.size();i++){
-			 buffer.append(criteria.get(i).toString());
-			 buffer.append(" ");
-			 if (i!=criteria.size()-1){
-				 buffer.append(operator.toString());
-				 buffer.append(" ");
-			 }
-		 }
-		 return buffer.append(")").toString();
-	 }
+	public String toString(){
+		StringBuffer buffer = new StringBuffer("(");
+		for (int i=0;i<criteria.size();i++){
+			buffer.append(criteria.get(i).toString());
+			buffer.append(" ");
+			if (i!=criteria.size()-1){
+				buffer.append(operator.toString());
+				buffer.append(" ");
+			}
+		}
+		return buffer.append(")").toString();
+	}
 
-	 public boolean isEmpty() {
-		 return this.criteria.isEmpty();
-	 }
+	public boolean isEmpty() {
+		return this.criteria.isEmpty();
+	}
 
 	@Override
 	public Iterator<Criterion> iterator() {
 		return criteria.iterator();
 	}
+
+
 
 
 

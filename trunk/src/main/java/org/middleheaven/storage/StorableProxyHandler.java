@@ -14,13 +14,14 @@ import org.middleheaven.util.identity.Identity;
 
 public class StorableProxyHandler implements ProxyHandler  {
 
-	
+
 	private Identity identity;
 	private StorableState state = StorableState.FILLED;
 	Class<?> originalType;
-	
+
     StorableProxyHandler(Class<?> original){
 		this.originalType = original;
+		
 	}
 	
 	@Override
@@ -48,7 +49,7 @@ public class StorableProxyHandler implements ProxyHandler  {
 				removeFieldElement(self, (StorableFieldModel)args[0],args[1]);
 						
 				return null;
-			}else {
+			} else {
 				Method method = Introspector.of(originalType).inspect().methods().named(methodName)
 								.withParametersType(delegator.getInvoked()
 										.getParameterTypes()).retrive();
@@ -157,6 +158,11 @@ public class StorableProxyHandler implements ProxyHandler  {
 		}
 	}
 
+	
+	public String toString(){
+		return this.originalType.getName()  + "#" + identity;
+	}
+	
 	public Identity getIdentity() {
 		return identity;
 	}
@@ -174,15 +180,13 @@ public class StorableProxyHandler implements ProxyHandler  {
 	}
 
 
-	public StorableState getPersistableState() {
+	public StorableState getStorableState() {
 		return state;
 	}
 
-	public void setPersistableState(StorableState state) {
+	public void setStorableState(StorableState state) {
 		this.state = state;
 	}
 
-
-	
 
 }

@@ -13,22 +13,20 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-
 import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractSequencialIdentityStorage;
-import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
+import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.WrappStorableReader;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.datasource.DataSourceProvider;
@@ -45,10 +43,6 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 	private DataBaseDialect dialect;
 	private DataSource datasource;
-
-	public DataBaseStorage(DataSourceProvider provider){
-		this(provider, new WrappStorableReader());
-	}
 
 	public DataBaseStorage(DataSourceProvider provider, StorableModelReader reader){
 		super(reader);
@@ -67,11 +61,12 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		return this;
 	}
 
-
 	Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
 
 	@Override
 	public <I extends Identity> Sequence<I> getSequence(String name) {
+
+		StoreQuerySession session =  StoreQuerySession.getInstance(this);
 
 		IdentitySequence iseq = sequences.get(name);
 		if (iseq==null){
@@ -81,34 +76,33 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		}
 		return iseq;
 
+
 	}
 
 	class DBStorageQuery<T> implements Query<T>{
 		Criteria<T> criteria;
-		StorableEntityModel model;
 		private ReadStrategy hints;
 
-		public DBStorageQuery(Criteria<T> criteria, StorableEntityModel model, ReadStrategy hints) {
+		public DBStorageQuery(Criteria<T> criteria,  ReadStrategy hints) {
 			super();
 			this.criteria = criteria;
-			this.model = model;
 			this.hints = hints;
 		}
 
 		@Override
 		public long count() {
-			return countByCriteria(criteria.duplicate(), model);
+			return countByCriteria(criteria.duplicate());
 		}
 
 		@Override
 		public T find() {
-			Collection<T> list = findByCriteria(criteria.duplicate(),model,hints);
+			Collection<T> list = findByCriteria(criteria.duplicate().setRange(1, 1),hints);
 			return list.isEmpty() ? null : list.iterator().next();
 		}
 
 		@Override
 		public Collection<T> findAll() {
-			return findByCriteria(criteria.duplicate(),model,hints);
+			return findByCriteria(criteria.duplicate(),hints);
 		}
 
 		@Override
@@ -121,20 +115,21 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 			Criteria<T> rangeCriteria = this.criteria.duplicate();
 			rangeCriteria.setRange(startAt, maxCount);
 
-			return new DBStorageQuery<T>( rangeCriteria, this.model, hints);
+			return new DBStorageQuery<T>( rangeCriteria, hints);
 		}
 
 	} 
 
-	<T> long countByCriteria(Criteria<T> criteria,StorableEntityModel model){
+	<T> long countByCriteria(Criteria<T> criteria ){
 
-		Connection con =null;
+		Connection con = null;
 		try {
 			con = this.datasource.getConnection();
+
 			criteria.setCountOnly(true);
-			RetriveDataBaseCommand command = dialect.createSelectCommand(criteria, model);
+			RetriveDataBaseCommand command = dialect.createSelectCommand(criteria, reader());
 			Logging.getBook("SQL").trace(command.toString());
-			command.execute(this,con, model);
+			command.execute(this, con);
 			ResultSet rs = command.getResult();
 
 			try{
@@ -149,24 +144,35 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		} catch (SQLException e){
 			throw dialect.handleSQLException(e);
 		} finally {
-			try {
-				con.close();
-			} catch (SQLException e) {
-				throw dialect.handleSQLException(e);
-			}
+			close(con);
 		}
 	}
 
-	<T> Collection<T> findByCriteria(Criteria<T> criteria,StorableEntityModel model, ReadStrategy hints){
+	private void close(Connection con){
+		try{
+			if (con != null ){
+				con.close();
+			}
+		} catch (SQLException e){
+			throw dialect.handleSQLException(e);
+		}
+	} 
 
-		Connection con =null;
+	<T> Collection<T> findByCriteria(Criteria<T> criteria,ReadStrategy hints){
+
+		StoreQuerySession session = StoreQuerySession.getInstance(this);
+
 		ResultSet rs= null;
+		Connection con = null;
 		try {
+			session.open();
 			con = this.datasource.getConnection();
+
 			criteria.setCountOnly(false);
-			RetriveDataBaseCommand command = dialect.createSelectCommand(criteria, model);
+			RetriveDataBaseCommand command = dialect.createSelectCommand(criteria, reader());
 			Logging.getBook("SQL").trace(command.toString());
-			command.execute(this,con, model);
+
+			command.execute(this, con);
 			rs = command.getResult();
 
 			// if dialect does not support offset
@@ -180,39 +186,34 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 			}
 
 		} catch (SQLException e){
-			try {
-				if (con!=null){
-					con.close();
-				}
-			} catch (SQLException e2) {
-				Logging.error("Error closing connection after exception",e2);
-			}
+			close(con);
 			throw dialect.handleSQLException(e);
 		} 
 
+		StorableEntityModel model =  reader().read(criteria.getTargetClass());
 		if (hints!=null && hints.isFowardOnly() && hints.isReadOnly()){
 			// fastlane
 			long count;
 			if (criteria.getCount()>=0){
 				count = criteria.getCount();
 			} else {
-				count =  countByCriteria(criteria,model);
+				count =  countByCriteria(criteria);
 			}
 			return new FastlaneCollection<T>(count, rs, con , model , this);
 		} else {
 
 			try{
 				// load all objects onto a list
-				
+
 				ResultSetStorable s = new ResultSetStorable(rs,model);
 				if (dialect.supportsCountLimit()){
 					LinkedList<T> list = new LinkedList<T>();
 					while (rs.next()){
 
 						T t = (T)merge(criteria.getTargetClass().cast(model.newInstance()));
-						this.copy(s, (Storable)t, model);
-						((Storable)t).setStorableState(StorableState.RETRIVED);
-						list.addLast(t);
+						Storable st = this.copy(s, (Storable)t, model, session);
+						st.setStorableState(StorableState.RETRIVED);
+						list.addLast((T)st);
 
 					}
 					return list;
@@ -222,12 +223,12 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					while (rs.next() && count < criteria.getCount()){
 
 						T t = (T)merge(criteria.getTargetClass().cast(model.newInstance()));
-						this.copy(s, (Storable)t, model);
-						((Storable)t).setStorableState(StorableState.RETRIVED);
-
-						list.add(t);
-						count++;
+						Storable st = this.copy(s, (Storable)t, model, session);
+						st.setStorableState(StorableState.RETRIVED);
+						list.add((T)st);
 						
+						count++;
+
 					}
 					return list;
 				}
@@ -236,94 +237,106 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 			} finally {
 				try {
 					rs.close();
-					if (con!=null){
-						con.close();
-					}
+					session.close();
 				} catch (SQLException e) {
 					throw dialect.handleSQLException(e);
 				}
 			}
 
 		}
-
-
 	}
 
-	protected void copyStorable(Storable from, Storable to,StorableEntityModel model) {
-		super.copy(from, to, model);
-	}
-
-	
-	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria,StorableEntityModel model, ReadStrategy strategy) {
-
-		return new DBStorageQuery<T>(dialect.merge(criteria,model),model,strategy);
-
-	}
-
-	@Override
-	public void insert(Collection<Storable> collection, StorableEntityModel model) {
-		if (collection.isEmpty()){
-			return;
-		}
-		executeCommand(dialect.createInsertCommand(collection,model), model );
-
-	}
-
-	@Override
-	public void remove(Collection<Storable> collection , StorableEntityModel model) {
-		if (collection.isEmpty()){
-			return;
-		}
-		List<Identity> keys = new ArrayList<Identity>(collection.size());
-		Storable s=null;
-		for (Iterator<Storable> it = collection.iterator();it.hasNext();){
-			s = it.next();
-			keys.add(s.getIdentity());
+	protected Storable copyStorable(Storable from, Storable to,StorableEntityModel model) {	
+		StoreQuerySession session = StoreQuerySession.getInstance(this);
+		try{
+			session.open();
+			return super.copy(from, to, model,session);
+		} finally{
+			session.close();
 		}
 
-		Criteria<?> c = CriteriaBuilder.search(s.getPersistableClass())
-		.and(model.identityFieldModel().getHardName().getName()).in(keys)
-		.all();
+	}
 
-		executeCommand(dialect.createDeleteCommand(c , model), model );
+
+	@Override
+	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+
+		StorableEntityModel model = this.reader().read(criteria.getTargetClass());
+		return new DBStorageQuery<T>(dialect.merge(criteria,model ),strategy);
 
 	}
 
-	@Override
-	public void remove(Criteria<?> criteria, StorableEntityModel model) {
-		executeCommand(dialect.createDeleteCommand(criteria, model), model );
 
-	}
+
+
+
 
 	@Override
-	public void update(Collection<Storable> collection, StorableEntityModel model) {
-		if (collection.isEmpty()){
-			return;
+	public void insert(Collection<Storable> collection) {
+
+		StorableEntityModel model = this.resolveModel(collection);
+		if (model != null){
+			executeCommand(dialect.createInsertCommand(collection,model) );
 		}
 
-		executeCommand(dialect.createUpdateCommand(collection , model), model );
+	}
+
+	@Override
+	public void remove(Collection<Storable> collection) {
+
+		StorableEntityModel model = this.resolveModel(collection);
+		if (model != null){
+
+
+			List<Identity> keys = new ArrayList<Identity>(collection.size());
+			Storable s=null;
+			for (Iterator<Storable> it = collection.iterator();it.hasNext();){
+				s = it.next();
+				keys.add(s.getIdentity());
+			}
+
+			Criteria<?> c = CriteriaBuilder.search(s.getPersistableClass())
+			.and(model.identityFieldModel().getHardName().getName()).in(keys)
+			.all();
+
+			executeCommand(dialect.createDeleteCommand(c , reader()) );
+		}
+	}
+
+	@Override
+	public void remove(Criteria<?> criteria) {
+		StorableEntityModel model = reader().read(criteria.getTargetClass());
+		if (model != null){
+			executeCommand(dialect.createDeleteCommand(criteria, reader()) );
+		}
 
 	}
 
-	private void executeCommand (DataBaseCommand command,StorableEntityModel model){
-		Connection con =null;
+	@Override
+	public void update(Collection<Storable> collection) {
+
+		StorableEntityModel model = this.resolveModel(collection);
+		if (model != null){
+			executeCommand(dialect.createUpdateCommand(collection , model) );
+		}
+	}
+
+	private void executeCommand (DataBaseCommand command){
+
+		Connection con = null;
 		try {
 			con = this.datasource.getConnection();
 
-			command.execute(this,con, model);
-
+			command.execute(this, con);
 
 		} catch (SQLException e){
 			throw dialect.handleSQLException(e);
 		} finally {
-			try {
-				con.close();
-			} catch (SQLException e) {
-				throw dialect.handleSQLException(e);
-			}
+			close(con);
 		}
 	}
+
+
 
 	/**
 	 * Used the DomainModel to create Tables and Indexes in the DataBase.
@@ -335,7 +348,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		DataBaseModel dbModel = new DataBaseModel();
 
 		for (EntityModel em : allEntities ){
-			dbModel.addDataBaseObjectModel(tableModelFor(this.storableModelOf(em)));
+			dbModel.addDataBaseObjectModel(tableModelFor(reader().read(em.getEntityClass())));
 		}
 
 		dialect.updateDatabaseModel(dbModel);
@@ -351,7 +364,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		if (column != null){
 			model.addColumn( column);
 		}
-		
+
 		for (StorableFieldModel fm : em.fields()){
 			column = columnModelFor(fm);
 			if (column != null){
@@ -384,7 +397,8 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 				if(size != null){
 					column.setSize(Integer.parseInt(size));
 				} else {
-					column.setSize(50);
+					column.setSize(0);
+					column.setType(DataType.MEMO);
 				}
 			} 
 		}
@@ -407,7 +421,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					// alter only creates, does not remove
 					if (!diff.columns.isEmpty()){
 						DataBaseCommand command = dialect.createAlterTableCommand(diff);
-						executeCommand(command, null);
+						executeCommand(command);
 					}
 
 				}
@@ -417,18 +431,18 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					if (dbObject.getType().equals(DataBaseObjectType.TABLE)){
 						TableModel tm = (TableModel)dbObject;
 						DataBaseCommand command = dialect.createCreateTableCommand(tm);
-						executeCommand(command, null);
+						executeCommand(command);
 
 						for (ColumnModel cm : tm){
 							if (cm.isIndexed()){
 								DataBaseCommand idxCommand = dialect.createCreateIndexCommand(cm);
-								executeCommand(idxCommand, null);
+								executeCommand(idxCommand);
 
 							}
 						}
 					} else if (dbObject.getType().equals(DataBaseObjectType.SEQUENCE)) {
 						DataBaseCommand command = dialect.createCreateSequenceCommand((SequenceModel)dbObject);
-						executeCommand(command, null);
+						executeCommand(command);
 					}
 
 				} catch (TableAlreadyExistsException e){
@@ -440,4 +454,10 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 	protected DataBaseDialect getDialect() {
 		return this.dialect;
-	}}
+	}
+
+	protected DataSource getDataSource() {
+		return this.datasource;
+	}
+
+}

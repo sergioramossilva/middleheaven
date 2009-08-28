@@ -36,6 +36,8 @@
 		<copy file="middleheaven.jar"
 			tofile="F:/Workspace/JavaBuilding/WebContent/WEB-INF/lib/middleheaven.jar"/>
 						
-	
+		<eclipse.refreshLocal resource="JavaBuilding/WebContent/WEB-INF/lib" depth="infinite"/>
+		<eclipse.refreshLocal resource="MHTestSite/WebContent/WEB-INF/lib" depth="infinite"/>
+			
 	</target>
 </project>

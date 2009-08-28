@@ -4,7 +4,11 @@ import java.util.Arrays;
 
 import org.middleheaven.util.Hash;
 
-public final class ArrayMapKey {
+/**
+ * ComposedMap key composed by an array of objects.
+ * The keys are equals if the objects are the same, and in the same order. 
+ */
+public final class ArrayMapKey extends ComposedMapKey{
 
 	private Object[] objects;
 

@@ -1,26 +1,34 @@
 package org.middleheaven.util.collections;
 
-
-public class SimmetricMapKey<T> {
+/**
+ * MapKey composed by two objects.
+ * SimmetricMapKey is equals to another SimmetricMapKey if 
+ * the objects are the same. More generally they are considered equals 
+ * if SimmetricMapKey A holds X and Y and SimmetricMapKey B holds Y and X 
+ * 
+ *
+ * @param <T>
+ */
+public final class SimmetricMapKey extends ComposedMapKey{
 
 	
-	private  Object A; 
-	private  Object B;
+	private  Object a; 
+	private  Object b;
 	
 	public SimmetricMapKey(Object a, Object b) {
-		A = a;
-		B = b;
+		this.a = a;
+		this.b = b;
 	}
 	
 	public int hashCode(){
-		return A.hashCode() ^ B.hashCode();
+		return a.hashCode() ^ b.hashCode();
 	}
 	
 	public boolean equals(Object other) {
-		return other instanceof SimmetricMapKey && equals((SimmetricMapKey<?>) other);
+		return other instanceof SimmetricMapKey && equals((SimmetricMapKey) other);
 	}
 
-	public boolean equals(SimmetricMapKey<T> other) {
-		 return (A.equals(other.A) &&  B.equals(other.B)) || (A.equals(other.B) &&  B.equals(other.A));
+	public boolean equals(SimmetricMapKey other) {
+		 return (a.equals(other.a) &&  b.equals(other.b)) || (a.equals(other.b) &&  b.equals(other.a));
 	}
 }

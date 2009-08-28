@@ -36,8 +36,8 @@ public abstract class AbstractCriteria <T> implements Criteria<T>{
 		this.start = other.start;
 		
 		this.restrictions = (LogicCriterion)other.restrictions.clone();
-		this.ordering = new LinkedList<OrderingCriterion>(ordering);
-		this.resultFields = new LinkedList<QualifiedName>(resultFields);
+		this.ordering = new LinkedList<OrderingCriterion>(other.ordering);
+		this.resultFields = new LinkedList<QualifiedName>(other.resultFields);
 		
 	}
 	
@@ -52,7 +52,7 @@ public abstract class AbstractCriteria <T> implements Criteria<T>{
 		return ordering;
 	}
 	
-	public LogicCriterion restrictions(){
+	public LogicCriterion constraints(){
 		return restrictions;
 	}
 	

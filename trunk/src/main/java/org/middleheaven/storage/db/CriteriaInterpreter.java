@@ -2,15 +2,15 @@ package org.middleheaven.storage.db;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.CountOperator;
 import org.middleheaven.storage.criteria.Criteria;
@@ -19,30 +19,32 @@ import org.middleheaven.storage.criteria.Criterion;
 import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.criteria.EmptyCriterion;
 import org.middleheaven.storage.criteria.FieldCriterion;
-import org.middleheaven.storage.criteria.FieldInSetCriteria;
+import org.middleheaven.storage.criteria.FieldInSetCriterion;
 import org.middleheaven.storage.criteria.FieldValueHolder;
-import org.middleheaven.storage.criteria.JuntionCriterion;
+import org.middleheaven.storage.criteria.JunctionCriterion;
 import org.middleheaven.storage.criteria.LogicCriterion;
 import org.middleheaven.storage.criteria.MaxFieldOperator;
 import org.middleheaven.storage.criteria.MinFieldOperator;
 import org.middleheaven.storage.criteria.OrderingCriterion;
 import org.middleheaven.storage.criteria.Projection;
 import org.middleheaven.storage.criteria.ProjectionOperator;
-import org.middleheaven.storage.criteria.SingleObjectValueHolder;
 import org.middleheaven.storage.criteria.SumFieldOperator;
 import org.middleheaven.util.classification.LogicOperator;
+import org.middleheaven.util.collections.Interval;
 
 
 public class CriteriaInterpreter {
 
 	private DataBaseDialect dataBaseDialect;
 	private Criteria<?> criteria;
+	private StorableModelReader reader;
 	private StorableEntityModel model;
 
-	public CriteriaInterpreter(DataBaseDialect dataBaseDialect,Criteria<?> criteria, StorableEntityModel model) {
+	public CriteriaInterpreter(DataBaseDialect dataBaseDialect,Criteria<?> criteria, StorableModelReader reader) {
 		this.dataBaseDialect = dataBaseDialect;
 		this.criteria = criteria;
-		this.model = model;
+		this.reader = reader;
+		this.model = reader.read(criteria.getTargetClass());
 	}
 
 	protected DataBaseDialect dialect(){
@@ -58,12 +60,12 @@ public class CriteriaInterpreter {
 	}
 
 	public RetriveDataBaseCommand translateRetrive(){
-		
+
 		StringBuilder sqlBuilder = new StringBuilder("SELECT ");
-		List<FieldValueHolder> params = new LinkedList<FieldValueHolder>();
-		
-		String alias = aliasFor(model.getEntityHardName(),false);
-		
+		List<ColumnValueHolder> params = new LinkedList<ColumnValueHolder>();
+
+		String alias = dataBaseDialect.aliasFor(model.getEntityHardName(),false);
+
 		// LIMITS: distinct and  top n 
 		writeStartLimitClause(sqlBuilder);
 
@@ -71,16 +73,19 @@ public class CriteriaInterpreter {
 		writeResultColumnsClause(alias,sqlBuilder);
 
 		// FROM CLAUSE 
-		writeFromClause(sqlBuilder);
+		writeFromClause(alias,sqlBuilder);
+
+		// JOIN CLAUSE
+		writeJoinClause(alias, sqlBuilder);
 
 		// WHERE CLAUSE
-		writeWhereClause(sqlBuilder,params,true);
+		writeWhereClause(alias,sqlBuilder,params);
 
 		// GROUP BY
-		writeGroupByClause(sqlBuilder);
+		writeGroupByClause(alias,sqlBuilder);
 
 		// ORDER BY
-		writeOrderByClause(sqlBuilder);
+		writeOrderByClause(alias,sqlBuilder);
 
 
 		// LIMITS: Limit and offset
@@ -88,34 +93,23 @@ public class CriteriaInterpreter {
 
 		return new SQLRetriveCommand(dialect(),sqlBuilder.toString(),params);
 	}
-	
-	private Map<String , Character> aliases = new TreeMap<String,Character>();
 
-	protected String aliasFor(String name, boolean increment){
 
-		Character c = aliases.get(name);
-		if ( c==null){
-			c = new Character('a');
-			aliases.put(name,c);
-		} else if (increment){
-			c = Character.valueOf((char)(c.charValue()+1));
-			aliases.put(name,c);
-		}
-
-		return c.toString() + "_" + name;
-	}
 
 	public DataBaseCommand translateDelete(){
-		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ")
-		.append(model.getEntityHardName());
+		StringBuilder sqlBuilder = new StringBuilder("DELETE FROM ");
 
-		List<FieldValueHolder> params = new LinkedList<FieldValueHolder>();
-		
+		dialect().writeEnclosureHardname(sqlBuilder, model.getEntityHardName());
+
+
+		List<ColumnValueHolder> params = new LinkedList<ColumnValueHolder>();
+
 		// WHERE CLAUSE
-		writeWhereClause(sqlBuilder,params,false);
+		writeWhereClause(null, sqlBuilder,params);
 
 		return new SQLDeleteCommand(dialect(),sqlBuilder.toString(),params);
 	}
+
 
 	protected void writeStartLimitClause(StringBuilder selectBuffer) {
 		if (criteria.isDistinct()){
@@ -124,29 +118,18 @@ public class CriteriaInterpreter {
 	}
 
 
-	protected QualifiedName aliasFor(QualifiedName name, String aliasPrefix ){
-		if ( aliasPrefix ==null ){
-			return name;
-		}
 
-		QualifiedName aliasName = QualifiedName.qualify(aliasPrefix, name.getName());
-		aliasName.setAlias(true);
-
-		return aliasName;
-	}
-	
 	protected void writeResultColumnsClause (String alias, StringBuilder queryBuffer){
 
-		// if this is a projection criteria
 		if (this.criteria().isCountOnly()){
 
 			queryBuffer.append("COUNT(");
 
-			dialect().writeQueryHardname(queryBuffer,aliasFor(model().identityFieldModel().getHardName(), alias));
+			dialect().writeQueryHardname(queryBuffer,dataBaseDialect.aliasFor(model().identityFieldModel().getHardName(), alias));
 
 			queryBuffer.append(")");
 
-		} else if (this.criteria().projection() !=null){
+		} else if (this.criteria().projection() !=null){ // if this is a projection criteria 
 
 			// add groupBy
 			Projection aggregation = this.criteria().projection();
@@ -180,7 +163,9 @@ public class CriteriaInterpreter {
 			// run thought the fields. The transient cannot be read so do not use them
 			boolean first = true;
 			if (this.criteria().resultFields().isEmpty()){
-				queryBuffer.append(" * ");
+				queryBuffer.append(' ');
+				this.writeAlias(queryBuffer, dataBaseDialect.aliasFor(model.getEntityHardName(),false));
+				queryBuffer.append(".* ");
 			} else {
 				for (QualifiedName name : this.criteria().resultFields() ){
 
@@ -207,78 +192,266 @@ public class CriteriaInterpreter {
 		// no-op
 	}
 
-	protected void writeFromClause(StringBuilder queryBuffer){
+	protected void writeFromClause(String alias , StringBuilder queryBuffer){
 
 		// FROM ClAUSE
-		queryBuffer.append(" FROM ");
-		queryBuffer.append(dialect().startDelimiter());
-		queryBuffer.append(model.getEntityHardName().toLowerCase());
-		queryBuffer.append(dialect().endDelimiter());
+		queryBuffer.append(" FROM ")
+		.append(dialect().startDelimiter())
+		.append(model.getEntityHardName().toLowerCase())
+		.append(dialect().endDelimiter());
+
+		if (alias!=null){
+			writeAliasSeparator(queryBuffer); 
+			writeAlias(queryBuffer,alias);
+		}
+	}
+
+	protected void writeAliasSeparator(StringBuilder queryBuffer){
+		queryBuffer.append(" AS ");
+	}
+
+	protected void writeAlias(StringBuilder queryBuffer , String alias){
+		queryBuffer.append(alias);
+	}	
+
+	private void sweepJunctionCriterions(List<JunctionCriterion> criterions ,Collection<Criterion> criterias ){
+
+		for (Iterator<Criterion> it = criterias.iterator(); it.hasNext();){
+			Criterion c = (Criterion)it.next();
+			if (c instanceof JunctionCriterion){
+				JunctionCriterion junction = (JunctionCriterion)c;
+				if ( junction.getSubCriteria() != null){
+					criterions.add(junction);
+					sweepJunctionCriterions( criterions, 
+							junction.getSubCriteria().constraints().reduce().criterias()
+					);
+				}
+			}
+		}
 
 	}
 
-	protected void writeOrderByClause(StringBuilder queryBuffer){
+	protected void writeJoinClause(String mainAlias, StringBuilder joinClause) {
+
+
+		Collection<Criterion> allCriterion = criteria().constraints().reduce().criterias();
+		if (!allCriterion.isEmpty()){
+			List<JunctionCriterion> junctionCriterions = new LinkedList<JunctionCriterion>();
+
+			// recolhe todos os criterios de join
+			sweepJunctionCriterions (junctionCriterions, allCriterion);
+
+			// apenas processa os criterios do tipo JuntionRestriction, se algum
+			for (Iterator<JunctionCriterion> it = junctionCriterions.iterator(); it.hasNext();){
+
+				JunctionCriterion jr = it.next();
+
+				StorableEntityModel sourceModel = reader.read(jr.getSourceType());
+				StorableEntityModel targetModel = reader.read(jr.getTargetType());
+
+				StorableFieldModel fm = sourceModel.fieldModel(jr.getFieldName());
+
+				if (fm.getDataType().isToOneReference()){
+					// join
+					QualifiedName kfm = targetModel.identityFieldModel().getHardName();
+
+					String targetAlias = dataBaseDialect.aliasFor(targetModel.getEntityHardName(),true);
+					String sourceAlias = dataBaseDialect.aliasFor(sourceModel.getEntityHardName(),false);
+
+
+					jr.setAlias(targetAlias);
+
+					joinClause.append(" INNER JOIN ");
+
+					dialect().writeJoinTableHardname(joinClause, targetModel.getEntityHardName());
+
+					writeAliasSeparator(joinClause);
+					writeAlias(joinClause,targetAlias);
+
+					joinClause.append(" ON ");
+
+					dialect().writeJoinField(joinClause, sourceAlias, fm.getHardName().getName());
+
+					joinClause.append(" = ");
+
+					dialect().writeJoinField(joinClause, targetAlias, kfm.getName());
+
+
+
+					// do not write WHERE clause because it will been writen in the normal process
+				} 
+			}
+		}
+	}
+
+	protected void writeOrderByClause(String alias, StringBuilder queryBuffer){
 
 		// do not write order by order by if its a count query
 		if (queryBuffer.indexOf("COUNT(")>=0){
 			return;
 		}
 
-		// ORDER BY
-		if (!criteria().ordering().isEmpty()){
-			queryBuffer.append(" ORDER BY ");
-			boolean first = true;
-			for (OrderingCriterion criterion  : criteria().ordering()){
+		// JOIN Order By
+		List<Criterion> list = new ArrayList<Criterion>();
 
-				if (!first){
-					queryBuffer.append(", ");
+		list.add(this.criteria.constraints());
+
+		popJunctionCriterions(list, 0);
+
+
+		if (list.isEmpty()){
+			// simple ordering
+			if (!criteria().ordering().isEmpty()){
+				queryBuffer.append(" ORDER BY ");
+
+				boolean first = true;
+				// result table level
+				for (OrderingCriterion criterion  : criteria().ordering()){
+
+					if (!first){
+						queryBuffer.append(", ");
+					}
+					first=false;
+
+					writeOrdeByClauseElement(alias, queryBuffer, criterion);
+
 				}
-				first=false;
+			}
+		} else {
 
-				dialect().writeQueryHardname(queryBuffer, model.fieldModel(criterion.getFieldName()).getHardName());
+			// join ordering 
+
+			Collection<AliasedOrderingCriterion> all = new LinkedList<AliasedOrderingCriterion>();
+
+			for (OrderingCriterion oc : criteria().ordering()){
+				all.add(new AliasedOrderingCriterion(alias, oc));
+			}
+
+			for (Criterion c : list){
+
+				JunctionCriterion jc = ((JunctionCriterion)c);
+
+				for (OrderingCriterion oc  : jc.getSubCriteria().ordering()){
+
+					all.add(new AliasedOrderingCriterion(alias, oc));
+
+				}
+
+			}
 
 
-				queryBuffer.append(criterion.isDescendant()?" desc":" asc");
+			if (!all.isEmpty()){
+				queryBuffer.append(" ORDER BY ");
+
+				boolean first = true;
+				// result table level
+				for (AliasedOrderingCriterion aoc  : all){
+
+					if (!first){
+						queryBuffer.append(", ");
+					}
+					first=false;
+
+					writeOrdeByClauseElement(aoc.alias, queryBuffer, aoc.criterion);
+
+				}
 
 			}
 		}
+
+
+
 	}
 
-	protected void writeGroupByClause(StringBuilder queryBuffer){
+	private class AliasedOrderingCriterion {
+
+		public OrderingCriterion criterion;
+		public String alias;
+
+		public AliasedOrderingCriterion(String alias , OrderingCriterion criterion) {
+			this.criterion = criterion;
+			this.alias = alias;
+		}
+
+	}
+
+	private void popJunctionCriterions (List<Criterion> stack, int index){
+		if(stack.isEmpty()){
+			return;
+		}
+
+		Criterion c = stack.get(index);
+		if (c instanceof LogicCriterion){
+			stack.remove(index);
+			for (Criterion b : ((LogicCriterion)c).criterias()){
+				if (b instanceof JunctionCriterion){
+					stack.add(b);
+				}
+			}
+		} else if (c instanceof FieldCriterion){
+			stack.remove(index);
+		} else if (c instanceof JunctionCriterion){
+			popJunctionCriterions(stack, index+1);
+		}
+
+
+	}
+
+	protected void writeOrdeByClauseElement(String alias, StringBuilder queryBuffer, OrderingCriterion criterion){
+
+		dialect().writeQueryHardname(queryBuffer,dataBaseDialect.aliasFor( model.fieldModel(criterion.getFieldName()).getHardName(), alias));
+
+		queryBuffer.append(criterion.isDescendant()?" desc":" asc");
+	}
+
+	protected void writeGroupByClause(String alias, StringBuilder queryBuffer){
+
+
 		//GROUP BY
+
 		Projection aggregation = criteria.projection();
-		if (aggregation !=null && !aggregation.groups().isEmpty()){
+
+		Collection<QualifiedName> aggregationGroups;
+		if (aggregation ==null){
+			aggregationGroups = Collections.emptySet();
+		} else {
+			aggregationGroups = aggregation.groups();
+		}
+
+		if (!aggregationGroups.isEmpty()){
+
 			queryBuffer.append(" GROUP BY ");
 
-			// write the name of all groups
-			for (Iterator<QualifiedName> it = aggregation.groups().iterator(); it.hasNext();){
+			boolean first = true;
+			// write the name of all groups from agregation
+			for (Iterator<QualifiedName> it = aggregationGroups.iterator(); it.hasNext();){
 				QualifiedName name = it.next();
+
+				if (!first){
+					queryBuffer.append(" , ");
+				}
+				first = false;
 
 				dialect().writeQueryHardname(queryBuffer,  model().fieldModel(name).getHardName());
 
-				if (it.hasNext()){
-					queryBuffer.append(" , ");
-				}
 			}
 
-
 		}
+
+
 	}
 
-	protected void writeWhereClause(StringBuilder queryBuffer, List<FieldValueHolder> params, boolean isQuery ){
+	protected void writeWhereClause(String alias, StringBuilder queryBuffer, List<ColumnValueHolder> params  ){
 		// WHERE CLAUSE
-		// First create the clause
-		// if no where clause is needed, none will be added
-
-		if ( criteria().restrictions().criteriaCount()==0){
+		// Cria primeiro a sentença. 
+		// Se não houver nenhum o where não é adicionado
+		if ( criteria().constraints().criteriaCount()==0){
 			return;
 		}
 
 		StringBuilder whereClause =  new StringBuilder();
-		StringBuilder joinClause =  new StringBuilder();
-		translateCriteriaToWhereClause(whereClause,params, joinClause, criteria().restrictions().simplify());;
 
-		queryBuffer.append(joinClause);
+		translateCriteriaToWhereClause(alias, whereClause,params, criteria().constraints().simplify(), model());
 
 		if (whereClause.length()>2){
 			queryBuffer.append(" WHERE ");
@@ -289,7 +462,7 @@ public class CriteriaInterpreter {
 
 
 
-	protected void translateFieldInQueryCriteriaToEmptySetInClause(StringBuilder criteriaBuffer,FieldInSetCriteria criterion){
+	protected void translateFieldInQueryCriteriaToEmptySetInClause(StringBuilder criteriaBuffer,FieldInSetCriterion criterion,StorableEntityModel model){
 		// [NOT] IN ( foo ) 
 		// where foo is return nothing select 
 		// made using range(0)
@@ -297,7 +470,7 @@ public class CriteriaInterpreter {
 
 		emptyCriteria.setKeyOnly(true);
 
-		CriteriaInterpreter ci = dialect().newCriteriaInterpreter(criteria(),model());
+		CriteriaInterpreter ci = dialect().newCriteriaInterpreter(criteria, reader);
 
 		StringBuilder queryBuffer = new StringBuilder();
 
@@ -315,13 +488,13 @@ public class CriteriaInterpreter {
 		criteriaBuffer.append(queryBuffer);
 	}
 
-	protected void translateFieldInQueryCriteriaToWhereClause(StringBuilder criteriaBuffer,FieldInSetCriteria criterion){
+	protected void translateFieldInQueryCriteriaToWhereClause(StringBuilder criteriaBuffer,FieldInSetCriterion criterion,StorableEntityModel  model){
 
 		// [NOT] IN ( Select field FROM table ... ) 
 		Criteria<?> c = (Criteria<?>)criterion.valueHolder().getValue();
 		c.setDistinct(true);
 
-		CriteriaInterpreter ci = dialect().newCriteriaInterpreter(c, model);
+		CriteriaInterpreter ci = dialect().newCriteriaInterpreter(c, reader);
 
 		StringBuilder queryBuffer = new StringBuilder();
 
@@ -332,9 +505,9 @@ public class CriteriaInterpreter {
 		if (!criterion.isIncluded()){
 			queryBuffer.append(" NOT ");
 		}
-		
+
 		RetriveDataBaseCommand r = ci.translateRetrive();
-		
+
 		queryBuffer.append(" IN (")
 		.append(r.toString()) // TODO merge param values 
 		.append(")");
@@ -343,68 +516,56 @@ public class CriteriaInterpreter {
 	}
 
 
-	protected void translateCriteriaToWhereClause(StringBuilder criteriaBuffer, List<FieldValueHolder> params, StringBuilder joinClause ,Criterion criterion){
+
+
+
+
+	protected  void translateCriteriaToWhereClause(String alias , StringBuilder criteriaBuffer, List<ColumnValueHolder> params,Criterion criterion ,StorableEntityModel model ){
+
 		if (criterion instanceof EmptyCriterion){
 			criteriaBuffer.append("TRUE");
-		} else if (criterion instanceof JuntionCriterion ) {
+		} else if (criterion instanceof JunctionCriterion ) {
 
-			JuntionCriterion jr = (JuntionCriterion)criterion;
-			StorableFieldModel fm = model.fieldModel(jr.getFieldName());
+			JunctionCriterion jr = (JunctionCriterion)criterion;
 
-			if (fm.getDataType().isToOneReference()){
-				// join
-				QualifiedName kfm = model().identityFieldModel().getHardName();
 
-				joinClause.append(" INNER JOIN ")
-				.append(dialect().startDelimiter())
-				.append(model.getEntityHardName())
-				.append(dialect().endDelimiter())
-				.append(" ON ")
-				.append(dialect().startDelimiter())
-				.append(fm.getHardName().getQualifier())
-				.append(dialect().endDelimiter())
-				.append(dialect().fieldSeparator())
-				.append(dialect().startDelimiter())
-				.append(fm.getHardName().getName())
-				.append(dialect().endDelimiter())
-				.append(" = ")
-				.append(dialect().startDelimiter())
-				.append(kfm.getQualifier())
-				.append(dialect().endDelimiter())
-				.append(dialect().fieldSeparator())
-				.append(dialect().startDelimiter())
-				.append(kfm.getName())
-				.append(dialect().endDelimiter());
+			if (!jr.getSubCriteria().constraints().isEmpty()){
+				if (criteriaBuffer.toString().trim().length()>0){
+					criteriaBuffer.append(" AND ");
+				}
 
-				// do not write WHERE claus because it will been writen in the normal process
+				translateCriteriaToWhereClause(jr.getAlias(), criteriaBuffer, params, 
+						jr.getSubCriteria().constraints(), reader.read(jr.getTargetType())
+				);
 			}
 
 
-		}else if (criterion instanceof FieldInSetCriteria){
-			FieldInSetCriteria f = (FieldInSetCriteria)criterion;
+		}else if (criterion instanceof FieldInSetCriterion){
+			FieldInSetCriterion f = (FieldInSetCriterion)criterion;
 
 			if (f.useCriteria()){
 				// values are obtain in a sub query
-				translateFieldInQueryCriteriaToWhereClause(criteriaBuffer , f );
+				translateFieldInQueryCriteriaToWhereClause(criteriaBuffer , f , model);
 			} else {
 				// values are obtain explicitly. use IN () command
 
 				if (f.valueHolder().isEmpty()){
 
-					translateFieldInQueryCriteriaToEmptySetInClause(criteriaBuffer , f );
+					translateFieldInQueryCriteriaToEmptySetInClause(criteriaBuffer , f , model);
 
 				} else {
-					dialect().writeQueryHardname(criteriaBuffer, model().fieldModel(f.getFieldName()).getHardName());
+					dialect().writeQueryHardname(criteriaBuffer, dataBaseDialect.aliasFor(model.fieldModel(f.getFieldName()).getHardName(), alias) );
 
 					if (!f.isIncluded()){
 						criteriaBuffer.append(" NOT ");
 					}
 					criteriaBuffer.append(" IN (");
-					StorableFieldModel fm = model().fieldModel(f.getFieldName());
-					
+					StorableFieldModel fm = model.fieldModel(f.getFieldName());
+
 					Collection<Object> values = (Collection<Object>) f.valueHolder().getValue();
 					for (Iterator<Object> it = values.iterator(); it.hasNext();){
-						params.add(new SingleObjectValueHolder(it.next(), fm.getDataType()));
+						// read the real datatype from the model
+						params.add(new ColumnValueHolder(it.next(), fm.getDataType()));
 						criteriaBuffer.append("?,");
 					}
 
@@ -415,81 +576,140 @@ public class CriteriaInterpreter {
 		}else if (criterion instanceof FieldCriterion){
 			FieldCriterion f = (FieldCriterion)criterion;
 
-			StorableFieldModel fm = model().fieldModel(f.getFieldName());
+			StorableFieldModel fm = model.fieldModel(f.getFieldName());
 			if (fm==null){
 				throw new IllegalStateException(f.getFieldName() + " not found");
 			}
 			FieldValueHolder vholder = f.valueHolder();
 
-			if (!fm.isTransient() && !fm.isVersion() && !fm.getDataType().isVirtual()){
-				
-				if (vholder.isEmpty()){
-					// empty value implies compare to NULL
-					criteriaBuffer.append(' ');
-					dialect().writeQueryHardname(criteriaBuffer, fm.getHardName());
+			if (vholder.getDataType()==null){
+				vholder.setDataType(fm.getDataType());
+			}
 
-					if (CriterionOperator.EQUAL.equals(f.getOperator())){
-						if (f.getOperator().isNegated()){
-							criteriaBuffer.append(" IS NOT NULL ");
-						} else {
-							criteriaBuffer.append(" IS NULL ");
-						}
-					} else {
+			if (!fm.isTransient() && !fm.isVersion() && !fm.getDataType().isVirtual()){
+
+				criteriaBuffer.append(' ');
+				CriterionOperator op = f.getOperator();
+
+				if (CriterionOperator.CONTAINS.equals(op) || 
+						CriterionOperator.STARTS_WITH.equals(op) || 
+						CriterionOperator.ENDS_WITH.equals(op) ){
+
+					writeLikeClause (fm, criteriaBuffer ,false, op,alias);
+					params.add(new ColumnValueHolder(vholder, op));
+
+				} else if (CriterionOperator.IS_NULL.equals(op)){
+					dialect().writeQueryHardname(criteriaBuffer, dataBaseDialect.aliasFor(fm.getHardName(),alias));
+
+					if (op.isNegated()){
 						criteriaBuffer.append(" IS NOT NULL ");
+					} else { // positive operators
+						criteriaBuffer.append(" IS NULL ");
+					}
+					// do not add parameter as there is no value holder
+				} else if (CriterionOperator.IN.equals(op)){
+
+					if (vholder.getValue() instanceof Collection){
+						dialect().writeQueryHardname(criteriaBuffer, dataBaseDialect.aliasFor(fm.getHardName(),alias));
+
+
+						if (op.isNegated()){
+							criteriaBuffer.append(" NOT");
+						} 
+						criteriaBuffer.append(" IN (");
+
+
+						Collection collection = (Collection) vholder.getValue();
+
+						for (Object obj : collection){
+							params.add(new ColumnValueHolder(obj,vholder.getDataType()));
+							criteriaBuffer.append(" ?, ");
+						}
+						criteriaBuffer.delete(criteriaBuffer.length()-2, criteriaBuffer.length());
+						criteriaBuffer.append(") ");
+					} else if (vholder.getValue() instanceof Interval){
+
+						Interval interval =  (Interval)vholder.getValue();
+
+						criteriaBuffer.append("(");
+
+						if (interval.start()!=null){
+							dialect().writeQueryHardname(criteriaBuffer, dataBaseDialect.aliasFor(fm.getHardName(),alias));
+							if (op.isNegated()){
+								criteriaBuffer.append(" < ? ");
+							} else {
+								criteriaBuffer.append(" >= ? ");
+							}
+							params.add(new ColumnValueHolder(interval.start(),vholder.getDataType()));
+						}
+
+						if (interval.end()!=null){
+
+							if (op.isNegated()){
+								if (interval.start()!=null){
+									criteriaBuffer.append(" OR ");
+								}
+								dialect().writeQueryHardname(criteriaBuffer, dataBaseDialect.aliasFor(fm.getHardName(),alias));
+								criteriaBuffer.append(" > ? ");
+							} else {
+								if (interval.start()!=null){
+									criteriaBuffer.append(" AND ");
+								}
+								dialect().writeQueryHardname(criteriaBuffer, dataBaseDialect.aliasFor(fm.getHardName(),alias));
+								criteriaBuffer.append(" <= ? ");
+							}
+							params.add(new ColumnValueHolder(interval.end(),vholder.getDataType()));
+						}
+
+						criteriaBuffer.append(") ");
+
+					} else {
+						throw new UnsupportedOperationException(vholder.getValue() + " is not supported for IN clause");
 					}
 
-					criteriaBuffer.append(' ');
-				} else if (!fm.getDataType().isVirtual()){
+				} else {
+					dialect().writeQueryHardname(criteriaBuffer, dataBaseDialect.aliasFor(fm.getHardName(),alias));
 
-					criteriaBuffer.append(' ');
-					dialect().writeQueryHardname(criteriaBuffer, fm.getHardName());
+					if (op.isNegated()){
 
-					if (f.getOperator().isNegated()){
-						if (CriterionOperator.CONTAINS.equals(f.getOperator()) || 
-								CriterionOperator.STARTS_WITH.equals(f.getOperator()) || 
-								CriterionOperator.ENDS_WITH.equals(f.getOperator())
-							){
-							criteriaBuffer.append(" NOT LIKE ? ");
-						} else if (CriterionOperator.GREATER_THAN.equals(f.getOperator())){
+						if (CriterionOperator.GREATER_THAN.equals(op)){
 							criteriaBuffer.append(" <= ? ");
-						} else if (CriterionOperator.GREATER_THAN_OR_EQUAL.equals(f.getOperator())){
+						} else if (CriterionOperator.GREATER_THAN_OR_EQUAL.equals(op)){
 							criteriaBuffer.append(" < ? ");
-						}  else if (CriterionOperator.LESS_THAN.equals(f.getOperator())){
+						}  else if (CriterionOperator.LESS_THAN.equals(op)){
 							criteriaBuffer.append(" >= ? ");
-						}  else if (CriterionOperator.LESS_THAN_OR_EQUAL.equals(f.getOperator())){
+						}  else if (CriterionOperator.LESS_THAN_OR_EQUAL.equals(op)){
 							criteriaBuffer.append(" > ? ");
-						} else if (CriterionOperator.EQUAL.equals(f.getOperator())){
+						} else if (CriterionOperator.EQUAL.equals(op)){
 							criteriaBuffer.append(" <> ? ");
-						} else if (CriterionOperator.UNKOWN.equals(f.getOperator())){
-							//logWarn("Criterion used an unkown match operator. Using equal instead");
-							criteriaBuffer.append(" = ? ");
+						} else if (CriterionOperator.IS_NULL.equals(op)){
+							criteriaBuffer.append(" IS NOT NULL ");
+						}  else {
+							throw new RuntimeException("Unkown operator " + op);
 						} 
 					} else { // positive operators
-						if (CriterionOperator.CONTAINS.equals(f.getOperator()) || 
-								CriterionOperator.STARTS_WITH.equals(f.getOperator()) || 
-								CriterionOperator.ENDS_WITH.equals(f.getOperator())
-							){
-							criteriaBuffer.append(" LIKE ? ");
-						} else if (CriterionOperator.GREATER_THAN.equals(f.getOperator())){
+
+						if (CriterionOperator.GREATER_THAN.equals(op)){
 							criteriaBuffer.append(" > ? ");
-						} else if (CriterionOperator.GREATER_THAN_OR_EQUAL.equals(f.getOperator())){
+						} else if (CriterionOperator.GREATER_THAN_OR_EQUAL.equals(op)){
 							criteriaBuffer.append(" >= ? ");
-						}  else if (CriterionOperator.LESS_THAN.equals(f.getOperator())){
+						}  else if (CriterionOperator.LESS_THAN.equals(op)){
 							criteriaBuffer.append(" < ? ");
-						}  else if (CriterionOperator.LESS_THAN_OR_EQUAL.equals(f.getOperator())){
+						}  else if (CriterionOperator.LESS_THAN_OR_EQUAL.equals(op)){
 							criteriaBuffer.append(" <= ? ");
-						} else if (CriterionOperator.UNKOWN.equals(f.getOperator())){
-							//logWarn("Criterion used an unkown match operator. Using equal instead");
+						}  else if (CriterionOperator.EQUAL.equals(op)){
 							criteriaBuffer.append(" = ? ");
-						} else if (CriterionOperator.EQUAL.equals(f.getOperator())){
-							criteriaBuffer.append(" = ? ");
+						} else if (CriterionOperator.IS_NULL.equals(op)){
+							criteriaBuffer.append(" IS NULL ");
+						} else {
+							throw new RuntimeException("Unkown operator " + op);
 						}
 					}
-					
-				
-
-					params.add(vholder);
+					params.add(new ColumnValueHolder(vholder,op));
 				}
+
+
+
 			}
 		}else if (criterion instanceof LogicCriterion){
 			Collection<Criterion> criterias = ((LogicCriterion)criterion).criterias();
@@ -499,8 +719,8 @@ public class CriteriaInterpreter {
 				List<Criterion> others = new ArrayList<Criterion>(criterias.size());
 				for (Iterator<Criterion> it = criterias.iterator(); it.hasNext();){
 					Criterion c = (Criterion)it.next();
-					if (c instanceof JuntionCriterion){
-						translateCriteriaToWhereClause(criteriaBuffer,params,joinClause,c);
+					if (c instanceof JunctionCriterion){
+						translateCriteriaToWhereClause(alias,criteriaBuffer,params,c,model);
 					} else {
 						others.add(c);
 					}
@@ -518,7 +738,7 @@ public class CriteriaInterpreter {
 							criteriaBuffer.append(' ');
 						}
 						int len = criteriaBuffer.length();
-						translateCriteriaToWhereClause(criteriaBuffer,params,joinClause,c);
+						translateCriteriaToWhereClause(alias,criteriaBuffer,params,c,model);
 						writeOperator = (criteriaBuffer.length()>len);
 					}
 					criteriaBuffer.append(')');
@@ -527,6 +747,15 @@ public class CriteriaInterpreter {
 		} 
 	}
 
+
+	protected void writeLikeClause(StorableFieldModel fm, StringBuilder criteriaBuffer, boolean caseSensitive, CriterionOperator op,String alias) {
+		dialect().writeQueryHardname(criteriaBuffer, dataBaseDialect.aliasFor(fm.getHardName(),alias));
+
+		if (op.isNegated()){
+			criteriaBuffer.append(" NOT");
+		}
+		criteriaBuffer.append(" LIKE ? ");
+	}
 
 	protected  void translateAggregationOperator (ProjectionOperator op , StringBuilder selectBuffer ){
 		if (op instanceof CountOperator){

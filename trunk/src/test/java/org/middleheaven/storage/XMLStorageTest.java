@@ -35,7 +35,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		);
 		
 		ManagedFile source = ManagedFileRepositories.resolveFile(this.getClass().getResource("data.xml"));
-		ds = new DomainStore(XMLStorage.manage(source, new WrappStorableReader()) , model);
+		ds = new DomainStore(XMLStorage.manage(source, new WrappStorableReader(model)) , model);
 	}
 	
 	@Test 

@@ -8,6 +8,7 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
+import org.middleheaven.util.conversion.TypeConvertions;
 import org.middleheaven.util.identity.Identity;
 
 public class ResultSetStorable implements Storable {
@@ -22,8 +23,23 @@ public class ResultSetStorable implements Storable {
 
 	@Override
 	public Identity getIdentity() {
-		// TODO Auto-generated method stub
-		return null;
+		StorableFieldModel identityFieldModel = model.identityFieldModel();
+		Object fieldValue = getFieldValue(identityFieldModel );
+		return (Identity)TypeConvertions.convert(fieldValue, identityFieldModel.getValueClass());
+	}
+	
+	@Override
+	public Object getFieldValue(StorableFieldModel model) {
+		try {
+			Object value =  rs.getObject(model.getHardName().getName());
+			if (model.getDataType().isReference()){
+				return value;
+			} else {
+				return TypeConvertions.convert(value, model.getValueClass());
+			}
+		} catch (SQLException e) {
+			throw new StorageException(e); 
+		}
 	}
 
 	@Override
@@ -47,14 +63,7 @@ public class ResultSetStorable implements Storable {
 		return StorableState.RETRIVED;
 	}
 
-	@Override
-	public Object getFieldValue(StorableFieldModel model) {
-		try {
-			return rs.getObject(model.getHardName().getName());
-		} catch (SQLException e) {
-			throw new StorageException(e); 
-		}
-	}
+
 
 	@Override
 	public void setFieldValue(StorableFieldModel model, Object fieldValue) {

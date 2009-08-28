@@ -89,9 +89,9 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			type = "CommandSet";
 		}
 		try {
-			return Introspector.of(UIComponent.class).load("org.middleheaven.ui.UI" + StringUtils.capitalize(type)).getIntrospected();
+			return Introspector.of(UIComponent.class).load("org.middleheaven.ui.UI" + StringUtils.capitalizeFirst(type)).getIntrospected();
 		} catch (NoSuchClassReflectionException e) {
-			return Introspector.of(UIComponent.class).load("org.middleheaven.ui.components.UI" + StringUtils.capitalize(type)).getIntrospected();
+			return Introspector.of(UIComponent.class).load("org.middleheaven.ui.components.UI" + StringUtils.capitalizeFirst(type)).getIntrospected();
 		}
 	}
 

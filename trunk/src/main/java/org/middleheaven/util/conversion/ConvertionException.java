@@ -6,4 +6,8 @@ public class ConvertionException extends RuntimeException {
 		super(e);
 	}
 
+	public ConvertionException(String msg) {
+		super(msg);
+	}
+
 }

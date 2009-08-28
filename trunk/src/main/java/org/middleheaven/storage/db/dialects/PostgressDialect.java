@@ -1,15 +1,16 @@
 package org.middleheaven.storage.db.dialects;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.middleheaven.storage.QualifiedName;
-import org.middleheaven.storage.StorableEntityModel;
+import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.FieldValueHolder;
+import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.db.ColumnModel;
+import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.CriteriaInterpreter;
 import org.middleheaven.storage.db.DataBaseDialect;
 import org.middleheaven.storage.db.EditionDataBaseCommand;
@@ -22,19 +23,31 @@ import org.middleheaven.storage.db.SequenceSupportedDBDialect;
 public class PostgressDialect extends SequenceSupportedDBDialect{
 
 	public PostgressDialect() {
-		super("'", "'", ".");
+		super("\"", "\"", ".");
 	}
 
+	@Override
 	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,
-			StorableEntityModel model) {
-		return new PostgressCriteriaInterpreter(this, criteria, model);
+			StorableModelReader reader) {
+		return new PostgressCriteriaInterpreter(this, criteria, reader);
 	}
 
+	@Override
+	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
+		return new SQLRetriveCommand(this,
+				new StringBuilder("SELECT nextval('")
+				.append("pgseq_").append(sequenceName) //avoid name colision
+				.append("') as sequenceValue")
+				.toString() ,
+				Collections.<ColumnValueHolder>emptySet()
+		);
+	}
+	
 	@Override
 	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel sequence) {
 		
 		StringBuilder sql = new StringBuilder("CREATE SEQUENCE ")
-		.append(sequence.getName()) // avoid name colision
+		.append("pgseq_").append(sequence.getName()) // avoid name colision
 		.append(" INCREMENT BY ").append(sequence.getIncrementBy())
 		.append(" MINVALUE ").append(sequence.getStartWith())
 		.append(" START WITH " ).append(sequence.getStartWith());
@@ -65,12 +78,18 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 		buffer.append(hardname.getName().toLowerCase());
 
 	}
+	
+	protected void writeEnclosureHardname(StringBuilder buffer , String hardname){
+		buffer.append(startDelimiter());
+		buffer.append(hardname.toLowerCase());
+		buffer.append(endDelimiter());
+	}
 
-	private static class PostgressCriteriaInterpreter extends CriteriaInterpreter{
+	private class PostgressCriteriaInterpreter extends CriteriaInterpreter{
 
 		public PostgressCriteriaInterpreter(DataBaseDialect dataBaseDialect,
-				Criteria<?> criteria, StorableEntityModel model) {
-			super(dataBaseDialect, criteria, model);
+				Criteria<?> criteria, StorableModelReader reader) {
+			super(dataBaseDialect, criteria, reader);
 		}
 
 		protected void writeFromClause(StringBuilder queryBuffer){
@@ -89,27 +108,24 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 				}
 			}
 		}
-	}
-	
-
-	@Override
-	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
-		final Collection<FieldValueHolder> none = Collections.emptySet();
-		return new SQLRetriveCommand(this,
-				new StringBuilder("SELECT nextval('")
-				.append(sequenceName)
-				.append("') as sequenceValue")
-				.toString() ,
-				none
-		);
-	}
-
-	@Override
-	protected void appendNativeTypeFor(StringBuilder sql, ColumnModel type) {
-		// TODO implement PostgressDialect.appendNativeTypeFor
 		
+		protected void writeLikeClause(StorableFieldModel fm,StringBuilder criteriaBuffer,
+				boolean caseSensitive, CriterionOperator op,String alias) {
+			dialect().writeQueryHardname(criteriaBuffer, dialect().aliasFor(fm.getHardName(),alias));
+
+			if (op.isNegated()){
+				criteriaBuffer.append(" NOT");
+			}
+			if (caseSensitive){
+				criteriaBuffer.append(" LIKE ? "); // case sensitive
+			} else {
+				criteriaBuffer.append(" ILIKE ? "); // case insensitive
+			}
+		}
 	}
 	
+
+
 	@Override
 	public boolean supportsCountLimit() {
 		return true;
@@ -119,5 +135,39 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	public boolean supportsOffSet() {
 		return true;
 	}
+
+	@Override
+	protected void appendNativeTypeFor(StringBuilder sql, ColumnModel column) {
+		switch (column.getType()){ // TODO verificar na documentação postgress
+		case DATE:
+			sql.append("date");
+			break;
+		case DATETIME:
+			sql.append("timestamp");
+			break;
+		case TIME:
+			sql.append("time");
+			break;
+		case TEXT:
+			sql.append("varchar (").append(column.getSize()).append(")");
+			break;
+		case MEMO:
+			sql.append("text");
+			break;
+		case INTEGER:
+			sql.append("bigint");
+			break;
+		case LOGIC:
+		case ENUM:
+			sql.append("int");
+			break;
+		case DECIMAL:
+			sql.append("numeric (").append(column.getPrecision()).append(",").append(column.getSize()).append(")");
+			break;
+		default:
+			throw new StorageException(column.getType() + " is not convertible to a native column type");
+		}
+	}
+
 
 }

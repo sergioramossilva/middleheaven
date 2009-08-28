@@ -5,7 +5,7 @@ package org.middleheaven.storage.criteria;
 
 import org.middleheaven.storage.QualifiedName;
 
-class BuildingOrdering<T,B extends CriteriaBuilderStrategy<T,B>> implements OrderingConstrain<T,B>{
+class BuildingOrdering<T,B extends AbstractCriteriaBuilder<T,B>> implements OrderingConstrain<T,B>{
 
 	private QualifiedName qname;
 	private B builder;

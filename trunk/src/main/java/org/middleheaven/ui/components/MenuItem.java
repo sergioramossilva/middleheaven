@@ -90,6 +90,14 @@ public class MenuItem {
 		}
 	}
 	
+	public MenuItem getFirst(){
+		return this.children.isEmpty() ? null : this.children.get(0);
+	}
+	
+	public MenuItem getLast(){
+		return this.children.isEmpty() ? null : this.children.get(children.size()-1);
+	}
+	
 	public boolean isChecked(){
 		return checked;
 	}
@@ -172,5 +180,7 @@ public class MenuItem {
 			toString(builder,m, tabs+1);
 		}
 	}
+	
+	
 
 }
