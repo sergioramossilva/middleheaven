@@ -10,9 +10,13 @@ import org.middleheaven.global.CultureResolver;
  * One or more {@code HttpProcessor} is registered with the {@code HttpServerService} to process
  * requests directed at specific URL address in the server. 
  */
-public interface ControlProcessor extends CultureResolver {
+public interface HttpProcessor extends CultureResolver {
 
-	
+	/**
+	 * Attributes a {@code HttpCultureResolveStrategy} to this processor used to determine
+	 * current {@code Culture} from the {@code HttpContext}  
+	 * @param strategy
+	 */
 	public void setCultureResolveStrategy(HttpCultureResolveStrategy strategy);
 
 

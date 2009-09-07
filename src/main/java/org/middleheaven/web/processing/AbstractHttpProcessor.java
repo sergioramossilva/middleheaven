@@ -2,7 +2,7 @@ package org.middleheaven.web.processing;
 
 import org.middleheaven.global.Culture;
 
-public abstract class AbstractHttpProcessor implements ControlProcessor {
+public abstract class AbstractHttpProcessor implements HttpProcessor {
 
 	private HttpCultureResolveStrategy strategy = new FromRequestHttpCultureResolveStrategy();
 	private Culture culture;

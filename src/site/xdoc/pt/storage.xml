@@ -1,0 +1,92 @@
+<document>
+
+<body>
+	<section name="Storage">
+		<p>
+		É raro que uma aplicação não necessite preservar dados entre um funcionamento e outro normalmente
+		o fazem na forma de arquivos.
+		Algumas aplicação se especializam em excatamente criar e manter esses arquios tais como editores de imagem,
+		som e texto.Para aplicação cooporativas um só arquivo pode não ser suficiente e nasce o conceito de banco 
+		de dados e dos sistema gerenciadores de banco de dados (SGBD)
+		</p>
+		<p>
+		Historicamente a perservação de dados com SGDB é o padrão de mercado para aplicções empresarais 
+		que lidam oom autualização concorrente e simultanea e grande numero de dados. Os SGDB passaram
+		do gereciamento de arquivos a um modelo relacional de dados baseado na matemática de tuplos.
+		Hoje em dia temos ainda o modelo orientado a objetos e os mecanismo de prevalencia em
+		que é preservada uma imagem da memoria do sistema e o conjunto de instruções de edição que
+		levam essa imagem até à imagem real mais atual.
+		</p>
+		<p>
+		Outros mecanismos de preservação de dados, mas que não são permanentes, são os famosos caches.
+		Este mecanismos deixam a informação mais utilizada mais rápidamente acessivel mas são espurgados quando a aplicação é 
+		desligada.  
+		</p>
+		<p>
+		O MiddleHeaven conta com dois tipos de abstrações que ajudam a preservar e depois a recuperar os 
+		dados de um local de preservação; as interfaces <code>EntityStorage</code> e <code>DataStorage</code>.
+		</p>
+		<section name="Preservando Entidades">
+			<p>
+			Ao trabalhar com aplicações de forma orientada ao dominio onde temos um modelo de objetos
+			que abstraem as relações entre as entidades do dominio é util que possamos pensar em 
+			preservação tento como unidade de base as instancias das entidades. Esta é uma forma natural
+			na programação orientada a objectos.
+			</p>
+			<p>
+			A interface <code>EntityStorage</code> permite que as operações de preservação sejam efetuadas com 
+			base em instâncias de entidades através de um pequeno conjunto de instruções.
+			<source>
+			public interface EntityStorage {
+			 
+			     public T store (T object);
+				 public void remove(Object object);
+				 public void remove(Criteria criteria);
+				 public Query createQuery (Criteria criteria);
+			}
+			</source>
+			O método <code>store</code> permite preservar a instancia da entidade.
+			O <code>EntityStorage</code> controla as instancias através da sua identidade. 
+			A identidade é uma caracteristica inrinseca a todas as instancias de entidade 
+			que diferencia cada uma da outra. <br/>
+			Ao perservar uma instancia com <code>store</code> é retornado um objeto da mesma classe
+			mas que já contém a informação da entidade daquela instancia naquele EntityStorage.
+			Além disso o <code>Entitytorage</code> pode incluir outros mecanismos que permitam um melhor controle
+			sobre o estado de perservação da instancia para simplificar futuras invocações a <code>store</code>
+			</p>
+			<p>
+			Os métodos <code>remove</code> permite remover a instancia ou conjunto de instancias do estado preservado.
+			O método <code>createQuery</code> cria um objecto <code>Query</code> que representa o executor
+			de uma pesquisa reutilizável, ou seja, ele não contém dados e sim o mecanismo de procurar
+			os dados. A cada invocação dos seus métodos a pesquisa é refeita. O objecto <code>Criteria</code>
+			contém os parametros da pesquisa que se relacionam com as instancias e suas propriedades. 
+			</p>
+			<p>
+			Aqui não ha uma procupação com a forma real que o sistema utilza para conseguir este mecanismo
+			de preservação das instancias nem de como elas serão recuperadas pela pesquisa.
+			</p>
+		</section>
+		<section name="DomainStorage" >
+			<p>
+			O DomainStorage é uma implementação de EntityStorage que se baseia no conceito de Modelo de Dominio (DomainModel)
+			e no padrão <pattern>DoaminStore</pattern>. O modelo é construido e passado como parametro do construtor.
+			O modelo contrém informações ssobre as relações entre as instancias das entidades, informaões
+			de como determinar a identidade das instancias. 
+			</p>
+			<p>
+			Além disso o DomainStorage utiliza um DataStorage no qual será feita a real preservação dos dados extraidos
+			da instancia através de um Modelo de Persistancia associado.
+			</p>  
+		</section>
+		<section name="DataStorage" >
+			<p>
+			O foco de preservação do DataStorage é a preservação de dados associdados entre si num tuplo 
+			representado por um <code>Storable</code> e um Modelo de Persistencia. Vários mecanismos de preservação de dados são implementados
+			com eesta interface. O mais utilizado , sem duvida, será o DataBaseStorage que persiste os dados utilizando 
+			os serviços de um SGBD através de JDBC. Além desses é possivel utilizar mecanismos baseados em arquivos XML,
+			Bancos de Dados Oerientados a Objectos e sistemas de prevalência e cache.
+			</p>
+		</section>
+	</section>
+</body>
+</document>

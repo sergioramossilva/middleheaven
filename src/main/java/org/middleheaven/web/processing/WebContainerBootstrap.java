@@ -16,13 +16,10 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.activation.ActivatorScanner;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
-import org.middleheaven.global.atlas.modules.AtlasActivator;
-import org.middleheaven.io.repository.FileRepositoryActivator;
-import org.middleheaven.logging.LoggingActivator;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.ServletContextLogBookWriter;
 import org.middleheaven.logging.WritableLogBook;
-import org.middleheaven.storage.DataStorageServiceActivator;
+import org.middleheaven.logging.writters.ConsoleLogWriter;
 import org.middleheaven.ui.service.UIServiceActivator;
 import org.middleheaven.web.container.WebContainerSwitcher;
 
@@ -32,12 +29,17 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 	protected ServletContext servletContext;
 
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
+		
+		servletContext =  servletContextEvent.getServletContext();
+		
+		servletContext.log("[MiddleHeaven] Initializing " + this.getClass().getSimpleName() + " at " + servletContext.getContextPath());
+		
 		try{
-			servletContext =  servletContextEvent.getServletContext();
-
+			
 
 			start(
-					new WritableLogBook("web container book",LoggingLevel.ALL)
+					new WritableLogBook("",LoggingLevel.ALL)
+					.addWriter(new ConsoleLogWriter())
 					.addWriter(new ServletContextLogBookWriter(servletContext))
 			);
 
@@ -45,8 +47,9 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 			HttpServerService httpService = ServiceRegistry.getService(HttpServerService.class);
 
 			httpService.start();
+			servletContext.log("[MiddleHeaven] Bootstap completed");
 		}catch (Throwable t){
-			servletContextEvent.getServletContext().log("Unexpected error", t);
+			servletContext.log("[MiddleHeaven] Unexpected error", t);
 		}
 	}
 

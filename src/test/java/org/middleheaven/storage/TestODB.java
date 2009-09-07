@@ -10,7 +10,7 @@ import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.io.repository.ManagedFiles;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.odb.ObjectDataStorage;
@@ -22,7 +22,7 @@ public class TestODB {
 	
 	@Test
 	public void testSimpleAdd(){
-		ManagedFile dataFile = ManagedFileRepositories.resolveFile(new File("./neodata.data"));
+		ManagedFile dataFile = ManagedFiles.resolveFile(new File("./neodata.data"));
 		ObjectDataStorage keeper = new ObjectDataStorage(dataFile);
 		
 		final DomainModel model = new DomainModelBuilder().build(

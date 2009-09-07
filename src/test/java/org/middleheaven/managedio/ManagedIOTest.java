@@ -10,7 +10,7 @@ import java.net.URL;
 import org.junit.Test;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.io.repository.ManagedFiles;
 
 
 public class ManagedIOTest {
@@ -20,7 +20,7 @@ public class ManagedIOTest {
 	public void textLocalRepository() throws ManagedIOException, IOException{
 		// select a folder. whatever it is doesn't mater
 
-		ManagedFile folder = ManagedFileRepositories.resolveFile(new File("."));
+		ManagedFile folder = ManagedFiles.resolveFile(new File("."));
 
 		assertTrue(folder.exists());
 		
@@ -35,7 +35,7 @@ public class ManagedIOTest {
 		assertTrue(testJar.exists());
 		
 		// this folder must exist as it is used by maven
-	    ManagedFile rep = ManagedFileRepositories.resolveFile(new File(System.getProperty("user.home") + "/.m2/repository/junit/junit/4.1"));
+	    ManagedFile rep = ManagedFiles.resolveFile(new File(System.getProperty("user.home") + "/.m2/repository/junit/junit/4.1"));
 	    
 	    
 	    ManagedFile junitJar = rep.resolveFile("junit-4.1.jar");
@@ -55,7 +55,7 @@ public class ManagedIOTest {
 	@Test
 	public void textZipRepository() throws ManagedIOException, IOException{
 	
-		   ManagedFile rep = ManagedFileRepositories.resolveFile(new File(System.getProperty("user.home") + "/.m2/repository/junit/junit/4.1"));
+		   ManagedFile rep = ManagedFiles.resolveFile(new File(System.getProperty("user.home") + "/.m2/repository/junit/junit/4.1"));
 		    
 		    ManagedFile junitJar = rep.resolveFile("junit-4.1.jar");
 
@@ -69,7 +69,7 @@ public class ManagedIOTest {
 		   // Extract
 		   ManagedFile manifest = junitJar.resolveFile("META-INF/MANIFEST.MF");
 		   
-		   ManagedFile frep = ManagedFileRepositories.resolveFile(new File("."));
+		   ManagedFile frep = ManagedFiles.resolveFile(new File("."));
 		   
 		   manifest.copyTo(frep);
 		   
@@ -85,8 +85,8 @@ public class ManagedIOTest {
 	
 		URL url = new URL("http://middleheaven.sourceforge.net/");
 		
-		ManagedFile localRep = ManagedFileRepositories.resolveFile(new File("."));
-		ManagedFile rep = ManagedFileRepositories.resolveFile(url);
+		ManagedFile localRep = ManagedFiles.resolveFile(new File("."));
+		ManagedFile rep = ManagedFiles.resolveFile(url);
 		
 		assertTrue(rep.isReadable());
 		assertTrue(rep.isWriteable());
@@ -116,7 +116,7 @@ public class ManagedIOTest {
 	
 		URL url = new URL("http://middleheaven.sourceforge.net/");
 		
-		ManagedFile http = ManagedFileRepositories.resolveFile(url);
+		ManagedFile http = ManagedFiles.resolveFile(url);
 		
 		// cannot be listed
 		assertFalse(!http.children().isEmpty());

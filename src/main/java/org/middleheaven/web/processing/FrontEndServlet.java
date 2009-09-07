@@ -33,12 +33,25 @@ public class FrontEndServlet extends HttpServlet {
 
 			ServletHttpServerService serverService = (ServletHttpServerService) this.getServletContext().getAttribute("httpService");
 		
+			if (serverService == null){
+				throw new ServletException("HTTPServerService not found in contexts");
+			}
+			
 			serverService.processRequest(request, response);
 			
+
 		} catch (ClassCastException e){
-			// this servelet can only work with this specific implementation of HTTPServerService
+			// this servlet can only work with this specific implementation of HTTPServerService
 			throw new ServletException("HTTPServerService not compatible with generic Servlet Container");
+		} catch (ServletException e){
+			throw e; 
+		} catch (IOException e) {
+			throw e;
+		} catch (Throwable t){
+			this.getServletContext().log("Unexpected Exception", t);
+			t.printStackTrace();
 		}
+		
 		
 		
 		

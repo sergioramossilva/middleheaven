@@ -3,9 +3,9 @@ package org.middleheaven.web.processing.action;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.middleheaven.aas.old.AccessDeniedException;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.web.processing.HttpCode;
 import org.middleheaven.web.processing.HttpContext;
 import org.middleheaven.web.processing.Outcome;
 
@@ -60,13 +60,13 @@ public class ListInterceptorChain implements InterceptorChain{
 	}
 	
 	protected Outcome resolveOutcome (OutcomeStatus status){
-		return new Outcome(status,505);
+		return new Outcome(status,HttpCode.NOT_IMPLEMENTED);
 	}
 	
 	protected Outcome doFinal(HttpContext context){ 
 		return outcome;
 	}
-	
+	/*
 	@Deprecated
 	public void interruptAndRedirect(String url) {
 		interrupted = true;
@@ -78,6 +78,7 @@ public class ListInterceptorChain implements InterceptorChain{
 		interrupted = true;
 		this.outcome = new Outcome(BasicOutcomeStatus.ERROR,errorCode);
 	}
+	*/
 
 	public Outcome getOutcome() {
 		return outcome;

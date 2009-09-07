@@ -8,8 +8,10 @@ public class Logging {
 
 	/**
 	 * Acquires a <code>LogBook</code> with a given name.
-	 * If no book is found under that name, a VoidBook is returned,
-	 * this way never corrupting client`s logging code.
+	 * If no book is found under that name, a {@code VoidBook} is returned.
+	 * If the logging service was not initialized a {@code ConsoleLogBook} is returned
+	 * and a message is displayed in {@code Sytem.err}
+	 * 
 	 * @param name
 	 * @return
 	 */
@@ -17,7 +19,7 @@ public class Logging {
 		try{
 			return ServiceRegistry.getService(LoggingService.class).getLogBook(bookName);
 		} catch (ServiceNotAvailableException e){
-			System.err.println("Please inicialize the logging service properly. Using Console.");
+			System.err.println("Logging service is unavailable. Using console.");
 			return new ConsoleLogBook(LoggingLevel.ALL);
 		}
 	}

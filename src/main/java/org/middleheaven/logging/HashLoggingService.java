@@ -7,6 +7,7 @@ import java.util.Map;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.logging.config.LoggingConfigurator;
+import org.middleheaven.logging.writters.ConsoleLogWriter;
 
 /**
  * @author  Sergio M. M. Taborda 
@@ -15,12 +16,14 @@ import org.middleheaven.logging.config.LoggingConfigurator;
 public class HashLoggingService  implements LoggingService{
 
 
-    static final VoidLogBook VOID_BOOK = VoidLogBook.getInstance();
+
     final Map<String, LogBook> books = new HashMap<String, LogBook>();
     LoggingConfiguration configuration ;
     
 	public HashLoggingService(LoggingConfiguration configuration , LoggingConfigurator configurator) {
 		configurator.config(this,configuration);
+		
+		addBook(new WritableLogBook("",LoggingLevel.ALL).addWriter(new ConsoleLogWriter()));
 	}
 
 	@Override
@@ -49,8 +52,7 @@ public class HashLoggingService  implements LoggingService{
         }
         
         if (book == null){
-        	book=VOID_BOOK;
-        	books.put(name, book); // cache for next search
+          book =  books.get("");
         }
         
         return book;

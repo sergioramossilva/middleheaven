@@ -80,7 +80,7 @@ public class ClassPathRepository implements ManagedFileRepository{
 			return new UnexistantManagedFile(null, filename);
 		}
 
-		return ManagedFileRepositories.resolveFile(url);
+		return ManagedFiles.resolveFile(url);
 
 	}
 
