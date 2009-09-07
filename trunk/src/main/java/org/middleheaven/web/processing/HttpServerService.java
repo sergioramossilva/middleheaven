@@ -1,13 +1,13 @@
 package org.middleheaven.web.processing;
 
 /**
- * 
+ * Service to process server-side HTTP requests
  *
  */
 public interface HttpServerService {
 
 	
-	public void registerHttpProcessor(String processorID, ControlProcessor procesor, UrlMapping mapping);
+	public void registerHttpProcessor(String processorID, HttpProcessor procesor, UrlMapping mapping);
 	public void unRegisterHttpProcessor(String processorID);
 	
 	public void addRenderingProcessorResolver(String resolverID, RenderingProcessorResolver resolver, UrlMapping mapping);
@@ -25,13 +25,13 @@ public interface HttpServerService {
 	 * @param url
 	 * @return or <code>null</code> if none matches 
 	 */
-	public ControlProcessor resolveControlProcessor(String url);
+	public HttpProcessor resolveControlProcessor(String url);
 	
 	/**
 	 * Set the availability state of this service.
 	 * 
 	 * If the service is available requests will be processed.
-	 * If not, a TEMPORARY_ANAVAILABLE HTTP error code will be returned.
+	 * If not, a TEMPORARY_UNAVAILABLE HTTP error code will be returned.
 	 * @param available
 	 */
 	public void setAvailable(boolean available);

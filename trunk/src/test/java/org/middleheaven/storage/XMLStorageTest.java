@@ -9,7 +9,7 @@ import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.io.repository.ManagedFiles;
 import org.middleheaven.sequence.service.FileSequenceStorageActivator;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.datasource.DataSourceServiceActivator;
@@ -34,7 +34,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 				new DomainClasses().add(TestSubject.class)
 		);
 		
-		ManagedFile source = ManagedFileRepositories.resolveFile(this.getClass().getResource("data.xml"));
+		ManagedFile source = ManagedFiles.resolveFile(this.getClass().getResource("data.xml"));
 		ds = new DomainStore(XMLStorage.manage(source, new WrappStorableReader(model)) , model);
 	}
 	

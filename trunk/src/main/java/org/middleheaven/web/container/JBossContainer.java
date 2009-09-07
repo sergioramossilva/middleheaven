@@ -12,7 +12,7 @@ import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.io.repository.ManagedFiles;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
 
@@ -55,19 +55,19 @@ public abstract class JBossContainer extends WebContainer {
     }
 
     public ManagedFile getEnvironmentDeployRepository() {
-        return ManagedFileRepositories.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "deploy"));
+        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "deploy"));
     }
 
     public ManagedFile getAppConfigRepository() {
-        return ManagedFileRepositories.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "conf"));
+        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "conf"));
     }
 
     public ManagedFile getAppDataRepository() {
-        return ManagedFileRepositories.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "app-data"));
+        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "app-data"));
     }
 
     public ManagedFile getAppLogRepository() {
-        return ManagedFileRepositories.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "log"));
+        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "log"));
     }
 
     public ManagedFile getAppClasspathRepository() {

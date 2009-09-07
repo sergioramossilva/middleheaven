@@ -16,15 +16,20 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 
 
 	private BuildableWebCommandMappingService mappingService  = new BuildableWebCommandMappingService();
-
+	private HttpServerService serverService;
+	
 	public WebActionApplicationModule(ApplicationID applicationID) {
 		super(applicationID);
 	}
 
-
+	protected HttpServerService getHttpServerService(){
+		return this.serverService;
+	} 
+	
 	@Override
 	protected final void doLoad(ApplicationContext context,HttpServerService serverService) {
 		
+		this.serverService = serverService;
 		ActionBasedProcessor processor = new ActionBasedProcessor(mappingService);
 		
 		serverService.registerHttpProcessor(this.getApplicationID().toString() + "_processor", processor, new UrlMapping(){

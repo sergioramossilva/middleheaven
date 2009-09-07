@@ -1,11 +1,11 @@
 package org.middleheaven.web.processing;
 
 /**
- * Enum for HTTP 1.1 protocol commom response error codes (4xx and 5xx)
+ * Enum for HTTP 1.1 protocol commom response codes (4xx and 5xx)
  * 
  * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
  */
-public enum HttpError {
+public enum HttpCode {
 	
 	/**
 	 * The server has not found anything matching the Request-URI.
@@ -69,12 +69,22 @@ public enum HttpError {
 	 * If known, the length of the delay MAY be indicated in a Retry-After header. 
 	 * If no Retry-After is given, the client SHOULD handle the response as it would for a INTERNAL_SERVER_ERROR (500) response. 
 	 */
-	SERVICE_UNAVAILABLE(503);
+	SERVICE_UNAVAILABLE(503), 
+	
+	HTTP_VERSION_NOT_SUPPORTED(505), 
+	
+	/**
+	 * All is correct
+	 */
+	OK(200),
+	
+	MOVED(300),
+	MOVED_PERMANENTLY(301);
 
 	
-	public static HttpError valueOf(int errorCode) {
-		for (HttpError error : HttpError.values()){
-			if (error.errorCode == errorCode){
+	public static HttpCode valueOf(int errorCode) {
+		for (HttpCode error : HttpCode.values()){
+			if (error.code == errorCode){
 				return error;
 			}
 		}
@@ -82,14 +92,14 @@ public enum HttpError {
 	}
 	
 	
-	private int errorCode;
+	private int code;
 
-	private HttpError(int errorCode){
-		this.errorCode = errorCode;
+	private HttpCode(int code){
+		this.code = code;
 	}
 	
-	public int errorCode(){
-		return errorCode;
+	public int intValue(){
+		return code;
 	}
 
 

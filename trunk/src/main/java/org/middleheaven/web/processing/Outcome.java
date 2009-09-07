@@ -9,26 +9,32 @@ public class Outcome {
 	boolean doRedirect = false;
 	boolean isError;
 	private String url;
-	private int error = 0;
+	private HttpCode error = HttpCode.OK;
 	
-	public Outcome(OutcomeStatus status, boolean doRedirect, String url) {
+	public Outcome(OutcomeStatus status, String url) {
+		this(status,url,false,HttpCode.OK);
+	}
+	
+	public Outcome(OutcomeStatus status, String url, boolean doRedirect, HttpCode redirectCode) {
 		super();
 		this.status = status;
 		this.doRedirect = doRedirect;
 		this.url = url;
 		this.isError = false;
+		this.error = redirectCode;
 	}
 	
-	public Outcome(OutcomeStatus status, int error) {
+	public Outcome(OutcomeStatus status, HttpCode error) {
 		super();
 		this.status = status;
 		this.doRedirect = true;
-		this.url = Integer.toString(error);
 		this.isError = true;
 		this.error = error;
 	}
+
 	
-	public int getErrorCode(){
+	
+	public HttpCode getHttpCode(){
 		return error;
 	}
 	

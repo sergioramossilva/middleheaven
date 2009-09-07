@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.aas.old.AccessDeniedException;
+import org.middleheaven.logging.Logging;
 import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
 import org.middleheaven.web.processing.action.RequestResponseWebContext;
@@ -56,7 +57,7 @@ class ServletHttpServerService implements HttpServerService {
 
 
 	@Override
-	public ControlProcessor resolveControlProcessor(String url) {
+	public HttpProcessor resolveControlProcessor(String url) {
 		for (HttpMapping mapping : processorsMappings.values()){
 			if (mapping.mapping.match(url)){
 				return mapping.processor;
@@ -66,7 +67,7 @@ class ServletHttpServerService implements HttpServerService {
 	}
 
 	@Override
-	public void registerHttpProcessor(String processorID, ControlProcessor processor,UrlMapping mapping) {
+	public void registerHttpProcessor(String processorID, HttpProcessor processor,UrlMapping mapping) {
 		processorsMappings.put(processorID, new HttpMapping(processor,mapping));
 
 	}
@@ -101,19 +102,22 @@ class ServletHttpServerService implements HttpServerService {
 	void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
 		if (stopped){
-			response.sendError(HttpError.NOT_FOUND.errorCode()); 
+			Logging.getBook(this.getClass()).warn("HttpServerService is stopped.");
+			response.sendError(HttpCode.NOT_FOUND.intValue()); 
 			return;
 		}
 
 		if (!available){
-			response.sendError(HttpError.SERVICE_UNAVAILABLE.errorCode()); 
+			Logging.getBook(this.getClass()).warn("HttpServerService is not available.");
+			response.sendError(HttpCode.SERVICE_UNAVAILABLE.intValue()); 
 			return;
 		}
 
-		ControlProcessor processor = resolveControlProcessor(request.getRequestURI());
+		HttpProcessor processor = resolveControlProcessor(request.getRequestURI());
 
 		if (processor == null){
-			response.sendError(HttpError.NOT_IMPLEMENTED.errorCode()); 
+			Logging.getBook(this.getClass()).warn("ControlProcessor has not found.");
+			response.sendError(HttpCode.NOT_IMPLEMENTED.intValue()); 
 			return;
 		}
 
@@ -124,14 +128,23 @@ class ServletHttpServerService implements HttpServerService {
 			RequestResponseWebContext context = new  RequestResponseWebContext(request,response);
 			Outcome outcome = processor.process(context);
 
-			if(outcome ==null){
-				response.sendError(HttpError.INTERNAL_SERVER_ERROR.errorCode());
+			if(outcome == null){
+				Logging.getBook(this.getClass()).warn("Outcome is null for " + request.getRequestURI());
+				response.sendError(HttpCode.INTERNAL_SERVER_ERROR.intValue());
 			} else if (outcome.isTerminal()){
-				return; // do nothing. The response is already done
+				Logging.getBook(this.getClass()).debug("Outcome is terminal for " + request.getRequestURI());
+				return; // do not process view. The response is already done written
 			} else if (outcome.isError){
-				response.sendError(Integer.parseInt(outcome.getUrl()));
+				response.sendError(outcome.getHttpCode().intValue());
 			}else if (outcome.isDoRedirect()){
-				response.sendRedirect(outcome.getUrl());
+				if (outcome.getHttpCode().equals(HttpCode.MOVED_PERMANENTLY)){
+					response.setStatus(HttpCode.MOVED_PERMANENTLY.intValue());
+					response.setHeader( "Location", outcome.getUrl() );
+					response.setHeader( "Connection", "close" );
+				} else {
+					response.sendRedirect(outcome.getUrl());
+				}
+				
 			} else {
 				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl());
 
@@ -139,7 +152,8 @@ class ServletHttpServerService implements HttpServerService {
 			}
 
 		}catch (AccessDeniedException e){
-			response.sendError(HttpError.FORBIDDEN.errorCode());
+			Logging.getBook(this.getClass()).warn("Access denied to " + request.getRequestURI());
+			response.sendError(HttpCode.FORBIDDEN.intValue());
 		}catch (HttpProcessIOException e){
 			throw e.getIOException();
 		}catch (HttpProcessServletException e){
@@ -153,10 +167,10 @@ class ServletHttpServerService implements HttpServerService {
 
 	private class HttpMapping{
 
-		public ControlProcessor processor;
+		public HttpProcessor processor;
 		public UrlMapping mapping;
 
-		public HttpMapping(ControlProcessor processor, UrlMapping mapping) {
+		public HttpMapping(HttpProcessor processor, UrlMapping mapping) {
 			this.processor = processor;
 			this.mapping = mapping;
 		}

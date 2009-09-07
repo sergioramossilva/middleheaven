@@ -2,6 +2,7 @@ package org.middleheaven.web.processing.action;
 
 import java.util.Map;
 
+import org.middleheaven.web.processing.HttpCode;
 import org.middleheaven.web.processing.Outcome;
 
 public class URLOutcome extends Outcome {
@@ -12,7 +13,7 @@ public class URLOutcome extends Outcome {
 	}
 	
 	public URLOutcome(String url, Map<String,String> params,boolean doRedirect) {
-		super(BasicOutcomeStatus.SUCCESS, doRedirect, url);
+		super(BasicOutcomeStatus.SUCCESS, url,doRedirect , HttpCode.OK);
 		this.params = params;
 	}
 

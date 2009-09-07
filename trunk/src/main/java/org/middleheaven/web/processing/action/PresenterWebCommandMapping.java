@@ -35,6 +35,7 @@ import org.middleheaven.web.annotations.In;
 import org.middleheaven.web.annotations.Post;
 import org.middleheaven.web.annotations.ProcessRequest;
 import org.middleheaven.web.annotations.Put;
+import org.middleheaven.web.processing.HttpCode;
 import org.middleheaven.web.processing.HttpContext;
 import org.middleheaven.web.processing.Outcome;
 
@@ -65,7 +66,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		this.outcomes.put(null,actionOutcome );
 
 		for (OutcomeStatus status : BasicOutcomeStatus.values()){
-			actionOutcome.put(status,new Outcome(status,500));
+			actionOutcome.put(status,new Outcome(status,HttpCode.NOT_IMPLEMENTED));
 		}
 
 		this.controllerClass = presenterClass;

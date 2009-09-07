@@ -7,7 +7,7 @@ import javax.servlet.ServletContext;
 import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.io.repository.ManagedFiles;
 
 public abstract class WebContainer implements BootstrapContainer  {
 
@@ -35,7 +35,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 	 * Normally this points to the META-INF folder for war applications
 	 */
 	public ManagedFile getAppConfigRepository() {
-		return ManagedFileRepositories.resolveFile(new File(context.getRealPath("./META-INF")));
+		return ManagedFiles.resolveFile(new File(context.getRealPath("./META-INF")));
 	}
 
 	/**
@@ -44,7 +44,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 	 */
 	@Override
 	public ManagedFile getEnvironmentConfigRepository() {
-		return ManagedFileRepositories.resolveFile(new File(context.getRealPath("./WEB-INF")));
+		return ManagedFiles.resolveFile(new File(context.getRealPath("./WEB-INF")));
 	}
 
 	/**
@@ -52,7 +52,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 	 * This defaults to the application`s root web folder. Application are encouraged to use specific folders inside the root
 	 */
 	public ManagedFile getAppDataRepository() {
-		return ManagedFileRepositories.resolveFile(new File(context.getRealPath(".")));
+		return ManagedFiles.resolveFile(new File(context.getRealPath(".")));
 	}
 
 	/**
@@ -60,13 +60,13 @@ public abstract class WebContainer implements BootstrapContainer  {
 	 * This defaults to the application`s root web folder. Application are encouraged to use specific folders inside the root
 	 */
 	public ManagedFile getAppLogRepository() {
-		return ManagedFileRepositories.resolveFile(new File(context.getRealPath(".")));
+		return ManagedFiles.resolveFile(new File(context.getRealPath(".")));
 	}
 
 
 
 	public ManagedFile getAppClasspathRepository() {
-		return ManagedFileRepositories.resolveFile(new File(context.getRealPath("./WEB-INF/classes")));
+		return ManagedFiles.resolveFile(new File(context.getRealPath("./WEB-INF/classes")));
 	}
 
 

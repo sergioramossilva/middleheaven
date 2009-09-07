@@ -5,10 +5,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class ManagedFileRepositories {
+public class ManagedFiles {
 
 	
-	private ManagedFileRepositories (){
+	private ManagedFiles (){
 		
 	}
 	

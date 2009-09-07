@@ -1,5 +1,6 @@
 package org.middleheaven.web.processing.action;
 
+import org.middleheaven.web.processing.HttpCode;
 import org.middleheaven.web.processing.Outcome;
 
 
@@ -60,15 +61,17 @@ public class PresenterCommandMappingBuilder {
 
 		@Override
 		public URLMappingBuilder asIndex() {
-			PresenterCommandMappingBuilder.this.to("").withNoAction().onSuccess().redirectTo(url);
+			PresenterCommandMappingBuilder.this.to("")
+			.withNoAction().onSuccess().redirectTo(url, RedirectOptions.permanent())
+			.withAction("read").onSuccess().redirectTo(url, RedirectOptions.permanent());
+			
 			return this;
 		}
 		
 	
 	}
 	
-	public static class Index{};
-	
+
 	private class MyActionMappingBuilder implements ActionMappingBuilder{
 		
 		private String action;
@@ -118,13 +121,13 @@ public class PresenterCommandMappingBuilder {
 		
 		@Override
 		public ActionMappingBuilder forwardTo(String url) {
-			Outcome outcome = new Outcome(status, false, url);
+			Outcome outcome = new Outcome(status, url);
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
 			return actionBuilder;
 		}
 
 		@Override
-		public ActionMappingBuilder redirectTo(int erroCode) {
+		public ActionMappingBuilder redirectTo(HttpCode erroCode) {
 			
 			Outcome outcome = new Outcome(status, erroCode);
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
@@ -133,7 +136,17 @@ public class PresenterCommandMappingBuilder {
 
 		@Override
 		public ActionMappingBuilder redirectTo(String url) {
-			Outcome outcome = new Outcome(status, true, url);
+			return this.redirectTo(url, RedirectOptions.temporary());
+		}
+
+		@Override
+		public ActionMappingBuilder redirectTo(String url, RedirectOptions options) {
+			Outcome outcome = new Outcome(
+					status,
+					url, 
+					true,
+					options.isPermanent() ? HttpCode.MOVED : HttpCode.MOVED_PERMANENTLY
+			);
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
 			return actionBuilder;
 		}

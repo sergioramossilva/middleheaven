@@ -13,7 +13,7 @@ import org.middleheaven.core.bootstrap.client.StandaloneContainer;
 import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
-import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.io.repository.ManagedFiles;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.quantity.time.CalendarDate;
@@ -31,7 +31,7 @@ public class NaiveStorageManagerTeste {
 	@Before
 	public void setUp(){
 		// bootstrap
-		BootstrapContainer container = new StandaloneContainer(ManagedFileRepositories.resolveFile(new File("."))){};
+		BootstrapContainer container = new StandaloneContainer(ManagedFiles.resolveFile(new File("."))){};
 			
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));

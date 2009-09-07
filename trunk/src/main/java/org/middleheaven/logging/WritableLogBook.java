@@ -14,10 +14,7 @@ public class WritableLogBook extends LogBook {
     }
 
     public WritableLogBook addWriter(LogBookWriter writer){
-        // add the writer only if its level could pass the books level
-        if (writer.getLevel().canLog(level)){
-            writers.add(writer);
-        }
+    	writers.add(writer);
         return this;
     }
 
@@ -26,7 +23,7 @@ public class WritableLogBook extends LogBook {
             try {
                 writer.log(event);
             }catch (LogWritingException e){
-                // do not stop the other writers to do theirs job
+                // do not stop for the other writers to do theirs job
                 continue;
             }
         }

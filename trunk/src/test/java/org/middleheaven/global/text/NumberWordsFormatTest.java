@@ -12,7 +12,7 @@ import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.text.writeout.FormatNotFoundException;
 import org.middleheaven.global.text.writeout.NumberWriteoutFormat;
-import org.middleheaven.io.repository.ManagedFileRepositories;
+import org.middleheaven.io.repository.ManagedFiles;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
@@ -36,12 +36,12 @@ public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 		assertEquals("cem", format.inWords(100));
 		assertEquals("vinte e cinco", format.inWords(25));
 		assertEquals("cento e cinquenta e nove", format.inWords(159));
-		assertEquals("três mil cento e cinquenta e nove", format.inWords(3159));
-		assertEquals("treze mil cento e cinquenta e noventa e nove centésimos", format.inWords(13150.99));
-		assertEquals("duzentos e treze mil cento e cinquenta e noventa e nove centésimos", format.inWords(213150.99));
-		assertEquals("um milhão , duzentos e treze mil cento e cinquenta e oitocentos e noventa e nove milésimos", format.inWords(1213150.899));;
-		assertEquals("um milhão , três mil cento e cinquenta e nove décimos", format.inWords(1003150.9));
-		assertEquals("um milhão , três mil cento e cinquenta e nove mil quatrocentos e setenta e seis décimos milésimos", format.inWords(1003150.9476));
+		assertEquals("trï¿½s mil cento e cinquenta e nove", format.inWords(3159));
+		assertEquals("treze mil cento e cinquenta e noventa e nove centï¿½simos", format.inWords(13150.99));
+		assertEquals("duzentos e treze mil cento e cinquenta e noventa e nove centï¿½simos", format.inWords(213150.99));
+		assertEquals("um milhï¿½o , duzentos e treze mil cento e cinquenta e oitocentos e noventa e nove milï¿½simos", format.inWords(1213150.899));;
+		assertEquals("um milhï¿½o , trï¿½s mil cento e cinquenta e nove dï¿½cimos", format.inWords(1003150.9));
+		assertEquals("um milhï¿½o , trï¿½s mil cento e cinquenta e nove mil quatrocentos e setenta e seis dï¿½cimos milï¿½simos", format.inWords(1003150.9476));
 
 	}
 	
@@ -84,9 +84,9 @@ public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 		assertEquals("tres mil ciento cincuenta y nueve", format.inWords(3159));
 		assertEquals("trece mil ciento cincuenta y noventa y nueve centesimas", format.inWords(13150.99));
 		assertEquals("doscientos trece mil ciento cincuenta y noventa y nueve centesimas", format.inWords(213150.99));
-		assertEquals("uno millón doscientos trece mil ciento cincuenta y ochocientos noventa y nueve milesimas", format.inWords(1213150.899));;
-		assertEquals("uno millón tres mil ciento cincuenta y nueve decimas", format.inWords(1003150.9));
-		assertEquals("uno millón tres mil ciento cincuenta y nueve mil cuatrocientos setenta y seis decimas milesimas", format.inWords(1003150.9476));
+		assertEquals("uno millï¿½n doscientos trece mil ciento cincuenta y ochocientos noventa y nueve milesimas", format.inWords(1213150.899));;
+		assertEquals("uno millï¿½n tres mil ciento cincuenta y nueve decimas", format.inWords(1003150.9));
+		assertEquals("uno millï¿½n tres mil ciento cincuenta y nueve mil cuatrocientos setenta y seis decimas milesimas", format.inWords(1003150.9476));
 
 	}
 	
@@ -96,7 +96,7 @@ public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 		
 		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("fr", "FR"));
 		
-		assertEquals("zéro", format.inWords(0));
+		assertEquals("zï¿½ro", format.inWords(0));
 		assertEquals("cent", format.inWords(100));
 		assertEquals("cent et un", format.inWords(101));
 		assertEquals("cent cinquante", format.inWords(150));
@@ -107,9 +107,9 @@ public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 		assertEquals("troi mile cent cinquante et neuf", format.inWords(3159));
 		assertEquals("treize mile cent cinquante etnoventa et neuf centisime", format.inWords(13150.99));
 	//	assertEquals("doscientos trece mil ciento cincuenta y noventa y nueve centesimas", format.inWords(213150.99));
-	//	assertEquals("uno millón doscientos trece mil ciento cincuenta y ochocientos noventa y nueve milesimas", format.inWords(1213150.899));;
-	//	assertEquals("uno millón tres mil ciento cincuenta y nueve decimas", format.inWords(1003150.9));
-	//	assertEquals("uno millón tres mil ciento cincuenta y nueve mil cuatrocientos setenta y seis decimas milesimas", format.inWords(1003150.9476));
+	//	assertEquals("uno millï¿½n doscientos trece mil ciento cincuenta y ochocientos noventa y nueve milesimas", format.inWords(1213150.899));;
+	//	assertEquals("uno millï¿½n tres mil ciento cincuenta y nueve decimas", format.inWords(1003150.9));
+	//	assertEquals("uno millï¿½n tres mil ciento cincuenta y nueve mil cuatrocientos setenta y seis decimas milesimas", format.inWords(1003150.9476));
 
 	}
 }
