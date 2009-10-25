@@ -14,7 +14,11 @@ public class WiringModel {
 	}
 	
 	public void setConstructorPoint(ConstructorWiringPoint point){
-		this.point = point;
+		if (this.point==null){
+			this.point = point;
+		} else {
+			this.point = this.point.merge(point);
+		}
 	}
 	
 	public Collection<AfterWiringPoint> getAfterPoints(){

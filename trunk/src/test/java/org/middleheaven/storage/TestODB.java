@@ -29,7 +29,7 @@ public class TestODB {
 				new DomainClasses().add(TestSubject.class)
 		);
 		
-		EntityStore ds = new DomainStore(keeper , model);
+		EntityStore ds = new SessionAwareEntityStore(keeper , model);
 
 		// read all
 		Criteria<TestSubject> c = CriteriaBuilder.search(TestSubject.class).all();

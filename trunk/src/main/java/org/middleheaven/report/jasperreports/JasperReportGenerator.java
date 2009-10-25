@@ -14,6 +14,9 @@ import org.middleheaven.report.ReportContext;
 import org.middleheaven.report.ReportException;
 import org.middleheaven.report.ReportGenerator;
 
+/**
+ * Extension ReportGenerator the uses Jasper Reports facilities
+ */
 public abstract class JasperReportGenerator implements ReportGenerator {
 
 	ManagedFile reportDefinitionFile;

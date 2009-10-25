@@ -392,10 +392,12 @@ public class DefaultWiringService implements WiringService{
 			for (PublishPoint pp : model.getPublishPoints()){
 				Object object = pp.getObject(activator);
 
-				ScoopingModel scoopingModel = binder.getScoopingModel(object);
-				scoopingModel.addParams(pp.getParams());
-				
-				scoopingModel.addToScope(binder,object);
+				if (object !=null){
+					ScoopingModel scoopingModel = binder.getScoopingModel(object);
+					scoopingModel.addParams(pp.getParams());
+					
+					scoopingModel.addToScope(binder,object);
+				}
 
 			}
 			

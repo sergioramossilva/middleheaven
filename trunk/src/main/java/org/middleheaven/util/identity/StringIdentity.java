@@ -3,27 +3,23 @@ package org.middleheaven.util.identity;
 import java.io.Serializable;
 
 
-public class StringIdentity extends Identity implements Serializable {
+public final class StringIdentity extends Identity implements Serializable {
 
-	String value;
+	private final String value;
 	
 	public static StringIdentity valueOf(String value){
-		return new StringIdentity(value);
+		return value == null ? null : new StringIdentity(value);
 	}
 	
-	public StringIdentity(String value){
+	private StringIdentity(String value){
 		this.value = value;
 	}
 	
 	@Override
 	public boolean equals(Identity other) {
-		return other instanceof StringIdentity && equals((StringIdentity)other);
+		return other instanceof StringIdentity && ((StringIdentity)other).value.equals(this.value);
 	}
 	
-	public boolean equals(StringIdentity other) {
-		return this.value == other.value;
-	}
-
 	@Override
 	public int hashCode() {
 		return value.hashCode();

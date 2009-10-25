@@ -48,7 +48,7 @@ public class TypeConvertions {
 		if (value==null){
 			return null;
 		} else if (type.isAssignableFrom(java.util.Date.class)){
-			// dates are treated differenttly
+			// dates are handled differently
 			if(value.getClass().equals(type)){
 				return type.cast(value);
 			}
@@ -57,8 +57,10 @@ public class TypeConvertions {
 		} else if (type.isInstance(value)){
 			return type.cast(value);
 		} else if (type.isPrimitive()){
+			// cannot type.cast the result because type is a primitive
+			
 			if (type.isInstance(value)){
-				return type.cast(value);
+				return (T)value;
 			} else {
 				BigInteger big = new BigInteger(value.toString());
 				if (type.equals(Byte.TYPE)){

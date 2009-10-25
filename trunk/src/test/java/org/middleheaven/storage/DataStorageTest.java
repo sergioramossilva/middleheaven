@@ -14,6 +14,7 @@ import org.middleheaven.core.bootstrap.BootstrapEvent;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
+import org.middleheaven.core.wiring.annotations.Name;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.DomainModelBuilder;
@@ -25,19 +26,25 @@ import org.middleheaven.storage.db.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.db.datasource.EmbeddedDSProvider;
 import org.middleheaven.storage.testdomain.TestSubject;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
+import org.middleheaven.transactions.Transaction;
+import org.middleheaven.transactions.TransactionService;
 
 
 public class DataStorageTest extends MiddleHeavenTestCase {
 
 	static EntityStore ds;
-	static Query<TestSubject> query;
+	static Query<TestSubject> queryAll;
+	static TransactionService transactionService;
 
-	protected void configurateTest(SetActivatorScanner scanner) {
-
-
+	protected void configurateActivators(SetActivatorScanner scanner) {
 		// Activator
+		scanner.addActivator(DomainStoreServiceActivator.class);
 		scanner.addActivator(DataSourceServiceActivator.class);
 		scanner.addActivator(FileSequenceStorageActivator.class);
+
+	}
+
+	protected void configurateTest() {
 
 		// Configured
 
@@ -54,11 +61,16 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		);
 
 		//	DataSource datasource = ServiceRegistry.getService(DataSourceService.class).getDataSource("test");
-		DataBaseStorage storeManager = new DataBaseStorage(provider, new WrappStorableReader(model));
+		DataBaseStorage dataStorage = new DataBaseStorage(provider, new WrappStorableReader(model));
 
-		storeManager.updateMetadata(model, catalog);
+		dataStorage.updateMetadata(model, catalog);
 
-		ds = new DomainStore(storeManager , model);
+		transactionService = ServiceRegistry.getService(TransactionService.class);
+
+		final EntityStoreService service = ServiceRegistry.getService(EntityStoreService.class);
+		service.register("ds", dataStorage, model);
+
+		ds = service.getStore();
 
 		final AtomicInteger counter = new AtomicInteger(9);
 		ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){
@@ -76,22 +88,46 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		});
 
 		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
-		query = ds.createQuery(all);
+		queryAll = ds.createQuery(all);
 
 	}
 
 	private void assetStoreIsEmpty(){
-		assertTrue("Store is not empty. Remaining " + query.count(), query.count() == 0);
+		assertTrue("Store is not empty. Remaining " + queryAll.count(), queryAll.count() == 0);
 	}
 
 	private void assertStoreHasElements(int count){
-		assertTrue("Store does not have " + count + " elements", query.count() == count);
+		assertTrue("Store does not have " + count + " elements", queryAll.count() == count);
 	}
 
+	
+	@Test
+	public void testDSInjection(){
+		
+		DSInjectionTester tester = this.getWiringService().getObjectPool().getInstance(DSInjectionTester.class);
+		
+		assertTrue(tester.test());
+	}
+	
+	public static class DSInjectionTester {
+
+		private EntityStore store;
+
+		
+		public DSInjectionTester (@Name("ds") EntityStore store){
+			this.store = store;
+		}
+		
+		public boolean test() {
+			return store != null;
+		}
+		
+	}
+	
 	@Test
 	public void testInsertDelete(){
 		Date birthdate = new Date();
-		
+
 		TestSubject to = new TestSubject();
 		to.setName("Name");
 		to.setBirthdate(birthdate);
@@ -100,44 +136,91 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		assetStoreIsEmpty();
 
-		// store it
-		ds.store(to);
+		storeIt(to);
 
-		to = ds.createQuery(CriteriaBuilder.search(TestSubject.class).all()).find();
-		
-		assertTrue(to.getNumber() == 10);
-		assertTrue(to.getBirthdate().equals(birthdate));
-		
 		assertStoreHasElements(1);
 
-		// remove it
-		ds.remove(to);
+		to = ds.createQuery(CriteriaBuilder.search(TestSubject.class).all()).first();
 
+		assertTrue(to.getNumber() == 10);
+		assertTrue(to.getBirthdate().equals(birthdate));
+
+		removeIt(to);
+		
+		
 		assetStoreIsEmpty();
+
 
 	}
 
 	@Test
 	public void testCriteriaDelete(){
 
-		TestSubject to = new TestSubject();
+		final TestSubject to = new TestSubject();
 		to.setName("Name");
 		to.setBirthdate(new Date());
-		
+
 		assetStoreIsEmpty();
 
-		// store it
-		ds.store(to);
+		storeIt(to);
+
 		assertStoreHasElements(1);
 
-		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
+		clean();
 
-		// remove them
-		ds.remove(all);
+	}
 
+	private void clean(){
+		final Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
+
+		Transaction t = transactionService.getTransaction();
+		try {
+			t.begin();
+
+			ds.remove(all);
+
+			t.commit();
+
+
+		} catch (RuntimeException e){
+			t.roolback();
+			throw e;
+		}
+	
 		assetStoreIsEmpty();
+	}
 
 
+	public <T> T storeIt(T to ){
+		Transaction t = transactionService.getTransaction();
+		try {
+			t.begin();
+
+			to =  ds.store(to);
+
+			t.commit();
+
+			return to;
+		} catch (RuntimeException e){
+			t.roolback();
+			throw e;
+		}
+	}
+
+
+	public void removeIt(Object to ){
+		Transaction t = transactionService.getTransaction();
+		try {
+			t.begin();
+
+			ds.remove(to);
+
+			t.commit();
+
+		} catch (RuntimeException e){
+			t.roolback();
+			throw e;
+		}
 	}
 
 
@@ -145,53 +228,52 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 	public void testInsertUpdate(){
 
 		assetStoreIsEmpty();
-		
+
 		TestSubject to = new TestSubject();
 		to.setName("Name");
-		to = ds.store(to);
-		
+
+		to = storeIt(to);
+
 		assertStoreHasElements(1);
 
 		to.setName("Name 4");
-		to = ds.store(to);
+
+		storeIt(to);
 
 		assertStoreHasElements(1);
-		
-		TestSubject to2 = query.find();
-		
-		assertEquals("Name 4", to2.getName());
-		
-		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
 
-		// remove them
-		ds.remove(all);
-		
-		assetStoreIsEmpty();
+		TestSubject to2 = queryAll.first();
+
+		assertEquals("Name 4", to2.getName());
+
+		clean();
 	}
 
 	@Test
 	public void testOrderby(){
 
 		assetStoreIsEmpty();
-		
+
 		TestSubject toA = new TestSubject();
 		toA.setName("A");
 		toA.setNumber(30);
-		
-		toA = ds.store(toA);
 
+		toA = storeIt(toA);
+		
 		TestSubject toB = new TestSubject();
 		toB.setName("B");
 		toB.setNumber(20);
-		toB = ds.store(toB);
-
+	
+		toB = storeIt(toB);
+		
 		TestSubject toC = new TestSubject();
 		toC.setName("C");
 		toC.setNumber(10);
-		toC = ds.store(toC);
+
+		toC = storeIt(toC);
 		
 		assertStoreHasElements(3);
-		
+
 		// order by name
 		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class)
 		.orderBy("name").asc()
@@ -200,14 +282,14 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		Query<TestSubject> q = ds.createQuery(some);
 
 		String[] names = {"A", "B" , "C"};
-		List<TestSubject> objects = new ArrayList<TestSubject>(q.findAll());
-		
+		List<TestSubject> objects = new ArrayList<TestSubject>(q.all());
+
 		assertEquals(names.length, objects.size());
-		
+
 		for (int i =0; i < names.length;i++){
 			assertEquals(names[i],objects.get(i).getName());
 		}
-		
+
 		some = CriteriaBuilder.search(TestSubject.class)
 		.orderBy("name").desc()
 		.all();
@@ -215,38 +297,41 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		q = ds.createQuery(some);
 
 		names = new String[]{"C", "B" , "A"};
-		objects = new ArrayList<TestSubject>(q.findAll());
-		
+		objects = new ArrayList<TestSubject>(q.all());
+
 		assertEquals(names.length, objects.size());
-		
+
 		for (int i =0; i < names.length;i++){
 			assertEquals(names[i],objects.get(i).getName());
 		}
-		
+
 	}
-	
+
+
 	@Test
 	public void testSelectCriteria(){
 
 		assetStoreIsEmpty();
-		
+
 		TestSubject toA = new TestSubject();
 		toA.setName("Name A");
 		toA.setNumber(10);
-		
-		toA = ds.store(toA);
+
+		toA = storeIt(toA);
 
 		TestSubject toB = new TestSubject();
 		toB.setName("Name B");
 		toA.setNumber(20);
-		toB = ds.store(toB);
-
+		
+		toB = storeIt(toB);
+		
 		TestSubject toC = new TestSubject();
 		toC.setName("Name C");
-		toC = ds.store(toC);
+
+		toC = storeIt(toC);
 		
 		assertStoreHasElements(3);
-		
+
 		// select all not named Name C
 		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class)
 		.and("name").not().eq("Name A")
@@ -265,18 +350,19 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		q = ds.createQuery(some);
 
 		assertEquals(1L, q.count());
-		
-		TestSubject rtoA = q.find();
+
+		TestSubject rtoA = q.first();
 		assertTrue("Loaded number is not read", rtoA.getNumber() == 10);
 
 		assertStoreHasElements(3);
-		ds.remove(toA);
+		removeIt(toA);
+
 		assertStoreHasElements(2);
-		ds.remove(toB);
+		removeIt(toB);
+		
 		assertStoreHasElements(1);
-		
-		ds.remove(toC);
-		
+		removeIt(toC);
+	
 		assetStoreIsEmpty();
 	}
 
@@ -285,22 +371,21 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		TestSubject toA = new TestSubject();
 		toA.setName("Name A");
-		toA = ds.store(toA);
-
+		toA = storeIt(toA);
+		
 		TestSubject toB = new TestSubject();
 		toB.setName("Name B");
-		toB = ds.store(toB);
-
+		toB = storeIt(toB);
+		
 		TestSubject toc = new TestSubject();
 		toc.setName("Name C");
-		toc = ds.store(toc);
-
+		toc = storeIt(toc);
 
 		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class).limit(2).all();
 
 		Query<TestSubject> q = ds.createQuery(some);
 
-		assertEquals(Integer.valueOf(2) , q.findAll().size());
+		assertEquals(Integer.valueOf(2) , q.all().size());
 
 
 		some = some.duplicate()
@@ -308,12 +393,12 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		q = ds.createQuery(some);
 
-		assertEquals(1 ,  q.findAll().size());
+		assertEquals(1 ,  q.all().size());
 
 		ds.remove(toA);
 		ds.remove(toB);
 		ds.remove(toc);
-		
+
 		assetStoreIsEmpty();
 	}
 
@@ -322,16 +407,16 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		TestSubject toA = new TestSubject();
 		toA.setName("Name A");
-		toA = ds.store(toA);
+		toA = storeIt(toA);
 
 		TestSubject toB = new TestSubject();
 		toB.setName("Name B");
-		toB = ds.store(toB);
+		toB = storeIt(toB);
 
 		TestSubject toc = new TestSubject();
 		toc.setName("Name C");
-		toc = ds.store(toc);
-		
+		toc = storeIt(toc);
+
 		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class).limit(3).all();
 
 		some = some.duplicate()
@@ -340,7 +425,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		Query<TestSubject> q = ds.createQuery(some);
 
 		assertEquals(3L , q.count());
-		assertEquals(2 , q.findAll().size());
+		assertEquals(2 , q.all().size());
 	}
 
 	@Test
@@ -354,12 +439,12 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		TestSubject to = new TestSubject();
 		to.setName("Name");
 		to.setBirthdate(new Date());
-		to = ds.store(to);
+		to = storeIt(to);
 
 		assertEquals(count+1,q.count());
 
 		count = q.count(); 
-		ds.remove(to);
+		removeIt(to);
 
 		assertEquals(count-1L, q.count());
 

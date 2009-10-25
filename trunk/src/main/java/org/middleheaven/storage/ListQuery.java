@@ -1,6 +1,7 @@
 package org.middleheaven.storage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -11,9 +12,9 @@ public class ListQuery<T> implements Query<T> , Serializable{
 	
 	private List<T> list;
 	
-	public ListQuery(List<T> list) {
+	public ListQuery(Collection<? extends T> list) {
 		super();
-		this.list = list;
+		this.list = new ArrayList<T> (list);
 	}
 
 	@Override
@@ -22,7 +23,7 @@ public class ListQuery<T> implements Query<T> , Serializable{
 	}
 
 	@Override
-	public T find() {
+	public T first() {
 		if (list.isEmpty()){
 			return null;
 		}
@@ -30,7 +31,7 @@ public class ListQuery<T> implements Query<T> , Serializable{
 	}
 
 	@Override
-	public Collection<T> findAll() {
+	public Collection<T> all() {
 		return Collections.unmodifiableList(list);
 	}
 
@@ -41,7 +42,7 @@ public class ListQuery<T> implements Query<T> , Serializable{
 
 	@Override
 	public Query<T> setRange(int startAt, int maxCount) {
-		return new ListQuery(this.list.subList(startAt, Math.min(list.size(), list.size()-startAt+maxCount)));
+		return new ListQuery<T>(this.list.subList(startAt, Math.min(list.size(), list.size()-startAt+maxCount)));
 	}
 
 }

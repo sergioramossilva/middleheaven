@@ -176,13 +176,8 @@ class Base64 {
 	 */
 	private static final int NON_BASE_64_PADDING = -3;
 
-	/**
-	 * This class need not be instantiated, all methods are static.
-	 *
-	 * @since ostermillerutils 1.00.00
-	 */
-	public Base64(){
-		// should not be called
+	private Base64(){
+		
 	}
 
 	/**

@@ -35,7 +35,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		);
 		
 		ManagedFile source = ManagedFiles.resolveFile(this.getClass().getResource("data.xml"));
-		ds = new DomainStore(XMLStorage.manage(source, new WrappStorableReader(model)) , model);
+		ds = new SessionAwareEntityStore(XMLStorage.manage(source, new WrappStorableReader(model)) , model);
 	}
 	
 	@Test 
@@ -44,7 +44,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		
 		assertTrue(q.count()>1);
 		
-		TestSubject a = q.find();
+		TestSubject a = q.first();
 		
 		assertTrue(a.getName().equals("Ana"));
 		assertTrue(a.getBirthdate()!=null);
@@ -57,7 +57,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		
 		assertTrue(q.count()==1);
 		
-		TestSubject b = q.find();
+		TestSubject b = q.first();
 		
 		assertFalse(a==b);
 		assertTrue(b.getName().equals("Ana"));

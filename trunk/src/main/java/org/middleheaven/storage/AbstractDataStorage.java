@@ -1,31 +1,29 @@
 package org.middleheaven.storage;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 
-import org.middleheaven.core.reflection.ClassIntrospector;
 import org.middleheaven.core.reflection.Introspector;
-import org.middleheaven.core.reflection.MethodIntrospector;
-import org.middleheaven.core.reflection.ObjectInstrospector;
-import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.StoreQuerySession;
-import org.middleheaven.util.classification.BooleanClassifier;
-import org.middleheaven.util.collections.ComposedMapKey;
-import org.middleheaven.util.collections.DualMapKey;
-import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.conversion.TypeConvertions;
 import org.middleheaven.util.identity.Identity;
 
 public abstract class AbstractDataStorage implements DataStorage {
 
 	private StorableModelReader reader;
+	private StorableStateManager manager;
 
 	public AbstractDataStorage(StorableModelReader reader){
 		this.reader = new CachedStorableModelReader(reader);
+	}
+	
+	public void setStorableStateManager(StorableStateManager manager){
+		this.manager = manager;
+	}
+	
+	protected StorableStateManager getStorableStateManager(){
+		return this.manager;
 	}
 
 	protected StorableModelReader reader() {
@@ -45,42 +43,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 		return reader.read(s.getPersistableClass());
 	}
 
-	public void flatten(Storable p, Set<Storable> all){
-
-		if (all.contains(p)){ // loop
-			return;
-		}
-
-		// add only if it will cause any change
-		if (!p.getStorableState().isNeutral()){
-			all.add(p);
-		}
-
-		StorableEntityModel entityModel = this.reader.read(p.getPersistableClass());
-
-		for (StorableFieldModel fieldModel : entityModel.fields()){
-			if(fieldModel.getDataType().isToOneReference()){
-				Storable merged = this.merge(p.getFieldValue(fieldModel));
-				if(merged != null){
-					p.setFieldValue(fieldModel, merged);
-					flatten(merged, all);
-				}
-			} else if (fieldModel.getDataType().isToManyReference()){
-			
-				Collection<?> allRefereed = new ArrayList((Collection<?>)p.getFieldValue(fieldModel));
-				for (Object o : allRefereed){
-					if(o !=null){
-						Storable merged = this.merge(o);
-						p.removeFieldElement(fieldModel, o);
-						p.addFieldElement(fieldModel, merged);
-						flatten(merged, all);
-					}
-				}
-			}
-		}
-
-	}
-
+	
 	@Override
 	public Identity getIdentityFor(Object object) {
 		if (object instanceof Storable){
@@ -109,7 +72,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 					.back()
 					.all();
 
-					Collection<?> all = this.createQuery(criteria , null).findAll();
+					Collection<?> all = this.createQuery(criteria , null).all();
 
 					for (Object o : all){
 						to.addFieldElement(fm,o);
@@ -133,7 +96,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 						.and("identity").eq(id)
 						.all();
 
-						o = (Storable) this.createQuery(criteria , null).find();
+						o = (Storable) this.createQuery(criteria , null).first();
 						session.put(o);
 					}
 
@@ -154,61 +117,6 @@ public abstract class AbstractDataStorage implements DataStorage {
 		return to;
 	}
 
-	@Override
-	public Storable merge(Object obj){
-		Storable p;
-		if (obj instanceof Storable){
-			p = (Storable)obj;
-		} else {
-			// not managed yet
-			ObjectInstrospector<Object> instrospector = Introspector.of(obj);
-			p = instrospector.newProxyInstance(new StorableProxyHandler(obj.getClass()),  Storable.class);
-
-			copyTo(obj,p);
-
-		}
-		return p;
-	}
-
-	public void copyTo(Object original, Storable copy ){
-
-		ClassIntrospector<? extends Object> introspector = Introspector.of(original.getClass());
-		EnhancedCollection<PropertyAccessor> properties = introspector.inspect().properties().retriveAll();
-		for (PropertyAccessor fa : properties){
-			Object value = fa.getValue(original);
-			if ( value instanceof Collection){
-				Collection all = (Collection) value;
-
-				if (!all.isEmpty()){
-					Object first = all.iterator().next();
-					MethodIntrospector adder = Introspector.of(introspector.inspect().methods()
-							.withParametersType(new Class[]{first.getClass()})
-							.notInheritFromObject()
-							.match(new BooleanClassifier<Method>(){
-
-								@Override
-								public Boolean classify(Method obj) {
-									return obj.getName().startsWith("add");
-								}
-
-							})
-							.retrive());
-
-					if (adder == null){
-						throw new RuntimeException("Add method for " + first.getClass().getName() + "  not found in " + introspector.getName());
-					}
-					
-					for (Object o : all){
-						adder.invoke(null, copy, o);
-					}
-				}
-
-			} else {
-				fa.setValue(copy, value);
-			}
-		}
-
-	}
 
 
 

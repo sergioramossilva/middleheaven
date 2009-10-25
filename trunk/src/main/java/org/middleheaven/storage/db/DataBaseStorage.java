@@ -95,13 +95,13 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		}
 
 		@Override
-		public T find() {
+		public T first() {
 			Collection<T> list = findByCriteria(criteria.duplicate().setRange(1, 1),hints);
 			return list.isEmpty() ? null : list.iterator().next();
 		}
 
 		@Override
-		public Collection<T> findAll() {
+		public Collection<T> all() {
 			return findByCriteria(criteria.duplicate(),hints);
 		}
 
@@ -199,7 +199,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 			} else {
 				count =  countByCriteria(criteria);
 			}
-			return new FastlaneCollection<T>(count, rs, con , model , this);
+			return new FastlaneCollection<T>(count, rs, con, model , this , this.getStorableStateManager());
 		} else {
 
 			try{
@@ -210,7 +210,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					LinkedList<T> list = new LinkedList<T>();
 					while (rs.next()){
 
-						T t = (T)merge(criteria.getTargetClass().cast(model.newInstance()));
+						T t = (T)this.getStorableStateManager().merge(criteria.getTargetClass().cast(model.newInstance()));
 						Storable st = this.copy(s, (Storable)t, model, session);
 						st.setStorableState(StorableState.RETRIVED);
 						list.addLast((T)st);
@@ -222,7 +222,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					List<T> list = new ArrayList<T>(criteria.getCount());
 					while (rs.next() && count < criteria.getCount()){
 
-						T t = (T)merge(criteria.getTargetClass().cast(model.newInstance()));
+						T t = (T)this.getStorableStateManager().merge(criteria.getTargetClass().cast(model.newInstance()));
 						Storable st = this.copy(s, (Storable)t, model, session);
 						st.setStorableState(StorableState.RETRIVED);
 						list.add((T)st);

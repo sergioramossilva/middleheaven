@@ -14,12 +14,12 @@ public class JavaScriptEnabledTag extends AbstractBodyTagSupport{
 		
 	}
 	
-	String query;
+	String body;
 
 	public int doAfterBody() throws JspException {
 		  BodyContent bc = getBodyContent();
 	      // get the bc as string
-	      query = bc.getString();
+	      body = bc.getString();
 	      // clean up
 	      bc.clearBody();
 	  
@@ -28,7 +28,7 @@ public class JavaScriptEnabledTag extends AbstractBodyTagSupport{
 
 	public int doEndTag() throws JspException  {
 		writeLine("<noscript>");
-		writeLine(query);
+		writeLine(body);
 		writeLine("</noscript>");
 		return EVAL_PAGE;
 	}

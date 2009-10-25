@@ -14,6 +14,13 @@ public final class OperatingSystemInfo {
 		return new OperatingSystemInfo(operatingSystem,operatingSystemVersion,operatingSystemVersionBase);
 	}
 	
+	public static OperatingSystemInfo local() {
+		return new OperatingSystemInfo(
+				System.getProperty("os.name"),
+				System.getProperty("os.version"),
+				System.getProperty("os.arch")
+				);
+	}
 	
 	private OperatingSystemInfo(String operatingSystem, String operatingSystemVersion, String operatingSystemVersionBase) {
 		this.operatingSystem = operatingSystem;
@@ -31,6 +38,10 @@ public final class OperatingSystemInfo {
 
 	public String getOperatingSystemVersionBase() {
 		return operatingSystemVersionBase;
+	}
+	
+	public boolean isWindows(){
+		return this.operatingSystem.contains("Windows"); 
 	}
 
 

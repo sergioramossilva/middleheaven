@@ -12,6 +12,13 @@ public class ForEachTag extends AbstractBodyTagSupport {
 	private Iterator<?> iterator;
 	private String varName = "item"; 
 	private int first = 0;
+	private int maxCount = 0;
+	private int count= 0;
+	
+	public void setMaxCount(int maxCount){
+		this.maxCount = maxCount;
+	}
+	
 	
 	public void setFirst(int first){
 		this.first = first;
@@ -34,7 +41,7 @@ public class ForEachTag extends AbstractBodyTagSupport {
 				iterator.next();
 			}
 			
-			return EVAL_BODY_BUFFERED;
+			return iterator.hasNext() ? EVAL_BODY_BUFFERED : SKIP_BODY;
 		}
 		return SKIP_BODY;
 	}
@@ -50,7 +57,7 @@ public class ForEachTag extends AbstractBodyTagSupport {
 				getBodyContent().writeOut(getPreviousOut());
 				getBodyContent().clear();
 				
-				if (iterator.hasNext()){
+				if ((maxCount == 0 || ++count < maxCount) && iterator.hasNext()){
 					Object obj = iterator.next();
 					pageContext.setAttribute(varName, obj);
 					return EVAL_BODY_BUFFERED;
@@ -64,6 +71,7 @@ public class ForEachTag extends AbstractBodyTagSupport {
 	}
 	
 	public void release(){
+		this.count = 0;
 		this.iterator = null;
 	}
 }

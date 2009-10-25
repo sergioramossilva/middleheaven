@@ -11,12 +11,12 @@ public final class EmptyQuery<T> implements Query<T>{
 	}
 
 	@Override
-	public T find() {
+	public T first() {
 		return null;
 	}
 
 	@Override
-	public Collection<T> findAll() {
+	public Collection<T> all() {
 		return Collections.emptyList();
 	}
 

@@ -3,6 +3,8 @@ package org.middleheaven.storage.db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.middleheaven.domain.EntityFieldModel;
+import org.middleheaven.domain.EntityModel;
 import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
@@ -29,13 +31,13 @@ public class ResultSetStorable implements Storable {
 	}
 	
 	@Override
-	public Object getFieldValue(StorableFieldModel model) {
+	public Object getFieldValue(EntityFieldModel fieldModel) {
 		try {
-			Object value =  rs.getObject(model.getHardName().getName());
-			if (model.getDataType().isReference()){
+			Object value =  rs.getObject(model.fieldModel(fieldModel.getLogicName()).getHardName().getName());
+			if (fieldModel.getDataType().isReference()){
 				return value;
 			} else {
-				return TypeConvertions.convert(value, model.getValueClass());
+				return TypeConvertions.convert(value, fieldModel.getValueClass());
 			}
 		} catch (SQLException e) {
 			throw new StorageException(e); 
@@ -66,18 +68,23 @@ public class ResultSetStorable implements Storable {
 
 
 	@Override
-	public void setFieldValue(StorableFieldModel model, Object fieldValue) {
+	public void setFieldValue(EntityFieldModel model, Object fieldValue) {
 		throw new UnsupportedOperationException("This storable is read only");
 	}
 
 	@Override
-	public void addFieldElement(StorableFieldModel model, Object element) {
+	public void addFieldElement(EntityFieldModel model, Object element) {
 		throw new UnsupportedOperationException("This storable is read only");
 	}
 
 	@Override
-	public void removeFieldElement(StorableFieldModel model, Object element) {
+	public void removeFieldElement(EntityFieldModel model, Object element) {
 		throw new UnsupportedOperationException("This storable is read only");
+	}
+
+	@Override
+	public EntityModel getEntityModel() {
+		return model;
 	}
 
 }

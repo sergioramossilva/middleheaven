@@ -18,7 +18,7 @@ public class CollectionUtilsTest {
 
 
 	@Test
-	public void addToArray(){
+	public void addElementsToArray(){
 		String[] sample = {"a","b"};
 		
 		String[] newsample = CollectionUtils.addToArray(sample, "c");
@@ -32,6 +32,20 @@ public class CollectionUtilsTest {
 		assertEquals("c",newsample[2]);
 		assertEquals("d",newsample[3]);
 		assertEquals("e",newsample[4]);
+	}
+	
+	@Test
+	public void addArrayToArray(){
+		String[] sample1 = {"a","b"};
+		String[] sample2 = {"c","d"};
+		
+		String[] newsample = CollectionUtils.addToArray(sample1, sample2);
+		
+		assertEquals(4,newsample.length);
+		assertEquals("a",newsample[0]);
+		assertEquals("b",newsample[1]);
+		assertEquals("c",newsample[2]);
+		assertEquals("d",newsample[3]);
 	}
 	
 	@Test

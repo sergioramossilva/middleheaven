@@ -1,38 +1,15 @@
 package org.middleheaven.storage;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.db.StoreQuerySession;
-import org.middleheaven.util.identity.Identity;
 
 /**
  * Abstraction for a real physical data storage.
- * {@ DataStorage} object encapsulate persistence technology related translations.  
+ * {@code DataStorage} object encapsulate persistence technology related translations.  
  */
-public interface DataStorage {
+public interface DataStorage extends IdentityManager{
 
-	/**
-	 * Wraps the object with a {@code Storable} interface.
-	 * If the object is already a {@code Storable}, return the object as it is.
-	 * @param obj
-	 * @return
-	 */
-	public Storable merge(Object obj);
-	
-	/**
-	 * Determine the object's identity token.
-	 * @param object
-	 * @return
-	 */
-	public Identity getIdentityFor(Object object);
-	
-	/**
-	 * Assign identity token for the object , if it has none
-	 * @return storable after assigning identity
-	 */
-	public Storable assignIdentity(Storable storable);
 	
 	/**
 	 * Include new objects in the storage
@@ -68,7 +45,11 @@ public interface DataStorage {
 	 */
 	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy);
 
-	public void flatten(Storable p, Set<Storable> all);
+	/**
+	 * Register the controling state manager
+	 * @param storableStateManager
+	 */
+	public void setStorableStateManager(StorableStateManager storableStateManager);
 
 
 
