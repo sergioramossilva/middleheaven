@@ -35,6 +35,39 @@
 	</tag>
 	
 	<tag>
+	    <name>if</name>
+	    <tagclass>org.middleheaven.ui.web.tags.IfTag</tagclass>
+	    <bodycontent>JSP</bodycontent>
+	    <attribute>
+	      <name>test</name>
+	      <required>true</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	</tag>
+	
+	<tag>
+	    <name>select</name>
+	    <tagclass>org.middleheaven.ui.web.tags.SelectTag</tagclass>
+	    <bodycontent>JSP</bodycontent>
+	    <attribute>
+	      <name>value</name>
+	      <required>true</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	</tag>
+	
+	<tag>
+	    <name>case</name>
+	    <tagclass>org.middleheaven.ui.web.tags.CaseTag</tagclass>
+	    <bodycontent>JSP</bodycontent>
+	    <attribute>
+	      <name>match</name>
+	      <required>true</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	</tag>
+	
+	<tag>
 	    <name>isAgent</name>
 	    <tagclass>org.middleheaven.ui.web.tags.AgentTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
@@ -120,6 +153,12 @@
 	    
 	    <attribute>
 	      <name>first</name>
+	      <required>false</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	    
+	     <attribute>
+	      <name>maxCount</name>
 	      <required>false</required>
 	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>

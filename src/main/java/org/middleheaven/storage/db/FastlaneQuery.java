@@ -20,12 +20,12 @@ class FastlaneQuery<T> implements Query<T> {
 	}
 
 	@Override
-	public T find() {
+	public T first() {
 		throw new ReadStrategyRestrictionException();
 	}
 
 	@Override
-	public Collection<T> findAll() {
+	public Collection<T> all() {
 		// TODO Auto-generated method stub
 		return null;
 	}

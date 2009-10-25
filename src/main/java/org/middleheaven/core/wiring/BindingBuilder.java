@@ -38,8 +38,9 @@ public class BindingBuilder<T> {
 		return this;
 	} 
 	
-	public BindingBuilder<T> toProvider(Class<Provider<T>> type){
-		//binding.setResolver(new ProviderResolver(type));
+	public BindingBuilder<T> toResolver(Class<Resolver<T>> type){
+		Resolver<T> r = binder.getInstance(WiringSpecification.search(type));
+		binding.setResolver(r);
 		return this;
 	}
 	

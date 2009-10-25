@@ -24,7 +24,7 @@ import org.middleheaven.util.identity.Identity;
 
 public class NaiveStorageManagerTeste {
 
-	DomainStore manager;
+	SessionAwareEntityStore manager;
 	TestSubject subj = new TestSubject();
 	InMemoryStorage store = new InMemoryStorage();
 	
@@ -41,7 +41,7 @@ public class NaiveStorageManagerTeste {
 				new DomainClasses().add(TestSubject.class)
 		);
 		
-		manager = new DomainStore(store , model);
+		manager = new SessionAwareEntityStore(store , model);
 		
 		subj.setNascimento(CalendarDate.today());
 		subj.setName("Alberto");

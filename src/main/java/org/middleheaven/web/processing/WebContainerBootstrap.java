@@ -8,6 +8,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.middleheaven.aas.AccessControlService;
+import org.middleheaven.aas.WebAccessController;
 import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
 import org.middleheaven.application.MetaInfApplicationServiceActivator;
 import org.middleheaven.core.BootstrapContainer;
@@ -67,6 +69,8 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 
 		ServiceRegistry.register(HttpServerService.class, httpService);
 
+		// access servie
+		ServiceRegistry.register(AccessControlService.class, new WebAccessController());
 	}
 
 	public void contextDestroyed(ServletContextEvent servletContextEvent) {

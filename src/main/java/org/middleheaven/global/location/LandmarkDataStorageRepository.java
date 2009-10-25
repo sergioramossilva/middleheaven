@@ -53,7 +53,7 @@ public class LandmarkDataStorageRepository extends LandmarkRepository {
 	public Iterable<String> getCategories() {
 		Collection<LandmarkCategory> all = storage.createQuery(
 				CriteriaBuilder.search(LandmarkCategory.class).all()
-		).findAll();
+		).all();
 		List<String> names = new ArrayList<String>(all.size());
 		for (LandmarkCategory category : all){
 			names.add(category.getName());
@@ -63,7 +63,7 @@ public class LandmarkDataStorageRepository extends LandmarkRepository {
 
 	@Override
 	public Iterable<Landmark> getLandmarks() {
-		return storage.createQuery(CriteriaBuilder.search(Landmark.class).all()).findAll();
+		return storage.createQuery(CriteriaBuilder.search(Landmark.class).all()).all();
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class LandmarkDataStorageRepository extends LandmarkRepository {
 				.and("coordinates.longitude").bewteen(minLongitude, maxLongitude)
 				.and("category").eq(category)
 				.all()
-		).findAll();
+		).all();
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class LandmarkDataStorageRepository extends LandmarkRepository {
 				.and("category").eq(category)
 				.or("name").eq(name)
 				.all()
-		).findAll();
+		).all();
 	}
 
 

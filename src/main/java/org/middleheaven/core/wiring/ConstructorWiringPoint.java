@@ -2,8 +2,14 @@ package org.middleheaven.core.wiring;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.middleheaven.core.reflection.ReflectionException;
+import org.middleheaven.util.collections.CollectionUtils;
 
 public final class ConstructorWiringPoint {
 
@@ -20,6 +26,30 @@ public final class ConstructorWiringPoint {
 		return paramsSpecifications;
 	}
 
+	public ConstructorWiringPoint merge(ConstructorWiringPoint other) {
+		if (other ==null){
+			return this;
+		}
+		if (!this.constructor.equals(other.constructor)){
+			throw new IllegalStateException("ConstructorWiringPoint with diferent constructors cannot be merged ");
+		} 
+		
+		WiringSpecification newMethodSpecification = this.methodSpecification;
+		if (methodSpecification !=null){
+			newMethodSpecification = newMethodSpecification.merge(other.methodSpecification);
+		}
+		
+		List<WiringSpecification<?>> result  = CollectionUtils.merge(
+				Arrays.asList(this.paramsSpecifications), 
+				Arrays.asList(other.paramsSpecifications)
+		);
+		
+		WiringSpecification[] r = new WiringSpecification[result.size()];
+		r = result.toArray(r);
+		
+		return new ConstructorWiringPoint (this.constructor, newMethodSpecification, r);
+		
+	}
 
 	public ConstructorWiringPoint(Constructor<?> constructor,WiringSpecification<?> methodSpecification,WiringSpecification<?>[] paramsSpecifications){
 		if (Modifier.isPrivate(constructor.getModifiers())){
@@ -51,4 +81,7 @@ public final class ConstructorWiringPoint {
 			throw ReflectionException.manage(e,constructor.getDeclaringClass());
 		}
 	}
+
+
+	
 }

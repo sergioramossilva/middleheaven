@@ -59,7 +59,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 
 		storeManager.updateMetadata(model, catalog);
 
-		ds = new DomainStore(storeManager , model);
+		ds = new SessionAwareEntityStore(storeManager , model);
 
 		final AtomicInteger counter = new AtomicInteger(9);
 		ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){
@@ -123,7 +123,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 		assertTrue(qr.count() == 1 );
 		
 		// find it
-		TestRelation relation2 = qr.find();
+		TestRelation relation2 = qr.first();
 		
 		assertNotNull(relation2);
 		
@@ -132,7 +132,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 				.and("identity").eq(ds.getIdentityFor(relation2))
 				.all());
 		
-		TestRelation relation3 = qr.find();
+		TestRelation relation3 = qr.first();
 		assertNotNull(relation3);
 		
 		// is the same as before
@@ -147,7 +147,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 		Query<TestFamillyMember> q1 = ds.createQuery(CriteriaBuilder.search(TestFamillyMember.class).all());
 		
 		// find it
-		TestFamillyMember tfm = q1.find();
+		TestFamillyMember tfm = q1.first();
 		
 		assertNotNull(tfm);
 		assertNotNull("Relation is null" , tfm.getRelation());
@@ -163,7 +163,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 		
 		// read the stored object
 		Query<TestSubject> q2 = ds.createQuery(CriteriaBuilder.search(TestSubject.class).all());
-		TestSubject tor = q2.find();
+		TestSubject tor = q2.first();
 		
 		// members are loaded
 		assertFalse("Members are empty", tor.getTestFamillyMembers().isEmpty());

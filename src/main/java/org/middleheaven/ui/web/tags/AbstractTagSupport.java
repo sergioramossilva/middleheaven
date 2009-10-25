@@ -1,7 +1,5 @@
 package org.middleheaven.ui.web.tags;
 
-import java.util.Date;
-
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.Tag;
 import javax.servlet.jsp.tagext.TagSupport;

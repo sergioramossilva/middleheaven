@@ -5,7 +5,7 @@ import java.io.Serializable;
 public abstract class Identity implements Comparable<Identity> , Serializable{
 
 
-	public boolean equals(Object other){
+	public final boolean equals(Object other){
 		return other !=null && this.getClass().isAssignableFrom(other.getClass()) && equals((Identity)other);
 	}
 	

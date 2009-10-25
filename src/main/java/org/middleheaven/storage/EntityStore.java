@@ -18,7 +18,7 @@ public interface EntityStore {
 	/**
 	 * Store the object.
 	 * Object with the same identity are only stored once. Further storage
-	 * of the same object only update the data for that object.
+	 * of the same object only updates the data for that object.
 	 * @param <T>
 	 * @param obj
 	 * @return
@@ -68,5 +68,7 @@ public interface EntityStore {
 	 * @param listener
 	 */
 	public void removeStorageListener(DataStorageListener listener);
+
+	
 	
 }

@@ -7,11 +7,11 @@ public class ReadStrategy {
 	private boolean isReadOnly = false;
 	private boolean isFowardOnly = false;
 
-	public static ReadStrategy none(){
+	public static ReadStrategy editableRandomAccess(){
 		return new ReadStrategy(false,false);
 	}
 
-	public static ReadStrategy all(){
+	public static ReadStrategy fowardReadOnly(){
 		return new ReadStrategy(true,true);
 	}
 

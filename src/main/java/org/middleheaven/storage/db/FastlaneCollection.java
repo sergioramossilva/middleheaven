@@ -10,6 +10,7 @@ import org.middleheaven.logging.Logging;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableState;
+import org.middleheaven.storage.StorableStateManager;
 import org.middleheaven.storage.StorageException;
 
 public class FastlaneCollection<T> implements Collection<T> {
@@ -20,17 +21,19 @@ public class FastlaneCollection<T> implements Collection<T> {
 	StorableEntityModel model;
 	long maxCount;
 	long count=0;
-	
+	private StorableStateManager manager;
+
 	public FastlaneCollection(long maxCount,ResultSet rs, Connection connection,StorableEntityModel model,
-			DataBaseStorage dataStorage) {
+			DataBaseStorage dataStorage, StorableStateManager manager) {
 		this.rs = rs;
 		this.connection = connection;
 		this.dataStorage = dataStorage;
 		this.model = model;
 		this.maxCount= maxCount;
+		this.manager = manager;
 
 	}
-	
+
 	@Override
 	public boolean isEmpty() {
 		return maxCount==0;
@@ -41,39 +44,47 @@ public class FastlaneCollection<T> implements Collection<T> {
 		return (int)maxCount;
 	}
 
-	
+	private void release(){
+		try{
+			rs.close();
+			connection.close();
+		} catch (SQLException e){
+			throw new StorageException(e);
+		}
+	}
+
 	@Override
 	public Iterator<T> iterator() {
 		return new Iterator <T>(){
 
 			@Override
 			public boolean hasNext() {
-				try {
-					
-					boolean hasNext = dataStorage.getDialect().supportsCountLimit() ? rs.next() : rs.next() && count < maxCount;
-					if (!hasNext){
-						try{
-							rs.close();
-							connection.close();
-						} catch (SQLException e){
-							Logging.error("Error closing fastlane connection", e);
-							// cannot rethrow exception because
-						}
-					}
-					return hasNext;
-				} catch (SQLException e) {
-					throw new StorageException(e);
+				boolean hasNext = count < maxCount;
+
+				if (!hasNext){
+					release();
 				}
+
+				return hasNext;
 			}
 
 			@Override
 			public T next() {
 				count++;
-				final ResultSetStorable s = new ResultSetStorable(rs,model);
-				Storable t = dataStorage.merge(model.newInstance());
-				t = dataStorage.copyStorable(s, t, model);
-				t.setStorableState(StorableState.RETRIVED);
-				return (T)t;
+				try {
+					if ( rs.next() ){
+						final ResultSetStorable s = new ResultSetStorable(rs,model);
+						Storable t = manager.merge(model.newInstance());
+						t = dataStorage.copyStorable(s, t, model);
+						t.setStorableState(StorableState.RETRIVED);
+						return (T)t;
+					} else {
+						release();
+						throw new IndexOutOfBoundsException("No more records");
+					}
+				} catch (SQLException e){
+					throw new StorageException(e);
+				}
 
 			}
 
@@ -135,7 +146,7 @@ public class FastlaneCollection<T> implements Collection<T> {
 	public <T> T[] toArray(T[] a) {
 		throw new UnsupportedOperationException();
 	}
-	
-	
+
+
 
 }

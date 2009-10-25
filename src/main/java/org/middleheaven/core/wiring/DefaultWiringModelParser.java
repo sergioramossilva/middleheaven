@@ -56,6 +56,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 			Constructor<T> constructor  = constructors.getFist();
 
+			if (constructor != null){
 			WiringSpecification[] params = readParamsSpecification(constructor, new BooleanClassifier<Annotation>(){
 
 				@Override
@@ -69,6 +70,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 			});
 
 			model.setConstructorPoint(new ConstructorWiringPoint(constructor,null,params));
+			}
 		}
 
 		// injection points
@@ -124,6 +126,9 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 	@Override
 	public void readScoopingModel(Object obj, ScoopingModel model) {
+		if (obj==null){
+			return;
+		}
 		Collection<Annotation> annotations = Introspector.of(obj.getClass()).inspect().annotations().retrive();
 		
 		for (Annotation a: annotations){

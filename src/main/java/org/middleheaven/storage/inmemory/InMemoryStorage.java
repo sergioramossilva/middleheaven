@@ -115,7 +115,7 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 	public void remove(Criteria<?> criteria) {
 		Query all = this.createQuery(criteria, null);
 
-		this.remove(all.findAll());
+		this.remove(all.all());
 	}
 
 	@Override

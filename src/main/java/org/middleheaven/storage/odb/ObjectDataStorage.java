@@ -65,7 +65,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 		}
 	}
 	
-	@Override
+	
 	public Storable merge(Object obj){
 		Storable p;
 		if (obj instanceof Storable){
@@ -79,6 +79,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 		}
 		return p;
 	}
+	
 
 	private static class NeoDatisMethodHandler implements ProxyHandler {
 

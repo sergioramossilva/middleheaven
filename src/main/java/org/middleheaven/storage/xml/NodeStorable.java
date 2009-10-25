@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.middleheaven.domain.EntityFieldModel;
+import org.middleheaven.domain.EntityModel;
+import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
@@ -19,35 +23,41 @@ public class NodeStorable implements Storable{
 
 	Map<String, String> data = new TreeMap<String,String>();
 	Identity key;
-	public NodeStorable(Node node , StorableFieldModel keyModel) {
+	private StorableEntityModel model;
 	
+	public NodeStorable(Node node , StorableEntityModel model) {
+		this.model = model;
+		
 		NodeList fields = node.getChildNodes();
 		for (int i = 0; i < fields.getLength(); i++) {
 			Node field = fields.item(i);
 			data.put(field.getNodeName(), field.getTextContent());
 		}
-		String val = data.get(keyModel.getHardName().getName());
+		String val = data.get(model.identityFieldModel().getHardName().getName());
 
 		key = val ==null ? null : IntegerIdentity.valueOf(val);
 	}
 
 	@Override
-	public Object getFieldValue(StorableFieldModel model) {
-		if (model.isIdentity()){
+	public Object getFieldValue(EntityFieldModel fieldModel) {
+		if (fieldModel.isIdentity()){
 			return key;
 		}
-		if (model.getDataType().isTemporal()){
+		
+		QualifiedName name = model.fieldModel(fieldModel.getLogicName()).getHardName();
+		
+		if (fieldModel.getDataType().isTemporal()){
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			Date date;
 			try {
-				date = format.parse(data.get(model.getHardName().getName()));
+				date = format.parse(data.get(name.getName()));
 			} catch (ParseException e) {
 				throw new RuntimeException(e);
 			}
 			
 			return date;
 		} else {
-			return TypeConvertions.convert(data.get(model.getHardName().getName()), model.getValueClass());
+			return TypeConvertions.convert(data.get(name.getName()), fieldModel.getValueClass());
 		}
 	}
 
@@ -68,7 +78,7 @@ public class NodeStorable implements Storable{
 	}
 
 	@Override
-	public void setFieldValue(StorableFieldModel model, Object fieldValue) {
+	public void setFieldValue(EntityFieldModel model, Object fieldValue) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -86,15 +96,21 @@ public class NodeStorable implements Storable{
 	}
 
 	@Override
-	public void addFieldElement(StorableFieldModel model, Object element) {
+	public void addFieldElement(EntityFieldModel model, Object element) {
 		// TODO implement Storable.addFieldElement
 		
 	}
 
 	@Override
-	public void removeFieldElement(StorableFieldModel model, Object element) {
+	public void removeFieldElement(EntityFieldModel model, Object element) {
 		// TODO implement Storable.removeFieldElement
 		
+	}
+
+	@Override
+	public EntityModel getEntityModel() {
+		// TODO implement Storable.getEntityModel
+		return null;
 	}
 
 

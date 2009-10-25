@@ -3,15 +3,14 @@ package org.middleheaven.aas;
 import org.middleheaven.core.wiring.service.Service;
 
 @Service
-public final class AccessController implements AccessControlService {
+public final class WebAccessController implements AccessControlService {
 
 
-	public AccessController(){}
+	public WebAccessController(){}
 
 
 	@Override
 	public AccessRequestBroker accessRequestBroker() {
-		// TODO implement AccessControlService.accessRequestBroker
-		return null;
+		return new AccessRequestBroker();
 	}
 }

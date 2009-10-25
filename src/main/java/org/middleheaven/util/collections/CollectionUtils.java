@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
@@ -15,6 +16,26 @@ import java.util.Set;
 
 public class CollectionUtils {
 
+	public static <T extends Mergable<T>> List<T> merge(List<T> a, List< T> b){
+		if (a.isEmpty()){
+			return b;
+		} else if (b.isEmpty()){
+			return a;
+		}
+		
+		List<T> result = new LinkedList<T>();
+		outter: for (T i : a){
+			for (T j : b){
+				if (i.canMergeWith(j)){
+					result.add(i.merge(j));
+					continue outter;
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 	public static <T> EnhancedList<T> enhance(T ... elements){
 		return new EnhancedArrayList<T>(Arrays.asList(elements));
 	}
@@ -186,6 +207,17 @@ public class CollectionUtils {
 	}
 
 
+	public static <T> T[] addToArray(T[] array1,T[] array2) {
+		
+		Class<?> componentType = array1.getClass().getComponentType();
+		
+		Object newArray = Array.newInstance(componentType, array1.length+array2.length);
+		
+		System.arraycopy(array1, 0, newArray, 0, array1.length);
+		System.arraycopy(array2, 0, newArray, array1.length,array2.length);
+		
+		return (T[]) newArray;
+	}
 	
 	public static <T> T[] addToArray(T[] array,T element , T ... elements) {
 		

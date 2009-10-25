@@ -9,13 +9,15 @@ import java.util.Set;
 
 import org.middleheaven.core.wiring.annotations.Name;
 import org.middleheaven.core.wiring.annotations.Params;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.Mergable;
 
 /**
  * Maintains data about the wiring contract to be fulfill by the wiring context.  
  *
  * @param <T> the type that must be retrieved
  */
-public class WiringSpecification<T> {
+public class WiringSpecification<T> implements Mergable<WiringSpecification<T>> {
 
 	private Class<T> contract;
 	private Set<Annotation> annotations;
@@ -109,5 +111,40 @@ public class WiringSpecification<T> {
 
 	public boolean isRequired() {
 		return required;
+	}
+	
+	public boolean equals(Object other){
+		return other instanceof WiringSpecification && equals((WiringSpecification)other);
+	}
+	
+	private boolean equals(WiringSpecification other){
+		return this.contract.getName().equals(other.contract.getName()) && 
+		CollectionUtils.equalContents(this.params, other.params);
+	}
+	
+	public int hashCode(){
+		return this.contract.getName().hashCode();
+	}
+
+
+	@Override
+	public boolean canMergeWith(WiringSpecification<T> other) {
+		return this.contract.getName().equals(other.contract.getName());
+	}
+
+	@Override
+	public WiringSpecification<T> merge(WiringSpecification<T> other) {
+		
+		Map<String,String> params = new HashMap<String,String>(this.params);
+		params.putAll(other.params);
+		
+		Set<Annotation> annotations = new HashSet<Annotation>(this.annotations);
+		annotations.addAll(other.annotations);
+		
+		return new WiringSpecification(
+			this.contract,
+			params,
+			annotations
+		);
 	}
 }

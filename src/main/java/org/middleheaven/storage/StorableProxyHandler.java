@@ -9,6 +9,8 @@ import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.MethodIntrospector;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.domain.EntityFieldModel;
+import org.middleheaven.domain.EntityModel;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.identity.Identity;
 
@@ -17,10 +19,12 @@ public class StorableProxyHandler implements ProxyHandler  {
 
 	private Identity identity;
 	private StorableState state = StorableState.FILLED;
-	Class<?> originalType;
+	private Class<?> originalType;
+	private EntityModel model;
 
-    StorableProxyHandler(Class<?> original){
+    StorableProxyHandler(Class<?> original, EntityModel model){
 		this.originalType = original;
+		this.model = model;
 		
 	}
 	
@@ -28,11 +32,12 @@ public class StorableProxyHandler implements ProxyHandler  {
 	public Object invoke(Object self, Object[] args, MethodDelegator delegator) throws Throwable {
 		String methodName = delegator.getName();
 		if (!delegator.hasSuper()){
-			if (methodName.equals("getFieldValue")){
+			if (methodName.equals("getEntityModel")){
+				return model;
+			} else if (methodName.equals("getFieldValue")){
 				
-				return this.getFieldValue( self, (StorableFieldModel)args[0]);
-				
-				
+				return this.getFieldValue( self, (EntityFieldModel)args[0]);
+
 			} else if (methodName.equals("setFieldValue")){
 
 				setFieldValue(self, (StorableFieldModel)args[0],args[1]);
@@ -121,8 +126,8 @@ public class StorableProxyHandler implements ProxyHandler  {
 		adder.invoke(null, self, object);
 	}
 
-	private void setFieldValue(Object self,StorableFieldModel model, Object value) {
-		String name = model.getHardName().getName();
+	private void setFieldValue(Object self,EntityFieldModel model, Object value) {
+		String name = model.getLogicName().getName();
 		
 		PropertyAccessor property = Introspector.of(this.originalType).inspect().properties()
 				.named(name).retrive();
@@ -139,8 +144,8 @@ public class StorableProxyHandler implements ProxyHandler  {
 		}
 	}
 	
-	private Object getFieldValue(Object self,StorableFieldModel model) {
-		String name = model.getHardName().getName();
+	private Object getFieldValue(Object self,EntityFieldModel model) {
+		String name = model.getLogicName().getName();
 		
 		PropertyAccessor property = Introspector.of(originalType).inspect().properties()
 									.named(name).retrive();

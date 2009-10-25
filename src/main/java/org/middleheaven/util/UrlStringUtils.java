@@ -22,7 +22,7 @@ public class UrlStringUtils extends StringUtils {
 	/**
 	 * 
 	 * @param url
-	 * @return
+	 * @return the name of the file in the url 
 	 */
 	public static String filename(CharSequence url){
 		final String urlString = url.toString();
@@ -34,6 +34,20 @@ public class UrlStringUtils extends StringUtils {
 			return "";
 		}
 		
+	}
+	/**
+	 * 
+	 * @param url
+	 * @param excludeExtention
+	 * @return the name of the file in the url  minus the extention id {@code excludeExtention} is {@code true}
+	 */
+	public static String filename(CharSequence url, boolean excludeExtention){
+		String filename = filename(url);
+		final int pos = filename.indexOf('.');
+		if (excludeExtention && pos> 0){
+			filename = filename.substring(0,pos);
+		}
+		return filename;
 	}
 	
 	public static String path(CharSequence url,CharSequence context){

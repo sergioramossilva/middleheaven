@@ -2,6 +2,12 @@ package org.middleheaven.report;
 
 import java.util.Map;
 
+/**
+ * Central report service. 
+ * 
+ * The report service acts as a {@code ReportGenerator} registry
+ * and a  report factory.
+ */
 public interface ReportService {
 
 	

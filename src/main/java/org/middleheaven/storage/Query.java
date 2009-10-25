@@ -5,9 +5,9 @@ import java.util.Collection;
 public interface Query<T> {
 
 	
-	public T find();
+	public T first();
 	
-	public Collection<T> findAll();
+	public Collection<T> all();
 	/**
 	 * Return the total number of elements in the query.
 	 * Even if the query was been paginated, {@code count} will allways return the
