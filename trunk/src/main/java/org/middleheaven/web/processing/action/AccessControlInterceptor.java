@@ -16,9 +16,11 @@ import org.middleheaven.aas.LoginStep;
 import org.middleheaven.aas.NameCallback;
 import org.middleheaven.aas.PasswordCallback;
 import org.middleheaven.aas.Permission;
+import org.middleheaven.aas.Signature;
 import org.middleheaven.aas.SignatureStore;
 import org.middleheaven.aas.Subject;
 import org.middleheaven.aas.UserAgent;
+import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.web.processing.HttpContext;
@@ -28,20 +30,20 @@ public class AccessControlInterceptor implements Interceptor{
 
 	private AccessControlService accessControlService;
 	private List<URLPermission> permissions = new LinkedList<URLPermission>();
-	private SignatureStore store;
 	private Outcome failureOutcome;
 	private Outcome loginOutcome;
 	private Outcome accessDeniedOutcome;
+	private SignatureStore<HttpContext> store;
 
 	public AccessControlInterceptor(
 			AccessControlService accessControlService,
-			SignatureStore store, 
+			SignatureStore<HttpContext> store, 
 			Outcome loginOutcome,
 			Outcome failureOutcome,
 			Outcome accessDeniedOutcome){
 		
-		this.accessControlService = accessControlService;
 		this.store = store;
+		this.accessControlService = accessControlService;
 		this.failureOutcome = failureOutcome;
 		this.loginOutcome = loginOutcome;
 	}
@@ -71,6 +73,7 @@ public class AccessControlInterceptor implements Interceptor{
 
 			};
 
+			
 			HttpContextAccessRequest request = new HttpContextAccessRequest(context,handler,store);
 
 			boolean repeat=true;
@@ -167,9 +170,9 @@ public class AccessControlInterceptor implements Interceptor{
 
 		private HttpContext context;
 		private CallbackHandler handler;
-		private SignatureStore store;
+		private SignatureStore<HttpContext> store;
 
-		public HttpContextAccessRequest(HttpContext context,CallbackHandler handler, SignatureStore store){
+		public HttpContextAccessRequest(HttpContext context,CallbackHandler handler, SignatureStore<HttpContext> store){
 			this.context = context;
 			this.store = store;
 			this.handler = handler;
@@ -190,11 +193,6 @@ public class AccessControlInterceptor implements Interceptor{
 			return context.getRemoteAddress();
 		}
 
-		@Override
-		public SignatureStore getSignatureStore() {
-			return store;
-		}
-
 		Subject subject;
 		
 		@Override
@@ -205,6 +203,16 @@ public class AccessControlInterceptor implements Interceptor{
 		@Override
 		protected void setSubject(Subject subject) {
 			this.subject = subject;
+		}
+
+		@Override
+		public Signature getSignature() {
+			return store.getSignature(context);
+		}
+
+		@Override
+		public void setSignature(Signature signature) {
+			 store.setSignature(context, signature);
 		}
 
 	}

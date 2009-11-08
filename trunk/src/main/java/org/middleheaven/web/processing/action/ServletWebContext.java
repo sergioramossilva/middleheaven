@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,6 +25,7 @@ import org.middleheaven.ui.CulturalAttributeContext;
 import org.middleheaven.util.OperatingSystemInfo;
 import org.middleheaven.util.conversion.TypeConvertions;
 import org.middleheaven.web.processing.BrowserInfo;
+import org.middleheaven.web.processing.RequestCookie;
 import org.middleheaven.web.processing.HttpProcessingUtils;
 import org.middleheaven.web.processing.HttpUserAgent;
 
@@ -211,6 +213,16 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 				value = new String[0]; // parameters can only be Strings, so an array can only of string
 			}
 			break;
+		case REQUEST_COOKIES:
+			ServletCookieBagTranslator t = new ServletCookieBagTranslator(((HttpServletRequest)getRequest()));
+		
+			if (type.isArray() && type.getComponentType().isAssignableFrom(RequestCookie.class)){
+				return type.cast(t.readAll().toArray());
+			} else if (type.isAssignableFrom(RequestCookie.class)){
+				return type.cast(t.readAll().getCookie(name));
+			} else {
+				throw new IllegalArgumentException("Illegal type for scope " + scope);
+			}
 		default:
 			throw new IllegalArgumentException("Unavailable scope " + scope);
 		}
@@ -240,6 +252,15 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 		case HEADER:
 			setHeaderAttribute( scope,  name,  value);
 			break;
+		case REQUEST_COOKIES:
+			if (!(value instanceof RequestCookie)){
+				throw new IllegalArgumentException(RequestCookie.class + " type expected");
+			}
+			
+			ServletCookieBagTranslator t = new ServletCookieBagTranslator(((HttpServletResponse)getResponse()));
+			
+			t.write((RequestCookie)value);
+			
 		case PARAMETERS:
 		case CONFIGURATION:
 			throw new IllegalArgumentException(scope + " is read-only");

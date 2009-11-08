@@ -17,7 +17,7 @@ public class AccessRequestBroker {
 		CallbackHandler callbackHandler = request.getCallbackHandler();
 
 		try{
-			Signature signature = request.getSignatureStore().getSignature();
+			Signature signature = request.getSignature();
 
 			if (signature == null || !signature.isValid() || signature.getCredentials().isEmpty()){
 				// autentication
@@ -76,8 +76,9 @@ public class AccessRequestBroker {
 		Signature signature = policy.createSignature(subject);
 		
 		//store signature
-		request.getSignatureStore().setSignature(signature);
+		request.setSignature(signature);
 
+		// store subject
 		request.setSubject(subject);
 
 	}

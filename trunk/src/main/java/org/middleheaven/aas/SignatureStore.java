@@ -1,10 +1,12 @@
 package org.middleheaven.aas;
 
+import org.middleheaven.ui.AttributeContext;
 
 
-public interface  SignatureStore {
 
-	public Signature getSignature();
+public interface  SignatureStore<C extends AttributeContext> {
 
-	public void setSignature(Signature signature);
+	public Signature getSignature(C context);
+
+	public void setSignature(C context, Signature signature);
 }

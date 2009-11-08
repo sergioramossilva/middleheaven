@@ -8,9 +8,12 @@ public abstract class AccessRequest {
 
 	public abstract UserAgent getAgent();
 	public abstract InetAddress getCallerAddress();
-	public abstract SignatureStore getSignatureStore();
+
 	public abstract CallbackHandler getCallbackHandler();
 	public abstract Subject getSubject();
 	
 	protected abstract void setSubject(Subject subject);
+	
+	public abstract Signature getSignature();
+	public abstract void setSignature(Signature signature);
 }
