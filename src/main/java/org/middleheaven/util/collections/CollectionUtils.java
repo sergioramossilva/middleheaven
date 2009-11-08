@@ -16,12 +16,45 @@ import java.util.Set;
 
 public class CollectionUtils {
 
+	public static <T extends Mergable<T>> T[] merge(T[] a, T[] b){
+		if (a == null || a.length ==0){
+			return b;
+		} else if (b == null || b.length ==0){
+			return a;
+		}
+		
+		Object newArray = Array.newInstance(a[0].getClass(), a.length+b.length);
+		
+		int position =0; 
+		outter: for (T i : a){
+			for (T j : b){
+				if (i.canMergeWith(j)){
+					Array.set(newArray, position, i.merge(j));
+					position++;
+					continue outter;
+				}
+			}
+		}
+		
+		if (position == 0){
+			return (T[]) Array.newInstance(a[0].getClass(),0);
+		} else {
+			Object result = Array.newInstance(a[0].getClass(),position);
+			
+			System.arraycopy(newArray, 0, result, 0, position);
+			return (T[])result;
+		}
+		
+	}
+	
 	public static <T extends Mergable<T>> List<T> merge(List<T> a, List< T> b){
 		if (a.isEmpty()){
 			return b;
 		} else if (b.isEmpty()){
 			return a;
 		}
+		
+
 		
 		List<T> result = new LinkedList<T>();
 		outter: for (T i : a){

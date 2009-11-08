@@ -38,8 +38,7 @@ import org.middleheaven.util.classification.BooleanClassifier;
 public class DataSourceServiceActivator extends Activator {
 
 	Map <String , DataSourceProvider> sources = new TreeMap <String , DataSourceProvider>();
-	LogBook book;
-	
+
 	private BootstrapService bootstrapService;
 	private LoggingService loggingService;
 	private DataSourceService dataSourceService;
@@ -64,7 +63,7 @@ public class DataSourceServiceActivator extends Activator {
 
 		BootstrapContainer container =  bootstrapService.getEnvironmentBootstrap().getContainer();
 
-		book = loggingService.getLogBook(null);
+		LogBook book = loggingService.getLogBook(null);
 
 		// look for the datasource mapping file
 
@@ -80,6 +79,8 @@ public class DataSourceServiceActivator extends Activator {
 
 
 		});
+		
+		this.dataSourceService =  new HashDataSourceService();
 
 		if (!configurations.isEmpty()){
 			for (ManagedFile file : configurations){
@@ -100,7 +101,7 @@ public class DataSourceServiceActivator extends Activator {
 					}
 					sources.put(connectionParams.getProperty("datasource.name"), provider );
 
-					this.dataSourceService =  new HashDataSourceService();
+				
 				} catch (ManagedIOException e) {
 					book.error("Error loading datasource file", e);
 					throw new AtivationException(e);

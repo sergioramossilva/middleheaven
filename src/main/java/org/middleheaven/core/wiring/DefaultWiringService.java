@@ -336,11 +336,6 @@ public class DefaultWiringService implements WiringService{
 			binder.wireMembers(obj);
 		}
 
-	
-
-
-
-
 	}
 	
 

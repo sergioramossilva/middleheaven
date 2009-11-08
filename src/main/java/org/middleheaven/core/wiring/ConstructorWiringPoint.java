@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.Mergable;
 
 public final class ConstructorWiringPoint {
 
@@ -39,15 +40,13 @@ public final class ConstructorWiringPoint {
 			newMethodSpecification = newMethodSpecification.merge(other.methodSpecification);
 		}
 		
-		List<WiringSpecification<?>> result  = CollectionUtils.merge(
-				Arrays.asList(this.paramsSpecifications), 
-				Arrays.asList(other.paramsSpecifications)
-		);
+		Mergable[] a = 	this.paramsSpecifications;
+		Mergable[] b = 	other.paramsSpecifications;
 		
-		WiringSpecification[] r = new WiringSpecification[result.size()];
-		r = result.toArray(r);
+		Mergable[] c  = CollectionUtils.merge(a,b);
 		
-		return new ConstructorWiringPoint (this.constructor, newMethodSpecification, r);
+
+		return new ConstructorWiringPoint (this.constructor, newMethodSpecification, (WiringSpecification<?>[]) c);
 		
 	}
 
