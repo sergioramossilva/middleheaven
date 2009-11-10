@@ -68,7 +68,7 @@ public class AccessControlInterceptor implements Interceptor{
 
 				@Override
 				public void onException(AccessException e) {
-					// TODO handle
+					e.printStackTrace(); //TODO log
 				}
 
 			};
@@ -77,13 +77,13 @@ public class AccessControlInterceptor implements Interceptor{
 			HttpContextAccessRequest request = new HttpContextAccessRequest(context,handler,store);
 
 			boolean repeat=true;
-			while (repeat){
+			loop:while (repeat){
 				
 				LoginStep step = accessControlService.accessRequestBroker().broke(request);
 				switch (step){
 				case FAIL:
 					chain.interruptWithOutcome(failureOutcome);
-					break;
+					break loop;
 				case SUCESS:
 					// is authenticated
 					
@@ -124,10 +124,10 @@ public class AccessControlInterceptor implements Interceptor{
 				((IPAddressCallback) callback).setAddress(context.getRemoteAddress());
 			} else if (callback instanceof NameCallback){
 				NameCallback nc = ((NameCallback) callback);
-				nc.setName(context.getAttribute(nc.getPrompt(), String.class));
-			} else if (callback instanceof NameCallback){
+				nc.setName(context.getAttribute(ContextScope.REQUEST,nc.getPrompt(), String.class));
+			} else if (callback instanceof PasswordCallback){
 				PasswordCallback pc = ((PasswordCallback) callback);
-				String attribute = context.getAttribute(pc.getPrompt(), String.class);
+				String attribute = context.getAttribute(ContextScope.REQUEST, pc.getPrompt(), String.class);
 				if (attribute==null){
 					attribute = "";
 				}

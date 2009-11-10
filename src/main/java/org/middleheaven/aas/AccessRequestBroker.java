@@ -8,11 +8,13 @@ import org.middleheaven.aas.old.SignaturePolicy;
 
 public class AccessRequestBroker {
 
-	Autorizator autorizator;
-	Autenticator autenticator;
+	Autorizator autorizator = new Autorizator();
+	Autenticator autenticator = new Autenticator();
 	SubjectLocator subjectLocator;
 	SignaturePolicy policy;
 
+	public AccessRequestBroker(){}
+	
 	public LoginStep broke(AccessRequest request){
 		CallbackHandler callbackHandler = request.getCallbackHandler();
 
