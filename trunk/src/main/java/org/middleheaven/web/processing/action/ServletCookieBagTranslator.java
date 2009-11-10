@@ -31,8 +31,9 @@ public class ServletCookieBagTranslator implements RequestCookieSource {
 	public RequestCookieBag readAll() {
 		RequestCookieBag bag = new RequestCookieBag();
 
-		if (request !=null ){
-			for (Cookie cookie : request.getCookies() ){
+		if (request !=null && request.getCookies() != null && request.getCookies().length > 0){
+		
+			for (Cookie cookie :  request.getCookies()){
 
 				RequestCookie rc = new RequestCookie(cookie.getName(), cookie.getValue());
 				rc.setComment(cookie.getComment());

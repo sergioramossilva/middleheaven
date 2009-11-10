@@ -16,7 +16,7 @@ public class AccessControlActivator extends Activator {
 
 	@Override
 	public void activate(ActivationContext context) {
-		controler = new WebAccessController();
+		controler = new SimpleAccessControlService();
 	}
 
 	@Override
