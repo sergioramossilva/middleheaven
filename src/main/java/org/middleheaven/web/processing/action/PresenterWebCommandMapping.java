@@ -24,10 +24,10 @@ import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.util.coersion.StringCalendarDateTimeCoersor;
+import org.middleheaven.util.coersion.StringDateCoersor;
+import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.Walker;
-import org.middleheaven.util.conversion.StringCalendarDateTimeConverter;
-import org.middleheaven.util.conversion.StringDateConverter;
-import org.middleheaven.util.conversion.TypeConvertions;
 import org.middleheaven.validation.ValidationException;
 import org.middleheaven.web.annotations.Delete;
 import org.middleheaven.web.annotations.Get;
@@ -325,8 +325,8 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 			
 			formatter.setPattern(TimepointFormatter.Format.DATE_ONLY);
 			
-			TypeConvertions.addConverter(String.class, Date.class, new StringDateConverter(formatter));
-			TypeConvertions.addConverter(String.class, CalendarDateTime.class, new StringCalendarDateTimeConverter(formatter));
+			TypeCoercing.addCoersor(String.class, Date.class, new StringDateCoersor(formatter));
+			TypeCoercing.addCoersor(String.class, CalendarDateTime.class, new StringCalendarDateTimeCoersor(formatter));
 
 			
 			String name = "";
@@ -378,8 +378,8 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 			}
 		
 		} finally {
-			TypeConvertions.removeConverter(String.class, Date.class);
-			TypeConvertions.removeConverter(String.class, CalendarDateTime.class);
+			TypeCoercing.removeConverter(String.class, Date.class);
+			TypeCoercing.removeConverter(String.class, CalendarDateTime.class);
 
 		}
 

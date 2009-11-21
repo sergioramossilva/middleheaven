@@ -6,6 +6,9 @@ package org.middleheaven.web.processing;
  */
 public interface HttpServerService {
 
+	public void addFilter (HttpFilter filter);
+	public void removeFilter (HttpFilter filter);
+	
 	
 	public void registerHttpProcessor(String processorID, HttpProcessor procesor, UrlMapping mapping);
 	public void unRegisterHttpProcessor(String processorID);

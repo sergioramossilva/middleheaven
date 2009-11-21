@@ -1,21 +1,21 @@
 package org.middleheaven.util.identity;
 
-import org.middleheaven.util.conversion.AbstractTypeConverter;
+import org.middleheaven.util.coersion.AbstractTypeCoersor;
 
-public class NumberIdentityConverter<N extends Number> extends AbstractTypeConverter<N, Identity> {
+public class NumberIdentityCoersor<N extends Number> extends AbstractTypeCoersor<N, Identity> {
 
 	private Class<? extends Number> numberClass;
 
-	public static <T extends Number> NumberIdentityConverter<T> newInstance(Class<T> numberClass){
-		return new NumberIdentityConverter<T>(numberClass);
+	public static <T extends Number> NumberIdentityCoersor<T> newInstance(Class<T> numberClass){
+		return new NumberIdentityCoersor<T>(numberClass);
 	}
 	
-	private NumberIdentityConverter(Class<? extends Number> numberClass) {
+	private NumberIdentityCoersor(Class<? extends Number> numberClass) {
 		this.numberClass = numberClass;
 	}
 
 	@Override
-	public <T extends Identity> T convertFoward(N value, Class<T> type) {
+	public <T extends Identity> T coerceForward(N value, Class<T> type) {
 		if (value ==null){
 			return null;
 		}
@@ -28,7 +28,7 @@ public class NumberIdentityConverter<N extends Number> extends AbstractTypeConve
 	}
 
 	@Override
-	public <T extends N> T convertReverse(Identity value, Class<T> type) {
+	public <T extends N> T coerceReverse(Identity value, Class<T> type) {
 		if (value == null){
 			return null;
 		}

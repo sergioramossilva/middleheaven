@@ -8,7 +8,7 @@ import org.middleheaven.global.Culture;
 import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.CulturalAttributeContext;
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.coersion.TypeCoercing;
 
 public class WebConfigContext implements CulturalAttributeContext {
 
@@ -44,7 +44,7 @@ public class WebConfigContext implements CulturalAttributeContext {
 		if ( value == null){
 			return null;
 		}
-		return TypeConvertions.convert(value, type);
+		return TypeCoercing.convert(value, type);
 
 	}
 

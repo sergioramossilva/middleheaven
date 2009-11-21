@@ -66,19 +66,6 @@ public class ListInterceptorChain implements InterceptorChain{
 	protected Outcome doFinal(HttpContext context){ 
 		return outcome;
 	}
-	/*
-	@Deprecated
-	public void interruptAndRedirect(String url) {
-		interrupted = true;
-		this.outcome = new Outcome(BasicOutcomeStatus.TERMINATE,true,url);
-	}
-
-	@Deprecated
-	public void interruptWithError(int errorCode) {
-		interrupted = true;
-		this.outcome = new Outcome(BasicOutcomeStatus.ERROR,errorCode);
-	}
-	*/
 
 	public Outcome getOutcome() {
 		return outcome;
