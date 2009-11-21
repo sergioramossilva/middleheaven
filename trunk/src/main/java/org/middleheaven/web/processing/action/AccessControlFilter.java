@@ -20,13 +20,14 @@ import org.middleheaven.aas.Signature;
 import org.middleheaven.aas.SignatureStore;
 import org.middleheaven.aas.Subject;
 import org.middleheaven.aas.UserAgent;
-import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.web.processing.HttpContext;
+import org.middleheaven.web.processing.HttpFilter;
+import org.middleheaven.web.processing.HttpFilterChain;
 import org.middleheaven.web.processing.Outcome;
 
-public class AccessControlInterceptor implements Interceptor{
+public class AccessControlFilter implements HttpFilter{
 
 	private AccessControlService accessControlService;
 	private List<URLPermission> permissions = new LinkedList<URLPermission>();
@@ -35,7 +36,7 @@ public class AccessControlInterceptor implements Interceptor{
 	private Outcome accessDeniedOutcome;
 	private SignatureStore<HttpContext> store;
 
-	public AccessControlInterceptor(
+	public AccessControlFilter(
 			AccessControlService accessControlService,
 			SignatureStore<HttpContext> store, 
 			Outcome loginOutcome,
@@ -49,7 +50,7 @@ public class AccessControlInterceptor implements Interceptor{
 	}
 
 	@Override
-	public void intercept(HttpContext context, InterceptorChain chain) {
+	public void doFilter(HttpContext context, HttpFilterChain chain) {
 
 		Permission[] permissions = getGuardPermission(context.getRequestUrl().toString());
 
@@ -111,6 +112,7 @@ public class AccessControlInterceptor implements Interceptor{
 						repeat = false;
 						context.setAttribute(ContextScope.REQUEST, "authentication.callbackset", set);
 						chain.interruptWithOutcome(loginOutcome);
+						break;
 					}
 				}
 			}
@@ -124,10 +126,10 @@ public class AccessControlInterceptor implements Interceptor{
 				((IPAddressCallback) callback).setAddress(context.getRemoteAddress());
 			} else if (callback instanceof NameCallback){
 				NameCallback nc = ((NameCallback) callback);
-				nc.setName(context.getAttribute(ContextScope.REQUEST,nc.getPrompt(), String.class));
+				nc.setName(context.getAttribute(ContextScope.PARAMETERS,nc.getPrompt(), String.class));
 			} else if (callback instanceof PasswordCallback){
 				PasswordCallback pc = ((PasswordCallback) callback);
-				String attribute = context.getAttribute(ContextScope.REQUEST, pc.getPrompt(), String.class);
+				String attribute = context.getAttribute(ContextScope.PARAMETERS, pc.getPrompt(), String.class);
 				if (attribute==null){
 					attribute = "";
 				}
@@ -216,5 +218,7 @@ public class AccessControlInterceptor implements Interceptor{
 		}
 
 	}
+
+
 
 }

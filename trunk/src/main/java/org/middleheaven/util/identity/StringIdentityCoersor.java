@@ -1,11 +1,11 @@
 package org.middleheaven.util.identity;
 
-import org.middleheaven.util.conversion.AbstractTypeConverter;
+import org.middleheaven.util.coersion.AbstractTypeCoersor;
 
-public class StringIdentityConverter extends AbstractTypeConverter<String, Identity> {
+public class StringIdentityCoersor extends AbstractTypeCoersor<String, Identity> {
 
 	@Override
-	public <T extends Identity> T convertFoward(String value, Class<T> type) {
+	public <T extends Identity> T coerceForward(String value, Class<T> type) {
 		if (value ==null){
 			return null;
 		}
@@ -16,13 +16,15 @@ public class StringIdentityConverter extends AbstractTypeConverter<String, Ident
 	}
 
 	@Override
-	public <T extends String> T convertReverse(Identity value, Class<T> type) {
+	public <T extends String> T coerceReverse(Identity value, Class<T> type) {
 		if (value ==null){
 			return null;
 		}
 		
 		return type.cast(value.toString());
 	}
+
+
 
 
 }

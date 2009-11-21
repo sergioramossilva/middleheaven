@@ -1,11 +1,11 @@
 package org.middleheaven.util.identity;
 
-import org.middleheaven.util.conversion.AbstractTypeConverter;
+import org.middleheaven.util.coersion.AbstractTypeCoersor;
 
-public class IdentityConverter extends AbstractTypeConverter<Identity,CharSequence>{
+public class IdentityCoersor extends AbstractTypeCoersor<Identity,CharSequence>{
 
 	@Override
-	public <T extends CharSequence> T convertFoward(Identity value, Class<T> targetClass) {
+	public <T extends CharSequence> T coerceForward(Identity value, Class<T> targetClass) {
 		if (targetClass.equals(String.class) || targetClass.equals(CharSequence.class)){
 			return targetClass.cast(value.toString());
 		} else if (targetClass.equals(StringBuilder.class)){
@@ -13,12 +13,12 @@ public class IdentityConverter extends AbstractTypeConverter<Identity,CharSequen
 		}else if (targetClass.equals(StringBuffer.class)){
 			return targetClass.cast(new StringBuffer(value.toString()));
 		} else {
-			throw new IllegalArgumentException("Cannot convert " + value.getClass().getName() + " to " + targetClass.getName());
+			throw new IllegalArgumentException("Cannot coerse " + value.getClass().getName() + " to " + targetClass.getName());
 		}
 	}
 
 	@Override
-	public <T extends Identity> T convertReverse(CharSequence value, Class<T> type) {
+	public <T extends Identity> T coerceReverse(CharSequence value, Class<T> type) {
 		try{
 			int id = Integer.parseInt(value.toString());
 			return type.cast(new IntegerIdentity(id));
@@ -26,6 +26,7 @@ public class IdentityConverter extends AbstractTypeConverter<Identity,CharSequen
 			return type.cast(new UUIDIdentity(value.toString()));
 		}
 	}
+
 
 
 }

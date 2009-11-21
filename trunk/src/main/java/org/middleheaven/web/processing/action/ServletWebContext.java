@@ -9,7 +9,6 @@ import java.util.Enumeration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,11 +22,11 @@ import org.middleheaven.io.repository.StreamBasedManagedFile;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.CulturalAttributeContext;
 import org.middleheaven.util.OperatingSystemInfo;
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.web.processing.BrowserInfo;
-import org.middleheaven.web.processing.RequestCookie;
 import org.middleheaven.web.processing.HttpProcessingUtils;
 import org.middleheaven.web.processing.HttpUserAgent;
+import org.middleheaven.web.processing.RequestCookie;
 
 
 public abstract class ServletWebContext extends WebContext implements CulturalAttributeContext{
@@ -232,7 +231,7 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 			@SuppressWarnings("unchecked") T t = (T)value;
 			return t;
 		}
-		return TypeConvertions.convert(value, type);
+		return TypeCoercing.convert(value, type);
 
 	}
 
