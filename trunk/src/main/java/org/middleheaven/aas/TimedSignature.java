@@ -8,9 +8,14 @@ public class TimedSignature implements Signature {
 	private int timeOut;
 	private long timeStamp;
 	
+	/**
+	 * 
+	 * @param credentials
+	 * @param timeOut in seconds
+	 */
 	public TimedSignature(Set<Credential>  credentials, int timeOut){
 		this.credentials  = credentials;
-		this.timeOut = timeOut;
+		this.timeOut = timeOut * 1000;
 		this.timeStamp = System.currentTimeMillis();
 	}
 	

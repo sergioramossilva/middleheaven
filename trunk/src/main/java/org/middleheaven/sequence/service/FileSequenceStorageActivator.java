@@ -16,7 +16,7 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.sequence.SequenceState;
 import org.middleheaven.sequence.StateChangedEvent;
 import org.middleheaven.sequence.StatePersistentSequence;
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.coersion.TypeCoercing;
 
 /**
  * Activates  <code>SequenceStorageService</code> for sequence storing. 
@@ -85,7 +85,7 @@ public class FileSequenceStorageActivator extends Activator  {
 		@Override
 		public void restore(StatePersistentSequence<?> sequence) {
 			Class<?> valueType = sequence.getSequenceState().getLastUsedValue().getClass();
-			Object value = TypeConvertions.convert(
+			Object value = TypeCoercing.convert(
 					properties.getProperty(sequence.getName()), 
 					valueType
 			);

@@ -6,7 +6,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.coersion.TypeCoercing;
 
 public class MapContext extends AbstractContext {
 
@@ -25,7 +25,7 @@ public class MapContext extends AbstractContext {
 	
 	@Override
 	public <T> T getAttribute(ContextScope scope, String name, Class<T> type) {
-		return TypeConvertions.convert(contextMap.get(scope).get(name), type);
+		return TypeCoercing.convert(contextMap.get(scope).get(name), type);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class MapContext extends AbstractContext {
 		}
 		Map<String,O> result = new TreeMap<String,O>();
 		for (Map.Entry<String,Object> entry : map.entrySet()){
-			result.put(entry.getKey(), TypeConvertions.convert(entry.getValue(), type));
+			result.put(entry.getKey(), TypeCoercing.convert(entry.getValue(), type));
 		}
 		return result;
 	}

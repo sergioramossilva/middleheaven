@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.coersion.TypeCoercing;
 
 public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor implements PropertyAccessor {
 
@@ -95,7 +95,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 			if( value == null && getValueType().isPrimitive()){
 				return; // does not set it
 			} else {
-				value = TypeConvertions.convert(value,getValueType());
+				value = TypeCoercing.convert(value,getValueType());
 				if (modifier != null){
 					
 					modifier.invoke(target, new Object[]{value});

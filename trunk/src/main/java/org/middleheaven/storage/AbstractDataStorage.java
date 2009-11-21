@@ -6,7 +6,7 @@ import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.StoreQuerySession;
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.identity.Identity;
 
 public abstract class AbstractDataStorage implements DataStorage {
@@ -87,7 +87,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 					StorableEntityModel otherModel = reader.read(fm.getValueClass());
 
 					// convert to identity
-					Identity id = (Identity)TypeConvertions.convert(obj, otherModel.identityFieldModel().getValueClass());
+					Identity id = (Identity)TypeCoercing.convert(obj, otherModel.identityFieldModel().getValueClass());
 
 
 					Storable o = session.get(otherModel.getEntityClass(), id);

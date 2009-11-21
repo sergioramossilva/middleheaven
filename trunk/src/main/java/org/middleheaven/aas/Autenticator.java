@@ -34,7 +34,7 @@ public final class Autenticator {
 
 	public void autenticate(Set<Credential> credentials, CallbacksSet callbackSet) throws AuthenticationException{
 
-		boolean globalSucess = false;
+		boolean globalSucess = true;
 
 		/*
 		 * The overall authentication succeeds only if all 
