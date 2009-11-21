@@ -10,7 +10,7 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.identity.Identity;
 
 public class ResultSetStorable implements Storable {
@@ -27,7 +27,7 @@ public class ResultSetStorable implements Storable {
 	public Identity getIdentity() {
 		StorableFieldModel identityFieldModel = model.identityFieldModel();
 		Object fieldValue = getFieldValue(identityFieldModel );
-		return (Identity)TypeConvertions.convert(fieldValue, identityFieldModel.getValueClass());
+		return (Identity)TypeCoercing.convert(fieldValue, identityFieldModel.getValueClass());
 	}
 	
 	@Override
@@ -37,7 +37,7 @@ public class ResultSetStorable implements Storable {
 			if (fieldModel.getDataType().isReference()){
 				return value;
 			} else {
-				return TypeConvertions.convert(value, fieldModel.getValueClass());
+				return TypeCoercing.convert(value, fieldModel.getValueClass());
 			}
 		} catch (SQLException e) {
 			throw new StorageException(e); 

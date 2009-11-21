@@ -13,7 +13,7 @@ import org.middleheaven.quantity.unit.MultipleUnit;
 import org.middleheaven.quantity.unit.NonSI;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
-import org.middleheaven.util.conversion.ConvertionException;
+import org.middleheaven.util.coersion.CoersionException;
 
 @SuppressWarnings("unchecked")
 public class UnitConversion {
@@ -57,7 +57,7 @@ public class UnitConversion {
 				DecimalMeasure<E> df = ((MultipleUnit)from).reduceToUnit();
 				return value.times(df.amount(), df.unit());
 			} else {
-				throw new ConvertionException(new IncompatibleUnitsException(from, to));
+				throw new CoersionException(new IncompatibleUnitsException(from, to));
 			}
 			
 		} else if (!(from instanceof MultipleUnit) && to instanceof MultipleUnit){
@@ -66,7 +66,7 @@ public class UnitConversion {
 				DecimalMeasure<E> dto = ((MultipleUnit)to).reduceToUnit();
 				return value.over(dto.amount(), to);
 			} else {
-				throw new ConvertionException(new IncompatibleUnitsException(from, to));
+				throw new CoersionException(new IncompatibleUnitsException(from, to));
 			}
 		}else {
 			MapKey key = new MapKey(from ,to);

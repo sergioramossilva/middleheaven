@@ -3,17 +3,24 @@ package org.middleheaven.aas;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.middleheaven.aas.old.SignaturePolicy;
 
 
 public class AccessRequestBroker {
 
 	Autorizator autorizator = new Autorizator();
 	Autenticator autenticator = new Autenticator();
-	SubjectLocator subjectLocator;
-	SignaturePolicy policy;
+	SubjectLocator subjectLocator = new DefaultSubjectLocator();
+	SignaturePolicy policy = new TemporarySignaturePolicy(30);
 
 	public AccessRequestBroker(){}
+	
+	public void setSubjectLocator(SubjectLocator subjectLocator ){
+		this.subjectLocator = subjectLocator;
+	}
+	
+	public void setSignaturePolicy(SignaturePolicy policy ){
+		this.policy = policy;
+	}
 	
 	public LoginStep broke(AccessRequest request){
 		CallbackHandler callbackHandler = request.getCallbackHandler();
@@ -75,7 +82,7 @@ public class AccessRequestBroker {
 		Subject subject = subjectLocator.load(credentials, roles);
 
 		//create signature
-		Signature signature = policy.createSignature(subject);
+		Signature signature = policy.createSignature(credentials);
 		
 		//store signature
 		request.setSignature(signature);

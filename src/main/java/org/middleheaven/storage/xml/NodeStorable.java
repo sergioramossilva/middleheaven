@@ -13,7 +13,7 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
-import org.middleheaven.util.conversion.TypeConvertions;
+import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.w3c.dom.Node;
@@ -57,7 +57,7 @@ public class NodeStorable implements Storable{
 			
 			return date;
 		} else {
-			return TypeConvertions.convert(data.get(name.getName()), fieldModel.getValueClass());
+			return TypeCoercing.convert(data.get(name.getName()), fieldModel.getValueClass());
 		}
 	}
 
