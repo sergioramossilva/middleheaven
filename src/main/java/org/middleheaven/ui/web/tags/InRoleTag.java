@@ -4,7 +4,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import org.middleheaven.aas.AccessRequest;
-import org.middleheaven.aas.RolePermission;
 import org.middleheaven.aas.Subject;
 import org.middleheaven.ui.ContextScope;
 
@@ -31,7 +30,7 @@ public class InRoleTag extends AbstractBodyTagSupport{
 	}
 	
 	public int doStartTag() throws JspException {
-		if (getSubject()==null || !getSubject().hasPermission(RolePermission.of(roleName))){
+		if (getSubject()==null || !getSubject().isInRole(roleName)){
 			return SKIP_BODY;
 		}else {
 			return EVAL_BODY_BUFFERED;
