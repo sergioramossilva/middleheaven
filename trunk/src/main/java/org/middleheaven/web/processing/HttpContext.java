@@ -15,7 +15,7 @@ public interface HttpContext extends CulturalAttributeContext{
 	
 	public Map<String,String> getParameters();
 	
-	public StringBuilder getRequestUrl();
+	public HttpUrl getRequestUrl();
 	
 	public  HttpMethod getHttpService();
 	

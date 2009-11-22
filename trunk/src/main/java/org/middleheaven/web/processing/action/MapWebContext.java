@@ -13,6 +13,7 @@ import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.MapContext;
+import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.HttpUserAgent;
 
 
@@ -107,9 +108,9 @@ public final class MapWebContext  extends WebContext{
 	}
 
 	@Override
-	public StringBuilder getRequestUrl() {
+	public HttpUrl getRequestUrl() {
 		// return a copy every time
-		return new StringBuilder(this.url);
+		return new HttpUrl(this.url, this.getContextPath());
 	}
 
 	@Override

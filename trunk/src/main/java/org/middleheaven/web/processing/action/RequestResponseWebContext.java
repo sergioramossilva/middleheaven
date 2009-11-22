@@ -15,6 +15,7 @@ import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.upload.UploadManagedFileRepository;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.web.processing.HttpProcessingUtils;
+import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.HttpUserAgent;
 
 public class RequestResponseWebContext extends ServletWebContext {
@@ -86,8 +87,8 @@ public class RequestResponseWebContext extends ServletWebContext {
 	}
 
 	@Override
-	public StringBuilder getRequestUrl() {
-		return new StringBuilder(request.getRequestURL());
+	public HttpUrl getRequestUrl() {
+		return new HttpUrl(request.getRequestURL(), this.getContextPath());
 	}
 
 	@Override

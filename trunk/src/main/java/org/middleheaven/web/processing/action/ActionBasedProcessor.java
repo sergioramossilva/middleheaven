@@ -41,7 +41,7 @@ public class ActionBasedProcessor extends AbstractHttpProcessor{
 	}
 
 	private CharSequence stripedRequestPath(HttpContext context) {
-		StringBuilder requestURL = new StringBuilder(context.getRequestUrl());
+		StringBuilder requestURL = new StringBuilder(context.getRequestUrl().toString());
 		
 		// remove context from the start and suffix from end
 		String strip;
