@@ -12,12 +12,6 @@
 	<uri>http://www.middleheaven.org/taglibs/core</uri>
 
 	<tag>
-	    <name>hello</name>
-	    <tagclass>org.middleheaven.ui.web.tags.HelloTag</tagclass>
-	    <bodycontent>empty</bodycontent>
-	</tag>
-	
-	<tag>
 	    <name>jsnotpresent</name>
 	    <tagclass>org.middleheaven.ui.web.tags.JavaScriptEnabledTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
@@ -641,7 +635,7 @@
 	</tag>
 	
 	<tag>
-	    <name>url</name>
+	    <name>urlInput</name>
 	    <tagclass>org.middleheaven.ui.web.tags.URLInputTag</tagclass>
 	    <bodycontent>empty</bodycontent>
 	    <attribute>
@@ -667,6 +661,17 @@
 	    <attribute>
 	      <name>id</name>
 	      <required>false</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	</tag>
+	
+	<tag>
+	    <name>url</name>
+	    <tagclass>org.middleheaven.ui.web.tags.UrlTag</tagclass>
+	    <bodycontent>empty</bodycontent>
+	    <attribute>
+	      <name>href</name>
+	      <required>true</required>
 	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>
 	</tag>
