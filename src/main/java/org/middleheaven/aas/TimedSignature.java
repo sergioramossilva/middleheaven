@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class TimedSignature implements Signature {
 
-	private Set<Credential>  credentials;
+	private Set<? extends Credential>  credentials;
 	private int timeOut;
 	private long timeStamp;
 	
@@ -13,7 +13,7 @@ public class TimedSignature implements Signature {
 	 * @param credentials
 	 * @param timeOut in seconds
 	 */
-	public TimedSignature(Set<Credential>  credentials, int timeOut){
+	public TimedSignature(Set<? extends Credential>  credentials, int timeOut){
 		this.credentials  = credentials;
 		this.timeOut = timeOut * 1000;
 		this.timeStamp = System.currentTimeMillis();
@@ -21,12 +21,12 @@ public class TimedSignature implements Signature {
 	
 	@Override
 	public Set<Credential> getCredentials() {
-		return credentials;
+		return (Set<Credential>) credentials;
 	}
 	
 	@Override
 	public boolean isValid() {
-		return System.currentTimeMillis() - this.timeStamp < this.timeOut;
+		return timeOut < 0 || ( System.currentTimeMillis() - this.timeStamp < this.timeOut);
 	}
 
 	@Override

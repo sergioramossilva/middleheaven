@@ -31,4 +31,8 @@ public final class RolePermission implements Permission {
 	public boolean isStrict() {
 		return false;
 	}
+	
+	public String getRoleName(){
+		return name;
+	}
 }

@@ -11,7 +11,8 @@ public class AccessRequestBroker {
 	Autenticator autenticator = new Autenticator();
 	SubjectLocator subjectLocator = new DefaultSubjectLocator();
 	SignaturePolicy policy = new TemporarySignaturePolicy(30);
-
+	PermissionResolver permissionResolver = new RolePermissionResolver();
+	
 	public AccessRequestBroker(){}
 	
 	public void setSubjectLocator(SubjectLocator subjectLocator ){
@@ -20,6 +21,15 @@ public class AccessRequestBroker {
 	
 	public void setSignaturePolicy(SignaturePolicy policy ){
 		this.policy = policy;
+	}
+	
+	public void setPermissionResolver (PermissionResolver permissionResolver){
+		this.permissionResolver = permissionResolver;
+	}
+	
+	
+	public boolean hasPermission (Subject subject, Permission p){
+		return permissionResolver.hasPermission(subject, p);
 	}
 	
 	public LoginStep broke(AccessRequest request){
