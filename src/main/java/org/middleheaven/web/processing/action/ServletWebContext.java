@@ -25,6 +25,7 @@ import org.middleheaven.util.OperatingSystemInfo;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.web.processing.BrowserInfo;
 import org.middleheaven.web.processing.HttpProcessingUtils;
+import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.HttpUserAgent;
 import org.middleheaven.web.processing.RequestCookie;
 
@@ -77,11 +78,12 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 	}
 
 	@Override
-	public StringBuilder getRequestUrl() {
+	public HttpUrl getRequestUrl() {
 		if (getRequest() instanceof HttpServletRequest){
-			return new StringBuilder(((HttpServletRequest)getRequest()).getRequestURL());
+			HttpServletRequest hrequest = (HttpServletRequest)getRequest();
+			return new HttpUrl(hrequest.getRequestURL(), hrequest.getContextPath());
 		} else {
-			return new StringBuilder();
+			return new HttpUrl(null, "/");
 		}
 		
 	}
@@ -259,7 +261,7 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 			ServletCookieBagTranslator t = new ServletCookieBagTranslator(((HttpServletResponse)getResponse()));
 			
 			t.write((RequestCookie)value);
-			
+			break;
 		case PARAMETERS:
 		case CONFIGURATION:
 			throw new IllegalArgumentException(scope + " is read-only");

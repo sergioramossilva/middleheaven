@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.middleheaven.aas.AccessControlService;
 import org.middleheaven.aas.AccessException;
 import org.middleheaven.aas.AccessRequest;
+import org.middleheaven.aas.AccessRequestBroker;
 import org.middleheaven.aas.Callback;
 import org.middleheaven.aas.CallbackHandler;
 import org.middleheaven.aas.CallbacksSet;
@@ -25,6 +26,7 @@ import org.middleheaven.util.StringUtils;
 import org.middleheaven.web.processing.HttpContext;
 import org.middleheaven.web.processing.HttpFilter;
 import org.middleheaven.web.processing.HttpFilterChain;
+import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.Outcome;
 
 public class AccessControlFilter implements HttpFilter{
@@ -52,7 +54,7 @@ public class AccessControlFilter implements HttpFilter{
 	@Override
 	public void doFilter(HttpContext context, HttpFilterChain chain) {
 
-		Permission[] permissions = getGuardPermission(context.getRequestUrl().toString());
+		Permission[] permissions = getGuardPermission(context.getRequestUrl());
 
 		if (permissions.length == 0){
 			// let pass
@@ -80,7 +82,8 @@ public class AccessControlFilter implements HttpFilter{
 			boolean repeat=true;
 			loop:while (repeat){
 				
-				LoginStep step = accessControlService.accessRequestBroker().broke(request);
+				final AccessRequestBroker accessRequestBroker = accessControlService.accessRequestBroker();
+				LoginStep step = accessRequestBroker.broke(request);
 				switch (step){
 				case FAIL:
 					chain.interruptWithOutcome(failureOutcome);
@@ -92,7 +95,7 @@ public class AccessControlFilter implements HttpFilter{
 
 					// assert permissions
 					for (Permission p : permissions){
-						if (!subject.hasPermission(p)){
+						if (!accessRequestBroker.hasPermission(subject, p)){
 							chain.interruptWithOutcome(accessDeniedOutcome);
 							return;
 						}
@@ -142,9 +145,9 @@ public class AccessControlFilter implements HttpFilter{
 		this.permissions.add(new URLPermission(urlPattern,permissions));
 	}
 
-	private Permission[] getGuardPermission(String url) {
+	private Permission[] getGuardPermission(HttpUrl url) {
 		for (URLPermission up : this.permissions){
-			if (up.match(url)){
+			if (up.match(url.toString())){
 				return up.permissions;
 			}
 		}
