@@ -114,40 +114,47 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 		processorsMappings.remove(processorID);
 	}
 	
-	protected void doService(HttpContext context ,HttpProcessor processor) throws HttpProcessException{
+	protected Outcome doService(HttpContext context ,HttpProcessor processor) throws HttpProcessException{
 		
-		new FilterChain(processor).doChain(context);
+		final FilterChain filterChain = new FilterChain(filters,processor);
+		filterChain.doChain(context);
+		
+		return filterChain.getOutcome();
 	}
 
-	protected abstract void doOnChainEnd(HttpContext context,HttpProcessor processor , Outcome outcome) throws HttpProcessException;
+	protected abstract Outcome doOnChainEnd(HttpContext context,HttpProcessor processor , Outcome outcome) throws HttpProcessException;
 	
-	private class FilterChain implements HttpFilterChain {
+	private  class FilterChain extends AbstractInterruptableChain<HttpFilter> implements HttpFilterChain {
 		
-		private int current=0;
 		HttpProcessor processor;
-		private Outcome outcome;
-		private boolean endIsReached = false;
-		
-		public FilterChain( HttpProcessor processor ){
+
+		public FilterChain(List<HttpFilter> filters, HttpProcessor processor ){
+			super (filters, null);
 			this.processor = processor; 
 		}
 		
-		public void doChain(HttpContext context) throws HttpProcessException {
-			if (outcome==null && current<filters.size()){
-				current++;
-				filters.get(current-1).doFilter(context, this);
-			}
-			
-			if (!endIsReached && (outcome!=null || current <= filters.size()))  {
-				
-				doOnChainEnd(context, this.processor,outcome);
-				endIsReached = true;
-			}
+//		public void doChain(HttpContext context) throws HttpProcessException {
+//			if (outcome==null && current<filters.size()){
+//				current++;
+//				filters.get(current-1).doFilter(context, this);
+//			}
+//			
+//			if (!endIsReached && (outcome!=null || current <= filters.size()))  {
+//				
+//				doOnChainEnd(context, this.processor,outcome);
+//				endIsReached = true;
+//			}
+//		}
+
+
+		@Override
+		protected void call(HttpFilter element, HttpContext context, AbstractInterruptableChain chain) {
+			element.doFilter(context, (FilterChain)chain);
 		}
 
 		@Override
-		public void interruptWithOutcome(Outcome outcome) {
-			this.outcome = outcome;
+		protected Outcome doFinal(HttpContext context) {
+			return doOnChainEnd( context, processor ,  this.getOutcome());
 		}
 		
 
