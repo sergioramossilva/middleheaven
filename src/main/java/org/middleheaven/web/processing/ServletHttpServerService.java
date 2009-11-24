@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.aas.old.AccessDeniedException;
-import org.middleheaven.aas.old.AccessFailedException;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
@@ -15,7 +14,6 @@ import org.middleheaven.web.processing.action.RequestResponseWebContext;
 
 // created directly on the WebContainerBoostrap
 class ServletHttpServerService extends AbstractHttpServerService {
-
 
 
 	public ServletHttpServerService(){
@@ -26,10 +24,10 @@ class ServletHttpServerService extends AbstractHttpServerService {
 			public boolean match(String url) {
 				return true;
 			}
-			
+
 		} );
 	}
-	
+
 	void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
 		if (isStopped()){
@@ -55,33 +53,11 @@ class ServletHttpServerService extends AbstractHttpServerService {
 
 		try{
 			RequestResponseWebContext context = new  RequestResponseWebContext(request,response);
-			
+
 			// execute processing
-			this.doService(context, processor);
+			Outcome outcome = this.doService(context, processor);
 
-		}catch (AccessDeniedException e){
-			Logging.getBook(this.getClass()).warn("Access denied to " + request.getRequestURI());
-			response.sendError(HttpCode.FORBIDDEN.intValue());
-		}catch (HttpProcessIOException e){
-			throw e.getIOException();
-		}catch (HttpProcessServletException e){
-			throw e.getServletException();
-		}catch (Throwable e){
-			throw new ServletException(e);
-		} 
-	}
 
-	protected void doOnChainEnd(HttpContext ctx,HttpProcessor processor , Outcome outcome) throws HttpProcessException{
-		
-		RequestResponseWebContext context = (RequestResponseWebContext)ctx;
-		HttpServletRequest request = context.getRequest();
-		HttpServletResponse response = context.getResponse();
-		
-		if (outcome == null){
-			 outcome = processor.process(context);
-		}
-
-		try{
 			if(outcome == null){
 				Logging.getBook(this.getClass()).warn("Outcome is null for " + request.getRequestURI());
 				response.sendError(HttpCode.INTERNAL_SERVER_ERROR.intValue());
@@ -98,17 +74,35 @@ class ServletHttpServerService extends AbstractHttpServerService {
 				} else {
 					response.sendRedirect(addContextPath(request.getContextPath(), outcome.getUrl()));
 				}
-				
+
 			} else {
 				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl());
-	
+
 				render.process(context, outcome);
 			}
-		} catch (IOException e){
-			throw  new HttpProcessIOException(e);
-		}
+
+
+		}catch (AccessDeniedException e){
+			Logging.getBook(this.getClass()).warn("Access denied to " + request.getRequestURI());
+			response.sendError(HttpCode.FORBIDDEN.intValue());
+		}catch (HttpProcessIOException e){
+			throw e.getIOException();
+		}catch (HttpProcessServletException e){
+			throw e.getServletException();
+		}catch (Throwable e){
+			throw new ServletException(e);
+		} 
 	}
-	
+
+	protected Outcome doOnChainEnd(HttpContext context,HttpProcessor processor , Outcome outcome) throws HttpProcessException{
+
+		if (outcome == null){
+			outcome = processor.process(context);
+		}
+
+		 return outcome;
+	}
+
 	private String addContextPath(String ctx, String url){
 		if (url.startsWith("/")){
 			return ctx.concat(url);

@@ -30,7 +30,7 @@ public class HttpUrl {
 	}
 	
 	public String getContexlessPath(){
-		return UrlStringUtils.removeContext(url.toString(), context);
+		return UrlStringUtils.path(url.toString(), context);
 	}
 	
 	public String getAuthority(){

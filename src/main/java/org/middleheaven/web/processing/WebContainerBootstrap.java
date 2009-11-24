@@ -1,7 +1,4 @@
-/*
- * Created on 2006/09/02
- *
- */
+
 package org.middleheaven.web.processing;
 
 import javax.servlet.ServletContext;
@@ -25,6 +22,9 @@ import org.middleheaven.logging.writters.ConsoleLogWriter;
 import org.middleheaven.ui.service.UIServiceActivator;
 import org.middleheaven.web.container.WebContainerSwitcher;
 
+/**
+ * Bootstrap that run in a webcontainer as a {@code ServletContextListener}
+ */
 public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap implements ServletContextListener{
 
 
