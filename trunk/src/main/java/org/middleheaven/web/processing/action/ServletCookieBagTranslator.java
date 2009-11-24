@@ -64,11 +64,12 @@ public class ServletCookieBagTranslator implements RequestCookieSource {
 		if (response != null ){
 			Cookie sc = new Cookie(cookie.getName(), cookie.getValue());
 			sc.setComment(cookie.getComment());
-			sc.setDomain(cookie.getDomain());
 			sc.setMaxAge(cookie.getMaxAge());
-			sc.setPath(cookie.getPath());
 			sc.setSecure(cookie.isSecure());
 			sc.setVersion(cookie.getVersion());
+			
+//			sc.setDomain(cookie.getDomain());
+//			sc.setPath(cookie.getPath());
 			
 			response.addCookie(sc);
 		}
