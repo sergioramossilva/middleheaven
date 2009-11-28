@@ -65,7 +65,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         // otherwise render the children components and add them to it.
         if (!render.isChildrenRenderer(  context,  parent,  component)){
             // does it need a container
-        	if (component instanceof UIContainer && !((UIContainer)renderedComponent).getUIContainerLayout().isRendered()){
+        	if (component instanceof UIContainer && ((UIContainer)renderedComponent).getUIContainerLayout()!= null && !((UIContainer)renderedComponent).getUIContainerLayout().isRendered()){
             	// render layout
             	UILayout layout = (UILayout)this.renderComponent(context, component , ((UIContainer)component).getUIContainerLayout());
             	((UIContainer)renderedComponent).setUIContainerLayout(layout);

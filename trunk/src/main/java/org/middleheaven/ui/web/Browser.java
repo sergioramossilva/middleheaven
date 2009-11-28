@@ -14,8 +14,7 @@ public class Browser extends AbstractUIClient implements UIBrowser{
 
 	@Override
 	public UIDimension getDimension() {
-		// TODO Auto-generated method stub
-		return null;
+		return UIDimension.of(0, 0);
 	}
 
 	@Override
