@@ -7,6 +7,7 @@ import org.middleheaven.ui.AbstractUIContainerModel;
 import org.middleheaven.ui.GenericUIComponent;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
+import org.middleheaven.ui.components.UILayout;
 import org.middleheaven.ui.components.UIView;
 import org.middleheaven.ui.rendering.RenderingContext;
 
