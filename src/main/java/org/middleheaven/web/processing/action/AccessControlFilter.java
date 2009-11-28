@@ -28,6 +28,8 @@ import org.middleheaven.web.processing.HttpFilter;
 import org.middleheaven.web.processing.HttpFilterChain;
 import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.Outcome;
+import org.middleheaven.web.processing.RedirectAfterCookie;
+import org.middleheaven.web.processing.RequestCookie;
 
 public class AccessControlFilter implements HttpFilter{
 
@@ -103,7 +105,14 @@ public class AccessControlFilter implements HttpFilter{
 					
 					// all fine. go on
 					repeat=false;
-					chain.doChain(context);
+					RequestCookie redirectCookie =	context.getAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", RequestCookie.class);
+					if (redirectCookie != null){ // read redirect cookie
+						RedirectAfterCookie rc = new RedirectAfterCookie(redirectCookie);
+						chain.interruptWithOutcome(rc.asOutcome());
+						context.setAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", rc.expire());
+					} else {
+						chain.doChain(context);
+					}
 					break;
 				case HANDLE_CALLBACK:
 
@@ -115,6 +124,10 @@ public class AccessControlFilter implements HttpFilter{
 						repeat = false;
 						context.setAttribute(ContextScope.REQUEST, "authentication.callbackset", set);
 						chain.interruptWithOutcome(loginOutcome);
+						
+						// memorize target page
+						RedirectAfterCookie rc = new RedirectAfterCookie("redirect_after_login", context.getRequestUrl().toString());
+						context.setAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", rc);
 						break;
 					}
 				}
