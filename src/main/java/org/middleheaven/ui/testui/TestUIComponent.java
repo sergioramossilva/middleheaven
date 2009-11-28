@@ -19,6 +19,11 @@ public class TestUIComponent<T extends UIComponent> extends GenericUIComponent<T
 	}
 
 	@Override
+	public boolean isRendered() {
+		return true;
+	}
+	
+	@Override
 	public void gainFocus() {
 		hasFocus = true; // TODO remove focus from all others
 	}

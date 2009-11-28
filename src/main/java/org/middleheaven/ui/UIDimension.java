@@ -8,6 +8,10 @@ public class UIDimension implements Serializable {
 	private int height;
 	private int width;
 
+	public static UIDimension of(int width, int height){
+		return new UIDimension(width,height);
+	}
+	
 	public UIDimension() {
 		this(0,0);
 	}

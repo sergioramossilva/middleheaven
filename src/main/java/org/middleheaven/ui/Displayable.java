@@ -2,7 +2,7 @@ package org.middleheaven.ui;
 
 /**
  * An object that can be positioned in a reference frame
- * and was size
+ * and was a resizable size
  */
 public interface Displayable {
 
