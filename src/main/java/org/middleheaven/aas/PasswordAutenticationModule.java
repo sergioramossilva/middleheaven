@@ -33,6 +33,7 @@ public class PasswordAutenticationModule implements AuthenticationModule {
 			credentials.add(new NameCredential(name));
 		} catch (InvalidPasswordException e){
 			// do not add credential
+			throw new FailureAutenticationException();
 		}
 	}
 

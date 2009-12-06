@@ -1,5 +1,7 @@
-package org.middleheaven.web.processing;
+package org.middleheaven.web.rendering;
 
+import org.middleheaven.web.processing.HttpProcessException;
+import org.middleheaven.web.processing.Outcome;
 import org.middleheaven.web.processing.action.RequestResponseWebContext;
 
 

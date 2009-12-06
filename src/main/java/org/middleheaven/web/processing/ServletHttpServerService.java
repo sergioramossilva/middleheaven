@@ -11,6 +11,8 @@ import org.middleheaven.logging.Logging;
 import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
 import org.middleheaven.web.processing.action.RequestResponseWebContext;
+import org.middleheaven.web.rendering.DefaultJspRenderingProcessorResolver;
+import org.middleheaven.web.rendering.RenderingProcessor;
 
 // created directly on the WebContainerBoostrap
 class ServletHttpServerService extends AbstractHttpServerService {
@@ -18,14 +20,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 
 	public ServletHttpServerService(){
 
-		addRenderingProcessorResolver("jsp",new DefaultJspRenderingProcessorResolver(),new UrlMapping(){
-
-			@Override
-			public boolean match(String url) {
-				return true;
-			}
-
-		} );
+		addRenderingProcessorResolver("jsp",new DefaultJspRenderingProcessorResolver(),UrlMapping.matchAll());
 	}
 
 	void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
@@ -78,9 +73,13 @@ class ServletHttpServerService extends AbstractHttpServerService {
 			} else {
 				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl());
 
-				render.process(context, outcome);
+				if (render == null){
+					Logging.getBook(this.getClass()).error("Render could not be found for " + outcome.getUrl());
+					response.sendError(HttpCode.NOT_FOUND.intValue());
+				} else {
+					render.process(context, outcome);
+				}
 			}
-
 
 		}catch (AccessDeniedException e){
 			Logging.getBook(this.getClass()).warn("Access denied to " + request.getRequestURI());
@@ -109,7 +108,9 @@ class ServletHttpServerService extends AbstractHttpServerService {
 		} else {
 			return url;
 		}
-	} 
+	}
+
+
 
 
 
