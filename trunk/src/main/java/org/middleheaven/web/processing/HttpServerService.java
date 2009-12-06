@@ -1,5 +1,8 @@
 package org.middleheaven.web.processing;
 
+import org.middleheaven.web.rendering.RenderingProcessor;
+import org.middleheaven.web.rendering.RenderingProcessorResolver;
+
 /**
  * Service to process server-side HTTP requests
  *
@@ -15,6 +18,8 @@ public interface HttpServerService {
 	
 	public void addRenderingProcessorResolver(String resolverID, RenderingProcessorResolver resolver, UrlMapping mapping);
 	public void removeRenderingProcessorResolver(String resolverID);
+	public void removeAllRenderingProcessors();
+	
 	
 	/**
 	 * Discovers and returns the ViewProcessor that can, according to it's registred UrlMapping, render the given url 

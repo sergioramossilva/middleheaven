@@ -1,4 +1,4 @@
-package org.middleheaven.web.processing;
+package org.middleheaven.web.rendering;
 
 public interface RenderingProcessorResolver {
 

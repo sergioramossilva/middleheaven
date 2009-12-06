@@ -1,4 +1,4 @@
-package org.middleheaven.web.processing;
+package org.middleheaven.web.rendering;
 
 import java.io.IOException;
 
@@ -6,6 +6,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.middleheaven.web.processing.HttpProcessException;
+import org.middleheaven.web.processing.Outcome;
 import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
 import org.middleheaven.web.processing.action.RequestResponseWebContext;
@@ -22,8 +24,6 @@ public class DefaultJspRenderingProcessorResolver implements RenderingProcessorR
 	public DefaultJspRenderingProcessorResolver(String path){
 		this.path = path;
 	}
-	
-
 	
 	@Override
 	public RenderingProcessor resolve(String url) {

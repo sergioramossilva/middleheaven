@@ -32,14 +32,7 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 		this.serverService = serverService;
 		ActionBasedProcessor processor = new ActionBasedProcessor(mappingService);
 		
-		serverService.registerHttpProcessor(this.getApplicationID().toString() + "_processor", processor, new UrlMapping(){
-
-			@Override
-			public boolean match(String url) {
-				return true;
-			}
-			
-		});
+		serverService.registerHttpProcessor(this.getApplicationID().toString() + "_processor", processor, UrlMapping.matchAll());
 		
 		configurate(context);
 	}

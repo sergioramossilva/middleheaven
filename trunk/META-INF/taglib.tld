@@ -7,7 +7,7 @@
   
 	<tlibversion>1.0</tlibversion>
 	<jspversion>1.2</jspversion>
-	<shortname>coremhtags</shortname>
+	<shortname>mh</shortname>
 	<info>MiddleHeaven Tag library</info>
 	<uri>http://www.middleheaven.org/taglibs/core</uri>
 
