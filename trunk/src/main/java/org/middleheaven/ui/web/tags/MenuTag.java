@@ -3,6 +3,7 @@ package org.middleheaven.ui.web.tags;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,14 +17,16 @@ import org.middleheaven.global.Culture;
 import org.middleheaven.global.text.GlobalLabel;
 import org.middleheaven.global.text.LocalizationService;
 import org.middleheaven.ui.components.MenuItem;
-import org.middleheaven.ui.web.tags.TagContext;
 
 public class MenuTag extends AbstractBodyTagSupport {
 
-	Iterator<MenuItem> masterIterator;
+	static final String SUB_MENU_TAG = "<submenu/>";
+	
+	StackItem masterStack;
+	StackItem parentStack;
 	private String varName = "menu"; 
 
-	LinkedList<Iterator<MenuItem>> iteratorStack = new LinkedList<Iterator<MenuItem>>();
+	LinkedList<StackItem> iteratorStack = new LinkedList<StackItem>();
 	private String rootClass;
 	private String selectedItemClass;
 
@@ -39,19 +42,21 @@ public class MenuTag extends AbstractBodyTagSupport {
 		this.selectedItemClass = selectedItemClass;
 	}
 
-	public MenuItem getCurrent(){
-		return this.current;
+	public MenuItem getCurrentMenuItem(){
+		return this.current.menu;
 	}
 
 	public void setRoot(MenuItem menu){
-		masterIterator = menu!=null ? menu.getChildren().iterator() : null;
+		if (menu != null){
+			masterStack = new StackItem(menu);
+		}  
 	}
 
 	private LocalizationService localizationService;
 	
 	public int doStartTag() throws JspException{
 
-		if (masterIterator==null){
+		if (masterStack==null){
 			return SKIP_BODY;
 		} 
 
@@ -66,19 +71,19 @@ public class MenuTag extends AbstractBodyTagSupport {
 			writeAttribute("class", rootClass);
 		}
 		write(">");
-		if (masterIterator.hasNext()){ // primeiro
+		if (masterStack.iterator.hasNext()){ // primeiro
 			return EVAL_BODY_BUFFERED;
 		}
 		return SKIP_BODY;
 	}
 
 	public void doInitBody (){
-		iteratorStack.addFirst(masterIterator);
-		current = masterIterator.next();
-		exposeMenu(current);
+		iteratorStack.addFirst(masterStack);
+		exposeMenu(masterStack.iterator.next());
 	}
 
 	private void exposeMenu(MenuItem item){
+		current = new StackItem(item);
 		if(!item.isTitleLocalized()){
 			Culture culture = new TagContext(pageContext).getCulture();
 			localizationService.getMessage(culture, new GlobalLabel(item.getTitle()), false);
@@ -88,41 +93,81 @@ public class MenuTag extends AbstractBodyTagSupport {
 		pageContext.setAttribute(varName, item);
 	}
 
-	MenuItem current;
+	StackItem current;
 
 	StringBuilder buffer = new StringBuilder();
 
+	
+	private static class StackItem {
+		public StackItem(MenuItem menu) {
+			this.menu = menu;
+			this.iterator = menu.getChildren().iterator();
+			this.count = menu.getChildrenCount();
+			if ( count > 0){
+				widths = BigInteger.valueOf(100L).divideAndRemainder(BigInteger.valueOf(this.count));
+			}
+			
+		}
+		
+		public boolean hasSubItems(){
+			return count > 0;
+		}
+		private int indicator = 0;
+		private BigInteger[] widths;
+		public MenuItem menu;
+		public Iterator<MenuItem> iterator;
+		public int count;
+		public BigInteger percentWitdh() {
+			if (widths == null){
+				return null;
+			}
+			if (indicator == 0){
+				indicator = 1;
+				return widths[0].add(widths[1]);
+			} else {
+				return widths[0];
+			}
+		}
+	}
+	
 	public int doAfterBody() throws JspException{
 
 		try {
 			BodyContent bc = getBodyContent();
 			// get the bc as string
+			final BigInteger percentWitdh = this.masterStack.percentWitdh();
+			if (percentWitdh==null){
+				buffer.append ("\n<li>");
+			} else {
+				buffer.append ("\n<li style=\"width: ").append(percentWitdh).append("%\"  >");
+			}
 			buffer.append(bc.getString());
+			buffer.append ("\n</li>");
 			// clean up
 			bc.clearBody();
 
 			getBodyContent().writeOut(getPreviousOut());
 			getBodyContent().clear();
 
-			if (current!=null  && !current.getChildren().isEmpty()){
-				buffer.append("<ul>");
-				iteratorStack.addFirst(current.getChildren().iterator());
+			if (current!=null  && current.hasSubItems()){
+				buffer.append("\n<ul>");
+				iteratorStack.addFirst(current);
 
 			}
 
 			// while the iterators stack is not empty
 			while (!iteratorStack.isEmpty()){
-				Iterator<MenuItem> top = iteratorStack.getFirst();
+				StackItem top = iteratorStack.getFirst();
 
-				if (top.hasNext()){
+				if (top.iterator.hasNext()){
 					// process next item of same menu
-					current = top.next();
-					exposeMenu(current);
+					
+					exposeMenu(top.iterator.next());
 					return EVAL_BODY_BUFFERED;
 
 				} else {
 					// menu has no more items. terminate menu
-					buffer.append("</ul>");
+					balanceTag(buffer, "ul");
 					// remove iterador 
 					iteratorStack.removeFirst();
 				}
@@ -135,6 +180,33 @@ public class MenuTag extends AbstractBodyTagSupport {
 
 }
 
+private StringBuilder balanceTag(StringBuilder buffer, String tag) {
+	int pos = buffer.indexOf("<" + tag + ">");
+	int count =0;
+	while (pos >=0){
+		count++;
+		 pos = buffer.indexOf("<" + tag + ">", pos + 1);
+	}
+	
+	pos = buffer.indexOf("</" + tag + ">");
+	while (pos >=0){
+		count--;
+		 pos = buffer.indexOf("</" + tag + ">", pos + 1);
+	}
+	
+	if (count >0){
+		for (int i=0; i < count; i++){
+			buffer.append("\n</" + tag + ">" );
+		}
+	} else if (count < 0){
+		for (int i=0; i < -count; i++){
+			buffer.insert(0, "\n<" + tag + ">" );
+		}
+	}
+	
+	return buffer;
+}
+
 public int doEndTag() throws JspTagException{
 
 	writeLine(processBuffer(buffer));
@@ -142,12 +214,12 @@ public int doEndTag() throws JspTagException{
 	return EVAL_PAGE;
 }
 
-private static String processBuffer(StringBuilder buffer) {
+private String processBuffer(StringBuilder buffer) {
 
 	BufferedReader reader = new BufferedReader(new StringReader(buffer.toString()));
 	String line;
 	RMenuItem root = new RMenuItem();
-	RMenuItem current =null;
+	RMenuItem currentRItem =null;
 	RMenuItem parent = root;
 	try {
 		String[] stoppers = {"<li", "</li" , "<ul" , "</ul" };
@@ -159,27 +231,27 @@ private static String processBuffer(StringBuilder buffer) {
 			
 			int[] res = find(line, stoppers,0);
 			
-			if (res[0]>0){
+			if (res[0]>=0){
 				do {
 					if (res[1]==0){ //<li
 						// start 
-						current = new RMenuItem();
-						current.addLine(line);
+						currentRItem = new RMenuItem();
+						currentRItem.addLine(line);
 					} else if (res[1]==1){ //</li
-						current.addLine(line);
-						parent.addChild(current);
+						currentRItem.addLine(line);
+						parent.addChild(currentRItem);
 					} else if (res[1]==2){ //<ul
 	
-						parent = current;
+						parent = currentRItem;
 	
 					} else if (res[1]==3){ //</ul
 						parent = parent.parent;
 					}
-					res = find(line, stoppers,res[0]);
-				} while (res[0]>0);
+					res = find(line, stoppers,res[0]+1);
+				} while (res[0]>=0);
 			} else {
-				if (current!=null){
-					current.addLine(line);
+				if (currentRItem!=null){
+					currentRItem.addLine(line);
 				}
 			}
 			
@@ -195,24 +267,25 @@ private static String processBuffer(StringBuilder buffer) {
 
 private static int[] find(String s , String[] options , int fromIndex){
 	for (int i=0; i < options.length; i++){
-		int pos = s.indexOf(options[i], fromIndex+1);
-		if (pos>0){
+		int pos = s.indexOf(options[i], fromIndex);
+		if (pos>=0){
 			return new int[]{pos,i};
 		}
 	}
 	return new int[]{-1,-1};
 }
 
-private static void printMenu (StringBuilder builder , RMenuItem item ){
+private void printMenu (StringBuilder builder , RMenuItem item ){
 
 	if (!item.children.isEmpty()){
 		StringBuilder subItens = new StringBuilder();
 		for (RMenuItem sub : item.children){
 			printMenu(subItens, sub);
 		}
-		int pos = item.builder.indexOf("<submenu/>");
+	
+		int pos = item.builder.indexOf(SUB_MENU_TAG);
 		if (pos>0){
-			item.builder.replace(pos, pos+"<submenu/>".length(),"<ul>\n"+ subItens.toString() + "</ul>");
+			item.builder.replace(pos, pos+SUB_MENU_TAG.length(),ensureOneSurroundByTag(balanceTag(subItens, "ul").toString(), "ul"));
 		} else {
 			item.builder.append(subItens.toString());
 		}
@@ -223,8 +296,16 @@ private static void printMenu (StringBuilder builder , RMenuItem item ){
 
 
 }
+private String ensureOneSurroundByTag(String string, String tag) {
+	if (string.startsWith("<" + tag + ">") && string.endsWith("</" + tag + ">")){
+		return string;
+	} else {
+		return "<" + tag + ">" + string + "</" + tag + ">";
+	}
+}
+
 public void release(){
-	this.masterIterator = null;
+	this.masterStack = null;
 	this.buffer.delete(0, buffer.length());
 }
 

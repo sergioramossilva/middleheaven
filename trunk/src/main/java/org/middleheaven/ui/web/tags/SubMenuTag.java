@@ -13,10 +13,10 @@ public class SubMenuTag extends AbstractTagSupport {
 		
 		MenuTag top =  this.findAncestorTag(MenuTag.class);
 		
-		MenuItem current = top.getCurrent();
+		MenuItem current = top.getCurrentMenuItem();
 		
 		if (current.getChildrenCount()>0){
-			writeLine("<submenu/>");
+			writeLine(MenuTag.SUB_MENU_TAG);
 		}
 		
 		return SKIP_BODY;
