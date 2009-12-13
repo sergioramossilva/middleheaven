@@ -41,7 +41,7 @@ public class NaiveStorageManagerTeste {
 				new DomainClasses().add(TestSubject.class)
 		);
 		
-		manager = new SessionAwareEntityStore(store , model);
+		manager = new SessionAwareEntityStore(new StorableStateManager(store,model)  , store);
 		
 		subj.setNascimento(CalendarDate.today());
 		subj.setName("Alberto");
