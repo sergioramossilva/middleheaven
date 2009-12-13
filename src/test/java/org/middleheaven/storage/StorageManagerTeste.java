@@ -28,8 +28,8 @@ public class StorageManagerTeste {
 		final DomainModel model = new DomainModelBuilder().build(
 				new DomainClasses().add(TestSubject.class)
 		);
-		
-		storage = new SessionAwareEntityStore(store , model);
+
+		storage = new SessionAwareEntityStore(new StorableStateManager(store,model)  , store);
 		
 	}
 	

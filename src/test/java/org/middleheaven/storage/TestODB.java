@@ -29,8 +29,8 @@ public class TestODB {
 				new DomainClasses().add(TestSubject.class)
 		);
 		
-		EntityStore ds = new SessionAwareEntityStore(keeper , model);
-
+		EntityStore ds = new SessionAwareEntityStore(new StorableStateManager(keeper,model)  , keeper);
+		
 		// read all
 		Criteria<TestSubject> c = CriteriaBuilder.search(TestSubject.class).all();
 		
