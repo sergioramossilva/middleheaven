@@ -1,7 +1,6 @@
 package org.middleheaven.domain;
 
 import org.middleheaven.storage.QualifiedName;
-import org.middleheaven.util.collections.ParamsMap;
 
 public class EditableEntityFieldModel implements EntityFieldModel{
 
@@ -13,8 +12,15 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 	private boolean isVersion;
 	private boolean isUnique;
 	
-	private final ParamsMap params = new ParamsMap();
 	private Class<?> aggregationClass;
+	private DataTypeModel dataTypeModel = new DataTypeModel(){
+
+		@Override
+		public DataType getDataType() {
+			return dataType;
+		}
+		
+	};
 	
 
 
@@ -57,9 +63,7 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 		return isVersion;
 	}
 
-	public void putParam(String key, String value) {
-		params.put(key, value);
-	}
+
 
 	public void setDataType(DataType dataType) {
 		this.dataType = dataType;
@@ -85,10 +89,6 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 		this.isUnique = isUnique;
 	}
 
-	@Override
-	public String getParam(String key) {
-		return params.get(key);
-	}
 
 	@Override
 	public Class<?> getAggregationClass() {
@@ -104,8 +104,16 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 		return "EditableEntityFieldModel [aggregationClass=" + aggregationClass
 				+ ", dataType=" + dataType + ", isIdentity=" + isIdentity
 				+ ", isTransient=" + isTransient + ", isUnique=" + isUnique
-				+ ", isVersion=" + isVersion + ", name=" + name + ", params="
-				+ params + ", valueType=" + valueType + "]";
+				+ ", isVersion=" + isVersion + ", name=" + name + ", valueType=" + valueType + "]";
+	}
+
+	@Override
+	public DataTypeModel getDataTypeModel() {
+		return dataTypeModel;
+	}
+
+	public void setDataTypeModel(DataTypeModel dataTypeModel) {
+		this.dataTypeModel = dataTypeModel;
 	}
 	
 	

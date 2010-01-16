@@ -6,11 +6,10 @@ public interface FieldModelBuilder {
 	FieldModelBuilder setTransient(boolean annotatedWith);
 
 	FieldModelBuilder setIdentity(boolean b);
-
-	FieldModelBuilder putParam(String string, String fieldName);
-
-	FieldModelBuilder setDataType(DataType many_to_one);
-
+	
+	FieldModelBuilder setDataType(DataType type);
+	FieldModelBuilder setDataTypeModel(DataTypeModel typeModel);
+	
 	String getName();
 
 	DataType getDataType();
@@ -19,11 +18,7 @@ public interface FieldModelBuilder {
 
 	FieldModelBuilder setUnique(boolean annotatedWith);
 
-	FieldModelBuilder setValueType(Class<?> valueType);
-
-	boolean  isIdentity();
-
-	FieldModelBuilder setAggregationType(Class<?> aggregationType);
+	boolean isIdentity();
 
 
 }

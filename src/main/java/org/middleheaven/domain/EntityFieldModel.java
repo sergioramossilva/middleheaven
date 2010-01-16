@@ -13,6 +13,6 @@ public interface EntityFieldModel {
 	public Class<?> getAggregationClass();
 	public boolean isUnique();
 	
-	public String getParam(String key);
+	public DataTypeModel getDataTypeModel();
 	
 }

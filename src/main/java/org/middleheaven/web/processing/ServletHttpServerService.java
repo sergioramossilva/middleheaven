@@ -55,7 +55,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 
 			if(outcome == null){
 				Logging.getBook(this.getClass()).warn("Outcome is null for " + request.getRequestURI());
-				response.sendError(HttpCode.INTERNAL_SERVER_ERROR.intValue());
+				response.sendError(HttpCode.NOT_FOUND.intValue());
 			} else if (outcome.isTerminal()){
 				Logging.getBook(this.getClass()).debug("Outcome is terminal for " + request.getRequestURI());
 				return; // do not process view. The response is already done written

@@ -124,12 +124,6 @@ public final class DomainModelBuilder {
 		}
 
 		@Override
-		public FieldModelBuilder putParam(String key, String value) {
-			fm.putParam(key,value);
-			return this;
-		}
-
-		@Override
 		public FieldModelBuilder setDataType(DataType dataType) {
 			fm.setDataType(dataType);
 			return this;
@@ -154,11 +148,6 @@ public final class DomainModelBuilder {
 			return this;
 		}
 
-		@Override
-		public FieldModelBuilder setValueType(Class<?> valueType) {
-			fm.setValueType(valueType);
-			return this;
-		}
 
 		@Override
 		public FieldModelBuilder setVersion(boolean isVersion) {
@@ -166,9 +155,10 @@ public final class DomainModelBuilder {
 			return this;
 		}
 
+
 		@Override
-		public FieldModelBuilder setAggregationType(Class<?> aggregationType) {
-			fm.setAggregationClass(aggregationType);
+		public FieldModelBuilder setDataTypeModel(DataTypeModel typeModel) {
+			fm.setDataTypeModel(typeModel);
 			return this;
 		}
 		

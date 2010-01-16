@@ -63,7 +63,6 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 		
 		Class<?> valueType = pa.getValueType();
 
-		fm.setValueType(valueType);
 		if(pa.isAnnotadedWith(Key.class)){
 			Key key = pa.getAnnotation(Key.class);
 
@@ -87,10 +86,11 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			if (fieldName.isEmpty()){
 				fieldName = fm.getName();
 			}
-			fm.putParam("targetField", fieldName);
-			fm.setValueType(valueType);
-			
-	
+			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.MANY_TO_ONE);
+			model.setTargetFieldName(fieldName);
+			model.setTargetType(valueType);
+			fm.setDataTypeModel(model);
+
 			
 		} else if (pa.isAnnotadedWith(OneToOne.class)){
 			fm.setDataType(DataType.ONE_TO_ONE);
@@ -99,28 +99,46 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			if (fieldName.isEmpty()){
 				fieldName = fm.getName();
 			}
-			fm.putParam("targetField", fieldName);
-			fm.setValueType(valueType);
+			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.ONE_TO_ONE);
+			model.setTargetFieldName(fieldName);
+			model.setTargetType(valueType);
+			fm.setDataTypeModel(model);
 
+		
 		} else if (pa.isAnnotadedWith(OneToMany.class)){
 			fm.setDataType( DataType.ONE_TO_MANY);
 			OneToMany ref = pa.getAnnotation(OneToMany.class);
 
-			fm.setValueType(ref.target());
-			fm.setAggregationType(valueType);
+			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.ONE_TO_MANY);
+
+			model.setTargetType(ref.target());
+			model.setAggregationType(valueType);
+			
+			fm.setDataTypeModel(model);
+			
+
 
 		} else if (pa.isAnnotadedWith(ManyToMany.class)){
 			fm.setDataType(DataType.MANY_TO_MANY);
 			ManyToMany ref = pa.getAnnotation(ManyToMany.class);
 			
-			fm.setValueType(ref.target());
-			fm.setAggregationType(valueType);
+			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.MANY_TO_MANY);
+
+			model.setTargetType(ref.target());
+			model.setAggregationType(valueType);
+			
+			fm.setDataTypeModel(model);
+			
 		}
 
 		
 		if ( fm.getDataType() == null){
 			if (matchTypes(valueType, String.class) ){
 				fm.setDataType(DataType.TEXT);
+				
+				TextDataTypeModel model = new TextDataTypeModel();
+				fm.setDataTypeModel(model);
+				
 			} else if (matchTypes(valueType,Integer.class ,int.class, Byte.class, byte.class, Short.class, short.class)  ){
 				fm.setDataType(DataType.INTEGER);
 			} else if (matchTypes(valueType,Identity.class)  ){
@@ -155,7 +173,13 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				em.setIdentityType(valueType.asSubclass(Identity.class));
 			} else {
 				fm.setDataType(DataType.MANY_TO_ONE);
-				fm.setValueType(valueType);
+				
+				ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.MANY_TO_ONE);
+
+				model.setTargetType(valueType);
+				fm.setDataTypeModel(model);
+				
+
 			}
 		}
 		

@@ -10,7 +10,7 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.util.StringUtils;
 
 /**
- * @author  Sergio M. M. Taborda 
+ * 
  */
 public class GlobalLabel implements Serializable{
 
@@ -19,12 +19,16 @@ public class GlobalLabel implements Serializable{
 	private Object[] params = new Object[0];
 	private LocalizationService service = ServiceRegistry.getService(LocalizationService.class);
 	
-	public static GlobalLabel newInstance(String template){
+	public static GlobalLabel of(String template){
 		return new GlobalLabel (template);
+	}
+	
+	public static GlobalLabel of(String domain, String label){
+		return new GlobalLabel (domain, label);
 	}
 
 	public GlobalLabel(String domainlabel, Object[] params){
-		if (domainlabel.indexOf(":")==0){
+		if (domainlabel.indexOf(":")<0){
 			throw new IllegalArgumentException("Label is not qualified in a domain");
 		}
 		String[] str = StringUtils.split(domainlabel, ":");

@@ -1,5 +1,6 @@
 package org.middleheaven.storage.criteria;
 
+import org.middleheaven.storage.ReferenceStorableDataTypeModel;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.classification.BooleanClassifier;
@@ -47,8 +48,9 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 			throw new IllegalStateException("Entity " + model.getEntityLogicName() + " does not have a field name" + fc.getFieldName());
 		}
 		fc.valueHolder().setDataType(fm.getDataType());
-		fc.valueHolder().setParam("targetField", fm.getParam("targetField"));
-		fc.valueHolder().setParam("targetFieldHardname", fm.getParam("targetFieldHardname"));
+		final ReferenceStorableDataTypeModel dataTypeModel = (ReferenceStorableDataTypeModel) fm.getDataTypeModel();
+		fc.valueHolder().setParam("targetField", dataTypeModel.getTargetFieldName());
+		fc.valueHolder().setParam("targetFieldHardname",dataTypeModel.getTargetFieldHardName());
 		return new ReflectionFieldFilter<T>(
 				fc.getFieldName(),
 				fc.getOperator(),

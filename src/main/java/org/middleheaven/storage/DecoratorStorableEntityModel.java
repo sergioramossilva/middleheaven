@@ -3,6 +3,8 @@ package org.middleheaven.storage;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.PropertyBagProxyHandler;
 import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
@@ -38,11 +40,6 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 			@Override
 			public QualifiedName getHardName() {
 				return this.getLogicName();
-			}
-
-			@Override
-			public String getParam(String key) {
-				return fModel.getParam(key);
 			}
 
 			@Override
@@ -84,6 +81,23 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 			public Class<?> getAggregationClass() {
 				return fModel.getAggregationClass();
 			}
+			
+			StorableDataTypeModel model;
+			@Override
+			public StorableDataTypeModel getDataTypeModel() {
+				if (model == null){
+					Class<? extends StorableDataTypeModel> type =  fModel.getDataType().isReference() ? ReferenceStorableDataTypeModel.class :  StorableDataTypeModel.class; 
+					model = (StorableDataTypeModel) Introspector.of(fModel.getDataTypeModel()).newProxyInstance(
+								new PropertyBagProxyHandler(),
+								type
+								
+					);
+
+				}
+				return	model;
+			}
+
+		
 			
 		};
 	}
