@@ -3,6 +3,7 @@ package org.middleheaven.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -199,6 +200,13 @@ public class StringUtils {
 		return split(charSequence , Character.toString(delimiter));
 	}
 
+	/**
+	 * Split the given char sequence into an array of strings using the delimiter has would String.split() do.
+	 * However if the delimiter is not found the char sequence the char sequence it self will be returned
+	 * @param charSequence
+	 * @param delimiter
+	 * @return
+	 */
 	public static String[] split(CharSequence charSequence, String delimiter){
 		if (delimiter==null){
 			throw new IllegalArgumentException("parameter `delimiter` is required");
@@ -257,6 +265,25 @@ public class StringUtils {
 			// is exactly
 			return Pattern.compile("^" + simplePattern + "$");
 		}
-
+	
+	}
+	
+	public static String removeDiacritics(CharSequence text) {
+	    return Normalizer.normalize(text, Normalizer.Form.NFD)
+	    .replaceAll("\\p{InCombiningDiacriticalMarks}+", ""); 
+	}
+	
+	public static String camelCaseToIffenDelimited(CharSequence text){
+		StringBuilder builder = new StringBuilder(text);
+		
+		for (int i=1; i < builder.length(); i++){
+			if (Character.isUpperCase(builder.charAt(i))){
+				builder.setCharAt(i, Character.toLowerCase(builder.charAt(i)));
+				builder.insert(i, "-");
+				i++;
+			}
+		}
+		
+		return builder.toString();
 	}
 }

@@ -37,7 +37,7 @@ public class PropertiesMessageFileFormat extends LocalizedMessagesFormatHandler{
         String message = bunble.getString(label.getLabel());
         Object [] messageParams = label.getMessageParams();
         if (messageParams.length >0){
-            MessageFormat mf = new MessageFormat(message);
+            final MessageFormat mf = new MessageFormat(message);
             return mf.format(messageParams);
         } else {
             return message;

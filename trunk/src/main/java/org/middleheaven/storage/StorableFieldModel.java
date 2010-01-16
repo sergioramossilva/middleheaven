@@ -1,13 +1,14 @@
 package org.middleheaven.storage;
 
+import org.middleheaven.domain.DataTypeModel;
 import org.middleheaven.domain.EntityFieldModel;
 
 public interface StorableFieldModel extends EntityFieldModel{
 
 
 	public QualifiedName getHardName();
-	public String getParam(String string);
-
+	public StorableDataTypeModel getDataTypeModel();
+	
 	StorableEntityModel getEntityModel();
 
 }

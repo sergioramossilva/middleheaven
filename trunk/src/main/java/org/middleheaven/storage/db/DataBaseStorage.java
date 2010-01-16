@@ -16,11 +16,13 @@ import javax.sql.DataSource;
 import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.EntityModel;
+import org.middleheaven.domain.TextDataTypeModel;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractSequencialIdentityStorage;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
+import org.middleheaven.storage.ReferenceStorableDataTypeModel;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
@@ -386,16 +388,20 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 			column.setType(DataType.INTEGER); // TODO resolve correct field type
 		} else if (column.getType().equals(DataType.MANY_TO_ONE)){
 			column.setType(DataType.INTEGER);
-			String name = fm.getParam("targetFieldHardName");
+			ReferenceStorableDataTypeModel model = (ReferenceStorableDataTypeModel)  fm.getDataTypeModel();
+			String name = model.getTargetFieldHardName();
 			if(name !=null){
 				column.setName(name);
 			}
 		}
 		if (column.getSize()==0){
 			if (column.getType().equals(DataType.TEXT)){
-				String size = fm.getParam("size");
-				if(size != null){
-					column.setSize(Integer.parseInt(size));
+				TextDataTypeModel model = (TextDataTypeModel) fm.getDataTypeModel();
+					
+				Integer maxLength = model.getMaxLength();
+		
+				if(maxLength != null){
+					column.setSize(maxLength);
 				} else {
 					column.setSize(0);
 					column.setType(DataType.MEMO);

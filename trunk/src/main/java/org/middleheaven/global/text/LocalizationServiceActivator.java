@@ -44,7 +44,7 @@ public class LocalizationServiceActivator extends Activator{
 	public void activate(ActivationContext context) {
 		BootstrapContainer environment = bootstrapService.getEnvironmentBootstrap().getContainer();
 
-		RepositoryDomainBundle masterBundle = new RepositoryDomainBundle();
+		masterBundle = new RepositoryDomainBundle();
 		masterBundle.setRepository(environment.getEnvironmentConfigRepository());
 
 		RepositoryDomainBundle childBundle = new RepositoryDomainBundle();

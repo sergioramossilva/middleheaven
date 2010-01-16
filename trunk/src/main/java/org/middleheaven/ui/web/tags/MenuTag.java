@@ -135,12 +135,8 @@ public class MenuTag extends AbstractBodyTagSupport {
 		try {
 			BodyContent bc = getBodyContent();
 			// get the bc as string
-			final BigInteger percentWitdh = this.masterStack.percentWitdh();
-			if (percentWitdh==null){
-				buffer.append ("\n<li>");
-			} else {
-				buffer.append ("\n<li style=\"width: ").append(percentWitdh).append("%\"  >");
-			}
+		
+			buffer.append ("\n<li>");
 			buffer.append(bc.getString());
 			buffer.append ("\n</li>");
 			// clean up
@@ -296,11 +292,11 @@ private void printMenu (StringBuilder builder , RMenuItem item ){
 
 
 }
-private String ensureOneSurroundByTag(String string, String tag) {
-	if (string.startsWith("<" + tag + ">") && string.endsWith("</" + tag + ">")){
-		return string;
+private String ensureOneSurroundByTag(String content, String tag) {
+	if (content.startsWith("<" + tag + ">") && content.endsWith("</" + tag + ">")){
+		return content;
 	} else {
-		return "<" + tag + ">" + string + "</" + tag + ">";
+		return "<" + tag + ">" + content + "</" + tag + ">";
 	}
 }
 

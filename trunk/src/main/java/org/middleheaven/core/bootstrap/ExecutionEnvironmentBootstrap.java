@@ -88,6 +88,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 		SetActivatorScanner overrridableScanner = new SetActivatorScanner()
 		.addActivator(AlarmClockScheduleWorkExecutionServiceActivator.class)
 		.addActivator(LocalizationServiceActivator.class);
+
 		wiringService.addActivatorScanner(overrridableScanner);
 		
 		// can and activate all
