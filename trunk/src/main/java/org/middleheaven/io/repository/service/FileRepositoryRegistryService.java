@@ -9,10 +9,14 @@ import java.util.Set;
 import org.middleheaven.io.repository.ManagedFile;
 
 
-public interface FileRepositoryService {
+public interface FileRepositoryRegistryService {
 	
-	
+	/**
+	 * Retrive all registred repository names
+	 * @return
+	 */
 	public Set<String> getRepositoriesNames();
+	
     /**
      * Retrieve <code>ManagedFileRepository</code> registered to the name
      * or <code>null</code> if the name isn`t found.

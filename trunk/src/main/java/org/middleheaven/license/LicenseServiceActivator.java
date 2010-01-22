@@ -20,7 +20,7 @@ import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.service.FileRepositoryService;
+import org.middleheaven.io.repository.service.FileRepositoryRegistryService;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.Logging;
 import org.middleheaven.util.classification.BooleanClassifier;
@@ -30,7 +30,7 @@ public class LicenseServiceActivator extends Activator {
 
 	private LicenseService implementation;
 	private LicenseProvider provider = new VoidLicenseProvider();
-	private FileRepositoryService frs;
+	private FileRepositoryRegistryService frs;
 
 	@Override
 	public void inactivate(ActivationContext context) {
@@ -43,7 +43,7 @@ public class LicenseServiceActivator extends Activator {
 	}
 
 	@Wire
-	public void setFileRepositoryService(FileRepositoryService fileService){
+	public void setFileRepositoryService(FileRepositoryRegistryService fileService){
 		this.frs = fileService;
 	}
 

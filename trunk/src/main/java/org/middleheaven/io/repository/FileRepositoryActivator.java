@@ -7,7 +7,7 @@ import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.repository.service.CommonRepositories;
-import org.middleheaven.io.repository.service.FileRepositoryService;
+import org.middleheaven.io.repository.service.FileRepositoryRegistryService;
 
 public class FileRepositoryActivator extends Activator {
 
@@ -21,7 +21,7 @@ public class FileRepositoryActivator extends Activator {
 	}
 	
 	@Publish
-	public FileRepositoryService getFileRepositoryService() {
+	public FileRepositoryRegistryService getFileRepositoryService() {
 		return fileRepositoryService;
 	}
 
