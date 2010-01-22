@@ -27,7 +27,7 @@ public class ChartTest {
 
 	public static void main(String ... args){
 		ChartTest r = new ChartTest();
-		//r.testBidimentionalChart();
+		//r.testBidimensionalChart();
 		r.testDynamicChart();
 	}
 
@@ -81,7 +81,7 @@ public class ChartTest {
 
 	}
 	@Test
-	public void testBidimentionalChart(){
+	public void testBidimensionalChart(){
 
 		ChartEngine engine = new JFreeChartEngine();
 

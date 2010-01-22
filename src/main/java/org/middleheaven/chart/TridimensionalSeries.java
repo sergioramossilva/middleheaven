@@ -18,15 +18,16 @@ public class TridimensionalSeries<X extends Comparable<X>, Y extends Comparable<
 			super();
 			this.x = x;
 			this.y = y;
+			this.z = z;
 		}
 		
 		@SuppressWarnings("unchecked")
-		public <T extends Comparable<T>> T get(int dimention){
-			if (dimention==0){
+		public <T extends Comparable<T>> T get(int dimension){
+			if (dimension==0){
 				return (T)x;
-			} else if (dimention==1){
+			} else if (dimension==1){
 				return (T)y;
-			} else if (dimention==2){
+			} else if (dimension==2){
 				return (T)z;
 			} else {
 				throw new IndexOutOfBoundsException();
@@ -49,8 +50,8 @@ public class TridimensionalSeries<X extends Comparable<X>, Y extends Comparable<
 
 
 	@Override
-	public <T extends Comparable<T>> T getValue(int dimention, int index) {
-		return values.get(index).get(dimention);
+	public <T extends Comparable<T>> T getValue(int dimension, int index) {
+		return values.get(index).get(dimension);
 	}
 
 	@Override

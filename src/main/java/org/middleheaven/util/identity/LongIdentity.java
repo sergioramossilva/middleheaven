@@ -10,11 +10,15 @@ public class LongIdentity extends Identity implements Serializable {
 	private long value;
 
 	public static Identity valueOf(String value) {
-		return new LongIdentity(Integer.parseInt(value));
+		return new LongIdentity(Long.parseLong(value));
 	}
 
-	public LongIdentity(long l) {
-		this.value = l;
+	public static Identity valueOf(Long value) {
+		return new LongIdentity(value.longValue());
+	}
+	
+	public LongIdentity(long value) {
+		this.value = value;
 	}
 
 	@Override
@@ -29,17 +33,6 @@ public class LongIdentity extends Identity implements Serializable {
 	@Override
 	public int hashCode() {
 		return Hash.hash(value).hashCode();
-	}
-
-	@Override
-	public int compareTo(Identity other) {
-		if ( this.value  == ((LongIdentity)other).value ){
-			return 0; 
-		} else if (this.value  > ((LongIdentity)other).value ){
-			return 1;
-		} else {
-			return -1;
-		}
 	}
 
 	@Override

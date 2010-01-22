@@ -41,5 +41,5 @@ public abstract class MathStructuresFactory {
 	
 	public abstract <T extends Field<T>> Vector<T> vectorize(List<T> elements);
 	public abstract <T extends Field<T>> Vector<T> vectorize(Vector<T> other);
-	public abstract <T extends Field<T>> Vector<T> vectorize(int dimention, T value);
+	public abstract <T extends Field<T>> Vector<T> vectorize(int dimension, T value);
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractSequencialIdentityStorage;
 import org.middleheaven.storage.ExecutableQuery;
+import org.middleheaven.storage.HashStorable;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
@@ -16,38 +17,58 @@ import org.middleheaven.storage.SimpleExecutableQuery;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriteriaFilter;
-import org.middleheaven.storage.db.StoreQuerySession;
+import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.collections.TransformedCollection;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
 
+/**
+ * Stores the storable objects in memory as copies of the real objects.
+ * TODO disconnect instances in relation 1-1, 1-n , n-1 , n-m 
+ */
 public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 
+	private final Map<String, Map<Identity,HashStorable> > data = new HashMap<String,Map<Identity,HashStorable> >();
+	private final Map<String, Sequence<Identity>> sequences = new HashMap<String,Sequence<Identity>>();
+
+	
 	public InMemoryStorage() {
 		super(null);
 	}
 
-	// Map<entity_name , Map<identity, Storable>
-	final Map<String, Map<Identity,Storable> > data = new HashMap<String,Map<Identity,Storable> >();
-	final Map<String, Sequence<Identity>> sequences = new HashMap<String,Sequence<Identity>>();
-
-	Collection<Storable> getBulkData(String name){
-		Map<Identity,Storable> col = data.get(name);
+	private Collection<Storable> getBulkData(String name){
+		Map<Identity,HashStorable> col = data.get(name);
 		if (col==null){
 			return Collections.emptySet();
 		}
-		return col.values();
+		return TransformedCollection.transform( col.values() , new Classifier<Storable,HashStorable>(){
+
+			@Override
+			public Storable classify(HashStorable obj) {
+				if (obj == null){
+					return null;
+				}
+				
+				Storable s = getStorableStateManager().merge(obj.getEntityModel().newInstance());
+				
+				obj.copyTo(s);
+				
+				return s;
+			}
+			
+		});
 	}
 
 
 	private <T> void setBulkData(Collection<Storable> collection){
 		if (!collection.isEmpty()){
 			Storable s = collection.iterator().next();
-			Map<Identity,Storable> col = data.get(s.getPersistableClass().getName());
+			Map<Identity,HashStorable> col = data.get(s.getPersistableClass().getName());
 			if (col==null){
-				col = new HashMap<Identity,Storable>();
+				col = new HashMap<Identity,HashStorable>();
 			}
 			for (Storable ss: collection){
-				col.put(ss.getIdentity(), ss);
+				col.put(ss.getIdentity(), HashStorable.clone(ss));
 			}
 			data.put(s.getPersistableClass().getName(),col);
 		}
@@ -96,8 +117,6 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 	@Override
 	public void insert(Collection<Storable> collection) {
 		this.setBulkData(collection);
-
-
 	}
 
 
@@ -125,9 +144,5 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 			this.getBulkData(s.getPersistableClass().getName()).removeAll(collection);
 		}
 	}
-
-
-
-
 
 }

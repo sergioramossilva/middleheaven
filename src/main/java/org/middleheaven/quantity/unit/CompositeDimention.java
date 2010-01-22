@@ -83,7 +83,7 @@ public class CompositeDimention extends Dimension {
     
 	@Override
 	protected Dimension simplify() {
-		// elimina todos os dimentionless
+		// elimina todos os dimensionless
 		for (Iterator<BaseDimention> it = dims.values().iterator(); it.hasNext();){
 			BaseDimention d = it.next();
 			if (d.exponent()==0 || d.axis() == '1'){

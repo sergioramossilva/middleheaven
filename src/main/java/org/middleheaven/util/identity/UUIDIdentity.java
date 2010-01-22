@@ -30,11 +30,6 @@ public class UUIDIdentity extends Identity implements Serializable {
 	}
 
 	@Override
-	public int compareTo(Identity other) {
-		return this.value.compareTo(((UUIDIdentity)other).value);
-	}
-
-	@Override
 	public String toString() {
 		return value.toString();
 	}

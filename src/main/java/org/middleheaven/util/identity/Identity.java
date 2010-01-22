@@ -2,7 +2,7 @@ package org.middleheaven.util.identity;
 
 import java.io.Serializable;
 
-public abstract class Identity implements Comparable<Identity> , Serializable{
+public abstract class Identity implements Serializable{
 
 
 	public final boolean equals(Object other){

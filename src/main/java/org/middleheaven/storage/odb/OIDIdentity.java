@@ -30,10 +30,5 @@ public class OIDIdentity extends Identity {
 		return oid.toString();
 	}
 
-	@Override
-	public int compareTo(Identity other) {
-		return oid.compareTo(((OIDIdentity)other).oid);
-	}
-
 
 }

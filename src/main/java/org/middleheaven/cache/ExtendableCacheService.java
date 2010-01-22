@@ -1,10 +1,8 @@
 package org.middleheaven.cache;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ExtendableCacheService implements CacheService {
 

@@ -30,11 +30,6 @@ public class IntegerIdentity extends Identity implements Serializable {
 	}
 
 	@Override
-	public int compareTo(Identity other) {
-		return this.value - ((IntegerIdentity)other).value;
-	}
-
-	@Override
 	public String toString() {
 		return Integer.toString(value);
 	}

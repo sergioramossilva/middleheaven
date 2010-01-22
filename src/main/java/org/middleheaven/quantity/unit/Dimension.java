@@ -53,22 +53,22 @@ public abstract class Dimension<E extends Measurable> implements Serializable {
 	public static final Dimension<Power> POWER = ENERGY.over(TIME);
 	public static final Dimension<Entropy> ENTROPY = ENERGY.over(TEMPERATURE);
 	
-	public Dimension<E> plus(Dimension<E> dimention) throws IncompatibleDimentionException{
-		if (dimention.equals(this)){
+	public Dimension<E> plus(Dimension<E> dimension) throws IncompatibleDimentionException{
+		if (dimension.equals(this)){
 			return this;
 		}
 		throw new IncompatibleDimentionException();
 	}
-	public Dimension<E> minus(Dimension<E> dimention) throws IncompatibleDimentionException{
-		if (dimention.equals(this)){
+	public Dimension<E> minus(Dimension<E> dimension) throws IncompatibleDimentionException{
+		if (dimension.equals(this)){
 			return this;
 		}
 		throw new IncompatibleDimentionException();
 	}
 	
-	public abstract <T extends Measurable> Dimension<T> times(Dimension<?> dimention) ;
+	public abstract <T extends Measurable> Dimension<T> times(Dimension<?> dimension) ;
 	
-	public abstract <T extends Measurable> Dimension<T> over(Dimension<?> dimention);
+	public abstract <T extends Measurable> Dimension<T> over(Dimension<?> dimension);
 
 	
     protected abstract <T extends Measurable> Dimension<T> simplify();

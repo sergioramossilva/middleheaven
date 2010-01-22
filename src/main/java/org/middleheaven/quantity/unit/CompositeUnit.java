@@ -148,7 +148,7 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 	}
 	
 	public Unit<E> simplify(){
-		//	elimina todos os dimentionless
+		//	elimina todos os dimensionless
 		for (Iterator<UnitPower> it = units.values().iterator(); it.hasNext();){
 			UnitPower d = it.next();
 			if (d.exponent==0){

@@ -1,7 +1,7 @@
 package org.middleheaven.chart;
 
 /**
- * A indexable, multi-dimentional set of values 
+ * A indexable, multi-dimensional set of values 
  * 
  *
  */
@@ -33,11 +33,11 @@ public interface Series {
 	/**
 	 * Obtain a value  for a specified axis
 	 * @param <C> values must be comparable
-	 * @param dimention 0 to getDimensions()-1
+	 * @param dimension 0 to getDimensions()-1
 	 * @param index 0 to size()-1
 	 * @return the value associated to an index an axis in the series. 
 	 */
-	public <C extends Comparable<C>> C getValue(int dimention, int index);
+	public <C extends Comparable<C>> C getValue(int dimension, int index);
 	
 	/**
 	 * Add a series listener that will be informed when the data in the series changes

@@ -5,7 +5,7 @@ import java.lang.annotation.Annotation;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.TransformCollection;
+import org.middleheaven.util.collections.TransformedCollection;
 
 public class PackageIntrospector extends Introspector {
 
@@ -22,7 +22,7 @@ public class PackageIntrospector extends Introspector {
 
 	public EnhancedCollection<ClassIntrospector> getClassesIntrospectors(){
 		return CollectionUtils.enhance(
-				new TransformCollection<Class<?>, ClassIntrospector>(
+				new TransformedCollection<Class<?>, ClassIntrospector>(
 						ReflectionUtils.getPackageClasses(typePackage) , 
 						new Classifier< ClassIntrospector,Class<?>>(){
 
