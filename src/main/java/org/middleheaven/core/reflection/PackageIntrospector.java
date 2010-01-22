@@ -22,7 +22,7 @@ public class PackageIntrospector extends Introspector {
 
 	public EnhancedCollection<ClassIntrospector> getClassesIntrospectors(){
 		return CollectionUtils.enhance(
-				new TransformedCollection<Class<?>, ClassIntrospector>(
+				TransformedCollection.transform(
 						ReflectionUtils.getPackageClasses(typePackage) , 
 						new Classifier< ClassIntrospector,Class<?>>(){
 

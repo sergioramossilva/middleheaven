@@ -111,7 +111,7 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 	@Override
 	public  Collection<StorableFieldModel> fields() {
 		@SuppressWarnings("unchecked")  Collection<EntityFieldModel> all = (Collection<EntityFieldModel>) model.fields();
-		return new TransformedCollection<EntityFieldModel,StorableFieldModel>(all, new Classifier<StorableFieldModel,EntityFieldModel>(){
+		return TransformedCollection.transform(all, new Classifier<StorableFieldModel,EntityFieldModel>(){
 
 			@Override
 			public StorableFieldModel classify(EntityFieldModel object) {
