@@ -6,20 +6,20 @@ import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.service.CommonRepositories;
-import org.middleheaven.io.repository.service.FileRepositoryService;
+import org.middleheaven.io.repository.service.FileRepositoryRegistryService;
 import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.logging.config.LoggingConfigurator;
 import org.middleheaven.logging.config.XMLLoggingConfigurator;
 
 public class LoggingActivator extends Activator {
 
-	FileRepositoryService fileRepositoryService;
+	FileRepositoryRegistryService fileRepositoryService;
 	LoggingService loggingService;
 	
 	public LoggingActivator(){}
 
 	@Wire
-	public void setFileRepositoryService(FileRepositoryService fileRepositoryService) {
+	public void setFileRepositoryService(FileRepositoryRegistryService fileRepositoryService) {
 		this.fileRepositoryService = fileRepositoryService;
 	}
 
