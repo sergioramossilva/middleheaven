@@ -9,7 +9,7 @@ import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.collections.TransformCollection;
+import org.middleheaven.util.collections.TransformedCollection;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.validation.Consistencies;
 
@@ -111,7 +111,7 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 	@Override
 	public  Collection<StorableFieldModel> fields() {
 		@SuppressWarnings("unchecked")  Collection<EntityFieldModel> all = (Collection<EntityFieldModel>) model.fields();
-		return new TransformCollection<EntityFieldModel,StorableFieldModel>(all, new Classifier<StorableFieldModel,EntityFieldModel>(){
+		return new TransformedCollection<EntityFieldModel,StorableFieldModel>(all, new Classifier<StorableFieldModel,EntityFieldModel>(){
 
 			@Override
 			public StorableFieldModel classify(EntityFieldModel object) {

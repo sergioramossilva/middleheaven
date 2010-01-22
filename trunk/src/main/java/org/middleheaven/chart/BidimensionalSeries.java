@@ -5,7 +5,7 @@ import java.util.List;
 
 public class BidimensionalSeries<X extends Comparable<X>, Y extends Comparable<Y>> extends AbstractSeries {
 
-	int dimentions = 2;
+	int dimensions = 2;
 	
 	public BidimensionalSeries(String name) {
 		super(name);
@@ -32,18 +32,18 @@ public class BidimensionalSeries<X extends Comparable<X>, Y extends Comparable<Y
 		}
 		
 		@SuppressWarnings("unchecked")
-		public <T extends Comparable<T>> T get(int dimention){
-			if (dimention==0){
+		public <T extends Comparable<T>> T get(int dimension){
+			if (dimension==0){
 				return (T)x;
-			} else if (dimention==1){
+			} else if (dimension==1){
 				return (T)y;
-			} else if (dimention==2){
+			} else if (dimension==2){
 				return (T)open;
-			} else if (dimention==3){
+			} else if (dimension==3){
 				return (T)close;
-			} else if (dimention==4){
+			} else if (dimension==4){
 				return (T)low;
-			} else if (dimention==5){
+			} else if (dimension==5){
 				return (T)height;
 			} else {
 				throw new IndexOutOfBoundsException();
@@ -60,7 +60,7 @@ public class BidimensionalSeries<X extends Comparable<X>, Y extends Comparable<Y
 	}
 	
 	public void add(X x , X open , X close , Y y , Y low, Y height){
-		dimentions = 6;
+		dimensions = 6;
 		values.add(new Entry<X,Y>(x,open,close,y,height , low));
 		this.fireChangeEvent();
 	}
@@ -68,14 +68,14 @@ public class BidimensionalSeries<X extends Comparable<X>, Y extends Comparable<Y
 	
 	@Override
 	public int getDimensions() {
-		return dimentions;
+		return dimensions;
 	}
 
 
 
 	@Override
-	public <T extends Comparable<T>> T getValue(int dimention, int index) {
-		return values.get(index).get(dimention);
+	public <T extends Comparable<T>> T getValue(int dimension, int index) {
+		return values.get(index).get(dimension);
 	}
 
 	@Override

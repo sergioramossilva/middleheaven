@@ -58,7 +58,7 @@ public abstract class Matrix<F extends Field<F>> implements VectorSpace<Matrix<F
 
 	public static <T extends Field<T>> Matrix<T> matrix(int rows, int columns, T ... values){
 		if (values.length != rows * columns){
-			throw new IllegalArgumentException("Invalid dimentions");
+			throw new IllegalArgumentException("Invalid dimensions");
 		}
 		MathStructuresFactory factory = MathStructuresFactory.getFactory();
 		

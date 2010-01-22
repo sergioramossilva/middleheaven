@@ -22,10 +22,10 @@ class DenseVector<F extends Field<F>> extends Vector<F> implements Conjugatable<
 		this.elements = new ArrayList<F>(elements);
 	}
 
-	DenseVector(int dimention, F value){
-		this.elements = new ArrayList<F>(dimention);
+	DenseVector(int dimension, F value){
+		this.elements = new ArrayList<F>(dimension);
 		if ( value!=null){
-			for (int i=0; i< dimention; i++){
+			for (int i=0; i< dimension; i++){
 				elements.add(value);
 			}
 		}

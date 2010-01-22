@@ -1,5 +1,6 @@
 package org.middleheaven.cache;
 
+
 public interface Cache {
 
 	/**
@@ -25,4 +26,5 @@ public interface Cache {
 	 * 
 	 */
 	public void remove(Object key);
+
 }

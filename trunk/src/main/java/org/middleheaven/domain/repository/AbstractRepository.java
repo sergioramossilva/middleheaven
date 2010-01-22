@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.domain.DomainModel;
 import org.middleheaven.storage.ListQuery;
 import org.middleheaven.storage.Query;
 
 public abstract class AbstractRepository<E> implements Repository<E> {
 
 	private Set<RepositoryListener> listeners = new CopyOnWriteArraySet<RepositoryListener> ();
+	private DomainModel domainModel;
 
 	@Override
 	public void addRepositoryListener(RepositoryListener listener) {
@@ -63,5 +65,12 @@ public abstract class AbstractRepository<E> implements Repository<E> {
 		return new ListQuery<E>(all);
 	}
 
-	
+	@Override
+	public void setDomainModel(DomainModel domainModel) {
+		this.domainModel = domainModel;
+	}
+
+	protected DomainModel getDomainModel(){
+		return this.domainModel;
+	}
 }

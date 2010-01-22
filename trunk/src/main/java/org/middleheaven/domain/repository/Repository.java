@@ -48,20 +48,33 @@ public interface Repository<E> {
 	/**
 	 * Store an instance in the repository giving it an identity. The identified instance
 	 * is returned as a result
-	 * @param instance
-	 * @return
+	 * @param instance to be stored in this repository
+	 * @return an instance equal to the stored instance with the repository given identity 
 	 */
 	public E store(E instance);
 	
 	/**
-	 * 
-	 * @param entity
+	 * Remove the instance from the repository 
+	 * @param instance the instance to be removed
 	 */
-	public void remove(E entity);
+	public void remove(E instance);
 	
+	/**
+	 * Add a repository listener 
+	 * @param listener
+	 */
 	public void addRepositoryListener(RepositoryListener listener);
+	
+	/**
+	 * remove a repository listener
+	 * @param listener
+	 */
 	public void removeRepositoryListener(RepositoryListener listener);
 	
+	/**
+	 * Set the domainModel associated with the repository entity
+	 * @param domainModel
+	 */
 	public void setDomainModel(DomainModel domainModel);
 
 }

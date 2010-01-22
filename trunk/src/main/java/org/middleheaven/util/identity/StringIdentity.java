@@ -26,11 +26,6 @@ public final class StringIdentity extends Identity implements Serializable {
 	}
 
 	@Override
-	public int compareTo(Identity other) {
-		return this.value.compareTo(((StringIdentity)other).value);
-	}
-
-	@Override
 	public String toString() {
 		return value.toString();
 	}

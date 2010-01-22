@@ -46,8 +46,8 @@ public class StandardMathStructuresFactory extends MathStructuresFactory {
 	}
 
 	@Override
-	public <T extends Field<T>> Vector<T> vectorize(int dimention, T value) {
-		return new DenseVector<T>(dimention,value);
+	public <T extends Field<T>> Vector<T> vectorize(int dimension, T value) {
+		return new DenseVector<T>(dimension,value);
 	}
 
 	@Override
@@ -59,9 +59,5 @@ public class StandardMathStructuresFactory extends MathStructuresFactory {
 	public <T extends Field<T>> Matrix<T> diagonal(int size, T value) {
 		return new SingleValueVectorDiagonalMatrix<T>(size, value);
 	}
-
-
-
-	
 
 }

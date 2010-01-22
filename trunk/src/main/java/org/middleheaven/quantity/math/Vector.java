@@ -39,8 +39,8 @@ public abstract class Vector<F extends Field<F>> implements VectorSpace<Vector<F
 		return MathStructuresFactory.getFactory().vectorize(other);
 	}
 
-	public static <T extends Field<T>> Vector<T> replicate(int dimention, T value){
-		return MathStructuresFactory.getFactory().vectorize(dimention, value);
+	public static <T extends Field<T>> Vector<T> replicate(int dimension, T value){
+		return MathStructuresFactory.getFactory().vectorize(dimension, value);
 	}
 	
 	public abstract F get(int index);

@@ -6,12 +6,16 @@ import java.util.Iterator;
 
 import org.middleheaven.util.classification.Classifier;
 
-public class TransformCollection<O,T> extends AbstractCollection<T> {
+public class TransformedCollection<O,T> extends AbstractCollection<T> {
 
 	private Collection<O> original;
 	private Classifier<T, O> classifier;
 	
-	public TransformCollection(Collection<O> original, Classifier<T,O> classifier){
+	public static <R,M> TransformedCollection<R,M> transform(Collection<R> original, Classifier<M,R> classifier){
+		return new TransformedCollection<R,M>(original, classifier);
+	}
+	
+	private TransformedCollection(Collection<O> original, Classifier<T,O> classifier){
 		this.original = original;
 		this.classifier = classifier;
 	}
