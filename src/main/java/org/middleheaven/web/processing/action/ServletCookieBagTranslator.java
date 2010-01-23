@@ -5,6 +5,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.middleheaven.quantity.time.Period;
 import org.middleheaven.web.processing.RequestCookie;
 
 public class ServletCookieBagTranslator implements RequestCookieSource {
@@ -27,6 +28,14 @@ public class ServletCookieBagTranslator implements RequestCookieSource {
 		this.response = response;
 	}
 
+	private Period maxAgeToPeriod(int seconds){
+		return seconds < 0 ? null : Period.seconds(seconds);
+	}
+	
+	private int maxAgeToSeconds(Period seconds){
+		return seconds == null ? -1 : (int)seconds.seconds();
+	}
+	
 	@Override
 	public RequestCookieBag readAll() {
 		RequestCookieBag bag = new RequestCookieBag();
@@ -38,7 +47,7 @@ public class ServletCookieBagTranslator implements RequestCookieSource {
 				RequestCookie rc = new RequestCookie(cookie.getName(), cookie.getValue());
 				rc.setComment(cookie.getComment());
 				rc.setDomain(cookie.getDomain());
-				rc.setMaxAge(cookie.getMaxAge());
+				rc.setMaxAge(maxAgeToPeriod(cookie.getMaxAge()));
 				rc.setPath(cookie.getPath());
 				rc.setSecure(cookie.getSecure());
 				rc.setVersion(cookie.getVersion());
@@ -64,7 +73,7 @@ public class ServletCookieBagTranslator implements RequestCookieSource {
 		if (response != null ){
 			Cookie sc = new Cookie(cookie.getName(), cookie.getValue());
 			sc.setComment(cookie.getComment());
-			sc.setMaxAge(cookie.getMaxAge());
+			sc.setMaxAge(maxAgeToSeconds(cookie.getMaxAge()));
 			sc.setSecure(cookie.isSecure());
 			sc.setVersion(cookie.getVersion());
 			

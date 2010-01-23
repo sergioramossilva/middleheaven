@@ -6,7 +6,7 @@ public class PermanentSignature extends TimedSignature {
 
 
 	public PermanentSignature(Set<Credential>  credentials){
-		super(credentials, -1);
+		super(credentials, null);
 	}
 
 	@Override

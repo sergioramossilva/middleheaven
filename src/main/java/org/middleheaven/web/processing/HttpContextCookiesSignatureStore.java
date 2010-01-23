@@ -1,6 +1,5 @@
 package org.middleheaven.web.processing;
 
-import java.net.URL;
 import java.util.Collections;
 
 import org.middleheaven.aas.Credential;
@@ -8,17 +7,18 @@ import org.middleheaven.aas.NameCredential;
 import org.middleheaven.aas.Signature;
 import org.middleheaven.aas.TimedSignature;
 import org.middleheaven.crypto.Base64CipherAlgorithm;
+import org.middleheaven.quantity.time.Period;
 import org.middleheaven.ui.ContextScope;
 
 public class HttpContextCookiesSignatureStore extends HttpContextSignatureStore {
 
-	private final int sessionTimeout; 
+	private final Period sessionTimeout; 
 
 	public HttpContextCookiesSignatureStore() {
-		this(60*30); // 30 minutes
+		this(Period.minutes(30));
 	}
 	
-	public HttpContextCookiesSignatureStore(int sessionTimeout) {
+	public HttpContextCookiesSignatureStore(Period sessionTimeout) {
 		this.sessionTimeout = sessionTimeout;
 	}
 	

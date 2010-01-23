@@ -3,17 +3,30 @@ package org.middleheaven.aas;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.middleheaven.quantity.time.Period;
 
+/**
+ * Determines the next LoginStep based on the current state of the request.
+ */
+public final class AccessRequestBroker {
 
-public class AccessRequestBroker {
-
-	Autorizator autorizator = new Autorizator();
-	Autenticator autenticator = new Autenticator();
-	SubjectLocator subjectLocator = new DefaultSubjectLocator();
-	SignaturePolicy policy = new TemporarySignaturePolicy(30);
-	PermissionResolver permissionResolver = new RolePermissionResolver();
+	private Autorizator autorizator = new Autorizator();
+	private Authenticator autenticator = new Authenticator();
+	private SubjectLocator subjectLocator = new DefaultSubjectLocator();
+	private SignaturePolicy policy = new TemporarySignaturePolicy(Period.seconds(30));
+	private PermissionResolver permissionResolver = new RolePermissionResolver();
 	
 	public AccessRequestBroker(){}
+	
+
+	public void addAuthenticationModule(AuthenticationModule module, SuccessLevel level) {
+		autenticator.addAuthenticationModule(module, level);
+	}
+
+
+	public void addAutorizationModule(AutorizationModule module) {
+		autorizator.addAutorizationModule(module);
+	}
 	
 	public void setSubjectLocator(SubjectLocator subjectLocator ){
 		this.subjectLocator = subjectLocator;
@@ -57,7 +70,7 @@ public class AccessRequestBroker {
 					// autorize
 					autorize (credentials, request);
 
-					return LoginStep.SUCESS;
+					return LoginStep.SUCCESS;
 					
 				} catch (FailureAutenticationException e){
 					callbackHandler.onException(e);
@@ -75,7 +88,7 @@ public class AccessRequestBroker {
 
 				autorize (credentials, request);
 				
-				return LoginStep.SUCESS;
+				return LoginStep.SUCCESS;
 			}
 		}catch (RuntimeException e){
 			callbackHandler.onException(new AccessException(e));
