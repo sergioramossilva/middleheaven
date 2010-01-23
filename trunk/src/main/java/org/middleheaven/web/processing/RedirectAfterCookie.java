@@ -15,7 +15,7 @@ public class RedirectAfterCookie extends RequestCookie {
 		this.setSecure(other.isSecure());
 		this.setVersion(other.getVersion());
 		
-		this.setMaxAge(-1); // session only
+		this.setMaxAge(null); // session only
 	}
 	
 	/**
@@ -25,7 +25,7 @@ public class RedirectAfterCookie extends RequestCookie {
 	 */
 	public RedirectAfterCookie(String name, String url) {
 		super(name, encode(url));
-		this.setMaxAge(-1); // session only
+		this.setMaxAge(null); // session only
 	}
 
 	private static String encode(String url) {

@@ -1,14 +1,18 @@
 package org.middleheaven.web.processing;
 
+import org.middleheaven.quantity.time.Period;
 import org.middleheaven.util.Hash;
 
+/**
+ * A technology independent representation of a Cookie. 
+ */
 public class RequestCookie {
 
 	private String name;
 	private String value;
 	private String comment;
 	private String domain;
-	private int maxAge = -1; // seconds
+	private Period maxAge = null; 
 	private String path;
 	private boolean secure;
 	private int version = 1;
@@ -19,7 +23,7 @@ public class RequestCookie {
 	}
 
 	public RequestCookie expire(){
-		this.maxAge = 0;
+		this.maxAge = Period.seconds(0);
 		return this;
 	}
 	
@@ -31,7 +35,11 @@ public class RequestCookie {
 		return domain;
 	}
 
-	public int getMaxAge() {
+	/**
+	 * Cookie age in secounds
+	 * @return
+	 */
+	public Period getMaxAge() {
 		return maxAge;
 	}
 
@@ -67,7 +75,7 @@ public class RequestCookie {
 		this.domain = domain;
 	}
 
-	public void setMaxAge(int maxAge) {
+	public void setMaxAge(Period maxAge) {
 		this.maxAge = maxAge;
 	}
 

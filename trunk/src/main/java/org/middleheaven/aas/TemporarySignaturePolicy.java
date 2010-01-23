@@ -2,11 +2,13 @@ package org.middleheaven.aas;
 
 import java.util.Set;
 
+import org.middleheaven.quantity.time.Period;
+
 public class TemporarySignaturePolicy  implements SignaturePolicy{
 
 	
-	private int timeOut;
-	public TemporarySignaturePolicy (int timeOut){
+	private Period timeOut;
+	public TemporarySignaturePolicy (Period timeOut){
 		this.timeOut = timeOut;
 	}
 	

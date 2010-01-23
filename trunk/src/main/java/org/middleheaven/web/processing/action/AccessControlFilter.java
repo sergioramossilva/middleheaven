@@ -59,7 +59,7 @@ public class AccessControlFilter implements HttpFilter{
 		Permission[] permissions = getGuardPermission(context.getRequestUrl());
 
 		if (permissions.length == 0){
-			// let pass
+			// free for all, let pass
 			chain.doChain(context);
 		} else {
 			final CallbacksSet set = new CallbacksSet();
@@ -90,7 +90,7 @@ public class AccessControlFilter implements HttpFilter{
 				case FAIL:
 					chain.interruptWithOutcome(failureOutcome);
 					break loop;
-				case SUCESS:
+				case SUCCESS:
 					// is authenticated
 					
 					Subject subject = request.getSubject();

@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 
-public final class Autenticator {
+public final class Authenticator {
 
 	private final Collection<QualifiedAuthenticationModule> agents = new LinkedHashSet<QualifiedAuthenticationModule>();
 
@@ -21,7 +21,7 @@ public final class Autenticator {
 
 	}
 
-	public Autenticator addAutenticationModule (AuthenticationModule module, SuccessLevel level){
+	public Authenticator addAuthenticationModule (AuthenticationModule module, SuccessLevel level){
 		this.agents.add(new QualifiedAuthenticationModule(module,level));
 		return this;
 	}
