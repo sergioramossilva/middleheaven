@@ -9,6 +9,7 @@ import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriterionOperator;
+import org.middleheaven.storage.db.Clause;
 import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.CriteriaInterpreter;
@@ -109,7 +110,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 			}
 		}
 		
-		protected void writeLikeClause(StorableFieldModel fm,StringBuilder criteriaBuffer,
+		protected void writeLikeClause(StorableFieldModel fm,Clause criteriaBuffer,
 				boolean caseSensitive, CriterionOperator op,String alias) {
 			dialect().writeQueryHardname(criteriaBuffer, dialect().aliasFor(fm.getHardName(),alias));
 
@@ -137,7 +138,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	}
 
 	@Override
-	protected void appendNativeTypeFor(StringBuilder sql, ColumnModel column) {
+	protected void appendNativeTypeFor(Clause sql, ColumnModel column) {
 		switch (column.getType()){ // TODO verificar na documentação postgress
 		case DATE:
 			sql.append("date");

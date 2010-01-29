@@ -7,6 +7,7 @@ import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorageException;
+import org.middleheaven.storage.db.Clause;
 import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.DataBaseCommand;
@@ -71,7 +72,7 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 	}
 
 	@Override
-	protected void appendNativeTypeFor(StringBuilder sql, ColumnModel column) {
+	protected void appendNativeTypeFor(Clause sql, ColumnModel column) {
 		switch (column.getType()){
 		case DATE:
 		case DATETIME:

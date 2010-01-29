@@ -6,24 +6,25 @@ import org.middleheaven.util.Hash;
 
 public class ColumnModel implements Cloneable{
 
-	String name;
-	DataType type;
-	boolean indexed = false;
-	boolean unique = false;
-	boolean nullable = true;
-	boolean key = false;
-	int size;
-	int precision;
-	TableModel model;
+	private String name;
+	private DataType type;
+	private boolean indexed = false;
+	private boolean unique = false;
+	private boolean nullable = true;
+	private boolean key = false;
+	private int size;
+	private int precision;
+	TableModel tableModel;
 
-	public TableModel getTableModel() {
-		return model;
-	}
 
 	public ColumnModel(String name, DataType type) {
 		super();
 		this.name = name;
 		this.type = type;
+	}
+
+	public TableModel getTableModel() {
+		return tableModel;
 	}
 
 	public void setSize(int size){
@@ -45,8 +46,6 @@ public class ColumnModel implements Cloneable{
 	public void setUnique(boolean unique) {
 		this.unique = unique;
 	}
-
-
 
 	public String getName() {
 		return name;
@@ -94,7 +93,7 @@ public class ColumnModel implements Cloneable{
 
 	public ColumnModel copy(TableModel tableModel) {
 		ColumnModel nc = (ColumnModel) this.clone();
-		nc.model = tableModel;
+		nc.tableModel = tableModel;
 		return nc;
 	}
 
@@ -112,6 +111,10 @@ public class ColumnModel implements Cloneable{
 
 	public boolean equals(Object other){
 		return other instanceof ColumnModel && ((ColumnModel)other).name.equals(name) && 
-		this.model.equals(((ColumnModel)other).model);
+		this.tableModel.equals(((ColumnModel)other).tableModel);
+	}
+	
+	public String toString(){
+		return this.getTableModel().getName() + "." + this.name;
 	}
 }

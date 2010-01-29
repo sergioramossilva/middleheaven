@@ -53,34 +53,37 @@ public class AccessControlFilter implements HttpFilter{
 		this.loginOutcome = loginOutcome;
 	}
 
+	private void letPass(HttpContext context,HttpFilterChain chain, AccessRequest request){
+		context.setAttribute(ContextScope.REQUEST, AccessRequest.class.getName(), 	request);
+		chain.doChain(context);
+	}
 	@Override
 	public void doFilter(HttpContext context, HttpFilterChain chain) {
 
 		Permission[] permissions = getGuardPermission(context.getRequestUrl());
+		final CallbacksSet set = new CallbacksSet();
+		
+		CallbackHandler handler = new CallbackHandler(){
+
+			@Override
+			public CallbacksSet getCallbacks() {
+				return set;
+			}
+
+			@Override
+			public void onException(AccessException e) {
+				e.printStackTrace(); //TODO log
+			}
+
+		};
+		
+		HttpContextAccessRequest request = new HttpContextAccessRequest(context,handler,store);
 
 		if (permissions.length == 0){
-			// free for all, let pass
-			chain.doChain(context);
+			// free for all
+			letPass(context,chain, request);
 		} else {
-			final CallbacksSet set = new CallbacksSet();
-
-			CallbackHandler handler = new CallbackHandler(){
-
-				@Override
-				public CallbacksSet getCallbacks() {
-					return set;
-				}
-
-				@Override
-				public void onException(AccessException e) {
-					e.printStackTrace(); //TODO log
-				}
-
-			};
-
 			
-			HttpContextAccessRequest request = new HttpContextAccessRequest(context,handler,store);
-
 			boolean repeat=true;
 			loop:while (repeat){
 				
@@ -111,7 +114,8 @@ public class AccessControlFilter implements HttpFilter{
 						chain.interruptWithOutcome(rc.asOutcome());
 						context.setAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", rc.expire());
 					} else {
-						chain.doChain(context);
+					
+						letPass(context,chain, request);
 					}
 					break;
 				case HANDLE_CALLBACK:

@@ -8,7 +8,6 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.logging.ConsoleLogBook;
-import org.middleheaven.logging.LoggingActivator;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.transactions.TestTransactionServiceActivator;
 
@@ -25,12 +24,13 @@ public abstract class MiddleHeavenTestCase {
 		
 		configurateActivators(scanner);
 		
-		getWiringService().addActivatorScanner(scanner);
+		final WiringService wiringService = getWiringService();
+		wiringService.addActivatorScanner(scanner);
 		
 	
-		getWiringService().scan();
+		wiringService.scan();
 		
-		getWiringService().getObjectPool().wireMembers(this);
+		wiringService.getObjectPool().wireMembers(this);
 		configurateTest();
 	}
 	

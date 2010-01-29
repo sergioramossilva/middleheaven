@@ -15,6 +15,11 @@ public class TestTransactionService implements TransactionService {
 	Set<XAResource> xar = new HashSet<XAResource>();
 	ThreadLocal<Transaction> local = new ThreadLocal<Transaction>();
 
+	
+	public TestTransactionService(){
+		System.out.println("oi");
+	}
+	
 	@Override
 	public void enlistResource(XAResource xaResource) {
 		xar.add(xaResource);

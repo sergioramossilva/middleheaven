@@ -41,7 +41,7 @@ public class RedirectAfterCookie extends RequestCookie {
 	}
 	
 	public Outcome asOutcome(){
-		return new URLOutcome(getUrl(), null, true);
+		return  URLOutcome.forUrl(getUrl()).byRedirecting();
 	}
 
 	

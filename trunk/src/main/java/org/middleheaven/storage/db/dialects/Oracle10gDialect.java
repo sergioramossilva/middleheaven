@@ -21,6 +21,7 @@ import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.criteria.FieldValueHolder;
+import org.middleheaven.storage.db.Clause;
 import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.CriteriaInterpreter;
@@ -49,7 +50,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 
 	}
 
-	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
+	public void writeEditionHardname(Clause buffer , QualifiedName hardname){
 
 			buffer.append(startDelimiter());
 			buffer.append(hardname.getName().toLowerCase());
@@ -164,7 +165,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 
 	public  EditionDataBaseCommand createCreateTableCommand(TableModel tm){
 
-		StringBuilder sql = new StringBuilder("CREATE TABLE ");
+		Clause sql = new Clause("CREATE TABLE ");
 		writeEnclosureHardname(sql, tm.getName());
 		sql.append("(\n ");
 		for (ColumnModel cm : tm){
@@ -180,7 +181,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 			} 
 			sql.append(",\n");
 		}
-		sql.delete(sql.length()-2, sql.length());
+		sql.removeLastCharacters(2);
 		sql.append(")");
 		return new SQLEditCommand(this,sql.toString());
 	}
@@ -231,7 +232,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 			}
 		}
 
-		protected void writeLikeClause(StorableFieldModel fm,StringBuilder criteriaBuffer,
+		protected void writeLikeClause(StorableFieldModel fm,Clause criteriaBuffer,
 				boolean caseSensitive, CriterionOperator op,String alias) {
 		
 				if (caseSensitive){
@@ -280,7 +281,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 	}
 
 	@Override
-	protected void appendNativeTypeFor(StringBuilder sql, ColumnModel column) {
+	protected void appendNativeTypeFor(Clause sql, ColumnModel column) {
 		switch (column.getType()){ 
 		case DATE:
 			sql.append("timestamp");

@@ -12,6 +12,13 @@ public interface DataBaseCommand {
 	 */
 	public DataBaseDialect getDialect();
 	
+	/**
+	 * 
+	 * @param storage
+	 * @param connection
+	 * @return
+	 * @throws SQLException
+	 */
 	public boolean execute(DataBaseStorage storage, Connection connection)  throws SQLException;
 
 }

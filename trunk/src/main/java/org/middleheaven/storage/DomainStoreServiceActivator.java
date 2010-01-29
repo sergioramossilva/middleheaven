@@ -11,11 +11,11 @@ import org.middleheaven.core.wiring.annotations.Wire;
 
 public class DomainStoreServiceActivator extends Activator {
 
-	private DomainStoreService storeService;
+	private HashEntityStoreService storeService;
 	private WiringService wiringService;
 	
 	@Publish
-	public DomainStoreService getDomainStoreService(){
+	public HashEntityStoreService getDomainStoreService(){
 		return storeService;
 	} 
 	
@@ -26,7 +26,7 @@ public class DomainStoreServiceActivator extends Activator {
 	
 	@Override
 	public void activate(ActivationContext context) {
-		storeService = new DomainStoreService();
+		storeService = new HashEntityStoreService();
 		
 		// install an EntityStore provider
 		

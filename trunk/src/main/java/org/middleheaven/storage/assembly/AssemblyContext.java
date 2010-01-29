@@ -13,9 +13,6 @@ public class AssemblyContext implements Iterable<Data> {
 	private Map<String , Data > map = new TreeMap<String,Data>();
 	private Class<?> targetType;
 	
-	public AssemblyContext(Class<? extends Object> targetType) {
-		this.targetType = targetType;
-	}
 
 	public static AssemblyContext contextualize(Object object){
 		Consistencies.consistNotNull(object);
@@ -23,6 +20,11 @@ public class AssemblyContext implements Iterable<Data> {
 		a.put(object.getClass().getName(), object);
 		return a;
 	}
+	
+	private AssemblyContext(Class<? extends Object> targetType) {
+		this.targetType = targetType;
+	}
+
 	
 	public Class<?> assemblyTargetType(){
 		return targetType;
@@ -37,7 +39,7 @@ public class AssemblyContext implements Iterable<Data> {
 		map.remove(data.getName());
 	}
 	
-	public boolean isPrimitive(Object object){
+	public boolean isUnAssembable(Object object){
 		return 
 				object.getClass().isPrimitive() || 
 				String.class.isInstance(object)|| 

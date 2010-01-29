@@ -1,7 +1,6 @@
 package org.middleheaven.logging;
 
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.core.services.ServiceNotAvailableException;
 
 
 public class Logging {
@@ -16,12 +15,13 @@ public class Logging {
 	 * @return
 	 */
 	public static LogBook getBook(String bookName){
-		try{
+//		try{
 			return ServiceRegistry.getService(LoggingService.class).getLogBook(bookName);
-		} catch (ServiceNotAvailableException e){
-			System.err.println("Logging service is unavailable. Using console.");
-			return new ConsoleLogBook(LoggingLevel.ALL);
-		}
+//		} catch (ServiceNotAvailableException e){
+//			
+//			System.err.println("Logging service is unavailable. Using console.");
+//			return new ConsoleLogBook(LoggingLevel.ALL);
+//		}
 	}
 	
 	public static LogBook getBook(Class<?> type){

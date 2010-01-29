@@ -46,7 +46,7 @@ public interface DataStorage extends IdentityManager{
 	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy);
 
 	/**
-	 * Register the controling state manager
+	 * Register the controlling state manager
 	 * @param storableStateManager
 	 */
 	public void setStorableStateManager(StorableStateManager storableStateManager);

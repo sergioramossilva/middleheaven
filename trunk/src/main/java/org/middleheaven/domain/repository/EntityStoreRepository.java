@@ -3,26 +3,27 @@ package org.middleheaven.domain.repository;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.storage.EntityStore;
 import org.middleheaven.storage.DataStorageListener;
+import org.middleheaven.storage.EntityStoreService;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.StorageChangeEvent;
 import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
 
 
-public class DomainStorageRepository<E> extends AbstractRepository<E>  {
+public class EntityStoreRepository<E> extends AbstractRepository<E>  {
 
 	private Class<E> entityType;
 	private DomainModel domainModel;
 	private DataStorageListener storageListener;
-	private EntityStore dataStorage;
+	private EntityStoreService entityStoreService;
 
-	public DomainStorageRepository(Class<E> entityType,EntityStore dataStorage){
+	public EntityStoreRepository(Class<E> entityType,EntityStoreService entityStoreService){
 		this.entityType = entityType;
-		this.dataStorage = dataStorage;
+		this.entityStoreService = entityStoreService;
 	}
 
-	public EntityStore getDataStorage(){
-		return dataStorage;
+	private EntityStore getEntityStore(){
+		return entityStoreService.getStore();
 	}
 
 	
@@ -45,7 +46,7 @@ public class DomainStorageRepository<E> extends AbstractRepository<E>  {
 				}
 
 			};
-			getDataStorage().addStorageListener(storageListener);
+			getEntityStore().addStorageListener(storageListener);
 		}
 
 	}
@@ -58,32 +59,32 @@ public class DomainStorageRepository<E> extends AbstractRepository<E>  {
 
 	@Override
 	public void remove(E intance) {
-		getDataStorage().remove(intance);
+		getEntityStore().remove(intance);
 	}
 
 	@Override
 	public E store(E entity) {
-		return getDataStorage().store(entity);
+		return getEntityStore().store(entity);
 	}
 
 	@Override
 	public Query<E> findAll() {
-		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).all());
+		return getEntityStore().createQuery(CriteriaBuilder.search(entityType).all());
 	}
 
 	@Override
 	public Query<E> findEquals(E instance) {
-		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).isEqual(instance).all());
+		return getEntityStore().createQuery(CriteriaBuilder.search(entityType).isEqual(instance).all());
 	}
 
 	@Override
 	public Query<E> findIdentical(E instance) {
-		return getDataStorage().createQuery(CriteriaBuilder.search(entityType).isIdentical(instance).all());
+		return getEntityStore().createQuery(CriteriaBuilder.search(entityType).isIdentical(instance).all());
 	}
 
 	@Override
 	public Query<E> findByIdentity(Identity id) {
-		return getDataStorage().createQuery(CriteriaBuilder.search(entityType)
+		return getEntityStore().createQuery(CriteriaBuilder.search(entityType)
 				.and(this.domainModel.getEntityModelFor(entityType).identityFieldModel().getLogicName().getName()).eq(id)
 				.all()
 		);
@@ -91,7 +92,7 @@ public class DomainStorageRepository<E> extends AbstractRepository<E>  {
 
 	@Override
 	public Identity getIdentityFor(E instance) {
-		return dataStorage.getIdentityFor(instance);
+		return this.getEntityStore().getIdentityFor(instance);
 	}
 
 

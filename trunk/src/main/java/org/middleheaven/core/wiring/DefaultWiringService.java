@@ -36,7 +36,14 @@ import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.core.wiring.connectors.JavaEE5InjectonConnector;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
+import org.middleheaven.logging.LinkedListLogBookWriter;
+import org.middleheaven.logging.LogBook;
+import org.middleheaven.logging.LogBookWriter;
 import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.LoggingEvent;
+import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.logging.LoggingService;
+import org.middleheaven.logging.WritableLogBook;
 
 @Service
 public class DefaultWiringService implements WiringService{
@@ -364,7 +371,16 @@ public class DefaultWiringService implements WiringService{
 			}
 			models.add(model);
 		}
-		new DependencyResolver(Logging.getBook(this.getClass())).resolve(models, new StarterMy());
+	
+		LinkedListLogBookWriter writer = new LinkedListLogBookWriter();
+		WritableLogBook bookProxy = new WritableLogBook("proxy", LoggingLevel.ALL).addWriter(writer);
+		
+		final DependencyResolver dependencyResolver = new DependencyResolver(bookProxy);
+		dependencyResolver.resolve(models, new StarterMy());
+		
+		final LogBook book = this.getObjectPool().getInstance(LoggingService.class).getLogBook(this.getClass().getName());
+		
+		writer.writeTo(book);
 	}
 
 	

@@ -49,8 +49,4 @@ public class EditableDomainModel implements DomainModel {
 		throw new ModelingException(repositoryType.getName() + " not found in model");
 	}
 
-
-
-
-
 }

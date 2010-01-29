@@ -1,8 +1,5 @@
 package org.middleheaven.storage;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
@@ -11,30 +8,17 @@ import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.transactions.XAResourceAdapter;
 import org.middleheaven.util.identity.Identity;
 
-class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore , StorageUnit {
+class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore  {
 
 	private final StorableStateManager manager;
-	private final DataStorage dataStorage;
-	private final List<StoreAction> actions = new LinkedList<StoreAction>();
-
+	private final StorageUnit unit = new ArrayStorageUnit();
+	
 	EventListenersSet<DataStorageListener> listeners = EventListenersSet.newSet(DataStorageListener.class); 
 	
-	public SessionAwareEntityStore(StorableStateManager manager, DataStorage dataStorage) {
-		this.dataStorage = dataStorage;
+	public SessionAwareEntityStore(StorableStateManager manager) {
 		this.manager = manager;
 	}
 
-
-	@Override
-	public void addAction(StoreAction action) {
-		actions.add(action);
-	}
-
-	@Override
-	public void simplify() {
-		//no-op : it should analize the actions and reduce to the simple one
-	}
-	
 	public Identity getIdentityFor(Object object) {
 		return manager.getIdentityFor(object); 
 	}
@@ -46,30 +30,28 @@ class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore ,
 
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
-		return dataStorage.createQuery(criteria , strategy);
+		return manager.createQuery(criteria , strategy);
 	}
 
 
 	@Override @SuppressWarnings("unchecked") // the merge method guarantees the same type
 	public <T> T store(T obj) {
-		return manager.store(obj, this);
+		return manager.store(obj, unit);
 	}
 
 	@Override
 	public <T> void remove(T obj) {
-		manager.remove(obj, this);
+		manager.remove(obj, unit);
 	}
 
 	@Override
 	public <T> void remove(final Criteria<T> criteria) {
 		
-		for (T t : dataStorage.createQuery(criteria, ReadStrategy.fowardReadOnly()).all()){
-			manager.remove(t, this);
+		for (T t : manager.createQuery(criteria, ReadStrategy.fowardReadOnly()).all()){
+			manager.remove(t, unit);
 		}
 	}
 
-
-	
 	// listeners
 	
 	@Override
@@ -114,7 +96,7 @@ class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore ,
 	
     public synchronized int prepare(Xid xid) throws XAException {
         
-    	this.simplify();
+    	unit.simplify();
     	
     	return super.prepare(xid);
     }
@@ -122,15 +104,13 @@ class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore ,
 
 	@Override
 	public synchronized void commit(Xid xid, boolean flag) throws XAException {
-		for (StoreAction action : this.actions) {
-			action.execute(dataStorage);
-		}
+		manager.commit(unit);
 	}
 
 
 	@Override
 	public synchronized void rollback(Xid xid) throws XAException {
-		// no-op
+		manager.roolback(unit);
 	}
 
 

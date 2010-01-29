@@ -7,16 +7,26 @@ import org.middleheaven.web.processing.Outcome;
 
 public class URLOutcome extends Outcome {
 
-	Map<String,String> params;
-	public URLOutcome(String url, Map<String,String> params) {
-		this(url,params,true);
+	public static URLOutcome forUrl(String url){
+		return new URLOutcome(url);
 	}
 	
-	public URLOutcome(String url, Map<String,String> params,boolean doRedirect) {
-		super(BasicOutcomeStatus.SUCCESS, url,doRedirect , HttpCode.OK);
-		this.params = params;
+	private Map<String,String> params;
+
+	private URLOutcome(String url) {
+		super(BasicOutcomeStatus.SUCCESS, url, false , HttpCode.OK);
 	}
 
+	public URLOutcome byRedirecting(){
+		this.setRedirect(true);
+		return this;
+	}
+	
+	public URLOutcome withParams(Map<String,String> params){
+		this.params = params;
+		return this;
+	}
+	
 	public String getParameterizedURL(){
 		if (params.isEmpty()){
 			return this.getUrl();

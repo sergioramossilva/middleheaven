@@ -45,6 +45,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 	private DataBaseDialect dialect;
 	private DataSource datasource;
+	private final Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
 
 	public DataBaseStorage(DataSourceProvider provider, StorableModelReader reader){
 		super(reader);
@@ -63,7 +64,6 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		return this;
 	}
 
-	Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
 
 	@Override
 	public <I extends Identity> Sequence<I> getSequence(String name) {
@@ -264,7 +264,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
 
 		StorableEntityModel model = this.reader().read(criteria.getTargetClass());
-		return new DBStorageQuery<T>(dialect.merge(criteria,model ),strategy);
+		return new DBStorageQuery<T>(dialect.mergeCriteria(criteria,model ),strategy);
 
 	}
 
@@ -382,9 +382,11 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		}
 
 		ColumnModel column = new ColumnModel(fm.getHardName().getName(), fm.getDataType());
+		column.setKey(fm.isIdentity());
 
-		if(column.getType().equals(DataType.IDENTITY)){
+		if(column.isKey() && column.getType().equals(DataType.UNKWON)){
 			column.setNullable(false);
+			column.setUnique(true);
 			column.setType(DataType.INTEGER); // TODO resolve correct field type
 		} else if (column.getType().equals(DataType.MANY_TO_ONE)){
 			column.setType(DataType.INTEGER);

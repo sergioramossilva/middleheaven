@@ -142,7 +142,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			} else if (matchTypes(valueType,Integer.class ,int.class, Byte.class, byte.class, Short.class, short.class)  ){
 				fm.setDataType(DataType.INTEGER);
 			} else if (matchTypes(valueType,Identity.class)  ){
-				fm.setDataType(DataType.IDENTITY);
+				fm.setDataType(DataType.UNKWON);
 			} else if (matchTypes(valueType,CalendarDate.class)){
 				fm.setDataType(DataType.DATE);
 			} else if (matchTypes(valueType,CalendarDateTime.class)){
@@ -168,7 +168,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			} else if (matchTypes(valueType, Collection.class, Map.class)){
 				fm.setDataType( DataType.ONE_TO_MANY);
 			} else if (matchTypes(valueType, Identity.class)){
-				fm.setDataType( DataType.IDENTITY);
+				fm.setDataType( DataType.UNKWON);
 				fm.setIdentity(true);
 				em.setIdentityType(valueType.asSubclass(Identity.class));
 			} else {

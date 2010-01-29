@@ -3,10 +3,11 @@
  */
 package org.middleheaven.storage;
 
-abstract class  StoreAction{
+abstract class  StoreAction {
 
 
-	protected Storable storable;
+	protected final Storable storable;
+	
 	public StoreAction (Storable storable){
 		this.storable = storable;
 	}

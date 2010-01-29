@@ -34,7 +34,7 @@ public final class EditableEntityModel implements EntityModel {
 			Logging.warn(this.type + " had no identity field defined");
 			EditableEntityFieldModel eidentityFieldModel = new EditableEntityFieldModel(this.getEntityName(), "identity");
 			eidentityFieldModel.setIsIdentity(true);
-			eidentityFieldModel.setDataType(DataType.IDENTITY);
+			eidentityFieldModel.setDataType(DataType.UNKWON);
 			eidentityFieldModel.setUnique(true);
 			eidentityFieldModel.setValueType(IntegerIdentity.class);
 			

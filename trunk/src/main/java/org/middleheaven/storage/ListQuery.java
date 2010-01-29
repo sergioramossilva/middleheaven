@@ -6,24 +6,24 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ListQuery<T> implements Query<T> , Serializable{
+public abstract class ListQuery<T> implements Query<T> , Serializable{
 
 	private static final long serialVersionUID = 5921463303407006568L;
 	
-	private List<T> list;
-	
-	public ListQuery(Collection<? extends T> list) {
+	public ListQuery() {
 		super();
-		this.list = new ArrayList<T> (list);
 	}
 
+	protected abstract List<T> list();
+	
 	@Override
 	public long count() {
-		return list.size();
+		return list().size();
 	}
 
 	@Override
 	public T first() {
+		final List<T> list = list();
 		if (list.isEmpty()){
 			return null;
 		}
@@ -32,17 +32,27 @@ public class ListQuery<T> implements Query<T> , Serializable{
 
 	@Override
 	public Collection<T> all() {
-		return Collections.unmodifiableList(list);
+		return Collections.unmodifiableList(list());
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return list.isEmpty();
+		return list().isEmpty();
 	}
 
 	@Override
-	public Query<T> setRange(int startAt, int maxCount) {
-		return new ListQuery<T>(this.list.subList(startAt, Math.min(list.size(), list.size()-startAt+maxCount)));
+	public Query<T> setRange(final int startAt, final int maxCount) {
+		
+		return new ListQuery<T>(){
+
+			@Override
+			protected List<T> list() {
+				final List<T> list = list();
+				return this.list().subList(startAt, Math.min(list.size(), list.size()-startAt+maxCount));
+			}
+			
+		};
 	}
+
 
 }

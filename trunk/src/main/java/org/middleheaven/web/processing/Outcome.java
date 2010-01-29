@@ -6,7 +6,7 @@ import org.middleheaven.web.processing.action.OutcomeStatus;
 public class Outcome {
 
 	OutcomeStatus status;
-	boolean doRedirect = false;
+	private boolean doRedirect = false;
 	boolean isError;
 	private String url;
 	private HttpCode error = HttpCode.OK;
@@ -32,7 +32,9 @@ public class Outcome {
 		this.error = error;
 	}
 
-	
+	protected void setRedirect(boolean redirect){
+		this.doRedirect = redirect;
+	}
 	
 	public HttpCode getHttpCode(){
 		return error;
