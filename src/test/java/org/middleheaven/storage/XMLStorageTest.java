@@ -36,7 +36,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		
 		ManagedFile source = ManagedFiles.resolveFile(this.getClass().getResource("data.xml"));
 		final XMLStorage xmlStore = XMLStorage.manage(source, new WrappStorableReader(model));
-		ds = new SessionAwareEntityStore(new StorableStateManager(xmlStore , model),xmlStore);
+		ds = new SessionAwareEntityStore(new StorableStateManager(xmlStore , model));
 	}
 	
 	@Test 

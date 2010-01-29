@@ -14,6 +14,7 @@ import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
+import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
@@ -21,15 +22,19 @@ import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.Walker;
 import org.middleheaven.util.identity.Identity;
 
-public class StorableStateManager {
+public final class StorableStateManager {
 
-	private DataStorage storage;
-	private DomainModel domainModel;
+	private final DataStorage storage;
+	private final DomainModel domainModel;
 
 	public StorableStateManager (DataStorage storage, DomainModel model){
 		this.storage = storage;
 		this.storage.setStorableStateManager(this);
 		this.domainModel = model;
+	}
+	
+	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+		return storage.createQuery(criteria , strategy);
 	}
 	
 	/**
@@ -202,8 +207,14 @@ public class StorableStateManager {
 
 		});
 
-
-
 		return (T)p;
+	}
+
+	public void commit(StorageUnit unit) {
+		unit.commitTo(storage);
+	}
+
+	public void roolback(StorageUnit unit) {
+		unit.roolback();
 	}
 }

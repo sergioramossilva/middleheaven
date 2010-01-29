@@ -20,7 +20,7 @@ public class TableModel implements Iterable<ColumnModel>, DataBaseObjectModel{
 			throw new IllegalArgumentException("Column name cannot be null");
 		}
 		if( columnModel.getTableModel()== null){
-			columnModel.model = this;
+			columnModel.tableModel = this;
 			columns.add(columnModel);
 		}
 		
@@ -39,6 +39,11 @@ public class TableModel implements Iterable<ColumnModel>, DataBaseObjectModel{
 		return DataBaseObjectType.TABLE;
 	}
 
+	/**
+	 * Create a table model with the columns of {@code this} that does not exist on {@code other}	
+	 * @param other
+	 * @return
+	 */
 	public TableModel differenceTo(TableModel other) {
 		// Create a table model with the columns that existe in ther this model that not exist on the other 
 		TableModel res = new TableModel(this.name);

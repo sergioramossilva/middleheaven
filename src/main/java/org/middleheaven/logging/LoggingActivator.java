@@ -56,7 +56,7 @@ public class LoggingActivator extends Activator {
 
 	@Override
 	public void inactivate(ActivationContext context) {
-		// no-op
+		loggingService = null;
 	}
 
 

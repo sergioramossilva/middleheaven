@@ -8,13 +8,13 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.transactions.TransactionService;
 
-
-public class DomainStoreService implements EntityStoreService {
+public class HashEntityStoreService implements EntityStoreService {
 
 	private static final ThreadLocal<Map<String,EntityStore>> threadStore = new ThreadLocal<Map<String,EntityStore>>(); 
 	
-	private Map<String , Info > infos = new LinkedHashMap<String, Info> ();
-
+	private final Map<String , Info > infos = new HashMap<String, Info> ();
+	private String firstEntityName;
+	
 	private static class Info {
 
 		public DataStorage dataStorage;
@@ -27,23 +27,21 @@ public class DomainStoreService implements EntityStoreService {
 		
 	}
 	
-	public DomainStoreService(){
+	public HashEntityStoreService(){
 		
 	}
 
-
 	@Override
 	public EntityStore getStore() {
-		if(infos.isEmpty()){
-			throw new IllegalStateException("No entity store is registered");
+		if(firstEntityName == null){
+			throw new IllegalStateException("No entity store is registered.Please register an EntityStore first.");
 		}
-		return getStore(infos.keySet().iterator().next());
+		return getStore(firstEntityName);
 	}
 
 
 	@Override
 	public EntityStore getStore(String name) {
-		
 		
 		Map<String,EntityStore> stores = threadStore.get();
 		if (stores==null){
@@ -61,7 +59,7 @@ public class DomainStoreService implements EntityStoreService {
 			
 			TransactionService ts = ServiceRegistry.getService(TransactionService.class);
 
-			store = new SessionAwareEntityStore(new StorableStateManager(info.dataStorage, info.domainModel), info.dataStorage);
+			store = new SessionAwareEntityStore(new StorableStateManager(info.dataStorage, info.domainModel));
 			ts.enlistResource((SessionAwareEntityStore)store);
 			
 			stores.put(name, store);
@@ -71,17 +69,17 @@ public class DomainStoreService implements EntityStoreService {
 
 
 	@Override
-	public void register(String name, DataStorage dataStorage, DomainModel domainModel) {
+	public void registerStore(String name, DataStorage dataStorage, DomainModel domainModel) {
+		if(infos.isEmpty()){
+			this.firstEntityName = name;
+		}
 		this.infos.put(name, new Info(dataStorage,domainModel));
-		
 	}
-
 
 	@Override
-	public void unRegister(String name) {
+	public void unRegisterStore(String name) {
 		this.infos.remove(name);
 	}
-
 
 	@Override
 	public void unRegisterAll() {

@@ -7,12 +7,12 @@ import org.middleheaven.domain.DomainModel;
 public interface EntityStoreService {
 
 	
-	public void register (String name, DataStorage dataStorage, DomainModel domainModel);
-	public void unRegister (String name);
+	public void registerStore (String name, DataStorage dataStorage, DomainModel domainModel);
+	public void unRegisterStore (String name);
 	public void unRegisterAll();
 	
 	/**
-	 * Return the first registered EntityStore. 
+	 * Return the first registered EntityStore instance allocated to the current transaction. 
 	 * @return the first registered EntityStore.  
 	 */
 	public EntityStore getStore();

@@ -15,6 +15,8 @@ import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.identity.LongIdentity;
+import org.middleheaven.util.identity.StringIdentity;
+import org.middleheaven.util.identity.UUIDIdentity;
 
 public class PreparedStatementStorable {
 
@@ -30,7 +32,7 @@ public class PreparedStatementStorable {
 
 		int index = 1;
 		for ( StorableFieldModel fm : fields){
-			setField(index,s.getFieldValue(fm) , fm.getDataType());
+			setField(index,s.getFieldValue(fm) , fm.isIdentity(), fm.getDataType());
 			index++;
 		}
 	}
@@ -54,13 +56,31 @@ public class PreparedStatementStorable {
 
 	}
 
-	public void setField(int i, Object value, DataType dataType ) throws SQLException {
+	private DataType resolveDataType(Object value){
+		DataType dt = DataType.fromClass(value.getClass());
+		if (dt.equals(DataType.UNKWON)){
+			if (value instanceof LongIdentity || value instanceof IntegerIdentity){
+				return DataType.INTEGER;
+			} else if (value instanceof StringIdentity || value instanceof UUIDIdentity){
+				return DataType.TEXT;
+			} else {
+				throw new UnsupportedOperationException(value.getClass() + " cannot be preseved");
+			}
+		}
+		return dt;
+	}
+	
+	public void setField(int i, Object value, StorableFieldModel fm ) throws SQLException {
+		setField(i,value,fm.isIdentity(), fm.getDataType());
+	}
+	
+	private void setField(int i, Object value, boolean isIdentity , DataType dataType ) throws SQLException {
 		
 		if (value == null){
 			ps.setNull(i, infereSQLType(dataType)); 
 		} else if (dataType.isToOneReference()){
 			final Identity id = keeper.getIdentityFor(value);
-			setField(i, id , DataType.IDENTITY);
+			setField(i, id , true, DataType.UNKWON);
 			
 		} else if (dataType.isToManyReference()){
 			return;
@@ -74,6 +94,8 @@ public class PreparedStatementStorable {
 			} else if (value instanceof CalendarDateTime){
 				ps.setTimestamp(i, new Timestamp(((CalendarDateTime)value).miliseconds()));
 			}
+		} else if (isIdentity){
+			setField(i, value, false, this.resolveDataType(value));
 		} else {
 			switch (dataType){
 			case TEXT:
@@ -84,17 +106,12 @@ public class PreparedStatementStorable {
 					ps.setLong(i,((Long)value).longValue());
 				} else if (value instanceof Integer){
 					ps.setInt(i, ((Integer)value).intValue());
-				}
-
-				break;
-			case IDENTITY:
-				// TODO identity can be another type, came up with an universal mechanis
-				if (value instanceof LongIdentity){
+				} else if (value instanceof LongIdentity){
 					ps.setLong(i,((LongIdentity)value).longValue());
 				} else if (value instanceof IntegerIdentity){
 					ps.setInt(i, ((IntegerIdentity)value).intValue());
-				}
-				
+				} 
+
 				break;
 			case LOGIC:
 				ps.setBoolean(i, Boolean.parseBoolean(value.toString()));

@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import org.middleheaven.storage.StorableFieldModel;
+
 public abstract class SQLConditionableCommand implements ConditionableDataBaseCommand {
 
 	private final String sql;
@@ -29,7 +31,8 @@ public abstract class SQLConditionableCommand implements ConditionableDataBaseCo
 
 		int param = 1;
 		for (ColumnValueHolder vh : data){
-			pss.setField(param, vh.getValue(), vh.getDataType());
+			StorableFieldModel fm = vh.getStorableFieldModel();
+			pss.setField(param, vh.getValue(), fm);
 			param++;
 		}
 

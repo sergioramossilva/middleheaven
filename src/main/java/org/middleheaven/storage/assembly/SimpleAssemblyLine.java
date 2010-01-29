@@ -84,7 +84,7 @@ public class SimpleAssemblyLine implements AssemblyLineService {
 			repeat = false;
 			for (Data d: ctx){
 				
-				if (d.getValue()!=null && !ctx.isPrimitive(d.getValue())){
+				if (d.getValue()!=null && !ctx.isUnAssembable(d.getValue())){
 					ctx.remove(d);
 					Assembler a = this.getAssembler(d.getValueType());
 					a.unAssemble(this, ctx,d);

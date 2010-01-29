@@ -15,6 +15,7 @@ import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.storage.db.Clause;
 import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.CriteriaInterpreter;
@@ -41,7 +42,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		return false;
 	}
 	
-	// storedProcedures
+	// HSQL storedProcedures
 	public static boolean containsMatch(String target, String search) {
 		search = search.replaceAll("%", "");
 		return target.toLowerCase().contains(search.toLowerCase());
@@ -109,19 +110,19 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	}
 
 	@Override
-	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
+	public void writeEditionHardname(Clause buffer , QualifiedName hardname){
 		if (!hardname.getName().isEmpty()){
 			buffer.append(hardname.getName().toLowerCase());
 		}
 	}
 	
 	@Override
-	public void writeEnclosureHardname(StringBuilder buffer , String hardname){
+	public void writeEnclosureHardname(Clause buffer , String hardname){
 		buffer.append(hardname);
 	}
 	
 	@Override
-	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
+	public void writeQueryHardname(Clause buffer , QualifiedName hardname){
 		if (hardname.isAlias()){
 			buffer.append(hardname.getQualifier().toLowerCase())
 			.append(fieldSeparator())
@@ -140,7 +141,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		}
 		
 		@Override
-		protected void writeFromClause(String alias , StringBuilder queryBuffer){
+		protected void writeFromClause(String alias , Clause queryBuffer){
 
 			// FROM ClAUSE
 			queryBuffer.append(" FROM ");
@@ -153,7 +154,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		}
 		
 		
-		protected void writeStartLimitClause(StringBuilder selectBuffer){
+		protected void writeStartLimitClause(Clause selectBuffer){
 			if (criteria().isDistinct()){
 				selectBuffer.append(" DISTINCT ");
 			} 
@@ -194,7 +195,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 
 	public EditionDataBaseCommand createCreateTableCommand(TableModel tm){
 
-		StringBuilder sql = new StringBuilder("CREATE CACHED TABLE ");
+		Clause sql = new Clause("CREATE CACHED TABLE ");
 		sql.append(tm.getName());
 		sql.append("(\n ");
 		for (ColumnModel cm : tm){
@@ -210,13 +211,13 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 			} 
 			sql.append(",\n");
 		}
-		sql.delete(sql.length()-2, sql.length());
+		sql.removeLastCharacters(2);
 		sql.append(")");
 		return new SQLEditCommand(this,sql.toString());
 	}
 	
 	@Override
-	protected void appendNativeTypeFor(StringBuilder sql, ColumnModel column) {
+	protected void appendNativeTypeFor(Clause sql, ColumnModel column) {
 		switch (column.getType()){
 		case DATE:
 		case DATETIME:

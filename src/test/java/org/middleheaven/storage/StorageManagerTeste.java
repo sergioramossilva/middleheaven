@@ -29,7 +29,7 @@ public class StorageManagerTeste {
 				new DomainClasses().add(TestSubject.class)
 		);
 
-		storage = new SessionAwareEntityStore(new StorableStateManager(store,model)  , store);
+		storage = new SessionAwareEntityStore(new StorableStateManager(store,model));
 		
 	}
 	

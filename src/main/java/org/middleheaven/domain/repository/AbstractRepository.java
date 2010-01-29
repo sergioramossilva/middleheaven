@@ -55,14 +55,23 @@ public abstract class AbstractRepository<E> implements Repository<E> {
 		return findByIdentity(this.getIdentityFor(instance));
 	}
 	
-	public Query<E> findEquals(E instance) {
-		List<E> all = new ArrayList<E>(this.findAll().all());
-		for (Iterator<E> it = all.iterator(); it.hasNext();){
-			if (!it.next().equals(instance)){
-				it.remove();
+	public Query<E> findEquals(final E instance) {
+		
+		return new ListQuery<E>(){
+
+			@Override
+			protected List<E> list() {
+				List<E> all = new ArrayList<E>(findAll().all());
+				for (Iterator<E> it = all.iterator(); it.hasNext();){
+					if (!it.next().equals(instance)){
+						it.remove();
+					}
+				}
+				return all;
 			}
-		}
-		return new ListQuery<E>(all);
+			
+		};
+		
 	}
 
 	@Override

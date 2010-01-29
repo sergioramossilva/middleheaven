@@ -19,6 +19,9 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
+import org.middleheaven.storage.assembly.AssemblyContext;
+import org.middleheaven.storage.assembly.AssemblyLineService;
+import org.middleheaven.storage.assembly.SimpleAssemblyLine;
 import org.middleheaven.storage.criteria.AbstractCriteria;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.Criterion;
@@ -82,7 +85,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return fieldSeparator;
 	}
 
-	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
+	public void writeQueryHardname(Clause buffer , QualifiedName hardname){
 		buffer.append(startDelimiter);
 		buffer.append(hardname.getQualifier().toLowerCase());
 		buffer.append(endDelimiter);
@@ -92,7 +95,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		buffer.append(endDelimiter);
 	}
 
-	protected void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
+	protected void writeEditionHardname(Clause buffer , QualifiedName hardname){
 		buffer.append(startDelimiter);
 		buffer.append(hardname.getQualifier().toLowerCase());
 		buffer.append(endDelimiter);
@@ -104,7 +107,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		}
 	}
 
-	protected void writeEnclosureHardname(StringBuilder buffer , String hardname){
+	protected void writeEnclosureHardname(Clause buffer , String hardname){
 		buffer.append(startDelimiter);
 		buffer.append(hardname);
 		buffer.append(endDelimiter);
@@ -116,7 +119,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 
 	public final <T> RetriveDataBaseCommand createSelectCommand (Criteria<T> criteria, StorableModelReader reader){
 
-		return newCriteriaInterpreter(merge(criteria,reader.read(criteria.getTargetClass())),reader).translateRetrive();
+		return newCriteriaInterpreter(mergeCriteria(criteria,reader.read(criteria.getTargetClass())),reader).translateRetrive();
 	}
 
 	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel dbtype) {
@@ -131,7 +134,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 	 */
 	public EditionDataBaseCommand createAlterTableCommand(TableModel tm) {
 
-		StringBuilder sql = new StringBuilder("ALTER TABLE ");
+		Clause sql = new Clause("ALTER TABLE ");
 		writeEnclosureHardname(sql, tm.getName());
 		sql.append("\n");
 		for (ColumnModel cm : tm ){
@@ -142,14 +145,14 @@ public abstract class DataBaseDialect implements AliasResolver{
 			sql.append(",\n");
 		}
 
-		sql.delete(sql.length()-2, sql.length());
+		sql.removeLastCharacters(2);
 
 		return new SQLEditCommand(this,sql.toString());
 	}
 
 	public  DataBaseCommand createInsertCommand(Collection<Storable> data,StorableEntityModel model){
-		StringBuilder names = new StringBuilder();
-		StringBuilder values = new StringBuilder();
+		Clause names = new Clause();
+		Clause values = new Clause();
 		List<StorableFieldModel> fields = new ArrayList<StorableFieldModel>();
 
 		this.writeEditionHardname(names, model.identityFieldModel().getHardName());
@@ -168,21 +171,23 @@ public abstract class DataBaseDialect implements AliasResolver{
 			fields.add(fm);
 		}
 
-		names.delete(names.length() - 1, names.length());
-		values.delete(values.length() - 1, values.length());
+		names.removeLastChar();
+		values.removeLastChar();
 
-		StringBuilder sql = new StringBuilder("INSERT INTO ")
+		Clause sql = new Clause("INSERT INTO ")
 		.append(model.getEntityHardName())
 		.append(" (")
 		.append(names)
 		.append(") VALUES (")
 		.append(values)
 		.append(")");
+		
+	
 
 		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
 
-	protected <T> Criteria<T> merge(Criteria<T> criteria, StorableEntityModel model){
+	protected <T> Criteria<T> mergeCriteria(Criteria<T> criteria, StorableEntityModel model){
 		if (criteria instanceof DBCriteria){
 			final DBCriteria<T> dbCriteria = (DBCriteria<T>)criteria;
 			return dbCriteria;
@@ -236,13 +241,13 @@ public abstract class DataBaseDialect implements AliasResolver{
 
 	public <T> DataBaseCommand createDeleteCommand(Criteria<T> criteria, StorableModelReader reader ){
 
-		return newCriteriaInterpreter(merge(criteria,reader.read(criteria.getTargetClass())), reader).translateDelete();
+		return newCriteriaInterpreter(mergeCriteria(criteria,reader.read(criteria.getTargetClass())), reader).translateDelete();
 
 	}
 
 
 	public DataBaseCommand createUpdateCommand(Collection<Storable> data,StorableEntityModel model){
-		StringBuilder sql = new StringBuilder("UPDATE ")
+		Clause sql = new Clause("UPDATE ")
 		.append(model.getEntityHardName())
 		.append(" SET ");
 
@@ -256,8 +261,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 			}
 		}
 
-		sql.delete(sql.length()-1, sql.length());
-		sql.append(" WHERE ");
+		sql.removeLastChar().append(" WHERE ");
 
 		this.writeEditionHardname(sql, model.identityFieldModel().getHardName());
 
@@ -275,7 +279,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 	public abstract Sequence<Long> getSequence(DataSource ds, String identifiableName);
 
 
-	public boolean supportsIntervalOf(DataType dataType) {
+	protected boolean supportsIntervalOf(DataType dataType) {
 		return !dataType.isReference();
 	}
 
@@ -371,7 +375,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 
 	public EditionDataBaseCommand createCreateTableCommand(TableModel tm){
 
-		StringBuilder sql = new StringBuilder("CREATE TABLE ");
+		Clause sql = new Clause("CREATE TABLE ");
 		writeEnclosureHardname(sql, tm.getName());
 		sql.append("(\n ");
 		for (ColumnModel cm : tm){
@@ -387,13 +391,13 @@ public abstract class DataBaseDialect implements AliasResolver{
 			} 
 			sql.append(",\n");
 		}
-		sql.delete(sql.length()-2, sql.length());
+		sql.removeLastCharacters(2);
 		sql.append(")");
 		return new SQLEditCommand(this,sql.toString());
 	}
 
 
-	protected abstract void appendNativeTypeFor(StringBuilder sql, ColumnModel type);
+	protected abstract void appendNativeTypeFor(Clause sql, ColumnModel type);
 
 
 	public EditionDataBaseCommand createCreateIndexCommand(ColumnModel cm){
@@ -409,14 +413,14 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return new SQLEditCommand(this,sql.toString());
 	}
 
-	public void writeJoinTableHardname(StringBuilder joinClause, String hardNameForEntity) {
+	public void writeJoinTableHardname(Clause joinClause, String hardNameForEntity) {
 		joinClause.append(startDelimiter())
 		.append(hardNameForEntity)
 		.append(endDelimiter());
 	}
 
 
-	public void writeJoinField(StringBuilder joinClause, String alias ,String fieldName) {
+	public void writeJoinField(Clause joinClause, String alias ,String fieldName) {
 		joinClause.append(startDelimiter())
 		.append(alias)
 		.append(endDelimiter())

@@ -32,10 +32,11 @@ import org.middleheaven.transactions.TransactionService;
 
 public class DataStorageTest extends MiddleHeavenTestCase {
 
-	static EntityStore ds;
+
 	static Query<TestSubject> queryAll;
 	static TransactionService transactionService;
-
+	static EntityStoreService service;
+	
 	protected void configurateActivators(SetActivatorScanner scanner) {
 		// Activator
 		scanner.addActivator(DomainStoreServiceActivator.class);
@@ -67,10 +68,8 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		transactionService = ServiceRegistry.getService(TransactionService.class);
 
-		final EntityStoreService service = ServiceRegistry.getService(EntityStoreService.class);
-		service.register("ds", dataStorage, model);
-
-		ds = service.getStore();
+		service = ServiceRegistry.getService(EntityStoreService.class);
+		service.registerStore("ds", dataStorage, model);
 
 		final AtomicInteger counter = new AtomicInteger(9);
 		ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){
@@ -88,7 +87,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		});
 
 		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
-		queryAll = ds.createQuery(all);
+		queryAll = service.getStore().createQuery(all);
 
 	}
 
@@ -140,7 +139,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		assertStoreHasElements(1);
 
-		to = ds.createQuery(CriteriaBuilder.search(TestSubject.class).all()).first();
+		to = service.getStore().createQuery(CriteriaBuilder.search(TestSubject.class).all()).first();
 
 		assertTrue(to.getNumber() == 10);
 		assertTrue(to.getBirthdate().equals(birthdate));
@@ -177,7 +176,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		try {
 			t.begin();
 
-			ds.remove(all);
+			service.getStore().remove(all);
 
 			t.commit();
 
@@ -196,7 +195,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		try {
 			t.begin();
 
-			to =  ds.store(to);
+			to =  service.getStore().store(to);
 
 			t.commit();
 
@@ -213,7 +212,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		try {
 			t.begin();
 
-			ds.remove(to);
+			service.getStore().remove(to);
 
 			t.commit();
 
@@ -279,7 +278,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		.orderBy("name").asc()
 		.all();
 
-		Query<TestSubject> q = ds.createQuery(some);
+		Query<TestSubject> q = service.getStore().createQuery(some);
 
 		String[] names = {"A", "B" , "C"};
 		List<TestSubject> objects = new ArrayList<TestSubject>(q.all());
@@ -294,7 +293,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		.orderBy("name").desc()
 		.all();
 
-		q = ds.createQuery(some);
+		q = service.getStore().createQuery(some);
 
 		names = new String[]{"C", "B" , "A"};
 		objects = new ArrayList<TestSubject>(q.all());
@@ -338,7 +337,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		.orderBy("name").asc()
 		.all();
 
-		Query<TestSubject> q = ds.createQuery(some);
+		Query<TestSubject> q = service.getStore().createQuery(some);
 
 		assertEquals(2L, q.count());
 
@@ -347,7 +346,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		.orderBy("name").asc()
 		.all();
 
-		q = ds.createQuery(some);
+		q = service.getStore().createQuery(some);
 
 		assertEquals(1L, q.count());
 
@@ -383,21 +382,20 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class).limit(2).all();
 
-		Query<TestSubject> q = ds.createQuery(some);
+		Query<TestSubject> q = service.getStore().createQuery(some);
 
 		assertEquals(Integer.valueOf(2) , q.all().size());
-
 
 		some = some.duplicate()
 		.setRange(2,1);
 
-		q = ds.createQuery(some);
+		q = service.getStore().createQuery(some);
 
 		assertEquals(1 ,  q.all().size());
 
-		ds.remove(toA);
-		ds.remove(toB);
-		ds.remove(toc);
+		service.getStore().remove(toA);
+		service.getStore().remove(toB);
+		service.getStore().remove(toc);
 
 		assetStoreIsEmpty();
 	}
@@ -422,7 +420,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		some = some.duplicate()
 		.setRange(2);
 
-		Query<TestSubject> q = ds.createQuery(some);
+		Query<TestSubject> q = service.getStore().createQuery(some);
 
 		assertEquals(3L , q.count());
 		assertEquals(2 , q.all().size());
@@ -432,7 +430,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 	public void testQueryReuse(){
 
 		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
-		Query<TestSubject> q = ds.createQuery(all);
+		Query<TestSubject> q = service.getStore().createQuery(all);
 
 		long count = q.count(); 
 

@@ -17,7 +17,7 @@ public interface EntityStore {
 	
 	/**
 	 * Store the object.
-	 * Object with the same identity are only stored once. Further storage
+	 * Object with the same identity are only stored once. Further storage 
 	 * of the same object only updates the data for that object.
 	 * @param <T>
 	 * @param obj

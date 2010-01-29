@@ -8,6 +8,7 @@ public enum DataType {
 	UNKWON,
 	LOGIC,
 	ENUM,
+	STATUS,
 	TEXT,
 	MEMO,
 	INTEGER,
@@ -18,8 +19,7 @@ public enum DataType {
 	ONE_TO_ONE,
 	ONE_TO_MANY,
 	MANY_TO_ONE, 
-	MANY_TO_MANY, 
-	IDENTITY;
+	MANY_TO_MANY;
 	
 	public static DataType fromClass(Class<?> type){
 		if (Date.class.isAssignableFrom(type)){

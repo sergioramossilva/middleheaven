@@ -94,7 +94,7 @@
 	</tag>
 	
 	<tag>
-	    <name>inrole</name>
+	    <name>inRole</name>
 	    <tagclass>org.middleheaven.ui.web.tags.InRoleTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
@@ -102,10 +102,16 @@
 	      <required>true</required>
 	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>
-	   <attribute>
-	      <name>reference</name>
-	      <required>false</required>
-	      <rtexprvalue>false</rtexprvalue>
+	</tag>
+	
+	<tag>
+	    <name>withoutRole</name>
+	    <tagclass>org.middleheaven.ui.web.tags.WithoutRoleTag</tagclass>
+	    <bodycontent>JSP</bodycontent>
+	    <attribute>
+	      <name>role</name>
+	      <required>true</required>
+	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>
 	</tag>
 	

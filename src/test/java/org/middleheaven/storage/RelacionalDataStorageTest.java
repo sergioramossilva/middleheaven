@@ -59,7 +59,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 
 		storeManager.updateMetadata(model, catalog);
 
-		ds =  new SessionAwareEntityStore(new StorableStateManager(storeManager,model)  , storeManager);
+		ds =  new SessionAwareEntityStore(new StorableStateManager(storeManager,model));
 		
 		final AtomicInteger counter = new AtomicInteger(9);
 		ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){

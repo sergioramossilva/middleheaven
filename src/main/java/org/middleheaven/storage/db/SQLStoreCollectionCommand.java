@@ -9,6 +9,10 @@ import java.util.Collections;
 
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.storage.assembly.AssemblyContext;
+import org.middleheaven.storage.assembly.AssemblyLineService;
+import org.middleheaven.storage.assembly.Data;
+import org.middleheaven.storage.assembly.SimpleAssemblyLine;
 
 public class SQLStoreCollectionCommand implements DataBaseCommand {
 
@@ -40,13 +44,23 @@ public class SQLStoreCollectionCommand implements DataBaseCommand {
 	public boolean execute(DataBaseStorage storage, Connection connection) throws SQLException {
 
 		if (data.size() > 1 && dialect.supportsBatch()){
-		
+			AssemblyLineService lines = new SimpleAssemblyLine();
+			
 			PreparedStatement ps = connection.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
 			
 			PreparedStatementStorable pss = new PreparedStatementStorable(storage,ps);
 			for (Storable s : data){
+				
+				AssemblyContext context = AssemblyContext.contextualize(s);
+				
+				
+				lines.unAssemble(context);
+				
+				context.iterator();
+				
 				pss.copy(s, fields);
 				ps.addBatch();
+				
 			}
 			return ps.executeBatch().length>0;
 		} else if (!data.isEmpty()){

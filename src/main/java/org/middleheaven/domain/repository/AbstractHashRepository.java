@@ -3,6 +3,7 @@ package org.middleheaven.domain.repository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.middleheaven.storage.ListQuery;
@@ -16,12 +17,28 @@ public abstract class AbstractHashRepository<E> extends AbstractRepository<E> {
 	
 	@Override
 	public Query<E> findAll() {
-		return new ListQuery<E>(new ArrayList<E>(this.instances.values()));
+		return new ListQuery<E>(){
+
+			@Override
+			protected List<E> list() {
+				return new ArrayList<E>(instances.values());
+			}
+			
+		};
+		
 	}
 
 	@Override
-	public Query<E> findByIdentity(Identity id) {
-		return new ListQuery<E>(Collections.singletonList(instances.get(id)));
+	public Query<E> findByIdentity(final Identity id) {
+		return new ListQuery<E>(){
+
+			@Override
+			protected List<E> list() {
+				return Collections.singletonList(instances.get(id));
+			}
+			
+		};
+		
 	}
 
 	@Override
