@@ -79,20 +79,22 @@ public class AccessControlFilter implements HttpFilter{
 		
 		HttpContextAccessRequest request = new HttpContextAccessRequest(context,handler,store);
 
+		final AccessRequestBroker accessRequestBroker = accessControlService.accessRequestBroker();
+		LoginStep step = accessRequestBroker.broke(request);
+		
 		if (permissions.length == 0){
 			// free for all
 			letPass(context,chain, request);
 		} else {
 			
 			boolean repeat=true;
-			loop:while (repeat){
+			do{
+				step = accessRequestBroker.broke(request);
 				
-				final AccessRequestBroker accessRequestBroker = accessControlService.accessRequestBroker();
-				LoginStep step = accessRequestBroker.broke(request);
 				switch (step){
 				case FAIL:
 					chain.interruptWithOutcome(failureOutcome);
-					break loop;
+					break;
 				case SUCCESS:
 					// is authenticated
 					
@@ -133,9 +135,9 @@ public class AccessControlFilter implements HttpFilter{
 						RedirectAfterCookie rc = new RedirectAfterCookie("redirect_after_login", context.getRequestUrl().toString());
 						context.setAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", rc);
 						break;
-					}
+					} 
 				}
-			}
+			} while (repeat);
 		}
 
 	}
