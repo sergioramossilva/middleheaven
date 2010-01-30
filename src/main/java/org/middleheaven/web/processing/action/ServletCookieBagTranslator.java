@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.quantity.time.Period;
+import org.middleheaven.util.StringUtils;
 import org.middleheaven.web.processing.RequestCookie;
 
 public class ServletCookieBagTranslator implements RequestCookieSource {
@@ -78,7 +79,7 @@ public class ServletCookieBagTranslator implements RequestCookieSource {
 			sc.setVersion(cookie.getVersion());
 			
 //			sc.setDomain(cookie.getDomain());
-//			sc.setPath(cookie.getPath());
+			sc.setPath(StringUtils.ensureStartsWith(cookie.getPath(), "/"));
 			
 			response.addCookie(sc);
 		}

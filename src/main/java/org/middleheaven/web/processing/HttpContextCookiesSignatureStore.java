@@ -12,6 +12,7 @@ import org.middleheaven.ui.ContextScope;
 
 public class HttpContextCookiesSignatureStore extends HttpContextSignatureStore {
 
+	private static final String SIGNATURE_ATTRIBUTE = "mh_user_signature";
 	private final Period sessionTimeout; 
 
 	public HttpContextCookiesSignatureStore() {
@@ -24,7 +25,7 @@ public class HttpContextCookiesSignatureStore extends HttpContextSignatureStore 
 	
 	@Override
 	public Signature getSignature(HttpContext context) {
-		RequestCookie cookie = context.getAttribute(ContextScope.REQUEST_COOKIES, "mh_user_signature", RequestCookie.class);
+		RequestCookie cookie = context.getAttribute(ContextScope.REQUEST_COOKIES, SIGNATURE_ATTRIBUTE, RequestCookie.class);
 		
 		if (cookie !=null){
 			String ticket = new String(new Base64CipherAlgorithm().revertCipher(cookie.getValue().getBytes()));
@@ -41,7 +42,8 @@ public class HttpContextCookiesSignatureStore extends HttpContextSignatureStore 
 
 	@Override
 	public void setSignature(HttpContext context, Signature signature) {
-		RequestCookie cookie= new RequestCookie("mh_user_signature", "");
+		
+		RequestCookie cookie= new RequestCookie(SIGNATURE_ATTRIBUTE, "");
 		cookie.expire();
 		if (signature.isValid()){
 			String name=null;
@@ -56,13 +58,13 @@ public class HttpContextCookiesSignatureStore extends HttpContextSignatureStore 
 				// the user is identified
 				String ticket = name + "@" + Integer.toHexString(name.hashCode() * 37);
 				String value = new String(new Base64CipherAlgorithm().cipher(ticket.getBytes()));
-				cookie = new RequestCookie("mh_user_signature", value);
+				cookie = new RequestCookie(SIGNATURE_ATTRIBUTE, value);
 				cookie.setDomain(context.getRequestUrl().getHost());
 				cookie.setPath(context.getContextPath());
 				cookie.setMaxAge(sessionTimeout);
 			}
 		} 
-		context.setAttribute(ContextScope.REQUEST_COOKIES, "mh_user_signature", cookie);
+		context.setAttribute(ContextScope.REQUEST_COOKIES, SIGNATURE_ATTRIBUTE, cookie);
 	}
 
 
