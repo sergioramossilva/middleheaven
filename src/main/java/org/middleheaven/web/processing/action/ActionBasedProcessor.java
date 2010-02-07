@@ -57,7 +57,7 @@ public class ActionBasedProcessor extends AbstractHttpProcessor{
 		}
 		
 	
-		final int end = requestURL.indexOf(".", start);
+		final int end = requestURL.lastIndexOf(".");
 		if(end>0){
 			strip = requestURL.substring( start, end);
 		} else {

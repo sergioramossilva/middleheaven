@@ -286,4 +286,19 @@ public class StringUtils {
 		
 		return builder.toString();
 	}
+	
+	
+	public static String iffenDelimitedToCamelCase(CharSequence text){
+		StringBuilder builder = new StringBuilder(text);
+		
+		for (int i=1; i < builder.length(); i++){
+			if (builder.charAt(i) == '-'){
+				builder.setCharAt(i, Character.toUpperCase(builder.charAt(i+1)));
+				builder.setCharAt(i+1, ' ');
+				i++;
+			}
+		}
+		
+		return builder.toString().replaceAll(" ", "");
+	}
 }
