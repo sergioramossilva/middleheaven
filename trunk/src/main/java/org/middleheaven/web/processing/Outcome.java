@@ -9,7 +9,7 @@ public class Outcome {
 	private boolean doRedirect = false;
 	boolean isError;
 	private String url;
-	private HttpCode error = HttpCode.OK;
+	private HttpCode httpCode = HttpCode.OK;
 	
 	public Outcome(OutcomeStatus status, String url) {
 		this(status,url,false,HttpCode.OK);
@@ -21,7 +21,7 @@ public class Outcome {
 		this.doRedirect = doRedirect;
 		this.url = url;
 		this.isError = false;
-		this.error = redirectCode;
+		this.httpCode = redirectCode;
 	}
 	
 	public Outcome(OutcomeStatus status, HttpCode error) {
@@ -29,15 +29,19 @@ public class Outcome {
 		this.status = status;
 		this.doRedirect = true;
 		this.isError = true;
-		this.error = error;
+		this.httpCode = error;
 	}
 
 	protected void setRedirect(boolean redirect){
 		this.doRedirect = redirect;
 	}
 	
+	protected void setHttpCode(HttpCode code) {
+		this.httpCode = code;
+	}
+	
 	public HttpCode getHttpCode(){
-		return error;
+		return httpCode;
 	}
 	
 	public OutcomeStatus getStatus() {
@@ -61,5 +65,9 @@ public class Outcome {
 	
 	public String toString(){
 		return status.toString() + (this.isDoRedirect() ? "redirectTo" : "fowardTo") + url;
+	}
+	
+	public String getParameterizedURL(){
+		return this.getUrl();
 	}
 }

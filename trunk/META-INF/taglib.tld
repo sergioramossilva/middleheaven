@@ -96,21 +96,16 @@
 	<tag>
 	    <name>inRole</name>
 	    <tagclass>org.middleheaven.ui.web.tags.InRoleTag</tagclass>
+	     <teiclass>org.middleheaven.ui.web.tags.InRoleTagExtraInfo</teiclass>
 	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>role</name>
 	      <required>true</required>
 	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>
-	</tag>
-	
-	<tag>
-	    <name>withoutRole</name>
-	    <tagclass>org.middleheaven.ui.web.tags.WithoutRoleTag</tagclass>
-	    <bodycontent>JSP</bodycontent>
-	    <attribute>
-	      <name>role</name>
-	      <required>true</required>
+	     <attribute>
+	      <name>var</name>
+	      <required>false</required>
 	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>
 	</tag>
@@ -680,6 +675,12 @@
 	      <required>true</required>
 	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>
+	</tag>
+	
+	<tag>
+	    <name>noCache</name>
+	    <tagclass>org.middleheaven.ui.web.tags.NoCacheTag</tagclass>
+	    <bodycontent>empty</bodycontent>
 	</tag>
 	
 	<tag>

@@ -31,9 +31,7 @@ public class GlobalLabel implements Serializable{
 		if (domainlabel.indexOf(":")<0){
 			throw new IllegalArgumentException("Label is not qualified in a domain");
 		}
-		String[] str = StringUtils.split(domainlabel, ":");
-		this.label = str[1];
-		this.domain = str[0];
+		setLabelAndDomainFrom(domainlabel);
 		this.params = params;
 	}
 
@@ -41,11 +39,15 @@ public class GlobalLabel implements Serializable{
 		if (domainlabel.indexOf(":")<0){
 			throw new IllegalArgumentException("Label is not qualified in a domain");
 		}
-		String[] str = StringUtils.split(domainlabel, ":");
-		this.label = str[1];
-		this.domain = str[0];
+		setLabelAndDomainFrom(domainlabel);
 	}
 
+	private void setLabelAndDomainFrom(String domainLabel){
+		String[] str = StringUtils.split(domainLabel, ":");
+		this.label = str.length > 1 ? str[1] : "";
+		this.domain = str[0];
+	}
+	
 	public GlobalLabel(String domain, String label){
 		this.label = label;
 		this.domain = domain;

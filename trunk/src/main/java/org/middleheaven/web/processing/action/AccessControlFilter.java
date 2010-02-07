@@ -72,7 +72,7 @@ public class AccessControlFilter implements HttpFilter{
 
 			@Override
 			public void onException(AccessException e) {
-				e.printStackTrace(); //TODO log
+				
 			}
 
 		};
@@ -94,6 +94,7 @@ public class AccessControlFilter implements HttpFilter{
 				switch (step){
 				case FAIL:
 					chain.interruptWithOutcome(failureOutcome);
+					repeat=false;
 					break;
 				case SUCCESS:
 					// is authenticated

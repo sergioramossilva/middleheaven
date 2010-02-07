@@ -1,5 +1,6 @@
 package org.middleheaven.web.processing.action;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.web.processing.HttpCode;
@@ -11,7 +12,7 @@ public class URLOutcome extends Outcome {
 		return new URLOutcome(url);
 	}
 	
-	private Map<String,String> params;
+	private Map<String,String> params = new HashMap<String,String>();
 
 	private URLOutcome(String url) {
 		super(BasicOutcomeStatus.SUCCESS, url, false , HttpCode.OK);
@@ -23,10 +24,22 @@ public class URLOutcome extends Outcome {
 	}
 	
 	public URLOutcome withParams(Map<String,String> params){
-		this.params = params;
+		this.params.putAll(params);
 		return this;
 	}
 	
+	public URLOutcome withParam(String name, String value){
+		this.params.put(name, value);
+		return this;
+	}
+	
+	public URLOutcome withCode(HttpCode code){
+		this.setHttpCode(code);
+		return this;
+	}
+	
+
+
 	public String getParameterizedURL(){
 		if (params.isEmpty()){
 			return this.getUrl();
