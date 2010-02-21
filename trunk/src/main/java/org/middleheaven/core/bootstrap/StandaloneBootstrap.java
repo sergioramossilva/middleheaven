@@ -15,7 +15,7 @@ import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.activation.ActivatorScanner;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.ui.service.UIServiceActivator;
 
 /**
@@ -51,7 +51,7 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 				appCycle.start();
 			}
 		} catch (ServiceNotAvailableException e){
-			Logging.getBook(this.getClass()).warn("Executing without Application Cycle Service");
+			Log.onBookFor(this.getClass()).warn("Executing without Application Cycle Service");
 		}
 	}
 

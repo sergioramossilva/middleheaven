@@ -21,7 +21,7 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.global.text.LocalizationService;
 import org.middleheaven.global.text.TimepointFormatter;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.util.coersion.StringCalendarDateTimeCoersor;
@@ -248,7 +248,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				if (result instanceof URLOutcome ){
 					return (Outcome)result;
 				} else {
-					Logging.error("Illegal outcome class. Use URLOutcome.");
+					Log.onBookFor(this.getClass()).warn("Illegal outcome class. Use URLOutcome.");
 					outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 				}
 			}else if (result==null || !(result instanceof OutcomeStatus)){
@@ -259,18 +259,18 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		} catch (ValidationException e){
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID);
 		} catch (InvocationTargetReflectionException e){
-			Logging.error("Exception found invoking " + actionMethod.getName(), e);
+			Log.onBookFor(this.getClass()).error("Exception found invoking " + actionMethod.getName(), e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e.getCause());
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 		}catch (ActionHandlerNotFoundException e){
-			Logging.fatal("Action not found", e);
+			Log.onBookFor(this.getClass()).fatal("Action not found", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
 		}catch (Exception e){
-			Logging.error("Exception found handling request", e);
+			Log.onBookFor(this.getClass()).error("Exception found handling request", e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 		} catch (Error e){
-			Logging.fatal("Exception found handling request", e);
+			Log.onBookFor(this.getClass()).fatal("Exception found handling request", e);
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
 			if (outcome==null){

@@ -20,7 +20,7 @@ import org.middleheaven.io.repository.FileChangeEvent;
 import org.middleheaven.io.repository.FileChangeListener;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.WatchableContainer;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.util.classification.BooleanClassifier;
 
 public class FileActivatorScanner extends AbstractActivatorScanner {
@@ -119,10 +119,10 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 					activators.put(activator.getClass().getName(),activator);
 					fireDeployableFound(older.getClass());
 				} catch (ClassCastException e){
-					Logging.getBook(this.getClass()).warn(className + " is not a valid application module activator");
+					Log.onBookFor(this.getClass()).warn(className + " is not a valid application module activator");
 				}
 			}else {
-				Logging.getBook(this.getClass()).warn(jar.getName() + " does not present an application module.");
+				Log.onBookFor(this.getClass()).warn(jar.getName() + " does not present an application module.");
 			}
 
 		}catch (IOException e) {

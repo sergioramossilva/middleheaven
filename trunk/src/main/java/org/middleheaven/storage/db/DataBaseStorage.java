@@ -17,7 +17,7 @@ import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.domain.TextDataTypeModel;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.AbstractSequencialIdentityStorage;
 import org.middleheaven.storage.Query;
@@ -130,7 +130,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 			criteria.setCountOnly(true);
 			RetriveDataBaseCommand command = dialect.createSelectCommand(criteria, reader());
-			Logging.getBook("SQL").trace(command.toString());
+			Log.onBook("SQL").trace(command.toString());
 			command.execute(this, con);
 			ResultSet rs = command.getResult();
 
@@ -172,7 +172,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 			criteria.setCountOnly(false);
 			RetriveDataBaseCommand command = dialect.createSelectCommand(criteria, reader());
-			Logging.getBook("SQL").trace(command.toString());
+			Log.onBook("SQL").trace(command.toString());
 
 			command.execute(this, con);
 			rs = command.getResult();
@@ -454,7 +454,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					}
 
 				} catch (TableAlreadyExistsException e){
-					Logging.getBook(this.getClass()).info("Table " + dbObject.getName() + " already exists");
+					Log.onBookFor(this.getClass()).info("Table " + dbObject.getName() + " already exists");
 				}
 			}
 		}

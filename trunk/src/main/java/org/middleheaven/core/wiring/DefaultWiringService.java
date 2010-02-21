@@ -39,7 +39,7 @@ import org.middleheaven.core.wiring.service.ServiceScope;
 import org.middleheaven.logging.LinkedListLogBookWriter;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LogBookWriter;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.logging.LoggingEvent;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.LoggingService;

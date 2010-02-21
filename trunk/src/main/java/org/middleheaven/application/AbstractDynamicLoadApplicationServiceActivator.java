@@ -113,7 +113,7 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Act
 				try {
 					module.load(appContext);
 				} catch (RuntimeException e){
-					log.error("Impossible to activate " + module.getModuleID(), e);
+					log.error(e  , "Impossible to activate {0}" , module.getModuleID());
 					throw e;
 				}
 			}
@@ -130,7 +130,7 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Act
 				try {
 					module.unload(appContext);
 				} catch (Exception e){
-					log.warn("Impossible to deactivate " + module.getModuleID(), e);
+					log.warn(e,"Impossible to deactivate {0}", module.getModuleID());
 				}
 			}
 			this.setState(ApplicationCycleState.STOPED);

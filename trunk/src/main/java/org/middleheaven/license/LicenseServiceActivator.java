@@ -22,7 +22,7 @@ import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.service.FileRepositoryRegistryService;
 import org.middleheaven.logging.LogBook;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.util.classification.BooleanClassifier;
 
 
@@ -117,7 +117,7 @@ public class LicenseServiceActivator extends Activator {
 	private ComposedProvider load(ComposedProvider providers ,Collection<ManagedFile> licences , ManagedFile certificate ){
 		AddocClassLoader cloader = new AddocClassLoader();
 
-		LogBook logBook = Logging.getBook(this.getClass());
+		LogBook logBook = Log.onBookFor(this.getClass());
 		Base64CipherAlgorithm base64 = new Base64CipherAlgorithm();
 		
 		for (ManagedFile f : licences){
@@ -156,7 +156,7 @@ public class LicenseServiceActivator extends Activator {
 
 
 			} catch (Throwable e) {
-				logBook.error("Licence " + f.getURL() + " could not be loaded", e);
+				logBook.error(e,"Licence {0} could not be loaded", f.getURL());
 			} 
 
 

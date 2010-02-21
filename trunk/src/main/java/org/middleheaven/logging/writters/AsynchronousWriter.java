@@ -5,7 +5,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.middleheaven.logging.LogBookWriter;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.logging.LoggingEvent;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.config.LoggingConfiguration;
@@ -56,7 +56,7 @@ public class AsynchronousWriter extends AbstractWriterAttachable{
         try {
             this.queue.put(event);
         } catch (InterruptedException e) {
-            Logging.warn("Interrupted queue put");
+            // exist thread
         }
     }
 

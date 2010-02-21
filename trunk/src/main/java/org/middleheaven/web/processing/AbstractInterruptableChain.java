@@ -3,7 +3,7 @@ package org.middleheaven.web.processing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.web.processing.action.BasicOutcomeStatus;
 import org.middleheaven.web.processing.action.OutcomeStatus;
@@ -75,11 +75,11 @@ public abstract class AbstractInterruptableChain<F> {
 				chainnable.doInChain(context, this);
 				
 			} catch (Exception e){
-				Logging.error("Exception found handling " + chainnable.getClass(), e);
+				Log.onBookFor(this.getClass()).error(e,"Exception found handling {0}", chainnable.getClass());
 				context.setAttribute(ContextScope.REQUEST, "exception", e);
 				this.interruptWithOutcome(resolveOutcome(BasicOutcomeStatus.FAILURE));
 			} catch (Error e){
-				Logging.fatal("Exception found handling interceptor " + chainnable.getClass(), e);
+				Log.onBookFor(this.getClass()).fatal(e,"Exception found handling interceptor {0} " , chainnable.getClass());
 				context.setAttribute(ContextScope.REQUEST, "exception", e);
 				Outcome outcome =  resolveOutcome(BasicOutcomeStatus.ERROR);
 				if (outcome==null){

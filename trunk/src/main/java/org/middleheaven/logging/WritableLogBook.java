@@ -18,7 +18,7 @@ public class WritableLogBook extends LogBook {
         return this;
     }
 
-    public void log(LoggingEvent event){
+    public void doLog(LoggingEvent event){
         for (LogBookWriter writer : writers ){
             try {
                 writer.log(event);

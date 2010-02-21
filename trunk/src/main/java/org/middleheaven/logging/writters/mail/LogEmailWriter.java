@@ -50,7 +50,7 @@ public class LogEmailWriter extends LogBookWriter implements FormatableLogWriter
             message.append(" - ");
             message.append(event.getLevel().toString());
             message.append(" - ");
-            message.append(event.getMessage().toString());
+            message.append(formatToText(event));
             message.append("\n");
             if (event.hasThrowable()){
                 message.append("\n");

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.db.dialects.HSQLDialect;
 import org.middleheaven.storage.db.dialects.MSDriverSQLServerDialect;
@@ -51,7 +51,7 @@ public final class DatabaseDialectFactory {
 		String driverName = dbm.getDriverName();
 		String driverVersion = dbm.getDriverVersion();
 
-		Logging.getBook(DatabaseDialectFactory.class).info("Inicializing dialect for: " + product + "  " + version + " usign driver " + driverName + " " + driverVersion );
+		Log.onBookFor(DatabaseDialectFactory.class).info("Inicializing dialect for: {0} {1} usign driver {2} {3}" ,  product , version,driverName, driverVersion);
 
 		if (product.equalsIgnoreCase("Microsoft SQL Server")){
 			if (driverName.toLowerCase().startsWith("sqlserver")){

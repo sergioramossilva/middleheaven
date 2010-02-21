@@ -3,7 +3,7 @@ package org.middleheaven.core.bootstrap.client;
 import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.ui.MapContext;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
@@ -50,7 +50,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 			 if (client.getChildrenCount()>1){
 				mainWindow = clientModel.defineMainWindow((UIDesktop)client,renderedContext);
 			} else if (client.getChildrenCount()==0){
-				Logging.getBook(this.getClass()).error("No main window found");
+				Log.onBookFor(this.getClass()).error("No main window found");
 				return;
 			} else {
 				mainWindow = client.getChildrenComponents().get(0);
@@ -59,7 +59,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 			renderKit.show(mainWindow);
 			
 		} catch (ServiceNotAvailableException e){
-			Logging.getBook(this.getClass()).warn("Executing without UI client");
+			Log.onBookFor(this.getClass()).warn("Executing without UI client");
 		}
 
 	}
@@ -85,7 +85,7 @@ public class DesktopUIContainer extends StandaloneContainer {
 			renderKit.dispose(mainWindow);
 			
 		} catch (ServiceNotAvailableException e){
-			Logging.getBook(this.getClass()).trace("Stopping without UI client");
+			Log.onBookFor(this.getClass()).trace("Stopping without UI client");
 		}
 	}
 

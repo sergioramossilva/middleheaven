@@ -1,7 +1,7 @@
 package org.middleheaven.work.scheduled;
 
 import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.quantity.time.Clock;
 import org.middleheaven.quantity.time.TimeContext;
 import org.middleheaven.quantity.time.TimePoint;
@@ -66,7 +66,7 @@ public class AlarmClockScheduleWorkExecutionService implements ScheduleWorkExecu
 			try{
 				work.execute(new AlarmScheduledWorkContext(StaticClock.forTime(point)));
 			}catch (Exception e){
-				Logging.getBook("Schedule work").error("Unexpected exception executing " + work.getClass(),e);
+				Log.onBook("Schedule work").error("Unexpected exception executing " + work.getClass(),e);
 			}
 		}
 
