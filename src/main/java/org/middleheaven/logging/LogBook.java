@@ -18,83 +18,76 @@ public abstract class LogBook {
         this.level = level;
     }
 
-    public void fatal(Object msg) {
+    public final void fatal(CharSequence msg, Object ... params) {
+        fatal(null,msg,params);
+    }
+
+    public void fatal(Throwable throwable, CharSequence message,Object ... params) {
         if (level.canLog(LoggingLevel.FATAL)){
-            log(new LoggingEvent(LoggingLevel.FATAL,msg));
+            log(new LoggingEvent(LoggingLevel.FATAL,message,throwable));
         }
     }
-
-    public void fatal(Object msg, Throwable throwable) {
-        if (level.canLog(LoggingLevel.FATAL)){
-            log(new LoggingEvent(LoggingLevel.FATAL,msg,throwable));
-        }
+    
+    public final void error(CharSequence msg, Object ... params) {
+        error(null,msg,params);
     }
 
-    public void error(Object msg) {
+    public void error(Throwable throwable, CharSequence message,Object ... params) {
         if (level.canLog(LoggingLevel.ERROR)){
-            log(new LoggingEvent(LoggingLevel.ERROR,msg));
+            log(new LoggingEvent(LoggingLevel.ERROR,message,throwable));
         }
     }
-
-    public void error(Object msg, Throwable throwable) {
-        if (level.canLog(LoggingLevel.ERROR)){
-            log(new LoggingEvent(LoggingLevel.ERROR,msg,throwable));
-        }
+   
+    public final void warn(CharSequence msg, Object ... params) {
+        warn(null,msg,params);
     }
-
-
-    public void warn(Object msg) {
+    
+    public void warn(Throwable throwable,CharSequence msg, Object ... params) {
         if (level.canLog(LoggingLevel.WARN)){
-            log(new LoggingEvent(LoggingLevel.WARN,msg));
+            log(new LoggingEvent(LoggingLevel.WARN,msg,throwable, params));
+        }
+    }
+    
+    public void info(CharSequence msg, Object ... params) {
+        info(null,msg,params);
+    }
+    
+    public void info(Throwable throwable,CharSequence msg, Object ... params) {
+        if (level.canLog(LoggingLevel.INFO)){
+            log(new LoggingEvent(LoggingLevel.INFO,msg,throwable, params));
         }
     }
 
-    public void warn(Object msg, Throwable throwable) {
+    public final void debug(CharSequence msg, Object ... params) {
+    	debug(null,msg,params);
+    }
+    
+    public void debug(Throwable throwable,CharSequence msg, Object ... params) {
+        if (level.canLog(LoggingLevel.DEBUG)){
+            log(new LoggingEvent(LoggingLevel.DEBUG,msg,throwable, params));
+        }
+    }
+    
+    public final void trace(CharSequence msg, Object ... params) {
+        warn(null,msg,params);
+    }
+    
+    public void trace(Throwable throwable,CharSequence msg, Object ... params) {
         if (level.canLog(LoggingLevel.WARN)){
-            log(new LoggingEvent(LoggingLevel.WARN,msg,throwable));
+            log(new LoggingEvent(LoggingLevel.WARN,msg,throwable, params));
         }
     }
-
-    public void info(Object msg) {
-        if (level.canLog(LoggingLevel.INFO)){
-            log(new LoggingEvent(LoggingLevel.INFO,msg));
-        }
-    }
-
-    public void info(Object msg, Throwable throwable) {
-        if (level.canLog(LoggingLevel.INFO)){
-            log(new LoggingEvent(LoggingLevel.INFO,msg,throwable));
-        }
-    }
-
-    public void debug(Object msg) {
-        if (level.canLog(LoggingLevel.DEBUG)){
-            log(new LoggingEvent(LoggingLevel.DEBUG,msg));
-        }
-    }
-
-    public void debug(Object msg, Throwable throwable) {
-        if (level.canLog(LoggingLevel.DEBUG)){
-            log(new LoggingEvent(LoggingLevel.DEBUG,msg,throwable));
-        }
-    }
-
-    public void trace(Object msg) {
-        if (level.canLog(LoggingLevel.TRACE)){
-            log(new LoggingEvent(LoggingLevel.TRACE,msg));
-        }
-    }
-
-    public void trace(Object msg, Throwable throwable) {
-        if (level.canLog(LoggingLevel.TRACE)){
-            log(new LoggingEvent(LoggingLevel.TRACE,msg,throwable));
-        }
-    }
-
+    
     public boolean isEnabled(LoggingLevel testlevel){
         return level.canLog(testlevel);
     }
     
-    public abstract void log(LoggingEvent event);
+    public final void log(LoggingEvent event){
+    	 if (level.canLog(event.getLevel())){
+    		 doLog(event);
+         }
+    }
+    
+    protected abstract void doLog(LoggingEvent event);
     public abstract LogBook addWriter(LogBookWriter writer);
 }

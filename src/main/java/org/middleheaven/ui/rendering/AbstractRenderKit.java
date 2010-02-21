@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UIContainer;
@@ -93,7 +93,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         UIRender render = renders.get(key);
         
         if (render ==null){
-        	Logging.warn("No render has found for familly " + familly + " and type " + componentType + ". Using default familly");
+        	Log.onBookFor(this.getClass()).warn("No render has found for familly {0} and type {1}. Using default familly", familly, componentType);
             // search default render
             key = new RenderPropertiesKey("", componentType);
             

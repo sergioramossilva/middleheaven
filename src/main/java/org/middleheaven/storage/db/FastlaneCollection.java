@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableState;

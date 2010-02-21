@@ -17,7 +17,7 @@ import org.middleheaven.domain.annotations.Temporal;
 import org.middleheaven.domain.annotations.Transient;
 import org.middleheaven.domain.annotations.Unique;
 import org.middleheaven.domain.annotations.Version;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimePoint;
@@ -154,9 +154,10 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				if (pa.isAnnotadedWith(Temporal.class)){
 					fm.setDataType(pa.getAnnotation(Temporal.class).value());
 				} else {
-					Logging.warn(valueType.getName() + 
-							" is to a too generic timestamp type. Consider annotate property " + 
-							fm.getName() + " with @Temporal or use an instance of " + 
+					Log.onBookFor(this.getClass()).warn(
+							" {0} is to a too generic timestamp type. Consider annotate property {1} with @Temporal or use an instance of {2}", 
+							valueType.getName(),
+							fm.getName(), 
 							TimePoint.class.getName()
 					);
 					fm.setDataType(DataType.DATETIME);

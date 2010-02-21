@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.aas.old.AccessDeniedException;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
 import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
 import org.middleheaven.web.processing.action.RequestResponseWebContext;
@@ -26,13 +26,13 @@ class ServletHttpServerService extends AbstractHttpServerService {
 	void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
 		if (isStopped()){
-			Logging.getBook(this.getClass()).warn("HttpServerService is stopped.");
+			Log.onBookFor(this.getClass()).warn("HttpServerService is stopped.");
 			response.sendError(HttpCode.NOT_FOUND.intValue()); 
 			return;
 		}
 
 		if (!isAvailable()){
-			Logging.getBook(this.getClass()).warn("HttpServerService is not available.");
+			Log.onBookFor(this.getClass()).warn("HttpServerService is not available.");
 			response.sendError(HttpCode.SERVICE_UNAVAILABLE.intValue()); 
 			return;
 		}
@@ -41,7 +41,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 		HttpProcessor processor = resolveControlProcessor(request.getRequestURI());
 
 		if (processor == null){
-			Logging.getBook(this.getClass()).warn("ControlProcessor has not found.");
+			Log.onBookFor(this.getClass()).warn("ControlProcessor has not found.");
 			response.sendError(HttpCode.NOT_IMPLEMENTED.intValue()); 
 			return;
 		}
@@ -54,10 +54,10 @@ class ServletHttpServerService extends AbstractHttpServerService {
 
 
 			if(outcome == null){
-				Logging.getBook(this.getClass()).warn("Outcome is null for " + request.getRequestURI());
+				Log.onBookFor(this.getClass()).warn("Outcome is null for " + request.getRequestURI());
 				response.sendError(HttpCode.NOT_FOUND.intValue());
 			} else if (outcome.isTerminal()){
-				Logging.getBook(this.getClass()).debug("Outcome is terminal for " + request.getRequestURI());
+				Log.onBookFor(this.getClass()).debug("Outcome is terminal for " + request.getRequestURI());
 				return; // do not process view. The response is already done written
 			} else if (outcome.isError){
 				response.sendError(outcome.getHttpCode().intValue());
@@ -74,7 +74,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl());
 
 				if (render == null){
-					Logging.getBook(this.getClass()).error("Render could not be found for " + outcome.getUrl());
+					Log.onBookFor(this.getClass()).error("Render could not be found for " + outcome.getUrl());
 					response.sendError(HttpCode.NOT_FOUND.intValue());
 				} else {
 					render.process(context, outcome);
@@ -82,7 +82,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 			}
 
 		}catch (AccessDeniedException e){
-			Logging.getBook(this.getClass()).warn("Access denied to " + request.getRequestURI());
+			Log.onBookFor(this.getClass()).warn("Access denied to " + request.getRequestURI());
 			response.sendError(HttpCode.FORBIDDEN.intValue());
 		}catch (HttpProcessIOException e){
 			throw e.getIOException();

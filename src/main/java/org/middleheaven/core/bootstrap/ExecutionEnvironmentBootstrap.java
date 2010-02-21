@@ -52,7 +52,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 		
 		BootstrapContainer container = getContainer();
 		
-		log.info("Container resolved: " + container.getEnvironmentName());
+		log.info("Container resolved: {0}", container.getEnvironmentName());
 		
 		log.debug("Register bootstrap services");
 
@@ -98,7 +98,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 		
 		container.start();
 
-		log.info("Environment inicialized in " + watch.mark().asMeasure().convertTo(SI.MILI(SI.SECOND)).toString() + ".");
+		log.info("Environment inicialized in " + watch.mark() + ".");
 		bootstrapService.fireBootupEnd();
 	}
 

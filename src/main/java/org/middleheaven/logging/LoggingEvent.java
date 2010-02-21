@@ -6,37 +6,39 @@ package org.middleheaven.logging;
  * @author  Sergio M. M. Taborda
  */
 public class LoggingEvent {
-
+	
+	private final long timeStamp;
+	private final String threadName;
   
-    protected LoggingLevel level;
-  
-    protected Object msg;
+	private final LoggingLevel level;
+	private final CharSequence msg;
+	private final Throwable t;
+    
+	private final Object[] params;
 
-    protected Throwable t;
-
-    protected final long timeStamp;
- 
-    protected final String threadName;
-
-    public LoggingEvent(LoggingLevel level, Object msg){
+    public LoggingEvent(LoggingLevel level, CharSequence msg){
         this(level,msg,null);
     }
-
-    public LoggingEvent(LoggingLevel level, Object msg, Throwable t){
+    
+    public LoggingEvent(LoggingLevel level, CharSequence msg, Throwable t,Object ... params){
         this.timeStamp = System.currentTimeMillis();
         this.level = level;
         this.msg = msg;
         this.t = t;
+        this.params = params;
         this.threadName = Thread.currentThread().getName();
     }
 
-
-    public LoggingLevel getLevel(){
+	public LoggingLevel getLevel(){
         return level;
     }
 
-    public Object getMessage(){
+    public CharSequence getMessage(){
         return msg;
+    }
+    
+    public Object[] getMessageParameters(){
+    	return this.params == null ? new Object[0] : params;
     }
 
     public boolean hasThrowable(){

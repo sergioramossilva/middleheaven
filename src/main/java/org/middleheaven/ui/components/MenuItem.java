@@ -62,6 +62,10 @@ public class MenuItem {
 		return url;
 	}
 	
+	public void setUrl(String url){
+		this.url = url;
+	}
+	
 	public List<MenuItem> getChildren(){
 		return Collections.unmodifiableList(children);
 	}

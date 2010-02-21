@@ -21,10 +21,10 @@ public class ServletContextLogBookWriter extends LogBookWriter {
 
 	@Override
 	public void write(LoggingEvent event) throws LogWritingException {
-		if (event.t==null){
-			context.log(event.msg.toString());
+		if (event.getThrowable()==null){
+			context.log(formatToText(event));
 		} else {
-			context.log(event.msg.toString(),event.t);
+			context.log(event.getMessage().toString(),event.getThrowable());
 		}
 	}
 

@@ -1,7 +1,8 @@
 package org.middleheaven.logging.writters;
 
-import org.apache.commons.logging.Log;
-import org.middleheaven.logging.Logging;
+import org.middleheaven.logging.Log;
+import org.middleheaven.logging.LogBook;
+
 
 /**
  * Adpater class for Apache Commons Logging.
@@ -9,13 +10,13 @@ import org.middleheaven.logging.Logging;
  * This class only responds to FATAL and ERROR events
  * TODO provide by proxy
  */
-public class CommonsLogAdapter implements Log {
+public class CommonsLogAdapter implements org.apache.commons.logging.Log {
 
 
-    final String bookName;
+    final LogBook book;
 
     public CommonsLogAdapter(String bookName){
-        this.bookName = bookName;
+        this.book = Log.onBook(bookName);
     }
 
     public boolean isDebugEnabled() {
@@ -42,38 +43,38 @@ public class CommonsLogAdapter implements Log {
         return false;
     }
 
-    public void trace(Object arg0) {}
+    public void trace(Object message) {}
 
-    public void trace(Object arg0, Throwable arg1) {}
+    public void trace(Object message, Throwable e) {}
 
-    public void debug(Object arg0) {}
+    public void debug(Object message) {}
 
-    public void debug(Object arg0, Throwable arg1) {}
+    public void debug(Object message, Throwable e) {}
 
-    public void info(Object arg0) {}
+    public void info(Object message) {}
 
-    public void info(Object arg0, Throwable arg1) {}
+    public void info(Object message, Throwable e) {}
 
-    public void warn(Object arg0) {}
+    public void warn(Object message) {}
 
-    public void warn(Object arg0, Throwable arg1) {
-        Logging.getBook(this.bookName).trace(arg0,arg1);
+    public void warn(Object message, Throwable e) {
+       book.trace(e,"{0}", message);
     }
 
-    public void error(Object arg0) {
-    	Logging.getBook(this.bookName).error(arg0);
+    public void error(Object message) {
+    	book.error("{0}", message);
     }
 
-    public void error(Object arg0, Throwable arg1) {
-    	Logging.getBook(this.bookName).error(arg0,arg1);
+    public void error(Object message, Throwable e) {
+    	book.error(e,"{0}", message);
     }
 
-    public void fatal(Object arg0) {
-    	Logging.getBook(this.bookName).fatal(arg0);
+    public void fatal(Object message) {
+    	book.fatal("{0}", message);
     }
 
-    public void fatal(Object arg0, Throwable arg1) {
-    	Logging.getBook(this.bookName).fatal(arg0,arg1);
+    public void fatal(Object message, Throwable e) {
+    	book.fatal(e,"{0}", message);
     }
 
 }
