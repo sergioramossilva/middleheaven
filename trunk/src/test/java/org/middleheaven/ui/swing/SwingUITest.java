@@ -1,4 +1,4 @@
-package org.middleheaven.test.ui.swing;
+package org.middleheaven.ui.swing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,7 +28,7 @@ public class SwingUITest extends MiddleHeavenTestCase {
 	@Test
 	public void testXMLBuilder(){
 		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWiringService().getObjectPool());
-		UIEnvironment root = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
+		UIEnvironment root = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/ui/swing/ui.xml"));
 		assertNotNull(root);
 		// one client
 		assertEquals(1,root.getClients().size());
@@ -43,9 +43,10 @@ public class SwingUITest extends MiddleHeavenTestCase {
 	public void testSwingRenderKit(){
 
 		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWiringService().getObjectPool());
-		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
+		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/ui/swing/ui.xml"));
 
 		UIClient client = env.getClients().iterator().next();
+		
 		
 		assertNotNull("UIModel is null",client.getUIModel());
 		
@@ -75,9 +76,12 @@ public class SwingUITest extends MiddleHeavenTestCase {
 	public void textUIQuery(){
 
 		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWiringService().getObjectPool());
-		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/test/ui/swing/ui.xml"));
+		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/ui/swing/ui.xml"));
 
 		UIClient client = env.getClients().iterator().next();
+		
+		assertNotNull("UIModel is null",client.getUIModel());
+		
 		RenderKit kit = client.getUIModel().getRenderKit();
 		RenderingContext context = new RenderingContext(kit);
 		
@@ -121,11 +125,12 @@ public class SwingUITest extends MiddleHeavenTestCase {
 		assertFalse(components.isEmpty());
 		assertEquals("frameA", frameA.getGID());
 		
-		components = UITreeCriteria.search("./../frameB").execute(layoutui)
+		components = UITreeCriteria.search("frameB").execute(layoutui)
 		.list();
 		
-		UIComponent frameB = components.get(0);
 		assertFalse(components.isEmpty());
+		
+		UIComponent frameB = components.get(0);
 		assertEquals("frameB", frameB.getGID());
 	}
 }

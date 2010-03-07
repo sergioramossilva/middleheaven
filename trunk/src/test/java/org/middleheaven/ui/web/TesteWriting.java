@@ -1,5 +1,6 @@
-package org.middleheaven.test.ui.web;
+package org.middleheaven.ui.web;
 
+import org.junit.Test;
 import org.middleheaven.web.processing.HttpCode;
 import org.middleheaven.web.processing.HttpContext;
 import org.middleheaven.web.processing.action.BasicOutcomeStatus;
@@ -11,7 +12,7 @@ import org.middleheaven.web.processing.action.PresenterCommandMappingBuilder;
 
 public class TesteWriting {
 
-	
+	@Test
 	public void testWriting(){
 		
 		PresenterCommandMappingBuilder.map(ProjectPresenter.class)

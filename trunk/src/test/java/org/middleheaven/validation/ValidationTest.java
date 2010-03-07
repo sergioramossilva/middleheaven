@@ -1,4 +1,4 @@
-package org.middleheaven.test.validation;
+package org.middleheaven.validation;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
