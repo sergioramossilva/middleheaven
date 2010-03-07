@@ -1,4 +1,4 @@
-package org.middleheaven.test.ui.swing;
+package org.middleheaven.ui.swing;
 
 import static org.junit.Assert.*;
 

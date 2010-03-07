@@ -7,7 +7,6 @@ import org.middleheaven.ui.AbstractUIContainerModel;
 import org.middleheaven.ui.GenericUIComponent;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.components.UILayout;
 import org.middleheaven.ui.components.UIView;
 import org.middleheaven.ui.rendering.RenderingContext;
 
@@ -18,7 +17,7 @@ public class UITest extends MiddleHeavenTestCase{
 	@Test
 	public void testRendering(){
 		
-		GenericUIComponent root = new GenericUIComponent(UIClient.class, null);
+		GenericUIComponent root =  (GenericUIComponent)GenericUIComponent.getInstance(UIClient.class, null);
 		UIComponent frame = root.addComponent(UIView.class, null);
 		frame.setUIModel(new AbstractUIContainerModel());
 		
