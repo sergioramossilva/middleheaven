@@ -106,7 +106,7 @@ public class MeasuresTestSuit {
 		
 
 		// create speed
-		Dimension<Velocity> V = Dimension.LENGTH.over(Dimension.TIME) ;
+		Dimension<Velocity> V = Dimension.DISTANCE.over(Dimension.TIME) ;
 		// assert right dimensions
 		assertEquals("LT^-1", V.toString());
 		assertEquals(Dimension.VELOCITY, V);
@@ -124,10 +124,10 @@ public class MeasuresTestSuit {
 		// get fundamental from calculus
 		Dimension<Distance> L = V.times(Dimension.TIME);
 		// assert is the same object
-		assertSame(L , Dimension.LENGTH);
+		assertSame(L , Dimension.DISTANCE);
 		
 		try {
-			L = L.plus(Dimension.LENGTH);
+			L = L.plus(Dimension.DISTANCE);
 		} catch (IncompatibleDimentionException e){
 			assertFalse (true);
 		}
@@ -136,7 +136,7 @@ public class MeasuresTestSuit {
 	
 	@Test
 	public void testUnits(){
-		Unit<Distance> m = Unit.unit( Dimension.LENGTH, "m");
+		Unit<Distance> m = Unit.unit( Dimension.DISTANCE, "m");
 		Unit<Time> s = Unit.unit( Dimension.TIME, "s");
 		
 		m.plus(m);
