@@ -25,7 +25,7 @@ public class ReflectionException extends RuntimeException {
 		} catch (IllegalArgumentException e) {
 			return new IllegalAccessReflectionException(e);
 		} catch (InvocationTargetException e) {
-			return new InvocationTargetReflectionException(e.getCause());
+			return new InvocationTargetReflectionException(e);
 		} catch (InstantiationException e) {
 			return new InstantiationReflectionException(type.getName(), e.getMessage());
 		} catch (IllegalAccessException e) {

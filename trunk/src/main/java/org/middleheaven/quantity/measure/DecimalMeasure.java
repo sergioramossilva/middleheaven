@@ -22,6 +22,9 @@ public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implem
 		return exact(Real.ZERO(), unit);
 	}
 	
+	public static <T extends Measurable> DecimalMeasure<T> one(Unit<T> unit) {
+		return exact(Real.ONE(), unit);
+	}
 	
 	public static <T extends Measurable> DecimalMeasure<T> measure(java.lang.Number value,java.lang.Number uncertainty, Unit<T> unit){
 		return measure( Real.valueOf(value),Real.valueOf(uncertainty), unit);

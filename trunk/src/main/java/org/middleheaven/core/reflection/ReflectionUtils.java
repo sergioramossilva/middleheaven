@@ -45,20 +45,24 @@ class ReflectionUtils {
 		return null;
 	}
 
-	public static <T> T proxy (Class<T> facadeClass , final ProxyHandler delegator){
-		return stategy.proxy(facadeClass, delegator);
+	public static <T> T proxyType (Class<T> facadeClass , final ProxyHandler delegator){
+		return stategy.proxyType(facadeClass, delegator);
+	}
+	
+	public static <T> T proxyType (Class<?> facadeClass , final ProxyHandler delegator,Class<T> proxyInterface , Class<?> ... adicionalInterfaces){
+		return stategy.proxyType( facadeClass,delegator,proxyInterface,adicionalInterfaces);
 	}
 
-	public static <I> I proxy ( Object delegationTarget , Class<I> proxyInterface){
-		return stategy.proxy(delegationTarget, proxyInterface);
+	public static <I> I proxyObject ( Object delegationTarget , Class<I> proxyInterface){
+		return stategy.proxyObject(delegationTarget, proxyInterface);
 	}
 
-	public static <I> I proxy (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface ){
-		return stategy.proxy(delegationTarget, delegator, proxyInterface);
+	public static <I> I proxyObject (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface ){
+		return stategy.proxyObject(delegationTarget, delegator, proxyInterface);
 	}
 
-	public static <I> I proxy (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface , Class<?> ... adicionalInterfaces){
-		return stategy.proxy(delegationTarget, delegator, proxyInterface,adicionalInterfaces);
+	public static <I> I proxyObject (Object delegationTarget , final ProxyHandler delegator , Class<I> proxyInterface , Class<?> ... adicionalInterfaces){
+		return stategy.proxyObject(delegationTarget, delegator, proxyInterface,adicionalInterfaces);
 	}
 
 	public static Set<Class<?>> getPackageClasses(Package classPackage) {

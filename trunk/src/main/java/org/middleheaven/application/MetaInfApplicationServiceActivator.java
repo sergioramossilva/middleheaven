@@ -42,7 +42,7 @@ public class MetaInfApplicationServiceActivator extends AbstractDynamicLoadAppli
 							
 								getAppContext().addModule(module);
 							} catch (ClassCastException e){
-								getLog().warn(className + " is not a valid application module activator");
+								getLog().warn("{0} is not a valid application module activator",className);
 							}
 						}
 						break;

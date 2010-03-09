@@ -2,22 +2,20 @@ package org.middleheaven.storage.pagination;
 
 import java.util.Collection;
 
-import org.middleheaven.storage.Query;
-
 public class Paginator<E> {
 
-	private final Query<E> query;
+	private final PaginatorModel<E> model;
 	private final int itemsPerPage;
 	
 	private int currentPageIndex = -1;
 	
-	protected Paginator(Query<E> query, int itemsPerPage){
-		this.query = query;
+	protected Paginator(PaginatorModel<E> model, int itemsPerPage){
+		this.model = model;
 		this.itemsPerPage = itemsPerPage;
 	}
 	
 	public int getPageCount(){
-		final long count = query.count();
+		final long count = model.totalCount();
 		return (int)(count / itemsPerPage + (count % itemsPerPage == 0 ? 0: 1));
 	}
 	
@@ -76,8 +74,7 @@ public class Paginator<E> {
 	public Collection<E> getPageItens(){
 		int startAt = (this.currentPageIndex-1) * this.itemsPerPage;
 		
-		Query<E> pageQuery = query.setRange(startAt, this.itemsPerPage);
-		
-		return pageQuery.all();
+		return model.getRange(startAt, itemsPerPage);
+
 	}
 }

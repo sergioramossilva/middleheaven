@@ -28,14 +28,25 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	private int height;
 	private int width;
 	
-	public static <T extends UIComponent>  T getInstance(Class<T> renderType, String familly){
-		return Introspector.of(new GenericUIComponent(renderType, familly)).newProxyInstance(renderType);
+	public static <T extends UIComponent>  T getInstance(Class<T> uiClass, String familly){
+		// TODO create UIComponentProxy that delgates to a GenericUIComponent object
+		
+		final GenericUIComponent object = new GenericUIComponent( uiClass, familly);
+		final GenericUIComponentProxyHandler proxyHandler = new GenericUIComponentProxyHandler(object,uiClass);
+		GenericUIComponent uic= (GenericUIComponent)Introspector.of(object).newProxyInstance(proxyHandler,uiClass);
+		
+		return uiClass.cast(uic);
 	}
 	
-	public GenericUIComponent(Class<T> renderType, String familly){
+	public GenericUIComponent(){
+		this.id = Integer.toString(nextID++);
+	}
+	
+	protected GenericUIComponent(Class<T> renderType, String familly){
+		this();
 		this.renderType = renderType;
 		this.familly = familly;
-		this.id = Integer.toString(nextID++);
+		
 		if (renderType.equals(UIContainer.class)){
 			layout = new GenericUIComponent(UILayout.class,"border");
 		}

@@ -1,5 +1,6 @@
 package org.middleheaven.quantity.unit;
 
+import org.middleheaven.domain.annotations.Length;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measurables.Angle;
 import org.middleheaven.quantity.measurables.Area;
@@ -23,7 +24,7 @@ public final class SI extends UnitSystem{
 
 	// Basic
 	public static final Unit<Dimensionless> DIMENTIONLESS = Unit.unit(Dimension.DIMENTIONLESS,"");
-	public static final Unit<Distance> METER = Unit.unit(Dimension.LENGTH,"m");
+	public static final Unit<Distance> METER = Unit.unit(Dimension.DISTANCE,"m");
 	
 	public static final Unit<Time> SECOND = Unit.unit(Dimension.TIME,"s");
 	public static final Unit<Mass> KILOGRAM = Unit.unit(Dimension.MASS,"kg");

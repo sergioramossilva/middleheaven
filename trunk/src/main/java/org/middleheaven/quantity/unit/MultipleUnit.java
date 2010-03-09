@@ -1,13 +1,11 @@
 package org.middleheaven.quantity.unit;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measurables.Measurable;
 import org.middleheaven.quantity.measure.DecimalMeasure;
-import org.middleheaven.quantity.measure.Measure;
 
 public class MultipleUnit<E extends Measurable> extends Unit<E> {
 

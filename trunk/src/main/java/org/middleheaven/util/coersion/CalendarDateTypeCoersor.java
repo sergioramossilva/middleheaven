@@ -11,7 +11,7 @@ public class CalendarDateTypeCoersor extends AbstractTypeCoersor<CalendarDate,Da
 
 	@Override
 	public <T extends Date> T coerceForward(CalendarDate value, Class<T> type) {
-		return type.cast(new Date(value.miliseconds()));
+		return type.cast(new Date(value.milliseconds()));
 	}
 
 	@Override

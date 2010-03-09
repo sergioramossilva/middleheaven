@@ -1,19 +1,19 @@
 package org.middleheaven.quantity.convertion;
 
 import org.middleheaven.quantity.measurables.Measurable;
-import org.middleheaven.quantity.measure.Scalable;
+import org.middleheaven.quantity.measure.DecimalMeasure;
 import org.middleheaven.quantity.unit.Unit;
 
-public final class InvertedUnitConverter<E extends Measurable,T extends Scalable<E,T>> implements UnitConverter<E,T> {
+public final class InvertedUnitConverter<E extends Measurable> implements UnitConverter<E> {
 
-	private UnitConverter<E,T> original;
+	private UnitConverter<E> original;
 	
-	public InvertedUnitConverter(UnitConverter<E,T> original){
+	public InvertedUnitConverter(UnitConverter<E> original){
 		this.original = original;
 	}
 
 	@Override
-	public UnitConverter<E,T> inverse() {
+	public UnitConverter<E> inverse() {
 		return original;
 	}
 
@@ -29,13 +29,13 @@ public final class InvertedUnitConverter<E extends Measurable,T extends Scalable
 
 
 	@Override
-	public T convertFoward(T value) {
+	public DecimalMeasure<E> convertFoward(DecimalMeasure<E>  value) {
 		return original.convertReverse(value);
 	}
 
 
 	@Override
-	public T convertReverse(T value) {
+	public DecimalMeasure<E>  convertReverse(DecimalMeasure<E>  value) {
 		return original.convertFoward(value);
 	}
 

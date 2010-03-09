@@ -5,9 +5,10 @@ public interface ReflectionStrategy {
 	public PropertyAccessor getPropertyAccessor(Class<?> type, String fieldName);
 	public Iterable<PropertyAccessor> getPropertyAccessors(Class<?> type) throws ReflectionException;
 
-		
-	public <T> T proxy (Class<T> facadeClass , ProxyHandler handler);
-	public <I> I proxy (Object delegationTarget , Class<I> proxyInterface);
+
+	public <T> T proxyType (Class<T> facadeClass , ProxyHandler handler);
+	
+	public <I> I proxyObject(Object delegationTarget , Class<I> proxyInterface);
 	
 	/**
 	 * Determine the real class type. 
@@ -25,5 +26,7 @@ public interface ReflectionStrategy {
 	 * @param proxyInterface
 	 * @return an object that is instanceof {@code delegationTarget} and {@code proxyInterface}. Also this object implements {@code WrapperProxy} interface
 	 */
-	public <I> I proxy (Object delegationTarget , final ProxyHandler handler , Class<I> proxyInterface , Class<?> ... adicionalInterfaces);
+	public <I> I proxyObject (Object delegationTarget ,  ProxyHandler handler , Class<I> proxyInterface , Class<?> ... adicionalInterfaces);
+	
+	public <T> T proxyType ( Class<?> facadeType, ProxyHandler handler , Class<T> proxyInterface  , Class<?> ... adicionalInterfaces);
 }

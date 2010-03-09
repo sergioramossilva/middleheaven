@@ -16,6 +16,8 @@ public interface DateHolder{
      */
     public DayOfWeek dayOfWeek();
     
+    public int dayOfYear();
+    
     public Month month();
     
     public Year year();

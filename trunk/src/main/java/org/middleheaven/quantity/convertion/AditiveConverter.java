@@ -2,13 +2,13 @@ package org.middleheaven.quantity.convertion;
 
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measurables.Measurable;
-import org.middleheaven.quantity.measure.Scalable;
+import org.middleheaven.quantity.measure.DecimalMeasure;
 import org.middleheaven.quantity.unit.Unit;
 
-public final class AditiveConverter<E extends Measurable , T extends Scalable<E,T>> extends AbstractUnitConverter<E,T> {
+public final class AditiveConverter<E extends Measurable > extends AbstractUnitConverter<E> {
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Measurable> AditiveConverter<E,?> convert(Unit<E> originalUnit,
+	public static <E extends Measurable> AditiveConverter<E> convert(Unit<E> originalUnit,
 			Unit<E> resultUnit, Real shift) {
 		return new AditiveConverter(shift,originalUnit, resultUnit );
 	}
@@ -20,20 +20,20 @@ public final class AditiveConverter<E extends Measurable , T extends Scalable<E,
 	}
 
 	@Override
-	public T convertFoward(T value) {
+	public DecimalMeasure<E>  convertFoward(DecimalMeasure<E>  value) {
 		if (!value.unit().equals(this.originalUnit)){
 			throw new IllegalArgumentException("Expected unit " + this.originalUnit + " but was " + value.unit());
 		}
-		final T diff =  value.one().times(shift, this.resultUnit);
+		final DecimalMeasure<E>  diff =  value.one().times(shift, this.resultUnit);
 		return value.times(Real.ONE(),  this.resultUnit).minus(diff);
 	}
 
 	@Override
-	public T convertReverse(T value) {
+	public DecimalMeasure<E>  convertReverse(DecimalMeasure<E>  value) {
 		if (!value.unit().equals(this.resultUnit)){
 			throw new IllegalArgumentException("Expected unit " + this.originalUnit + " but was " + value.unit());
 		}
-		final T diff =  value.one().times(shift, this.originalUnit);
+		final DecimalMeasure<E>  diff =  value.one().times(shift, this.originalUnit);
 		return value.times(Real.ONE(),  this.originalUnit).plus(diff);
 	}
 

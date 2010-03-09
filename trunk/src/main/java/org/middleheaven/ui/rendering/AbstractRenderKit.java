@@ -65,7 +65,7 @@ public abstract class AbstractRenderKit extends RenderKit {
         // otherwise render the children components and add them to it.
         if (!render.isChildrenRenderer(  context,  parent,  component)){
             // does it need a container
-        	if (component instanceof UIContainer && ((UIContainer)renderedComponent).getUIContainerLayout()!= null && !((UIContainer)renderedComponent).getUIContainerLayout().isRendered()){
+        	if (renderedComponent instanceof UIContainer && ((UIContainer)renderedComponent).getUIContainerLayout()!= null && !((UIContainer)renderedComponent).getUIContainerLayout().isRendered()){
             	// render layout
             	UILayout layout = (UILayout)this.renderComponent(context, component , ((UIContainer)component).getUIContainerLayout());
             	((UIContainer)renderedComponent).setUIContainerLayout(layout);
@@ -130,6 +130,9 @@ public abstract class AbstractRenderKit extends RenderKit {
         final Class<?> type;
         
         public RenderPropertiesKey(String familly , Class<?>  type){
+        	if(type ==null){
+        		throw new IllegalArgumentException("Type cannot be null");
+        	}
             this.familly = familly==null?"":familly.trim();
             this.type = type;
         }

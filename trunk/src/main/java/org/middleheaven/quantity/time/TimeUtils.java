@@ -40,7 +40,7 @@ public final class TimeUtils {
 		} else if (value instanceof Calendar) {
 			time = ((Calendar)value).getTime().getTime();
 		} else if (value instanceof CalendarDate) {
-			time = ((CalendarDate)value).miliseconds();
+			time = ((CalendarDate)value).milliseconds();
 		} else if (value instanceof CalendarDateTime) {
 			time = ((CalendarDateTime)value).milliseconds();
 		} else {

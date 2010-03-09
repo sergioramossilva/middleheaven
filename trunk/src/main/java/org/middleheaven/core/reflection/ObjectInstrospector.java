@@ -46,11 +46,12 @@ public class ObjectInstrospector<T> {
 	public <I> I newProxyInstance(ProxyHandler handler,
 			Class<I> proxyInterface ,Class<?> ... adicionalInterfaces) {
 		
-		return ReflectionUtils.proxy(this.object,handler, proxyInterface, adicionalInterfaces);
+		return ReflectionUtils.proxyObject(this.object,handler, proxyInterface, adicionalInterfaces);
 	}
 	
 	public <I> I newProxyInstance (Class<I> proxyInterface){
-		return ReflectionUtils.proxy(this.object, proxyInterface);
+		return ReflectionUtils.proxyObject(this.object, proxyInterface);
 	}
+
 
 }

@@ -43,12 +43,16 @@ public abstract class ListQuery<T> implements Query<T> , Serializable{
 	@Override
 	public Query<T> setRange(final int startAt, final int maxCount) {
 		
+		if (startAt < 1){
+			throw new IllegalArgumentException("Range must start at position 1 or further");
+		}
+		
 		return new ListQuery<T>(){
 
 			@Override
 			protected List<T> list() {
-				final List<T> list = list();
-				return this.list().subList(startAt, Math.min(list.size(), list.size()-startAt+maxCount));
+				final List<T> list = ListQuery.this.list();
+				return list.subList(startAt-1, Math.min(list.size(),startAt+maxCount-1));
 			}
 			
 		};

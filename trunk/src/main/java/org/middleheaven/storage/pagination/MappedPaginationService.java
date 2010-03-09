@@ -3,8 +3,6 @@ package org.middleheaven.storage.pagination;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.storage.Query;
-
 public class MappedPaginationService implements PaginationService {
 
 	private Map<String, Integer> sizes = new HashMap<String,Integer>();
@@ -24,25 +22,25 @@ public class MappedPaginationService implements PaginationService {
 	}
 
 	@Override
-	public <T> Paginator<T> paginate(Query<T> query) {
-		return paginate(query, "");
+	public <T> Paginator<T> paginate(PaginatorModel<T> model) {
+		return paginate(model, "");
 	}
 
 	@Override
-	public <T> Paginator<T> paginate(Query<T> query, String name) {
+	public <T> Paginator<T> paginate(PaginatorModel<T> model, String name) {
 		Integer size = sizes.get(name);
 
 		if (size ==null){
 			size = defaultPageSize;
 		}
 
-		return paginate(query, size);
+		return paginate(model, size);
 	}
 
 	@Override
-	public <T> Paginator<T> paginate(Query<T> query, int itemsPerPage) {
+	public <T> Paginator<T> paginate(PaginatorModel<T> model, int itemsPerPage) {
 
-		return new Paginator<T>(query,itemsPerPage);
+		return new Paginator<T>(model,itemsPerPage);
 
 	}
 

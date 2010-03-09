@@ -103,10 +103,10 @@ public class DataSourceServiceActivator extends Activator {
 
 				
 				} catch (ManagedIOException e) {
-					book.error("Error loading datasource file", e);
+					book.error(e,"Error loading datasource file");
 					throw new AtivationException(e);
 				} catch (IOException e) {
-					book.error("Error loading datasource file", e);
+					book.error(e,"Error loading datasource file");
 					throw new AtivationException(e);
 				} 
 			}

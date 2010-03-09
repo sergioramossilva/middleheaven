@@ -21,7 +21,7 @@ public class ManagedIOException extends RuntimeException {
             return new FileNotFoundManagedException(ioe.getMessage());
         } else if  (ioe instanceof SocketTimeoutException){
             return new RemoteComunicationTimeoutException(ioe.getMessage());
-        }
+        } 
         return new ManagedIOException(ioe);
     }
     

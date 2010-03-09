@@ -35,5 +35,5 @@ public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 		return result;
 	}
 
-	
+
 }

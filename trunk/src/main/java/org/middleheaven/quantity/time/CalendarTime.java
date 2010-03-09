@@ -22,7 +22,7 @@ public class CalendarTime extends AbstractTimePoint implements  TimeHolder {
 	}
 	
 	@Override
-	public long miliseconds() {
+	public long milliseconds() {
 		return this.milliseconds;
 	}
 

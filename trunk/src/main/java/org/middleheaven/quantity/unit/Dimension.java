@@ -2,6 +2,7 @@ package org.middleheaven.quantity.unit;
 
 import java.io.Serializable;
 
+
 import org.middleheaven.quantity.measurables.Aceleration;
 import org.middleheaven.quantity.measurables.Action;
 import org.middleheaven.quantity.measurables.Angle;
@@ -32,7 +33,7 @@ public abstract class Dimension<E extends Measurable> implements Serializable {
 	// fundamental
 	public static final Dimension<Angle> ANGLE = BaseDimention.base('\u0398');
 	
-	public static final Dimension<Distance> LENGTH = BaseDimention.base('L');
+	public static final Dimension<Distance> DISTANCE = BaseDimention.base('L');
 	public static final Dimension<Time> TIME = BaseDimention.base('T');
 	public static final Dimension<Mass> MASS = BaseDimention.base('M');
 	public static final Dimension<Temperature> TEMPERATURE = BaseDimention.base('K');
@@ -44,11 +45,11 @@ public abstract class Dimension<E extends Measurable> implements Serializable {
 	public static final Dimension<Area> AREA = BaseDimention.base('L',2);
 	public static final Dimension<Volume> VOLUME = BaseDimention.base('L',3);
 	public static final Dimension<Density> DENSITY = MASS.over(VOLUME);
-	public static final Dimension<Velocity> VELOCITY = LENGTH.over(TIME);
+	public static final Dimension<Velocity> VELOCITY = DISTANCE.over(TIME);
 	public static final Dimension<Aceleration> ACELERATION = VELOCITY.over(TIME);
 	public static final Dimension<Force> FORCE = ACELERATION.times(MASS);
 	public static final Dimension<Pressure> PRESSURE = FORCE.over(AREA);
-	public static final Dimension<Energy> ENERGY = FORCE.times(LENGTH);
+	public static final Dimension<Energy> ENERGY = FORCE.times(DISTANCE);
 	public static final Dimension<Action> ACTION = ENERGY.times(TIME);
 	public static final Dimension<Power> POWER = ENERGY.over(TIME);
 	public static final Dimension<Entropy> ENTROPY = ENERGY.over(TEMPERATURE);

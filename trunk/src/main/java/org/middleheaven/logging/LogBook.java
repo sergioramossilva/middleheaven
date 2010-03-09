@@ -5,8 +5,8 @@ package org.middleheaven.logging;
 
 
 /**
- * Represents a repository where logEvents are registered.
- * @author  Sergio M. M. Taborda
+ * Represents a repository where LogEvents are registered.
+ * 
  */
 public abstract class LogBook {
 
@@ -24,7 +24,7 @@ public abstract class LogBook {
 
     public void fatal(Throwable throwable, CharSequence message,Object ... params) {
         if (level.canLog(LoggingLevel.FATAL)){
-            log(new LoggingEvent(LoggingLevel.FATAL,message,throwable));
+            log(new LoggingEvent(LoggingLevel.FATAL,message,throwable,params));
         }
     }
     
@@ -34,7 +34,7 @@ public abstract class LogBook {
 
     public void error(Throwable throwable, CharSequence message,Object ... params) {
         if (level.canLog(LoggingLevel.ERROR)){
-            log(new LoggingEvent(LoggingLevel.ERROR,message,throwable));
+            log(new LoggingEvent(LoggingLevel.ERROR,message,throwable,params));
         }
     }
    
@@ -69,7 +69,7 @@ public abstract class LogBook {
     }
     
     public final void trace(CharSequence msg, Object ... params) {
-        warn(null,msg,params);
+        trace(null,msg,params);
     }
     
     public void trace(Throwable throwable,CharSequence msg, Object ... params) {

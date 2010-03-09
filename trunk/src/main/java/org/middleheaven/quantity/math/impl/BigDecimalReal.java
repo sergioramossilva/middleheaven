@@ -85,7 +85,7 @@ public class BigDecimalReal extends Real{
 
 	private BigDecimalReal simplify() {
 
-		if (denominator.equals(BigDecimal.ONE) || numerator.signum()==0){
+		if (denominator.compareTo(BigDecimal.ONE) == 0 || numerator.signum()==0){
 			return this; // is zero or divided by 1
 		}
 		BigDecimal min = denominator.min(numerator);
@@ -94,7 +94,7 @@ public class BigDecimalReal extends Real{
 			min = min.subtract(BigDecimal.ONE);
 		}
 
-		if (min.equals(BigDecimal.ONE)){
+		if (min.compareTo(BigDecimal.ONE) == 0 ){
 			// already simplified
 			return this;
 		} else {
@@ -205,16 +205,19 @@ public class BigDecimalReal extends Real{
 		return this.times(Real.valueOf(n));
 	}
 
-/*
-	public boolean equals(BigDecimalReal other){
-		return (this.denominator.compareTo(other.denominator)==0 &&  this.numerator.compareTo(other.numerator) ==0)
-		|| this.numerator.multiply(other.denominator).compareTo(this.denominator.multiply(other.numerator))==0;
+
+	private int compareToSame(BigDecimalReal other){
+		
+		BigDecimal denominatorProduct = denominator.multiply(other.numerator);
+		BigDecimal numeratorProduct = numerator.multiply(other.denominator);
+		
+		return numeratorProduct.compareTo(denominatorProduct);
+
 	}
-*/
 	
 	@Override
 	protected boolean equalsSame(Real other) {
-		return compareTo((BigDecimalReal)other)==0;
+		return compareToSame((BigDecimalReal)other)==0;
 	}
 	
 	public int hashCode(){
@@ -223,6 +226,9 @@ public class BigDecimalReal extends Real{
 
 	@Override
 	public int compareTo(org.middleheaven.quantity.math.Numeral<? super Real> o) {
+		if (o instanceof BigDecimalReal){
+			return this.compareToSame((BigDecimalReal)o);
+		}
 		return this.asNumber().compareTo(o.asNumber());
 	}
 

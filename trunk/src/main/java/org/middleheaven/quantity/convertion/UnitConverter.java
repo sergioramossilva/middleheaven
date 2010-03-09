@@ -1,7 +1,7 @@
 package org.middleheaven.quantity.convertion;
 
 import org.middleheaven.quantity.measurables.Measurable;
-import org.middleheaven.quantity.measure.Scalable;
+import org.middleheaven.quantity.measure.DecimalMeasure;
 import org.middleheaven.quantity.unit.Unit;
 
 /**
@@ -9,7 +9,7 @@ import org.middleheaven.quantity.unit.Unit;
  *
  * @param <E>
  */
-public interface UnitConverter<E extends Measurable,T extends Scalable<E,T>> {
+public interface UnitConverter<E extends Measurable> {
 
 	/**
 	 * Convert from measure given in unit A to measure in unit B
@@ -18,10 +18,10 @@ public interface UnitConverter<E extends Measurable,T extends Scalable<E,T>> {
 	 * @param <M>
 	 * @return
 	 */
-	public T convertFoward( T value);
-	public T convertReverse( T value);
+	public DecimalMeasure<E> convertFoward( DecimalMeasure<E> value);
+	public DecimalMeasure<E> convertReverse( DecimalMeasure<E> value);
 	
-	public UnitConverter<E,T> inverse();
+	public UnitConverter<E> inverse();
  
 	public Unit<E> originalUnit();
 

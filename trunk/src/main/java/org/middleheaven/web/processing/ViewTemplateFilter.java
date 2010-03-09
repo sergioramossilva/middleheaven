@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -22,7 +20,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import org.middleheaven.web.rendering.Decorator;
 import org.middleheaven.web.rendering.Page;
 
-public class ViewTemplateFilter implements Filter {
+public class ViewTemplateFilter extends AbstractFilter {
 
 	private static final String FILTER_APPLIED = "_filterApplied";
 
@@ -33,17 +31,6 @@ public class ViewTemplateFilter implements Filter {
 	private static final String PAGE = "_page";
 
 
-	private FilterConfig filterConfig;
-
-	@Override
-	public void destroy() {
-		filterConfig = null;
-	}
-
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		this.filterConfig = filterConfig;
-	}
 
 	public void doFilter(ServletRequest  rq, ServletResponse  rs, FilterChain chain) throws IOException , ServletException {
 
@@ -92,7 +79,7 @@ public class ViewTemplateFilter implements Filter {
 	protected void applyDecorator(Page page, Decorator decorator, HttpServletRequest  request, HttpServletResponse  response) throws ServletException, IOException  {
 		try {
 			request.setAttribute(PAGE, page);
-			ServletContext context = filterConfig.getServletContext();
+			ServletContext context = getFilterConfig().getServletContext();
 			// see if the URI path (webapp) is set
 			if (decorator.getURIPath() != null) {
 				// in a security conscious environment, the servlet container

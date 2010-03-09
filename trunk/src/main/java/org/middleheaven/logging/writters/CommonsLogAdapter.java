@@ -58,7 +58,7 @@ public class CommonsLogAdapter implements org.apache.commons.logging.Log {
     public void warn(Object message) {}
 
     public void warn(Object message, Throwable e) {
-       book.trace(e,"{0}", message);
+       book.warn(e,"{0}", message);
     }
 
     public void error(Object message) {

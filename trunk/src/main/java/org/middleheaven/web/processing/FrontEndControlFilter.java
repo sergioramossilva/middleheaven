@@ -2,24 +2,16 @@ package org.middleheaven.web.processing;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class FrontEndControlFilter implements Filter{
+public class FrontEndControlFilter extends AbstractFilter{
 
-	private FilterConfig filterConfig;
-	
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		this.filterConfig = filterConfig;
-	}
-	
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		
@@ -29,7 +21,7 @@ public class FrontEndControlFilter implements Filter{
 			HttpServletResponse hResponse = (HttpServletResponse) request;
 			try{
 
-				ServletHttpServerService serverService = (ServletHttpServerService) this.filterConfig.getServletContext().getAttribute("httpService");
+				ServletHttpServerService serverService = (ServletHttpServerService) this.getFilterConfig().getServletContext().getAttribute("httpService");
 			
 				if (serverService == null){
 					throw new ServletException("HTTPServerService not found in contexts");
@@ -46,12 +38,12 @@ public class FrontEndControlFilter implements Filter{
 			} catch (IOException e) {
 				throw e;
 			} catch (Throwable t){
-				this.filterConfig.getServletContext().log("Unexpected Exception", t);
+				this.getFilterConfig().getServletContext().log("Unexpected Exception", t);
 				t.printStackTrace();
 			}
 			
 		} catch (ClassCastException e){
-			this.filterConfig.getServletContext().log("Cannot process non HTTP request/response", e);
+			this.getFilterConfig().getServletContext().log("Cannot process non HTTP request/response", e);
 			chain.doFilter(request, response);
 		}
 		
@@ -59,9 +51,6 @@ public class FrontEndControlFilter implements Filter{
 		
 	}
 
-	@Override
-	public void destroy() {
-		this.filterConfig = null;
-	}
+
 
 }

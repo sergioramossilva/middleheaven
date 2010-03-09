@@ -118,6 +118,13 @@ public class JavaCalendarCronology extends AbstractChronology{
 	}
 
 	@Override
+	public int yearDay(TimePoint point) {
+		Calendar c =  (Calendar)prototype.clone();
+		c.setTimeInMillis(point.milliseconds());
+		return c.get(Calendar.DAY_OF_YEAR);
+	}
+	
+	@Override
 	public Month monthOf(int year, int month) {
 		Calendar calendar = (Calendar)prototype.clone();
 		clearCalendar(calendar);
@@ -153,7 +160,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 		}
 
 		@Override
-		public long miliseconds() {
+		public long milliseconds() {
 			return calendar.get(Calendar.MILLISECOND);
 		}
 
@@ -168,4 +175,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 		}
 		
 	}
+
+
+
 }

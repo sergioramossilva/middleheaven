@@ -1,10 +1,10 @@
 package org.middleheaven.quantity.convertion;
 
 import org.middleheaven.quantity.measurables.Measurable;
-import org.middleheaven.quantity.measure.Scalable;
+import org.middleheaven.quantity.measure.DecimalMeasure;
 import org.middleheaven.quantity.unit.Unit;
 
-class IdentityConverter<E extends Measurable,T extends Scalable<E,T>> implements UnitConverter<E,T> {
+class IdentityConverter<E extends Measurable> implements UnitConverter<E> {
 	
 	private Unit<E> unit;
 
@@ -24,17 +24,17 @@ class IdentityConverter<E extends Measurable,T extends Scalable<E,T>> implements
 	}
 
 	@Override
-	public T convertFoward(T value) {
+	public DecimalMeasure<E>  convertFoward(DecimalMeasure<E>  value) {
 		return value;
 	}
 
 	@Override
-	public T convertReverse(T value) {
+	public DecimalMeasure<E>  convertReverse(DecimalMeasure<E>  value) {
 		return value;
 	}
 
 	@Override
-	public UnitConverter<E,T> inverse() {
+	public UnitConverter<E> inverse() {
 		return this;
 	}
 

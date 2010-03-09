@@ -90,9 +90,9 @@ public class PreparedStatementStorable {
 			} else if (value instanceof Calendar ) {
 				ps.setTimestamp(i, new Timestamp(((Calendar)value).getTimeInMillis()));
 			} else if (value instanceof CalendarDate){
-				ps.setTimestamp(i, new Timestamp(((CalendarDate)value).miliseconds()));
+				ps.setTimestamp(i, new Timestamp(((CalendarDate)value).milliseconds()));
 			} else if (value instanceof CalendarDateTime){
-				ps.setTimestamp(i, new Timestamp(((CalendarDateTime)value).miliseconds()));
+				ps.setTimestamp(i, new Timestamp(((CalendarDateTime)value).milliseconds()));
 			}
 		} else if (isIdentity){
 			setField(i, value, false, this.resolveDataType(value));

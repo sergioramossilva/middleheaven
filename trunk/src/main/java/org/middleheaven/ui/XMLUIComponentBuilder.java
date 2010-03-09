@@ -108,6 +108,11 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 		Class<UIComponent> uiClass = resolveClass(type);
 
 		UIComponent uiComponent =  GenericUIComponent.getInstance(uiClass, familly);
+		
+		if (!uiClass.isInstance(uiComponent)){
+			throw new Error();
+		}
+		
 		if (!name.isEmpty()){
 			uiComponent.setGID(name);
 		}

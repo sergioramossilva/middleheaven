@@ -66,7 +66,7 @@ public class AlarmClockScheduleWorkExecutionService implements ScheduleWorkExecu
 			try{
 				work.execute(new AlarmScheduledWorkContext(StaticClock.forTime(point)));
 			}catch (Exception e){
-				Log.onBook("Schedule work").error("Unexpected exception executing " + work.getClass(),e);
+				Log.onBook("Schedule work").error(e,"Unexpected exception executing {0}", work.getClass());
 			}
 		}
 
