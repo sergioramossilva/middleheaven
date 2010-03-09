@@ -16,7 +16,8 @@ import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 public class LicenceTeste extends MiddleHeavenTestCase{
 
-	protected void configurateTest(SetActivatorScanner scanner) {
+	@Override
+	protected void configurateActivators(SetActivatorScanner scanner) {
 		scanner.addActivator(LicenseServiceActivator.class);
 	}
 	
