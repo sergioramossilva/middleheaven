@@ -37,7 +37,7 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 		@Override
 		public boolean hasSuper() {
 			try{
-				type.getMethod(invoked.getName(), invoked.getParameterTypes());
+				type.getDeclaredMethod(invoked.getName(), invoked.getParameterTypes());
 				return true;
 			} catch (NoSuchMethodException e){
 				return false;
@@ -79,7 +79,7 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 	
 
 	@Override
-	public <T> T proxy(Class<T> facadeClass, ProxyHandler handler) {
+	public <T> T proxyType(Class<T> facadeClass, ProxyHandler handler) {
 		try{
 			return facadeClass.cast(Enhancer.create(
 					facadeClass,
@@ -89,9 +89,17 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 			throw new ReflectionException(e);
 		}
 	}
+	
+	@Override
+	public <T> T proxyType(Class<?> facadeType, ProxyHandler handler, Class<T> proxyInterface, Class<?>... adicionalInterfaces) {
+		// TODO implement ReflectionStrategy.proxyType
+		return null;
+	}
+
+	
 
 	@Override
-	public <I> I proxy(final Object delegationTarget, Class<I> proxyInterface) {
+	public <I> I proxyObject(final Object delegationTarget, Class<I> proxyInterface) {
 		if (!proxyInterface.isInterface()){
 			throw new IllegalArgumentException("Proxy must be applied with an interface");
 		}
@@ -113,13 +121,13 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 
 	
 	@Override
-	public <I> I proxy(Object delegationTarget, ProxyHandler handler,Class<I> proxyInterface,Class<?> ... adicionalInterfaces) {
+	public <I> I proxyObject(Object delegationTarget, ProxyHandler handler,Class<I> proxyInterface,Class<?> ... adicionalInterfaces) {
 		if (!proxyInterface.isInterface()){
 			throw new IllegalArgumentException("Proxy must be applied with an interface");
 		}
 
 		if (adicionalInterfaces.length==0 && proxyInterface.isInstance(delegationTarget)){
-			return proxy(delegationTarget,proxyInterface);
+			return proxyObject(delegationTarget,proxyInterface);
 		} else {
 			try{
 				@SuppressWarnings("unchecked") Class[] newInterfaces = new Class[adicionalInterfaces.length+1];
@@ -156,6 +164,9 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 		}
 		return type;
 	}
+
+	
+
 
 
 

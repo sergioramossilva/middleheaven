@@ -47,9 +47,6 @@ public abstract class MiddleHeavenTestCase {
 
 	}
 
-
-
-	
 	public WiringService getWiringService(){
 		return  ServiceRegistry.getService(WiringService.class);
 	}

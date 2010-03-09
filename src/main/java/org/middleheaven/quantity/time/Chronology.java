@@ -34,6 +34,8 @@ public abstract class Chronology {
     
     public abstract Year yearOf(TimePoint point);
 
+    public abstract int yearDay(TimePoint point);
+    
 	public abstract Month monthOf(int ordinal, int month);
 
 	public abstract TimeHolder timeOf(TimePoint point);
@@ -41,8 +43,10 @@ public abstract class Chronology {
 	public CalendarDate convertTo(CalendarDate date, Chronology chronology){
 		
 		// TODO 
-		throw new UnimplementedMethodException("Conversion between chonologies are not yet supported");
+		throw new UnimplementedMethodException("Conversion between chonologies is not yet supported");
 	}
+
+	
 
     
 }

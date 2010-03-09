@@ -12,8 +12,11 @@ import javax.swing.JMenuBar;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
+import org.middleheaven.ui.UILayoutConstraint;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
+import org.middleheaven.ui.components.UICommand;
+import org.middleheaven.ui.components.UILayout;
 import org.middleheaven.ui.components.UIWindow;
 import org.middleheaven.ui.events.UIFocusEvent;
 import org.middleheaven.ui.events.UIPrespectiveEvent;
@@ -27,6 +30,7 @@ public class SWindow extends JFrame implements UIWindow{
 	private String id;
 	private String family;
 	private UIWindowModel model;
+	private UILayout layout;
 	
 	public SWindow(){
 
@@ -220,5 +224,8 @@ public class SWindow extends JFrame implements UIWindow{
 	public UIDimension getDimension() {
 		return new UIDimension(this.getWidth(), this.getHeight());
 	}
+
+	
+
 
 }

@@ -102,14 +102,14 @@ public class ClassIntrospector<T> extends Introspector{
 		if(!type.isInterface()){
 			throw new UnsupportedOperationException("Cannot proxy " + type.getName() + " as interface");
 		}
-		return ReflectionUtils.proxy(type, handler);
+		return ReflectionUtils.proxyType(type, handler);
 	} 
 	
-	public <I> I newProxyInstance(ProxyHandler handler, Class<I> proxyInterface , Class<?> ... adicionalInterfaces){
+	public <I> I newProxyInstance(ProxyHandler handler, Class<I> proxyInterface ,Class<?> ... adicionalInterfaces){
 		if(!type.isInterface()){
 			throw new UnsupportedOperationException("Cannot proxy " + type.getName() + ".Type is not an interface");
 		}
-		return ReflectionUtils.proxy(type, handler, proxyInterface, adicionalInterfaces);
+		return ReflectionUtils.proxyType(type, handler, proxyInterface, adicionalInterfaces);
 	} 
 
 	public boolean isInstance (Object obj){

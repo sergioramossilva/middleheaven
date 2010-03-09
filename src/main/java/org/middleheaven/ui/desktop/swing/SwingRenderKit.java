@@ -57,6 +57,7 @@ public class SwingRenderKit extends AbstractRenderKit {
 		this.addRender(new SWindowRender(), UIWindow.class);
 		this.addRender(new SSplashWindowRender(), UIWindow.class,"splash");
 		this.addRender(new SLayoutRender(), UILayout.class);
+		this.addRender(new SLayoutRender(), UILayout.class, "tabs");
 		this.addRender(new SViewRender(), UIView.class);
 		this.addRender(new SLabelRender(), UILabel.class);
 		this.addRender(new SCommandRender(), UICommand.class);

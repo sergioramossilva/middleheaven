@@ -5,7 +5,7 @@ import org.middleheaven.ui.models.UIClientModel;
 
 
 /**
- * The client graphical interface the user interact with in order
+ * The client graphical interface the user interacts with in order
  * to input commands and receive informations.
  * 
  */

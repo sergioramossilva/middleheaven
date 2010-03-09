@@ -119,10 +119,10 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 					activators.put(activator.getClass().getName(),activator);
 					fireDeployableFound(older.getClass());
 				} catch (ClassCastException e){
-					Log.onBookFor(this.getClass()).warn(className + " is not a valid application module activator");
+					Log.onBookFor(this.getClass()).warn("{0} is not a valid application module activator",className);
 				}
 			}else {
-				Log.onBookFor(this.getClass()).warn(jar.getName() + " does not present an application module.");
+				Log.onBookFor(this.getClass()).warn( "{0} does not present an application module.",jar.getName());
 			}
 
 		}catch (IOException e) {

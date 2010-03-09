@@ -54,7 +54,7 @@ public class DependencyResolver {
 					it.remove();
 					newStack.addLast(dependable);
 				}  catch (InicializationNotPossibleException e){
-					log.warn("Impossible to inicialize " + dependable, e);
+					log.warn(e,"Impossible to inicialize {0}." , dependable);
 					// dependencies will never be available
 					failedDependencies.add(dependable);
 					
@@ -64,7 +64,7 @@ public class DependencyResolver {
 
 		if (!failedDependencies.isEmpty()){
 			for (T t : failedDependencies){
-				log.fatal("Impossible to resolve dependencies for " + t );
+				log.fatal("Impossible to resolve dependencies for {0}" , t );
 			}
 			throw new DependencyResolutionFailedException(failedDependencies);
 		}
@@ -81,7 +81,7 @@ public class DependencyResolver {
 					it.remove();
 					newStack.addLast(dependable);
 				}  catch (InicializationNotPossibleException e){
-					log.warn("Impossible to inicialize " + dependable, e);
+					log.warn(e,"Impossible to inicialize {0}", dependable);
 					// dependencies will never be available
 					failedDependencies.add(dependable);
 					

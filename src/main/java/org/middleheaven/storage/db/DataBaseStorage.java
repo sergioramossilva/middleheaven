@@ -454,7 +454,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					}
 
 				} catch (TableAlreadyExistsException e){
-					Log.onBookFor(this.getClass()).info("Table " + dbObject.getName() + " already exists");
+					Log.onBookFor(this.getClass()).info("Table {0} already exists.",dbObject.getName());
 				}
 			}
 		}

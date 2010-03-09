@@ -31,6 +31,12 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
         return context.getChronology().monthDay(this);
      }
     
+	@Override
+	public int dayOfYear() {
+		 return context.getChronology().yearDay(this);
+	}
+    
+	
     public DayOfWeek dayOfWeek(){
         return context.getChronology().weekDay(this);
     }
@@ -149,11 +155,6 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 		return new Date(this.milliseconds).toString();
 	}
 
-	@Override
-	public long miliseconds() {
-		return this.milliseconds;
-	}
-
 	public CalendarTime toTime() {
 		return new CalendarTime(this.context, this.milliseconds);
 	}
@@ -161,7 +162,8 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
     public CalendarDate toDate(){
     	return new CalendarDate(this.context, this.milliseconds);
     }
-    
+
+
 	
 
 }

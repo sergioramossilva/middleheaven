@@ -38,7 +38,7 @@ public class UnitConversion {
 		converters.put(new MapKey(converter.originalUnit(),converter.resultUnit()), converter);
 	}
 	
-	public static <E extends Measurable,T extends Scalable<E,T>> T convert(T value,Unit<E> to){
+	public static <E extends Measurable> DecimalMeasure<E> convert(DecimalMeasure<E> value,Unit<E> to){
 		Unit<E> from = value.unit();
 		if (from.equals(to)){
 			return value;
@@ -49,8 +49,9 @@ public class UnitConversion {
 			DecimalMeasure<E> df = ((MultipleUnit)from).reduceToUnit();
 			DecimalMeasure<E> dto = ((MultipleUnit)to).reduceToUnit();
 			
-			return value.times(dto.times(df).amount(), df.unit());
-		
+			final DecimalMeasure<Measurable> result = df.times(dto).inverse().over(value);
+			return DecimalMeasure.measure(result.amount(), result.uncertainty(), to);
+
 		} else if (from instanceof MultipleUnit && !(to instanceof MultipleUnit)){
 			MultipleUnit mfrom = (MultipleUnit)from;
 			if(mfrom.getBaseUnit().equals(to)){
@@ -70,7 +71,7 @@ public class UnitConversion {
 			}
 		}else {
 			MapKey key = new MapKey(from ,to);
-			UnitConverter<E,T> converter = converters.get(key);
+			UnitConverter<E> converter = converters.get(key);
 			if (converter.resultUnit().equals(from)){
 				converter =  converter.inverse();
 			}

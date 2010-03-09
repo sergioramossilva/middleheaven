@@ -36,7 +36,7 @@ import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.core.wiring.connectors.JavaEE5InjectonConnector;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
-import org.middleheaven.logging.LinkedListLogBookWriter;
+import org.middleheaven.logging.ListLogBookWriter;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LogBookWriter;
 import org.middleheaven.logging.Log;
@@ -372,7 +372,7 @@ public class DefaultWiringService implements WiringService{
 			models.add(model);
 		}
 	
-		LinkedListLogBookWriter writer = new LinkedListLogBookWriter();
+		ListLogBookWriter writer = new ListLogBookWriter();
 		WritableLogBook bookProxy = new WritableLogBook("proxy", LoggingLevel.ALL).addWriter(writer);
 		
 		final DependencyResolver dependencyResolver = new DependencyResolver(bookProxy);

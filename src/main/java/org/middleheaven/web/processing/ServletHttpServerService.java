@@ -54,10 +54,10 @@ class ServletHttpServerService extends AbstractHttpServerService {
 
 
 			if(outcome == null){
-				Log.onBookFor(this.getClass()).warn("Outcome is null for " + request.getRequestURI());
+				Log.onBookFor(this.getClass()).warn("Outcome is null for {0}", request.getRequestURI());
 				response.sendError(HttpCode.NOT_FOUND.intValue());
 			} else if (outcome.isTerminal()){
-				Log.onBookFor(this.getClass()).debug("Outcome is terminal for " + request.getRequestURI());
+				Log.onBookFor(this.getClass()).debug("Outcome is terminal for {0} ", request.getRequestURI());
 				return; // do not process view. The response is already done written
 			} else if (outcome.isError){
 				response.sendError(outcome.getHttpCode().intValue());
@@ -74,7 +74,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl());
 
 				if (render == null){
-					Log.onBookFor(this.getClass()).error("Render could not be found for " + outcome.getUrl());
+					Log.onBookFor(this.getClass()).error("Render could not be found for {0}" , outcome.getUrl());
 					response.sendError(HttpCode.NOT_FOUND.intValue());
 				} else {
 					render.process(context, outcome);
@@ -82,7 +82,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 			}
 
 		}catch (AccessDeniedException e){
-			Log.onBookFor(this.getClass()).warn("Access denied to " + request.getRequestURI());
+			Log.onBookFor(this.getClass()).warn("Access denied to {0}", request.getRequestURI());
 			response.sendError(HttpCode.FORBIDDEN.intValue());
 		}catch (HttpProcessIOException e){
 			throw e.getIOException();

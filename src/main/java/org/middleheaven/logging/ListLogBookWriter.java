@@ -6,7 +6,11 @@ import java.util.Map;
 
 import org.middleheaven.logging.config.LoggingConfiguration;
 
-public final class LinkedListLogBookWriter extends LogBookWriter{
+/**
+ * Stores all {@code LoggingEvent}s written to it in a {@code List}.
+ * The events can be recovered in the {@code List} of {@code LoggingEvent} format.
+ */
+public final class ListLogBookWriter extends LogBookWriter{
 
 	private final LinkedList<LoggingEvent> events = new LinkedList<LoggingEvent>();
 	

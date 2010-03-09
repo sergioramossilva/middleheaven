@@ -102,7 +102,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 
 	public void stop(){
 
-		Log.onBookFor(this.getClass()).info("Stopping :" + url);
+		Log.onBookFor(this.getClass()).info("Stopping : {0}" , url);
 
 		Connection con=null;
 		try{

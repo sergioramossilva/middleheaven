@@ -259,18 +259,18 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		} catch (ValidationException e){
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID);
 		} catch (InvocationTargetReflectionException e){
-			Log.onBookFor(this.getClass()).error("Exception found invoking " + actionMethod.getName(), e);
+			Log.onBookFor(this.getClass()).error(e,"Exception found invoking {0}", actionMethod.getName());
 			context.setAttribute(ContextScope.REQUEST, "exception", e.getCause());
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 		}catch (ActionHandlerNotFoundException e){
-			Log.onBookFor(this.getClass()).fatal("Action not found", e);
+			Log.onBookFor(this.getClass()).fatal(e,"Action not found");
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
 		}catch (Exception e){
-			Log.onBookFor(this.getClass()).error("Exception found handling request", e);
+			Log.onBookFor(this.getClass()).error(e,"Exception found handling request");
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
 		} catch (Error e){
-			Log.onBookFor(this.getClass()).fatal("Exception found handling request", e);
+			Log.onBookFor(this.getClass()).fatal(e,"Exception found handling request");
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
 			if (outcome==null){
