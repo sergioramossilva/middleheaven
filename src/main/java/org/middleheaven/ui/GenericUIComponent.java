@@ -29,7 +29,6 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	private int width;
 	
 	public static <T extends UIComponent>  T getInstance(Class<T> uiClass, String familly){
-		// TODO create UIComponentProxy that delgates to a GenericUIComponent object
 		
 		final GenericUIComponent object = new GenericUIComponent( uiClass, familly);
 		final GenericUIComponentProxyHandler proxyHandler = new GenericUIComponentProxyHandler(object,uiClass);
