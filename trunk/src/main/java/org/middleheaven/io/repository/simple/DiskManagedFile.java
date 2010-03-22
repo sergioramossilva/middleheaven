@@ -1,3 +1,4 @@
+
 package org.middleheaven.io.repository.simple;
 
 import java.io.File;
@@ -16,23 +17,34 @@ import org.middleheaven.io.repository.AbstractManagedFile;
 import org.middleheaven.io.repository.EmptyFileContent;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
-import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
-public class DiskManagedFile  extends AbstractManagedFile implements ManagedFileRepository , QueryableRepository{
+public class DiskManagedFile  extends AbstractManagedFile implements QueryableRepository{
 
-	private File root;
+	private File file;
 	private ManagedFile parent;
 
-	public DiskManagedFile(ManagedFile parent, File root) {
-		this.root = root;
+	public DiskManagedFile(ManagedFile parent, File file) {
+		this.file = file;
 		this.parent = parent;
 	}
 
+	public boolean equals(Object other){
+		return other instanceof DiskManagedFile && ((DiskManagedFile)other).file.equals(this.file);
+	}
+	
+	public int hashCode (){
+		return file.hashCode();
+	}
+	
+	public String toString(){
+		return file.toString();
+	}
+	
 	@Override
 	public boolean contains(ManagedFile other) {
 		return this.resolveFile(other.getName()).exists();
@@ -40,12 +52,12 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 
 	@Override
 	public boolean delete() {
-		return root.delete();
+		return file.delete();
 	}
 
 	@Override
 	public boolean exists() {
-		return root.exists();
+		return file.exists();
 	}
 
 	@Override
@@ -59,7 +71,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 			@Override
 			public InputStream getInputStream() throws ManagedIOException {
 				try {
-					return new FileInputStream(root);
+					return new FileInputStream(file);
 				} catch (IOException e) {
 					throw ManagedIOException.manage(e);
 				}
@@ -68,7 +80,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 			@Override
 			public OutputStream getOutputStream() throws ManagedIOException {
 				try {
-					return new FileOutputStream(root);
+					return new FileOutputStream(file);
 				} catch (IOException e) {
 					throw ManagedIOException.manage(e);
 				}
@@ -90,19 +102,19 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 
 	@Override
 	public final long getSize() {
-		if (!this.root.exists()){
+		if (!this.file.exists()){
 			return 0;
 		}
 		
-		if (this.root.getParent()==null ){
+		if (this.file.getParent()==null ){
 			// drive
-			return this.root.getTotalSpace() - this.root.getFreeSpace();  
-		} else if(this.root.isDirectory()) {
+			return this.file.getTotalSpace() - this.file.getFreeSpace();  
+		} else if(this.file.isDirectory()) {
 			// folder
-			return  getDirSize(root);
+			return  getDirSize(file);
 		} 
 		// file
-		return this.root.length();
+		return this.file.length();
 		
 		
 	}
@@ -124,13 +136,13 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 
 	@Override
 	public String getName() {
-		return root.getName();
+		return file.getName();
 	}
 
 	@Override
 	public ManagedFile getParent() {
-		if (parent !=null && root.getParentFile() !=null){
-			return new DiskManagedFile(null,root.getParentFile());
+		if (parent !=null && file.getParentFile() !=null){
+			return new DiskManagedFile(null,file.getParentFile());
 		}
 		return parent;
 	}
@@ -138,13 +150,13 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 
 	@Override
 	public ManagedFileType getType() {
-		return this.root.isFile() ? ManagedFileType.FILE : ManagedFileType.FOLDER;
+		return this.file.isFile() ? ManagedFileType.FILE : ManagedFileType.FOLDER;
 	}
 
 	@Override
 	public URL getURL() {
 		try {
-			return root.toURI().toURL();
+			return file.toURI().toURL();
 		} catch (MalformedURLException e) {
 			throw ManagedIOException.manage(e);
 		}
@@ -152,7 +164,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 
 	@Override
 	public boolean isReadable() {
-		return root.canRead();
+		return file.canRead();
 	}
 
 	@Override
@@ -162,13 +174,17 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 
 	@Override
 	public boolean isWriteable() {
-		return root.canWrite();
+		return file.canWrite();
 	}
 
 	@Override
 	public EnhancedCollection<ManagedFile> children() throws ManagedIOException {
-		File[] children = root.listFiles();
+		File[] children = file.listFiles();
 
+		if (children == null){ // not a folder
+			return CollectionUtils.emptyCollection();
+		}
+		
 		Collection<ManagedFile> all = new ArrayList<ManagedFile>(children.length);
 		for (File f : children){
 			all.add(new DiskManagedFile(DiskManagedFile.this,f));	
@@ -179,12 +195,11 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 
 	@Override
 	public void setName(String name) {
-		root.renameTo(new File(root.getParent(), name));
+		file.renameTo(new File(file.getParent(), name));
 	}
 
-	@Override
-	public ManagedFile resolveFile(String filepath) {
-		return new DiskManagedFile(this,new File(filepath));
+	private ManagedFile resolveFile(String filepath) {
+		return new DiskManagedFile(this,new File(this.file , filepath).getAbsoluteFile());
 	}
 
 	@Override
@@ -233,8 +248,8 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 	@Override
 	protected ManagedFile doCreateFile() {
 		try {
-			root.createNewFile();
-			return new DiskManagedFile(this.parent,root);
+			file.createNewFile();
+			return new DiskManagedFile(this.parent,file);
 		} catch (IOException e) {
 			throw ManagedIOException.manage(e);
 		}
@@ -244,8 +259,8 @@ public class DiskManagedFile  extends AbstractManagedFile implements ManagedFile
 	@Override
 	protected ManagedFile doCreateFolder() {
 
-		root.mkdirs();
-		return new DiskManagedFile(this.parent,root);
+		file.mkdirs();
+		return new DiskManagedFile(this.parent,file);
 
 	}
 

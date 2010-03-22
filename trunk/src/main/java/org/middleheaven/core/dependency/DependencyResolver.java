@@ -1,5 +1,6 @@
 package org.middleheaven.core.dependency;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class DependencyResolver {
 	 * @param dependables
 	 * @param starter
 	 */
-	public <T> void resolve (List<T> dependables, Starter<T> starter){
+	public <T> void resolve (Collection<T> dependables, Starter<T> starter){
 		
 		// this is a very simplistic algorithm that does not 
 		// resolve dependencies explicitly. 

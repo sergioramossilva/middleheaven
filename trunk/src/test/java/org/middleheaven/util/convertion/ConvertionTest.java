@@ -12,13 +12,13 @@ public class ConvertionTest {
 	public void testPrimitiveConvertion (){
 		
 		Integer intA = 1;
-		Object intCa = TypeCoercing.convert(intA, int.class);
+		Object intCa = TypeCoercing.coerce(intA, int.class);
 		
 		assertTrue(intCa instanceof Integer);
 		assertEquals(intA,intCa);
 		
 		Long longA = 1L;
-		Object longCa = TypeCoercing.convert(longA, int.class);
+		Object longCa = TypeCoercing.coerce(longA, int.class);
 		
 		assertTrue(longCa instanceof Integer);
 		assertTrue(longA.intValue() == ((Number)longCa).intValue());
@@ -31,7 +31,7 @@ public class ConvertionTest {
 	
 		Long longA = Integer.MAX_VALUE + 3L;
 		// this long cannot be holded by an int
-		Object longCa = TypeCoercing.convert(longA, int.class);
+		Object longCa = TypeCoercing.coerce(longA, int.class);
 		
 		assertTrue(longCa instanceof Integer);
 		assertTrue(longA.intValue() == ((Number)longCa).intValue());

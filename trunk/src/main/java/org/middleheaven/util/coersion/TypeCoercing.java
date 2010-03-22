@@ -44,7 +44,7 @@ public class TypeCoercing {
 	 * @return The same value represented in the {@code type} type.
 	 */
 	
-	public static <O,T> T convert (O value , Class<T> type ){
+	public static <O,T> T coerce (O value , Class<T> type ){
 		if (value==null){
 			return null;
 		} else if (type.isAssignableFrom(java.util.Date.class)){
@@ -53,7 +53,7 @@ public class TypeCoercing {
 				return type.cast(value);
 			}
 			@SuppressWarnings("unchecked") Class<O> valueClass = (Class<O>) value.getClass();
-			return getConverter(valueClass, type).coerceForward(value, type);
+			return getCoersor(valueClass, type).coerceForward(value, type);
 		} else if (type.isInstance(value)){
 			return type.cast(value);
 		} else if (type.isPrimitive()){
@@ -84,7 +84,7 @@ public class TypeCoercing {
 		
 		
 		@SuppressWarnings("unchecked") Class<O> valueClass = (Class<O>) value.getClass();
-		return getConverter(valueClass, type).coerceForward(value, type);
+		return getCoersor(valueClass, type).coerceForward(value, type);
 	}
 
 	private static void checkOverflow(BigInteger value, BigInteger max){
@@ -97,20 +97,21 @@ public class TypeCoercing {
 		converters.put(new Key(to,from), converter.inverse());
 	}
 
-	public static <O,R> void removeConverter(Class<O> from, Class<R> to) {
+	public static <O,R> void removeCoersor(Class<O> from, Class<R> to) {
 		converters.remove(new Key(from,to));
 		converters.remove(new Key(to,from));
 	}  
 	
 	
-	public static <O,R> TypeCoersor<O,R> getConverter(Class<O> from , Class<R> to){
+	
+	public static <O,R> TypeCoersor<O,R> getCoersor(Class<O> from , Class<R> to){
 		
 		if (to.isPrimitive()){
 			String wrapper = to.getSimpleName().substring(0,1).toUpperCase() + to.getSimpleName().substring(1);
 			if (to.getSimpleName().equals("int")){
 				wrapper = "Integer";
 			}
-			to = (Class<R>)Introspector.of(Object.class).load("java.lang."+wrapper).getIntrospected();
+			 to = (Class<R>)Introspector.of(Object.class).load("java.lang."+wrapper).getIntrospected();
 			
 		}
 		Key key = new Key(from,to);

@@ -8,11 +8,31 @@ import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.text.GlobalLabel;
 import org.middleheaven.global.text.LocalizationService;
+import org.middleheaven.global.text.TimepointFormatter;
+import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.ui.ContextScope;
 
 
 public class AbstractBodyTagSupport extends BodyTagSupport {
 
+	public String localize(CalendarDateTime date ,TimepointFormatter.Format format){
+		Culture culture =  new TagContext(pageContext).getCulture();
+		
+		final LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
+
+		return i18nService.getTimestampFormatter(culture).format(date,format);
+	}
+
+	
+	public String localize(Number number){
+		Culture culture =  new TagContext(pageContext).getCulture();
+		
+		final LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
+
+		return i18nService.getQuantityFormatter(culture).format(Real.valueOf(number));
+	}
+	
 	public <T extends Tag> T findAncestorTag(Class<T> type){
 		return type.cast(this.findAncestorWithClass(this, type));
 	}

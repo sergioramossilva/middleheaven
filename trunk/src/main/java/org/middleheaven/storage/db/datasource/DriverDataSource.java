@@ -9,7 +9,6 @@ public class DriverDataSource extends AbstractDataSource{
 	private String URL;
 	private String login;
 	private String pass;
-	  
 
 	public DriverDataSource(){}
 

@@ -51,7 +51,7 @@ public class FileWriter extends StreamLogBookWriter {
      
         ManagedFile rep = configuration.getBaseRepository();
         
-        ManagedFile logFile = rep.resolveFile(filename);
+        ManagedFile logFile = rep.retrive(filename);
         
         if (!logFile.exists()){
         	logFile.createFile();

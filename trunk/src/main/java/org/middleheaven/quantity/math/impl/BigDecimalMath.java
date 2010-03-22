@@ -2,17 +2,81 @@ package org.middleheaven.quantity.math.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
+import java.math.RoundingMode;
 
 
 class BigDecimalMath {
-// from Java Number Cruncher
+
 	
+	protected static boolean isInteger(BigDecimal a){
+	
+			if (a.scale()<=0){
+				return true;	
+			}
+			
+		    try {
+		        a.toBigIntegerExact();
+		        return true;
+		    } catch (ArithmeticException ex) {
+		    	return false;
+		    }
+
+	}
+	
+	/**
+	 * Greatest Common Divisor
+	 * 
+	 * @see http://en.wikipedia.org/wiki/Greatest_common_divisor
+	 * @see http://sci.tech-archive.net/Archive/sci.math/2006-04/msg01661.html
+	 */
+	protected static BigDecimal gcd(BigDecimal a , BigDecimal b){
+		
+			if (a.compareTo(BigDecimal.ZERO)==0 && b.compareTo(BigDecimal.ZERO)==0){
+				return BigDecimal.ZERO;
+			} else if (b.compareTo(BigDecimal.ZERO)==0){
+				return a.abs();
+			} else if (a.compareTo(BigDecimal.ZERO)==0){
+				return gcd(b,a);
+			} else if (a.compareTo(BigDecimal.ZERO)<0 && b.compareTo(BigDecimal.ZERO)<0){
+				return gcd(a.negate(),b.negate()).negate();
+			} else if (a.signum() * b.signum() < 0 ){
+				return gcd(a.abs(),b.abs());
+			}
+			
+			BigDecimal absA = a.abs();
+			BigDecimal absB = b.abs();
+			
+			BigDecimal remainder=null;  
+			
+		    do {
+		      remainder = absA.divideAndRemainder(absB)[1];
+		      absA = absB;
+		      absB = remainder;
+		    } while (remainder.compareTo(BigDecimal.ZERO) > 0);
+		  
+		    return absA.multiply(BigDecimal.valueOf(a.signum() * b.signum()));
+	}
+	
+	/**
+	 * Least coomon Multiplier
+	 * 
+	 * lcm = |a.b| / gcd(a,b);
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	protected static BigDecimal lcm(BigDecimal a , BigDecimal b){
+		if (a.compareTo(BigDecimal.ZERO)==0 && b.compareTo(BigDecimal.ZERO)==0){
+			return BigDecimal.ZERO;
+		} 
+		
+		return a.multiply(b).abs().divide(gcd(a,b));
+	}
 	
 	 /**
-     * Compute x^exponent to a given scale.  Uses the same
-     * algorithm as class numbercruncher.mathutils.IntPower.
+     * Compute x^exponent to a given scale. 
+     * 
      * @param x the value x
      * @param exponent the exponent value
      * @param scale the desired scale of the result
@@ -113,17 +177,19 @@ class BigDecimalMath {
      * @param scale the desired scale of the result
      * @return the result value
      */
-    protected static BigDecimal exp(BigDecimal x, int scale)
-    {
+    protected static BigDecimal exp(BigDecimal x, int scale){
+    	
+    	scale++;
+    	
         // e^0 = 1
         if (x.signum() == 0) {
-            return BigDecimal.valueOf(1);
+            return BigDecimal.ONE;
         }
 
         // If x is negative, return 1/(e^-x).
         else if (x.signum() == -1) {
             return BigDecimal.valueOf(1)
-                        .divide(exp(x.negate(), scale), scale,
+                        .divide(exp(x.negate(),scale), scale,
                                 BigDecimal.ROUND_HALF_EVEN);
         }
 
@@ -143,10 +209,10 @@ class BigDecimalMath {
                                     BigDecimal.ROUND_HALF_EVEN));
 
         // t = e^z
-        BigDecimal t = expTaylor(z, scale);
+        BigDecimal t = expProductSerie(z, scale);
 
         BigDecimal maxLong = BigDecimal.valueOf(Long.MAX_VALUE);
-        BigDecimal result  = BigDecimal.valueOf(1);
+        BigDecimal result  = BigDecimal.ONE;
 
         // Compute and return t^whole using intPower().
         // If whole > Long.MAX_VALUE, then first compute products
@@ -159,7 +225,7 @@ class BigDecimalMath {
 
         }
         return result.multiply(intPower(t, xWhole.longValue(), scale))
-                        .setScale(scale, BigDecimal.ROUND_HALF_EVEN);
+                        .setScale(scale-1, BigDecimal.ROUND_HALF_EVEN);
     }
 
     /**
@@ -170,7 +236,7 @@ class BigDecimalMath {
      */
     private static BigDecimal expTaylor(BigDecimal x, int scale)
     {
-        BigDecimal factorial = BigDecimal.valueOf(1);
+        BigDecimal termial = BigDecimal.valueOf(1);
         BigDecimal xPower    = x;
         BigDecimal sumPrev;
 
@@ -186,11 +252,11 @@ class BigDecimalMath {
                         .setScale(scale, BigDecimal.ROUND_HALF_EVEN);
 
             // i!
-            factorial = factorial.multiply(BigDecimal.valueOf(i));
+            termial = termial.multiply(BigDecimal.valueOf(i));
 
             // x^i/i!
             BigDecimal term = xPower
-                                .divide(factorial, scale,
+                                .divide(termial, scale,
                                         BigDecimal.ROUND_HALF_EVEN);
 
             // sum = sum + x^i/i!
@@ -287,58 +353,10 @@ class BigDecimalMath {
         	}
         	
         	x = x.remainder(BigDecimal.valueOf(2*Math.PI));
-
-        	
-        	// |x| > 1
-        	if (x.compareTo(new BigDecimal("0.1257")) > 0){
-        		BigDecimal y = x.divide(BigDecimal.valueOf(5),BigDecimal.ROUND_HALF_EVEN);
-        		BigDecimal s = sin(y,scale);
-        		BigDecimal s3 = s.multiply(s).multiply(s);
-        		BigDecimal s5 = s3.multiply(s).multiply(s);
-        		return BigDecimal.valueOf(16).multiply(s5).subtract(BigDecimal.valueOf(20).multiply(s3))
-        		.add(BigDecimal.valueOf(5).multiply(s)).setScale(scale, BigDecimal.ROUND_HALF_EVEN);
-        	}
-        	
-        	
-            return sinTaylor(x, scale);
+  	
+            return sinProductSerie(x, scale + 1).setScale(scale, BigDecimal.ROUND_DOWN);
         }
 	}
-	
-	 private static BigDecimal sinTaylor(BigDecimal x, int scale){
-	        int     sp1     = scale + 1;
-	        int     i       = 3;
-	        boolean addFlag = false;
-
-	        BigDecimal power = x;
-	        BigDecimal sum   = x;
-	        BigDecimal term;
-
-	        // Convergence tolerance = (10^-(scale+1))
-	        BigDecimal tolerance = BigDecimal.ONE.movePointLeft(sp1);
-
-	        
-	        // taylor is 1- x^3/3! + x^5/5! - x^7/7! 
-	        // Loop until the approximations converge
-	        // (two successive approximations are within the tolerance).
-	
-	        do {
-	            // x^i
-	            power = x.pow(i);
-
-	            // (x^i)/i!
-	            term = power.divide(factorial(BigDecimal.valueOf(i)), sp1, BigDecimal.ROUND_HALF_EVEN);
-
-	            // sum = sum +- (x^i)/i!
-	            sum = addFlag ? sum.add(term) : sum.subtract(term);
-
-	            i += 2;
-	            addFlag = !addFlag;
-
-	        } while (term.compareTo(tolerance) > 0);
-
-	       // sum = sum.(scale,BigDecimal.ROUND_HALF_EVEN);
-	        return sum;
-	    }
 	
     /**
      * Compute the cos of x to a given scale, |x| < 1
@@ -348,6 +366,8 @@ class BigDecimalMath {
      */
     protected static BigDecimal cos(BigDecimal x, int scale){
 
+    	
+    	
         // If x is negative, return cos(-x).
         if (x.signum() == -1) {
             return cos(x.negate(), scale);
@@ -363,76 +383,78 @@ class BigDecimalMath {
         	
         	x = x.remainder(BigDecimal.valueOf(2*Math.PI));
         	  
-        	// |x| > 1
-        	if (x.compareTo(new BigDecimal("0.015")) > 0){
-        		BigDecimal y = x.divide(BigDecimal.valueOf(4),BigDecimal.ROUND_HALF_EVEN);
-        		BigDecimal c = cos(y,scale);
-        		BigDecimal c2 = c.multiply(c);
-        		BigDecimal c4 = c2.multiply(c2);
-        		return BigDecimal.valueOf(8).multiply(c4.subtract(c2)).add(BigDecimal.ONE)
-        					.setScale(scale, BigDecimal.ROUND_HALF_EVEN);
-        	}
-        	
-            return cosTaylor(x, scale);
+            return cosProductSerie(x, scale + 1 ).setScale(scale, BigDecimal.ROUND_DOWN);
         }
     }
     
-    static Map<BigDecimal, BigDecimal> factors = new HashMap<BigDecimal, BigDecimal>();
+    private static BigDecimal cosProductSerie(BigDecimal x, int scale){
     
-    static {
-    	factors.put(BigDecimal.ZERO, BigDecimal.ONE);
-    	factors.put(BigDecimal.ONE, BigDecimal.ONE);
-    	factors.put(BigDecimal.valueOf(2), BigDecimal.valueOf(2));
-    	
-    	factorial(BigDecimal.valueOf(12)); //fill the map
-    }
-    
-    private static BigDecimal factorial (BigDecimal x){
-    	if(x.signum() < 0 ){
-    		throw new IllegalArgumentException("Factorial is for positive values");
-    	} else {
-    		BigDecimal result = factors.get(x);
-    		if (result == null){
-    			result = x.multiply(factorial(x.subtract(BigDecimal.ONE)));
-    			factors.put(x, result);
-    		}
-    		return result;
-    	}
-    }
-    
-
-    private static BigDecimal cosTaylor(BigDecimal x, int scale){
-        int     sp1     = scale + 1;
-        int     i       = 2;
-        boolean addFlag = false;
-
-        BigDecimal power = x;
-        BigDecimal sum   = BigDecimal.ONE;
-        BigDecimal term;
-
-        // Convergence tolerance = (10^-(scale+1))
-        BigDecimal tolerance = BigDecimal.ONE.movePointLeft(sp1);
-
+        BigDecimal term = BigDecimal.ONE;  
+        BigDecimal result = BigDecimal.ZERO;
         
-        // taylor is 1-x^2/2! + x^4/4! - x^6/6! 
-        // Loop until the approximations converge
-        // (two successive approximations are within the tolerance).
-        do {
-            // x^i
-            power = x.pow(i);
+        result = result.add (term); 
+        
+        int n = 1;  
+        do {  
+            term = term.negate().multiply(x.multiply(x)).divide(new BigDecimal ((2 * n) * (2 * n - 1)), scale, RoundingMode.HALF_EVEN);  
+            n++;  
+            result = result.add (term);  
+        } while (term.abs().compareTo(term.ulp()) > 0);  
+        
+        return result;  
+    }
+    
+    private static BigDecimal expProductSerie(BigDecimal x, int scale){
+        
+        // exp(x) = 1 + x + x^2/2! + x^3/3! + ...
+    	
+        BigDecimal result = BigDecimal.ONE;
+        BigDecimal term = x;
 
-            // (x^i)/i!
-            term = power.divide(factorial(BigDecimal.valueOf(i)), sp1, BigDecimal.ROUND_HALF_EVEN);
+        result = result.add(term);
+        
+        int n = 2;  
+        do {  
+            term = term.multiply(x).divide(new BigDecimal (n), scale, RoundingMode.HALF_EVEN);  
+            n++;  
+            result = result.add (term);  
+        } while (term.abs().compareTo(term.ulp()) > 0);  
+        
+        return result;  
+    }
+    
+    private static BigDecimal sinProductSerie(BigDecimal x, int scale){
+        
+         
+        BigDecimal result = x;
+        BigDecimal term = x; 
+        
 
-            // sum = sum +- (x^i)/i!
-            sum = addFlag ? sum.add(term) : sum.subtract(term);
+        int n = 1;  
+        do {  
+            term = term.negate().multiply(x.multiply(x)).divide(new BigDecimal ((2 * n) * (2 * n + 1)), scale, RoundingMode.HALF_EVEN);  
+            n++;  
+            result = result.add (term);  
+        } while (term.abs().compareTo(term.ulp()) > 0);  
+        
+        return result;  
+    }
+    
+    private static BigDecimal arcTanProductSerie(BigDecimal x, int scale){
+        
+        // k_n = k_(n-1) * x*x (2n-1)/(2n+1)  
+        BigDecimal result = x;
+        BigDecimal term = x; 
+        
 
-            i += 2;
-            addFlag = !addFlag;
-
-        } while (term.compareTo(tolerance) > 0);
-
-        return sum;
+        int n = 1;  
+        do {  
+            term = term.negate().multiply(x.multiply(x)).multiply(new BigDecimal(2 * n - 1)).divide(new BigDecimal (2 * n + 1), scale, RoundingMode.HALF_EVEN);  
+            n++;  
+            result = result.add (term);  
+        } while (term.abs().compareTo(term.ulp()) > 0);  
+        
+        return result;  
     }
     
     /**
@@ -443,26 +465,34 @@ class BigDecimalMath {
      */
     protected static BigDecimal arctan(BigDecimal x, int scale) {
         // Check that |x| < 1.
-        if (x.abs().compareTo(BigDecimal.valueOf(1)) >= 0) {
-            throw new IllegalArgumentException("|x| >= 1");
+        if (x.abs().compareTo(BigDecimal.ONE) > 0) {
+        	//If |x| > 1, compute arctan(x) = pi/2 - arctan(1/x).
+        	return  BigDecimal.valueOf(Math.PI/2).subtract(arctan(BigDecimal.ONE.divide(x, scale,BigDecimal.ROUND_HALF_EVEN), scale));
+        }else if (x.abs().compareTo(BigDecimal.ONE) == 0) {
+        	return  BigDecimal.valueOf(Math.PI/4);
+        }else if (x.abs().compareTo(BigDecimal.ZERO) == 0) {
+        	return  BigDecimal.ZERO;
         }
 
         // If x is negative, return -arctan(-x).
         if (x.signum() == -1) {
             return arctan(x.negate(), scale).negate();
         } else {
-            return arctanTaylor(x, scale);
+            return arcTanProductSerie(x, scale + 1).setScale(scale, BigDecimal.ROUND_DOWN);
         }
     }
 
     /**
      * Compute the arctangent of x to a given scale
      * by the Taylor series, |x| < 1
+     * 
+     * arcTan (x) = x - x^3/ 3 + x^5/5 - x^7/7
      * @param x the value of x
      * @param scale the desired scale of the result
      * @return the result value
      */
     private static BigDecimal arctanTaylor(BigDecimal x, int scale) {
+
         int     sp1     = scale + 1;
         int     i       = 3;
         boolean addFlag = false;
@@ -495,6 +525,7 @@ class BigDecimalMath {
 
         } while (term.compareTo(tolerance) > 0);
 
+        // the sum as one extra digit
         return sum;
     }
 

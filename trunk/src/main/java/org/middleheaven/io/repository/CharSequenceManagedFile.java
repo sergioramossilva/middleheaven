@@ -84,7 +84,7 @@ public class CharSequenceManagedFile extends AbstractContentManagedFile implemen
 	}
 
 	@Override
-	public ManagedFile resolveFile(String filepath) {
+	public ManagedFile retrive(String filepath) {
 		return new UnexistantManagedFile(this,filepath);
 	}
 

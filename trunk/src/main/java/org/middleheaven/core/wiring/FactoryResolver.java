@@ -27,7 +27,13 @@ public final class FactoryResolver<T> implements Resolver<T> {
 
 		WiringModel model = binder.getWiringModel(type);
 		
-		Object instance = model.getConstructorPoint().construct(binder);
+		final ConstructorWiringPoint constructorPoint = model.getConstructorPoint();
+		
+		if(constructorPoint == null){
+			throw new ConfigurationException("Type " + type + " does not have a valid constructor");
+		}
+		
+		Object instance = constructorPoint.construct(binder);
 		
 
 		// TODO intercep // call PostCreate

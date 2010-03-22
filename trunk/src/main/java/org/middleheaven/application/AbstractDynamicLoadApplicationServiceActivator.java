@@ -105,21 +105,24 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Act
 
 		@Override
 		public void start() {
-			log.info("Scanning for applications");
-			this.setState(ApplicationCycleState.STOPED);
-			loadPresentModules();
-			log.info("Activating applications");
-			for (ApplicationModule module : appContext.modules()){
-				try {
-					module.load(appContext);
-				} catch (RuntimeException e){
-					log.error(e  , "Impossible to activate {0}" , module.getModuleID());
-					throw e;
+	
+			if (this.setState(ApplicationCycleState.STOPED)){
+				log.info("Scanning for applications");
+				loadPresentModules();
+				log.info("Activating applications");
+				for (ApplicationModule module : appContext.modules()){
+					try {
+						module.load(appContext);
+					} catch (RuntimeException e){
+						log.error(e  , "Impossible to activate {0}" , module.getModuleID());
+						throw e;
+					}
 				}
+				this.setState(ApplicationCycleState.LOADED);
+				this.setState(ApplicationCycleState.READY);
+				log.info("Applications ready");
 			}
-			this.setState(ApplicationCycleState.LOADED);
-			this.setState(ApplicationCycleState.READY);
-			log.info("Applications ready");
+			
 		}
 
 		@Override

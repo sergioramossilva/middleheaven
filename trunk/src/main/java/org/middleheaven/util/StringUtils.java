@@ -37,13 +37,22 @@ public class StringUtils {
 	}
 
 	public static String ensureEndsWith(String text, String suffix){
+		if(text==null){
+			return suffix;
+		}
+		
 		if (!text.endsWith(suffix)){
 			return text.concat(suffix);
 		} 
 		return text;
 	}
 	
+
 	public static String ensureStartsWith(String text, String prefix){
+		if(text==null){
+			return prefix;
+		}
+		
 		if (!text.startsWith(prefix)){
 			return prefix.concat(text);
 		} 

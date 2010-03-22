@@ -1,8 +1,7 @@
 package org.middleheaven.util.identity;
 
-import org.middleheaven.util.coersion.AbstractTypeCoersor;
 
-public class NumberIdentityCoersor<N extends Number> extends AbstractTypeCoersor<N, Identity> {
+public class NumberIdentityCoersor<N extends Number> extends AbstractIdentityCoersor<N> {
 
 	private Class<? extends Number> numberClass;
 

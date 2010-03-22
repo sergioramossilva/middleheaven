@@ -25,7 +25,7 @@ public class MetaInfApplicationServiceActivator extends AbstractDynamicLoadAppli
 
 		ManagedFile f =  getBootstrapService().getEnvironmentBootstrap().getContainer().getAppConfigRepository();
 
-		ManagedFile manifest = f.resolveFile("MANIFEST.MF");
+		ManagedFile manifest = f.retrive("MANIFEST.MF");
 
 		if (manifest.exists()){
 			BufferedReader reader = new BufferedReader(new InputStreamReader(manifest.getContent().getInputStream()));

@@ -44,7 +44,7 @@ public class WebConfigContext implements CulturalAttributeContext {
 		if ( value == null){
 			return null;
 		}
-		return TypeCoercing.convert(value, type);
+		return TypeCoercing.coerce(value, type);
 
 	}
 

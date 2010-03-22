@@ -5,7 +5,6 @@
 package org.middleheaven.core;
 
 
-import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
 
@@ -23,10 +22,21 @@ public interface  BootstrapContainer  {
     
     /**
      * 
-     * @return ManagedFile representing a folder where to read environment configuration classapth
+     * @return ManagedFile representing a folder where to read environment configuration 
      */
     public ManagedFile getEnvironmentConfigRepository();
     
+    /**
+     * 
+     * @return ManagedFile representing a folder where to read environment data 
+     */
+    public ManagedFile getEnvironmentDataRepository();
+    
+    /**
+     * 
+     * @return ManagedFile representing the aaplication's reference folder 
+     */
+    public ManagedFile getAppRootRepository();
     
     /**
      * 

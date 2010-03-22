@@ -16,7 +16,7 @@ public abstract class AbstractManagedFile implements ManagedFile{
 			if (other.getType()==ManagedFileType.FILE){
 				IOUtils.copy(this.getContent().getInputStream(), other.getContent().getOutputStream());
 			} else {
-				ManagedFile newFile = other.resolveFile(this.getName());
+				ManagedFile newFile = other.retrive(this.getName());
 				newFile.createFile();
 				IOUtils.copy(this.getContent().getInputStream(), newFile.getContent().getOutputStream());
 			}

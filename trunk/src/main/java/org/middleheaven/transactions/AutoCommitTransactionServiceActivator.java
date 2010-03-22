@@ -3,14 +3,13 @@ package org.middleheaven.transactions;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.tool.test.TestTransactionService;
 
-public class TestTransactionServiceActivator extends Activator {
+public class AutoCommitTransactionServiceActivator extends Activator {
 
 	
 	@Publish 
-	public TestTransactionService getTestTransactionService(){
-		return new TestTransactionService();
+	public AutoCommitTransactionService getTestTransactionService(){
+		return new AutoCommitTransactionService();
 	}
 	
 	@Override

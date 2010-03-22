@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 abstract class  DefaultApplicationLoadingCycle implements ApplicationLoadingCycle {
 
 	private Set<ApplicationCycleListener> listeners = new CopyOnWriteArraySet<ApplicationCycleListener>(); 
+	private ApplicationCycleState state = ApplicationCycleState.STOPED;
 	
 	@Override
 	public void addApplicationCycleListener(ApplicationCycleListener listener) {
@@ -17,8 +18,13 @@ abstract class  DefaultApplicationLoadingCycle implements ApplicationLoadingCycl
 		this.listeners.remove(listener);
 	}
 	
-	public void setState(ApplicationCycleState phase){
-		fireEvent(new ApplicationCycleEvent(phase));
+	public final boolean setState(ApplicationCycleState phase){
+		if ( state.canChangeTo(phase)){
+			state = phase;
+			fireEvent(new ApplicationCycleEvent(phase));
+			return true;
+		}
+		return false;
 	}
 	
 	private void fireEvent (ApplicationCycleEvent event){

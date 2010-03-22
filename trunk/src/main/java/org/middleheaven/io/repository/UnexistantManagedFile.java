@@ -70,8 +70,10 @@ public class UnexistantManagedFile extends AbstractContentManagedFile{
 	}
 
 	@Override
-	public ManagedFile resolveFile(String filepath) {
-		return new UnexistantManagedFile(this.parent,filepath);
+	public ManagedFile retrive(String filename) throws ManagedIOException {
+		return new UnexistantManagedFile(this,filename);
 	}
+
+
 
 }

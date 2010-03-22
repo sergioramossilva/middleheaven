@@ -1,4 +1,4 @@
-package org.middleheaven.managedio;
+package org.middleheaven.io;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +24,7 @@ public class ManagedIOTest {
 
 		assertTrue(folder.exists());
 		
-		ManagedFile testJar = folder.resolveFile("test.jar");
+		ManagedFile testJar = folder.retrive("test.jar");
 		
 		if (testJar.exists()){
 			testJar.delete();
@@ -38,7 +38,7 @@ public class ManagedIOTest {
 	    ManagedFile rep = ManagedFiles.resolveFile(new File(System.getProperty("user.home") + "/.m2/repository/junit/junit/4.1"));
 	    
 	    
-	    ManagedFile junitJar = rep.resolveFile("junit-4.1.jar");
+	    ManagedFile junitJar = rep.retrive("junit-4.1.jar");
 	    
 	    junitJar.copyTo(testJar);
 	    
@@ -57,7 +57,7 @@ public class ManagedIOTest {
 	
 		   ManagedFile rep = ManagedFiles.resolveFile(new File(System.getProperty("user.home") + "/.m2/repository/junit/junit/4.1"));
 		    
-		    ManagedFile junitJar = rep.resolveFile("junit-4.1.jar");
+		    ManagedFile junitJar = rep.retrive("junit-4.1.jar");
 
 		    assertTrue(junitJar.getType().hasContent());
 		    assertTrue(junitJar.getType().hasChildren());
@@ -67,13 +67,13 @@ public class ManagedIOTest {
 		   assertFalse(junitJar.children().isEmpty());
 		   
 		   // Extract
-		   ManagedFile manifest = junitJar.resolveFile("META-INF/MANIFEST.MF");
+		   ManagedFile manifest = junitJar.retrive("META-INF/MANIFEST.MF");
 		   
 		   ManagedFile frep = ManagedFiles.resolveFile(new File("."));
 		   
 		   manifest.copyTo(frep);
 		   
-		   ManagedFile manifestCopy = frep.resolveFile("MANIFEST.MF");
+		   ManagedFile manifestCopy = frep.retrive("MANIFEST.MF");
 		   
 		   assertTrue(manifestCopy.exists());
 		   
@@ -91,14 +91,14 @@ public class ManagedIOTest {
 		assertTrue(rep.isReadable());
 		assertTrue(rep.isWriteable());
 		
-		ManagedFile faq = rep.resolveFile("faq.html");
-		ManagedFile xxx = rep.resolveFile("xxx.html");
+		ManagedFile faq = rep.retrive("faq.html");
+		ManagedFile xxx = rep.retrive("xxx.html");
 		
 		assertTrue(faq.exists());
 		assertFalse(xxx.exists());
 	
 		
-		ManagedFile localFaq = localRep.resolveFile("faq.html");
+		ManagedFile localFaq = localRep.retrive("faq.html");
 		localFaq.createFile();
 		
 		assertTrue(localFaq.exists());
@@ -123,5 +123,7 @@ public class ManagedIOTest {
 
 
 	}
+	
+	
 	
 }

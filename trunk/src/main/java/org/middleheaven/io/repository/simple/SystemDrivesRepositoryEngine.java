@@ -1,33 +1,44 @@
 package org.middleheaven.io.repository.simple;
 
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
+
+import java.io.File;
+import java.net.URI;
+
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileResolver;
 import org.middleheaven.io.repository.RepositoryCreationException;
 import org.middleheaven.io.repository.RepositoryEngine;
-import org.middleheaven.io.repository.vfs.VirtualFileSystemManagedFile;
+import org.middleheaven.io.repository.UnsupportedSchemeException;
 
 public class SystemDrivesRepositoryEngine implements RepositoryEngine {
+
+	private SystemDrivesEngineManagedFileResolver resolver = new SystemDrivesEngineManagedFileResolver();
 
 
 	@Override
 	public ManagedFileResolver getManagedFileResolver() throws RepositoryCreationException {
-		return new ManagedFileResolver(){
+		return resolver;
+	}
 
-			@Override
-			public ManagedFile resolveFile(String filepath) {
-				try {
-					FileObject file = VFS.getManager().resolveFile(filepath);
-					
-					return new VirtualFileSystemManagedFile(file);
-				} catch (FileSystemException e) {
-					throw new RepositoryCreationException(e);
-				}
+	
+	private class SystemDrivesEngineManagedFileResolver implements ManagedFileResolver{
+
+		DiskFileManagedRepository diskFileManagedRepository;
+		
+		private SystemDrivesEngineManagedFileResolver(){
+			diskFileManagedRepository  = DiskFileManagedRepository.repository();
+		}
+
+		@Override
+		public ManagedFile resolveURI(URI uri) {
+			if (uri.getScheme().equals("file")){
+				return diskFileManagedRepository.resolveURI(uri);
+			} else {
+				throw new UnsupportedSchemeException(uri.getScheme() + " is not supported by " + SystemDrivesRepositoryEngine.class.getName());
 			}
 			
-		};
+		}
+		
 	}
 
 }

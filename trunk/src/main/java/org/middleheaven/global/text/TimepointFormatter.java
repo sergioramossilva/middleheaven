@@ -34,6 +34,10 @@ public class TimepointFormatter implements Formatter<TimePoint> {
 	}
 
 	public String format(TimePoint value,Format format) {
+		if( value == null){
+			return "";
+		}
+		
 		Date date = TimeUtils.toDate(value);
 		DateFormat formater=null;
 		switch (format){

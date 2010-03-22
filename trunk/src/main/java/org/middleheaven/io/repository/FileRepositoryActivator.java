@@ -33,12 +33,15 @@ public class FileRepositoryActivator extends Activator {
 	public void activate(ActivationContext context) {
 		BootstrapContainer container = bootstrapService.getEnvironmentBootstrap().getContainer(); 
 
-		fileRepositoryService.registerRepository(CommonRepositories.DATA, container.getAppDataRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_DATA, container.getAppDataRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_CLASSPATH, container.getAppClasspathRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_ROOT, container.getAppRootRepository());
 		fileRepositoryService.registerRepository(CommonRepositories.APP_CONFIGURATION, container.getAppConfigRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_LOG, container.getAppLogRepository());
+		
 		fileRepositoryService.registerRepository(CommonRepositories.ENV_CONFIGURATION, container.getEnvironmentConfigRepository());
-		fileRepositoryService.registerRepository(CommonRepositories.LOG, container.getAppLogRepository());
-
-
+		fileRepositoryService.registerRepository(CommonRepositories.ENV_DATA, container.getEnvironmentConfigRepository());
+		
 	}
 
 	@Override

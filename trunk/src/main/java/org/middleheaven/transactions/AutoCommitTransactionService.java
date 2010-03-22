@@ -1,4 +1,4 @@
-package org.middleheaven.tool.test;
+package org.middleheaven.transactions;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,17 +7,15 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.middleheaven.transactions.Transaction;
-import org.middleheaven.transactions.TransactionService;
 
-public class TestTransactionService implements TransactionService {
+public class AutoCommitTransactionService implements TransactionService {
 
 	Set<XAResource> xar = new HashSet<XAResource>();
 	ThreadLocal<Transaction> local = new ThreadLocal<Transaction>();
 
 	
-	public TestTransactionService(){
-		System.out.println("oi");
+	public AutoCommitTransactionService(){
+	
 	}
 	
 	@Override
@@ -123,7 +121,7 @@ public class TestTransactionService implements TransactionService {
 	}
 
 	@Override
-	public boolean haveTransaction() {
+	public boolean isTransactional() {
 		return local.get() != null;
 	}
 }

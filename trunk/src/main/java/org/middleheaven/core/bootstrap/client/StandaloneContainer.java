@@ -34,21 +34,31 @@ public class StandaloneContainer implements BootstrapContainer {
     }
 
     public ManagedFile getAppConfigRepository() {
-        return repository.resolveFile("META-INF");
+        return repository.retrive("META-INF");
     }
 
     public ManagedFile getAppDataRepository() {
-        return repository.resolveFile("data");
+        return repository.retrive("data");
     }
 
     public ManagedFile getAppLogRepository() {
-        return repository.resolveFile("logs");
+        return repository.retrive("logs");
     }
 
     public ManagedFile getAppClasspathRepository() {
-        return repository.resolveFile("bin");
+        return repository.retrive("bin");
     }
     
+	@Override
+	public ManagedFile getEnvironmentDataRepository() {
+		 return repository.retrive("data");
+	}
+	
+	@Override
+	public ManagedFile getAppRootRepository() {
+		return repository;
+	}
+	
     public void init(WiringService wiringService){}
 
     @Override
@@ -56,4 +66,8 @@ public class StandaloneContainer implements BootstrapContainer {
 
 	@Override
 	public void stop() {}
+
+
+
+
 }

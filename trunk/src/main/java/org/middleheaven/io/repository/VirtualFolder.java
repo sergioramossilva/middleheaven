@@ -113,7 +113,7 @@ public class VirtualFolder extends AbstractContainerManagedFile  {
 
 
 	@Override
-	public ManagedFile resolveFile(String filepath) {
+	public ManagedFile retrive(String filepath) {
 		return this.files.get(filepath);
 	}
 

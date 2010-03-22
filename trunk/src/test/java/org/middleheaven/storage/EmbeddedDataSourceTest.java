@@ -16,7 +16,7 @@ public class EmbeddedDataSourceTest {
 	public void test(){
 		
 		ManagedFile vfs =  ManagedFiles.resolveFile(new File("."));
-		ManagedFile dataFolder = vfs.resolveFile("data/db");
+		ManagedFile dataFolder = vfs.retrive("data/db");
 		if (!dataFolder.exists()){
 			dataFolder.createFolder();
 		}
