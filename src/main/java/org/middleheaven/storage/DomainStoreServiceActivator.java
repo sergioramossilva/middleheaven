@@ -8,6 +8,7 @@ import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.transactions.TransactionService;
 
 public class DomainStoreServiceActivator extends Activator {
 
@@ -22,6 +23,11 @@ public class DomainStoreServiceActivator extends Activator {
 	@Wire
 	public void setWiringService(WiringService wiringService){
 		this.wiringService = wiringService;
+	}
+	
+	@Wire
+	public void setTransactionService(TransactionService transactionService){
+		// just force the transaction service to be present
 	}
 	
 	@Override

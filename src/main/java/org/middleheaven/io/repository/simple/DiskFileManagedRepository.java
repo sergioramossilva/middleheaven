@@ -1,22 +1,26 @@
 package org.middleheaven.io.repository.simple;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.AbstractManagedRepository;
+import org.middleheaven.io.repository.FileNotFoundManagedException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.ManagedFileResolver;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.UnexistantManagedFile;
+import org.middleheaven.io.repository.UnsupportedSchemeException;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
-public class DiskFileManagedRepository extends AbstractManagedRepository implements QueryableRepository{
+public class DiskFileManagedRepository extends AbstractManagedRepository implements ManagedFileResolver , QueryableRepository{
 
 
-	public static ManagedFileRepository repository(){
+	public static DiskFileManagedRepository repository(){
 		return new DiskFileManagedRepository();
 	}
 
@@ -27,18 +31,38 @@ public class DiskFileManagedRepository extends AbstractManagedRepository impleme
 	private DiskFileManagedRepository(){
 
 	}
+	
+	@Override
+	public ManagedFile resolveURI(URI uri) throws UnsupportedSchemeException {
+		if (uri.getScheme().equals("file")){
+			return retriveFromFile(new File(uri));
+		} else {
+			throw new UnsupportedSchemeException(uri.getScheme() + " is not supported");
+		}
+	}
+	
+	protected boolean isDriveRoot(File file){
 
+		return file.getParentFile() == null;
+	}
+
+	protected ManagedFile retriveFromFile(File file){
+		if (isDriveRoot(file)){
+			File[] roots = File.listRoots();
+			for (File  root : roots){
+				if (root.equals(file)){
+					return new DiskManagedFile(null,root);
+				}
+			}
+			throw new FileNotFoundManagedException(file.getAbsolutePath());
+		} else {
+			return new DiskManagedFile(null,file);
+		}
+	}
+	
 	@Override
 	public ManagedFile retrive(String filename) throws ManagedIOException {
-		File file = new File(filename);
-		File[] roots = File.listRoots();
-		for (File  root : roots){
-			if (root.equals(file)){
-				return new DiskManagedFile(null,root);
-			}
-		}
-		// TODO iner search
-		return new UnexistantManagedFile(null, filename);
+		return retriveFromFile(new File(filename));
 	}
 
 	@Override
@@ -63,7 +87,9 @@ public class DiskFileManagedRepository extends AbstractManagedRepository impleme
 		return CollectionUtils.enhance(result);
 	}
 
-	
+
+
+
 
 
 

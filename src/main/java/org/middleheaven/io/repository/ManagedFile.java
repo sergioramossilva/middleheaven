@@ -14,7 +14,7 @@ import org.middleheaven.util.collections.TreeWalkable;
 /**
  * A common abstract for all types of files : disk files, url addresses, uploaded files, email attachments, etc ...
  */
-public interface ManagedFile extends ManagedFileResolver , TreeWalkable<ManagedFile>{
+public interface ManagedFile extends TreeWalkable<ManagedFile>{
 
 	
 	public String getText();
@@ -58,6 +58,13 @@ public interface ManagedFile extends ManagedFileResolver , TreeWalkable<ManagedF
 	
 	public URL getURL();
 	
+	 /**
+     * Retrives a ManagedFile representing the file with the specified name who's parent is {@code  this}
+     * @param the file name (name and extention)
+     * @return 
+     */
+    public abstract ManagedFile retrive(String filename) throws ManagedIOException;
+
 
     public String getName();
     

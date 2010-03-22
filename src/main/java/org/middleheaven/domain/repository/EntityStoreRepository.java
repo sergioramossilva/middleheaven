@@ -17,8 +17,8 @@ public class EntityStoreRepository<E> extends AbstractRepository<E>  {
 	private DataStorageListener storageListener;
 	private EntityStoreService entityStoreService;
 
-	public EntityStoreRepository(Class<E> entityType,EntityStoreService entityStoreService){
-		this.entityType = entityType;
+	public EntityStoreRepository(EntityStoreService entityStoreService){
+		this.entityType = this.getEntityClass();
 		this.entityStoreService = entityStoreService;
 	}
 

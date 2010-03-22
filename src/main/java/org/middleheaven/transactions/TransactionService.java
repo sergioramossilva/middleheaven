@@ -13,8 +13,16 @@ public interface TransactionService {
 	 */
 	void enlistResource(XAResource xaResource);
 
+	/**
+	 * Obtains the current transaction
+	 * @return the current transaction
+	 */
 	Transaction getTransaction();
 
-	boolean haveTransaction();
+	/**
+	 * 
+	 * @return 
+	 */
+	boolean isTransactional();
 
 }

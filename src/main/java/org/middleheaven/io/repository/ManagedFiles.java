@@ -27,11 +27,11 @@ public class ManagedFiles {
 	}
 	
 	public static ManagedFile resolveFile(URI uri){
-		return engine.getManagedFileResolver().resolveFile(uri.toString());
+		return engine.getManagedFileResolver().resolveURI(uri);
 	}
 	
 	public static ManagedFile resolveFile(File file){
-		return engine.getManagedFileResolver().resolveFile(file.toURI().toString());
+		return engine.getManagedFileResolver().resolveURI(file.toURI());
 	}
 
 }

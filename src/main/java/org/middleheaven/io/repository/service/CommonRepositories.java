@@ -1,7 +1,4 @@
-/*
- * Created on 2006/11/02
- *
- */
+
 package org.middleheaven.io.repository.service;
 
 /**
@@ -9,18 +6,20 @@ package org.middleheaven.io.repository.service;
  * This class implements <code>CharSequence</code> so it can 
  * be used in FileReposity Service to retrieve repositories.
  * 
- * @author Sergio M. M. Taborda 
  *
  */
 public enum CommonRepositories implements CharSequence{
 
-    IMAGE, // Image repository
-    DATA, // Data repository. Generic repository
-    TEMP_DATA, // Temporary Data Repository
+    APP_IMAGE, // Image repository
+    APP_ROOT, // Root repository
+    APP_DATA, // Data repository. Generic repository
+    APP_CONFIG, // Application Configuration
+    APP_TEMP_DATA, // Temporary Data Repository
     APP_CONFIGURATION, // Application Configuration Repository
     ENV_CONFIGURATION, // Execution Environment Configuration Repository
-    LOG; // Log Repository
-
+    ENV_DATA,
+    APP_LOG, // Log Repository
+    APP_CLASSPATH; // Class repository
     
     public char charAt(int index) {
         return this.toString().charAt(index);

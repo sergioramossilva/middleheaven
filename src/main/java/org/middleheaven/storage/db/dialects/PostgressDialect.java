@@ -32,6 +32,10 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 			StorableModelReader reader) {
 		return new PostgressCriteriaInterpreter(this, criteria, reader);
 	}
+	
+	protected void appendInlineCreateTableColumnPrimaryKeyConstraint(Clause sql, String constraintName){
+		sql.append(" CONSTRAINT PK_").append(constraintName).append(" PRIMARY KEY ");
+	}
 
 	@Override
 	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {

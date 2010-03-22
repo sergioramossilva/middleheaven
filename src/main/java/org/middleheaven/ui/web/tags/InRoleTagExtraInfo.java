@@ -14,7 +14,7 @@ public class InRoleTagExtraInfo extends TagExtraInfo {
 		
 		String exportedName = (String) data.getAttribute("var");
 
-		rc[0] = new VariableInfo(exportedName, "java.lang.Object", true , VariableInfo.AT_BEGIN);
+		rc[0] = new VariableInfo(exportedName, "java.lang.Boolean", true , VariableInfo.AT_BEGIN);
 
 	
 		return rc;

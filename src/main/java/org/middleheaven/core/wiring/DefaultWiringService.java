@@ -38,9 +38,6 @@ import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
 import org.middleheaven.logging.ListLogBookWriter;
 import org.middleheaven.logging.LogBook;
-import org.middleheaven.logging.LogBookWriter;
-import org.middleheaven.logging.Log;
-import org.middleheaven.logging.LoggingEvent;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.LoggingService;
 import org.middleheaven.logging.WritableLogBook;
@@ -52,7 +49,6 @@ public class DefaultWiringService implements WiringService{
 	private final PropertyResolver<Object> propertyResolver = new PropertyResolver<Object>();
 	private final Set<ActivatorDependencyResolver> resolvers = new CopyOnWriteArraySet<ActivatorDependencyResolver>();
 
-	private final Collection<Class<? extends Activator>> activatorsTypes = new HashSet<Class<? extends Activator>>();
 	private final List<Activator> activators = new ArrayList<Activator>();
 
 	private final Set<ActivatorScanner> scanners = new HashSet<ActivatorScanner>();
@@ -62,20 +58,7 @@ public class DefaultWiringService implements WiringService{
 	private final Map<String,Class<? extends ScopePool>> scopes = new TreeMap<String,Class<? extends ScopePool>>();
 	private final Map<String, ScopePool> scopePools = new TreeMap<String,ScopePool>();
 
-	private ActivatorScannerListener listener = new ActivatorScannerListener(){
 
-		@Override
-		public void onActivatorLost(ActivatorScannerEvent event) {
-			// TODO implement DeployableScannerListener.onDeployableLost
-
-		}
-
-		@Override
-		public void onActivatorFound(ActivatorScannerEvent event) {
-			activatorsTypes.add(event.getActivatorType());
-		}
-
-	};
 
 
 	public DefaultWiringService(){
@@ -246,7 +229,7 @@ public class DefaultWiringService implements WiringService{
 				try{
 					// resolve scope 
 					ScopePool scopePool = getScopePool(binding);
-					
+
 
 					// get resolver
 					Resolver<T> resolver = binding.getResolver();
@@ -258,7 +241,7 @@ public class DefaultWiringService implements WiringService{
 					T obj = scopePool.getInScope(query, interceptorResolver);
 
 					wireMembers(obj);
-	
+
 					stack.remove(key);
 					// check if there is any proxy to complete
 					CyclicProxy proxy = cyclicProxies.get(key);
@@ -281,7 +264,7 @@ public class DefaultWiringService implements WiringService{
 				obj = a.writeAtPoint(binder, obj);
 			}
 		}
-		
+
 		@Override
 		public void removeBinding(Binding binding) {
 			bindings.remove(binding.getKey());
@@ -307,7 +290,7 @@ public class DefaultWiringService implements WiringService{
 				scopePool = getInstance(WiringSpecification.search(scopeClass));
 				scopePools.put(scopeClass.getName(), scopePool);
 			}
-			
+
 			return scopePool;
 		}
 
@@ -344,7 +327,7 @@ public class DefaultWiringService implements WiringService{
 		}
 
 	}
-	
+
 
 
 	public void addActivatorDependencyResolver(ActivatorDependencyResolver listener) {
@@ -355,36 +338,102 @@ public class DefaultWiringService implements WiringService{
 		resolvers.remove(listener);
 	}
 
+	@Override
+	public void addConnector(WiringConnector... connectors) {
+		for (WiringConnector c : connectors){
+			c.connect(binder);
+		}
+	}
+
+	boolean scanEarly = false;
+
+	@Override
+	public void removeActivatorScanner(ActivatorScanner scanner) {
+		scanners.remove(scanner);
+
+	}
+
+	@Override
+	public void addActivatorScanner(ActivatorScanner scanner) {
+		scanners.add(scanner);
+
+		if(scanEarly){
+			doScan(scanner, new ArrayList<UnitActivatorDepedencyModel>(1));
+		}
+	}
 
 	public void scan(){
+
+		final Collection<UnitActivatorDepedencyModel> dependencyModels = new HashSet<UnitActivatorDepedencyModel>();
+
 		for (ActivatorScanner scanner : scanners){
-			scanner.scan(this);
+			doScan(scanner, dependencyModels);
 		}
 
+		resolveDependencies(dependencyModels);
 
-		List<UnitActivatorDepedencyModel> models = new ArrayList<UnitActivatorDepedencyModel>(activatorsTypes.size());
+		scanEarly = true;
 
-		for (Class<? extends Activator> activatorType : activatorsTypes){
-			UnitActivatorDepedencyModel model = new UnitActivatorDepedencyModel();
+	}
+
+	private static class ScanActivatorScannerListener implements ActivatorScannerListener{
+
+		public Collection<Class<? extends Activator>> activatorTypes = new LinkedList<Class<? extends Activator>>();
+
+		@Override
+		public void onActivatorFound(ActivatorScannerEvent event) {
+			activatorTypes.add(event.getActivatorType());
+		}
+
+		@Override
+		public void onActivatorLost(ActivatorScannerEvent event) {}
+
+	}
+
+	private void doScan(ActivatorScanner scanner, final Collection<UnitActivatorDepedencyModel> dependencyModels){
+		final ScanActivatorScannerListener listener = new ScanActivatorScannerListener();
+
+
+		scanner.addScannerListener(listener);
+		scanner.scan(this);
+
+		for (Class<? extends Activator> activatorType : listener.activatorTypes){
+			UnitActivatorDepedencyModel model = new UnitActivatorDepedencyModel(activatorType);
+
 			for (ActivatorDependencyResolver resolver : this.resolvers){
+
 				resolver.resolveDependency(activatorType, model);
 			}
-			models.add(model);
+			dependencyModels.add(model);
 		}
-	
+
+		if (scanEarly){
+			resolveDependencies(dependencyModels);
+		}
+	}
+
+
+
+	private void resolveDependencies(Collection<UnitActivatorDepedencyModel> dependencyModels){
+
 		ListLogBookWriter writer = new ListLogBookWriter();
 		WritableLogBook bookProxy = new WritableLogBook("proxy", LoggingLevel.ALL).addWriter(writer);
-		
+
 		final DependencyResolver dependencyResolver = new DependencyResolver(bookProxy);
-		dependencyResolver.resolve(models, new StarterMy());
-		
+		dependencyResolver.resolve(dependencyModels, new StarterMy());
+
 		final LogBook book = this.getObjectPool().getInstance(LoggingService.class).getLogBook(this.getClass().getName());
-		
+
 		writer.writeTo(book);
 	}
 
-	
+
+
 	class StarterMy implements Starter<UnitActivatorDepedencyModel>{
+
+
+
+		public StarterMy(){}
 
 
 		private Activator startActivator(UnitActivatorDepedencyModel model){
@@ -395,7 +444,7 @@ public class DefaultWiringService implements WiringService{
 			for (AfterWiringPoint a : model.getAfterPoints()){
 				a.writeAtPoint(binder, activator);
 			}
-			
+
 			// activate
 			activator.activate(new ActivationContext(){});
 
@@ -406,19 +455,18 @@ public class DefaultWiringService implements WiringService{
 				if (object !=null){
 					ScoopingModel scoopingModel = binder.getScoopingModel(object);
 					scoopingModel.addParams(pp.getParams());
-					
+
 					scoopingModel.addToScope(binder,object);
 				}
 
 			}
-			
+
 			return activator;
 		}
-		
+
 		@Override
-		public void inicialize(UnitActivatorDepedencyModel model)
-		throws InicializationNotResolvedException,
-		InicializationNotPossibleException {
+		public void inicialize(UnitActivatorDepedencyModel model) 
+		throws InicializationNotResolvedException, InicializationNotPossibleException {
 
 			try{
 				Activator activator = startActivator(model); 
@@ -426,7 +474,7 @@ public class DefaultWiringService implements WiringService{
 				// add activator to context for future inactivation
 				activators.add(activator);
 			}catch (BindingException e){
-					throw new InicializationNotResolvedException();
+				throw new InicializationNotResolvedException();
 			}catch (RuntimeException e){
 				throw new InicializationNotPossibleException(e);
 			}
@@ -449,43 +497,26 @@ public class DefaultWiringService implements WiringService{
 		}
 
 		@Override
-		public List<UnitActivatorDepedencyModel> sort(List<UnitActivatorDepedencyModel> dependencies) {
-			
-			Collections.sort(dependencies, new Comparator<UnitActivatorDepedencyModel>(){
+		public List<UnitActivatorDepedencyModel> sort(Collection<UnitActivatorDepedencyModel> dependencies) {
+
+			List<UnitActivatorDepedencyModel> list = new ArrayList<UnitActivatorDepedencyModel>(dependencies);
+
+			Collections.sort(list, new Comparator<UnitActivatorDepedencyModel>(){
 
 				@Override
 				public int compare(UnitActivatorDepedencyModel a,
 						UnitActivatorDepedencyModel b) {
 					return a.getAfterPoints().size() - b.getAfterPoints().size();
 				}
-				
+
 			});
-			
-			return dependencies;
+
+			return list;
 		}
 
 
 	}
 
-	@Override
-	public void addConnector(WiringConnector... connectors) {
-		for (WiringConnector c : connectors){
-			c.connect(binder);
-		}
-	}
-
-	@Override
-	public void addActivatorScanner(ActivatorScanner scanner) {
-		scanners.add(scanner);
-		scanner.addScannerListener(listener);
-	}
-
-
-	@Override
-	public void removeActivatorScanner(ActivatorScanner scanner) {
-		scanners.remove(scanner);
-		scanner.removeScannerListener(listener);
-	}
 
 
 }

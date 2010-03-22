@@ -9,6 +9,9 @@ public class WiringModel {
 	private ConstructorWiringPoint point;
 	private final Collection<AfterWiringPoint> afterpoints = new HashSet<AfterWiringPoint>();
 	
+	
+	public WiringModel(){}
+	
 	public ConstructorWiringPoint getConstructorPoint(){
 		return point;
 	}

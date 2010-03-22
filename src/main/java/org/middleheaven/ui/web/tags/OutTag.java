@@ -10,6 +10,8 @@ import javax.servlet.jsp.JspTagException;
 import org.middleheaven.global.text.TimepointFormatter.Format;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimeUtils;
+import org.middleheaven.util.coersion.TypeCoercing;
+import org.middleheaven.util.identity.Identity;
 
 public class OutTag extends AbstractTagSupport {
 	
@@ -17,12 +19,20 @@ public class OutTag extends AbstractTagSupport {
 	private Object value;
 	private int start = 0;
 	private int end = -1;
-	
+	private String exportName = "";
 	
 	public void setValue(Object value) {
 		this.value = value;
 	}
-
+	
+	public void setExportTo(String exportName){
+		this.exportName = exportName;
+	}
+	
+	public String getExportTo(){
+		return this.exportName;
+	}
+	
 	public void setStart(int value){
 		this.start = value;
 	}
@@ -38,7 +48,12 @@ public class OutTag extends AbstractTagSupport {
 			str = str.substring(start);
 		}
 		
-		pageContext.getOut().print(str);
+		if (exportName.isEmpty()){
+			pageContext.getOut().print(str);
+		} else {
+			pageContext.setAttribute(exportName, str);
+		}
+		
 	}
 	
 	public int doStartTag() throws JspException {
@@ -52,7 +67,8 @@ public class OutTag extends AbstractTagSupport {
 				print(localize(((CalendarDateTime)value),Format.DATE_AND_TIME));
 			} else if (double.class.isInstance(value)||Double.class.isInstance(value)) {
 				print(localize(new Double(value.toString())));
-			
+			} else if (value instanceof Identity){
+				print(TypeCoercing.coerce(value, String.class));
 			} else if (value != null) {
 				print(value.toString());
 			}

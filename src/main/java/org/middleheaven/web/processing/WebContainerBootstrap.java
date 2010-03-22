@@ -38,10 +38,8 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 		
 		try{
 			
-
 			start(
 					new WritableLogBook("",LoggingLevel.ALL)
-					.addWriter(new ConsoleLogWriter())
 					.addWriter(new ServletContextLogBookWriter(servletContext))
 			);
 

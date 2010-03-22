@@ -25,22 +25,32 @@ public class TestContainer implements BootstrapContainer {
     public ManagedFile getEnvironmentDeployRepository() {
         return getAppConfigRepository();
     }
-
+    
+    @Override
+	public ManagedFile getAppRootRepository() {
+		return repository;
+	}
+    
     public ManagedFile getAppConfigRepository() {
-        return repository.resolveFile("META-INF");
+        return repository.retrive("META-INF");
     }
 
     public ManagedFile getAppDataRepository() {
-        return repository.resolveFile("data");
+        return repository.retrive("data");
     }
 
     public ManagedFile getAppLogRepository() {
-        return repository.resolveFile("logs");
+        return repository.retrive("logs");
     }
 
     public ManagedFile getAppClasspathRepository() {
         return repository;
     }
+    
+    @Override
+	public ManagedFile getEnvironmentDataRepository() {
+    	  return repository.retrive("data");
+	}
     
 	@Override
 	public void start() {
@@ -59,5 +69,9 @@ public class TestContainer implements BootstrapContainer {
 		// TODO implement BootstrapContainer.init
 		
 	}
+
+	
+
+	
 
 }

@@ -74,8 +74,8 @@ public class BufferedMediaVirtualFile extends AbstractContentManagedFile impleme
 
 
 	@Override
-	public ManagedFile resolveFile(String filepath) {
-		return null;
+	public ManagedFile retrive(String filename) {
+		return new UnexistantManagedFile(this,filename);
 	}
 
 	@Override

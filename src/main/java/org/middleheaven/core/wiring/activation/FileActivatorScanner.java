@@ -33,9 +33,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 	private WiringService wiringService;
 	
 	public FileActivatorScanner(ManagedFile file, String ... filePatterns){
-		if(file.getType().isFolder() && !file.isWatchable()){
-			throw new IllegalArgumentException("Can only scan watchable folders or single files");
-		}
+		
 		this.root = file;
 		for (String pattern : filePatterns){
 			this.filePatterns.add(Pattern.compile(pattern));
@@ -85,7 +83,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 
 		for (ManagedFile file : allFiles){
 			loadModuleFromFile(wiringService,file , activators);
-			if(wr!=null){
+			if(wr != null){
 				wr.addFileChangelistener(fileChangeListener, root);
 			}
 		}

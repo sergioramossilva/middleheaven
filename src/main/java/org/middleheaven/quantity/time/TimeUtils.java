@@ -29,13 +29,15 @@ public final class TimeUtils {
 	}
 	
 	public static Date toDate(TimePoint date){
-		return new Date(date.milliseconds());
+		return date == null ? null:  new Date(date.milliseconds());
 	}
 	
 	public static CalendarDateTime from(Object value) {
 		final long time;
 		
-		if (value instanceof Date) {
+		if(value == null){
+			return null;
+		} else if (value instanceof Date) {
 			time = ((Date)value).getTime();				
 		} else if (value instanceof Calendar) {
 			time = ((Calendar)value).getTime().getTime();

@@ -8,7 +8,7 @@ public class StringUtilsTest {
 
 	
 	@Test
-	public void textSimplePattern(){
+	public void testSimplePattern(){
 		
 		String phrase = "MiddleHeaven is the best framework";
 		
@@ -16,4 +16,6 @@ public class StringUtilsTest {
 		assertTrue(StringUtils.simplePatternMatch("MiddleHeaven*", phrase));
 		assertTrue(StringUtils.simplePatternMatch("*best*", phrase));
 	}
+	
+
 }

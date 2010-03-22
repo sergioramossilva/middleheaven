@@ -1,5 +1,7 @@
 package org.middleheaven.ui.web.tags;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,9 +24,23 @@ public class MessageLocalizationTag extends AbstractTagSupport {
 		this.key = key;
 	}
 
+	public void setParams(Object params){
+		if (params instanceof String){
+			if (params.toString().contains(",")){
+				this.params.addAll(Arrays.asList(params.toString().split(",")));
+			} else {
+				this.params.add(params);
+			}
+		} else if (params instanceof Collection){
+			this.params.addAll((Collection)params);
+		} else if (params.getClass().isArray()){
+			this.params.addAll(Arrays.asList((Object[])params));
+		} else {
+			this.params.add(params);
+		}
+	}
 
 	public int doStartTag() {
-		params.clear();
 		return EVAL_BODY_INCLUDE;
 
 	}
@@ -35,8 +51,6 @@ public class MessageLocalizationTag extends AbstractTagSupport {
 
 		paramsObj = params.toArray(paramsObj);			
 
-
-
 		if(scope==null) {
 			write(localize(new GlobalLabel( key,paramsObj), null));
 		} else {
@@ -46,7 +60,8 @@ public class MessageLocalizationTag extends AbstractTagSupport {
 		return EVAL_PAGE;
 	}
 
-	protected void addParam(Object obj) {
+	// used by MessageLocationParam
+	void addParam(Object obj) {
 		params.add(obj);
 	}
 	

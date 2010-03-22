@@ -95,7 +95,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 			if( value == null && getValueType().isPrimitive()){
 				return; // does not set it
 			} else {
-				value = TypeCoercing.convert(value,getValueType());
+				value = TypeCoercing.coerce(value,getValueType());
 				if (modifier != null){
 					
 					modifier.invoke(target, new Object[]{value});

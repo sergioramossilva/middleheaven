@@ -37,10 +37,10 @@ public class LoggingActivator extends Activator {
 		LoggingConfiguration configuration = new LoggingConfiguration(null);
 
 		if (configFolder!=null && configFolder.exists() && configFolder.isReadable()){
-			ManagedFile configXML = configFolder.resolveFile("log-config.xml");
+			ManagedFile configXML = configFolder.retrive("log-config.xml");
 			if (configXML!=null && configXML.exists() && configXML.isReadable()){
 				configurator = new XMLLoggingConfigurator(configXML.getURL());
-				ManagedFile logFolder = fileRepositoryService.getRepository(CommonRepositories.LOG);
+				ManagedFile logFolder = fileRepositoryService.getRepository(CommonRepositories.APP_LOG);
 				configuration = new LoggingConfiguration(logFolder);
 			}
 		} 

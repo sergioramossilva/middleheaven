@@ -5,7 +5,15 @@ import java.util.UUID;
 
 public class UUIDIdentity extends Identity implements Serializable {
 
-	UUID value;
+	private UUID value;
+	
+	public static UUIDIdentity valueOf(String value) {
+		return new UUIDIdentity(value);
+	}
+	
+	public static UUIDIdentity next() {
+		return new UUIDIdentity(UUID.randomUUID());
+	}
 	
 	public UUIDIdentity(UUID value){
 		this.value = value;
@@ -34,8 +42,6 @@ public class UUIDIdentity extends Identity implements Serializable {
 		return value.toString();
 	}
 
-	public static UUIDIdentity next() {
-		return new UUIDIdentity(UUID.randomUUID());
-	}
+
 
 }

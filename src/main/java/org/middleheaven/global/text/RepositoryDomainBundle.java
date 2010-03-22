@@ -72,7 +72,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
 
 			StringBuilder filename = new StringBuilder(key + ".properties");
 
-			while (!repository.resolveFile(filename.toString()).exists()){
+			while (!repository.retrive(filename.toString()).exists()){
 				int pos = filename.lastIndexOf("_");
 				if (pos<0){
 					final Object[] args = {label.getDomain(),label.getLabel()};
@@ -81,7 +81,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
 				filename.delete(pos, filename.length());
 				filename.append(".properties");
 			}
-			ManagedFile file = repository.resolveFile(filename.toString());
+			ManagedFile file = repository.retrive(filename.toString());
 			createWatcher(file);
 			format = fileFormat.newFormatHandler(file.getContent().getInputStream());
 

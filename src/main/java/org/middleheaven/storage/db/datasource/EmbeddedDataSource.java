@@ -143,7 +143,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 			TransactionService ts = ServiceRegistry.getService(TransactionService.class);
 			Connection con = riseConnection(nlogin,npass);
 			
-			if (ts.haveTransaction()){
+			if (ts.isTransactional()){
 				con.setAutoCommit(false);
 		
 				ts.enlistResource(new XAConnectionControl(con));

@@ -387,7 +387,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 			} 
 			sql.append(" NULL ");
 			if (cm.isKey()){
-				sql.append("CONSTRAINT PK_").append(cm.getName());
+				appendInlineCreateTableColumnPrimaryKeyConstraint(sql, "PK_" + cm.getName());
 			} 
 			sql.append(",\n");
 		}
@@ -396,7 +396,10 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return new SQLEditCommand(this,sql.toString());
 	}
 
-
+	protected void appendInlineCreateTableColumnPrimaryKeyConstraint(Clause sql, String constraintName){
+		sql.append(" CONSTRAINT PK_").append(constraintName);
+	}
+	
 	protected abstract void appendNativeTypeFor(Clause sql, ColumnModel type);
 
 

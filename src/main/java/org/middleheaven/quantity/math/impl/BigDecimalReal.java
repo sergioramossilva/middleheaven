@@ -37,10 +37,10 @@ public class BigDecimalReal extends Real{
 
 	public BigDecimal asNumber() {
 		return numerator.signum()==0 
-					? BigDecimal.ZERO 
-					: denominator.intValue()==1 
-							? numerator 
-							: numerator.divide(denominator, 15, RoundingMode.HALF_EVEN);
+		? BigDecimal.ZERO 
+				: denominator.intValue()==1 
+				? numerator 
+						: numerator.divide(denominator, SCALE, RoundingMode.HALF_EVEN);
 	}
 
 
@@ -88,25 +88,22 @@ public class BigDecimalReal extends Real{
 		if (denominator.compareTo(BigDecimal.ONE) == 0 || numerator.signum()==0){
 			return this; // is zero or divided by 1
 		}
-		BigDecimal min = denominator.min(numerator);
 
-		while (numerator.remainder(min).signum()!=0 &&  denominator.remainder(min).signum()!=0){
-			min = min.subtract(BigDecimal.ONE);
-		}
+		BigDecimal gcd = BigDecimalMath.gcd ( numerator, denominator);
 
-		if (min.compareTo(BigDecimal.ONE) == 0 ){
-			// already simplified
+		if (gcd.signum()==0){
 			return this;
-		} else {
-			try{
-				return new BigDecimalReal(
-						numerator.divide(min),
-						denominator.divide(min)
-				);
-			} catch (ArithmeticException e){
-				return this;
-			}
 		}
+
+		try{
+			return new BigDecimalReal(
+					numerator.divide(gcd),
+					denominator.divide(gcd)
+			);
+		} catch (ArithmeticException e){
+			return this;
+		}
+
 	}
 
 	private BigDecimal[] multipliers (BigDecimal d1 , BigDecimal d2){
@@ -207,27 +204,27 @@ public class BigDecimalReal extends Real{
 
 
 	private int compareToSame(BigDecimalReal other){
-		
+
 		BigDecimal denominatorProduct = denominator.multiply(other.numerator);
 		BigDecimal numeratorProduct = numerator.multiply(other.denominator);
-		
+
 		return numeratorProduct.compareTo(denominatorProduct);
 
 	}
-	
+
 	@Override
 	protected boolean equalsSame(Real other) {
 		return compareToSame((BigDecimalReal)other)==0;
 	}
-	
+
 	public int hashCode(){
 		return Hash.hash(numerator).hash(denominator).hashCode();
 	}
 
 	@Override
 	public int compareTo(org.middleheaven.quantity.math.Numeral<? super Real> o) {
-		if (o instanceof BigDecimalReal){
-			return this.compareToSame((BigDecimalReal)o);
+		if (BigDecimalReal.class.isInstance(o)){
+			return this.compareToSame(BigDecimalReal.class.cast(o));
 		}
 		return this.asNumber().compareTo(o.asNumber());
 	}
@@ -247,11 +244,13 @@ public class BigDecimalReal extends Real{
 		return this;
 	}
 
+
+	final int SCALE = 15;
 	
 	@Override
 	public Real arctan() {
 		return new BigDecimalReal(
-				BigDecimalMath.arctan(this.asNumber(), 20), BigDecimal.ONE);
+				BigDecimalMath.arctan(this.asNumber(), SCALE), BigDecimal.ONE);
 	}
 
 
@@ -259,34 +258,34 @@ public class BigDecimalReal extends Real{
 	@Override
 	public Real sqrt() {
 		return new BigDecimalReal(
-				BigDecimalMath.sqrt(this.asNumber() , 20), 
+				BigDecimalMath.sqrt(this.asNumber() , SCALE), 
 				BigDecimal.ONE
 		).simplify();
 	}
-	
+
 	@Override
 	public Real cos() {
 		return new BigDecimalReal(
-				BigDecimalMath.cos(this.asNumber(), 15), BigDecimal.ONE);
+				BigDecimalMath.cos(this.asNumber(), SCALE), BigDecimal.ONE);
 	}
 
-	
+
 	@Override
 	public Real sin() {
 		return new BigDecimalReal(
-				BigDecimalMath.sin(this.asNumber(), 15), BigDecimal.ONE);
+				BigDecimalMath.sin(this.asNumber(), SCALE), BigDecimal.ONE);
 	}
 
 	@Override
 	public Real exp() {
 		return new BigDecimalReal(
-				BigDecimalMath.exp(this.asNumber(), 20), BigDecimal.ONE);
+				BigDecimalMath.exp(this.asNumber(), SCALE), BigDecimal.ONE);
 	}
 
 	@Override
 	public Real ln() {
 		return new BigDecimalReal(
-				BigDecimalMath.ln(this.asNumber(), 20), BigDecimal.ONE);
+				BigDecimalMath.ln(this.asNumber(), SCALE), BigDecimal.ONE);
 	}
 
 

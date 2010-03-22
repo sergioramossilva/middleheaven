@@ -204,10 +204,6 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 		}
 	}
 
-	@Override
-	public ManagedFile resolveFile(String filepath) {
-		return this.retrive(filepath);
-	}
 
 	@Override
 	public boolean isWatchable() {

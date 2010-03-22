@@ -233,7 +233,7 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 			@SuppressWarnings("unchecked") T t = (T)value;
 			return t;
 		}
-		return TypeCoercing.convert(value, type);
+		return TypeCoercing.coerce(value, type);
 
 	}
 

@@ -14,6 +14,7 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.io.repository.MediaManagedFileContent;
+import org.middleheaven.io.repository.UnexistantManagedFile;
 
 public class UploadManagedFile extends AbstractContentManagedFile implements MediaManagedFile {
 
@@ -76,8 +77,8 @@ public class UploadManagedFile extends AbstractContentManagedFile implements Med
 
 
 	@Override
-	public ManagedFile resolveFile(String filepath) {
-		return null;
+	public ManagedFile retrive(String filepath) {
+		return new UnexistantManagedFile(this,filepath);
 	}
 
 	private class FileItemManagedFileContent implements  MediaManagedFileContent{

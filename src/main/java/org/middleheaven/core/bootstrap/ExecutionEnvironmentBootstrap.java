@@ -4,8 +4,8 @@
  */
 package org.middleheaven.core.bootstrap;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.services.RegistryServiceContext;
@@ -19,7 +19,6 @@ import org.middleheaven.global.text.LocalizationServiceActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
-import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.util.StopWatch;
 import org.middleheaven.work.scheduled.AlarmClockScheduleWorkExecutionServiceActivator;
 
@@ -91,14 +90,14 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 		wiringService.addActivatorScanner(overrridableScanner);
 		
-		// can and activate all
-		wiringService.scan();
+		// scan and activate all
+		wiringService.scan(); 
 		
 		doAfterStart();
 		
 		container.start();
 
-		log.info("Environment inicialized in " + watch.mark() + ".");
+		log.info("Environment inicialized in {0}. " , watch.mark());
 		bootstrapService.fireBootupEnd();
 	}
 
@@ -113,7 +112,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 	private class SimpleBootstrapService implements BootstrapService{
 		
 		private ExecutionEnvironmentBootstrap executionEnvironmentBootstrap;
-		private List<BootstapListener> listeners = new CopyOnWriteArrayList<BootstapListener>();
+		private Set<BootstapListener> listeners = new CopyOnWriteArraySet<BootstapListener>();
 		
 		public SimpleBootstrapService(ExecutionEnvironmentBootstrap executionEnvironmentBootstrap) {
 			this.executionEnvironmentBootstrap = executionEnvironmentBootstrap;

@@ -25,7 +25,7 @@ public class MapContext extends AbstractContext {
 	
 	@Override
 	public <T> T getAttribute(ContextScope scope, String name, Class<T> type) {
-		return TypeCoercing.convert(contextMap.get(scope).get(name), type);
+		return TypeCoercing.coerce(contextMap.get(scope).get(name), type);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class MapContext extends AbstractContext {
 		}
 		Map<String,O> result = new TreeMap<String,O>();
 		for (Map.Entry<String,Object> entry : map.entrySet()){
-			result.put(entry.getKey(), TypeCoercing.convert(entry.getValue(), type));
+			result.put(entry.getKey(), TypeCoercing.coerce(entry.getValue(), type));
 		}
 		return result;
 	}

@@ -50,7 +50,7 @@ public class FileSequenceStorageActivator extends Activator  {
 		if (!container.getAppDataRepository().isWriteable()){
 			throw new IllegalArgumentException("Data repository must be writable");
 		}
-		ManagedFile file = container.getAppDataRepository().resolveFile("sequences.properties");
+		ManagedFile file = container.getAppDataRepository().retrive("sequences.properties");
 		if (file.exists()){
 			try {
 				properties.load(file.getContent().getInputStream());
@@ -85,7 +85,7 @@ public class FileSequenceStorageActivator extends Activator  {
 		@Override
 		public void restore(StatePersistentSequence<?> sequence) {
 			Class<?> valueType = sequence.getSequenceState().getLastUsedValue().getClass();
-			Object value = TypeCoercing.convert(
+			Object value = TypeCoercing.coerce(
 					properties.getProperty(sequence.getName()), 
 					valueType
 			);

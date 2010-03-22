@@ -9,7 +9,7 @@ import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
-import org.middleheaven.transactions.TestTransactionServiceActivator;
+import org.middleheaven.transactions.AutoCommitTransactionServiceActivator;
 
 public abstract class MiddleHeavenTestCase {
 
@@ -20,7 +20,7 @@ public abstract class MiddleHeavenTestCase {
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 		
 		SetActivatorScanner scanner = new SetActivatorScanner();
-		scanner.addActivator(TestTransactionServiceActivator.class);
+		scanner.addActivator(AutoCommitTransactionServiceActivator.class);
 		
 		configurateActivators(scanner);
 		

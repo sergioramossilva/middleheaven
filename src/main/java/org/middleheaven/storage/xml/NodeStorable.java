@@ -57,7 +57,7 @@ public class NodeStorable implements Storable{
 			
 			return date;
 		} else {
-			return TypeCoercing.convert(data.get(name.getName()), fieldModel.getValueClass());
+			return TypeCoercing.coerce(data.get(name.getName()), fieldModel.getValueClass());
 		}
 	}
 

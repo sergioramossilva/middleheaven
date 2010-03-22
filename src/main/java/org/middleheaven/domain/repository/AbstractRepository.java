@@ -1,5 +1,6 @@
 package org.middleheaven.domain.repository;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,16 @@ public abstract class AbstractRepository<E> implements Repository<E> {
 	private Set<RepositoryListener> listeners = new CopyOnWriteArraySet<RepositoryListener> ();
 	private DomainModel domainModel;
 
+	public AbstractRepository(){
+		
+	}
+
+	protected Class<E> getEntityClass () {
+		ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+		@SuppressWarnings("unchecked") Class<E> type = (Class<E>) parameterizedType.getActualTypeArguments()[0];
+		return type;
+	}
+	
 	@Override
 	public void addRepositoryListener(RepositoryListener listener) {
 		listeners.add(listener);

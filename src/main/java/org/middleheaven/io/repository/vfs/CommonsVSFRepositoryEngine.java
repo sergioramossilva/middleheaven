@@ -1,5 +1,7 @@
 package org.middleheaven.io.repository.vfs;
 
+import java.net.URI;
+
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
@@ -22,9 +24,9 @@ public class CommonsVSFRepositoryEngine implements RepositoryEngine {
 	private class CommonsVFSManagedFileResolver implements ManagedFileResolver{
 
 		@Override
-		public ManagedFile resolveFile(String filepath) {
+		public ManagedFile resolveURI(URI uri) {
 			try {
-				FileObject file = VFS.getManager().resolveFile(filepath);
+				FileObject file = VFS.getManager().resolveFile(uri.toString());
 				
 				return new VirtualFileSystemManagedFile(file);
 			} catch (FileSystemException e) {

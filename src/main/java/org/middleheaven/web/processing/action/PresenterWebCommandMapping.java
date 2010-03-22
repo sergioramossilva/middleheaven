@@ -1,10 +1,7 @@
 package org.middleheaven.web.processing.action;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Date;
 import java.util.EnumMap;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,19 +16,12 @@ import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.core.reflection.MethodFilters;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.global.text.LocalizationService;
-import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.logging.Log;
-import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.ui.ContextScope;
-import org.middleheaven.util.coersion.StringCalendarDateTimeCoersor;
-import org.middleheaven.util.coersion.StringDateCoersor;
-import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.Walker;
 import org.middleheaven.validation.ValidationException;
 import org.middleheaven.web.annotations.Delete;
 import org.middleheaven.web.annotations.Get;
-import org.middleheaven.web.annotations.In;
 import org.middleheaven.web.annotations.Post;
 import org.middleheaven.web.annotations.ProcessRequest;
 import org.middleheaven.web.annotations.Put;
@@ -50,7 +40,8 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	private final Map<String, Map<OutcomeStatus, Outcome>> outcomes = new HashMap<String, Map<OutcomeStatus, Outcome>>();
 	private final Map<String , Method> actions = new TreeMap<String,Method>();
 	private final List<String> patterns = new LinkedList<String>();
-
+	private final AttributeContextBeanLoader beanLoader = new AttributeContextBeanLoader();
+	
 	private EnumMap<HttpMethod, Method> serviceMethods = new EnumMap<HttpMethod, Method>(HttpMethod.class);
 
 	private Method doService=null;
@@ -300,99 +291,17 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 					throw new IllegalStateException("Is not possible to inject " + HttpServletResponse.class.getName() + " on current environment");
 				}
 			} else if (!argClasses[i].isPrimitive()){
-				args[i]=loadBean(context,argClasses[i], action.getParameterAnnotations()[i]);
+				args[i]=beanLoader.loadBean(context,argClasses[i], action.getParameterAnnotations()[i]);
 			}
 		}
 
 		return args;
 	}
 
-	private <A extends Annotation> A getAnnotation(Annotation[] annotations ,Class<A> annotationClass){
-		for (Annotation a : annotations){
-			if(annotationClass.isAssignableFrom(a.getClass())){
-				return annotationClass.cast(a);
-			}
-		}
-		return null;
-	}
+
 	
-	private <T> T loadBean(HttpContext context, Class<T> type ,Annotation[] annotations) {
-		try{
-			// set up timestamp formatters and converter
-			LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
-
-			TimepointFormatter formatter = i18nService.getTimestampFormatter(context.getCulture());
-			
-			formatter.setPattern(TimepointFormatter.Format.DATE_ONLY);
-			
-			TypeCoercing.addCoersor(String.class, Date.class, new StringDateCoersor(formatter));
-			TypeCoercing.addCoersor(String.class, CalendarDateTime.class, new StringCalendarDateTimeCoersor(formatter));
-
-			
-			String name = "";
-			ContextScope inScope =null;
-			In in = getAnnotation(annotations,In.class);
-			if (in!=null){
-				name = in.value();
-				inScope = in.scope();
-				if(name.isEmpty()){
-					throw new IllegalArgumentException("Cannot inject an unamed parameter");
-				}
-				return context.getAttribute(inScope, name, type);
-
-			} else {
-				if (isPrimitive(type)){
-					throw new IllegalArgumentException("Use @In for instances of " + type);
-				}
-
-				T object = null;
-				
-				// search in the contexts in reverse order to find an object of class type
-				ContextScope[] scopes = new ContextScope[]{
-						ContextScope.APPLICATION,
-						ContextScope.SESSION,
-						ContextScope.REQUEST};
 
 
-				for (ContextScope scope : scopes){
-					Enumeration<String> names = context.getAttributeNames(scope);
-					while (names.hasMoreElements()){
-						Object candidate = context.getAttribute(scope, names.nextElement(), null);
-						if (candidate!=null && type.isAssignableFrom(candidate.getClass())){
-							object = type.cast(candidate);
-							break;
-						}
-					}
-				}
-
-				if (object==null){
-
-					// try to load from parameters
-					object =  new ContextAssembler(
-							ServiceRegistry.getService(WiringService.class).getObjectPool(), 
-							context,
-							ContextScope.PARAMETERS).assemble(type);
-				}
-				
-				return object;
-			}
-		
-		} finally {
-			TypeCoercing.removeConverter(String.class, Date.class);
-			TypeCoercing.removeConverter(String.class, CalendarDateTime.class);
-
-		}
-
-
-
-	}
-
-	private boolean isPrimitive(Class<?> type){
-		return type.isPrimitive() || 
-		String.class.isAssignableFrom(type) || 
-		Date.class.isAssignableFrom(type)|| 
-		Number.class.isAssignableFrom(type);
-	}
 
 	void addInterceptor(Interceptor interceptor) {
 		this.interceptors.add(interceptor);

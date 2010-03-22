@@ -87,7 +87,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 					StorableEntityModel otherModel = reader.read(fm.getValueClass());
 
 					// convert to identity
-					Identity id = (Identity)TypeCoercing.convert(obj, otherModel.identityFieldModel().getValueClass());
+					Identity id = (Identity)TypeCoercing.coerce(obj, otherModel.identityFieldModel().getValueClass());
 
 
 					Storable o = session.get(otherModel.getEntityClass(), id);

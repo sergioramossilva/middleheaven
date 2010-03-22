@@ -2,12 +2,8 @@ package org.middleheaven.io.repository;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.util.classification.BooleanClassifier;
 
 public abstract class StreamBasedManagedFile extends AbstractContentManagedFile implements MediaManagedFile {
 
@@ -98,11 +94,8 @@ public abstract class StreamBasedManagedFile extends AbstractContentManagedFile 
 		return parent;
 	}
 
-
-	@Override
-	public ManagedFile resolveFile(String filepath) {
-		return null;
+	public ManagedFile retrive(String filename){
+		return new UnexistantManagedFile(this,filename); 
 	}
-
 
 }

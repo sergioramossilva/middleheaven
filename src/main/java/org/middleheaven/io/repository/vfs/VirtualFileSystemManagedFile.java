@@ -137,7 +137,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	}
 
 	@Override
-	public ManagedFile resolveFile(String filepath) {
+	public ManagedFile retrive(String filepath) {
 		try{
 			return new VirtualFileSystemManagedFile(getVirtualFolder().resolveFile(filepath));
 		} catch (FileSystemException e) {

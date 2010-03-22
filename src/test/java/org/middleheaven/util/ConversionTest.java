@@ -11,13 +11,13 @@ public class ConversionTest {
 	@Test
 	public void testIdentity() {
 		String s = "test";
-		assertEquals(s, TypeCoercing.convert(s, String.class));
-		assertSame(s, TypeCoercing.convert(s, String.class));
+		assertEquals(s, TypeCoercing.coerce(s, String.class));
+		assertSame(s, TypeCoercing.coerce(s, String.class));
 		CharSequence cs = "test";
-		assertEquals(cs, TypeCoercing.convert(s, String.class));
-		assertSame(cs, TypeCoercing.convert(s, String.class));
-		assertEquals(cs, TypeCoercing.convert(s, CharSequence.class));
-		assertSame(cs, TypeCoercing.convert(s, CharSequence.class));
+		assertEquals(cs, TypeCoercing.coerce(s, String.class));
+		assertSame(cs, TypeCoercing.coerce(s, String.class));
+		assertEquals(cs, TypeCoercing.coerce(s, CharSequence.class));
+		assertSame(cs, TypeCoercing.coerce(s, CharSequence.class));
 	}
 	
 	@Test
@@ -27,17 +27,17 @@ public class ConversionTest {
 		StringBuilder ba = new StringBuilder("1");
 		Long one = 1L;
 		
-		assertEquals(one, TypeCoercing.convert(a, Long.class));
-		assertEquals(one, TypeCoercing.convert(ba, Long.class));
-		assertEquals(a, TypeCoercing.convert(one, String.class));
-		StringBuilder bs = TypeCoercing.convert(one, StringBuilder.class);
+		assertEquals(one, TypeCoercing.coerce(a, Long.class));
+		assertEquals(one, TypeCoercing.coerce(ba, Long.class));
+		assertEquals(a, TypeCoercing.coerce(one, String.class));
+		StringBuilder bs = TypeCoercing.coerce(one, StringBuilder.class);
 		assertEquals(ba.toString(), bs.toString());
 		
 		String b = "1.23";
 		Double d = 1.23;
 		
-		assertEquals(d, TypeCoercing.convert(b, Double.class));
-		assertEquals(b, TypeCoercing.convert(d, String.class));
+		assertEquals(d, TypeCoercing.coerce(b, Double.class));
+		assertEquals(b, TypeCoercing.coerce(d, String.class));
 
 	}
 }
