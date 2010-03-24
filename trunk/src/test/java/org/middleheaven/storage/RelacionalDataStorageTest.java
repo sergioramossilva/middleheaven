@@ -55,7 +55,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 				new DomainClasses().add(TestSubject.class.getPackage())
 		);
 
-		DataBaseStorage storeManager = new DataBaseStorage(provider, new WrappStorableReader(model));
+		DataBaseStorage storeManager = new DataBaseStorage(provider.getDataSource(), new WrappStorableReader(model));
 
 		storeManager.updateMetadata(model, catalog);
 

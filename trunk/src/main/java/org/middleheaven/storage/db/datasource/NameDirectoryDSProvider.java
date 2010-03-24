@@ -4,49 +4,43 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.core.wiring.annotations.Wire;
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.NamingDirectoryException;
 import org.middleheaven.storage.StorageException;
 
+/**
+ * Provides DataSource objects from a location in a NameDirectoryService
+ */
 public class NameDirectoryDSProvider implements DataSourceProvider{
 
-	NameDirectoryService service;
-	
-	@Wire
-	public NameDirectoryDSProvider(@Service NameDirectoryService service){
-		this.service = service;
+	private NameDirectoryService service;
+	private String url;
+
+	public static NameDirectoryDSProvider provider(NameDirectoryService service, String url){
+		return new NameDirectoryDSProvider(service,url);
 	}
 	
-	public static NameDirectoryDSProvider provider(Properties properties){
-
+	public static NameDirectoryDSProvider provider(NameDirectoryService service, Properties properties){
 		String  url = properties.getProperty("datasource.url");
 		url = url.substring(url.indexOf(':')+1);
-		return provider(url);
-	}
-	
-	public static NameDirectoryDSProvider provider(String url){
-		return new NameDirectoryDSProvider(url);
+
+		return provider(service,url);
 	}
 
-	String url;
-	public NameDirectoryDSProvider(String url){
+	private NameDirectoryDSProvider(NameDirectoryService service,String url){
+		this.service = service;
 		this.url = url;
 	}
-	
-	DataSource ds;
+
+
 	@Override
 	public DataSource getDataSource() {
-		if (ds==null){
-			try {
-				ds = service.lookup(url,DataSource.class);
-			} catch (NamingDirectoryException e) {
-				throw new StorageException(e);
-			}
+		try {
+			return service.lookup(url,DataSource.class);
+		} catch (NamingDirectoryException e) {
+			throw new StorageException(e);
 		}
-		return ds;
 	}
-	
+
 
 }

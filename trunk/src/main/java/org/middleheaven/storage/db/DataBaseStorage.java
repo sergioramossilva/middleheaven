@@ -47,9 +47,9 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 	private DataSource datasource;
 	private final Map<String, IdentitySequence> sequences = new TreeMap<String,IdentitySequence>();
 
-	public DataBaseStorage(DataSourceProvider provider, StorableModelReader reader){
+	public DataBaseStorage(DataSource datasource, StorableModelReader reader){
 		super(reader);
-		this.datasource = provider.getDataSource();
+		this.datasource = datasource;
 		this.dialect = DatabaseDialectFactory.getDialect(this.datasource);
 	}
 
