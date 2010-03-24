@@ -2,6 +2,7 @@ package org.middleheaven.web.processing;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.middleheaven.global.Culture;
 import org.middleheaven.util.OperatingSystemInfo;
 import org.middleheaven.util.VersionReader;
 
@@ -19,7 +20,7 @@ public class HttpProcessingUtils {
 		
 		
 		String[] res = getBrowser(userAgent);
-		BrowserInfo binfo = BrowserInfo.browser(res[0],res[1],VersionReader.fromString(res[2]));
+		BrowserInfo binfo = BrowserInfo.browser(  Culture.valueOf(request.getLocale()), res[0],res[1],VersionReader.fromString(res[2]));
 		
 		res = getOS(userAgent);
 		OperatingSystemInfo osInfo = OperatingSystemInfo.system(res[0],res[1],res[2]);

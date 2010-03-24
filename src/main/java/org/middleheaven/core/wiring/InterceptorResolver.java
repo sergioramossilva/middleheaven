@@ -11,9 +11,9 @@ public class InterceptorResolver<T> implements Resolver<T> {
 
 	
 	private final Resolver<T> original;
-	private final List<Interceptor> interceptors;
+	private final List<WiringInterceptor> interceptors;
 	
-	public InterceptorResolver(List<Interceptor> interceptors,Resolver<T> original) {
+	public InterceptorResolver(List<WiringInterceptor> interceptors,Resolver<T> original) {
 		super();
 		this.original = original;
 		this.interceptors = interceptors;

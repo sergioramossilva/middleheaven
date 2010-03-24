@@ -5,7 +5,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.List;
 
 import org.middleheaven.core.reflection.ClassIntrospector;
 import org.middleheaven.core.reflection.Introspector;
@@ -24,12 +23,18 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 	private Class<? extends Annotation>[] annotations;
 
+	@SuppressWarnings("unchecked")
 	public DefaultWiringModelParser(){
-		this(Wire.class);
+		 this.annotations = new Class[]{Wire.class};
 	}
 
 	public DefaultWiringModelParser(Class<? extends Annotation> ... adicionalAnnotations){
-		this.annotations = CollectionUtils.addToArray(adicionalAnnotations, Wire.class);
+		if (!CollectionUtils.arrayContains(adicionalAnnotations, Wire.class)){
+			this.annotations = CollectionUtils.addToArray(adicionalAnnotations, Wire.class);
+		} else {
+			this.annotations = adicionalAnnotations;
+		}
+		
 	}
 
 	@Override
@@ -47,7 +52,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 			if (constructors.isEmpty()){
 				// search all constructors
 				constructors = introspector.inspect().constructors().retriveAll();
-				if (constructors.size()>1){
+				if (constructors.size()>1 && !Introspector.of(type).isEnhanced()){
 					throw new ConfigurationException("Multiple constructors found for " + type + ". Annotate only one with @" + Wire.class.getSimpleName());
 				}
 			} else if (constructors.size()>1){
@@ -57,7 +62,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 			Constructor<T> constructor  = constructors.getFist();
 
 			if (constructor != null){
-			WiringSpecification[] params = readParamsSpecification(constructor, new BooleanClassifier<Annotation>(){
+				WiringSpecification[] params = readParamsSpecification(constructor, new BooleanClassifier<Annotation>(){
 
 				@Override
 				public Boolean classify(Annotation a) {

@@ -29,6 +29,10 @@ class ReflectionUtils {
 
 	public ReflectionUtils(){}
 
+	public static boolean isEnhanced(Class<?> type) {
+		return stategy.isEnhanced(type);
+	}
+	
 	public static boolean isInClasspath(String className) {
 		try {
 			Class.forName(className, false, ReflectionUtils.class.getClassLoader());

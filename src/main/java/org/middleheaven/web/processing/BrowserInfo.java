@@ -1,5 +1,6 @@
 package org.middleheaven.web.processing;
 
+import org.middleheaven.global.Culture;
 import org.middleheaven.util.Version;
 
 public class BrowserInfo {
@@ -18,20 +19,22 @@ public class BrowserInfo {
 	String name;
 	String baseEngine;
 	Version version;
+	private Culture culture;
 	
-	public static BrowserInfo unkownBrowser(){
-		return new BrowserInfo("","",Version.from(0, 0, 0));
+	public static BrowserInfo unkownBrowser(Culture culture){
+		return new BrowserInfo(culture,"","",Version.from(0, 0, 0));
 	}
 	
-	public static BrowserInfo browser(String name, String baseEngine, Version version){
-		return new BrowserInfo(name,baseEngine,version);
+	public static BrowserInfo browser(Culture culture, String name, String baseEngine, Version version){
+		return new BrowserInfo(culture,name,baseEngine,version);
 	}
 	
-	private BrowserInfo(String name, String baseEngine, Version version) {
+	private BrowserInfo(Culture culture , String name, String baseEngine, Version version) {
 		super();
 		this.name = name;
 		this.baseEngine = baseEngine;
 		this.version = version;
+		this.culture = culture;
 	}
 
 	public String getName() {
@@ -45,7 +48,15 @@ public class BrowserInfo {
 	public Version getVersion() {
 		return version;
 	}
+	
+	public Culture getCulture(){
+		return this.culture;
+	}
 
+	public boolean isUnkown(){
+		return this.name.isEmpty();	
+	}
+	
 	public boolean is(CommonBrowsers browser){
 		return this.name.equalsIgnoreCase(browser.name());
 	}

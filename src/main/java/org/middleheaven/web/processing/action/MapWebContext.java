@@ -15,6 +15,8 @@ import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.MapContext;
 import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.HttpUserAgent;
+import org.middleheaven.web.processing.global.RequestAgentHttpCultureResolver;
+import org.middleheaven.web.processing.global.HttpCultureResolver;
 
 
 public final class MapWebContext  extends WebContext{
@@ -28,7 +30,12 @@ public final class MapWebContext  extends WebContext{
 	private String url;
 	private String contextPath;
 	
-	public MapWebContext(String url , String contextPath, Culture culture, HttpMethod service) {
+	public MapWebContext(String url , String contextPath, HttpMethod service) {
+		this(url,contextPath, service, new RequestAgentHttpCultureResolver());
+	}
+	
+	public MapWebContext(String url , String contextPath, HttpMethod service, HttpCultureResolver httpCultureResolveService) {
+		super(httpCultureResolveService);
 		this.service = service;
 		this.url = url;
 		this.contextPath = contextPath;

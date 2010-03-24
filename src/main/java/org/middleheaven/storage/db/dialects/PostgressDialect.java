@@ -69,8 +69,9 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 		}
 		return new StorageException(msg);
 	}
-
-	public void writeQueryHardname(StringBuilder buffer , QualifiedName hardname){
+	
+	@Override
+	public void writeQueryHardname(Clause buffer , QualifiedName hardname){
 
 
 		buffer.append(hardname.getQualifier().toLowerCase());
@@ -78,13 +79,15 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 		buffer.append(hardname.getName().toLowerCase());
 	}
 	
-	public void writeEditionHardname(StringBuilder buffer , QualifiedName hardname){
+	@Override
+	public void writeEditionHardname(Clause buffer , QualifiedName hardname){
 
 		buffer.append(hardname.getName().toLowerCase());
 
 	}
 	
-	protected void writeEnclosureHardname(StringBuilder buffer , String hardname){
+	@Override
+	protected void writeEnclosureHardname(Clause buffer , String hardname){
 		buffer.append(startDelimiter());
 		buffer.append(hardname.toLowerCase());
 		buffer.append(endDelimiter());

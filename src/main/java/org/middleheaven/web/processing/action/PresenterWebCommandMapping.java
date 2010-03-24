@@ -69,7 +69,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 			@Override
 			public void doWith(Method m) {
-				// a method can have multiple bindings (not chain ifs)
+				// a method can have multiple bindings 
 				if (m.isAnnotationPresent(Post.class)){
 					serviceMethods.put(HttpMethod.POST,m);
 				} 

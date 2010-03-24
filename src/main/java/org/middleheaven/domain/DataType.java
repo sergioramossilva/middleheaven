@@ -27,13 +27,13 @@ public enum DataType {
 		}else if (Long.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type) || int.class.isAssignableFrom(type) || long.class.isAssignableFrom(type)){
 			return DataType.INTEGER;
 		}else if (Double.class.isAssignableFrom(type) || BigDecimal.class.isAssignableFrom(type) || double.class.isAssignableFrom(type)){
-			return DataType.INTEGER;
+			return DataType.DECIMAL;
 		}else if (Boolean.class.isAssignableFrom(type) || boolean.class.isAssignableFrom(type)){
 			return DataType.LOGIC;
 		}else if (CharSequence.class.isAssignableFrom(type)){
 			return DataType.TEXT;
 		} else {
-			throw new IllegalArgumentException("Unkown datatype " + type.getName() );
+			return UNKWON;
 		}
 	}
 	

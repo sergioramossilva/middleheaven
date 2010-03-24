@@ -64,4 +64,12 @@ public class Clause {
 	public boolean isEmpty(){
 		return builder.length() ==0 ;
 	}
+
+	public boolean endsWith(char c) {
+		return builder.length()> 0 && builder.charAt(builder.length() -1 ) == c;
+	}
+	
+	public boolean endsWith(String str) {
+		return builder.length()> 0 && str.equals(builder.substring(builder.length() - str.length(), builder.length()));
+	}
 }

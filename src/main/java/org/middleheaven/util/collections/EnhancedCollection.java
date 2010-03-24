@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Random;
 
-import org.middleheaven.core.reflection.MethodFilters;
 import org.middleheaven.util.classification.Classification;
 import org.middleheaven.util.classification.Classifier;
 

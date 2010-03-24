@@ -165,6 +165,11 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 		return type;
 	}
 
+	@Override
+	public boolean isEnhanced(Class<?> type) {
+		return Enhancer.isEnhanced(type);
+	}
+
 	
 
 

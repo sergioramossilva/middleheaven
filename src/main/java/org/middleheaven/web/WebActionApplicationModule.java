@@ -36,8 +36,7 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 		
 		configurate(context);
 	}
-	
-	
+
 	public BuildableWebCommandMappingService getBuildableMappingService() {
 		return mappingService  ;
 	}

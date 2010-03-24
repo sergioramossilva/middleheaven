@@ -1,5 +1,6 @@
 package org.middleheaven.web.processing;
 
+import org.middleheaven.web.processing.global.HttpCultureResolver;
 import org.middleheaven.web.rendering.RenderingProcessor;
 import org.middleheaven.web.rendering.RenderingProcessorResolver;
 
@@ -12,6 +13,8 @@ public interface HttpServerService {
 	public void addFilter (HttpFilter filter);
 	public void removeFilter (HttpFilter filter);
 	
+	public void setHttpCultureResolver(HttpCultureResolver httpCultureResolveService);
+	public HttpCultureResolver getHttpCultureResolver();
 	
 	public void registerHttpProcessor(String processorID, HttpProcessor procesor, UrlMapping mapping);
 	public void unRegisterHttpProcessor(String processorID);

@@ -12,23 +12,23 @@ public final class InterceptionContext <T>{
 		this.specification = query;
 	}
 
-	protected T getObject() {
+	public T getObject() {
 		return object;
 	}
 
-	protected void setObject(T object) {
+	public void setObject(T object) {
 		this.object = object;
 	}
 
-	protected WiringSpecification<T> getWiringSpecification(){
+	public WiringSpecification<T> getWiringSpecification(){
 		return specification;
 	}
 	
-	protected Class<?> getTarget() {
+	public Class<?> getTarget() {
 		return specification.getContract();
 	}
 
-	protected Set<Annotation> getAnnotations() {
+	public Set<Annotation> getAnnotations() {
 		return specification.getSpecifications();
 	}
 }

@@ -1,7 +1,9 @@
 package org.middleheaven.ui;
 
-import org.middleheaven.global.CultureResolver;
+import org.middleheaven.global.Culture;
 
-public interface CulturalAttributeContext extends AttributeContext , CultureResolver{
 
+public interface CulturalAttributeContext extends AttributeContext {
+
+	public Culture getCulture();
 }

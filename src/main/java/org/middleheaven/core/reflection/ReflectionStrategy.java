@@ -29,4 +29,11 @@ public interface ReflectionStrategy {
 	public <I> I proxyObject (Object delegationTarget ,  ProxyHandler handler , Class<I> proxyInterface , Class<?> ... adicionalInterfaces);
 	
 	public <T> T proxyType ( Class<?> facadeType, ProxyHandler handler , Class<T> proxyInterface  , Class<?> ... adicionalInterfaces);
+	
+	/**
+	 * 
+	 * @param type
+	 * @return {@code true} if the type was been altered.
+	 */
+	public boolean isEnhanced(Class<?> type);
 }

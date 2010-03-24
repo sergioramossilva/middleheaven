@@ -47,7 +47,9 @@ class ServletHttpServerService extends AbstractHttpServerService {
 		}
 
 		try{
-			RequestResponseWebContext context = new  RequestResponseWebContext(request,response);
+		
+			
+			RequestResponseWebContext context = new  RequestResponseWebContext(request,response,this.getHttpCultureResolver());
 
 			// execute processing
 			Outcome outcome = this.doService(context, processor);
@@ -109,6 +111,8 @@ class ServletHttpServerService extends AbstractHttpServerService {
 			return url;
 		}
 	}
+
+
 
 
 

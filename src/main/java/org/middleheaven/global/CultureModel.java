@@ -13,7 +13,6 @@ import org.middleheaven.global.text.writeout.NumberWriteoutFormat;
  * Localizable resources can belong in different locales. In particular they can be 
  * submited to a unique locale. That choice is application specific
  *  
- * @author Sergio M. M. Taborda 
  *
  */
 public interface CultureModel {

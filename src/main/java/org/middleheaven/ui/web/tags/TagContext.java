@@ -13,13 +13,22 @@ import javax.servlet.jsp.PageContext;
 
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.web.processing.action.ServletWebContext;
+import org.middleheaven.web.processing.global.HttpCultureResolver;
 
 
 public class TagContext extends ServletWebContext {
 
-	PageContext pageContex;
+	private PageContext pageContex;
+	
 	public TagContext(PageContext pageContext) {
+		super(resolveHttpCultureResolveService(pageContext));
 		this.pageContex = pageContext;
+	}
+	
+	private static HttpCultureResolver resolveHttpCultureResolveService (PageContext pageContext){
+		
+		return (HttpCultureResolver)pageContext.getRequest().getAttribute("__" + HttpCultureResolver.class.getName());
+		
 	}
 
 	@Override
