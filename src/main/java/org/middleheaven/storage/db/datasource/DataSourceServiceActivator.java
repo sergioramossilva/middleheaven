@@ -18,8 +18,10 @@ import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.logging.Log;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingService;
+import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.util.classification.BooleanClassifier;
 
 /**
@@ -33,6 +35,7 @@ import org.middleheaven.util.classification.BooleanClassifier;
  * datasource.username=username
  * datasource.password=password
  * (for jndi)
+ * datasource.name=dataSourceName
  * datasource.url=jndi:java:/comp/env/jdbc/dsname
  */
 public class DataSourceServiceActivator extends Activator {
@@ -42,6 +45,8 @@ public class DataSourceServiceActivator extends Activator {
 	private BootstrapService bootstrapService;
 	private LoggingService loggingService;
 	private DataSourceService dataSourceService;
+
+	private NameDirectoryService nameDirectoryService;
 	
 	@Publish
 	public DataSourceService getDataSourceService() {
@@ -51,6 +56,11 @@ public class DataSourceServiceActivator extends Activator {
 	@Wire
 	public void setBootstrapService(BootstrapService bootstrapService) {
 		this.bootstrapService = bootstrapService;
+	}
+	
+	@Wire(required=false)
+	public void setNameDirectoryService(NameDirectoryService nameDirectoryService) {
+		this.nameDirectoryService = nameDirectoryService;
 	}
 	
 	@Wire
@@ -84,7 +94,7 @@ public class DataSourceServiceActivator extends Activator {
 
 		if (!configurations.isEmpty()){
 			for (ManagedFile file : configurations){
-				Properties connectionParams =new Properties();
+				Properties connectionParams = new Properties();
 				try {
 					connectionParams.load(file.getContent().getInputStream());
 					final String url = connectionParams.getProperty("datasource.url");
@@ -95,7 +105,12 @@ public class DataSourceServiceActivator extends Activator {
 					if ("jdbc".equals(protocol)){
 						provider = DriverManagerDSProvider.provider(connectionParams);
 					} else if ("jndi".equals(protocol)){
-						provider = NameDirectoryDSProvider.provider(connectionParams);
+						if (nameDirectoryService ==null){
+							Log.onBookFor(this.getClass())
+								.error("DataSource configuration uses a Name and Directory location, but a Name Directory Service was not found");
+							continue;
+						}
+						provider = NameDirectoryDSProvider.provider(nameDirectoryService , connectionParams);
 					} else {
 						book.error("Error loading datasource file. Provider type not recognized");
 					}

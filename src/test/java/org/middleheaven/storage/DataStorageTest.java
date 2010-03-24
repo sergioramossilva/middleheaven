@@ -62,7 +62,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		);
 
 		//	DataSource datasource = ServiceRegistry.getService(DataSourceService.class).getDataSource("test");
-		DataBaseStorage dataStorage = new DataBaseStorage(provider, new WrappStorableReader(model));
+		DataBaseStorage dataStorage = new DataBaseStorage(provider.getDataSource(), new WrappStorableReader(model));
 
 		dataStorage.updateMetadata(model, catalog);
 

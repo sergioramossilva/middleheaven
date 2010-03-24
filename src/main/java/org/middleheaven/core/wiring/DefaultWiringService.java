@@ -205,7 +205,11 @@ public class DefaultWiringService implements WiringService{
 					new BindingBuilder<T>(this,query.getContract()).in(found.annotationType());
 					return getInstance(query); // repeat search
 				} else {
-					throw new BindingNotFoundException(query.getContract());
+					if (query.isRequired()){
+						throw new BindingNotFoundException(query.getContract());
+					} else {
+						return null;
+					}
 				}
 
 			}

@@ -14,7 +14,7 @@ import org.middleheaven.transactions.AutoCommitTransactionServiceActivator;
 public abstract class MiddleHeavenTestCase {
 
 	private TestBootstrap bootstrap = new TestBootstrap(new File("."));
-	
+
 	@Before
 	public final void setUp(){
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));

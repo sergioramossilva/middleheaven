@@ -4,6 +4,9 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+/**
+ * Provides DataSource objects directly from the {@code DriverManager}
+ */
 public class DriverManagerDSProvider implements DataSourceProvider {
 
 	public static DriverManagerDSProvider provider(Properties properties){
@@ -16,6 +19,7 @@ public class DriverManagerDSProvider implements DataSourceProvider {
 		return provider( driver, url, username, password);
 
 	}
+	
 	
 	public static DriverManagerDSProvider provider(String driver,String url,String username,String password){
 
