@@ -3,7 +3,6 @@ package org.middleheaven.storage.db;
 import org.middleheaven.domain.DataType;
 import org.middleheaven.util.Hash;
 
-
 public class ColumnModel implements Cloneable{
 
 	private String name;

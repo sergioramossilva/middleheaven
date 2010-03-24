@@ -88,12 +88,14 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		}
 	}
 	
-	public void writeJoinTableHardname(StringBuilder joinClause, String hardNameForEntity) {
+	@Override
+	public void writeJoinTableHardname(Clause joinClause, String hardNameForEntity) {
 		joinClause.append(hardNameForEntity);
 	}
 
 
-	public void writeJoinField(StringBuilder joinClause, String alias ,String fieldName) {
+	@Override
+	public void writeJoinField(Clause joinClause, String alias ,String fieldName) {
 		joinClause.append(alias).append(fieldSeparator()).append(fieldName);
 	}
 	

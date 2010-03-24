@@ -17,6 +17,7 @@ import org.middleheaven.ui.ContextScope;
 import org.middleheaven.web.processing.HttpProcessingUtils;
 import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.HttpUserAgent;
+import org.middleheaven.web.processing.global.HttpCultureResolver;
 
 public class RequestResponseWebContext extends ServletWebContext {
 
@@ -26,9 +27,13 @@ public class RequestResponseWebContext extends ServletWebContext {
 	private ManagedFileRepository uploadRepository;
 
 	@SuppressWarnings("unchecked")
-	public RequestResponseWebContext(HttpServletRequest request,HttpServletResponse response) {
+	public RequestResponseWebContext(HttpServletRequest request,HttpServletResponse response, HttpCultureResolver httpCultureResolveService) {
+		super(httpCultureResolveService);
+		
 		this.request = request;
 		this.response = response;
+		
+		this.request.setAttribute("__" + HttpCultureResolver.class.getName(), httpCultureResolveService);
 		
 		if (ServletFileUpload.isMultipartContent(request)){
 

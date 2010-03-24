@@ -5,11 +5,11 @@ import java.util.List;
 
 public class InterceptorChain<T> {
 
-	private List<Interceptor> interceptors = new LinkedList<Interceptor>();
+	private List<WiringInterceptor> interceptors = new LinkedList<WiringInterceptor>();
 	private int current=-1;
 	private Resolver<T> resolver;
 	
-	public InterceptorChain(List<Interceptor> interceptors, Resolver<T> resolver) {
+	public InterceptorChain(List<WiringInterceptor> interceptors, Resolver<T> resolver) {
 		this.interceptors.addAll(interceptors);
 		this.interceptors.add(new Destination());
 		this.resolver = resolver;
@@ -22,7 +22,7 @@ public class InterceptorChain<T> {
 		}
 	}
 	
-	private class Destination implements Interceptor{
+	private class Destination implements WiringInterceptor{
 
 		@Override
 		public void intercept(InterceptionContext context, InterceptorChain chain) {

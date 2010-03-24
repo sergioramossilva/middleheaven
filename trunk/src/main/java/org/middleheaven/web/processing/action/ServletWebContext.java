@@ -28,18 +28,27 @@ import org.middleheaven.web.processing.HttpProcessingUtils;
 import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.HttpUserAgent;
 import org.middleheaven.web.processing.RequestCookie;
+import org.middleheaven.web.processing.global.HttpCultureResolver;
 
 
 public abstract class ServletWebContext extends WebContext implements CulturalAttributeContext{
+
 
 	protected abstract ServletResponse getResponse();
 	protected abstract ServletRequest getRequest();
 	protected abstract HttpSession getSession();
 	
+
+	public ServletWebContext(HttpCultureResolver httpCultureResolver) {
+		super(httpCultureResolver);
+	}
+	
+	
 	protected abstract ServletContext getServletContext();
 
 	protected abstract void setHeaderAttribute(ContextScope scope, String name, Object value);
 
+	
 	@Override
 	public HttpMethod getHttpService() {
 		if (getRequest() instanceof HttpServletRequest){
@@ -53,14 +62,9 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 		if (getRequest() instanceof HttpServletRequest){
 			return HttpProcessingUtils.parse((HttpServletRequest)getRequest());
 		} else {
-			return new HttpUserAgent(BrowserInfo.unkownBrowser(),OperatingSystemInfo.unkown());
+			return new HttpUserAgent(BrowserInfo.unkownBrowser(Culture.valueOf(getRequest().getLocale())),OperatingSystemInfo.unkown());
 		}
 		
-	}
-	
-	@Override
-	public Culture getCulture() {
-		return Culture.valueOf(getRequest().getLocale());
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package org.middleheaven.core.reflection;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * 
@@ -82,6 +84,16 @@ public class ClassIntrospector<T> extends Introspector{
 		return type.getSimpleName();
 	}
 
+	public Type[] getActualTypeArguments(){
+		Type type  = getClass().getGenericSuperclass();
+		if (type instanceof ParameterizedType){
+			ParameterizedType parameterizedType = (ParameterizedType) type;
+			return parameterizedType.getActualTypeArguments();
+		} else {
+			return new Type[0];
+		}
+		
+	}
 	public IntrospectionCriteriaBuilder<T> inspect(){
 		return new IntrospectionCriteriaBuilder<T>(this.type);
 	}
@@ -99,9 +111,9 @@ public class ClassIntrospector<T> extends Introspector{
 	}
 
 	public T newProxyInstance(ProxyHandler handler){
-		if(!type.isInterface()){
-			throw new UnsupportedOperationException("Cannot proxy " + type.getName() + " as interface");
-		}
+//		if(!type.isInterface()){
+//			throw new UnsupportedOperationException("Cannot proxy " + type.getName() + " as interface");
+//		}
 		return ReflectionUtils.proxyType(type, handler);
 	} 
 	
@@ -143,6 +155,10 @@ public class ClassIntrospector<T> extends Introspector{
 		} catch (NoSuchMethodException e) {
 			throw new NoSuchMethodReflectionException(e);
 		}
+	}
+
+	public boolean isEnhanced() {
+		return ReflectionUtils.isEnhanced(type);
 	}
 
 

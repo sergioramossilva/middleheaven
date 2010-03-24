@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.middleheaven.web.processing.global.RequestAgentHttpCultureResolver;
+import org.middleheaven.web.processing.global.HttpCultureResolver;
 import org.middleheaven.web.rendering.RenderingProcessor;
 import org.middleheaven.web.rendering.RenderingProcessorResolver;
 
@@ -17,6 +19,8 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 	private boolean available = false;
 	private boolean stopped = false;
 	
+	private HttpCultureResolver httpCultureResolveService = new RequestAgentHttpCultureResolver();
+	
 	private class HttpMapping{
 
 		public HttpProcessor processor;
@@ -28,7 +32,18 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 		}
 
 	}
+	
+	@Override
+	public HttpCultureResolver getHttpCultureResolver() {
+		return httpCultureResolveService;
+	}
 
+	@Override
+	public void setHttpCultureResolver(HttpCultureResolver httpCultureResolveService) {
+		this.httpCultureResolveService = httpCultureResolveService;
+		
+	}
+	
 	private class HttpRenderingMapping{
 
 		public RenderingProcessorResolver processor;

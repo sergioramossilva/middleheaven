@@ -20,7 +20,6 @@ import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.CriterionOperator;
-import org.middleheaven.storage.criteria.FieldValueHolder;
 import org.middleheaven.storage.db.Clause;
 import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.ColumnValueHolder;
@@ -208,21 +207,23 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 			super(Oracle10gDialect.this, criteria, reader);
 		}
 
-		protected void writeAliasSeparator(StringBuilder queryBuffer){
+		@Override
+		protected void writeAliasSeparator(Clause queryBuffer){
 			queryBuffer.append(" ");
 		}
 		
-		protected void writeAlias(StringBuilder queryBuffer , String alias){
+		@Override
+		protected void writeAlias(Clause queryBuffer , String alias){
 			queryBuffer.append(startDelimiter())
 			.append(alias)
 			.append(endDelimiter());
 		}	
 
-		
-		protected void writeEndLimitClause(StringBuilder selectBuffer){
+		@Override
+		protected void writeEndLimitClause(Clause selectBuffer){
 			if (criteria().getCount()>0 && criteria().getStart()>1){
 				
-				if (selectBuffer.charAt(selectBuffer.length()-1)==')'){
+				if (selectBuffer.endsWith(')')){
 					selectBuffer.append(" AND ");
 				}
 				selectBuffer.append("rownum between ")

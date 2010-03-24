@@ -1,5 +1,6 @@
 package org.middleheaven.util.collections;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
+
+import org.middleheaven.core.wiring.annotations.Wire;
 
 
 public class CollectionUtils {
@@ -286,6 +289,15 @@ public class CollectionUtils {
 	
 	public static <T> EnhancedCollection<T> emptySet() {
 		return enhance(Collections.<T>emptySet());
+	}
+
+	public static <T> boolean arrayContains(T[] array, T candidate ) {
+		for (T t : array){
+			if (t == candidate || (t != null && t.equals(candidate))){
+				return true;
+			}
+		}
+		return false;
 	}
 
 

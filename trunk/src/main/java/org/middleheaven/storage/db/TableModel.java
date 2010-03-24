@@ -15,6 +15,7 @@ public class TableModel implements Iterable<ColumnModel>, DataBaseObjectModel{
 	public TableModel(String name) {
 		this.name = name;
 	}
+	
 	public void addColumn(ColumnModel columnModel) {
 		if (columnModel.getName() == null){
 			throw new IllegalArgumentException("Column name cannot be null");

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.dependency.DependencyResolver;
@@ -54,12 +55,9 @@ public class DefaultWiringService implements WiringService{
 	private final Set<ActivatorScanner> scanners = new HashSet<ActivatorScanner>();
 	private final DefaultObjectPool wiringContext = new DefaultObjectPool();
 	private final BinderImpl binder = new BinderImpl();
-	private final List<Interceptor> interceptors = new ArrayList<Interceptor>();
+	private final List<WiringInterceptor> interceptors = new CopyOnWriteArrayList<WiringInterceptor>();
 	private final Map<String,Class<? extends ScopePool>> scopes = new TreeMap<String,Class<? extends ScopePool>>();
 	private final Map<String, ScopePool> scopePools = new TreeMap<String,ScopePool>();
-
-
-
 
 	public DefaultWiringService(){
 		scopes.put(Shared.class.getName(), SharedScope.class);
@@ -294,6 +292,16 @@ public class DefaultWiringService implements WiringService{
 			return scopePool;
 		}
 
+		@Override
+		public void addInterceptor(WiringInterceptor interceptor) {
+			interceptors.add(interceptor);
+		}
+
+		@Override
+		public void removeInterceptor(WiringInterceptor interceptor) {
+			interceptors.remove(interceptor);
+		}
+
 
 	}
 
@@ -327,6 +335,7 @@ public class DefaultWiringService implements WiringService{
 		}
 
 	}
+
 
 
 

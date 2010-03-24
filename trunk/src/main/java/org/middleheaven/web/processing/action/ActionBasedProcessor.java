@@ -10,8 +10,8 @@ import org.middleheaven.web.processing.Outcome;
 public class ActionBasedProcessor extends AbstractHttpProcessor{
 
 	private WebCommandMappingService mapper;
-
-	public ActionBasedProcessor(WebCommandMappingService mapper){
+	
+	public ActionBasedProcessor (WebCommandMappingService mapper){
 		this.mapper = mapper;
 	}
 
