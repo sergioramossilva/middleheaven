@@ -13,11 +13,12 @@ class InsertAction extends StoreAction{
 
 	@Override
 	public boolean execute(DataStorage dataStorage) {
-		dataStorage.insert(Collections.singleton(storable));
+		dataStorage.insert(Collections.singleton(this.getStorable()));
 
-		storable.setStorableState(StorableState.RETRIVED);
+		getStorable().setStorableState(StorableState.RETRIVED);
 		
 		return true;
 	}
+
 
 }

@@ -10,9 +10,11 @@ public class Outcome {
 	boolean isError;
 	private String url;
 	private HttpCode httpCode = HttpCode.OK;
+	private String contentType;
 	
-	public Outcome(OutcomeStatus status, String url) {
+	public Outcome(OutcomeStatus status, String url, String contentType) {
 		this(status,url,false,HttpCode.OK);
+		this.contentType = contentType;
 	}
 	
 	public Outcome(OutcomeStatus status, String url, boolean doRedirect, HttpCode redirectCode) {
@@ -22,16 +24,25 @@ public class Outcome {
 		this.url = url;
 		this.isError = false;
 		this.httpCode = redirectCode;
+		
 	}
 	
 	public Outcome(OutcomeStatus status, HttpCode error) {
+		this(status,error,"text/html");
+	}
+	
+	public Outcome(OutcomeStatus status, HttpCode error,String contentType) {
 		super();
 		this.status = status;
 		this.doRedirect = true;
 		this.isError = true;
 		this.httpCode = error;
+		this.contentType = contentType;
 	}
 
+	public String getContentType(){
+		return contentType;
+	}
 	protected void setRedirect(boolean redirect){
 		this.doRedirect = redirect;
 	}
@@ -64,7 +75,7 @@ public class Outcome {
 	}
 	
 	public String toString(){
-		return status.toString() + (this.isDoRedirect() ? "redirectTo" : "fowardTo") + url;
+		return status.toString() + (this.isDoRedirect() ? " redirectTo:" : " fowardTo:") + url + " as " + contentType;
 	}
 	
 	public String getParameterizedURL(){

@@ -1,5 +1,7 @@
 package org.middleheaven.storage.criteria;
 
+import org.middleheaven.util.identity.Identity;
+
 
 
 /**
@@ -53,6 +55,7 @@ public class CriteriaBuilder<T> extends AbstractCriteriaBuilder<T, CriteriaBuild
 		this.criteria.setRange(start,count);
 		return this;
 	}
+
 
 
 }

@@ -141,7 +141,7 @@ public class XMLStorage extends AbstractSequencialIdentityStorage {
 	}
 
 	@Override
-	public <I extends Identity> Sequence<I> getSequence(String name) {
+	public <I extends Identity> Sequence<I> getSequence(Class<?> type) {
 		// TODO Auto-generated method stub
 		return null;
 	}

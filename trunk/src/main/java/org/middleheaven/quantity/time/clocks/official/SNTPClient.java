@@ -65,7 +65,7 @@ public class SNTPClient {
 			//NtpMessage.encodeTimestamp(requestPacket.getData(), 40,
 			//	(System.currentTimeMillis()/1000.0) + OFFSET_FROM_JAVA_EPOC);
 
-			long before = reference.getTime().milliseconds();
+			long before = reference.getTime().getMilliseconds();
 			// Send Request
 			socket.send(requestPacket);
 	
@@ -73,7 +73,7 @@ public class SNTPClient {
 			socket.receive(packet);
 
 			// Immediately record the incoming timestamp
-			long after =  reference.getTime().milliseconds();
+			long after =  reference.getTime().getMilliseconds();
 			double destinationTimestamp =(after + OFFSET_FROM_JAVA_EPOC)/1000.0;
 
 

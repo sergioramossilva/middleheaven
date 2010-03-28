@@ -26,10 +26,14 @@ public class DefaultJspRenderingProcessorResolver implements RenderingProcessorR
 	}
 	
 	@Override
-	public RenderingProcessor resolve(String url) {
+	public RenderingProcessor resolve(String url, String contentType) {
 		return processor;
 	}
-
+	
+	@Override
+	public boolean canProcess(String url, String contentType) {
+		return true;
+	}
 	
 	public class DefaultJspRendingProcessor implements RenderingProcessor{
 
@@ -44,7 +48,7 @@ public class DefaultJspRenderingProcessorResolver implements RenderingProcessorR
 		}
 		
 		@Override
-		public void process(RequestResponseWebContext context, Outcome outcome)
+		public void process(RequestResponseWebContext context, Outcome outcome,String contentType)
 		throws HttpProcessException {
 
 
@@ -63,5 +67,9 @@ public class DefaultJspRenderingProcessorResolver implements RenderingProcessorR
 
 
 	}
+
+
+
+
 
 }

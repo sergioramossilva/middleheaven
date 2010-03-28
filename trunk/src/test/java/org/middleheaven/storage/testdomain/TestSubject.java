@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
-import org.middleheaven.domain.annotations.Key;
+import org.middleheaven.domain.annotations.Id;
 import org.middleheaven.domain.annotations.OneToMany;
 import org.middleheaven.storage.model.Column;
 import org.middleheaven.storage.model.Table;
@@ -17,7 +17,7 @@ import org.middleheaven.util.identity.Identity;
 @Table("tablec")
 public class TestSubject {
 	
-	@Key
+	@Id
 	private Identity identity;  
 	
 	private Collection<TestFamillyMember> familly = new ArrayList<TestFamillyMember>();

@@ -10,5 +10,5 @@ public interface TimeHolder {
 	public int hour();
 	public int minute();
 	public int second();
-	public long milliseconds();
+	public long getMilliseconds();
 }

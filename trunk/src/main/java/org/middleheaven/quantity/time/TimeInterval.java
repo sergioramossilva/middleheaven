@@ -29,10 +29,10 @@ public class TimeInterval extends Interval<TimePoint>{
     }
     
     public Duration duration(){
-    	return Duration.of().miliseconds(end.milliseconds()-start.milliseconds());
+    	return Duration.of().miliseconds(end.getMilliseconds()-start.getMilliseconds());
     }
 
     public Period pediod(){
-    	return Period.miliseconds(end.milliseconds()-start.milliseconds());
+    	return Period.miliseconds(end.getMilliseconds()-start.getMilliseconds());
     }
 }

@@ -13,7 +13,6 @@ import org.middleheaven.util.identity.Identity;
 public class EntityStoreRepository<E> extends AbstractRepository<E>  {
 
 	private Class<E> entityType;
-	private DomainModel domainModel;
 	private DataStorageListener storageListener;
 	private EntityStoreService entityStoreService;
 
@@ -51,11 +50,6 @@ public class EntityStoreRepository<E> extends AbstractRepository<E>  {
 
 	}
 
-	@Override
-	public void setDomainModel(DomainModel domainModel) {
-		this.domainModel = domainModel;
-	}
-
 
 	@Override
 	public void remove(E intance) {
@@ -85,7 +79,7 @@ public class EntityStoreRepository<E> extends AbstractRepository<E>  {
 	@Override
 	public Query<E> findByIdentity(Identity id) {
 		return getEntityStore().createQuery(CriteriaBuilder.search(entityType)
-				.and(this.domainModel.getEntityModelFor(entityType).identityFieldModel().getLogicName().getName()).eq(id)
+				.hasIdentity(id)
 				.all()
 		);
 	}

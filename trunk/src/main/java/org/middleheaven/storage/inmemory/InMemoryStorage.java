@@ -29,7 +29,7 @@ import org.middleheaven.util.identity.IntegerIdentitySequence;
 public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 
 	private final Map<String, Map<Identity,HashStorable> > data = new HashMap<String,Map<Identity,HashStorable> >();
-	private final Map<String, Sequence<Identity>> sequences = new HashMap<String,Sequence<Identity>>();
+	private final Map<String, Sequence<? extends Identity>> sequences = new HashMap<String,Sequence<? extends Identity>>();
 
 	
 	public InMemoryStorage() {
@@ -106,10 +106,11 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 	}
 
 	@Override
-	public <I extends Identity> Sequence<I>  getSequence(String name) {
-		Sequence<I> seq= (Sequence<I>) sequences.get(name);
+	public <I extends Identity> Sequence<I>  getSequence(Class<?> entityType) {
+		Sequence<I> seq= (Sequence<I>) sequences.get(entityType.getName());
 		if (seq ==null){
 			seq = (Sequence<I>) new IntegerIdentitySequence();
+			sequences.put(entityType.getName(), seq);
 		}
 		return seq;
 	}

@@ -71,10 +71,5 @@ public interface Repository<E> {
 	 */
 	public void removeRepositoryListener(RepositoryListener listener);
 	
-	/**
-	 * Set the domainModel associated with the repository entity
-	 * @param domainModel
-	 */
-	public void setDomainModel(DomainModel domainModel);
 
 }

@@ -53,7 +53,7 @@ public final class TimeContext {
 	}
 	
 	public TimePoint now (){
-		return new CalendarDateTime(this, referenceClock.getTime().milliseconds());
+		return new CalendarDateTime(this, referenceClock.getTime().getMilliseconds());
 	}
 	
 	/**

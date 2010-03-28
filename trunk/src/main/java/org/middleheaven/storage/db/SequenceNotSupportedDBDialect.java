@@ -42,7 +42,7 @@ public abstract class SequenceNotSupportedDBDialect extends DataBaseDialect impl
 		Connection con =null;
 		try {
 			con = ds.getConnection();
-			RetriveDataBaseCommand command = createSequenceStateReadCommand(sequence.getName());
+			RetriveDataBaseCommand command = createSequenceStateReadCommand(sequence);
 			
 			command.execute(null,con);
 			ResultSet rs = command.getResult();
@@ -68,11 +68,11 @@ public abstract class SequenceNotSupportedDBDialect extends DataBaseDialect impl
 		Connection con =null;
 		try {
 			con = ds.getConnection();
-			DataBaseCommand command = createUpdateSequenceValueCommand(sequence.getName(), sequence.getLastUsed());
+			DataBaseCommand command = createUpdateSequenceValueCommand(sequence, sequence.getLastUsed());
 			
 			if (!command.execute(null, con)){
 				//sequence does not exist 
-				DataBaseCommand insertCommand = createInsertSequenceValueCommand(sequence.getName());
+				DataBaseCommand insertCommand = createInsertSequenceValueCommand(sequence);
 				insertCommand.execute(null, con);
 			}
 			command.execute(null, con);
@@ -87,9 +87,9 @@ public abstract class SequenceNotSupportedDBDialect extends DataBaseDialect impl
 		}
 	}
 	
-	protected abstract DataBaseCommand createUpdateSequenceValueCommand(String name,long lastUsed);
-	protected abstract DataBaseCommand createInsertSequenceValueCommand(String name);
+	protected abstract DataBaseCommand createUpdateSequenceValueCommand(TableBasedSequence sequence,long lastUsed);
+	protected abstract DataBaseCommand createInsertSequenceValueCommand(TableBasedSequence sequence);
 	
-	protected abstract RetriveDataBaseCommand  createSequenceStateReadCommand(String sequenceName);
+	protected abstract RetriveDataBaseCommand  createSequenceStateReadCommand(TableBasedSequence sequence);
 	
 }

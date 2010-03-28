@@ -1,17 +1,25 @@
 package org.middleheaven.storage.xml;
 
+import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.criteria.Criterion;
 import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.criteria.EmptyCriterion;
 import org.middleheaven.storage.criteria.FieldCriterion;
+import org.middleheaven.storage.criteria.FieldValueCriterion;
+import org.middleheaven.storage.criteria.FieldValueHolder;
+import org.middleheaven.storage.criteria.IdentityCriterion;
 import org.middleheaven.storage.criteria.LogicCriterion;
+import org.middleheaven.storage.criteria.SingleObjectValueHolder;
 
 public class XMLCriteriaInterpreter {
 
+	private StorableEntityModel model;
 	
 	public String Interpreter(StorableEntityModel model, Criteria<?> criteria){
+		
+		this.model = model;
 		
 		String hardname = model.getEntityHardName();
 		
@@ -32,6 +40,12 @@ public class XMLCriteriaInterpreter {
 	private void addPredicate(StringBuilder builder, Criterion c) {
 		if(c instanceof EmptyCriterion){
 			
+		} else if (c instanceof IdentityCriterion){
+			
+			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)c).getIdentity(), DataType.UNKWON);
+			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
+			
+			addPredicate (builder, f);
 		} else if (c instanceof FieldCriterion){
 			FieldCriterion fc = (FieldCriterion)c;
 			

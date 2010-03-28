@@ -18,7 +18,9 @@ import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.domain.TextDataTypeModel;
 import org.middleheaven.logging.Log;
+import org.middleheaven.sequence.DefaultToken;
 import org.middleheaven.sequence.Sequence;
+import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.storage.AbstractSequencialIdentityStorage;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
@@ -34,7 +36,9 @@ import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.datasource.DataSourceProvider;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IdentitySequence;
+import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
+import org.middleheaven.util.identity.LongIdentity;
 
 /**
  * Keeps data stored in a relational database.
@@ -66,19 +70,35 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 
 	@Override
-	public <I extends Identity> Sequence<I> getSequence(String name) {
+	public final <I extends Identity> Sequence<I> getSequence(Class<?> entityType) {
 
+		String name = this.reader().read(entityType).getEntityLogicName();
+		
 		StoreQuerySession session =  StoreQuerySession.getInstance(this);
 
 		IdentitySequence iseq = sequences.get(name);
 		if (iseq==null){
 			Sequence<Long> seq = dialect.getSequence(datasource, name);
-			iseq = new IntegerIdentitySequence();
+			iseq = new DBIdentitySequenceAdapter(seq);
 			sequences.put(name,iseq);
 		}
 		return iseq;
 
+	}
+	
+	class DBIdentitySequenceAdapter implements IdentitySequence<IntegerIdentity> {
 
+		private Sequence<Long> nativeSequence;
+
+		public DBIdentitySequenceAdapter(Sequence<Long> nativeSequence){
+			this.nativeSequence = nativeSequence;
+		}
+		
+		@Override
+		public SequenceToken<IntegerIdentity> next() {
+			return new DefaultToken(IntegerIdentity.valueOf(nativeSequence.next().value().intValue()));
+		}
+		
 	}
 
 	class DBStorageQuery<T> implements Query<T>{

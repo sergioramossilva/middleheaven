@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
@@ -20,7 +21,9 @@ import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.criteria.EmptyCriterion;
 import org.middleheaven.storage.criteria.FieldCriterion;
 import org.middleheaven.storage.criteria.FieldInSetCriterion;
+import org.middleheaven.storage.criteria.FieldValueCriterion;
 import org.middleheaven.storage.criteria.FieldValueHolder;
+import org.middleheaven.storage.criteria.IdentityCriterion;
 import org.middleheaven.storage.criteria.JunctionCriterion;
 import org.middleheaven.storage.criteria.LogicCriterion;
 import org.middleheaven.storage.criteria.MaxFieldOperator;
@@ -28,6 +31,7 @@ import org.middleheaven.storage.criteria.MinFieldOperator;
 import org.middleheaven.storage.criteria.OrderingCriterion;
 import org.middleheaven.storage.criteria.Projection;
 import org.middleheaven.storage.criteria.ProjectionOperator;
+import org.middleheaven.storage.criteria.SingleObjectValueHolder;
 import org.middleheaven.storage.criteria.SumFieldOperator;
 import org.middleheaven.util.classification.LogicOperator;
 import org.middleheaven.util.collections.Interval;
@@ -540,7 +544,14 @@ public class CriteriaInterpreter {
 			}
 
 
-		}else if (criterion instanceof FieldInSetCriterion){
+		} else if (criterion instanceof IdentityCriterion){
+			
+			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)criterion).getIdentity(), DataType.UNKWON);
+			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
+			
+			translateCriteriaToWhereClause(alias, criteriaBuffer, params, f , model);
+			
+		} else if (criterion instanceof FieldInSetCriterion){
 			FieldInSetCriterion f = (FieldInSetCriterion)criterion;
 
 			if (f.useCriteria()){

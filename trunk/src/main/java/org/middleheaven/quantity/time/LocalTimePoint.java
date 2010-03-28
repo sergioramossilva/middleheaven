@@ -27,7 +27,7 @@ public class LocalTimePoint implements TimePoint , Comparable<TimePoint>  {
 	}
 	
 	@Override
-	public long milliseconds() {
+	public long getMilliseconds() {
 		return TimeUtils.universalToLocalTime(this.milliseconds, timeZone);
 	}
 
@@ -38,7 +38,7 @@ public class LocalTimePoint implements TimePoint , Comparable<TimePoint>  {
 
 	@Override
 	public int compareTo(TimePoint other) {
-		return (int)(this.milliseconds - other.milliseconds());
+		return (int)(this.milliseconds - other.getMilliseconds());
 	}
 
 

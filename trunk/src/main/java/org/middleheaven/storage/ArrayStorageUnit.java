@@ -1,7 +1,12 @@
 package org.middleheaven.storage;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import org.middleheaven.util.identity.Identity;
 
 public class ArrayStorageUnit implements StorageUnit {
 
@@ -23,11 +28,36 @@ public class ArrayStorageUnit implements StorageUnit {
 		for (StoreAction action : actions) {
 			action.execute(dataStorage);
 		}
+		actions.clear();
 	}
 
 	@Override
 	public void roolback() {
 		actions.clear();
+	}
+
+	@Override
+	public Collection<Storable> filter(Collection<Storable> all) {
+		if (actions.isEmpty()){
+			return all;
+		}
+		
+		Map<Identity, Storable> result = new LinkedHashMap<Identity,Storable>();
+		
+		for (Storable s : all){
+			result.put(s.getIdentity(), s);
+		}
+		
+		for (StoreAction action : actions){
+			if( action instanceof DeleteAction){
+				result.remove(action.getStorable().getIdentity());
+			} else {
+				result.put(action.getStorable().getIdentity(), action.getStorable());
+			}
+
+		}
+		
+		return result.values();
 	}
 
 }

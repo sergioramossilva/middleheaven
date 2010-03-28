@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import org.middleheaven.core.reflection.ClassIntrospector;
@@ -22,6 +23,10 @@ import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.Walker;
 import org.middleheaven.util.identity.Identity;
 
+
+/**
+ * Comon storable state controler
+ */
 public final class StorableStateManager {
 
 	private final DataStorage storage;
@@ -33,8 +38,22 @@ public final class StorableStateManager {
 		this.domainModel = model;
 	}
 	
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
-		return storage.createQuery(criteria , strategy);
+	public <T> Query<T> createQuery(final Criteria<T> criteria, final ReadStrategy strategy, final StorageUnit unit) {
+		
+		return new SimpleExecutableQuery<T>(criteria , null, new QueryExecuter (){
+
+			@Override
+			public <E> Collection<E> execute(ExecutableQuery<E> query) {
+				
+				Collection all = storage.createQuery(criteria , strategy).all();
+				
+				all = unit.filter(all);
+				
+				return all;
+			}
+			
+		});
+
 	}
 	
 	/**
@@ -124,7 +143,7 @@ public final class StorableStateManager {
 			}
 		case BLANK:
 		case RETRIVED:
-			// not-op
+			// no-op
 			return null;
 		default:
 			throw new IllegalStateException(p.getStorableState() + " is unkown");
@@ -172,13 +191,13 @@ public final class StorableStateManager {
 
 	
 	public <T> void remove(T obj, StorageUnit unit) {
-		if (obj instanceof Storable) {
-			final Storable p = (Storable) obj;
+		Storable p = this.merge(obj);
+		if (p.getIdentity()!=null) {
 			p.setStorableState(StorableState.DELETED);
 			unit.addAction(assignAction(p));
 		}
 		// else
-		// not managed
+		// not identified
 		// do nothing as this obj is not in the store
 
 	}

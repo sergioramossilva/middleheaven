@@ -5,7 +5,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 
 public abstract class AbstractFilter implements Filter{
-
+	
 	private FilterConfig filterConfig;
 	
 	@Override

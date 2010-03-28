@@ -17,12 +17,12 @@ public abstract class AbstractSequencialIdentityStorage extends AbstractDataStor
 	 * @param name sequence name
 	 * @return Sequence of <code>Identity</code> sequence
 	 */
-	protected abstract <I extends Identity> Sequence<I> getSequence(String name);
+	protected abstract <I extends Identity> Sequence<I> getSequence(Class<?> entityType);
 
 	
 	@Override
 	public Storable assignIdentity(Storable storable) {
-		storable.setIdentity(this.getSequence(storable.getPersistableClass().getName()).next().value());
+		storable.setIdentity(this.getSequence(storable.getPersistableClass()).next().value());
 		return storable;
 	}
 

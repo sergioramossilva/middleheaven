@@ -30,7 +30,7 @@ class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore  
 
 	@Override
 	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
-		return manager.createQuery(criteria , strategy);
+		return manager.createQuery(criteria , strategy, unit);
 	}
 
 
@@ -47,7 +47,7 @@ class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore  
 	@Override
 	public <T> void remove(final Criteria<T> criteria) {
 		
-		for (T t : manager.createQuery(criteria, ReadStrategy.fowardReadOnly()).all()){
+		for (T t : manager.createQuery(criteria, ReadStrategy.fowardReadOnly(), unit).all()){
 			manager.remove(t, unit);
 		}
 	}

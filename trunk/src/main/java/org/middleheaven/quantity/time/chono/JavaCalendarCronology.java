@@ -36,7 +36,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 	public <T extends TimePoint> T add(T point, Duration duration) {
 		Calendar calendar = (Calendar)prototype.clone();
 		calendar.setLenient(true);
-		calendar.setTimeInMillis(point.milliseconds());
+		calendar.setTimeInMillis(point.getMilliseconds());
 		calendar.add(Calendar.YEAR, duration.years());
 		calendar.add(Calendar.MONTH, duration.months());
 		calendar.add(Calendar.DATE, duration.days());
@@ -87,14 +87,14 @@ public class JavaCalendarCronology extends AbstractChronology{
 	@Override
 	public DayOfMonth monthDay(TimePoint point) {
 		Calendar c = (Calendar)prototype.clone();
-		c.setTimeInMillis(point.milliseconds());
+		c.setTimeInMillis(point.getMilliseconds());
 		return new DayOfMonth(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH)+1);
 	}
 
 	@Override
 	public Month monthOf(TimePoint point) {
 		Calendar c = (Calendar)prototype.clone();
-		c.setTimeInMillis(point.milliseconds());
+		c.setTimeInMillis(point.getMilliseconds());
 		return month( c.get(Calendar.YEAR),
 				c.get(Calendar.MONTH)+1,
 				c.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -103,14 +103,14 @@ public class JavaCalendarCronology extends AbstractChronology{
 	@Override
 	public DayOfWeek weekDay(TimePoint point) {
 		Calendar c = (Calendar)prototype.clone();
-		c.setTimeInMillis(point.milliseconds());
+		c.setTimeInMillis(point.getMilliseconds());
 		return weekDay(c.get(Calendar.DAY_OF_WEEK));
 	}
 
 	@Override
 	public Year yearOf(TimePoint point) {
 		Calendar c =  (Calendar)prototype.clone();
-		c.setTimeInMillis(point.milliseconds());
+		c.setTimeInMillis(point.getMilliseconds());
 		return year(
 				c.get(Calendar.YEAR),
 				c.getActualMaximum(Calendar.MONTH)
@@ -120,7 +120,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 	@Override
 	public int yearDay(TimePoint point) {
 		Calendar c =  (Calendar)prototype.clone();
-		c.setTimeInMillis(point.milliseconds());
+		c.setTimeInMillis(point.getMilliseconds());
 		return c.get(Calendar.DAY_OF_YEAR);
 	}
 	
@@ -143,7 +143,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 	@Override
 	public TimeHolder timeOf(TimePoint point) {
 		Calendar c =  (Calendar)prototype.clone();
-		c.setTimeInMillis(point.milliseconds());
+		c.setTimeInMillis(point.getMilliseconds());
 		return new CalendarTimeHolder(c);
 	}
 
@@ -160,7 +160,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 		}
 
 		@Override
-		public long milliseconds() {
+		public long getMilliseconds() {
 			return calendar.get(Calendar.MILLISECOND);
 		}
 

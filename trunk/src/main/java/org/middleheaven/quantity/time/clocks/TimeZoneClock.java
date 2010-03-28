@@ -36,7 +36,7 @@ public class TimeZoneClock extends WrappedClock {
 	@Override
 	protected TimePoint calculateTimeFromReference(TimePoint referenceTime) {
 		return new EpocTimePoint(TimeUtils.convertLocalTime(
-				referenceTime.milliseconds(),
+				referenceTime.getMilliseconds(),
 				getReferenceClock().getTimeZone(),
 				this.timeZone)
 		);

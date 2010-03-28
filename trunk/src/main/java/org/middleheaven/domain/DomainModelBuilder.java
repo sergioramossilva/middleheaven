@@ -161,6 +161,12 @@ public final class DomainModelBuilder {
 			fm.setDataTypeModel(typeModel);
 			return this;
 		}
+
+		@Override
+		public FieldModelBuilder setValueType(Class<?> valueType) {
+			fm.setValueType(valueType);
+			return this;
+		}
 		
 	}
 }

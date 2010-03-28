@@ -7,7 +7,6 @@ package org.middleheaven.quantity.time;
  * A time instance represented by the number of miliseconds to an epoc.
  * Epoc is Java default epoc.
  * 
- * @author Sergio M.M. Taborda
  */
 public interface TimePoint extends Comparable<TimePoint>{
 
@@ -24,5 +23,5 @@ public interface TimePoint extends Comparable<TimePoint>{
      * @return The number of milisecounds elapsed from the epoc reference
      * 
      */
-    public long milliseconds();
+    public long getMilliseconds();
 }

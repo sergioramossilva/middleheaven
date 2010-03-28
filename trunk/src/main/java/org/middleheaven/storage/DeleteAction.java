@@ -11,12 +11,15 @@ class DeleteAction extends StoreAction{
 		super(storable);
 	}
 
+	
+	
 	@Override
 	public boolean execute(DataStorage dataStorage) {
-		dataStorage.remove(Collections.singleton(storable));
+		dataStorage.remove(Collections.singleton(this.getStorable()));
 
-		storable.setStorableState(StorableState.DELETED);
+		getStorable().setStorableState(StorableState.DELETED);
 		return true;
 	}
+
 
 }

@@ -18,7 +18,6 @@ public class EditableDomainModel implements DomainModel {
 	}
 
 	public <E> void addEntityRepository(Class<E> entityType, Repository<? extends E> repository) {
-		repository.setDomainModel(this);
 		repositories.put(entityType.getName(), repository);
 	}
 	

@@ -17,7 +17,6 @@ import org.middleheaven.web.rendering.RenderingProcessor;
 // created directly on the WebContainerBoostrap
 class ServletHttpServerService extends AbstractHttpServerService {
 
-
 	public ServletHttpServerService(){
 
 		addRenderingProcessorResolver("jsp",new DefaultJspRenderingProcessorResolver(),UrlMapping.matchAll());
@@ -73,13 +72,20 @@ class ServletHttpServerService extends AbstractHttpServerService {
 				}
 
 			} else {
-				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl());
+				
+				String contentType = request.getHeader("Content-Type");
+				
+				if(outcome.getContentType()!=null){
+					contentType = outcome.getContentType();
+				} 
+				
+				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl(), contentType);
 
 				if (render == null){
-					Log.onBookFor(this.getClass()).error("Render could not be found for {0}" , outcome.getUrl());
+					Log.onBookFor(this.getClass()).error("Render could not be found for {0}" , outcome);
 					response.sendError(HttpCode.NOT_FOUND.intValue());
 				} else {
-					render.process(context, outcome);
+					render.process(context, outcome,contentType);
 				}
 			}
 
