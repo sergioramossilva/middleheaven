@@ -12,7 +12,7 @@ public class EpocTimePoint implements TimePoint  {
 	}
 
 	@Override
-	public long milliseconds() {
+	public long getMilliseconds() {
 		return timeFromEpoc;
 	}
 
@@ -23,7 +23,7 @@ public class EpocTimePoint implements TimePoint  {
 
 	@Override
 	public int compareTo(TimePoint other) {
-		return (int)(this.timeFromEpoc - other.milliseconds());
+		return (int)(this.timeFromEpoc - other.getMilliseconds());
 	}
 
 	public String toString(){

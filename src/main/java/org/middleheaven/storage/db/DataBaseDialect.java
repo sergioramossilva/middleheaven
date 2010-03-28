@@ -330,7 +330,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 					}
 					dbm.addDataBaseObjectModel(tm);
 				} else if ("SEQUENCE".equals(tables.getString(4))){
-					dbm.addDataBaseObjectModel(new SequenceModel(tables.getString(3),1,1));
+					dbm.addDataBaseObjectModel(new SequenceModel(logicSequenceName(tables.getString(3)),1,1));
 				}
 			}
 
@@ -348,6 +348,14 @@ public abstract class DataBaseDialect implements AliasResolver{
 				}
 			}
 		}
+	}
+	
+	protected String hardSequenceName(String logicName){
+		return "seq_".concat(logicName.toLowerCase());
+	}
+	
+	protected String logicSequenceName(String hardName){
+		return hardName.substring(4);
 	}
 
 	protected DataType typeFromNative(int sqlType) {
@@ -373,7 +381,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return DataType.TEXT;
 	}
 
-	public EditionDataBaseCommand createCreateTableCommand(TableModel tm){
+	public  EditionDataBaseCommand createCreateTableCommand(TableModel tm){
 
 		Clause sql = new Clause("CREATE TABLE ");
 		writeEnclosureHardname(sql, tm.getName());
@@ -387,7 +395,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 			} 
 			sql.append(" NULL ");
 			if (cm.isKey()){
-				appendInlineCreateTableColumnPrimaryKeyConstraint(sql, "PK_" + cm.getName());
+				appendInlineCreateTableColumnPrimaryKeyConstraint(sql,cm);
 			} 
 			sql.append(",\n");
 		}
@@ -396,8 +404,9 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return new SQLEditCommand(this,sql.toString());
 	}
 
-	protected void appendInlineCreateTableColumnPrimaryKeyConstraint(Clause sql, String constraintName){
-		sql.append(" CONSTRAINT PK_").append(constraintName);
+	
+	protected  void appendInlineCreateTableColumnPrimaryKeyConstraint(Clause sql, ColumnModel column){
+		sql.append(" CONSTRAINT PK_").append(column.getTableModel().getName()).append("_").append(column.getName());
 	}
 	
 	protected abstract void appendNativeTypeFor(Clause sql, ColumnModel type);

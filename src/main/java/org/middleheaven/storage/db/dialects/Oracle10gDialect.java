@@ -138,7 +138,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 						}
 						dbm.addDataBaseObjectModel(tm);
 					} else if ("SEQUENCE".equals(tables.getString(4))){
-						dbm.addDataBaseObjectModel(new SequenceModel(tables.getString(3),1,1));
+						dbm.addDataBaseObjectModel(new SequenceModel(logicSequenceName(tables.getString(3)),1,1));
 					}
 				}
 			} finally{
@@ -184,22 +184,6 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 		sql.append(")");
 		return new SQLEditCommand(this,sql.toString());
 	}
-
-	public void updateDatabaseModel(DataBaseModel model){
-
-		List<SequenceModel> sequences = new LinkedList<SequenceModel>();
-
-		for (DataBaseObjectModel table : model){
-			if(table.getType().equals(DataBaseObjectType.TABLE)){
-				sequences.add(new SequenceModel("seq_" + table.getName() , 0,1));
-			}
-		}
-
-		for (SequenceModel seq : sequences){
-			model.addDataBaseObjectModel(seq);
-		}
-	}
-
 
 	private  class OracleCriteriaInterpreter extends CriteriaInterpreter{
 
@@ -264,7 +248,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
 		return new SQLRetriveCommand(this,
 				new StringBuilder("SELECT ")
-				.append("seq_").append(sequenceName) //avoid name colision
+				.append(hardSequenceName(sequenceName))
 				.append(".nextval FROM dual")
 				.toString() ,
 				Collections.<ColumnValueHolder>emptySet()
@@ -315,7 +299,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel sequence) {
 
 		StringBuilder sql = new StringBuilder("CREATE SEQUENCE ")
-		.append(sequence.getName()) // avoid name colision
+		.append(hardSequenceName(sequence.getName())) // avoid name colision
 		.append(" INCREMENT BY ").append(sequence.getIncrementBy())
 		.append(" MINVALUE ").append(sequence.getStartWith())
 		.append(" START WITH " ).append(sequence.getStartWith());

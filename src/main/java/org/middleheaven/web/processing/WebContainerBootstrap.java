@@ -27,7 +27,6 @@ import org.middleheaven.web.container.WebContainerSwitcher;
  */
 public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap implements ServletContextListener{
 
-
 	protected ServletContext servletContext;
 
 	public void contextInitialized(ServletContextEvent servletContextEvent) {

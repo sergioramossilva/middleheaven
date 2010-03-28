@@ -1,5 +1,6 @@
 package org.middleheaven.storage.criteria;
 
+import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.ReferenceStorableDataTypeModel;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
@@ -27,6 +28,12 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 			return fieldCriterionAsFilter((FieldCriterion)c,model);
 		} else if ( c instanceof FieldJuntionCriterion){
 			return fieldJuntionCriterionAsFilter((FieldJuntionCriterion)c,model);
+		} else if (c instanceof IdentityCriterion){
+			
+			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)c).getIdentity(), DataType.UNKWON);
+			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
+			
+			return fieldCriterionAsFilter (f , model);
 		} else {
 			throw new RuntimeException("Cannot convert " + c.getClass() + " to a filter");
 		}

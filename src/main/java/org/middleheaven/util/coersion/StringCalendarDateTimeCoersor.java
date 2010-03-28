@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.quantity.time.CalendarDateTime;
+import org.middleheaven.quantity.time.TimeUtils;
 
 public class StringCalendarDateTimeCoersor extends AbstractTypeCoersor<String, CalendarDateTime>{
 
@@ -21,9 +22,15 @@ public class StringCalendarDateTimeCoersor extends AbstractTypeCoersor<String, C
 				return null;
 			}
 			
-			Method method = type.getMethod("date", new Class[]{Date.class});
+			try {
+				return type.cast(TimeUtils.from(Long.valueOf(value)));
+				
+			} catch (NumberFormatException e){
+				
+				return type.cast(TimeUtils.from(format.parse(value)));
+				
+			}
 			
-			return type.cast( method.invoke(null, format.parse(value)));
 		} catch (Exception e) {
 			throw new CoersionException(e);
 		} 

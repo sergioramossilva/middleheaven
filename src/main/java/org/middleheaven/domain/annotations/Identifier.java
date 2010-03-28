@@ -6,14 +6,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.identity.IntegerIdentity;
-
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD , ElementType.METHOD})
 @Documented
-public @interface Key {
+public @interface Identifier {
 
-	
-	Class<? extends Identity> type() default IntegerIdentity.class;
+	String group() default "standard";
 }

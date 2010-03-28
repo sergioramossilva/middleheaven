@@ -16,18 +16,22 @@ import org.middleheaven.storage.db.RetriveDataBaseCommand;
 import org.middleheaven.storage.db.SQLRetriveCommand;
 import org.middleheaven.storage.db.SQLStoreCollectionCommand;
 import org.middleheaven.storage.db.SequenceNotSupportedDBDialect;
+import org.middleheaven.storage.db.TableBasedSequence;
 import org.middleheaven.storage.db.TableModel;
 
 public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 
+	
+	private final static String SEQUENCES_TABLE_NAME = "tb_sequences";
+	
 	public SQLServerDialect() {
 		super("[", "]", ".");
 	}
 
 
 	public void updateDatabaseModel (DataBaseModel dbModel){
-		// add sequence table
-		TableModel sequencesTable = new TableModel("tb_sequences");
+		// add sequences control table
+		TableModel sequencesTable = new TableModel(SEQUENCES_TABLE_NAME);
 		sequencesTable.addColumn(new ColumnModel("name",DataType.TEXT));
 		sequencesTable.addColumn(new ColumnModel("lastUsed",DataType.INTEGER));
 
@@ -35,10 +39,10 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 	}
 
 	@Override
-	protected RetriveDataBaseCommand createSequenceStateReadCommand(String sequenceName) {
+	protected RetriveDataBaseCommand createSequenceStateReadCommand(TableBasedSequence sequence) {
 		return new SQLRetriveCommand(this,
-				new StringBuilder("SELECT lastUsed FROM tb_sequences WHERE name ='")
-				.append(sequenceName)
+				new StringBuilder("SELECT lastUsed FROM ").append(SEQUENCES_TABLE_NAME).append(" WHERE name ='")
+				.append(hardSequenceName(sequence.getName()))
 				.append("'")
 				.toString(),
 				Collections.<ColumnValueHolder>emptySet()
@@ -46,26 +50,26 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 	}
 
 	@Override
-	protected DataBaseCommand createUpdateSequenceValueCommand(String name,long lastUsed) {
+	protected DataBaseCommand createUpdateSequenceValueCommand(TableBasedSequence sequence,long lastUsed) {
 		Collection<StorableFieldModel> fields = Collections.emptySet();
 		Collection<Storable> data = Collections.emptySet();
 
-		StringBuilder sql = new StringBuilder("UPDATE tb_sequences SET lastUsed=")
+		StringBuilder sql = new StringBuilder("UPDATE ").append(SEQUENCES_TABLE_NAME).append(" SET lastUsed=")
 		.append(lastUsed)
 		.append(" WHERE name='")
-		.append(name)
+		.append(hardSequenceName(sequence.getName()))
 		.append("'");
 
 		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
 
 	@Override
-	protected DataBaseCommand createInsertSequenceValueCommand(String name) {
+	protected DataBaseCommand createInsertSequenceValueCommand(TableBasedSequence sequence) {
 		Collection<StorableFieldModel> fields = Collections.emptySet();
 		Collection<Storable> data = Collections.emptySet();
 
-		StringBuilder sql = new StringBuilder("INSERT INTO tb_sequences (name,lastUsed) VALUES ('")
-		.append(name)
+		StringBuilder sql = new StringBuilder("INSERT INTO ").append(SEQUENCES_TABLE_NAME).append(" (name,lastUsed) VALUES ('")
+		.append(hardSequenceName(sequence.getName()))
 		.append("',0)");
 
 		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);

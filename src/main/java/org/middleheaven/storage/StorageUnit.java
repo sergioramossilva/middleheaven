@@ -1,5 +1,7 @@
 package org.middleheaven.storage;
 
+import java.util.Collection;
+
 public interface StorageUnit {
 
 	/**
@@ -18,4 +20,6 @@ public interface StorageUnit {
 	public void roolback();
 	
 	public void commitTo(DataStorage dataStorage);
+
+	public Collection<Storable> filter(Collection<Storable> all);
 }

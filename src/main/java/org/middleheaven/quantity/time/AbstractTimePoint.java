@@ -18,7 +18,7 @@ class AbstractTimePoint implements TimePoint, Serializable {
     
     
 	@Override
-	public long milliseconds() {
+	public long getMilliseconds() {
 		return milliseconds;
 	}
 
@@ -31,7 +31,7 @@ class AbstractTimePoint implements TimePoint, Serializable {
 		if (other==null){
 			throw new ClassCastException("Null is not an instance of " + this.getClass());
 		}
-		return (int)(this.milliseconds - other.milliseconds());
+		return (int)(this.milliseconds - other.getMilliseconds());
 	}
 
 }

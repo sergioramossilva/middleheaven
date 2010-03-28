@@ -17,7 +17,7 @@ public class CalendarDate extends CalendarDateTime  implements Incrementable<Ela
 	private static final long serialVersionUID = -5640403398323384454L;
 	
 	public static CalendarDate today(){
-    	return new CalendarDate(TimeContext.getTimeContext(), TimeContext.getTimeContext().now().milliseconds());
+    	return new CalendarDate(TimeContext.getTimeContext(), TimeContext.getTimeContext().now().getMilliseconds());
     }
 	
     public static CalendarDate date(int year , int month, int day){

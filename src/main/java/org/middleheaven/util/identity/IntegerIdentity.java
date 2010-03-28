@@ -11,6 +11,14 @@ public class IntegerIdentity extends Identity implements Serializable {
 		return new IntegerIdentity(Integer.parseInt(value));
 	}
 	
+	public static Identity valueOf(Integer value) {
+		return new IntegerIdentity(value.intValue());
+	}
+	
+	public static Identity valueOf(int value) {
+		return new IntegerIdentity(value);
+	}
+	
 	public IntegerIdentity(int value) {
 		this.value = value;
 	}

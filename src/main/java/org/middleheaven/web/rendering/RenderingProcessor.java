@@ -7,5 +7,5 @@ import org.middleheaven.web.processing.action.RequestResponseWebContext;
 
 public interface RenderingProcessor {
 
-	public void process(RequestResponseWebContext context, Outcome outcome) throws HttpProcessException;
+	public void process(RequestResponseWebContext context, Outcome outcome , String contentType) throws HttpProcessException;
 }

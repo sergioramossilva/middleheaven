@@ -85,11 +85,6 @@ public abstract class AbstractRepository<E> implements Repository<E> {
 		
 	}
 
-	@Override
-	public void setDomainModel(DomainModel domainModel) {
-		this.domainModel = domainModel;
-	}
-
 	protected DomainModel getDomainModel(){
 		return this.domainModel;
 	}

@@ -120,10 +120,15 @@ public class PresenterCommandMappingBuilder {
 		}
 		
 		@Override
-		public ActionMappingBuilder forwardTo(String url) {
-			Outcome outcome = new Outcome(status, url);
+		public ActionMappingBuilder forwardTo(String url, String asContentType) {
+			Outcome outcome = new Outcome(status, url,asContentType);
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
 			return actionBuilder;
+		}
+		
+		@Override
+		public ActionMappingBuilder forwardTo(String url) {
+			return forwardTo(url, "text/html");
 		}
 
 		@Override
@@ -150,6 +155,8 @@ public class PresenterCommandMappingBuilder {
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
 			return actionBuilder;
 		}
+
+	
 
 	}
 

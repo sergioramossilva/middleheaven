@@ -73,21 +73,6 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		return new StorageException(e);
 	}
 	
-	public void updateDatabaseModel(DataBaseModel model){
-
-		List<SequenceModel> sequences = new LinkedList<SequenceModel>();
-		
-		for (DataBaseObjectModel table : model){
-			if(table.getType().equals(DataBaseObjectType.TABLE)){
-				sequences.add(new SequenceModel(table.getName() , 0,1));
-			}
-		}
-		
-		for (SequenceModel seq : sequences){
-			model.addDataBaseObjectModel(seq);
-		}
-	}
-	
 	@Override
 	public void writeJoinTableHardname(Clause joinClause, String hardNameForEntity) {
 		joinClause.append(hardNameForEntity);
@@ -103,7 +88,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel sequence) {
 
 		StringBuilder sql = new StringBuilder("CREATE SEQUENCE ")
-		.append(sequence.getName()) 
+		.append(hardSequenceName(sequence.getName())) 
 		.append(" AS INTEGER ")
 		.append(" START WITH " ).append(sequence.getStartWith())
 		.append(" INCREMENT BY ").append(sequence.getIncrementBy());
@@ -178,7 +163,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
 		return new SQLRetriveCommand( this,
 				new StringBuilder("SELECT NEXT VALUE FOR ")
-				.append(sequenceName)
+				.append(hardSequenceName(sequenceName))
 				.append(" FROM INFORMATION_SCHEMA.SYSTEM_SEQUENCES")
 				.toString(),
 				Collections.<ColumnValueHolder>emptySet()
@@ -293,7 +278,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 			
 			ResultSet sequences = psSequences.executeQuery();
 			while (sequences.next()) {
-				SequenceModel sm = new SequenceModel(sequences.getString(1) , sequences.getInt(2), sequences.getInt(3));
+				SequenceModel sm = new SequenceModel(logicSequenceName(sequences.getString(1)) , sequences.getInt(2), sequences.getInt(3));
 				dbm.addDataBaseObjectModel(sm);
 			}
 			

@@ -13,10 +13,12 @@ class UpdateAction extends StoreAction{
 
 	@Override
 	public boolean execute(DataStorage dataStorage) {
-		dataStorage.update(Collections.singleton(storable));
+		dataStorage.update(Collections.singleton(this.getStorable()));
 
-		storable.setStorableState(StorableState.RETRIVED);
+		this.getStorable().setStorableState(StorableState.RETRIVED);
 		return true;
 	}
+
+
 
 }

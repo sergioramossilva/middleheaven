@@ -29,7 +29,7 @@ public final class TimeUtils {
 	}
 	
 	public static Date toDate(TimePoint date){
-		return date == null ? null:  new Date(date.milliseconds());
+		return date == null ? null:  new Date(date.getMilliseconds());
 	}
 	
 	public static CalendarDateTime from(Object value) {
@@ -42,9 +42,11 @@ public final class TimeUtils {
 		} else if (value instanceof Calendar) {
 			time = ((Calendar)value).getTime().getTime();
 		} else if (value instanceof CalendarDate) {
-			time = ((CalendarDate)value).milliseconds();
+			time = ((CalendarDate)value).getMilliseconds();
 		} else if (value instanceof CalendarDateTime) {
-			time = ((CalendarDateTime)value).milliseconds();
+			time = ((CalendarDateTime)value).getMilliseconds();
+		} else if (value instanceof Long) {
+			time = ((Long)value).longValue();
 		} else {
 			throw new IllegalArgumentException(value.getClass()+ " does not represent a point in time");
 		}
@@ -53,19 +55,19 @@ public final class TimeUtils {
 	}
 	
 	public static java.sql.Date toSQLDate(TimePoint date){
-		return new java.sql.Date(date.milliseconds());
+		return new java.sql.Date(date.getMilliseconds());
 	}
 	
 	public static java.sql.Time toSQLTime(TimePoint date){
-		return new java.sql.Time(date.milliseconds());
+		return new java.sql.Time(date.getMilliseconds());
 	}
 	
 	public static Timestamp toSQLTimestamp(TimePoint date){
-		return new java.sql.Timestamp(date.milliseconds());
+		return new java.sql.Timestamp(date.getMilliseconds());
 	}
 	
 	public static int compare(Date a, TimePoint b){
-		return (int)(a.getTime() - b.milliseconds());
+		return (int)(a.getTime() - b.getMilliseconds());
 	}
 
 

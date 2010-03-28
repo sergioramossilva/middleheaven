@@ -86,7 +86,7 @@ public class MachineClock extends Clock {
 			if (chronogram.getStartTime()==null){
 				timer.schedule(new TickTimerTask(translatingMethod, translatingObject), 0, chronogram.repetitionPeriod().milliseconds());
 			} else {
-				timer.schedule(new TickTimerTask(translatingMethod, translatingObject), new Date(chronogram.getStartTime().milliseconds()), chronogram.repetitionPeriod().milliseconds());
+				timer.schedule(new TickTimerTask(translatingMethod, translatingObject), new Date(chronogram.getStartTime().getMilliseconds()), chronogram.repetitionPeriod().milliseconds());
 			}
 		}
 

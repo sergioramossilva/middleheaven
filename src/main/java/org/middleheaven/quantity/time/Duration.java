@@ -291,7 +291,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		TimePoint t1 = TimeContext.getTimeContext().getChronology().add(CalendarDateTime.origin(), this);
 		TimePoint t2 = TimeContext.getTimeContext().getChronology().add(CalendarDateTime.origin(), other);
 		
-		return (int)(t2.milliseconds()-t1.milliseconds());
+		return (int)(t2.getMilliseconds()-t1.getMilliseconds());
 	}
 
 

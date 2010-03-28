@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.middleheaven.web.processing.global.RequestAgentHttpCultureResolver;
 import org.middleheaven.web.processing.global.HttpCultureResolver;
+import org.middleheaven.web.processing.global.RequestAgentHttpCultureResolver;
 import org.middleheaven.web.rendering.RenderingProcessor;
 import org.middleheaven.web.rendering.RenderingProcessorResolver;
 
@@ -15,7 +15,7 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 	private final List<HttpFilter> filters = new CopyOnWriteArrayList<HttpFilter>();
 	private final Map<String, HttpMapping> processorsMappings = new TreeMap<String, HttpMapping>();
 	private final Map<String, HttpRenderingMapping> renderingMappings = new TreeMap<String, HttpRenderingMapping>();
-
+	
 	private boolean available = false;
 	private boolean stopped = false;
 	
@@ -82,10 +82,10 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 	} 
 	
 	@Override
-	public RenderingProcessor resolverRenderingProcessor(String url) {
+	public RenderingProcessor resolverRenderingProcessor(String url , String contentType) {
 		for (HttpRenderingMapping mapping : renderingMappings.values()){
-			if (mapping.mapping.match(url)){
-				return mapping.processor.resolve(url);
+			if (mapping.mapping.match(url) && mapping.processor.canProcess(url, contentType)){
+				return mapping.processor.resolve(url, contentType);
 			}
 		}
 		return null;

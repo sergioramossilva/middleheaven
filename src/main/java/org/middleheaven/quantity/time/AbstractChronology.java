@@ -11,7 +11,7 @@ public abstract class AbstractChronology extends Chronology {
 	@Override
 	public <T extends TimePoint> T add(T point, Period period) {
 		return reduce(
-				timePointFor(point.milliseconds() + period.milliseconds()),
+				timePointFor(point.getMilliseconds() + period.milliseconds()),
 				Introspector.of(point).getType()
 		);
 	}

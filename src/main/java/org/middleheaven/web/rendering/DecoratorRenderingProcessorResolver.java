@@ -62,7 +62,7 @@ public class DecoratorRenderingProcessorResolver implements RenderingProcessorRe
 	}
 	
 	@Override
-	public RenderingProcessor resolve(String url) {
+	public RenderingProcessor resolve(String url, String contentType) {
 		return processor;
 	}
 
@@ -80,7 +80,7 @@ public class DecoratorRenderingProcessorResolver implements RenderingProcessorRe
 		}
 
 		@Override
-		public void process(RequestResponseWebContext context, Outcome outcome)
+		public void process(RequestResponseWebContext context, Outcome outcome, String contentType)
 		throws HttpProcessException {
 
 
@@ -209,6 +209,13 @@ public class DecoratorRenderingProcessorResolver implements RenderingProcessorRe
 		}
 
 	}
+
+	@Override
+	public boolean canProcess(String url, String contentType) {
+		return url.endsWith("html") || url.endsWith("htm") || "text/html".equalsIgnoreCase(contentType);
+	}
+
+
 
 
 

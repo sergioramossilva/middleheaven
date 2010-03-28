@@ -43,7 +43,7 @@ public class ClockTest {
 		long now = System.currentTimeMillis();
 		Clock clock = StaticClock.forTime(now);
 
-		assertEquals(now, clock.getTime().milliseconds()); 
+		assertEquals(now, clock.getTime().getMilliseconds()); 
 	}
 
 	@Test
@@ -55,23 +55,23 @@ public class ClockTest {
 		// raceclock = sclock * cadence + 1000
 
 		sclock.setLocalTime(2000);
-		assertEquals(3000L, clock.getTime().milliseconds()); 
+		assertEquals(3000L, clock.getTime().getMilliseconds()); 
 
 		sclock.setLocalTime(3000);
-		assertEquals(5000L, clock.getTime().milliseconds()); 
+		assertEquals(5000L, clock.getTime().getMilliseconds()); 
 
 
 		sclock.setLocalTime(0);
 		clock = SpeedyClock.aSecondIsAnHour(sclock);
 
 		sclock.setLocalTime(1000);
-		assertEquals(60*60*1000L, clock.getTime().milliseconds()); 
+		assertEquals(60*60*1000L, clock.getTime().getMilliseconds()); 
 
 		sclock.setLocalTime(0);
 		clock = SpeedyClock.aSecondIsADay(sclock);
 
 		sclock.setLocalTime(1000);
-		assertEquals(1000*60*60*24L, clock.getTime().milliseconds()); 
+		assertEquals(1000*60*60*24L, clock.getTime().getMilliseconds()); 
 
 
 	}
@@ -85,19 +85,19 @@ public class ClockTest {
 
 		TimeZoneClock local = new TimeZoneClock(sclock.getTimeZone(), sclock);
 
-		assertEquals(now.milliseconds(), local.getTime().milliseconds());
+		assertEquals(now.getMilliseconds(), local.getTime().getMilliseconds());
 
 		TimeZoneClock GMT = new TimeZoneClock( TimeZone.getTimeZone("GMT+00:00"), sclock);
 
 		// calculate time at GMT
 		TimePoint reduced = now.minus(sclock.getTimeZone().getRawOffsetPeriod());
 
-		assertEquals(0L, GMT.getTime().milliseconds() - reduced.milliseconds() );
+		assertEquals(0L, GMT.getTime().getMilliseconds() - reduced.getMilliseconds() );
 
 		TimeZoneClock newYork = new TimeZoneClock(TimeZone.getTimeZone("GMT-04:00"), sclock);
 
 		// calculate time at New York
-		assertEquals(0L, now.minus(sclock.getTimeZone().getRawOffsetPeriod()).minus(Duration.of().hours(4)).milliseconds() - newYork.getTime().milliseconds() );
+		assertEquals(0L, now.minus(sclock.getTimeZone().getRawOffsetPeriod()).minus(Duration.of().hours(4)).getMilliseconds() - newYork.getTime().getMilliseconds() );
 
 	}
 	

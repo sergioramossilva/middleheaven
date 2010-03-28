@@ -6,7 +6,7 @@ import java.util.Date;
 public class CalendarDateTime extends AbstractTimePoint implements  DateHolder , TimeHolder  {
 
 	public static CalendarDateTime now(){
-		return new CalendarDateTime(TimeContext.getTimeContext(), TimeContext.getTimeContext().now().milliseconds());
+		return new CalendarDateTime(TimeContext.getTimeContext(), TimeContext.getTimeContext().now().getMilliseconds());
 	}
 	
 	static CalendarDateTime origin(){
@@ -144,11 +144,11 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 	}
 
 	public boolean equals(TimePoint other) {
-		return other.milliseconds() == this.milliseconds;
+		return other.getMilliseconds() == this.milliseconds;
 	}
 
 	public int hashCode() {
-		return (int)this.milliseconds();
+		return (int)this.getMilliseconds();
 	}
 	
 	public String toString(){

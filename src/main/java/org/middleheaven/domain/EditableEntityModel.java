@@ -31,16 +31,19 @@ public final class EditableEntityModel implements EntityModel {
 					break;
 				}
 			}
-			Log.onBookFor(this.getClass()).warn("{0} had no identity field defined.",this.type);
-			EditableEntityFieldModel eidentityFieldModel = new EditableEntityFieldModel(this.getEntityName(), "identity");
-			eidentityFieldModel.setIsIdentity(true);
-			eidentityFieldModel.setDataType(DataType.UNKWON);
-			eidentityFieldModel.setUnique(true);
-			eidentityFieldModel.setValueType(IntegerIdentity.class);
 			
-			addField(eidentityFieldModel);
-			
-			identityFieldModel = eidentityFieldModel;
+			if (identityFieldModel == null){
+				Log.onBookFor(this.getClass()).warn("{0} has no identity field defined.",this.type);
+				EditableEntityFieldModel eidentityFieldModel = new EditableEntityFieldModel(this.getEntityName(), "identity");
+				eidentityFieldModel.setIsIdentity(true);
+				eidentityFieldModel.setDataType(DataType.UNKWON);
+				eidentityFieldModel.setUnique(true);
+				eidentityFieldModel.setValueType(IntegerIdentity.class);
+				
+				addField(eidentityFieldModel);
+				
+				identityFieldModel = eidentityFieldModel;
+			}
 		}
 		return identityFieldModel;
 	}

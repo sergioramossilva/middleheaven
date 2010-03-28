@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.domain.annotations.Key;
+import org.middleheaven.domain.annotations.Id;
 import org.middleheaven.domain.annotations.ManyToMany;
 import org.middleheaven.domain.annotations.ManyToOne;
 import org.middleheaven.domain.annotations.OneToMany;
@@ -63,8 +63,10 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 		
 		Class<?> valueType = pa.getValueType();
 
-		if(pa.isAnnotadedWith(Key.class)){
-			Key key = pa.getAnnotation(Key.class);
+		fm.setValueType(valueType);
+		
+		if(pa.isAnnotadedWith(Id.class)){
+			Id key = pa.getAnnotation(Id.class);
 
 			fm.setIdentity(true);
 			fm.setUnique(true);

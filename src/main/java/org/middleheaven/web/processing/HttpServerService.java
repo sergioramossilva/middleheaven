@@ -29,7 +29,7 @@ public interface HttpServerService {
 	 * @param url
 	 * @return or <code>null</code> if none matches 
 	 */
-	public RenderingProcessor resolverRenderingProcessor(String url);
+	public RenderingProcessor resolverRenderingProcessor(String url , String contentType);
 	
 	/**
 	 * Discovers and returns the HttpProcessor that can, according to it's registred UrlMapping, process the given url 

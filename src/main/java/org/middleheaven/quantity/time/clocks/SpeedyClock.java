@@ -55,7 +55,7 @@ public class SpeedyClock extends WrappedClock {
 	}
 
 	protected TimePoint calculateTimeFromReference(TimePoint tick){
-		return new EpocTimePoint(mark.milliseconds() + (long)((tick.milliseconds() - mark.milliseconds()) * cadence));
+		return new EpocTimePoint(mark.getMilliseconds() + (long)((tick.getMilliseconds() - mark.getMilliseconds()) * cadence));
 	}
 
 	

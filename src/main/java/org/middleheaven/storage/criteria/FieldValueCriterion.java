@@ -2,7 +2,7 @@ package org.middleheaven.storage.criteria;
 
 import org.middleheaven.storage.QualifiedName;
 
-class FieldValueCriterion implements FieldCriterion {
+public class FieldValueCriterion implements FieldCriterion {
 	
 	private static final long serialVersionUID = 7204559851317644625L;
 	

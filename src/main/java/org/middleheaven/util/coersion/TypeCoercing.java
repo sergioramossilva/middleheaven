@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.NumberIdentityCoersor;
 import org.middleheaven.util.identity.StringIdentityCoersor;
@@ -28,7 +29,16 @@ public class TypeCoercing {
 		addCoersor(Timestamp.class, java.util.Date.class ,  DateTypeCoersor.newInstance(Timestamp.class));
 		addCoersor(java.sql.Date.class, java.util.Date.class ,  DateTypeCoersor.newInstance(java.sql.Date.class));
 		addCoersor(Time.class, java.util.Date.class ,  DateTypeCoersor.newInstance(Time.class));
-		addCoersor(CalendarDate.class ,java.util.Date.class, new CalendarDateTypeCoersor());
+		
+		addCoersor(CalendarDate.class ,java.util.Date.class,  CalendarDateTypeCoersor.getInstance(CalendarDate.class,java.util.Date.class));
+		addCoersor(CalendarDate.class ,java.sql.Date.class,  CalendarDateTypeCoersor.getInstance(CalendarDate.class,java.sql.Date.class));
+		addCoersor(CalendarDate.class ,java.sql.Timestamp.class,  CalendarDateTypeCoersor.getInstance(CalendarDate.class,java.sql.Timestamp.class));
+		addCoersor(CalendarDate.class ,java.sql.Time.class,  CalendarDateTypeCoersor.getInstance(CalendarDate.class,java.sql.Time.class));
+		
+		addCoersor(CalendarDateTime.class ,java.util.Date.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.util.Date.class));
+		addCoersor(CalendarDateTime.class ,java.sql.Date.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Date.class));
+		addCoersor(CalendarDateTime.class ,java.sql.Timestamp.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Timestamp.class));
+		addCoersor(CalendarDateTime.class ,java.sql.Time.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Time.class));
 		
 	}
 	
@@ -44,6 +54,7 @@ public class TypeCoercing {
 	 * @return The same value represented in the {@code type} type.
 	 */
 	
+	@SuppressWarnings("unchecked")
 	public static <O,T> T coerce (O value , Class<T> type ){
 		if (value==null){
 			return null;
@@ -104,6 +115,7 @@ public class TypeCoercing {
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	public static <O,R> TypeCoersor<O,R> getCoersor(Class<O> from , Class<R> to){
 		
 		if (to.isPrimitive()){
@@ -118,7 +130,7 @@ public class TypeCoercing {
 		TypeCoersor<O,R> converter = converters.get(key);
 
 		if (converter==null){
-			throw new RuntimeException("Converter from " + from + " to " + to + " has not found");
+			throw new CoersionException("TypeCoersor from " + from + " to " + to + " has not found");
 		}
 		return converter;
 	}
@@ -134,12 +146,6 @@ public class TypeCoercing {
 			this.to = to;
 		}
 
-		public Class<?> getFrom() {
-			return from;
-		}
-		public Class<?> getTo() {
-			return to;
-		}
 
 		@Override
 		public int hashCode() {

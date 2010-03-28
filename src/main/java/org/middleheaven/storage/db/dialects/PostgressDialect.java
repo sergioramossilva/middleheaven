@@ -20,9 +20,12 @@ import org.middleheaven.storage.db.SQLEditCommand;
 import org.middleheaven.storage.db.SQLRetriveCommand;
 import org.middleheaven.storage.db.SequenceModel;
 import org.middleheaven.storage.db.SequenceSupportedDBDialect;
+import org.middleheaven.storage.db.TableModel;
 
 public class PostgressDialect extends SequenceSupportedDBDialect{
 
+	private final String SEQUENCE_PREFIX = "pgseq_";
+	
 	public PostgressDialect() {
 		super("\"", "\"", ".");
 	}
@@ -33,15 +36,25 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 		return new PostgressCriteriaInterpreter(this, criteria, reader);
 	}
 	
-	protected void appendInlineCreateTableColumnPrimaryKeyConstraint(Clause sql, String constraintName){
-		sql.append(" CONSTRAINT PK_").append(constraintName).append(" PRIMARY KEY ");
+	@Override
+	protected void appendInlineCreateTableColumnPrimaryKeyConstraint(Clause sql, ColumnModel column){
+		sql.append(" CONSTRAINT PK_").append(column.getTableModel().getName()).append("_").append(column.getName()).append(" PRIMARY KEY ");
 	}
 
+	protected String hardSequenceName(String logicName){
+
+		return SEQUENCE_PREFIX.concat(logicName.toLowerCase()); //avoid name colision
+	}
+	
+	protected String logicSequenceName(String hardName){
+		return hardName.substring(SEQUENCE_PREFIX.length());
+	}
+	
 	@Override
 	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
 		return new SQLRetriveCommand(this,
 				new StringBuilder("SELECT nextval('")
-				.append("pgseq_").append(sequenceName) //avoid name colision
+				.append(hardSequenceName(sequenceName)) 
 				.append("') as sequenceValue")
 				.toString() ,
 				Collections.<ColumnValueHolder>emptySet()
@@ -52,7 +65,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel sequence) {
 		
 		StringBuilder sql = new StringBuilder("CREATE SEQUENCE ")
-		.append("pgseq_").append(sequence.getName()) // avoid name colision
+		.append(hardSequenceName(sequence.getName())) 
 		.append(" INCREMENT BY ").append(sequence.getIncrementBy())
 		.append(" MINVALUE ").append(sequence.getStartWith())
 		.append(" START WITH " ).append(sequence.getStartWith());

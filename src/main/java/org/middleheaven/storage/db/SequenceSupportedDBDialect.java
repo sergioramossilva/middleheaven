@@ -3,6 +3,8 @@ package org.middleheaven.storage.db;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -19,6 +21,22 @@ public abstract class SequenceSupportedDBDialect extends DataBaseDialect {
 		super(startDelimiter, endDelimiter, fieldSeparator);
 	}
 
+	@Override
+	public void updateDatabaseModel(DataBaseModel model){
+
+		List<SequenceModel> sequences = new LinkedList<SequenceModel>();
+		
+		for (DataBaseObjectModel table : model){
+			if(table.getType().equals(DataBaseObjectType.TABLE)){
+				sequences.add(new SequenceModel(table.getName() , 0,1));
+			}
+		}
+		
+		for (SequenceModel seq : sequences){
+			model.addDataBaseObjectModel(seq);
+		}
+	}
+	
 	@Override
 	public final Sequence<Long> getSequence(DataSource ds, String identifiableName) {
 		
