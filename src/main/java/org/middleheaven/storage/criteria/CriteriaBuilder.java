@@ -44,9 +44,7 @@ public class CriteriaBuilder<T> extends AbstractCriteriaBuilder<T, CriteriaBuild
 
 	 */
 
-	
-
-	public CriteriaBuilder<T>limit(int count) {
+	public CriteriaBuilder<T> limit(int count) {
 		this.criteria.setRange(count);
 		return this;
 	}

@@ -2,7 +2,7 @@ package org.middleheaven.tool.test;
 
 import java.io.File;
 
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.io.repository.ManagedFiles;
 

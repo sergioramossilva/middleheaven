@@ -72,6 +72,8 @@ public class TypeCoercing {
 			
 			if (type.isInstance(value)){
 				return (T)value;
+			} else if (type.equals(Boolean.TYPE)){
+				return (T) new Boolean(((Boolean)value).booleanValue());
 			} else {
 				BigInteger big = new BigInteger(value.toString());
 				if (type.equals(Byte.TYPE)){

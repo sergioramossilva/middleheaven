@@ -2,8 +2,7 @@ package org.middleheaven.web.container;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
-import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.bootstrap.ContainerFileSystem;
 
 public class StandardSevletContainer extends WebContainer{
 
@@ -12,15 +11,11 @@ public class StandardSevletContainer extends WebContainer{
 	}
 
 	@Override
-	public String getEnvironmentName() {
-		return "Standard Servlet Container";
+	public String getContainerName() {
+		return  "Standard Servlet Container";
 	}
 
 
-	@Override
-	public void init(WiringService wiringService) {
-		// no-op
-	}
 
 
 }

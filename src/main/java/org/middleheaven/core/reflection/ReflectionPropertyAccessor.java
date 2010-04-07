@@ -2,9 +2,7 @@ package org.middleheaven.core.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 
 import org.middleheaven.util.coersion.TypeCoercing;
 
@@ -93,7 +91,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 		try {
 			
 			if( value == null && getValueType().isPrimitive()){
-				return; // does not set it
+				return; // cannot set a primitive to null. TODO throw exception ?
 			} else {
 				value = TypeCoercing.coerce(value,getValueType());
 				if (modifier != null){

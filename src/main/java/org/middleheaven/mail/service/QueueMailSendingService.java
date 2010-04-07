@@ -4,12 +4,13 @@ import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import org.middleheaven.mail.MailAsynchrounsCallbak;
-import org.middleheaven.mail.MailAsynchrounsCallbakDecorator;
+import org.middleheaven.mail.MailAsynchrounsCallback;
+import org.middleheaven.mail.MailAsynchrounsCallbackDecorator;
 import org.middleheaven.mail.MailException;
 import org.middleheaven.mail.MailMessage;
 import org.middleheaven.mail.MailSendingService;
 import org.middleheaven.mail.MailSendingServiceDecorator;
+import org.middleheaven.mail.MailTransmissionResult;
 
 public class QueueMailSendingService extends MailSendingServiceDecorator {
 
@@ -48,7 +49,7 @@ public class QueueMailSendingService extends MailSendingServiceDecorator {
 	}
 
 	@Override
-	public void send(MailMessage message, MailAsynchrounsCallbak callback)throws MailException {
+	public void send(MailMessage message, MailAsynchrounsCallback callback)throws MailException {
 		queue.offer(new QueuedMessage(message,callback));
 	}
 
@@ -64,10 +65,10 @@ public class QueueMailSendingService extends MailSendingServiceDecorator {
 				try{
 					QueuedMessage qm = queue.take();
 					try{
-						getOriginal().send(qm.getMessage(), new MailAsynchrounsCallbakDecorator(qm.getCallback()));
+						getOriginal().send(qm.getMessage(), new MailAsynchrounsCallbackDecorator(qm.getCallback()));
 
 					} catch (Exception e){
-						qm.getCallback().onSent(qm.getMessage(), false);
+						qm.getCallback().onSent(new MailTransmissionResult(qm.getMessage(), e));
 					}
 				} catch (InterruptedException e){
 					break;
@@ -78,10 +79,10 @@ public class QueueMailSendingService extends MailSendingServiceDecorator {
 
 	private static class QueuedMessage{
 		MailMessage message;
-		MailAsynchrounsCallbak callback;
+		MailAsynchrounsCallback callback;
 
 		public QueuedMessage(MailMessage message,
-				MailAsynchrounsCallbak callback) {
+				MailAsynchrounsCallback callback) {
 			this.message = message;
 			this.callback = callback;
 		}
@@ -90,7 +91,7 @@ public class QueueMailSendingService extends MailSendingServiceDecorator {
 			return message;
 		}
 
-		public MailAsynchrounsCallbak getCallback() {
+		public MailAsynchrounsCallback getCallback() {
 			return callback;
 		}
 

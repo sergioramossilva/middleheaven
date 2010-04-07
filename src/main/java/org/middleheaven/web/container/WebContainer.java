@@ -6,7 +6,10 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContext;
+import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.EditableContainerFileSystem;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
@@ -18,51 +21,57 @@ import org.middleheaven.io.repository.ManagedFiles;
 public abstract class WebContainer implements BootstrapContainer  {
 
 	private ServletContext context;
-	private ManagedFile appConfigRepository;
-	private ManagedFile appDataRepository;
-	private ManagedFile appLogRepository;
-	private ManagedFile appClasspathRepository;
-
-	private ManagedFile environmentConfigRepository;
-	private ManagedFile environmentDataRepository;
-
+	private EditableContainerFileSystem fileSystem;
+	
 	public WebContainer(ServletContext context) {
 		this.context = context;
-
-		setupDefaultFilesRepositories(context);
-
-		String fileMapping = this.context.getInitParameter("filesMapping");
-		if(fileMapping!=null){
-			ManagedFile file = environmentConfigRepository.retrive(fileMapping);
-			if(file.exists()){
-				setupConfigurationForFilesRepositories(file);
-			}
-		} 
 	}
-
+	
+	public void configurate(BootstrapContext context) {
+		//no-op
+	}
+	
 	public ServletContext getServletContext(){
 		return this.context;
 	}
 
-	public void init(WiringService wiringService){
-		//no-op
-	}
+	@Override
+	public final ContainerFileSystem getFileSystem() {
+		if (this.fileSystem==null){
+			fileSystem = new EditableContainerFileSystem();
+			
+			setupDefaultFilesRepositories(context,fileSystem);
 
-	protected void setupConfigurationForFilesRepositories(ManagedFile file){
+			String fileMapping = this.context.getInitParameter("filesMapping");
+			if(fileMapping!=null){
+				ManagedFile file = fileSystem.getEnvironmentConfigRepository().retrive(fileMapping);
+				if(file.exists()){
+					setupConfigurationForFilesRepositories(file,fileSystem);
+				}
+			} 
+			
+			
+		}
+		
+		return fileSystem;
+	}
+	
+	protected void setupConfigurationForFilesRepositories(ManagedFile configFile, EditableContainerFileSystem fileSystem){
 
 		Properties params = new Properties();
 		try {
-			params.load(file.getContent().getInputStream());
+			params.load(configFile.getContent().getInputStream());
 
 			final File root = new File(context.getRealPath("."));
 
-			environmentConfigRepository = resolveFile("environmentConfig" , root , params , environmentConfigRepository);
-			environmentDataRepository = resolveFile("environmentData" , root , params , environmentDataRepository);
 
-			appConfigRepository = resolveFile("appConfig" , root , params , appConfigRepository);
-			appDataRepository = resolveFile("appData" , root , params , appDataRepository);
-			appLogRepository = resolveFile("appLog" , root , params , appLogRepository);
-			appClasspathRepository = resolveFile("appClasspath" , root , params , appClasspathRepository);
+			fileSystem.setEnvironmentConfigRepository(resolveFile("environmentConfig" , root , params , fileSystem.getEnvironmentConfigRepository()));
+			fileSystem.setEnvironmentDataRepository(resolveFile("environmentData" , root , params , fileSystem.getEnvironmentDataRepository()));
+
+			fileSystem.setAppConfigRepository(resolveFile("appConfig" , root , params , fileSystem.getAppConfigRepository()));
+			fileSystem.setAppDataRepository(resolveFile("appData" , root , params ,fileSystem.getAppDataRepository()));
+			fileSystem.setAppLogRepository(resolveFile("appLog" , root , params , fileSystem.getAppLogRepository()));
+			fileSystem.setAppClasspathRepository(resolveFile("appClasspath" , root , params ,fileSystem.getAppClasspathRepository()));
 
 
 		} catch (IOException e) {
@@ -70,6 +79,26 @@ public abstract class WebContainer implements BootstrapContainer  {
 		}
 	}
 
+	
+	protected void setupDefaultFilesRepositories(ServletContext context, EditableContainerFileSystem fileSystem ){
+
+
+		fileSystem.setEnvironmentConfigRepository(ManagedFiles.resolveFile(new File(context.getRealPath("./../conf"))));
+		fileSystem.setAppDataRepository(ManagedFiles.resolveFile(new File(context.getRealPath("./../data"))).createFolder());
+		fileSystem.setAppConfigRepository(ManagedFiles.resolveFile(new File(context.getRealPath("./META-INF"))));
+		
+		ManagedFile root = ManagedFiles.resolveFile(new File(context.getRealPath(".")));
+		fileSystem.setAppRootRepository(root);
+		
+		fileSystem.setAppDataRepository(fileSystem.getEnvironmentDataRepository().retrive(root.getName()).createFolder());
+		fileSystem.setAppLogRepository(fileSystem.getAppDataRepository().retrive("log").createFolder());
+		
+		fileSystem.setAppClasspathRepository(ManagedFiles.resolveFile(new File(context.getRealPath("./WEB-INF/classes"))));
+		
+
+	}
+	
+	
 	private ManagedFile resolveFile(String name, File root, Properties params, ManagedFile defaultLocation) {
 		String path = (String)params.get(name);
 		if(path == null || path.trim().isEmpty()){
@@ -83,124 +112,16 @@ public abstract class WebContainer implements BootstrapContainer  {
 		}
 	}
 
-	protected void setupDefaultFilesRepositories(ServletContext context){
-
-		if(environmentConfigRepository==null){
-			environmentConfigRepository = ManagedFiles.resolveFile(new File(context.getRealPath("./../conf")));
-		}
-
-		if (environmentDataRepository==null){
-			environmentDataRepository = ManagedFiles.resolveFile(new File(context.getRealPath("./../data"))).createFolder();
-		}
-
-		if(appConfigRepository==null){
-			appConfigRepository = ManagedFiles.resolveFile(new File(context.getRealPath("./META-INF")));
-		}
-
-		ManagedFile root = getAppRootRepository();
-
-		if(appDataRepository == null){
-			appDataRepository = environmentDataRepository.retrive(root.getName()).createFolder();
-		}
-
-		if(appLogRepository == null){
-			appLogRepository = appDataRepository.retrive("log").createFolder();
-		}
-
-		if(appClasspathRepository == null){
-			appClasspathRepository = ManagedFiles.resolveFile(new File(context.getRealPath("./WEB-INF/classes")));
-		}
-
-	}
+	
 
 	@Override
 	public void start() {
 		// no-op
-
-
 	}
 
 	@Override
 	public void stop(){
 		this.context = null; 
 	}
-
-	public ManagedFile getAppRootRepository() {
-		return ManagedFiles.resolveFile(new File(context.getRealPath(".")));
-	}
-	
-	/**
-	 * @return <code>ManagedFileRepository</code> representing the Repository where application configuration files are stored. 
-	 * Normally this points to the META-INF folder for war applications
-	 */
-	public ManagedFile getAppConfigRepository() {
-		return appConfigRepository;
-	}
-
-	/**
-	 * @return <code>ManagedFileRepository</code> representing the Repository where environment configuration files are stored. 
-	 * Normally this points to the WEB-INF folder for war applications
-	 */
-	@Override
-	public ManagedFile getEnvironmentConfigRepository() {
-		return environmentConfigRepository;
-	}
-
-	@Override
-	public ManagedFile getEnvironmentDataRepository() {
-		return environmentDataRepository;
-	}
-
-	/**
-	 * @return <code>ManagedFileRepository</code> representing the repository where the application can store data
-	 * This defaults to the application`s root web folder. Application are encouraged to use specific folders inside the root
-	 */
-	public ManagedFile getAppDataRepository() {
-		return appDataRepository;
-	}
-
-	/**
-	 * @return <code>ManagedFileRepository</code> representing the repository where the application can store their logs
-	 * This defaults to the application`s root web folder. Application are encouraged to use specific folders inside the root
-	 */
-	public ManagedFile getAppLogRepository() {
-		return appLogRepository;
-	}
-
-	public ManagedFile getAppClasspathRepository() {
-		return appClasspathRepository;
-	}
-
-	protected void setContext(ServletContext context) {
-		this.context = context;
-	}
-
-	protected void setAppConfigRepository(ManagedFile appConfigRepository) {
-		this.appConfigRepository = appConfigRepository;
-	}
-
-	protected void setAppDataRepository(ManagedFile appDataRepository) {
-		this.appDataRepository = appDataRepository;
-	}
-
-	protected void setAppLogRepository(ManagedFile appLogRepository) {
-		this.appLogRepository = appLogRepository;
-	}
-
-	protected void setAppClasspathRepository(ManagedFile appClasspathRepository) {
-		this.appClasspathRepository = appClasspathRepository;
-	}
-
-	protected void setEnvironmentConfigRepository(
-			ManagedFile environmentConfigRepository) {
-		this.environmentConfigRepository = environmentConfigRepository;
-	}
-
-	protected void setEnvironmentDataRepository(
-			ManagedFile environmentDataRepository) {
-		this.environmentDataRepository = environmentDataRepository;
-	}
-
-
 
 }

@@ -1,8 +1,9 @@
 package org.middleheaven.global.gov.br;
 
 import org.middleheaven.global.gov.NDI;
+import org.middleheaven.validation.DefaultValidationResult;
 import org.middleheaven.validation.MessageInvalidationReason;
-import org.middleheaven.validation.ValidationContext;
+import org.middleheaven.validation.ValidationResult;
 import org.middleheaven.validation.Validator;
 
 public final class BRCNPJValidator implements Validator<NDI> {
@@ -14,14 +15,16 @@ public final class BRCNPJValidator implements Validator<NDI> {
 	public BRCNPJValidator(){}
 	
 	@Override
-	public void validate(ValidationContext context, NDI ndi) {
+	public ValidationResult validate(NDI ndi) {
+		DefaultValidationResult result = new DefaultValidationResult();
+		
 		final int[] combA = {5,4,3,2,9,8,7,6,5,4,3,2};
 		final int[] combB = {6,5,4,3,2,9,8,7,6,5,4,3,2};
 	    final int[] id = ndi.asIntArray();
 		
 	    if (id.length != CNPJ_LENGTH){
-	    	context.add(MessageInvalidationReason.invalid());
-	    	return;
+	    	result.add(MessageInvalidationReason.invalid());
+	    	return result;
 	    }
 	    
 	    // first digit 
@@ -34,8 +37,8 @@ public final class BRCNPJValidator implements Validator<NDI> {
 	    vd = vd <=1 ? 0 : MODULE - vd;
 	    
 	    if( id[id.length - 2] != vd){
-	    	context.add(MessageInvalidationReason.invalid());
-	    	return;
+	    	result.add(MessageInvalidationReason.invalid());
+	    	return result;
 	    }
 	    
 	    // second digit
@@ -48,9 +51,10 @@ public final class BRCNPJValidator implements Validator<NDI> {
 	    vd = vd <= 1 ? 0 : MODULE - vd;
 	    
 	    if (id[id.length - 1] != vd) {
-	    	context.add(MessageInvalidationReason.invalid());
-	    	return;
+	    	result.add(MessageInvalidationReason.invalid());
 	    }
+	    
+	    return result;
 	}
 
 	public boolean acceptAllEqual() {

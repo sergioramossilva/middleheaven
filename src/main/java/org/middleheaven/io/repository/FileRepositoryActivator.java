@@ -1,7 +1,7 @@
 package org.middleheaven.io.repository;
 
-import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
+import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
@@ -31,16 +31,16 @@ public class FileRepositoryActivator extends Activator {
 
 	@Override
 	public void activate(ActivationContext context) {
-		BootstrapContainer container = bootstrapService.getEnvironmentBootstrap().getContainer(); 
+		ContainerFileSystem fileSystem = bootstrapService.getEnvironmentBootstrap().getContainer().getFileSystem();
 
-		fileRepositoryService.registerRepository(CommonRepositories.APP_DATA, container.getAppDataRepository());
-		fileRepositoryService.registerRepository(CommonRepositories.APP_CLASSPATH, container.getAppClasspathRepository());
-		fileRepositoryService.registerRepository(CommonRepositories.APP_ROOT, container.getAppRootRepository());
-		fileRepositoryService.registerRepository(CommonRepositories.APP_CONFIGURATION, container.getAppConfigRepository());
-		fileRepositoryService.registerRepository(CommonRepositories.APP_LOG, container.getAppLogRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_DATA, fileSystem.getAppDataRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_CLASSPATH, fileSystem.getAppClasspathRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_ROOT, fileSystem.getAppRootRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_CONFIGURATION, fileSystem.getAppConfigRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.APP_LOG, fileSystem.getAppLogRepository());
 		
-		fileRepositoryService.registerRepository(CommonRepositories.ENV_CONFIGURATION, container.getEnvironmentConfigRepository());
-		fileRepositoryService.registerRepository(CommonRepositories.ENV_DATA, container.getEnvironmentConfigRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.ENV_CONFIGURATION, fileSystem.getEnvironmentConfigRepository());
+		fileRepositoryService.registerRepository(CommonRepositories.ENV_DATA, fileSystem.getEnvironmentConfigRepository());
 		
 	}
 

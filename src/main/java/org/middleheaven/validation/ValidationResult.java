@@ -7,7 +7,7 @@ import java.util.Iterator;
  * Result of validating an object
  *
  */
-public interface ValidationContext extends Serializable, Iterable<InvalidationReason>{
+public interface ValidationResult extends Serializable, Iterable<InvalidationReason>{
 
 	/**
 	 * 
@@ -42,7 +42,7 @@ public interface ValidationContext extends Serializable, Iterable<InvalidationRe
 	/**
 	 * Adds the invalidation reasons on <code>other</code> to <code>this</code> 
 	 */
-	public void merge(ValidationContext other);
+	public void merge(ValidationResult other);
 
 	public Iterator<InvalidationReason> iterator(InvalidationSeverity severity);
 }

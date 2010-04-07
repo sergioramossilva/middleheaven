@@ -158,7 +158,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 		@Override
 		public <T> Collection<T> execute(final ExecutableQuery<T> query) {
 			final Criteria<T> criteria = query.getCriteria();
-			final CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,query.getModel());
+			final CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,query.getModel(), ObjectDataStorage.this);
 			
 			ODB odb = getDataBase();
 			try{

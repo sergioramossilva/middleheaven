@@ -106,7 +106,7 @@ public interface Constraint<T, B extends AbstractCriteriaBuilder<T,B> > {
 	public Constraint<T, B> not();
 	
 	/**
-	 * The attribute value is an entity equal to {@code candidate}
+	 * The attribute value is an entity equals to {@code candidate}
 	 * @param <O>
 	 * @param other
 	 * @return

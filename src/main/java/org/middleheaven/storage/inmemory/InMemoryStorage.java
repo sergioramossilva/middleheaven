@@ -41,6 +41,7 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 		if (col==null){
 			return Collections.emptySet();
 		}
+	
 		return TransformedCollection.transform( col.values() , new Classifier<Storable,HashStorable>(){
 
 			@Override
@@ -85,7 +86,7 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 				return Collections.emptySet();
 			}
 
-			CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,query.getModel());
+			CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,query.getModel(),InMemoryStorage.this);
 			Collection<T> result = new LinkedList<T>();
 			for (Storable s : all){
 				T obj = criteria.getTargetClass().cast(s);

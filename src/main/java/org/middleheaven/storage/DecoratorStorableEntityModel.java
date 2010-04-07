@@ -82,6 +82,11 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 				return fModel.getAggregationClass();
 			}
 			
+			@Override
+			public boolean isNullable() {
+				return fModel.isNullable();
+			}
+			
 			StorableDataTypeModel model;
 			@Override
 			public StorableDataTypeModel getDataTypeModel() {
@@ -96,9 +101,6 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 				}
 				return	model;
 			}
-
-		
-			
 		};
 	}
 	

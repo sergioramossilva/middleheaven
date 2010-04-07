@@ -167,6 +167,12 @@ public final class DomainModelBuilder {
 			fm.setValueType(valueType);
 			return this;
 		}
+
+		@Override
+		public FieldModelBuilder setNullable(boolean nullable) {
+			fm.setNullable(nullable);
+			return this;
+		}
 		
 	}
 }

@@ -8,6 +8,7 @@ import java.io.File;
 
 import javax.servlet.ServletContext;
 
+import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
@@ -17,25 +18,23 @@ import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
 
 /**
- * @author  Sergio M. M. Taborda 
+ * 
  */
-public abstract class JBossContainer extends WebContainer {
+public abstract class AbstractJBossContainer extends StandardSevletContainer {
 
-    public JBossContainer(ServletContext context){
+    public AbstractJBossContainer(ServletContext context){
        super(context);
     }
-    
- 
-    
+
     @Override
-    public String getEnvironmentName() {
+    public String getContainerName() {
         // TODO add more details like System: versao , OS , etc 
         return "JBoss";
     }
 
     
     @Override
-    public void init(WiringService wiringService) {
+    public void configurate(BootstrapContext context) {
  
         // Set JNDI default parameters
         System.setProperty("java.naming.factory.initial",  "org.jnp.interfaces.NamingContextFactory");
@@ -55,19 +54,19 @@ public abstract class JBossContainer extends WebContainer {
     }
 
     public ManagedFile getEnvironmentDeployRepository() {
-        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "deploy"));
+        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") , "deploy"));
     }
 
     public ManagedFile getAppConfigRepository() {
-        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "conf"));
+        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") , "conf"));
     }
 
     public ManagedFile getAppDataRepository() {
-        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "app-data"));
+        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") ,"app-data"));
     }
 
     public ManagedFile getAppLogRepository() {
-        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") + File.separator + "log"));
+        return ManagedFiles.resolveFile(new File(System.getProperty("jboss.server.home.dir") , "log"));
     }
 
     public ManagedFile getAppClasspathRepository() {

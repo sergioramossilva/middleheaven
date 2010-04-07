@@ -1,5 +1,8 @@
 package org.middleheaven.mail;
 
+import org.middleheaven.core.wiring.service.Service;
+
+@Service
 public class MailSendingServiceDecorator implements MailSendingService {
 
 	
@@ -23,7 +26,7 @@ public class MailSendingServiceDecorator implements MailSendingService {
 	}
 
 	@Override
-	public void send(MailMessage message, MailAsynchrounsCallbak callback)throws MailException {
+	public void send(MailMessage message, MailAsynchrounsCallback callback)throws MailException {
 		original.send(message,callback);
 	}
 

@@ -8,6 +8,9 @@ import java.io.File;
 
 import javax.servlet.ServletContext;
 
+import org.middleheaven.core.bootstrap.BootstrapContext;
+import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.EditableContainerFileSystem;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.io.repository.ManagedFiles;
@@ -18,7 +21,7 @@ import org.middleheaven.work.scheduled.AlarmClockScheduleWorkExecutionServiceAct
  * 
  * @see WebContainer
  */
-public class CatalinaContainer extends WebContainer  {
+public class CatalinaContainer extends StandardSevletContainer  {
 
 
 	public CatalinaContainer(ServletContext context){
@@ -26,38 +29,41 @@ public class CatalinaContainer extends WebContainer  {
 	}
 
 	@Override
-	public void init(WiringService wiringService) {
-		super.init(wiringService);
-		SetActivatorScanner scanner = new SetActivatorScanner();
-		scanner.addActivator(AlarmClockScheduleWorkExecutionServiceActivator.class);
+	public void configurate(BootstrapContext context) {
+		super.configurate(context);
+		
+		context.addActivator(AlarmClockScheduleWorkExecutionServiceActivator.class);
 		
 		Boolean useNaming = Boolean.valueOf(System.getProperty("catalina.useNaming"));
 		
 		if(useNaming.booleanValue()){
-			scanner.addActivator(JNDINamingDirectoryActivator.class);
+			context.addActivator(JNDINamingDirectoryActivator.class);
 		}
-		
-		wiringService.addActivatorScanner(scanner);
+
 
 	}
 
-	protected void setupDefaultFilesRepositories(ServletContext context){
+	@Override
+	protected void setupDefaultFilesRepositories(ServletContext context,EditableContainerFileSystem fileSystem){
 	
 		
 		File catalinaBase = new File(System.getProperty("catalina.base"));
 
-		setEnvironmentConfigRepository(ManagedFiles.resolveFile(new File(catalinaBase ,  "conf")));
-		setEnvironmentDataRepository(ManagedFiles.resolveFile(new File(catalinaBase , "data")).createFolder());
+		fileSystem.setEnvironmentConfigRepository(ManagedFiles.resolveFile(new File(catalinaBase ,  "conf")));
+		fileSystem.setEnvironmentDataRepository(ManagedFiles.resolveFile(new File(catalinaBase , "data")).createFolder());
 
-		super.setupDefaultFilesRepositories(context);
+		super.setupDefaultFilesRepositories(context, fileSystem);
 		
 	}
 
 	@Override
-	public String getEnvironmentName() {
+	public String getContainerName() {
 		// TODO get detais, version, OS , etc..
 		return "Tomcat";
 	}
+
+
+
 
 
 

@@ -5,6 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -161,7 +166,23 @@ public class ClassIntrospector<T> extends Introspector{
 		return ReflectionUtils.isEnhanced(type);
 	}
 
+	public Class<?>[] getImplementedInterfaces() {
+		return type.getInterfaces(); 
+	}
 
+	public Class<?>[] getDeclaredInterfaces() {
+		List<Class<?>> all = new LinkedList<Class<?>>();
+		Class<?> superType = type;
+		while (superType!=null && !superType.equals(Object.class)){
+			all.addAll(Arrays.asList(superType.getInterfaces())); // interfaces in class
+			
+			// up to super class
+			superType = superType.getSuperclass();
+		}
+
+		Class<?>[] result = new Class<?>[all.size()]; 
+		return all.toArray(result);
+	}
 
 
 }

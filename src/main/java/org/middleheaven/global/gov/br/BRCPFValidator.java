@@ -1,8 +1,9 @@
 package org.middleheaven.global.gov.br;
 
 import org.middleheaven.global.gov.NDI;
+import org.middleheaven.validation.DefaultValidationResult;
 import org.middleheaven.validation.MessageInvalidationReason;
-import org.middleheaven.validation.ValidationContext;
+import org.middleheaven.validation.ValidationResult;
 import org.middleheaven.validation.Validator;
 
 public class BRCPFValidator implements Validator<NDI> {
@@ -10,14 +11,16 @@ public class BRCPFValidator implements Validator<NDI> {
 	private boolean acceptAllEqual = false;
 	
 	@Override
-	public void validate(ValidationContext context, NDI ndi) {
+	public ValidationResult validate(NDI ndi) {
+		DefaultValidationResult result = new DefaultValidationResult();
+		
 		final int[] combA = {10,9,8,7,6,5,4,3,2};
 		final int[] combB = {11,10,9,8,7,6,5,4,3,2};
 	    final int[] id = ndi.asIntArray();
 		
 	    if (id.length!=11){
-	    	context.add(MessageInvalidationReason.invalid());
-	    	return;
+	    	result.add(MessageInvalidationReason.invalid());
+	    	return result;
 	    }
 	    
 	    // first digit 
@@ -34,8 +37,8 @@ public class BRCPFValidator implements Validator<NDI> {
 	    
 	    // digits cannot be all equal
 	    if (!acceptAllEqual && equals){
-	    	context.add(MessageInvalidationReason.invalid());
-	    	return;
+	    	result.add(MessageInvalidationReason.invalid());
+	    	return result;
 	    }
 
 	    
@@ -43,8 +46,8 @@ public class BRCPFValidator implements Validator<NDI> {
 	    vd = vd <=1 ? 0 : 11 - vd;
 	    
 	    if( id[id.length - 2] != vd){
-	    	context.add(MessageInvalidationReason.invalid());
-	    	return;
+	    	result.add(MessageInvalidationReason.invalid());
+	    	return result;
 	    }
 	    
 	    // Second Digit
@@ -57,9 +60,10 @@ public class BRCPFValidator implements Validator<NDI> {
 	    vd = vd <=1 ? 0 : 11 - vd;
 	    
 	    if(id[id.length - 1] != vd){
-	    	context.add(MessageInvalidationReason.invalid());
-	    	return;
+	    	result.add(MessageInvalidationReason.invalid());
 	    }
+	    
+		return result;
 	}
 
 	public boolean acceptAllEqual() {

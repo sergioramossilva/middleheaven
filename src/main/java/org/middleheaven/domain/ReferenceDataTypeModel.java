@@ -1,5 +1,7 @@
 package org.middleheaven.domain;
 
+import org.middleheaven.validation.Validator;
+
 public class ReferenceDataTypeModel implements DataTypeModel {
 
 	private String fieldName;
@@ -44,6 +46,6 @@ public class ReferenceDataTypeModel implements DataTypeModel {
 	public Class<?> getAggregationType() {
 		return aggregationType;
 	}
-	
+
 	
 }

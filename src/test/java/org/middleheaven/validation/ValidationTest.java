@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.middleheaven.global.gov.NDI;
 import org.middleheaven.global.gov.br.BRCNPJValidator;
 import org.middleheaven.global.gov.br.BRCPFValidator;
-import org.middleheaven.global.gov.us.USSocialSecurtyNumberValidator;
-import org.middleheaven.validation.DefaultValidationContext;
+import org.middleheaven.global.gov.us.USSocialSecurityNumberValidator;
+import org.middleheaven.validation.DefaultValidationResult;
 import org.middleheaven.validation.LogicValidator;
 
 
@@ -16,69 +16,60 @@ public class ValidationTest {
 
 	@Test
 	public void testBRGovCPFValidate(){
-		DefaultValidationContext context = new DefaultValidationContext();
+		
 		BRCPFValidator validator = new BRCPFValidator();
 		NDI ndi;
 		
-		context.clear();
 		validator.setAcceptAllEqual(true);
 		ndi = new NDI("11111111111");
-		context.apply(validator, ndi);
-		assertTrue(context.isValid());
-		
 	
+		assertTrue(validator.validate(ndi).isValid());
+		
 		validator.setAcceptAllEqual(false);
 			
-		context.clear();
 	    ndi = new NDI("12345678909");
-		context.apply(validator, ndi);
-		assertTrue(context.isValid());
+		assertTrue(validator.validate(ndi).isValid());
 		
-		context.clear();
+
 		ndi = new NDI("55847609604");
-		context.apply(validator, ndi);
-		assertTrue(context.isValid());
+		assertTrue(validator.validate(ndi).isValid());
 		
-		context.clear();
+		
 		ndi = new NDI("12345678919");
-		context.apply(validator, ndi);
-		assertFalse(context.isValid());
+		assertFalse(validator.validate(ndi).isValid());
 		
-		context.clear();
+
 		ndi = new NDI("11111111111");
-		context.apply(validator, ndi);
-		assertFalse(context.isValid());
+
+		assertFalse(validator.validate(ndi).isValid());
 	}
 	
 	@Test
 	public void testBRGovCNPJValidate(){
 		
 	
-		DefaultValidationContext context = new DefaultValidationContext();
+		DefaultValidationResult context = new DefaultValidationResult();
 		NDI ndi;
 		
 		BRCNPJValidator validator = new BRCNPJValidator();
 
 		context.clear();
 		ndi = new NDI("11222333000181");
-		context.apply(validator, ndi);
-		assertTrue(context.isValid());
+		assertTrue(validator.validate(ndi).isValid());
 		
 		context.clear();
 		ndi = new NDI("32249467000166");
-		context.apply(validator, ndi);
-		assertTrue(context.isValid());
+		assertTrue(validator.validate(ndi).isValid());
 		
 		context.clear();
 		ndi = new NDI("11222333000196");
-		context.apply(validator, ndi);
-		assertFalse(context.isValid());
+		assertFalse(validator.validate(ndi).isValid());
 
 	}
 	
 	@Test
 	public void testLogicValidatorValidate(){
-		DefaultValidationContext context = new DefaultValidationContext();
+		DefaultValidationResult context = new DefaultValidationResult();
 		NDI ndi;
 			
 		BRCNPJValidator a = new BRCNPJValidator();
@@ -86,85 +77,67 @@ public class ValidationTest {
 		
 		
 		// use a CNPJ
-		context.clear();
+
 		ndi = new NDI("32249467000166");
-		context.apply(LogicValidator.and(a, b), ndi);
-		assertFalse(context.isValid());
+		assertFalse(LogicValidator.and(a, b).validate(ndi).isValid());
 		
 		context.clear();
 		ndi = new NDI("32249467000166");
-		context.apply(LogicValidator.and(b, a), ndi);
-		assertFalse(context.isValid());
+		assertFalse(LogicValidator.and(a, b).validate(ndi).isValid());
 
 		context.clear();
 		ndi = new NDI("32249467000166");
-		context.apply(LogicValidator.or(a, b), ndi);
-		assertTrue(context.isValid());
+		assertTrue(LogicValidator.or(a, b).validate(ndi).isValid());
 		
 		context.clear();
 		ndi = new NDI("32249467000166");
-		context.apply(LogicValidator.or(b, a), ndi);
-		assertTrue(context.isValid());
+		assertTrue(LogicValidator.or(a, b).validate(ndi).isValid());
 		
 		context.clear();
 		ndi = new NDI("32249467000166");
-		context.apply(LogicValidator.or(b, b), ndi);
-		assertFalse(context.isValid());
+		assertFalse(LogicValidator.or(a, b).validate(ndi).isValid());
 	}
 	
 	@Test
 	public void testUSGovValidate(){
 		
-		DefaultValidationContext context = new DefaultValidationContext();
-		USSocialSecurtyNumberValidator validator = new USSocialSecurtyNumberValidator();
+		DefaultValidationResult context = new DefaultValidationResult();
+		USSocialSecurityNumberValidator validator = new USSocialSecurityNumberValidator();
 		
 		NDI ndi = new NDI("123456789");
 		
-		context.apply(validator, ndi);
-		
-		assertTrue(context.isValid());
+		assertTrue(validator.validate(ndi).isValid());
 		
 		ndi = new NDI("987654328");
 		
-		context.apply(validator, ndi);
-		
-		assertFalse(context.isValid());
+		assertFalse(validator.validate(ndi).isValid());
 
 		context.clear();
 		ndi = new NDI("77390890");
-		
-		context.apply(validator, ndi);
-		
-		assertFalse(context.isValid());
+
+		assertFalse(validator.validate(ndi).isValid());
 		
 		context.clear();
 		ndi = new NDI("00089765");
 		
-		context.apply(validator, ndi);
-		
-		assertFalse(context.isValid());
+		assertFalse(validator.validate(ndi).isValid());
 		
 		context.clear();
 		ndi = new NDI("12300765");
-		
-		context.apply(validator, ndi);
-		
-		assertFalse(context.isValid());
+
+		assertFalse(validator.validate(ndi).isValid());
 		
 		context.clear();
 		ndi = new NDI("12367000");
 		
-		context.apply(validator, ndi);
-		
-		assertFalse(context.isValid());
+		assertFalse(validator.validate(ndi).isValid());
 		
 		// accept advertisement
 		ndi = new NDI("987654328");
 		
 		context.clear();
 		validator.setAcceptAdvertisementReserved(true);
-		context.apply(validator, ndi);
-		
-		assertTrue(context.isValid());
+
+		assertTrue(validator.validate(ndi).isValid());
 	}
 }

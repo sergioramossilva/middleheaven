@@ -1,8 +1,9 @@
 package org.middleheaven.domain.repository;
 
 import org.middleheaven.storage.Query;
+import org.middleheaven.validation.DefaultValidationResult;
 import org.middleheaven.validation.MessageInvalidationReason;
-import org.middleheaven.validation.ValidationContext;
+import org.middleheaven.validation.ValidationResult;
 import org.middleheaven.validation.Validator;
 
 
@@ -15,14 +16,16 @@ public class NotDuplicatedValidator<T> implements Validator<T>{
 	}
 
 	@Override
-	public void validate(ValidationContext context, T object) {
+	public ValidationResult validate(T object) {
+		DefaultValidationResult result = new DefaultValidationResult();
 		
 		Query<T> query = repository.findEquals(object);
 
 		if (!query.isEmpty()) {
-			context.add(MessageInvalidationReason.error("invalid.instance.duplicated"));
+			result.add(MessageInvalidationReason.error("invalid.instance.duplicated"));
 		}			
 
+		return result;
 	}
 
 }

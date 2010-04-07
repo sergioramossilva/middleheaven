@@ -224,7 +224,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 					if (context.getHttpService().equals(HttpMethod.GET)){
 						return resolveOutcome(null,BasicOutcomeStatus.SUCCESS);
 					} else {
-						throw new ActionHandlerNotFoundException(context.getHttpService() , this.controllerClass);
+						throw new ActionHandlerNotFoundException(context.getHttpService() , this.controllerClass,actionNameFromURL);
 					}
 				}
 			}

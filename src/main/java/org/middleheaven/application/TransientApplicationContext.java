@@ -4,7 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
+import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.wiring.ObjectPool;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.util.Version;
@@ -15,11 +16,11 @@ public class TransientApplicationContext implements ApplicationContext {
 	Map<String, ApplicationModule> modules = new HashMap<String, ApplicationModule>();
 	Collection<ApplicationModule> all = new LiveCollection<ApplicationModule>();
 	
-	private BootstrapContainer container;
+	private ContainerFileSystem fileSystem;
 	private ObjectPool wcontext;
 	
-	public TransientApplicationContext(ObjectPool wcontext, BootstrapContainer configContext) {
-		this.container = configContext;
+	public TransientApplicationContext(ObjectPool wcontext, ContainerFileSystem fileSystem) {
+		this.fileSystem = fileSystem;
 		this.wcontext = wcontext;
 	}
 	
@@ -62,21 +63,21 @@ public class TransientApplicationContext implements ApplicationContext {
 	}
 
 	public ManagedFile getAppClasspathRepository() {
-		return container.getAppClasspathRepository();
+		return fileSystem.getAppClasspathRepository();
 	}
 
 
 	public ManagedFile getAppConfigRepository() {
-		return container.getAppConfigRepository();
+		return fileSystem.getAppConfigRepository();
 	}
 
 	public ManagedFile getAppDataRepository() {
-		return container.getAppDataRepository();
+		return fileSystem.getAppDataRepository();
 	}
 
 
 	public ManagedFile getAppLogRepository() {
-		return container.getAppLogRepository();
+		return fileSystem.getAppLogRepository();
 	}
 
 }

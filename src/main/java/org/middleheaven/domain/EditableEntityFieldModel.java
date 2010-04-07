@@ -11,9 +11,10 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 	private boolean isTransient;
 	private boolean isVersion;
 	private boolean isUnique;
+	private boolean isNullable;
 	
 	private Class<?> aggregationClass;
-	private DataTypeModel dataTypeModel = new DataTypeModel(){
+	private DataTypeModel dataTypeModel = new AbstractDataTypeModel(){
 
 		@Override
 		public DataType getDataType() {
@@ -103,7 +104,7 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 	public String toString() {
 		return "EditableEntityFieldModel [aggregationClass=" + aggregationClass
 				+ ", dataType=" + dataType + ", isIdentity=" + isIdentity
-				+ ", isTransient=" + isTransient + ", isUnique=" + isUnique
+				+ ", isTransient=" + isTransient + ", isUnique=" + isUnique + ", isNullable=" + isNullable
 				+ ", isVersion=" + isVersion + ", name=" + name + ", valueType=" + valueType + "]";
 	}
 
@@ -114,6 +115,15 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 
 	public void setDataTypeModel(DataTypeModel dataTypeModel) {
 		this.dataTypeModel = dataTypeModel;
+	}
+
+	public void setNullable(boolean isNullable) {
+		this.isNullable = isNullable;
+	}
+	
+	@Override
+	public boolean isNullable() {
+		return isNullable;
 	}
 	
 	

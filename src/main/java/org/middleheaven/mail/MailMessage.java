@@ -17,8 +17,7 @@ import org.middleheaven.io.repository.SetManagedFileRepository;
 
 
 /**
- * A email message. This class wraps javax.mail and javax.activation classes
- * to facilitate email creation
+ * An email message. This class facilitates email creation abstracting all technology dependencies
  * 
  */
 public class MailMessage implements Serializable {

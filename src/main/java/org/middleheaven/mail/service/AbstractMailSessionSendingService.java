@@ -1,16 +1,13 @@
 package org.middleheaven.mail.service;
 
 import java.util.List;
-import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Address;
-import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -18,86 +15,50 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.MediaManagedFile;
-import org.middleheaven.mail.MailMessage;
-import org.middleheaven.mail.MailAsynchrounsCallbak;
+import org.middleheaven.mail.MailAsynchrounsCallback;
 import org.middleheaven.mail.MailException;
+import org.middleheaven.mail.MailMessage;
 import org.middleheaven.mail.MailRecipientType;
 import org.middleheaven.mail.MailSendingService;
+import org.middleheaven.mail.MailTransmissionResult;
 
 /**
  * Implementation of {@link MailSendingService} that uses standard JavaMail API
- * for sending email 
- * 
+ * for sending email.
  */
-@Service
-public class JavaMailSendingService implements MailSendingService {
+public abstract class AbstractMailSessionSendingService implements MailSendingService{
 
-	boolean debug = false;
-	private String stmpHost;
-	private String userName;
-	private String password;
-	
 	@Override
 	public void send(MailMessage email) {
 		executeEmailSend(email);
 	}
 
 	@Override
-	public void send(MailMessage email, MailAsynchrounsCallbak callback) {
+	public void send(MailMessage email, MailAsynchrounsCallback callback) {
 		new EmailSenderThread(email,callback).start();
 	}
 
-	public void setDebug(boolean debug){
-		this.debug = debug;
-	}
-
-	public void setSMTPHost(String host){
-		stmpHost = host;
-	}
-
-	public void setUsername(String username){
-		this.userName = username;
-	}
-	
-	public void setPassword(String password){
-		this.password = password;
-	}
+	protected abstract Session getMailSession() throws MailException;
 	
 	private void executeEmailSend(MailMessage email){
 		try {
-
-			//Set the host smtp address
-			Properties props = new Properties();
-			props.put("mail.smtp.host", stmpHost);
-
-			// create some properties and get the default Session
-			Authenticator auth = new Authenticator(){
-				public PasswordAuthentication getPasswordAuthentication(){
-					 return new PasswordAuthentication(userName,password);
-				}
-			};
-			
-			Session session = Session.getDefaultInstance(props,auth );
-			session.setDebug(debug);
-
+			Session session = this.getMailSession();
 			Transport.send(transformToMimeMessage(session,email));
 		} catch (MessagingException e) {
-			throw new MailException(e);
+			throw MailException.manage(e);
 		}
 	}
-
+	
 	protected Message transformToMimeMessage(Session session, MailMessage email) throws MessagingException{
 
 		// create a message
-		MimeMessage m = new MimeMessage(session);
+		MimeMessage message = new MimeMessage(session);
 
         // set sender address
-        m.setFrom( new InternetAddress(email.getFrom()));
-        //m.setFrom();
-        
+        message.setFrom( new InternetAddress(email.getFrom()));
+      
         // set recipients
         int i;
         List<String> recipients = email.getRecipients(MailRecipientType.TO);
@@ -105,7 +66,7 @@ public class JavaMailSendingService implements MailSendingService {
         for (i=0; i<adresses.length ; i++){
             adresses[i] = new InternetAddress(recipients.get(i));
         }
-        m.setRecipients(Message.RecipientType.TO, adresses);
+        message.setRecipients(Message.RecipientType.TO, adresses);
         
         // set copy recipients
         recipients = email.getRecipients(MailRecipientType.CC);
@@ -113,7 +74,7 @@ public class JavaMailSendingService implements MailSendingService {
         for (i=0; i<adresses.length  ; i++){
         	adresses[i] = new InternetAddress(recipients.get(i));
         }
-        m.setRecipients(Message.RecipientType.CC, adresses);
+        message.setRecipients(Message.RecipientType.CC, adresses);
         
         // set blind copy recipients
         recipients = email.getRecipients(MailRecipientType.BCC);
@@ -121,12 +82,12 @@ public class JavaMailSendingService implements MailSendingService {
         for (i=0; i<adresses.length  ; i++){
         	adresses[i] = new InternetAddress(recipients.get(i));
         }
-        m.setRecipients(Message.RecipientType.BCC, adresses);
+        message.setRecipients(Message.RecipientType.BCC, adresses);
         
         // set subject
-        m.setSubject(email.getSubject());
+        message.setSubject(email.getSubject());
         // set date
-        m.setSentDate(email.getSendDate());
+        message.setSentDate(email.getSendDate());
         
       
         // set body
@@ -145,20 +106,20 @@ public class JavaMailSendingService implements MailSendingService {
                 mp.addBodyPart(part);
         }
         // set contents    
-        m.setContent(mp);
+        message.setContent(mp);
       
         // Updates the appropriate header fields of this message 
         // to be consistent with the message's contents.
-        m.saveChanges();
+        message.saveChanges();
         
-        return m;
+        return message;
 
 	}
 
 	private class EmailSenderThread extends Thread {
 		MailMessage email;
-		MailAsynchrounsCallbak callback;
-		public EmailSenderThread(MailMessage email, MailAsynchrounsCallbak callback) {
+		MailAsynchrounsCallback callback;
+		public EmailSenderThread(MailMessage email, MailAsynchrounsCallback callback) {
 			super();
 			this.email = email;
 			this.callback = callback;
@@ -167,9 +128,9 @@ public class JavaMailSendingService implements MailSendingService {
 		public void run(){
 			try{
 				executeEmailSend(email);
-				callback.onSent(email, true);
+				callback.onSent(new MailTransmissionResult( email, null));
 			} catch (Exception e){
-				callback.onSent(email, false);
+				callback.onSent(new MailTransmissionResult( email, e));
 			}
 		}
 	}

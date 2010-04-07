@@ -4,6 +4,9 @@ public class TextDataTypeModel implements DataTypeModel{
 
 	private Integer minLength;
 	private Integer maxLength;
+	private boolean emptyable = true;
+	private boolean isEmail = false;
+	private boolean isUrl = false;
 	
 	public TextDataTypeModel(){}
 	
@@ -27,6 +30,32 @@ public class TextDataTypeModel implements DataTypeModel{
 	public Integer getMaxLength() {
 		return maxLength;
 	}
+	
+	public boolean isEmptyable(){
+		return emptyable;
+	}
+	
+	public void setEmptyable(boolean emptyable){
+		this.emptyable = emptyable;
+	}
+
+	public boolean isEmailAddress() {
+		return isEmail;
+	}
+
+	public void setEmailAddress(boolean isEmail) {
+		this.isEmail = isEmail;
+	}
+
+	public boolean isUrl() {
+		return isUrl;
+	}
+
+	public void setUrl(boolean isUrl) {
+		this.isUrl = isUrl;
+	}
+
+
 
 	
 }
