@@ -16,7 +16,7 @@ import org.middleheaven.ui.rendering.RenderKit;
 import org.middleheaven.ui.rendering.RenderingContext;
 
 
-public class DesktopUIContainer extends StandaloneContainer {
+public class DesktopUIContainer extends AbstractStandaloneContainer {
 
 	RenderingContext renderedContext;
 

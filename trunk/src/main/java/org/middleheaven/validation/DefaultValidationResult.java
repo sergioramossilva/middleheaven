@@ -8,18 +8,12 @@ import java.util.Map;
 
 import org.middleheaven.util.collections.IteratorsIterator;
 
-public class DefaultValidationContext implements ValidationContext{
+public class DefaultValidationResult implements ValidationResult{
 
 
 	private Map<String, List<InvalidationReason>> reasons = new HashMap<String, List<InvalidationReason>>();
 	private boolean hasErrors = false;
 	private boolean hasWarnings = false;
-	
-	
-	public <T> ValidationContext apply(Validator<T> validator, T object){
-		 validator.validate(this, object);
-		 return this;
-	}
 	
 	public void clear(){
 		hasErrors = false;
@@ -86,7 +80,7 @@ public class DefaultValidationContext implements ValidationContext{
 	}
 
 	@Override
-	public void merge(ValidationContext other) {
+	public void merge(ValidationResult other) {
 	
 		for ( InvalidationReason reason : other){
 			this.add(reason);

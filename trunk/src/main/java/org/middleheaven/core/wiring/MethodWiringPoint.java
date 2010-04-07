@@ -18,10 +18,17 @@ public class MethodWiringPoint implements AfterWiringPoint{
 		return paramsSpecifications;
 	}
 
+	@Override
+	public String toString(){
+		return method.getName();
+	}
+	
+	@Override
 	public int hashCode(){
 		return method.hashCode();
 	}
 	
+	@Override
 	public boolean equals(Object other){
 		return other instanceof MethodWiringPoint && this.method.equals(((MethodWiringPoint)other).method);
 	}
@@ -53,7 +60,7 @@ public class MethodWiringPoint implements AfterWiringPoint{
 			
 			method.invoke(object, params);
 		} catch (Exception e) {
-			ReflectionException.manage(e, object.getClass());
+			throw ReflectionException.manage(e, object.getClass());
 		} 
 		
 		return object;

@@ -48,6 +48,7 @@ public class MessageInvalidationReason implements InvalidationReason{
 		return params;
 	}
 	
+	@Override
 	public boolean equals(Object other) {
 		return other instanceof MessageInvalidationReason
 				&& equals((MessageInvalidationReason) other);
@@ -57,7 +58,13 @@ public class MessageInvalidationReason implements InvalidationReason{
 		return this.severity.equals(other.severity) && this.message.equals(other.message);
 	}
 
+	@Override
 	public int hashCode() {
 		return this.severity.hashCode() ^ this.message.hashCode();
+	}
+	
+	@Override
+	public String toString(){
+		return this.message;
 	}
 }

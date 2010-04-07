@@ -7,6 +7,10 @@ package org.middleheaven.validation;
  */
 public interface Validator<T> {
 
-	
-	public void validate ( ValidationContext context , T object ); 
+	/**
+	 * Validates the given object. Returns the result of that validation.
+	 * @param object
+	 * @return
+	 */
+	public ValidationResult validate ( T object ); 
 }

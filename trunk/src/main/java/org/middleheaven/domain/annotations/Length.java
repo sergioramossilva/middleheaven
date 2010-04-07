@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 public @interface Length {
 
 	int min () default 0;
-	int max ();
+	int max () default Integer.MAX_VALUE;
 }

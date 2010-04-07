@@ -3,14 +3,14 @@ package org.middleheaven.validation;
 public class ValidationException extends RuntimeException {
 
 	
-	private ValidationContext context;
+	private ValidationResult context;
 
-	public ValidationException(ValidationContext context) {
+	public ValidationException(ValidationResult context) {
 		super();
 		this.context = context;
 	}
 
-	public ValidationContext getContext() {
+	public ValidationResult getContext() {
 		return context;
 	}
 	

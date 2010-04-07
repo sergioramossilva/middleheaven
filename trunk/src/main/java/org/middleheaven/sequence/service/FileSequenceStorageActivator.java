@@ -4,7 +4,7 @@ package org.middleheaven.sequence.service;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
@@ -47,10 +47,11 @@ public class FileSequenceStorageActivator extends Activator  {
 
 		BootstrapContainer container = bootstrapService.getEnvironmentBootstrap().getContainer();
 
-		if (!container.getAppDataRepository().isWriteable()){
+		final ManagedFile appDataRepository = container.getFileSystem().getAppDataRepository();
+		if (!appDataRepository.isWriteable()){
 			throw new IllegalArgumentException("Data repository must be writable");
 		}
-		ManagedFile file = container.getAppDataRepository().retrive("sequences.properties");
+		ManagedFile file = appDataRepository.retrive("sequences.properties");
 		if (file.exists()){
 			try {
 				properties.load(file.getContent().getInputStream());

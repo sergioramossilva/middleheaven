@@ -2,8 +2,9 @@ package org.middleheaven.domain.repository;
 
 
 import org.middleheaven.storage.Query;
+import org.middleheaven.validation.DefaultValidationResult;
 import org.middleheaven.validation.MessageInvalidationReason;
-import org.middleheaven.validation.ValidationContext;
+import org.middleheaven.validation.ValidationResult;
 
 
 public class NotExistsValidator<T> implements org.middleheaven.validation.Validator<T> {
@@ -15,14 +16,16 @@ public class NotExistsValidator<T> implements org.middleheaven.validation.Valida
 	}
 
 	@Override
-	public void validate(ValidationContext context, T object) {
-
+	public ValidationResult validate(T object) {
+		DefaultValidationResult result = new DefaultValidationResult();
+		
 		Query<T> query = repository.findIdentical(object);
 
 		if (!query.isEmpty()) {
-			context.add(MessageInvalidationReason.error("invalid.instance.exists"));
+			result.add(MessageInvalidationReason.error("invalid.instance.exists"));
 		}			
 
+		return result;
 	}
 
 }

@@ -1,10 +1,13 @@
 package org.middleheaven.mail;
 
+import org.middleheaven.core.wiring.service.Service;
 
+
+@Service
 public interface MailSendingService {
 
 	/**
-	 * Tries to send the mail message assinchrounously 
+	 * Tries to send the mail message synchronously 
 	 * @param message
 	 * @throws MailException
 	 */
@@ -18,6 +21,6 @@ public interface MailSendingService {
 	 * @param message the email to send
 	 * @param callback the callbak to warn after the email is sent
 	 */
-	void send (MailMessage message, MailAsynchrounsCallbak callback ) throws MailException;
+	void send (MailMessage message, MailAsynchrounsCallback callback ) throws MailException;
 
 }

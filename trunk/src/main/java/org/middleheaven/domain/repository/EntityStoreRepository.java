@@ -21,7 +21,7 @@ public class EntityStoreRepository<E> extends AbstractRepository<E>  {
 		this.entityStoreService = entityStoreService;
 	}
 
-	private EntityStore getEntityStore(){
+	protected EntityStore getEntityStore(){
 		return entityStoreService.getStore();
 	}
 

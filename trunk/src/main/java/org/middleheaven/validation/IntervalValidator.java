@@ -37,9 +37,11 @@ public class IntervalValidator<T extends Comparable<T>> implements Validator<T> 
 	}
 
 	@Override
-	public void validate(ValidationContext context, T object) {
+	public ValidationResult validate(T object) {
+		DefaultValidationResult result = new DefaultValidationResult();
 		if (!interval.contains(object,includeStart,includeEnd)){
-			context.add(MessageInvalidationReason.invalid());
+			result.add(MessageInvalidationReason.invalid());
 		}
+		return result;
 	}
 }

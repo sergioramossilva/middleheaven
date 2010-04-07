@@ -7,9 +7,9 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
-import org.middleheaven.core.bootstrap.client.StandaloneContainer;
+import org.middleheaven.core.bootstrap.client.AbstractStandaloneContainer;
 import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
@@ -31,7 +31,7 @@ public class NaiveStorageManagerTeste {
 	@Before
 	public void setUp(){
 		// bootstrap
-		BootstrapContainer container = new StandaloneContainer(ManagedFiles.resolveFile(new File("."))){};
+		BootstrapContainer container = new AbstractStandaloneContainer(ManagedFiles.resolveFile(new File("."))){};
 			
 		StandaloneBootstrap bootstrap = new StandaloneBootstrap(this,container);
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));

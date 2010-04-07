@@ -57,7 +57,7 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Act
 		log = loggingService.getLogBook(this.getClass().getName());
 	
 		bootstrapService.addListener(this);
-		appContext = new TransientApplicationContext(wiringService.getObjectPool(),bootstrapService.getEnvironmentBootstrap().getContainer());
+		appContext = new TransientApplicationContext(wiringService.getObjectPool(),bootstrapService.getEnvironmentBootstrap().getContainer().getFileSystem());
 		cycle = new DinamicLoadingCycle();
 		
 		applicationLoadingCycleService =  new DynamicLoadApplicationService();

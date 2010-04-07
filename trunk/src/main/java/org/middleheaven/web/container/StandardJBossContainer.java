@@ -8,7 +8,7 @@ import javax.servlet.ServletContext;
 
 
 
-public class StandardJBossContainer extends JBossContainer {
+public class StandardJBossContainer extends AbstractJBossContainer {
 
     public StandardJBossContainer(ServletContext context) {
         super(context);

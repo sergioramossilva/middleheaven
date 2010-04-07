@@ -1,11 +1,11 @@
 package org.middleheaven.mail;
 
 
-public interface MailAsynchrounsCallbak {
+public interface MailAsynchrounsCallback {
 
 	/**
 	 * Called when after the email is sent sucessufly or
 	 * the send is not sucesfull
 	 */
-	public void onSent (MailMessage email, boolean sucess);
+	public void onSent (MailTransmissionResult result);
 }

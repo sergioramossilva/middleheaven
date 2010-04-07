@@ -8,8 +8,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
+import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
@@ -42,7 +43,7 @@ public class LocalizationServiceActivator extends Activator{
 	
 	@Override
 	public void activate(ActivationContext context) {
-		BootstrapContainer environment = bootstrapService.getEnvironmentBootstrap().getContainer();
+		ContainerFileSystem environment = bootstrapService.getEnvironmentBootstrap().getContainer().getFileSystem();
 
 		masterBundle = new RepositoryDomainBundle();
 		masterBundle.setRepository(environment.getEnvironmentConfigRepository());

@@ -6,7 +6,7 @@ package org.middleheaven.core.bootstrap.client;
 
 import java.io.File;
 
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.io.repository.ManagedFiles;
 import org.middleheaven.logging.ConsoleLogBook;

@@ -2,7 +2,7 @@ package org.middleheaven.web.container;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
 
 public class WebContainerSwitcher {
 

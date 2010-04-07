@@ -17,11 +17,13 @@ public interface FieldModelBuilder {
 
 	DataType getDataType();
 
-	FieldModelBuilder setVersion(boolean annotatedWith);
+	FieldModelBuilder setVersion(boolean version);
 
-	FieldModelBuilder setUnique(boolean annotatedWith);
+	FieldModelBuilder setUnique(boolean unique);
 
 	boolean isIdentity();
+
+	FieldModelBuilder setNullable(boolean nullable);
 
 
 }

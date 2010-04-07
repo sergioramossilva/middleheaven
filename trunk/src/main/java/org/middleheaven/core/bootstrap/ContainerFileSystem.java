@@ -1,25 +1,10 @@
-/*
- * Created on 2006/08/19
- *
- */
-package org.middleheaven.core;
+package org.middleheaven.core.bootstrap;
 
-
-import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.repository.ManagedFile;
 
-/**
- * 
- */
-public interface  BootstrapContainer  {
+public interface ContainerFileSystem {
 
 
-    public String getEnvironmentName();
-    
-    public void init(WiringService wiringService);
-    public void start();
-    public void stop();
-    
     /**
      * 
      * @return ManagedFile representing a folder where to read environment configuration 
@@ -62,7 +47,5 @@ public interface  BootstrapContainer  {
      */
     public ManagedFile getAppClasspathRepository();
 
-
     
-  
 }

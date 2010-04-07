@@ -2,6 +2,7 @@ package org.middleheaven.storage.criteria;
 
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.storage.IdentityManager;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
@@ -12,9 +13,9 @@ public class JuntionFilter<T> implements BooleanClassifier<T> {
 	QualifiedName fieldName;
 	CriteriaFilter<T> subCriteria;
 	
-	public JuntionFilter(QualifiedName fieldName,StorableEntityModel target , Criteria<T> criteria) {
+	public JuntionFilter(QualifiedName fieldName,StorableEntityModel target , Criteria<T> criteria,IdentityManager identityManager) {
 		super();
-		subCriteria = new CriteriaFilter<T>(criteria, target);
+		subCriteria = new CriteriaFilter<T>(criteria, target,identityManager);
 		
 		this.fieldName = fieldName;
 	}

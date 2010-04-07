@@ -1,19 +1,21 @@
 package org.middleheaven.storage.criteria;
 
 import org.middleheaven.domain.DataType;
+import org.middleheaven.storage.IdentityManager;
 import org.middleheaven.storage.ReferenceStorableDataTypeModel;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.classification.LogicComposedClassifier;
+import org.middleheaven.util.identity.Identity;
 
 public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanClassifier<T>{
 
 	BooleanClassifier<T> filter;
 	
-	public CriteriaFilter(Criteria<T> c,StorableEntityModel model) {
+	public CriteriaFilter(Criteria<T> c,StorableEntityModel model ,IdentityManager identityManager) {
 		super(c.getTargetClass());
-		filter = asFilter(c.constraints(), model);
+		filter = asFilter(c.constraints(), model,identityManager);
 	}
 	
 	private CriteriaFilter (CriteriaFilter other){
@@ -21,29 +23,43 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 		this.filter = other.filter;
 	}
 
-	private BooleanClassifier<T> asFilter(Criterion c,StorableEntityModel model){
+	private BooleanClassifier<T> asFilter(Criterion c,StorableEntityModel model,IdentityManager identityManager){
 		if ( c instanceof LogicCriterion){
-			return logicCriterionAsFilter((LogicCriterion)c, model);
+			return logicCriterionAsFilter((LogicCriterion)c, model,identityManager);
 		} else if ( c instanceof FieldValueCriterion){
 			return fieldCriterionAsFilter((FieldCriterion)c,model);
 		} else if ( c instanceof FieldJuntionCriterion){
-			return fieldJuntionCriterionAsFilter((FieldJuntionCriterion)c,model);
+			return fieldJuntionCriterionAsFilter((FieldJuntionCriterion)c,model, identityManager);
 		} else if (c instanceof IdentityCriterion){
 			
 			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)c).getIdentity(), DataType.UNKWON);
 			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
 			
 			return fieldCriterionAsFilter (f , model);
+		} else if (c instanceof EqualsOtherInstanceCriterion){
+			
+			// TODO search model for identifiable groups and use the default 
+			throw new RuntimeException("Cannot convert " + c.getClass() + " to a filter");
+		} else if (c instanceof IsIdenticalToOtherInstanceCriterion){
+			IsIdenticalToOtherInstanceCriterion cri = (IsIdenticalToOtherInstanceCriterion)c;
+			
+			Identity id = identityManager.getIdentityFor(cri.getInstance());
+			
+			FieldValueHolder valueHolder = new SingleObjectValueHolder(id, DataType.UNKWON);
+			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
+			
+			return fieldCriterionAsFilter (f , model);
+			
 		} else {
 			throw new RuntimeException("Cannot convert " + c.getClass() + " to a filter");
 		}
 	}
 	
 
-	private BooleanClassifier<T> logicCriterionAsFilter(LogicCriterion lc, StorableEntityModel model){
+	private BooleanClassifier<T> logicCriterionAsFilter(LogicCriterion lc, StorableEntityModel model,IdentityManager identityManager){
 		LogicComposedClassifier<T> lf =  new LogicComposedClassifier<T>(lc.getOperator());
 		for (Criterion c : lc ){
-			lf.add(asFilter(c, model));
+			lf.add(asFilter(c, model,identityManager));
 		}
 		return lf;
 	}
@@ -65,11 +81,9 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 		);
 	}
 	
-	private BooleanClassifier<T> fieldJuntionCriterionAsFilter(FieldJuntionCriterion c,StorableEntityModel model) {
-		
+	private BooleanClassifier<T> fieldJuntionCriterionAsFilter(FieldJuntionCriterion c,StorableEntityModel model,IdentityManager identityManager) {
 	
-		//return new JuntionFilter( c.getFieldName(), c.getTargetEntityModel(),c.getSubCriteria());
-		return new JuntionFilter( c.getFieldName(), model,c.getSubCriteria());
+		return new JuntionFilter( c.getFieldName(), model,c.getSubCriteria(), identityManager);
 	}
 	
 	@Override

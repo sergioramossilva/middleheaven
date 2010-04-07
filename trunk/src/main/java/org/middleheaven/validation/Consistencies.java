@@ -240,8 +240,8 @@ public class Consistencies {
 
 		@Override
 		protected boolean isNotConsistent(Object object) {
-			ValidationContext context = new DefaultValidationContext();
-			validator.validate(context,(T)object);
+			ValidationResult context = new DefaultValidationResult();
+			validator.validate((T)object);
 			return !context.isStrictlyValid();
 		}
 		

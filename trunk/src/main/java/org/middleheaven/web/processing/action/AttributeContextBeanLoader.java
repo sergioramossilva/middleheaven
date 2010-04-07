@@ -22,38 +22,43 @@ public class AttributeContextBeanLoader {
 	public <T> T loadBean(CulturalAttributeContext context, Class<T> type ){
 		return loadBean(context, type, new Annotation[0]);
 	}
-	
+
 	public <T> T loadBean(CulturalAttributeContext context, Class<T> type ,Annotation[] annotations) {
 		try{
 			// set up timestamp formatters and converter
 			LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 
 			TimepointFormatter formatter = i18nService.getTimestampFormatter(context.getCulture());
-			
+
 			formatter.setPattern(TimepointFormatter.Format.DATE_ONLY);
-			
+
 			TypeCoercing.addCoersor(String.class, Date.class, new StringDateCoersor(formatter));
 			TypeCoercing.addCoersor(String.class, CalendarDateTime.class, new StringCalendarDateTimeCoersor(formatter));
 
-			
+
 			String name = "";
 			ContextScope inScope =null;
 			In in = getAnnotation(annotations,In.class);
+
+			final boolean isPrimitive = isPrimitive(type);
+			
+			if (isPrimitive && in == null){
+				throw new IllegalArgumentException("Annotate parameter with @In for instances of " + type);
+			}
+
 			if (in!=null){
 				name = in.value();
 				inScope = in.scope();
 				if(name.isEmpty()){
 					throw new IllegalArgumentException("Cannot inject an unamed parameter");
 				}
+			} 
+
+			if (isPrimitive){
 				return context.getAttribute(inScope, name, type);
-
 			} else {
-				if (isPrimitive(type)){
-					throw new IllegalArgumentException("Use @In for instances of " + type);
-				}
-
 				T object = null;
-				
+
 				// search in the contexts in reverse order to find an object of class type
 				ContextScope[] scopes = new ContextScope[]{
 						ContextScope.APPLICATION,
@@ -76,14 +81,15 @@ public class AttributeContextBeanLoader {
 
 					// try to load from parameters
 					object =  new ContextAssembler(
-							ServiceRegistry.getService(WiringService.class).getObjectPool(), 
-							context,
-							ContextScope.PARAMETERS).assemble(type);
+									ServiceRegistry.getService(WiringService.class).getObjectPool(), 
+									context,
+									ContextScope.PARAMETERS,type.getSimpleName()
+							).assemble(type);
 				}
-				
+
 				return object;
+
 			}
-		
 		} finally {
 			TypeCoercing.removeCoersor(String.class, Date.class);
 			TypeCoercing.removeCoersor(String.class, CalendarDateTime.class);
@@ -93,7 +99,7 @@ public class AttributeContextBeanLoader {
 
 
 	}
-	
+
 	private <A extends Annotation> A getAnnotation(Annotation[] annotations ,Class<A> annotationClass){
 		if (annotations !=null){
 			for (Annotation a : annotations){
@@ -104,8 +110,8 @@ public class AttributeContextBeanLoader {
 		}
 		return null;
 	}
-	
-	
+
+
 	private boolean isPrimitive(Class<?> type){
 		return type.isPrimitive() || 
 		String.class.isAssignableFrom(type) || 

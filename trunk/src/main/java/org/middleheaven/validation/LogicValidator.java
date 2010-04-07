@@ -30,18 +30,19 @@ public class LogicValidator<T> implements Validator<T> {
 	}
 
 	@Override
-	public void validate(ValidationContext context, T object) {
-		DefaultValidationContext aContext= new DefaultValidationContext();
-		aContext.apply(a, object);
+	public ValidationResult validate(T object) {
+		DefaultValidationResult result = new DefaultValidationResult();
 		
-		DefaultValidationContext bContext= new DefaultValidationContext();
-		bContext.apply(b, object);
+		ValidationResult aContext=  a.validate(object);
+		 
+		ValidationResult bContext=  b.validate(object);
 		
 		if (!operator.operate(aContext.isValid(), bContext.isValid())){
-			context.merge(aContext);
-			context.merge(bContext);
+			result.merge(aContext);
+			result.merge(bContext);
 		}
 		
+		return result;
 	}
 
 }

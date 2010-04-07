@@ -12,7 +12,8 @@ public interface EntityFieldModel {
 	public Class<?> getValueClass();
 	public Class<?> getAggregationClass();
 	public boolean isUnique();
-	
+	public boolean isNullable();
+
 	public DataTypeModel getDataTypeModel();
 	
 }

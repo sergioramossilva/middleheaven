@@ -4,13 +4,16 @@
  */
 package org.middleheaven.core.bootstrap;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.middleheaven.core.BootstrapContainer;
 import org.middleheaven.core.services.RegistryServiceContext;
 import org.middleheaven.core.wiring.DefaultWiringService;
 import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.ActivatorScanner;
 import org.middleheaven.core.wiring.activation.FileActivatorScanner;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
@@ -19,6 +22,7 @@ import org.middleheaven.global.text.LocalizationServiceActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
+import org.middleheaven.mail.service.MailBootstrapExtention;
 import org.middleheaven.util.StopWatch;
 import org.middleheaven.work.scheduled.AlarmClockScheduleWorkExecutionServiceActivator;
 
@@ -47,48 +51,77 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 		doBeforeStart();
 
-		log.trace("Resolving container");
-		
 		BootstrapContainer container = getContainer();
+		ContainerFileSystem fileSystem = container.getFileSystem();
 		
-		log.info("Container resolved: {0}", container.getEnvironmentName());
+		log.info("Using {0} container", container.getContainerName());
 		
+	
 		log.debug("Register bootstrap services");
 
 		WiringService wiringService = new DefaultWiringService();
 		serviceRegistryContext.register(WiringService.class, wiringService,null);
 		serviceRegistryContext.register(BootstrapService.class, bootstrapService,null);
 
-		doEnvironmentServiceRegistry(wiringService);
+		// set scanner
+		final SetActivatorScanner scanner = new SetActivatorScanner()
+		.addActivator(AtlasActivator.class)
+		.addActivator(LoggingActivator.class)
+		.addActivator(FileRepositoryActivator.class);
+
+	
+		BootstrapContext context = new BootstrapContext(){
+
+			@Override
+			public BootstrapContext addActivator(Class<? extends Activator> activatorType) {
+				scanner.addActivator(activatorType);
+				return this;
+			}
+
+			@Override
+			public BootstrapContext removeActivator(Class<? extends Activator> activatorType) {
+				scanner.removeActivator(activatorType);
+				return this;
+			}
+
+			@Override
+			public boolean contains(Class<? extends Activator> activatorType) {
+				return scanner.contains(activatorType);
+			}
+			
+		};
+		
+		preConfig(context);
 		
 		bootstrapService.fireBootupStart();
 		
 		log.debug("Inicialize service discovery engines");
 		
-		// default scanner
-		ActivatorScanner scanner = new SetActivatorScanner()
-		.addActivator(AtlasActivator.class)
-		.addActivator(LoggingActivator.class)
-		.addActivator(FileRepositoryActivator.class);
-
-		wiringService.addActivatorScanner(scanner);
 		
 		// file aware scannaer
-		ActivatorScanner fileScanner = new FileActivatorScanner(container.getAppClasspathRepository(), ".jar$");
+		ActivatorScanner fileScanner = new FileActivatorScanner(fileSystem.getAppClasspathRepository(), ".jar$");
 		wiringService.addActivatorScanner(fileScanner);
-
-		// call configuration
-		configurate(wiringService);
 		
-		// call container configuration
-		container.init(wiringService);
+		log.debug("Scanning for extentions");
+		
+		List<BootstrapContainerExtention> extentions = new ArrayList<BootstrapContainerExtention>();
+		readExtentions(extentions);
+		
+		// configurate container with chain of extentions
+		BootstrapChain chain = new BootstrapChain(extentions,container);
+		
+		chain.doChain(context);
+		
+		// call configuration
+		posConfig(context);
 
+		
 		// activate services that can be overrriden by the container or final environment
-		SetActivatorScanner overrridableScanner = new SetActivatorScanner()
-		.addActivator(AlarmClockScheduleWorkExecutionServiceActivator.class)
+	
+		scanner.addActivator(AlarmClockScheduleWorkExecutionServiceActivator.class)
 		.addActivator(LocalizationServiceActivator.class);
 
-		wiringService.addActivatorScanner(overrridableScanner);
+		wiringService.addActivatorScanner(scanner);
 		
 		// scan and activate all
 		wiringService.scan(); 
@@ -101,11 +134,16 @@ public abstract class ExecutionEnvironmentBootstrap {
 		bootstrapService.fireBootupEnd();
 	}
 
-	protected void doEnvironmentServiceRegistry(WiringService wiringService) {
+	
+	private void readExtentions(List<BootstrapContainerExtention> extentions){
+		extentions.add(new MailBootstrapExtention());
+	}
+	
+	protected void preConfig(BootstrapContext contex) {
 		// no-op
 	}
 
-	public void configurate(WiringService wiringService){
+	public void posConfig(BootstrapContext context){
 		
 	}
 

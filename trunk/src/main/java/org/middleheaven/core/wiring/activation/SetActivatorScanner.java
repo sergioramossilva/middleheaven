@@ -29,4 +29,11 @@ public class SetActivatorScanner extends AbstractActivatorScanner {
 		}
 	}
 
+	public boolean contains(Class<? extends Activator> activatorType) {
+		return units.contains(activatorType);
+	}
+
+	public String toString(){
+		return units.toString();
+	}
 }

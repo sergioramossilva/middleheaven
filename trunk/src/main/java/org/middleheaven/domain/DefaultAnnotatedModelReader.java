@@ -8,14 +8,19 @@ import java.util.Map;
 
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.domain.annotations.EmailAddress;
 import org.middleheaven.domain.annotations.Id;
+import org.middleheaven.domain.annotations.Length;
 import org.middleheaven.domain.annotations.ManyToMany;
 import org.middleheaven.domain.annotations.ManyToOne;
+import org.middleheaven.domain.annotations.NotEmpty;
+import org.middleheaven.domain.annotations.NotNull;
 import org.middleheaven.domain.annotations.OneToMany;
 import org.middleheaven.domain.annotations.OneToOne;
 import org.middleheaven.domain.annotations.Temporal;
 import org.middleheaven.domain.annotations.Transient;
 import org.middleheaven.domain.annotations.Unique;
+import org.middleheaven.domain.annotations.Url;
 import org.middleheaven.domain.annotations.Version;
 import org.middleheaven.logging.Log;
 import org.middleheaven.quantity.time.CalendarDate;
@@ -39,46 +44,50 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 		EntityModelBuilder<?> em = builder.getEntity(type);
 
 		Collection<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
-		
+
 		if (propertyAccessors.isEmpty()){
 			throw new ModelingException("No public fields found for entity " + type.getName() + ".");
 		} else {
-		
+
 			for (PropertyAccessor pa : propertyAccessors){
 
-				processField(pa,em,builder);
-				
+				processField(pa,em);
+
 			}
 
 		}
 
 	}
-	
-	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em,ModelBuilder builder){
+
+	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em){
 
 		FieldModelBuilder fm = em.getField(pa.getName())
 		.setTransient(pa.isAnnotadedWith(Transient.class))
 		.setVersion( pa.isAnnotadedWith(Version.class))
-		.setUnique( pa.isAnnotadedWith(Unique.class));
-		
+		.setUnique( pa.isAnnotadedWith(Unique.class))
+		.setNullable(!pa.isAnnotadedWith(NotNull.class))
+		;
+
 		Class<?> valueType = pa.getValueType();
 
 		fm.setValueType(valueType);
-		
+
 		if(pa.isAnnotadedWith(Id.class)){
 			Id key = pa.getAnnotation(Id.class);
 
 			fm.setIdentity(true);
 			fm.setUnique(true);
+			fm.setNullable(false);
 			em.setIdentityType(key.type());
 
 		} else if ( fm.isIdentity() || valueType.isAssignableFrom(Identity.class) ){
-			
+
 			fm.setIdentity(true);
 			fm.setUnique(true);
-			
+			fm.setNullable(false);
+
 			em.setIdentityType(valueType.asSubclass(Identity.class));
-			
+
 		}
 
 		if (pa.isAnnotadedWith(ManyToOne.class)){
@@ -93,7 +102,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			model.setTargetType(valueType);
 			fm.setDataTypeModel(model);
 
-			
+
 		} else if (pa.isAnnotadedWith(OneToOne.class)){
 			fm.setDataType(DataType.ONE_TO_ONE);
 			OneToOne ref = pa.getAnnotation(OneToOne.class);
@@ -106,7 +115,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			model.setTargetType(valueType);
 			fm.setDataTypeModel(model);
 
-		
+
 		} else if (pa.isAnnotadedWith(OneToMany.class)){
 			fm.setDataType( DataType.ONE_TO_MANY);
 			OneToMany ref = pa.getAnnotation(OneToMany.class);
@@ -115,31 +124,52 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 			model.setTargetType(ref.target());
 			model.setAggregationType(valueType);
-			
+
 			fm.setDataTypeModel(model);
-			
+
 
 
 		} else if (pa.isAnnotadedWith(ManyToMany.class)){
 			fm.setDataType(DataType.MANY_TO_MANY);
 			ManyToMany ref = pa.getAnnotation(ManyToMany.class);
-			
+
 			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.MANY_TO_MANY);
 
 			model.setTargetType(ref.target());
 			model.setAggregationType(valueType);
-			
+
 			fm.setDataTypeModel(model);
-			
+
 		}
 
-		
 		if ( fm.getDataType() == null){
 			if (matchTypes(valueType, String.class) ){
 				fm.setDataType(DataType.TEXT);
-				
-				TextDataTypeModel model = new TextDataTypeModel();
+
+				TextDataTypeModel model= new TextDataTypeModel();
+
 				fm.setDataTypeModel(model);
+
+				if(pa.isAnnotadedWith(EmailAddress.class)){
+					model.setEmailAddress(true);
+					model.setMaxLength(255);
+					model.setMinLength(0);
+					
+				} else if(pa.isAnnotadedWith(Length.class)){
+					Length ref = pa.getAnnotation(Length.class);
+					model.setMaxLength(ref.max());
+					model.setMinLength(ref.min());
+				}
+
+				if(pa.isAnnotadedWith(NotEmpty.class)){
+					model.setEmptyable(false);
+				}
+
+				
+				
+				if(pa.isAnnotadedWith(Url.class)){
+					model.setUrl(true);
+				}
 				
 			} else if (matchTypes(valueType,Integer.class ,int.class, Byte.class, byte.class, Short.class, short.class)  ){
 				fm.setDataType(DataType.INTEGER);
@@ -176,16 +206,16 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				em.setIdentityType(valueType.asSubclass(Identity.class));
 			} else {
 				fm.setDataType(DataType.MANY_TO_ONE);
-				
+
 				ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.MANY_TO_ONE);
 
 				model.setTargetType(valueType);
 				fm.setDataTypeModel(model);
-				
+
 
 			}
 		}
-		
+
 		return fm;
 	}
 

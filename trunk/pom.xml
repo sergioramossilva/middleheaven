@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>MiddleHeaven</groupId>
-	<artifactId>MiddleHeaven</artifactId>
+	<groupId>middleHeaven</groupId>
+	<artifactId>middleHeaven</artifactId>
 	<name>MiddleHeaven</name>
 	<version>0.0.2</version>
 	<description>MiddleHeaven aims to be a full-featured
-		business application framework that:
-		Minimize all effort concerning non-functional requirements. Maximize
-		reusability of business code and logics Minimize dependency of
-		third-party libraries (but used them under the hood) Maximize
-		extensibility</description>
+		business application framework that minimizes all effort concerning non-functional requirements
+		and dependency of third-party libraries, thus maximizing extensability and reusability of business code and logic.  
+	</description>
 	<url>http://middleheaven.sourceforge.net/</url>
 	<issueManagement>
 		<system>sourceforge</system>
-		<url>http://sourceforge.net/tracker/?group_id=211558
-		</url>
+		<url>http://sourceforge.net/tracker/?group_id=211558</url>
 	</issueManagement>
 	<developers>
 		<developer>
@@ -152,12 +149,13 @@
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>space4j</groupId>
 			<artifactId>space4j</artifactId>
 			<version>0.9</version>
-			<scope>compile</scope>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>hsqldb</groupId>

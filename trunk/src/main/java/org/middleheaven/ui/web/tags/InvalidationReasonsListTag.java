@@ -8,14 +8,14 @@ import javax.servlet.jsp.JspTagException;
 
 import org.middleheaven.validation.InvalidationReason;
 import org.middleheaven.validation.InvalidationSeverity;
-import org.middleheaven.validation.ValidationContext;
+import org.middleheaven.validation.ValidationResult;
 
 
 public class InvalidationReasonsListTag extends AbstractBodyTagSupport {
 
 	Iterator<InvalidationReason> iterator;
 	private String varName = "item"; 
-	private ValidationContext result;
+	private ValidationResult result;
 	private InvalidationSeverity severity = null;
 
 	public void setVar(String varName){
@@ -26,7 +26,7 @@ public class InvalidationReasonsListTag extends AbstractBodyTagSupport {
 		return varName;
 	}
 
-	public void setResult(ValidationContext result){
+	public void setResult(ValidationResult result){
 		this.result = result;
 	}
 

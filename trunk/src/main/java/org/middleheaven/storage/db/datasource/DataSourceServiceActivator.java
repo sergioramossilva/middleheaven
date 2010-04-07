@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.AtivationException;
 import org.middleheaven.core.wiring.activation.ActivationContext;
@@ -77,8 +77,7 @@ public class DataSourceServiceActivator extends Activator {
 
 		// look for the datasource mapping file
 
-		ManagedFile folder = container.getAppConfigRepository();
-
+		ManagedFile folder = container.getFileSystem().getAppConfigRepository();
 
 		Collection<? extends ManagedFile> configurations = folder.children().findAll(new BooleanClassifier<ManagedFile>(){
 

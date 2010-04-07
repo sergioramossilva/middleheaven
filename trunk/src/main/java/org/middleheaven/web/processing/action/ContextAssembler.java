@@ -13,15 +13,17 @@ public class ContextAssembler implements BeanAssembler {
 	AttributeContext context;
 	ContextScope scope;
 	private ObjectPool pool;
+	private String objectName;
 	
-	public ContextAssembler(ObjectPool pool,AttributeContext context, ContextScope scope) {
+	public ContextAssembler(ObjectPool pool,AttributeContext context, ContextScope scope, String objectName) {
 		this.context = context;
 		this.scope = scope;
 		this.pool = pool;
+		this.objectName = objectName.toLowerCase();
 	}
 
 	@Override
-	public <B> B assemble(Class<B> type) {
+	public <B> B assemble(final Class<B> type) {
 		
 		final B instance = pool.getInstance(type);
 		
@@ -29,7 +31,12 @@ public class ContextAssembler implements BeanAssembler {
 
 			@Override
 			public void doWith(PropertyAccessor acessor) {
-				acessor.setValue(instance,context.getAttribute(scope,acessor.getName().toLowerCase(), acessor.getValueType()));
+				acessor.setValue(instance,context.getAttribute(
+						scope,
+						(objectName ==null ? "" : objectName + ".") + acessor.getName().toLowerCase(), 
+						acessor.getValueType()
+						)
+				);
 			}
 			
 		});

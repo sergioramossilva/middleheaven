@@ -4,22 +4,16 @@
  */
 package org.middleheaven.core.bootstrap;
 
-import javax.management.ServiceNotFoundException;
-
 import org.middleheaven.application.ApplicationLoadingCycle;
 import org.middleheaven.application.ApplicationLoadingService;
 import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
-import org.middleheaven.core.BootstrapContainer;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.ServiceNotAvailableException;
-import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.activation.ActivatorScanner;
-import org.middleheaven.core.wiring.activation.SetActivatorScanner;
+import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.logging.Log;
 import org.middleheaven.ui.service.UIServiceActivator;
 
 /**
- * @author  Sergio M. M. Taborda 
+ * 
  */
 public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 
@@ -31,13 +25,13 @@ public class StandaloneBootstrap extends ExecutionEnvironmentBootstrap {
 		this.starter = starter;
 	}
 
-	public void configurate(WiringService wiringService){
-		ActivatorScanner scanner = new SetActivatorScanner()
-		.addActivator(DynamicLoadApplicationServiceActivator.class)
+	@Override
+	public void posConfig(BootstrapContext context){
+
+		context.addActivator(DynamicLoadApplicationServiceActivator.class)
 		.addActivator(UIServiceActivator.class)
 		;
-		
-		wiringService.addActivatorScanner(scanner);
+
 	}
 
 	ApplicationLoadingCycle appCycle;

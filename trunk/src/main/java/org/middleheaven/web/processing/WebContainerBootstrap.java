@@ -9,7 +9,8 @@ import org.middleheaven.aas.AccessControlService;
 import org.middleheaven.aas.SimpleAccessControlService;
 import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
 import org.middleheaven.application.MetaInfApplicationServiceActivator;
-import org.middleheaven.core.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
@@ -51,13 +52,14 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 			servletContext.log("[MiddleHeaven] Unexpected error", t);
 		}
 	}
-
-	protected void doEnvironmentServiceRegistry(WiringService wiringService) {
+	
+	@Override
+	protected void preConfig(BootstrapContext context) {
 		// web application have a special inicialization
-		ActivatorScanner scanner = new SetActivatorScanner()
-		.addActivator(MetaInfApplicationServiceActivator.class);
-		
-		wiringService.addActivatorScanner(scanner);
+
+		context.addActivator(MetaInfApplicationServiceActivator.class)
+		.addActivator(DynamicLoadApplicationServiceActivator.class)
+		.addActivator(UIServiceActivator.class);
 		
 		ServletHttpServerService httpService = new ServletHttpServerService();
 		
@@ -66,7 +68,7 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 
 		ServiceRegistry.register(HttpServerService.class, httpService);
 
-		// access servie
+		// access service
 		ServiceRegistry.register(AccessControlService.class, new SimpleAccessControlService());
 	}
 
@@ -80,15 +82,6 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 		return new WebContainerSwitcher().getWebContainer(servletContext);
 	}
 
-	public void configurate(WiringService wiringService){
-		ActivatorScanner scanner = new SetActivatorScanner()
-		.addActivator(MetaInfApplicationServiceActivator.class)
-		.addActivator(DynamicLoadApplicationServiceActivator.class)
-		.addActivator(UIServiceActivator.class)
-		;
-
-		wiringService.addActivatorScanner(scanner);
-	}
 
 
 
