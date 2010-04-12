@@ -10,7 +10,7 @@ import org.middleheaven.util.collections.Range;
 
 
 /**
- * @author Sergio M.M. Taborda
+ * 
  */
 public class CalendarDate extends CalendarDateTime  implements Incrementable<ElapsedTime>{
 
