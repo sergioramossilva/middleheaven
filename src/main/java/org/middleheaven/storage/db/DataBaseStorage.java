@@ -117,13 +117,13 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		}
 
 		@Override
-		public T first() {
+		public T fetchFirst() {
 			Collection<T> list = findByCriteria(criteria.duplicate().setRange(1, 1),hints);
 			return list.isEmpty() ? null : list.iterator().next();
 		}
 
 		@Override
-		public Collection<T> all() {
+		public Collection<T> fetchAll() {
 			return findByCriteria(criteria.duplicate(),hints);
 		}
 
@@ -133,7 +133,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		}
 
 		@Override
-		public Query<T> setRange(int startAt, int maxCount) {
+		public Query<T> limit(int startAt, int maxCount) {
 			Criteria<T> rangeCriteria = this.criteria.duplicate();
 			rangeCriteria.setRange(startAt, maxCount);
 
@@ -352,6 +352,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 			command.execute(this, con);
 
 		} catch (SQLException e){
+			Log.onBookFor(this.getClass()).debug("SQL : {0}",command.getSQL());
 			throw dialect.handleSQLException(e);
 		} finally {
 			close(con);
@@ -404,13 +405,16 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		ColumnModel column = new ColumnModel(fm.getHardName().getName(), fm.getDataType());
 		column.setKey(fm.isIdentity());
 
-		if(column.isKey() && column.getType().equals(DataType.UNKWON)){
+		if(column.isKey()){
 			column.setNullable(false);
 			column.setUnique(true);
-			column.setType(DataType.INTEGER); // TODO resolve correct field type
+
 		} else if (column.getType().equals(DataType.MANY_TO_ONE)){
-			column.setType(DataType.INTEGER);
+		
 			ReferenceStorableDataTypeModel model = (ReferenceStorableDataTypeModel)  fm.getDataTypeModel();
+			
+			column.setType(DataType.fromClass(model.getTargetFieldType()));
+			
 			String name = model.getTargetFieldHardName();
 			if(name !=null){
 				column.setName(name);

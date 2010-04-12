@@ -25,5 +25,8 @@ public interface FieldModelBuilder {
 
 	FieldModelBuilder setNullable(boolean nullable);
 
+	Class<?> getValueType();
+
+
 
 }

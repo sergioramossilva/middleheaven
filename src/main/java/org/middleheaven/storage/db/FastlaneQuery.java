@@ -20,12 +20,12 @@ class FastlaneQuery<T> implements Query<T> {
 	}
 
 	@Override
-	public T first() {
+	public T fetchFirst() {
 		throw new ReadStrategyRestrictionException();
 	}
 
 	@Override
-	public Collection<T> all() {
+	public Collection<T> fetchAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -47,7 +47,7 @@ class FastlaneQuery<T> implements Query<T> {
 	}
 
 	@Override
-	public Query<T> setRange(int startAt, int maxCount) {
+	public Query<T> limit(int startAt, int maxCount) {
 		// TODO implement Query<T>.setRange
 		return null;
 	}

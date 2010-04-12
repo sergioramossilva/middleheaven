@@ -32,4 +32,9 @@ public class SQLEditCommand implements EditionDataBaseCommand {
 		return dialect;
 	}
 
+	@Override
+	public String getSQL() {
+		return sql;
+	}
+
 }

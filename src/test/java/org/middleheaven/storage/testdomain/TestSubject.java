@@ -18,7 +18,7 @@ import org.middleheaven.util.identity.Identity;
 public class TestSubject {
 	
 	@Id
-	private Identity identity;  
+	private Id identity;  
 	
 	private Collection<TestFamillyMember> familly = new ArrayList<TestFamillyMember>();
 
@@ -34,11 +34,11 @@ public class TestSubject {
 
 	private int number;
 	
-	public Identity getIdentity() {
+	public Id getIdentity() {
 		return identity;
 	}
 
-	public void setIdentity(Identity identity) {
+	public void setIdentity(Id identity) {
 		this.identity = identity;
 	}
 	

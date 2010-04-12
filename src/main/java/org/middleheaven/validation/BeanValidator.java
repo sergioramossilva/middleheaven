@@ -38,6 +38,16 @@ public class BeanValidator<T> extends CompositeValidator<T> {
 		return this;
 	}
 	
+	public BeanValidator<T> add(Validator<? extends T> validator){
+		 super.add(validator);
+		 return this;
+	}
+	
+	public BeanValidator<T> remove(Validator<? extends T> validator){
+		super.add(validator);
+		return this;
+	}
+	
 	@Override
 	public final ValidationResult validate(T object) {
 		DefaultValidationResult result = new DefaultValidationResult();

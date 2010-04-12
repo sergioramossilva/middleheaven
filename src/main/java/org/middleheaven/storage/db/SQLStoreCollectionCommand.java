@@ -82,5 +82,10 @@ public class SQLStoreCollectionCommand implements DataBaseCommand {
 
 	}
 
+	@Override
+	public String getSQL() {
+		return sql;
+	}
+
 
 }

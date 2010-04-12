@@ -6,8 +6,10 @@ import java.util.Collections;
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyBagProxyHandler;
 import org.middleheaven.domain.DataType;
+import org.middleheaven.domain.DataTypeModel;
 import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
+import org.middleheaven.domain.ReferenceDataTypeModel;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.TransformedCollection;
 import org.middleheaven.util.identity.Identity;
@@ -53,8 +55,8 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 			}
 
 			@Override
-			public Class<?> getValueClass() {
-				return fModel.getValueClass();
+			public Class<?> getValueType() {
+				return fModel.getValueType();
 			}
 
 			@Override
@@ -91,16 +93,30 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 			@Override
 			public StorableDataTypeModel getDataTypeModel() {
 				if (model == null){
-					Class<? extends StorableDataTypeModel> type =  fModel.getDataType().isReference() ? ReferenceStorableDataTypeModel.class :  StorableDataTypeModel.class; 
-					model = (StorableDataTypeModel) Introspector.of(fModel.getDataTypeModel()).newProxyInstance(
+					if (fModel.getDataType().isReference()){
+						ReferenceStorableDataTypeModel rm = (ReferenceStorableDataTypeModel) Introspector.of(fModel.getDataTypeModel()).newProxyInstance(
 								new PropertyBagProxyHandler(),
-								type
-								
-					);
+								ReferenceStorableDataTypeModel.class
+						);
+						
+						ReferenceDataTypeModel dtm = (ReferenceDataTypeModel)fModel.getDataTypeModel();
+						
+						rm.setTargetFieldHardname(dtm.getTargetFieldName());
+						rm.setTargetFieldname(dtm.getTargetFieldName());
+
+						model = rm;
+					} else {
+						model = (StorableDataTypeModel) Introspector.of(fModel.getDataTypeModel()).newProxyInstance(
+								new PropertyBagProxyHandler(),
+								StorableDataTypeModel.class
+						);
+					}
 
 				}
 				return	model;
 			}
+
+		
 		};
 	}
 	
@@ -160,7 +176,7 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 	}
 
 	@Override
-	public Class<? extends Identity> getIdentityType() {
+	public Class<?> getIdentityType() {
 		return model.getIdentityType();
 	}
 
@@ -169,7 +185,7 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 		for (EntityFieldModel tfm : this.model.fields()){
 			StorableFieldModel sf = this.convertField(tfm);
 			
-			if (sf.getDataType().isToOneReference() && sf.getValueClass().equals(type)){
+			if (sf.getDataType().isToOneReference() && sf.getValueType().equals(type)){
 				return sf;
 			}
 		}

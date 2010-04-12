@@ -32,26 +32,26 @@ public final class SimpleExecutableQuery<T> implements ExecutableQuery<T> {
 	
 	@Override
 	public long count() {
-		return all().size();
+		return fetchAll().size();
 	}
 
 	@Override
-	public T first() {
-		if (all().isEmpty()){
+	public T fetchFirst() {
+		if (fetchAll().isEmpty()){
 			return null;
 		}
-		return all().iterator().next();
+		return fetchAll().iterator().next();
 	}
 	
 
 	@Override
 	public boolean isEmpty() {
-		return all().isEmpty();
+		return fetchAll().isEmpty();
 	}
 	
 
 	@Override
-	public final Query<T> setRange(int startAt, int maxCount) {
+	public final Query<T> limit(int startAt, int maxCount) {
 		Criteria<T> rangeCriteria = this.criteria.duplicate();
 		rangeCriteria.setRange(startAt, maxCount);
 
@@ -59,7 +59,7 @@ public final class SimpleExecutableQuery<T> implements ExecutableQuery<T> {
 	}
 
 	@Override
-	public Collection<T> all() {
+	public Collection<T> fetchAll() {
 		return executer.execute(this);
 	}
 

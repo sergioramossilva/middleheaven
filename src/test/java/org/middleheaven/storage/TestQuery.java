@@ -25,34 +25,34 @@ public class TestQuery {
 		
 		assertFalse(q.isEmpty());
 		assertEquals(5L, q.count());
-		assertEquals("A", q.first());
+		assertEquals("A", q.fetchFirst());
 	
-		Query<String> r = q.setRange(1, 2);
+		Query<String> r = q.limit(1, 2);
 		
 		assertFalse(r.isEmpty());
 		assertEquals(2L, r.count());
-		assertEquals("A", r.first());
-		assertTrue(CollectionUtils.equalContents(Arrays.asList("A","B"), r.all()));
+		assertEquals("A", r.fetchFirst());
+		assertTrue(CollectionUtils.equalContents(Arrays.asList("A","B"), r.fetchAll()));
 		
-		r = q.setRange(3, 3);
+		r = q.limit(3, 3);
 		
 		assertFalse(r.isEmpty());
 		assertEquals(3L, r.count());
-		assertEquals("C", r.first());
-		assertTrue(CollectionUtils.equalContents(Arrays.asList("C","D","E"), r.all()));
+		assertEquals("C", r.fetchFirst());
+		assertTrue(CollectionUtils.equalContents(Arrays.asList("C","D","E"), r.fetchAll()));
 		
-		r = q.setRange(4, 3);
+		r = q.limit(4, 3);
 		
 		assertFalse(r.isEmpty());
 		assertEquals(2L, r.count());
-		assertEquals("D", r.first());
-		assertTrue(CollectionUtils.equalContents(Arrays.asList("D","E"), r.all()));
+		assertEquals("D", r.fetchFirst());
+		assertTrue(CollectionUtils.equalContents(Arrays.asList("D","E"), r.fetchAll()));
 		
-		r = q.setRange(6, 3);
+		r = q.limit(6, 3);
 		
 		assertTrue(r.isEmpty());
 		assertEquals(0L, r.count());
-		assertEquals(null, r.first());
-		assertTrue(r.all().isEmpty());
+		assertEquals(null, r.fetchFirst());
+		assertTrue(r.fetchAll().isEmpty());
 	}
 }

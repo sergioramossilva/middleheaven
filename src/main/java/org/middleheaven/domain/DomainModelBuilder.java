@@ -1,12 +1,25 @@
 package org.middleheaven.domain;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.middleheaven.core.dependency.DependencyResolver;
+import org.middleheaven.core.dependency.InicializationNotPossibleException;
+import org.middleheaven.core.dependency.InicializationNotResolvedException;
+import org.middleheaven.core.dependency.Starter;
+import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.domain.annotations.Entity;
 import org.middleheaven.domain.repository.Repository;
+import org.middleheaven.logging.Log;
+import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.identity.Identity;
 
 public final class DomainModelBuilder {
 
@@ -28,9 +41,83 @@ public final class DomainModelBuilder {
 		
 		final SimpleModelBuilder builder = new SimpleModelBuilder();
 		
-		for (Class<?> type : classes){
-			modelReader.read(type, builder);
-		}
+		new DependencyResolver(Log.onBookFor(this.getClass())).resolve(classes.entities, new Starter<Class<?>>(){
+
+			@Override
+			public void inicialize(Class<?> type)
+					throws InicializationNotResolvedException,
+					InicializationNotPossibleException {
+				
+				modelReader.read(type, builder);
+			}
+
+			@Override
+			public void inicializeWithProxy(Class<?> dependableProperties)
+					throws InicializationNotResolvedException,
+					InicializationNotPossibleException {
+				
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public List<Class<?>> sort(final Collection<Class<?>> dependencies) {
+
+				List<ClassDependency> deps = new ArrayList<ClassDependency>(dependencies.size());
+
+				for (Class<?> c: dependencies){
+					deps.add(new ClassDependency (c, dependencies));
+				}
+				
+				Collections.sort(deps, new Comparator<ClassDependency>(){
+
+					@Override
+					public int compare(ClassDependency a,	ClassDependency b) {
+						return a.getDepenciesCount() - b.getDepenciesCount();
+					}
+					
+				});
+				List<Class<?>> result = new ArrayList<Class<?>>(dependencies.size());
+				for (ClassDependency cd : deps){
+					result.add(cd.getType());
+				}
+				
+				return result;
+			}
+
+			class ClassDependency {
+				
+				private Class<?> type;
+				private Collection<Class<?>> depends;
+				
+				public ClassDependency(Class<?> type, final Collection<Class<?>> dependencies){
+					this.type = type;
+					
+					this.depends = Introspector.of(type).inspect().properties().retriveAll().collect(new Classifier<Class<?>,PropertyAccessor>(){
+
+						@Override
+						public Class<?> classify(PropertyAccessor obj) {
+							if( dependencies.contains(obj.getValueType())){
+								return obj.getValueType();
+							}
+							return null;
+						}
+
+					});
+						
+					
+				}
+				
+				public int getDepenciesCount() {
+					return depends.size();
+				}
+
+				public Class getType(){
+					return type;
+				}
+				
+			}
+			
+		});
 		
 		return builder.getModel();
 	}
@@ -60,6 +147,7 @@ public final class DomainModelBuilder {
 
 			private EditableEntityModel model;
 			private Map<String, FieldModelBuilder> fields = new HashMap<String, FieldModelBuilder>();
+			private FieldModelBuilder identityField;
 			
 			public SimpleEntityModelBuilder(EditableEntityModel model) {
 				this.model = model;
@@ -73,6 +161,9 @@ public final class DomainModelBuilder {
 					model.addField(fem);
 					fm = new SimpleFieldModelBuilder(fem);
 					fields.put(name, fm);
+					if (fm.isIdentity()){
+						identityField = fm;
+					}
 				}
 				return fm;
 			}
@@ -86,7 +177,7 @@ public final class DomainModelBuilder {
 			}
 
 			@Override
-			public EntityModelBuilder<E> setIdentityType(Class<? extends Identity> type) {
+			public EntityModelBuilder<E> setIdentityType(Class<?> type) {
 				model.setIdentityType(type);
 				return this;
 			}
@@ -94,6 +185,24 @@ public final class DomainModelBuilder {
 			@Override
 			public EnhancedCollection<FieldModelBuilder> fields() {
 				return CollectionUtils.enhance(fields.values());
+			}
+
+			@Override
+			public FieldModelBuilder getIdentityField() {
+				if(this.identityField==null){
+					for (FieldModelBuilder fmb : this.fields.values()){
+						if(fmb.isIdentity()){
+							identityField = fmb;
+							break;
+						}
+					}
+				}
+				return identityField;
+			}
+
+			@Override
+			public Class<?> getIdentityType() {
+				return model.getIdentityType();
 			}
 			
 		}
@@ -172,6 +281,11 @@ public final class DomainModelBuilder {
 		public FieldModelBuilder setNullable(boolean nullable) {
 			fm.setNullable(nullable);
 			return this;
+		}
+
+		@Override
+		public Class<?> getValueType() {
+			return fm.getValueType();
 		}
 		
 	}

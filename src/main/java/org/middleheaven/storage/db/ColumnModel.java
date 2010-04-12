@@ -109,7 +109,7 @@ public class ColumnModel implements Cloneable{
 	}
 
 	public boolean equals(Object other){
-		return other instanceof ColumnModel && ((ColumnModel)other).name.equals(name) && 
+		return other instanceof ColumnModel && ((ColumnModel)other).name.equalsIgnoreCase(name) && 
 		this.tableModel.equals(((ColumnModel)other).tableModel);
 	}
 	

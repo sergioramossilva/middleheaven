@@ -17,4 +17,6 @@ public class SQLDeleteCommand extends SQLConditionableCommand {
 
 
 	}
+
+
 }

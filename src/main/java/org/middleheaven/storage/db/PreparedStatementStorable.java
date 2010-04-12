@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.middleheaven.domain.DataType;
+import org.middleheaven.domain.DataTypeModel;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.storage.Storable;
@@ -32,7 +33,7 @@ public class PreparedStatementStorable {
 
 		int index = 1;
 		for ( StorableFieldModel fm : fields){
-			setField(index,s.getFieldValue(fm) , fm.isIdentity(), fm.getDataType());
+			setField(index,s.getFieldValue(fm) , fm.isIdentity(), fm.getDataTypeModel());
 			index++;
 		}
 	}
@@ -58,33 +59,33 @@ public class PreparedStatementStorable {
 
 	private DataType resolveDataType(Object value){
 		DataType dt = DataType.fromClass(value.getClass());
-		if (dt.equals(DataType.UNKWON)){
-			if (value instanceof LongIdentity || value instanceof IntegerIdentity){
-				return DataType.INTEGER;
-			} else if (value instanceof StringIdentity || value instanceof UUIDIdentity){
-				return DataType.TEXT;
-			} else {
-				throw new UnsupportedOperationException(value.getClass() + " cannot be preseved");
-			}
-		}
+//		if (dt.equals(DataType.UNKWON)){
+//			if (value instanceof LongIdentity || value instanceof IntegerIdentity){
+//				return DataType.INTEGER;
+//			} else if (value instanceof StringIdentity || value instanceof UUIDIdentity){
+//				return DataType.TEXT;
+//			} else {
+//				throw new UnsupportedOperationException(value.getClass() + " cannot be preseved");
+//			}
+//		}
 		return dt;
 	}
 	
 	public void setField(int i, Object value, StorableFieldModel fm ) throws SQLException {
-		setField(i,value,fm.isIdentity(), fm.getDataType());
+		setField(i,value,fm.isIdentity(), fm.getDataTypeModel());
 	}
 	
-	private void setField(int i, Object value, boolean isIdentity , DataType dataType ) throws SQLException {
+	private void setField(int i, Object value, boolean isIdentity , DataTypeModel dataTypeModel ) throws SQLException {
 		
 		if (value == null){
-			ps.setNull(i, infereSQLType(dataType)); 
-		} else if (dataType.isToOneReference()){
+			ps.setNull(i, infereSQLType(dataTypeModel.getDataType())); 
+		} else if (dataTypeModel.getDataType().isToOneReference()){
 			final Identity id = keeper.getIdentityFor(value);
-			setField(i, id , true, DataType.UNKWON);
+			setField(i, id , false, dataTypeModel);
 			
-		} else if (dataType.isToManyReference()){
+		} else if (dataTypeModel.getDataType().isToManyReference()){
 			return;
-		} else if (dataType.isTemporal()){ 
+		} else if (dataTypeModel.getDataType().isTemporal()){ 
 			if (value instanceof Date ) {
 				ps.setTimestamp(i, new Timestamp(((Date)value).getTime()));
 			} else if (value instanceof Calendar ) {
@@ -95,9 +96,10 @@ public class PreparedStatementStorable {
 				ps.setTimestamp(i, new Timestamp(((CalendarDateTime)value).getMilliseconds()));
 			}
 		} else if (isIdentity){
-			setField(i, value, false, this.resolveDataType(value));
+			//setField(i, value, false, this.resolveDataType(value));
+			setField(i, value, false, dataTypeModel);
 		} else {
-			switch (dataType){
+			switch (dataTypeModel.getDataType()){
 			case TEXT:
 				ps.setString(i, value.toString());
 				break;

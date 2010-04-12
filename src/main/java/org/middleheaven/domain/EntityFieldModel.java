@@ -9,7 +9,7 @@ public interface EntityFieldModel {
 	public boolean isTransient();
 	public boolean isVersion();
 	public boolean isIdentity();
-	public Class<?> getValueClass();
+	public Class<?> getValueType();
 	public Class<?> getAggregationClass();
 	public boolean isUnique();
 	public boolean isNullable();

@@ -32,7 +32,7 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 			return fieldJuntionCriterionAsFilter((FieldJuntionCriterion)c,model, identityManager);
 		} else if (c instanceof IdentityCriterion){
 			
-			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)c).getIdentity(), DataType.UNKWON);
+			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)c).getIdentity(),model.identityFieldModel().getDataType());
 			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
 			
 			return fieldCriterionAsFilter (f , model);
@@ -45,7 +45,7 @@ public class CriteriaFilter<T> extends AbstractCriteria<T> implements BooleanCla
 			
 			Identity id = identityManager.getIdentityFor(cri.getInstance());
 			
-			FieldValueHolder valueHolder = new SingleObjectValueHolder(id, DataType.UNKWON);
+			FieldValueHolder valueHolder = new SingleObjectValueHolder(id, model.identityFieldModel().getDataType());
 			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
 			
 			return fieldCriterionAsFilter (f , model);

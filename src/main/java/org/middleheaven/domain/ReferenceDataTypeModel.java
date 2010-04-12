@@ -1,51 +1,11 @@
 package org.middleheaven.domain;
 
-import org.middleheaven.validation.Validator;
+public interface ReferenceDataTypeModel extends DataTypeModel{
 
-public class ReferenceDataTypeModel implements DataTypeModel {
+	public abstract String getTargetFieldName();
 
-	private String fieldName;
-	private DataType dataType;
-	private Class<?> targetType;
-	private Class<?> aggregationType;
-	
-	protected ReferenceDataTypeModel() {
-		super();
-	}
-	
-	public ReferenceDataTypeModel(DataType dataType) {
-		super();
-		this.dataType = dataType;
-	}
+	public abstract Class<?> getTargetType();
 
-	@Override
-	public DataType getDataType() {
-		return dataType;
-	}
-	
-	public void setTargetFieldName(String fieldName){
-		this.fieldName = fieldName;
-	}
-
-	public void setTargetType(Class<?> targetType) {
-		this.targetType =targetType; 
-	}
-
-	public String getTargetFieldName() {
-		return fieldName;
-	}
-
-	public Class<?> getTargetType() {
-		return targetType;
-	}
-
-	public void setAggregationType(Class<?> aggregationType) {
-		this.aggregationType = aggregationType;
-	}
-
-	public Class<?> getAggregationType() {
-		return aggregationType;
-	}
-
-	
+	public abstract Class<?> getAggregationType();
+	public abstract Class<?> getTargetFieldType();
 }

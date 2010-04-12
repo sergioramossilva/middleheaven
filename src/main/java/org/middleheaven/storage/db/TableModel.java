@@ -59,7 +59,7 @@ public class TableModel implements Iterable<ColumnModel>, DataBaseObjectModel{
 	}
 	
 	public boolean equals(Object other){
-		return other instanceof TableModel && ((TableModel)other).name.equals(this.name);
+		return other instanceof TableModel && ((TableModel)other).name.equalsIgnoreCase(this.name);
 	}
 	
 	public int hashCode(){

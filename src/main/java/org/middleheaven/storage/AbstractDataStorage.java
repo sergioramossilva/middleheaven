@@ -60,7 +60,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 		for (StorableFieldModel fm : model.fields()){
 			if(fm.getDataType().isToManyReference()){
 				// lookfor the other ones
-				StorableEntityModel otherModel = reader.read(fm.getValueClass());
+				StorableEntityModel otherModel = reader.read(fm.getValueType());
 
 				StorableFieldModel frm = otherModel.fieldReferenceTo(to.getPersistableClass());
 
@@ -72,7 +72,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 					.back()
 					.all();
 
-					Collection<?> all = this.createQuery(criteria , null).all();
+					Collection<?> all = this.createQuery(criteria , null).fetchAll();
 
 					for (Object o : all){
 						to.addFieldElement(fm,o);
@@ -84,10 +84,10 @@ public abstract class AbstractDataStorage implements DataStorage {
 				Object obj = from.getFieldValue(fm);
 
 				if(obj!=null){
-					StorableEntityModel otherModel = reader.read(fm.getValueClass());
+					StorableEntityModel otherModel = reader.read(fm.getValueType());
 
 					// convert to identity
-					Identity id = (Identity)TypeCoercing.coerce(obj, otherModel.identityFieldModel().getValueClass());
+					Identity id = (Identity)TypeCoercing.coerce(obj, otherModel.identityFieldModel().getValueType());
 
 
 					Storable o = session.get(otherModel.getEntityClass(), id);
@@ -96,7 +96,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 						.and("identity").eq(id)
 						.all();
 
-						o = (Storable) this.createQuery(criteria , null).first();
+						o = (Storable) this.createQuery(criteria , null).fetchFirst();
 						session.put(o);
 					}
 

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.NegationClassifier;
 
 public abstract class AbstractAdapter<T> implements Enumerable<T>{
 
@@ -28,7 +27,10 @@ public abstract class AbstractAdapter<T> implements Enumerable<T>{
 	public <C> EnhancedCollection<C> collect(Classifier<C, T> classifier) {
 		EnhancedCollection<C> result = CollectionUtils.enhance(new LinkedList<C>());
 		for (Iterator<T> it = iterator();it.hasNext();){
-			result.add(classifier.classify(it.next()));
+			final C item = classifier.classify(it.next());
+			if (item!=null){
+				result.add(item);
+			}
 		}
 		return result;
 	}

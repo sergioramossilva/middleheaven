@@ -61,9 +61,10 @@ public class AttributeContextBeanLoader {
 
 				// search in the contexts in reverse order to find an object of class type
 				ContextScope[] scopes = new ContextScope[]{
-						ContextScope.APPLICATION,
+						ContextScope.REQUEST,
 						ContextScope.SESSION,
-						ContextScope.REQUEST};
+						ContextScope.APPLICATION
+						};
 
 
 				for (ContextScope scope : scopes){
@@ -78,12 +79,15 @@ public class AttributeContextBeanLoader {
 				}
 
 				if (object==null){
-
+					if(name.isEmpty()){
+						name = type.getSimpleName();
+					}
 					// try to load from parameters
 					object =  new ContextAssembler(
 									ServiceRegistry.getService(WiringService.class).getObjectPool(), 
 									context,
-									ContextScope.PARAMETERS,type.getSimpleName()
+									ContextScope.PARAMETERS,
+									name
 							).assemble(type);
 				}
 

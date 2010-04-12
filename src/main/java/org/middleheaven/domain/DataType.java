@@ -3,9 +3,14 @@ package org.middleheaven.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.CalendarDateTime;
+import org.middleheaven.util.identity.IntegerIdentity;
+import org.middleheaven.util.identity.LongIdentity;
+
 public enum DataType {
 	
-	UNKWON,
+	UNKONW,
 	LOGIC,
 	ENUM,
 	STATUS,
@@ -22,9 +27,11 @@ public enum DataType {
 	MANY_TO_MANY;
 	
 	public static DataType fromClass(Class<?> type){
-		if (Date.class.isAssignableFrom(type)){
+		if (CalendarDate.class.isAssignableFrom(type)){
+			return DataType.DATE;
+		} else if (CalendarDateTime.class.isAssignableFrom(type) || Date.class.isAssignableFrom(type)){
 			return DataType.DATETIME;
-		}else if (Long.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type) || int.class.isAssignableFrom(type) || long.class.isAssignableFrom(type)){
+		}else if (LongIdentity.class.isAssignableFrom(type) || IntegerIdentity.class.isAssignableFrom(type) || Long.class.isAssignableFrom(type) || Integer.class.isAssignableFrom(type) || int.class.isAssignableFrom(type) || long.class.isAssignableFrom(type)){
 			return DataType.INTEGER;
 		}else if (Double.class.isAssignableFrom(type) || BigDecimal.class.isAssignableFrom(type) || double.class.isAssignableFrom(type)){
 			return DataType.DECIMAL;
@@ -33,7 +40,7 @@ public enum DataType {
 		}else if (CharSequence.class.isAssignableFrom(type)){
 			return DataType.TEXT;
 		} else {
-			return UNKWON;
+			throw new IllegalArgumentException("No datatype exists for " + type);
 		}
 	}
 	

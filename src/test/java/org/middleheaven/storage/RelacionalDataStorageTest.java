@@ -123,7 +123,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 		assertTrue(qr.count() == 1 );
 		
 		// find it
-		TestRelation relation2 = qr.first();
+		TestRelation relation2 = qr.fetchFirst();
 		
 		assertNotNull(relation2);
 		
@@ -132,7 +132,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 				.and("identity").eq(ds.getIdentityFor(relation2))
 				.all());
 		
-		TestRelation relation3 = qr.first();
+		TestRelation relation3 = qr.fetchFirst();
 		assertNotNull(relation3);
 		
 		// is the same as before
@@ -147,7 +147,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 		Query<TestFamillyMember> q1 = ds.createQuery(CriteriaBuilder.search(TestFamillyMember.class).all());
 		
 		// find it
-		TestFamillyMember tfm = q1.first();
+		TestFamillyMember tfm = q1.fetchFirst();
 		
 		assertNotNull(tfm);
 		assertNotNull("Relation is null" , tfm.getRelation());
@@ -163,7 +163,7 @@ public class RelacionalDataStorageTest extends MiddleHeavenTestCase {
 		
 		// read the stored object
 		Query<TestSubject> q2 = ds.createQuery(CriteriaBuilder.search(TestSubject.class).all());
-		TestSubject tor = q2.first();
+		TestSubject tor = q2.fetchFirst();
 		
 		// members are loaded
 		assertFalse("Members are empty", tor.getTestFamillyMembers().isEmpty());

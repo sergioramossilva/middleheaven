@@ -45,7 +45,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		
 		assertTrue(q.count()>1);
 		
-		TestSubject a = q.first();
+		TestSubject a = q.fetchFirst();
 		
 		assertTrue(a.getName().equals("Ana"));
 		assertTrue(a.getBirthdate()!=null);
@@ -58,7 +58,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		
 		assertTrue(q.count()==1);
 		
-		TestSubject b = q.first();
+		TestSubject b = q.fetchFirst();
 		
 		assertFalse(a==b);
 		assertTrue(b.getName().equals("Ana"));
