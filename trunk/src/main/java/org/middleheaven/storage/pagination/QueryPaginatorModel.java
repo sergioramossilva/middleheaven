@@ -27,7 +27,7 @@ public class QueryPaginatorModel<E> implements PaginatorModel<E> {
 	
 	public Collection<E> getRange(int startAt, int itemsPerPage){
 
-		return query.setRange(startAt, itemsPerPage).all();
+		return query.limit(startAt, itemsPerPage).fetchAll();
 
 	}
 

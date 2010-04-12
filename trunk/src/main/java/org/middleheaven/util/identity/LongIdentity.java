@@ -9,15 +9,15 @@ public class LongIdentity extends Identity implements Serializable {
 
 	private long value;
 
-	public static Identity valueOf(String value) {
+	public static LongIdentity valueOf(String value) {
 		return valueOf(Long.parseLong(value));
 	}
 
-	public static Identity valueOf(Long value) {
+	public static LongIdentity valueOf(Long value) {
 		return  valueOf(value.longValue());
 	}
 	
-	public static Identity valueOf(long value) {
+	public static LongIdentity valueOf(long value) {
 		return new LongIdentity(value);
 	}
 	

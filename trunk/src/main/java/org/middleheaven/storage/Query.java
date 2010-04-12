@@ -4,10 +4,18 @@ import java.util.Collection;
 
 public interface Query<T> {
 
+	/**
+	 * 
+	 * @return the first element in the query range, or {@code null} if no elements exist. 
+	 */
+	public T fetchFirst();
 	
-	public T first();
+	/**
+	 * 
+	 * @return a collection of elements in the query range
+	 */
+	public Collection<T> fetchAll();
 	
-	public Collection<T> all();
 	/**
 	 * Return the total number of elements in the query.
 	 * Even if the query was been paginated, {@code count} will allways return the
@@ -21,5 +29,13 @@ public interface Query<T> {
 	 */
 	public boolean isEmpty();
 	
-	public Query<T> setRange(int startAt, int maxCount);
+	/**
+	 * Creates a new query base on the same criteria used for {@code this} 
+	 * but with limited elements 
+	 * 
+	 * @param startAt ordinal position of the first element in the new query (1 is the first)
+	 * @param maxCount the maximum quantity of elements to fecth. 
+	 * @return
+	 */
+	public Query<T> limit(int startAt, int maxCount);
 }

@@ -20,6 +20,11 @@ public abstract class SQLConditionableCommand implements ConditionableDataBaseCo
 		this.sql = sql;
 	}
 
+	@Override
+	public String getSQL() {
+		return sql;
+	}
+	
 	public DataBaseDialect getDialect(){
 		return dialect;
 	}

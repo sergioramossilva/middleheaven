@@ -42,7 +42,7 @@ public class XMLCriteriaInterpreter {
 			
 		} else if (c instanceof IdentityCriterion){
 			
-			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)c).getIdentity(), DataType.UNKWON);
+			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)c).getIdentity(),model.identityFieldModel().getDataType());
 			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
 			
 			addPredicate (builder, f);

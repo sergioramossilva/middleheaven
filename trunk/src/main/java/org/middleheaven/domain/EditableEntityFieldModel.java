@@ -40,7 +40,7 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 	}
 
 	@Override
-	public Class<?> getValueClass() {
+	public Class<?> getValueType() {
 		return valueType;
 	}
 

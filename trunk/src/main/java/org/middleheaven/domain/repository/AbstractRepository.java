@@ -72,7 +72,7 @@ public abstract class AbstractRepository<E> implements Repository<E> {
 
 			@Override
 			protected List<E> list() {
-				List<E> all = new ArrayList<E>(findAll().all());
+				List<E> all = new ArrayList<E>(findAll().fetchAll());
 				for (Iterator<E> it = all.iterator(); it.hasNext();){
 					if (!it.next().equals(instance)){
 						it.remove();

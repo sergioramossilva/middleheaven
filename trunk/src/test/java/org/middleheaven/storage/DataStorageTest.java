@@ -139,7 +139,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		assertStoreHasElements(1);
 
-		to = service.getStore().createQuery(CriteriaBuilder.search(TestSubject.class).all()).first();
+		to = service.getStore().createQuery(CriteriaBuilder.search(TestSubject.class).all()).fetchFirst();
 
 		assertTrue(to.getNumber() == 10);
 		assertTrue(to.getBirthdate().equals(birthdate));
@@ -241,7 +241,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		assertStoreHasElements(1);
 
-		TestSubject to2 = queryAll.first();
+		TestSubject to2 = queryAll.fetchFirst();
 
 		assertEquals("Name 4", to2.getName());
 
@@ -281,7 +281,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		Query<TestSubject> q = service.getStore().createQuery(some);
 
 		String[] names = {"A", "B" , "C"};
-		List<TestSubject> objects = new ArrayList<TestSubject>(q.all());
+		List<TestSubject> objects = new ArrayList<TestSubject>(q.fetchAll());
 
 		assertEquals(names.length, objects.size());
 
@@ -296,7 +296,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		q = service.getStore().createQuery(some);
 
 		names = new String[]{"C", "B" , "A"};
-		objects = new ArrayList<TestSubject>(q.all());
+		objects = new ArrayList<TestSubject>(q.fetchAll());
 
 		assertEquals(names.length, objects.size());
 
@@ -350,7 +350,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		assertEquals(1L, q.count());
 
-		TestSubject rtoA = q.first();
+		TestSubject rtoA = q.fetchFirst();
 		assertTrue("Loaded number is not read", rtoA.getNumber() == 10);
 
 		assertStoreHasElements(3);
@@ -384,14 +384,14 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		Query<TestSubject> q = service.getStore().createQuery(some);
 
-		assertEquals(Integer.valueOf(2) , q.all().size());
+		assertEquals(Integer.valueOf(2) , q.fetchAll().size());
 
 		some = some.duplicate()
 		.setRange(2,1);
 
 		q = service.getStore().createQuery(some);
 
-		assertEquals(1 ,  q.all().size());
+		assertEquals(1 ,  q.fetchAll().size());
 
 		service.getStore().remove(toA);
 		service.getStore().remove(toB);
@@ -423,7 +423,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		Query<TestSubject> q = service.getStore().createQuery(some);
 
 		assertEquals(3L , q.count());
-		assertEquals(2 , q.all().size());
+		assertEquals(2 , q.fetchAll().size());
 	}
 
 	@Test

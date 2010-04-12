@@ -1,5 +1,6 @@
 package org.middleheaven.domain;
 
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Collection;
@@ -26,7 +27,6 @@ import org.middleheaven.logging.Log;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimePoint;
-import org.middleheaven.util.identity.Identity;
 
 public class DefaultAnnotatedModelReader implements ModelReader {
 
@@ -51,15 +51,27 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 			for (PropertyAccessor pa : propertyAccessors){
 
-				processField(pa,em);
+				processField(pa,em, builder);
 
 			}
 
+			if (em.getIdentityField() == null){
+				throw new ModelingException("No identity field found for entity " + type.getName() + ".");
+			}
 		}
 
 	}
 
-	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em){
+	
+	private <T> Class<T> resolveValidIdentityType(Class<T> type){
+		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())){
+			throw new ModelingException("Cannot use interfaces or abstract types as identity type. Please use a concrete type.");
+		}
+
+		return type;
+	}
+	
+	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em, ModelBuilder builder){
 
 		FieldModelBuilder fm = em.getField(pa.getName())
 		.setTransient(pa.isAnnotadedWith(Transient.class))
@@ -78,28 +90,33 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			fm.setIdentity(true);
 			fm.setUnique(true);
 			fm.setNullable(false);
-			em.setIdentityType(key.type());
+			
+			Class<?> identityType = valueType;
+			if(identityType.isInterface() || Modifier.isAbstract(identityType.getModifiers())){
+				identityType = key.type();
+				if(identityType==null || Void.class.equals(identityType)){
+					throw new ModelingException("Illegal identity type for " + pa.getDeclaringClass() + ".When using interfaces or abstract types as identity type you must specify a non interface, non abstract, class for identity");
+				}
+			}
+			
+			em.setIdentityType(resolveValidIdentityType(identityType));
+			fm.setDataType(DataType.fromClass(identityType));
 
-		} else if ( fm.isIdentity() || valueType.isAssignableFrom(Identity.class) ){
-
-			fm.setIdentity(true);
-			fm.setUnique(true);
-			fm.setNullable(false);
-
-			em.setIdentityType(valueType.asSubclass(Identity.class));
-
-		}
-
-		if (pa.isAnnotadedWith(ManyToOne.class)){
+		} else if (pa.isAnnotadedWith(ManyToOne.class)){
 			fm.setDataType(DataType.MANY_TO_ONE);
 			ManyToOne ref = pa.getAnnotation(ManyToOne.class);
 			String fieldName = ref.targetIdentityField();
 			if (fieldName.isEmpty()){
 				fieldName = fm.getName();
 			}
-			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.MANY_TO_ONE);
+			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_ONE);
 			model.setTargetFieldName(fieldName);
 			model.setTargetType(valueType);
+			
+			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
+
+			model.setTargetFieldType(this.resolveValidIdentityType(targetModel.getIdentityType()));
+			
 			fm.setDataTypeModel(model);
 
 
@@ -110,9 +127,14 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			if (fieldName.isEmpty()){
 				fieldName = fm.getName();
 			}
-			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.ONE_TO_ONE);
+			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ONE_TO_ONE);
 			model.setTargetFieldName(fieldName);
 			model.setTargetType(valueType);
+			
+			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
+			
+			model.setTargetFieldType(this.resolveValidIdentityType(targetModel.getIdentityType()));
+			
 			fm.setDataTypeModel(model);
 
 
@@ -120,7 +142,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			fm.setDataType( DataType.ONE_TO_MANY);
 			OneToMany ref = pa.getAnnotation(OneToMany.class);
 
-			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.ONE_TO_MANY);
+			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ONE_TO_MANY);
 
 			model.setTargetType(ref.target());
 			model.setAggregationType(valueType);
@@ -133,7 +155,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			fm.setDataType(DataType.MANY_TO_MANY);
 			ManyToMany ref = pa.getAnnotation(ManyToMany.class);
 
-			ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.MANY_TO_MANY);
+			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_MANY);
 
 			model.setTargetType(ref.target());
 			model.setAggregationType(valueType);
@@ -173,8 +195,6 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				
 			} else if (matchTypes(valueType,Integer.class ,int.class, Byte.class, byte.class, Short.class, short.class)  ){
 				fm.setDataType(DataType.INTEGER);
-			} else if (matchTypes(valueType,Identity.class)  ){
-				fm.setDataType(DataType.UNKWON);
 			} else if (matchTypes(valueType,CalendarDate.class)){
 				fm.setDataType(DataType.DATE);
 			} else if (matchTypes(valueType,CalendarDateTime.class)){
@@ -200,14 +220,10 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				fm.setDataType(DataType.DECIMAL);
 			} else if (matchTypes(valueType, Collection.class, Map.class)){
 				fm.setDataType( DataType.ONE_TO_MANY);
-			} else if (matchTypes(valueType, Identity.class)){
-				fm.setDataType( DataType.UNKWON);
-				fm.setIdentity(true);
-				em.setIdentityType(valueType.asSubclass(Identity.class));
 			} else {
 				fm.setDataType(DataType.MANY_TO_ONE);
 
-				ReferenceDataTypeModel model = new ReferenceDataTypeModel(DataType.MANY_TO_ONE);
+				DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_ONE);
 
 				model.setTargetType(valueType);
 				fm.setDataTypeModel(model);

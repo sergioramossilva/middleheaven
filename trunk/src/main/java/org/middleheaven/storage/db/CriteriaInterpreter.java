@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
@@ -546,7 +545,7 @@ public class CriteriaInterpreter {
 
 		} else if (criterion instanceof IdentityCriterion){
 			
-			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)criterion).getIdentity(), DataType.UNKWON);
+			FieldValueHolder valueHolder = new SingleObjectValueHolder(((IdentityCriterion)criterion).getIdentity(),model.identityFieldModel().getDataType());
 			FieldCriterion f = new FieldValueCriterion(model.identityFieldModel().getLogicName(), CriterionOperator.EQUAL, valueHolder);
 			
 			translateCriteriaToWhereClause(alias, criteriaBuffer, params, f , model);

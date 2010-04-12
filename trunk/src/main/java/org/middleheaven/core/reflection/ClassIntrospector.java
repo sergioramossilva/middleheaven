@@ -5,11 +5,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 
@@ -41,10 +42,13 @@ public class ClassIntrospector<T> extends Introspector{
 	 * @throws NoSuchClassReflectionException if the class is not found on the classpath
 	 * @throws ClassCastReflectionException if the loaded class is not a subclass of the introspected class 
 	 */
+
 	public ClassIntrospector<T> load( String className){
 		// this does not delegate to load(string,classloaded) because inicialization control
 		try{
-			return new ClassIntrospector<T>( (Class<T>) Class.forName(className, false, this.getClass().getClassLoader()).asSubclass(this.type));
+			@SuppressWarnings("unchecked")
+			Class<T> type = (Class<T>) Class.forName(className, false, this.getClass().getClassLoader()).asSubclass(this.type);
+			return new ClassIntrospector<T>(type);
 		} catch (ClassNotFoundException e) {
 			throw new NoSuchClassReflectionException(className);
 		} catch (ClassCastException e){
@@ -60,9 +64,12 @@ public class ClassIntrospector<T> extends Introspector{
 	 * @throws NoSuchClassReflectionException if the class is not found on the classpath
 	 * @throws ClassCastReflectionException if the loaded class is not a subclass of the introspected class 
 	 */
+	
 	public ClassIntrospector<T> load( String className, ClassLoader loader){
 		try{
-			return new ClassIntrospector<T>((Class<T>) loader.loadClass(className).asSubclass(this.type));
+			@SuppressWarnings("unchecked")
+			Class<T> type = (Class<T>) loader.loadClass(className).asSubclass(this.type);
+			return new ClassIntrospector<T>(type);
 		} catch (ClassNotFoundException e) {
 			throw new NoSuchClassReflectionException(className);
 		}
@@ -182,6 +189,28 @@ public class ClassIntrospector<T> extends Introspector{
 
 		Class<?>[] result = new Class<?>[all.size()]; 
 		return all.toArray(result);
+	}
+
+	/**
+	 * Informs if the instrospected type is fundamental. Fundamental types are thoses primitive, respective wrappers,
+	 * {@code String} and {@code Date}
+	 * 
+	 * @return {@code true} if the instrospected type is fundamental, {@code false] otherwise.
+	 */
+	public boolean isFundamental() {
+		return type.isPrimitive()
+			|| String.class.isAssignableFrom(type)
+			|| Date.class.isAssignableFrom(type)
+			|| Integer.class.isAssignableFrom(type)
+			|| Long.class.isAssignableFrom(type)
+			|| BigInteger.class.isAssignableFrom(type)
+			|| BigDecimal.class.isAssignableFrom(type)
+			|| Byte.class.isAssignableFrom(type)
+			|| Short.class.isAssignableFrom(type)
+			|| Character.class.isAssignableFrom(type)
+			|| Double.class.isAssignableFrom(type)
+			|| Float.class.isAssignableFrom(type)
+			;
 	}
 
 

@@ -16,6 +16,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -299,9 +300,12 @@ class ReflectionUtils {
 		while (!superType.equals(Object.class)){
 			all.addAll(Arrays.asList(superType.getDeclaredMethods())); // private , protected , public
 			all.addAll(Arrays.asList(superType.getMethods())); // super class inherit public
+
 			superType = superType.getSuperclass();
+			
 		}
 
+		
 		Set<Method> annotated = new HashSet<Method>();
 
 		for (Method m : all){
@@ -315,30 +319,6 @@ class ReflectionUtils {
 
 		return annotated;
 	}
-	
-	/*
-	public static boolean isAnnotadedWith(Class<?> candidate,Class<? extends Annotation> annotationClass) {
-		return candidate.isAnnotationPresent(annotationClass);
-	}
-
-	
-	public static <A extends Annotation> A getAnnotation(Class<?> annotated, Class<A> annotationClass){
-		return annotated.getAnnotation(annotationClass);
-	}
-
-	public static <A extends Annotation> A getAnnotation(AccessibleObject obj, Class<A> annotationClass){
-		return obj.getAnnotation(annotationClass);
-	}
-	*/
-
-	/*
-	public static <A extends Annotation> A getAnnotation(Field field, Class<A> annotationClass) {
-		if (field.isAnnotationPresent(annotationClass)){
-			return field.getAnnotation(annotationClass);
-		}
-		return null;
-	}
-	*/
 
 	public static Class<?>[] typesOf (Object[] objs ){
 		Class<?>[] classes = new Class<?>[objs.length];

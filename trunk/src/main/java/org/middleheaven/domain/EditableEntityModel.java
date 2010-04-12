@@ -8,7 +8,6 @@ import java.util.Map;
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.logging.Log;
 import org.middleheaven.storage.QualifiedName;
-import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 
 public final class EditableEntityModel implements EntityModel {
@@ -16,7 +15,7 @@ public final class EditableEntityModel implements EntityModel {
 	private Class<?> type;
 	private Map<String, EntityFieldModel> fields = new HashMap<String, EntityFieldModel>();
 	private EntityFieldModel identityFieldModel;
-	private Class<? extends Identity> identityType;
+	private Class<?> identityType;
 	
 	public EditableEntityModel(Class<?> type) {
 		this.type = type;
@@ -36,7 +35,7 @@ public final class EditableEntityModel implements EntityModel {
 				Log.onBookFor(this.getClass()).warn("{0} has no identity field defined.",this.type);
 				EditableEntityFieldModel eidentityFieldModel = new EditableEntityFieldModel(this.getEntityName(), "identity");
 				eidentityFieldModel.setIsIdentity(true);
-				eidentityFieldModel.setDataType(DataType.UNKWON);
+				eidentityFieldModel.setDataType(DataType.INTEGER);
 				eidentityFieldModel.setUnique(true);
 				eidentityFieldModel.setValueType(IntegerIdentity.class);
 				
@@ -80,12 +79,12 @@ public final class EditableEntityModel implements EntityModel {
 		return Introspector.of(type).newInstance();
 	}
 
-	public void setIdentityType(Class<? extends Identity> type) {
+	public void setIdentityType(Class<?> type) {
 		this.identityType = type;
 		
 	}
 	
-	public Class<? extends Identity> getIdentityType(){
+	public Class<?> getIdentityType(){
 		return this.identityType;
 	}
 

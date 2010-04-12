@@ -11,12 +11,12 @@ public final class EmptyQuery<T> implements Query<T>{
 	}
 
 	@Override
-	public T first() {
+	public T fetchFirst() {
 		return null;
 	}
 
 	@Override
-	public Collection<T> all() {
+	public Collection<T> fetchAll() {
 		return Collections.emptyList();
 	}
 
@@ -26,7 +26,7 @@ public final class EmptyQuery<T> implements Query<T>{
 	}
 
 	@Override
-	public Query<T> setRange(int startAt, int maxCount) {
+	public Query<T> limit(int startAt, int maxCount) {
 		return this;
 	}
 

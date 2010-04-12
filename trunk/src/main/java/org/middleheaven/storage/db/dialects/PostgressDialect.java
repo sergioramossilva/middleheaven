@@ -179,6 +179,8 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 			sql.append("bigint");
 			break;
 		case LOGIC:
+			sql.append("boolean");
+			break;
 		case ENUM:
 			sql.append("int");
 			break;

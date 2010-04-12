@@ -174,9 +174,10 @@ public abstract class DataBaseDialect implements AliasResolver{
 		names.removeLastChar();
 		values.removeLastChar();
 
-		Clause sql = new Clause("INSERT INTO ")
-		.append(model.getEntityHardName())
-		.append(" (")
+		Clause sql = new Clause("INSERT INTO ");
+		this.writeEnclosureHardname(sql, model.getEntityHardName());
+		
+		sql.append(" (")
 		.append(names)
 		.append(") VALUES (")
 		.append(values)
@@ -247,9 +248,11 @@ public abstract class DataBaseDialect implements AliasResolver{
 
 
 	public DataBaseCommand createUpdateCommand(Collection<Storable> data,StorableEntityModel model){
-		Clause sql = new Clause("UPDATE ")
-		.append(model.getEntityHardName())
-		.append(" SET ");
+		Clause sql = new Clause("UPDATE ");
+
+		this.writeEnclosureHardname(sql, model.getEntityHardName());
+
+		sql.append(" SET ");
 
 		List<StorableFieldModel> fields = new ArrayList<StorableFieldModel>();
 

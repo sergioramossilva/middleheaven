@@ -1,7 +1,6 @@
 package org.middleheaven.storage;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +21,7 @@ public abstract class ListQuery<T> implements Query<T> , Serializable{
 	}
 
 	@Override
-	public T first() {
+	public T fetchFirst() {
 		final List<T> list = list();
 		if (list.isEmpty()){
 			return null;
@@ -31,7 +30,7 @@ public abstract class ListQuery<T> implements Query<T> , Serializable{
 	}
 
 	@Override
-	public Collection<T> all() {
+	public Collection<T> fetchAll() {
 		return Collections.unmodifiableList(list());
 	}
 
@@ -41,7 +40,7 @@ public abstract class ListQuery<T> implements Query<T> , Serializable{
 	}
 
 	@Override
-	public Query<T> setRange(final int startAt, final int maxCount) {
+	public Query<T> limit(final int startAt, final int maxCount) {
 		
 		if (startAt < 1){
 			throw new IllegalArgumentException("Range must start at position 1 or further");

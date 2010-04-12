@@ -95,12 +95,12 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 
 	@Override
 	public boolean isBefore(DateHolder other) {
-		return this.compareTo((DateHolder)CalendarDate.date(other.year().ordinal(),other.month().ordinal(),other.dayOfMonth().getDay()))<0;
+		return this.compareTo(other)<0;
 	}
 
 	@Override
 	public boolean isAfter(DateHolder other) {
-		return this.compareTo((DateHolder)CalendarDate.date(other.year().ordinal(),other.month().ordinal(),other.dayOfMonth().getDay()))>0;
+		return this.compareTo(other)>0;
 	}
 
 	@Override
@@ -135,7 +135,15 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 	
 	@Override
 	public int compareTo(DateHolder other) {
-		return this.compareTo((TimePoint)CalendarDate.date(other.year().ordinal(),other.month().ordinal(),other.dayOfMonth().getDay()));
+		int comp = this.year().ordinal() - other.year().ordinal();
+		if (comp ==0){
+			comp = this.month().ordinal() - other.month().ordinal();
+			if (comp ==0){
+				comp = this.dayOfMonth().getDay() - other.dayOfMonth().getDay();
+				
+			}
+		}
+		return comp;
 	}
 
 	public boolean equals(Object other) {

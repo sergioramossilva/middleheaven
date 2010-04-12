@@ -64,7 +64,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 		// each method on the presenter that is not a getter or a setter is an action
 		// only public not property methods
-		Introspector.of(presenterClass).inspect().methods().match(MethodFilters.publicInstanceNonProperty())
+		Introspector.of(presenterClass).inspect().methods().notInheritFromObject().match(MethodFilters.publicInstanceNonProperty())
 		.each(new Walker<Method>(){
 
 			@Override
@@ -232,35 +232,36 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 			Object[] args = inicilizeActionParameters(actionMethod, context);
 
-
-			Object result = Introspector.of(actionMethod).invoke(actionMethod.getReturnType(), controllerObject, args);
-
-			if (result instanceof Outcome){
-				if (result instanceof URLOutcome ){
-					return (Outcome)result;
+			try{
+				Object result = Introspector.of(actionMethod).invoke(actionMethod.getReturnType(), controllerObject, args);
+			
+				if (result instanceof Outcome){
+					if (result instanceof URLOutcome ){
+						return (Outcome)result;
+					} else {
+						Log.onBookFor(this.getClass()).warn("Illegal outcome class. Use URLOutcome.");
+						outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
+					}
+				}else if (result==null || !(result instanceof OutcomeStatus)){
+					return resolveOutcome(action,BasicOutcomeStatus.SUCCESS);
 				} else {
-					Log.onBookFor(this.getClass()).warn("Illegal outcome class. Use URLOutcome.");
-					outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
+					return resolveOutcome(action,(OutcomeStatus)result);
 				}
-			}else if (result==null || !(result instanceof OutcomeStatus)){
-				return resolveOutcome(action,BasicOutcomeStatus.SUCCESS);
-			} else {
-				return resolveOutcome(action,(OutcomeStatus)result);
+				
+			} catch (InvocationTargetReflectionException e){
+				throw e.getCause();
 			}
+			
 		} catch (ValidationException e){
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID);
-		} catch (InvocationTargetReflectionException e){
-			Log.onBookFor(this.getClass()).error(e,"Exception found invoking {0}", actionMethod.getName());
-			context.setAttribute(ContextScope.REQUEST, "exception", e.getCause());
-			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
-		}catch (ActionHandlerNotFoundException e){
+		} catch (ActionHandlerNotFoundException e){
 			Log.onBookFor(this.getClass()).fatal(e,"Action not found");
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
 		}catch (Exception e){
 			Log.onBookFor(this.getClass()).error(e,"Exception found handling request");
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
-		} catch (Error e){
+		} catch (Throwable e){
 			Log.onBookFor(this.getClass()).fatal(e,"Exception found handling request");
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);

@@ -7,15 +7,15 @@ public class IntegerIdentity extends Identity implements Serializable {
 	
 	private int value;
 	
-	public static Identity valueOf(String value) {
+	public static IntegerIdentity valueOf(String value) {
 		return new IntegerIdentity(Integer.parseInt(value));
 	}
 	
-	public static Identity valueOf(Integer value) {
+	public static IntegerIdentity valueOf(Integer value) {
 		return new IntegerIdentity(value.intValue());
 	}
 	
-	public static Identity valueOf(int value) {
+	public static IntegerIdentity valueOf(int value) {
 		return new IntegerIdentity(value);
 	}
 	

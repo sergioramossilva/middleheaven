@@ -47,7 +47,7 @@ class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore  
 	@Override
 	public <T> void remove(final Criteria<T> criteria) {
 		
-		for (T t : manager.createQuery(criteria, ReadStrategy.fowardReadOnly(), unit).all()){
+		for (T t : manager.createQuery(criteria, ReadStrategy.fowardReadOnly(), unit).fetchAll()){
 			manager.remove(t, unit);
 		}
 	}

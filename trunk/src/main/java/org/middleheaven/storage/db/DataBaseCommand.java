@@ -21,4 +21,6 @@ public interface DataBaseCommand {
 	 */
 	public boolean execute(DataBaseStorage storage, Connection connection)  throws SQLException;
 
+	public String getSQL();
+
 }

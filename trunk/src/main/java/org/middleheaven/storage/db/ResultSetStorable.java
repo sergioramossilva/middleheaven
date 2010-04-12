@@ -27,7 +27,7 @@ public class ResultSetStorable implements Storable {
 	public Identity getIdentity() {
 		StorableFieldModel identityFieldModel = model.identityFieldModel();
 		Object fieldValue = getFieldValue(identityFieldModel );
-		return (Identity)TypeCoercing.coerce(fieldValue, identityFieldModel.getValueClass());
+		return (Identity)TypeCoercing.coerce(fieldValue, identityFieldModel.getValueType());
 	}
 	
 	@Override
@@ -37,7 +37,7 @@ public class ResultSetStorable implements Storable {
 			if (fieldModel.getDataType().isReference()){
 				return value;
 			} else {
-				return TypeCoercing.coerce(value, fieldModel.getValueClass());
+				return TypeCoercing.coerce(value, fieldModel.getValueType());
 			}
 		} catch (SQLException e) {
 			throw new StorageException(e); 

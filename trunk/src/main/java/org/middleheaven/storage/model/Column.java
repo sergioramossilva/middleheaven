@@ -29,6 +29,6 @@ public @interface Column {
 	 */
 	boolean persistable () default true;
 	
-	DataType type() default DataType.UNKWON;
+	DataType type() default DataType.UNKONW;
 
 }

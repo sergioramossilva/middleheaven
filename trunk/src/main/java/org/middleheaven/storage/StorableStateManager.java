@@ -45,7 +45,7 @@ public final class StorableStateManager {
 			@Override
 			public <E> Collection<E> execute(ExecutableQuery<E> query) {
 				
-				Collection all = storage.createQuery(criteria , strategy).all();
+				Collection all = storage.createQuery(criteria , strategy).fetchAll();
 				
 				all = unit.filter(all);
 				
