@@ -7,7 +7,7 @@ public final class OperatingSystemInfo {
 	private String operatingSystemVersionBase;
 	
 	public static OperatingSystemInfo unkown() {
-		return new OperatingSystemInfo("","","");
+		return new OperatingSystemInfo("?","?","?");
 	}
 	
 	public static OperatingSystemInfo system(String operatingSystem, String operatingSystemVersion, String operatingSystemVersionBase) {

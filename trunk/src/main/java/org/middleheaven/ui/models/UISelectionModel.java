@@ -5,6 +5,10 @@ public interface UISelectionModel extends UIInputModel {
 
 	public Object getElementAt(int index);
 
+	/**
+	 * 
+	 * @return The number of elements in the model
+	 */
 	public int getSize();
 
 	public void clearSelection();
@@ -21,6 +25,11 @@ public interface UISelectionModel extends UIInputModel {
 
 	public void removeSelectionInterval(int start, int end);
 
+	/**
+	 * 
+	 * @param anItem the index of the item in the model or -1 if the item is not in the model
+	 * @return
+	 */
 	public int indexOf(Object anItem);
 
 }

@@ -7,7 +7,7 @@ public class NotNullValidator<T> implements Validator<T> {
 		DefaultValidationResult result = new DefaultValidationResult();	
 		
 		if (object == null) {
-			result.add(MessageInvalidationReason.error("invalid.is.null"));
+			result.add(MessageInvalidationReason.error(object,"invalid.is.null"));
 		}			
 		
 		return result;

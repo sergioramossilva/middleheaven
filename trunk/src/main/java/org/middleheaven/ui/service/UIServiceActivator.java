@@ -10,6 +10,8 @@ import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.ui.BrowserEnviroment;
+import org.middleheaven.ui.DesktopEnvironment;
 import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIEnvironmentType;
 import org.middleheaven.ui.UIException;
@@ -25,7 +27,8 @@ public class UIServiceActivator extends Activator {
 	
 	@Override
 	public void activate(ActivationContext context) {
-		
+		service.registerEnvironment(new BrowserEnviroment(), true);
+		service.registerEnvironment(new DesktopEnvironment(), true);
 	}
 
 	@Override

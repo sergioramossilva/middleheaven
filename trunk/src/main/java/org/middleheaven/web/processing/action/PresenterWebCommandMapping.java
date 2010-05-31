@@ -253,6 +253,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 			}
 			
 		} catch (ValidationException e){
+			context.setAttribute(ContextScope.REQUEST, "validationResult", e.getResult());
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID);
 		} catch (ActionHandlerNotFoundException e){
 			Log.onBookFor(this.getClass()).fatal(e,"Action not found");

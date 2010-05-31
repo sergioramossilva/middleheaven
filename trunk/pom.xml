@@ -4,7 +4,7 @@
 	<groupId>middleHeaven</groupId>
 	<artifactId>middleHeaven</artifactId>
 	<name>MiddleHeaven</name>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<description>MiddleHeaven aims to be a full-featured
 		business application framework that minimizes all effort concerning non-functional requirements
 		and dependency of third-party libraries, thus maximizing extensability and reusability of business code and logic.  
@@ -190,6 +190,11 @@
 			<groupId>org.htmlparser</groupId>
 			<artifactId>htmlparser</artifactId>
 			<version>1.6</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-core</artifactId>
+		    <version>3.0.1</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>

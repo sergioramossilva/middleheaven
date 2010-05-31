@@ -1,5 +1,6 @@
 package org.middleheaven.ui.web.tags;
 
+import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
@@ -14,7 +15,7 @@ import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.ui.ContextScope;
 
 
-public class AbstractBodyTagSupport extends BodyTagSupport {
+public abstract class AbstractBodyTagSupport extends BodyTagSupport {
 
 	public String localize(CalendarDateTime date ,TimepointFormatter.Format format){
 		Culture culture =  new TagContext(pageContext).getCulture();
@@ -24,6 +25,9 @@ public class AbstractBodyTagSupport extends BodyTagSupport {
 		return i18nService.getTimestampFormatter(culture).format(date,format);
 	}
 
+	public void release(){
+		releaseState();
+	}
 	
 	public String localize(Number number){
 		Culture culture =  new TagContext(pageContext).getCulture();
@@ -78,6 +82,11 @@ public class AbstractBodyTagSupport extends BodyTagSupport {
 		}
 	}
 
+	public int doEndTag() throws JspException {
+		releaseState();
+		return EVAL_PAGE;
+	}
 	
+	public abstract void releaseState();
 	
 }

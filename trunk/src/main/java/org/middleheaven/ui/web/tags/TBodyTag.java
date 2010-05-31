@@ -92,11 +92,6 @@ public class TBodyTag  extends AbstractBodyTagSupport {
 		return EVAL_PAGE;
 	}
 
-	public void release(){
-		this.iterator = null;
-		this.paginator = null;
-	}
-
 	private boolean isPaginator(){
 		return paginator != null;
 	}
@@ -163,5 +158,11 @@ public class TBodyTag  extends AbstractBodyTagSupport {
 		}
 
 		write("</td></tr></tfoot>");
+	}
+
+	@Override
+	public void releaseState() {
+		this.iterator = null;
+		this.paginator = null;
 	}
 }

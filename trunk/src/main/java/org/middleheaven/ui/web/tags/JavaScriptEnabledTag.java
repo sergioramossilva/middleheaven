@@ -32,4 +32,9 @@ public class JavaScriptEnabledTag extends AbstractBodyTagSupport{
 		writeLine("</noscript>");
 		return EVAL_PAGE;
 	}
+
+	@Override
+	public void releaseState() {
+		// no-op
+	}
 }

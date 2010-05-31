@@ -2,16 +2,16 @@ package org.middleheaven.storage.xml;
 
 import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.StorableEntityModel;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.Criterion;
-import org.middleheaven.storage.criteria.CriterionOperator;
-import org.middleheaven.storage.criteria.EmptyCriterion;
-import org.middleheaven.storage.criteria.FieldCriterion;
-import org.middleheaven.storage.criteria.FieldValueCriterion;
-import org.middleheaven.storage.criteria.FieldValueHolder;
-import org.middleheaven.storage.criteria.IdentityCriterion;
-import org.middleheaven.storage.criteria.LogicCriterion;
-import org.middleheaven.storage.criteria.SingleObjectValueHolder;
+import org.middleheaven.util.criteria.Criteria;
+import org.middleheaven.util.criteria.Criterion;
+import org.middleheaven.util.criteria.CriterionOperator;
+import org.middleheaven.util.criteria.EmptyCriterion;
+import org.middleheaven.util.criteria.FieldCriterion;
+import org.middleheaven.util.criteria.FieldValueCriterion;
+import org.middleheaven.util.criteria.FieldValueHolder;
+import org.middleheaven.util.criteria.LogicCriterion;
+import org.middleheaven.util.criteria.SingleObjectValueHolder;
+import org.middleheaven.util.criteria.entity.IdentityCriterion;
 
 public class XMLCriteriaInterpreter {
 

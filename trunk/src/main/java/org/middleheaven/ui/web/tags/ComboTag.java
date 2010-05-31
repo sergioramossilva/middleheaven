@@ -150,4 +150,10 @@ public class ComboTag extends AbstractBodyTagSupport {
 	public void release(){
 		this.iterator = null;
 	}
+
+	@Override
+	public void releaseState() {
+		// TODO implement AbstractBodyTagSupport.releaseState
+		
+	}
 }

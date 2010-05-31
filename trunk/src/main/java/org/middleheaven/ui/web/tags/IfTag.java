@@ -41,7 +41,13 @@ public class IfTag extends AbstractBodyTagSupport{
 		if (query!=null){
 			write(query);
 		}
-		query =null;
+		releaseState();
 		return EVAL_PAGE;
+	}
+
+	@Override
+	public void releaseState() {
+		// no-op
+		query =null;
 	}
 }

@@ -10,7 +10,6 @@ import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.bootstrap.EditableContainerFileSystem;
-import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFiles;
@@ -90,7 +89,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 		ManagedFile root = ManagedFiles.resolveFile(new File(context.getRealPath(".")));
 		fileSystem.setAppRootRepository(root);
 		
-		fileSystem.setAppDataRepository(fileSystem.getEnvironmentDataRepository().retrive(root.getName()).createFolder());
+		fileSystem.setAppDataRepository(fileSystem.getEnvironmentDataRepository().retrive(root.getPath().getBaseName()).createFolder());
 		fileSystem.setAppLogRepository(fileSystem.getAppDataRepository().retrive("log").createFolder());
 		
 		fileSystem.setAppClasspathRepository(ManagedFiles.resolveFile(new File(context.getRealPath("./WEB-INF/classes"))));

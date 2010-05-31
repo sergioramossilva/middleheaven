@@ -37,4 +37,9 @@ public class HeadTag extends AbstractBodyTagSupport{
 		query =null;
 		return EVAL_PAGE;
 	}
+
+	@Override
+	public void releaseState() {
+		// no-op
+	}
 }

@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -14,15 +12,12 @@ import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.db.Clause;
 import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.CriteriaInterpreter;
 import org.middleheaven.storage.db.DataBaseDialect;
 import org.middleheaven.storage.db.DataBaseModel;
-import org.middleheaven.storage.db.DataBaseObjectModel;
-import org.middleheaven.storage.db.DataBaseObjectType;
 import org.middleheaven.storage.db.EditionDataBaseCommand;
 import org.middleheaven.storage.db.RetriveDataBaseCommand;
 import org.middleheaven.storage.db.SQLEditCommand;
@@ -31,6 +26,7 @@ import org.middleheaven.storage.db.SequenceModel;
 import org.middleheaven.storage.db.SequenceSupportedDBDialect;
 import org.middleheaven.storage.db.TableAlreadyExistsException;
 import org.middleheaven.storage.db.TableModel;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 
 public class HSQLDialect extends SequenceSupportedDBDialect{
 
@@ -60,7 +56,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	// end stored procedures
 	
 	@Override
-	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,
+	public CriteriaInterpreter newCriteriaInterpreter(EntityCriteria<?> criteria,
 			StorableModelReader model) {
 		return new HSQLCriteriaInterpreter(this, criteria, model);
 	}
@@ -123,7 +119,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	private static class HSQLCriteriaInterpreter extends CriteriaInterpreter{
 
 		public HSQLCriteriaInterpreter(DataBaseDialect dataBaseDialect,
-				Criteria<?> criteria, StorableModelReader reader) {
+				EntityCriteria<?> criteria, StorableModelReader reader) {
 			super(dataBaseDialect, criteria, reader);
 		}
 		

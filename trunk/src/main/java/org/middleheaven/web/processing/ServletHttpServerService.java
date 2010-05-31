@@ -46,13 +46,12 @@ class ServletHttpServerService extends AbstractHttpServerService {
 		}
 
 		try{
-		
-			
+
+
 			RequestResponseWebContext context = new  RequestResponseWebContext(request,response,this.getHttpCultureResolver());
 
 			// execute processing
 			Outcome outcome = this.doService(context, processor);
-
 
 			if(outcome == null){
 				Log.onBookFor(this.getClass()).warn("Outcome is null for {0}", request.getRequestURI());
@@ -72,13 +71,13 @@ class ServletHttpServerService extends AbstractHttpServerService {
 				}
 
 			} else {
-				
+
 				String contentType = request.getHeader("Content-Type");
-				
+
 				if(outcome.getContentType()!=null){
 					contentType = outcome.getContentType();
 				} 
-				
+
 				RenderingProcessor render = this.resolverRenderingProcessor(outcome.getUrl(), contentType);
 
 				if (render == null){
@@ -107,7 +106,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 			outcome = processor.process(context);
 		}
 
-		 return outcome;
+		return outcome;
 	}
 
 	private String addContextPath(String ctx, String url){

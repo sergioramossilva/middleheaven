@@ -83,7 +83,7 @@ public class DataSourceServiceActivator extends Activator {
 
 			@Override
 			public Boolean classify(ManagedFile file) {
-				return file.getName().endsWith("-ds.properties");
+				return file.getPath().getBaseName().endsWith("-ds.properties");
 			}
 
 

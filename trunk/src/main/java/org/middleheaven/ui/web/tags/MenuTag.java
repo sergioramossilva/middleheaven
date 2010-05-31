@@ -300,7 +300,7 @@ private String ensureOneSurroundByTag(String content, String tag) {
 	}
 }
 
-public void release(){
+public void releaseState(){
 	this.masterStack = null;
 	this.buffer.delete(0, buffer.length());
 }

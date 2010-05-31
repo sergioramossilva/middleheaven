@@ -7,12 +7,12 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
+import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.storage.inmemory.InMemoryStorage;
 import org.middleheaven.storage.testdomain.TestSubject;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 
 
 public class StorageManagerTeste {
@@ -36,7 +36,7 @@ public class StorageManagerTeste {
 	@Test
 	public void testInsert(){
 		
-		Query<TestSubject> q = storage.createQuery(CriteriaBuilder.search(TestSubject.class).all());
+		Query<TestSubject> q = storage.createQuery(EntityCriteriaBuilder.search(TestSubject.class).all());
 		TestSubject subj = new TestSubject();
 		subj.setBirthdate(new Date());
 		subj.setName("Alberto");

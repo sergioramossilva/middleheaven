@@ -182,7 +182,7 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 					} else if (UIWindowModel.class.isAssignableFrom(uiModelClass)) { 
 						uiModel = new DefaultUIWindowModel();
 					} else if (UIFieldInputModel.class.isAssignableFrom(uiModelClass)){
-						uiModel = new AbstractUIFieldInputModel();
+						uiModel = new AbstractUIFieldInputModel(){};
 					} else {
 						uiModel = Introspector.of(uiModelClass).newProxyInstance(new PropertyBagProxyHandler());
 					}

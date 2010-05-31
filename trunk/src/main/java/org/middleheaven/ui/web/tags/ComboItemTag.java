@@ -66,4 +66,10 @@ public class ComboItemTag extends AbstractBodyTagSupport {
 	protected void setChecked(boolean isChecked) {
 		this.isChecked = isChecked;
 	}
+
+	@Override
+	public void releaseState() {
+		// TODO implement AbstractBodyTagSupport.releaseState
+		
+	}
 }

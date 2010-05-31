@@ -7,8 +7,6 @@ import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.db.Clause;
 import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.ColumnValueHolder;
@@ -20,7 +18,8 @@ import org.middleheaven.storage.db.SQLEditCommand;
 import org.middleheaven.storage.db.SQLRetriveCommand;
 import org.middleheaven.storage.db.SequenceModel;
 import org.middleheaven.storage.db.SequenceSupportedDBDialect;
-import org.middleheaven.storage.db.TableModel;
+import org.middleheaven.util.criteria.CriterionOperator;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 
 public class PostgressDialect extends SequenceSupportedDBDialect{
 
@@ -31,7 +30,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	}
 
 	@Override
-	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,
+	public CriteriaInterpreter newCriteriaInterpreter(EntityCriteria<?> criteria,
 			StorableModelReader reader) {
 		return new PostgressCriteriaInterpreter(this, criteria, reader);
 	}
@@ -94,9 +93,9 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	
 	@Override
 	public void writeEditionHardname(Clause buffer , QualifiedName hardname){
-
+		buffer.append(this.startDelimiter());
 		buffer.append(hardname.getName().toLowerCase());
-
+		buffer.append(this.endDelimiter());
 	}
 	
 	@Override
@@ -109,7 +108,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	private class PostgressCriteriaInterpreter extends CriteriaInterpreter{
 
 		public PostgressCriteriaInterpreter(DataBaseDialect dataBaseDialect,
-				Criteria<?> criteria, StorableModelReader reader) {
+				EntityCriteria<?> criteria, StorableModelReader reader) {
 			super(dataBaseDialect, criteria, reader);
 		}
 

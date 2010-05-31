@@ -40,6 +40,8 @@ public class TypeCoercing {
 		addCoersor(CalendarDateTime.class ,java.sql.Timestamp.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Timestamp.class));
 		addCoersor(CalendarDateTime.class ,java.sql.Time.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Time.class));
 		
+		addCoersor(String.class ,Enum.class,  new EnumNameTypeCoersor());
+		
 	}
 	
 	

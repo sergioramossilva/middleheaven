@@ -38,9 +38,9 @@ public class LengthValidator<T> implements Validator<T> {
 		}
 		
 		if (size < min ) {
-			result.add(MessageInvalidationReason.error("invalid.length.min" , min, max));
+			result.add(MessageInvalidationReason.error(obj,"invalid.length.min" ,  min, max));
 		} else if (size > max){
-			result.add(MessageInvalidationReason.error("invalid.length.max" , min, max));
+			result.add(MessageInvalidationReason.error(obj,"invalid.length.max" , min, max));
 		}
 		return result;
 	}

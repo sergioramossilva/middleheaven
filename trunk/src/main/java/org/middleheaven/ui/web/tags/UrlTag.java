@@ -4,6 +4,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
+
+/**
+ * Adds context information to an URL
+ */
 public class UrlTag extends AbstractTagSupport{
 
 	private String href;
@@ -14,11 +18,17 @@ public class UrlTag extends AbstractTagSupport{
 	}
 	
 	private String addContextPath(String ctx, String url){
+		String result;
 		if (ctx.length() > 1 && url.startsWith("/")){
-			return ctx.concat(url);
+			result = ctx.concat(url);
 		} else {
-			return url;
+			result = url;
 		}
+		
+		while(result.startsWith("//")){
+			result = result.substring(1);
+		}
+		return result;
 	} 
 
 	public int doStartTag() throws JspException {

@@ -1,6 +1,7 @@
 package org.middleheaven.validation;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +12,7 @@ import org.middleheaven.util.collections.IteratorsIterator;
 public class DefaultValidationResult implements ValidationResult{
 
 
-	private Map<String, List<InvalidationReason>> reasons = new HashMap<String, List<InvalidationReason>>();
+	private final Map<InvalidationSeverity, List<InvalidationReason>> reasons = new EnumMap<InvalidationSeverity, List<InvalidationReason>>(InvalidationSeverity.class);
 	private boolean hasErrors = false;
 	private boolean hasWarnings = false;
 	
@@ -29,22 +30,17 @@ public class DefaultValidationResult implements ValidationResult{
 		if (!hasWarnings && InvalidationSeverity.WARNING.equals(reason.getSeverity())){
 			hasWarnings = true;
 		}
-		if (reason instanceof TaggedInvalidationReason){
-			add(((TaggedInvalidationReason)reason).getTag(), reason);
-		} else {
-			add(null, reason);
-		}
-	}
-	
-	private void add(String tag, InvalidationReason reason){
-		List<InvalidationReason> list = reasons.get(tag);
+		
+		InvalidationSeverity severity = reason.getSeverity() == null ? InvalidationSeverity.ERROR : reason.getSeverity();
+		
+		List<InvalidationReason> list = reasons.get(severity);
 		if (list==null){
 			list = new LinkedList<InvalidationReason>();
-			reasons.put(tag,list);
+			reasons.put(severity,list);
 		}
 		list.add(reason);
 	}
-
+	
 	@Override
 	public boolean hasErrors() {
 		return hasErrors;
@@ -62,7 +58,6 @@ public class DefaultValidationResult implements ValidationResult{
 
 	@Override
 	public Iterator<InvalidationReason> iterator() {
-		// TODO implement ValidationContext.iterator
 		// reason.values returns a list of list of reasons.
 		return new IteratorsIterator<InvalidationReason>(reasons.values());
 	}
@@ -70,8 +65,11 @@ public class DefaultValidationResult implements ValidationResult{
 
 	@Override
 	public Iterator<InvalidationReason> iterator(InvalidationSeverity severity) {
-		// TODO implement ValidationContext.iterator
-		return null;
+		List<InvalidationReason> list = reasons.get(severity);
+		if(list == null){
+			list = Collections.emptyList();
+		}
+		return list.iterator();
 	}
 	
 	@Override

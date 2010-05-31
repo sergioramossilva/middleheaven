@@ -24,7 +24,7 @@ public class SimpleEmailAddressValidator<C extends CharSequence> implements Vali
 		Matcher m = p.matcher(email.toString()); 
 		
 		if (!m.matches()){
-			result.add(MessageInvalidationReason.invalid());
+			result.add(MessageInvalidationReason.error(email,"invalid.email.address"));
 		}		
 		
 		return result;

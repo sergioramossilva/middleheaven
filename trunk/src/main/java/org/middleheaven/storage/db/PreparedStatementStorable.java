@@ -9,8 +9,10 @@ import java.util.Date;
 
 import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.DataTypeModel;
+import org.middleheaven.domain.ReferenceDataTypeModel;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
+import org.middleheaven.storage.ReferenceStorableDataTypeModel;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.identity.Identity;
@@ -33,7 +35,9 @@ public class PreparedStatementStorable {
 
 		int index = 1;
 		for ( StorableFieldModel fm : fields){
-			setField(index,s.getFieldValue(fm) , fm.isIdentity(), fm.getDataTypeModel());
+			Object value = keeper.readFieldValue(s, fm);
+			
+			setField(index, value , fm.getDataTypeModel());
 			index++;
 		}
 	}
@@ -72,17 +76,17 @@ public class PreparedStatementStorable {
 	}
 	
 	public void setField(int i, Object value, StorableFieldModel fm ) throws SQLException {
-		setField(i,value,fm.isIdentity(), fm.getDataTypeModel());
+		setField(i,value, fm.getDataTypeModel());
 	}
 	
-	private void setField(int i, Object value, boolean isIdentity , DataTypeModel dataTypeModel ) throws SQLException {
+	private void setField(int i, Object value, DataTypeModel dataTypeModel ) throws SQLException {
 		
 		if (value == null){
 			ps.setNull(i, infereSQLType(dataTypeModel.getDataType())); 
-		} else if (dataTypeModel.getDataType().isToOneReference()){
-			final Identity id = keeper.getIdentityFor(value);
-			setField(i, id , false, dataTypeModel);
-			
+		} else if (value instanceof LongIdentity){
+			ps.setLong(i,((LongIdentity)value).longValue());
+		} else if (value instanceof IntegerIdentity){
+			ps.setInt(i, ((IntegerIdentity)value).intValue());
 		} else if (dataTypeModel.getDataType().isToManyReference()){
 			return;
 		} else if (dataTypeModel.getDataType().isTemporal()){ 
@@ -95,10 +99,7 @@ public class PreparedStatementStorable {
 			} else if (value instanceof CalendarDateTime){
 				ps.setTimestamp(i, new Timestamp(((CalendarDateTime)value).getMilliseconds()));
 			}
-		} else if (isIdentity){
-			//setField(i, value, false, this.resolveDataType(value));
-			setField(i, value, false, dataTypeModel);
-		} else {
+		}  else {
 			switch (dataTypeModel.getDataType()){
 			case TEXT:
 				ps.setString(i, value.toString());
@@ -108,12 +109,7 @@ public class PreparedStatementStorable {
 					ps.setLong(i,((Long)value).longValue());
 				} else if (value instanceof Integer){
 					ps.setInt(i, ((Integer)value).intValue());
-				} else if (value instanceof LongIdentity){
-					ps.setLong(i,((LongIdentity)value).longValue());
-				} else if (value instanceof IntegerIdentity){
-					ps.setInt(i, ((IntegerIdentity)value).intValue());
 				} 
-
 				break;
 			case LOGIC:
 				ps.setBoolean(i, Boolean.parseBoolean(value.toString()));

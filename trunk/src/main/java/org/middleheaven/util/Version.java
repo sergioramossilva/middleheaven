@@ -7,38 +7,50 @@ package org.middleheaven.util;
 /**
  * Represents a version number. A version number as 4 parts The major version number, the minor version number, the revision number and the build version number
  */
-public class Version implements Comparable<Version>{
+public final class Version implements Comparable<Version>{
 
 
     private int major;
     private int minor;
     private int revision;
     private int build;
+    private String tag;
+    
+    private boolean unkown = false;
+    
+	public static Version valueOf(int major, int minor, int revision) {
+		return valueOf(major, minor, revision, 0, "");
+	}
+	
+	public static Version valueOf(int major, int minor) {
+		return valueOf(major, minor, 0, 0, "");
+	}
+	
+	public static Version valueOf(int major, int minor, int revision, int build, CharSequence tag) {
+		return new Version(major, minor, revision, build, tag.toString().trim());
+	}
 
- 
-    /**
-     * @param major
-     * @param minor
-     * @param revision
-     * @param build
-     */
-    public Version(int major, int minor, int revision, int build) {
+
+	public static Version unknown() {
+		return new Version(true);
+	}
+	
+	Version(boolean unkown){
+		this.unkown = unkown;
+	}
+	
+    Version(int major, int minor, int revision, int build, String tag) {
         this.major = major;
         this.minor = minor;
         this.revision = revision;
         this.build = build;
+        this.tag = tag.isEmpty() ? null : tag;
     }
 
-    public Version(int major, int minor, int revision) {
-        this(major,minor,revision,-1);
+    public boolean isUnknown(){
+    	return this.unkown;
     }
     
-    public Version(int major, int minor) {
-        this(major,minor,0,-1);
-    }
-    
-    protected Version(){}
-
     public final int getBuild() {
         return build;
     }
@@ -72,7 +84,10 @@ public class Version implements Comparable<Version>{
     }
 
     public String toString(){
-        return major + "." + minor + "." + revision + (build>=0 ? "." + build : "");
+    	if (this.isUnknown()){
+    		return "UNKNOWN";
+    	}
+        return major + "." + minor + "." + revision + (build>0 ? "." + build : "") + (tag != null ? "-" + tag : "");
     }
 
     public boolean exists(){
@@ -102,10 +117,9 @@ public class Version implements Comparable<Version>{
 		return this.major == other.major && 
 		this.minor == other.minor && 
 		this.revision == other.revision &&
-		this.build == other.build;
+		this.build == other.build &&
+		(this.tag == null ? other.tag == null : this.tag.equals(other.tag));
 	}
 
-	public static Version from(int major, int minor, int revision) {
-		return new Version(major, minor, revision, 0);
-	}
+
 }
