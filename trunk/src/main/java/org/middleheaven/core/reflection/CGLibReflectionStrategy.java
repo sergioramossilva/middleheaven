@@ -143,6 +143,12 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 						newInterfaces,
 						new ProxyHandlerInterceptor(delegationTarget.getClass(),handler))
 				);
+			} catch (IllegalArgumentException e){
+				if (e.getMessage().equals("Superclass has no null constructors but no arguments were given")){
+					throw new ReflectionException("Type " + delegationTarget.getClass() + " has no argumentless constructors and no arguments were given");
+				} else {
+					throw new ReflectionException(e);
+				}
 			}catch (RuntimeException e){
 				throw new ReflectionException(e);
 			}

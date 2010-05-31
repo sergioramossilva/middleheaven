@@ -33,7 +33,18 @@ public class ClassIntrospector<T> extends Introspector{
 	ClassIntrospector(Class<T> type) {
 		this.type = type;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public static ClassIntrospector<?> loadFrom( String className){
+		// this does not delegate to load(string,classloaded) because inicialization control
+		try{
+			Class type =  Class.forName(className, false, ClassIntrospector.class.getClassLoader());
+			return new ClassIntrospector(type);
+		} catch (ClassNotFoundException e) {
+			throw new NoSuchClassReflectionException(className);
+		}
+	}
+	
 	/**
 	 * Loads a subclass of the introspected class from its name.
 	 * 
@@ -42,7 +53,6 @@ public class ClassIntrospector<T> extends Introspector{
 	 * @throws NoSuchClassReflectionException if the class is not found on the classpath
 	 * @throws ClassCastReflectionException if the loaded class is not a subclass of the introspected class 
 	 */
-
 	public ClassIntrospector<T> load( String className){
 		// this does not delegate to load(string,classloaded) because inicialization control
 		try{

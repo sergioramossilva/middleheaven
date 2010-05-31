@@ -2,15 +2,15 @@ package org.middleheaven.storage;
 
 import java.util.Collection;
 
-import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 
 public final class SimpleExecutableQuery<T> implements ExecutableQuery<T> {
 
-	Criteria<T> criteria;
+	EntityCriteria<T> criteria;
 	StorableEntityModel model;
 	private QueryExecuter executer;
 
-	public SimpleExecutableQuery (Criteria<T> criteria, StorableEntityModel model, QueryExecuter executer ){
+	public SimpleExecutableQuery (EntityCriteria<T> criteria, StorableEntityModel model, QueryExecuter executer ){
 		this.criteria = criteria;
 		this.model = model;
 		this.executer = executer;
@@ -19,7 +19,7 @@ public final class SimpleExecutableQuery<T> implements ExecutableQuery<T> {
 	/* (non-Javadoc)
 	 * @see org.middleheaven.storage.ExecutableQuery#getCriteria()
 	 */
-	public Criteria<T> getCriteria() {
+	public EntityCriteria<T> getCriteria() {
 		return criteria;
 	}
 
@@ -52,7 +52,7 @@ public final class SimpleExecutableQuery<T> implements ExecutableQuery<T> {
 
 	@Override
 	public final Query<T> limit(int startAt, int maxCount) {
-		Criteria<T> rangeCriteria = this.criteria.duplicate();
+		EntityCriteria<T> rangeCriteria = this.criteria.duplicate();
 		rangeCriteria.setRange(startAt, maxCount);
 
 		return new SimpleExecutableQuery<T>(rangeCriteria, this.model, this.executer);

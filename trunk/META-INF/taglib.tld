@@ -140,10 +140,10 @@
 	<tag>
 	    <name>param</name>
 	    <tagclass>org.middleheaven.ui.web.tags.MessageLocationParamTag</tagclass>
-	    <bodycontent>empty</bodycontent>
+	    <bodycontent>JSP</bodycontent>
 	    <attribute>
 	      <name>value</name>
-	      <required>true</required>
+	      <required>false</required>
 	      <rtexprvalue>true</rtexprvalue>
 	    </attribute>
 	</tag>
@@ -689,9 +689,20 @@
 	</tag>
 	
 	<tag>
-	    <name>noCache</name>
-	    <tagclass>org.middleheaven.ui.web.tags.NoCacheTag</tagclass>
+	    <name>cacheControl</name>
+	    <tagclass>org.middleheaven.ui.web.tags.CacheControlTag</tagclass>
 	    <bodycontent>empty</bodycontent>
+	    <attribute>
+	      <name>cache</name>
+	      <required>true</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	    <attribute>
+	      <name>expiresIn</name>
+	      <required>false</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	    
 	</tag>
 	
 	<tag>

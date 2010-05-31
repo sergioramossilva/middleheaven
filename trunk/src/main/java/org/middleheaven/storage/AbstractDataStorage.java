@@ -3,10 +3,10 @@ package org.middleheaven.storage;
 import java.util.Collection;
 
 import org.middleheaven.core.reflection.Introspector;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.StoreQuerySession;
 import org.middleheaven.util.coersion.TypeCoercing;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
 
 public abstract class AbstractDataStorage implements DataStorage {
@@ -65,7 +65,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 				StorableFieldModel frm = otherModel.fieldReferenceTo(to.getPersistableClass());
 
 				if (frm !=null){
-					Criteria<?> criteria = CriteriaBuilder.search(otherModel.getEntityClass())
+					EntityCriteria<?> criteria = EntityCriteriaBuilder.search(otherModel.getEntityClass())
 					.and(frm.getLogicName().getName())
 					.navigateTo(Introspector.of(to).getRealType())
 					.and("identity").eq(to.getIdentity())
@@ -92,7 +92,7 @@ public abstract class AbstractDataStorage implements DataStorage {
 
 					Storable o = session.get(otherModel.getEntityClass(), id);
 					if (o == null){
-						Criteria<?> criteria = CriteriaBuilder.search(otherModel.getEntityClass())
+						EntityCriteria<?> criteria = EntityCriteriaBuilder.search(otherModel.getEntityClass())
 						.and("identity").eq(id)
 						.all();
 

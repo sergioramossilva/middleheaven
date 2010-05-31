@@ -16,18 +16,18 @@ public class USSocialSecurityNumberValidator implements Validator<NDI> {
 		DefaultValidationResult result = new DefaultValidationResult();
 		
 		if (ndi.length()!=9){
-			result.add(MessageInvalidationReason.invalid());
+			result.add(MessageInvalidationReason.invalid(ndi));
 		}else if (ndi.subGroup(0, 3).equals("000") || 
 				ndi.subGroup(4, 2).equals("00") || 
 				ndi.subGroup(6, 3).equals("000")){
-			result.add(MessageInvalidationReason.invalid());
+			result.add(MessageInvalidationReason.invalid(ndi));
 		} else if (ndi.subGroup(0, 8).equals("98765432")){
 			// 987-65-4320 to 987-65-4329
 			if (!acceptAd){
-				result.add(MessageInvalidationReason.invalid());
+				result.add(MessageInvalidationReason.invalid(ndi));
 			}
 		} else if (ndi.subGroup(0, 3).asNumber()==null || ndi.subGroup(0, 3).asNumber().longValue()>772){
-			result.add(MessageInvalidationReason.invalid());
+			result.add(MessageInvalidationReason.invalid(ndi));
 		}
 		
 		return result;

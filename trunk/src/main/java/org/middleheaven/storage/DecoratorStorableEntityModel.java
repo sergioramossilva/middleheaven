@@ -3,16 +3,13 @@ package org.middleheaven.storage;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.middleheaven.core.reflection.Introspector;
-import org.middleheaven.core.reflection.PropertyBagProxyHandler;
 import org.middleheaven.domain.DataType;
-import org.middleheaven.domain.DataTypeModel;
 import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.domain.ReferenceDataTypeModel;
+import org.middleheaven.domain.TextDataTypeModel;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.TransformedCollection;
-import org.middleheaven.util.identity.Identity;
 import org.middleheaven.validation.Consistencies;
 
 public class DecoratorStorableEntityModel implements StorableEntityModel {
@@ -34,6 +31,9 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 		
 		return new StorableFieldModel(){
 
+			
+			StorableDataTypeModel model;
+			
 			@Override
 			public StorableEntityModel getEntityModel() {
 				return DecoratorStorableEntityModel.this;
@@ -88,28 +88,20 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 			public boolean isNullable() {
 				return fModel.isNullable();
 			}
-			
-			StorableDataTypeModel model;
+		
 			@Override
 			public StorableDataTypeModel getDataTypeModel() {
 				if (model == null){
 					if (fModel.getDataType().isReference()){
-						ReferenceStorableDataTypeModel rm = (ReferenceStorableDataTypeModel) Introspector.of(fModel.getDataTypeModel()).newProxyInstance(
-								new PropertyBagProxyHandler(),
-								ReferenceStorableDataTypeModel.class
-						);
 						
-						ReferenceDataTypeModel dtm = (ReferenceDataTypeModel)fModel.getDataTypeModel();
-						
-						rm.setTargetFieldHardname(dtm.getTargetFieldName());
-						rm.setTargetFieldname(dtm.getTargetFieldName());
+						model = new ReferenceStorableDataTypeModelAdapter((ReferenceDataTypeModel) fModel.getDataTypeModel());
 
-						model = rm;
+					} else if (fModel.getDataType().isTextual()){
+						model = new TextStorableDataTypeAdapter((TextDataTypeModel)fModel.getDataTypeModel());
+						
 					} else {
-						model = (StorableDataTypeModel) Introspector.of(fModel.getDataTypeModel()).newProxyInstance(
-								new PropertyBagProxyHandler(),
-								StorableDataTypeModel.class
-						);
+						
+						model = new DefaultStorableDataTypeAdapter(fModel.getDataTypeModel());
 					}
 
 				}

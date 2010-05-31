@@ -9,6 +9,10 @@ import org.middleheaven.util.collections.EnhancedCollection;
 
 public abstract class AbstractContentManagedFile extends AbstractManagedFile {
 
+	protected AbstractContentManagedFile(ManagedFilePath path) {
+		super(path);
+	}
+
 	/**
 	 * @return <code>false</code> as this file is not a directory
 	 */

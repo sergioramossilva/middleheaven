@@ -28,7 +28,7 @@ class ManagedFileDataSource implements DataSource {
 
 	@Override
 	public String getName() {
-		return file.getName();
+		return file.getPath().getBaseName();
 	}
 
 	@Override

@@ -6,12 +6,17 @@ public class UnexistantManagedFile extends AbstractContentManagedFile{
 
 	
 	private ManagedFile parent;
-	private String name;
-	
+
 	public UnexistantManagedFile(ManagedFile parent, String name){
+		super(new SimpleManagedFilePath(parent.getPath() , name));
 		this.parent = parent;
-		this.name = name;
 	}
+	
+	@Override
+	public void renameTo(String name) {
+		this.setPath(new SimpleManagedFilePath(parent.getPath() , name));
+	}
+
 	
 	@Override
 	public void copyTo(ManagedFile other) throws ManagedIOException {
@@ -44,11 +49,6 @@ public class UnexistantManagedFile extends AbstractContentManagedFile{
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
 	public ManagedFile getParent() {
 		return this.parent;
 	}
@@ -64,10 +64,6 @@ public class UnexistantManagedFile extends AbstractContentManagedFile{
 	}
 
 
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	@Override
 	public ManagedFile retrive(String filename) throws ManagedIOException {

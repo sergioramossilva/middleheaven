@@ -27,6 +27,9 @@ public enum DataType {
 	MANY_TO_MANY;
 	
 	public static DataType fromClass(Class<?> type){
+		if(type==null){
+			throw new IllegalArgumentException("Type is required");
+		}
 		if (CalendarDate.class.isAssignableFrom(type)){
 			return DataType.DATE;
 		} else if (CalendarDateTime.class.isAssignableFrom(type) || Date.class.isAssignableFrom(type)){

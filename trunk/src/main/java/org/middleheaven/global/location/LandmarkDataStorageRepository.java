@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.middleheaven.quantity.measure.AngularMeasure;
 import org.middleheaven.storage.EntityStore;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 
 public class LandmarkDataStorageRepository extends LandmarkRepository {
 
@@ -52,7 +52,7 @@ public class LandmarkDataStorageRepository extends LandmarkRepository {
 	@Override
 	public Iterable<String> getCategories() {
 		Collection<LandmarkCategory> all = storage.createQuery(
-				CriteriaBuilder.search(LandmarkCategory.class).all()
+				EntityCriteriaBuilder.search(LandmarkCategory.class).all()
 		).fetchAll();
 		List<String> names = new ArrayList<String>(all.size());
 		for (LandmarkCategory category : all){
@@ -63,7 +63,7 @@ public class LandmarkDataStorageRepository extends LandmarkRepository {
 
 	@Override
 	public Iterable<Landmark> getLandmarks() {
-		return storage.createQuery(CriteriaBuilder.search(Landmark.class).all()).fetchAll();
+		return storage.createQuery(EntityCriteriaBuilder.search(Landmark.class).all()).fetchAll();
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class LandmarkDataStorageRepository extends LandmarkRepository {
 			AngularMeasure minLongitude,AngularMeasure minLatitude, 
 			AngularMeasure maxLongitude,AngularMeasure maxLatitude) {
 
-		return storage.createQuery(CriteriaBuilder.search(Landmark.class)
+		return storage.createQuery(EntityCriteriaBuilder.search(Landmark.class)
 				.and("coordinates.latitude").bewteen(minLatitude,maxLatitude)
 				.and("coordinates.longitude").bewteen(minLongitude, maxLongitude)
 				.and("category").eq(category)
@@ -81,7 +81,7 @@ public class LandmarkDataStorageRepository extends LandmarkRepository {
 
 	@Override
 	public Iterable<Landmark> getLandmarks(String category, String name) {
-		return storage.createQuery(CriteriaBuilder.search(Landmark.class)
+		return storage.createQuery(EntityCriteriaBuilder.search(Landmark.class)
 				.and("category").eq(category)
 				.or("name").eq(name)
 				.all()

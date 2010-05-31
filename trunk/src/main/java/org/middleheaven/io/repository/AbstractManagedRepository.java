@@ -37,7 +37,7 @@ public abstract class AbstractManagedRepository implements ManagedFileRepository
 			throw new RepositoryNotWritableException(this.getClass().getName());
 		}
 		
-		ManagedFile myFile = this.retrive(file.getName());
+		ManagedFile myFile = this.retrive(file.getPath().getBaseName());
 		if (!myFile.exists()){
 			myFile = myFile.createFile();
 		}

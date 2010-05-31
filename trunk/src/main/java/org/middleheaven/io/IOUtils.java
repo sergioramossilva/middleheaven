@@ -15,10 +15,31 @@ import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
 import org.middleheaven.io.repository.FileNotFoundManagedException;
+import org.middleheaven.io.repository.ManagedFilePath;
 
 public final class IOUtils {
 
 	private IOUtils(){}
+	
+	public static boolean deleteTree(File directory){
+		if(!directory.isDirectory()){
+			throw new IllegalArgumentException(directory + " is not a directory");
+		}
+		
+		for (File f : directory.listFiles()){
+			if (f.isDirectory()){
+				if(!deleteTree(f)){
+					return false;
+				}
+			} else {
+				if(!f.delete()){
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
 
 	/**
 	 * Closes an I/O resource. Possible IOException is encapsulated in 
@@ -151,4 +172,6 @@ public final class IOUtils {
 		doCopyFile(fis,fos);
 
 	}
+
+
 }

@@ -4,8 +4,8 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
 import org.middleheaven.events.EventListenersSet;
-import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.transactions.XAResourceAdapter;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.identity.Identity;
 
 class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore  {
@@ -24,12 +24,12 @@ class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore  
 	}
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria) {
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria) {
 		return this.createQuery(criteria, ReadStrategy.fowardReadOnly());
 	}
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria, ReadStrategy strategy) {
 		return manager.createQuery(criteria , strategy, unit);
 	}
 
@@ -45,7 +45,7 @@ class SessionAwareEntityStore extends XAResourceAdapter implements EntityStore  
 	}
 
 	@Override
-	public <T> void remove(final Criteria<T> criteria) {
+	public <T> void remove(final EntityCriteria<T> criteria) {
 		
 		for (T t : manager.createQuery(criteria, ReadStrategy.fowardReadOnly(), unit).fetchAll()){
 			manager.remove(t, unit);

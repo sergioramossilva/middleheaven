@@ -106,15 +106,20 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			fm.setDataType(DataType.MANY_TO_ONE);
 			ManyToOne ref = pa.getAnnotation(ManyToOne.class);
 			String fieldName = ref.targetIdentityField();
-			if (fieldName.isEmpty()){
-				fieldName = fm.getName();
-			}
+			
+			
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_ONE);
-			model.setTargetFieldName(fieldName);
+			
 			model.setTargetType(valueType);
 			
 			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
 
+			if (fieldName.isEmpty()){
+				fieldName = targetModel.getIdentityField().getName();
+			}else {
+				// TODO validate field exists
+			}
+			model.setTargetFieldName(fieldName);
 			model.setTargetFieldType(this.resolveValidIdentityType(targetModel.getIdentityType()));
 			
 			fm.setDataTypeModel(model);
@@ -124,14 +129,18 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			fm.setDataType(DataType.ONE_TO_ONE);
 			OneToOne ref = pa.getAnnotation(OneToOne.class);
 			String fieldName = ref.targetIdentityField();
-			if (fieldName.isEmpty()){
-				fieldName = fm.getName();
-			}
+	
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ONE_TO_ONE);
-			model.setTargetFieldName(fieldName);
+		
 			model.setTargetType(valueType);
 			
 			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
+			
+			if (fieldName.isEmpty()){
+				fieldName = targetModel.getIdentityField().getName();
+			} else {
+				// TODO validate field exists
+			}
 			
 			model.setTargetFieldType(this.resolveValidIdentityType(targetModel.getIdentityType()));
 			

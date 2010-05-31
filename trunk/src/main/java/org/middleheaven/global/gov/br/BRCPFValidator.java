@@ -19,7 +19,7 @@ public class BRCPFValidator implements Validator<NDI> {
 	    final int[] id = ndi.asIntArray();
 		
 	    if (id.length!=11){
-	    	result.add(MessageInvalidationReason.invalid());
+	    	result.add(MessageInvalidationReason.invalid(ndi));
 	    	return result;
 	    }
 	    
@@ -37,7 +37,7 @@ public class BRCPFValidator implements Validator<NDI> {
 	    
 	    // digits cannot be all equal
 	    if (!acceptAllEqual && equals){
-	    	result.add(MessageInvalidationReason.invalid());
+	    	result.add(MessageInvalidationReason.invalid(ndi));
 	    	return result;
 	    }
 
@@ -46,7 +46,7 @@ public class BRCPFValidator implements Validator<NDI> {
 	    vd = vd <=1 ? 0 : 11 - vd;
 	    
 	    if( id[id.length - 2] != vd){
-	    	result.add(MessageInvalidationReason.invalid());
+	    	result.add(MessageInvalidationReason.invalid(ndi));
 	    	return result;
 	    }
 	    
@@ -60,7 +60,7 @@ public class BRCPFValidator implements Validator<NDI> {
 	    vd = vd <=1 ? 0 : 11 - vd;
 	    
 	    if(id[id.length - 1] != vd){
-	    	result.add(MessageInvalidationReason.invalid());
+	    	result.add(MessageInvalidationReason.invalid(ndi));
 	    }
 	    
 		return result;

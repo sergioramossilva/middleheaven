@@ -47,7 +47,7 @@ public class URLManagedFile extends StreamBasedManagedFile {
 	}
 
 	@Override
-	public void setName(String name) {
+	public void renameTo(String name) {
 		//no-op
 	}
 
