@@ -8,6 +8,7 @@ import org.middleheaven.global.atlas.Atlas;
 import org.middleheaven.global.atlas.Country;
 import org.middleheaven.quantity.time.Chonologies;
 import org.middleheaven.quantity.time.Chronology;
+import org.middleheaven.validation.Consistencies;
 
 /**
  * Representation of a culture.
@@ -23,37 +24,44 @@ public final class Culture implements Serializable{
 	}
 	
 	public static Culture valueOf(Locale locale) {
+		Consistencies.consistNotNull(locale);
 		return valueOf(locale.getLanguage(), locale.getCountry());
 	}
 
 	
-	public static Culture valueOf(String language){
-		return new Culture(language.toLowerCase());
-	}
+
 	
 	public static Culture valueOf(String language, String country){
-		return new Culture(language.toLowerCase(), country.toUpperCase());
+		Consistencies.consistNotNull(language);
+		Consistencies.consistNotNull(country);
+		return new Culture(language.trim().toLowerCase(), country.trim().toUpperCase());
 	}
 	
 	public static Culture valueOf(String ... parts){
 		String[] variant = Arrays.copyOfRange(parts, 2, parts.length);
-		return new Culture(parts[0].toLowerCase(),parts[1].toUpperCase(), variant);
+		return new Culture(parts[0].trim().toLowerCase(),parts[1].trim().toUpperCase(), variant);
 	}
 	
 	public static Culture valueOf(CharSequence charSequence){
-		if (charSequence.length()==0){
-			throw new IllegalArgumentException("Char sequence is empty");
-		}
-		
-		String[] parts = charSequence.toString().split("_");
-		
-		if (parts.length==1){
-			return valueOf(parts[0]);
-		} else if (parts.length==2){
-			return valueOf(parts[0].toLowerCase(),parts[1].toUpperCase());
+	
+		Consistencies.consistNotNull(charSequence);
+		Consistencies.consistNotEmpty(charSequence);
+
+		final String culture = charSequence.toString();
+		if(culture.contains("_")){
+			return new Culture(culture);
 		} else {
-			return valueOf(parts);
+			String[] parts = culture.split("_");
+			
+			if (parts.length==1){
+				return new Culture(parts[0].trim());
+			} else if (parts.length==2){
+				return valueOf(parts[0],parts[1]);
+			} else {
+				return valueOf(parts);
+			}
 		}
+		
 	}
 	
 	

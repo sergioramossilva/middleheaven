@@ -2,7 +2,7 @@ package org.middleheaven.storage;
 
 import java.util.Collection;
 
-import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 
 /**
  * Abstraction for a real physical data storage.
@@ -31,7 +31,7 @@ public interface DataStorage extends IdentityManager{
 	/**
 	 * Removes all object, that match the criteria, from the store
 	 */
-	public void remove(Criteria<?> criteria);
+	public void remove(EntityCriteria<?> criteria);
 	
 	/**
 	 * Creates a store-specific <code>Query</code> object using a <code>Criteria</code>
@@ -43,7 +43,7 @@ public interface DataStorage extends IdentityManager{
 	 * @param <code>ReadStrategy</code> read strategy
 	 * @return
 	 */
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy);
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria, ReadStrategy strategy);
 
 	/**
 	 * Register the controlling state manager

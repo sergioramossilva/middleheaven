@@ -23,7 +23,7 @@ public final class BRCNPJValidator implements Validator<NDI> {
 	    final int[] id = ndi.asIntArray();
 		
 	    if (id.length != CNPJ_LENGTH){
-	    	result.add(MessageInvalidationReason.invalid());
+	    	result.add(MessageInvalidationReason.invalid(ndi));
 	    	return result;
 	    }
 	    
@@ -37,7 +37,7 @@ public final class BRCNPJValidator implements Validator<NDI> {
 	    vd = vd <=1 ? 0 : MODULE - vd;
 	    
 	    if( id[id.length - 2] != vd){
-	    	result.add(MessageInvalidationReason.invalid());
+	    	result.add(MessageInvalidationReason.invalid(ndi));
 	    	return result;
 	    }
 	    
@@ -51,7 +51,7 @@ public final class BRCNPJValidator implements Validator<NDI> {
 	    vd = vd <= 1 ? 0 : MODULE - vd;
 	    
 	    if (id[id.length - 1] != vd) {
-	    	result.add(MessageInvalidationReason.invalid());
+	    	result.add(MessageInvalidationReason.invalid(ndi));
 	    }
 	    
 	    return result;

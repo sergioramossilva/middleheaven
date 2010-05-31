@@ -14,19 +14,11 @@ public class EditableEntityFieldModel implements EntityFieldModel{
 	private boolean isNullable;
 	
 	private Class<?> aggregationClass;
-	private DataTypeModel dataTypeModel = new AbstractDataTypeModel(){
-
-		@Override
-		public DataType getDataType() {
-			return dataType;
-		}
-		
-	};
-	
-
+	private DataTypeModel dataTypeModel;
 
 	public EditableEntityFieldModel(String entityName, String name) {
 		this.name = QualifiedName.qualify(entityName, name);
+		dataTypeModel = new SimpleDataTypeModel(this);
 	}
 	
 	@Override

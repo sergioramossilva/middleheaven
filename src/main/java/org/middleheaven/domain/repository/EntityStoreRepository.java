@@ -1,12 +1,11 @@
 package org.middleheaven.domain.repository;
 
-import org.middleheaven.domain.DomainModel;
-import org.middleheaven.storage.EntityStore;
 import org.middleheaven.storage.DataStorageListener;
+import org.middleheaven.storage.EntityStore;
 import org.middleheaven.storage.EntityStoreService;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.StorageChangeEvent;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
 
 
@@ -63,22 +62,22 @@ public class EntityStoreRepository<E> extends AbstractRepository<E>  {
 
 	@Override
 	public Query<E> findAll() {
-		return getEntityStore().createQuery(CriteriaBuilder.search(entityType).all());
+		return getEntityStore().createQuery(EntityCriteriaBuilder.search(entityType).all());
 	}
 
 	@Override
 	public Query<E> findEquals(E instance) {
-		return getEntityStore().createQuery(CriteriaBuilder.search(entityType).isEqual(instance).all());
+		return getEntityStore().createQuery(EntityCriteriaBuilder.search(entityType).isEqual(instance).all());
 	}
 
 	@Override
 	public Query<E> findIdentical(E instance) {
-		return getEntityStore().createQuery(CriteriaBuilder.search(entityType).isIdentical(instance).all());
+		return getEntityStore().createQuery(EntityCriteriaBuilder.search(entityType).isIdentical(instance).all());
 	}
 
 	@Override
 	public Query<E> findByIdentity(Identity id) {
-		return getEntityStore().createQuery(CriteriaBuilder.search(entityType)
+		return getEntityStore().createQuery(EntityCriteriaBuilder.search(entityType)
 				.hasIdentity(id)
 				.all()
 		);

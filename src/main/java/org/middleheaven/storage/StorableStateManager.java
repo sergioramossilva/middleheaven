@@ -15,12 +15,13 @@ import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
-import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.criteria.Criteria;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.identity.Identity;
 
 
@@ -38,7 +39,7 @@ public final class StorableStateManager {
 		this.domainModel = model;
 	}
 	
-	public <T> Query<T> createQuery(final Criteria<T> criteria, final ReadStrategy strategy, final StorageUnit unit) {
+	public <T> Query<T> createQuery(final EntityCriteria<T> criteria, final ReadStrategy strategy, final StorageUnit unit) {
 		
 		return new SimpleExecutableQuery<T>(criteria , null, new QueryExecuter (){
 
@@ -158,7 +159,7 @@ public final class StorableStateManager {
 			return;
 		}
 
-		// if add only if it will cause any change
+		// add only if it will cause any change
 		if (!p.getStorableState().isNeutral()){
 			all.add(p);
 		}

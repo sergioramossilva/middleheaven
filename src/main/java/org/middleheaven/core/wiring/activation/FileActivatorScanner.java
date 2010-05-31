@@ -65,7 +65,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 				public Boolean classify(ManagedFile file) {
 					if (file.isReadable() && file.getType().isFile()){
 						for (Pattern pattern : filePatterns){
-							return pattern.matcher(file.getName()).find();
+							return pattern.matcher(file.getPath().getBaseName()).find();
 						}
 					} 
 					return Boolean.FALSE;
@@ -120,7 +120,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 					Log.onBookFor(this.getClass()).warn("{0} is not a valid application module activator",className);
 				}
 			}else {
-				Log.onBookFor(this.getClass()).warn( "{0} does not present an application module.",jar.getName());
+				Log.onBookFor(this.getClass()).warn( "{0} does not present an application module.",jar.getPath().getBaseName());
 			}
 
 		}catch (IOException e) {

@@ -22,7 +22,7 @@ public class NotExistsValidator<T> implements org.middleheaven.validation.Valida
 		Query<T> query = repository.findIdentical(object);
 
 		if (!query.isEmpty()) {
-			result.add(MessageInvalidationReason.error("invalid.instance.exists"));
+			result.add(MessageInvalidationReason.error(object,"invalid.instance.exists"));
 		}			
 
 		return result;

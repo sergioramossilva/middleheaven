@@ -1,6 +1,6 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.identity.Identity;
 
 /**
@@ -38,7 +38,7 @@ public interface EntityStore {
 	 * @param criteria
 	 * @return
 	 */
-	public <T> Query<T> createQuery(Criteria<T> criteria);
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria);
 
 	/**
 	 * Create a query from a criteria informing the reading strategy that will be use
@@ -48,14 +48,14 @@ public interface EntityStore {
 	 * @param strategy
 	 * @return
 	 */
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy);
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria, ReadStrategy strategy);
 	
 	/**
 	 * Remove from storage all object that match the given criteria
 	 * @param <T>
 	 * @param criteria
 	 */
-	public <T> void remove(Criteria<T> criteria);
+	public <T> void remove(EntityCriteria<T> criteria);
 	
 	/**
 	 * Register a storage listener.

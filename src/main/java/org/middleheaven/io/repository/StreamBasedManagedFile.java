@@ -13,7 +13,7 @@ public abstract class StreamBasedManagedFile extends AbstractContentManagedFile 
 	private String contentType = "octet-stream";
 	
 	public StreamBasedManagedFile(String name, ManagedFile parent) {
-		super();
+		super(new SimpleManagedFilePath(parent.getPath() , name));
 		this.name = name;
 		this.parent = parent;
 	}
@@ -83,12 +83,11 @@ public abstract class StreamBasedManagedFile extends AbstractContentManagedFile 
 		throw new UnsupportedOperationException();
 	}
 
-
 	@Override
-	public String getName() {
-		return name;
+	public void renameTo(String name) {
+		this.setPath(new SimpleManagedFilePath(parent.getPath() , name));
 	}
-
+	
 	@Override
 	public ManagedFile getParent() {
 		return parent;

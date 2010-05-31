@@ -4,7 +4,7 @@ import org.middleheaven.global.address.Address;
 import org.middleheaven.quantity.coordinate.GeoCoordinate;
 
 public class Landmark implements Locatable{
-
+	
 	private String name;
 	private String description;
 	private GeoCoordinate geoCoordinate;

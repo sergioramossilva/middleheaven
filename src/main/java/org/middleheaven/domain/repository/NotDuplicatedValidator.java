@@ -22,7 +22,7 @@ public class NotDuplicatedValidator<T> implements Validator<T>{
 		Query<T> query = repository.findEquals(object);
 
 		if (!query.isEmpty()) {
-			result.add(MessageInvalidationReason.error("invalid.instance.duplicated"));
+			result.add(MessageInvalidationReason.error(object,"invalid.instance.duplicated"));
 		}			
 
 		return result;

@@ -87,7 +87,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
 
 
 			files.put(key, format);
-			filesMapping.put(file.getName(), key);
+			filesMapping.put(file.getPath().getBaseName(), key);
 		}
 		return format.findLabel(label);
 
@@ -109,7 +109,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle implements 
 	public void onChange(FileChangeEvent event) {
 		LocalizedMessagesFormatHandler format = fileFormat.newFormatHandler(event.getFile().getContent().getInputStream());
 		synchronized(files){
-			files.put(filesMapping.get(event.getFile().getName()), format);
+			files.put(filesMapping.get(event.getFile().getPath().getBaseName()), format);
 		}
 	}
 }

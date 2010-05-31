@@ -23,6 +23,7 @@ import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
+import org.middleheaven.io.repository.SimpleManagedFilePath;
 import org.middleheaven.io.repository.VirtualFolder;
 import org.middleheaven.util.collections.EnhancedArrayList;
 import org.middleheaven.util.collections.EnhancedCollection;
@@ -69,7 +70,7 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 						// is a file
 					
 						VirtualFolder folder = new VirtualFolder(item.getFieldName(), repository);
-						repository.folders.put(folder.getName(), folder);
+						repository.folders.put(folder.getPath().getBaseName(), folder);
 						folder.add(new UploadManagedFile(item, repository));
 						
 					} else if (parameters!=null){
@@ -95,7 +96,9 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	DiskFileItemFactory factory;
 	private String name = "upload repository";
 	
-	private UploadManagedFileRepository(){}
+	private UploadManagedFileRepository(){
+		super(new SimpleManagedFilePath(""));
+	}
 	
 	public void dispose(){
 		// remove all files
@@ -181,11 +184,6 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
 	public ManagedFile getParent() {
 		return null;
 	}
@@ -220,7 +218,7 @@ public class UploadManagedFileRepository extends AbstractManagedFile implements 
 	}
 
 	@Override
-	public void setName(String name) {
+	public void renameTo(String name) {
 		this.name = name;
 	}
 

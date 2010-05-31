@@ -16,12 +16,30 @@ import org.middleheaven.util.collections.TreeWalkable;
  */
 public interface ManagedFile extends TreeWalkable<ManagedFile>{
 
-	
-	public String getText();
+	/**
+	 * This file's path
+	 * @return
+	 */
+	public ManagedFilePath getPath(); 
 	
 	public EnhancedCollection<ManagedFile> children() throws ManagedIOException;
 
-	public void setName(String name);
+	/**
+	 * determines if the base name of this file can be changed to a new one.
+	 * It can not be changed if a file with that name already exists.
+	 * Some implementations may not support te rename operation 
+	 * @param newBaseName
+	 * @return
+	 */
+	public boolean canRenameTo(String newBaseName);
+	
+	
+	/**
+	 * Change the base name to a new value
+	 * @param name
+	 * @throws ManagedIOException
+	 */
+	public void renameTo(String newBaseName) throws ManagedIOException;
 	
 	/**
 	 * For FILE managed files it returns the same as <code>getContent().getSize</code>
@@ -64,9 +82,6 @@ public interface ManagedFile extends TreeWalkable<ManagedFile>{
      * @return 
      */
     public abstract ManagedFile retrive(String filename) throws ManagedIOException;
-
-
-    public String getName();
     
     /**
      * indicates if getInputStream() can be invoked

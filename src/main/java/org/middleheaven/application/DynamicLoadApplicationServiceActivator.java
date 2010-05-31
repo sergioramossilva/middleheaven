@@ -34,7 +34,7 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 
 		@Override
 		public Boolean classify(ManagedFile file) {
-			return file.getName().endsWith(".apm");
+			return file.getPath().getBaseName().endsWith(".apm");
 		}
 	};
 	
@@ -97,7 +97,7 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 					getLog().warn("{0} is not a valid application module activator",className);
 				}
 			}else {
-				getLog().warn("{0} does not present an application module.",jar.getName());
+				getLog().warn("{0} does not present an application module.",jar.getPath().getBaseName());
 			}
 
 		}catch (IOException e) {

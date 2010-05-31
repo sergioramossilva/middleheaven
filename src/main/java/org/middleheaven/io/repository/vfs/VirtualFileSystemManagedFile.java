@@ -29,6 +29,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	boolean isfilefolder;
 
 	public VirtualFileSystemManagedFile(FileObject file){
+		super(new VirtualFileManagedFilePath(file.getName()));
 		this.file = file;
 		try {	
 			if (file.getType().hasContent()){
@@ -47,6 +48,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
+
 	}
 
 	public String toString(){
@@ -164,12 +166,6 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	}
 
 
-
-	@Override
-	public String getName() {
-		return file.getName().getBaseName();
-	}
-
 	@Override
 	public URL getURL() {
 		try {
@@ -267,7 +263,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	@Override
 	public void addFileChangelistener(FileChangeListener listener,ManagedFile file) {
 		try {
-			this.file.getFileSystem().addListener( this.file.resolveFile(file.getName()),new FileListenerAdapter(listener));
+			this.file.getFileSystem().addListener( this.file.resolveFile(file.getPath().getBaseName()),new FileListenerAdapter(listener));
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
@@ -276,7 +272,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	@Override
 	public void removeFileChangelistener(FileChangeListener listener,ManagedFile file) {
 		try {
-			this.file.getFileSystem().removeListener( this.file.resolveFile(file.getName()),new FileListenerAdapter(listener));
+			this.file.getFileSystem().removeListener( this.file.resolveFile(file.getPath().getBaseName()),new FileListenerAdapter(listener));
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
@@ -297,7 +293,7 @@ public final class VirtualFileSystemManagedFile extends AbstractManagedFile impl
 	}
 
 	@Override
-	public void setName(String name) {
+	public void renameTo(String name) {
 		throw new UnsupportedOperationException();
 	}
 

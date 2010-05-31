@@ -10,13 +10,20 @@ import org.middleheaven.util.collections.Walker;
 
 public abstract class AbstractManagedFile implements ManagedFile{
 
+	
+	private ManagedFilePath path;
+
+	protected AbstractManagedFile(ManagedFilePath path){
+		this.path = path;
+	}
+	
 	@Override
 	public void copyTo(ManagedFile other) throws ManagedIOException {
 		try {
 			if (other.getType()==ManagedFileType.FILE){
 				IOUtils.copy(this.getContent().getInputStream(), other.getContent().getOutputStream());
 			} else {
-				ManagedFile newFile = other.retrive(this.getName());
+				ManagedFile newFile = other.retrive(this.getPath().getBaseName());
 				newFile.createFile();
 				IOUtils.copy(this.getContent().getInputStream(), newFile.getContent().getOutputStream());
 			}
@@ -25,6 +32,25 @@ public abstract class AbstractManagedFile implements ManagedFile{
 			throw ManagedIOException.manage(ioe);
 		}
 	}
+	
+	@Override
+	public ManagedFilePath getPath() {
+		return path;
+	}
+	
+	protected void setPath(ManagedFilePath path){
+		this.path = path;
+	}
+	
+	@Override
+	public boolean canRenameTo(String newBaseName) {
+		ManagedFile p = this.getParent();
+		if ( p == null){
+			return false;
+		}
+		return !p.retrive(newBaseName).exists();
+	}
+
 
 	public String getText(){
 		BufferedReader reader = null;
@@ -64,7 +90,7 @@ public abstract class AbstractManagedFile implements ManagedFile{
 		case VIRTUAL:
 			return doCreateFile();
 		default:
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("Cannot create file of type " + this.getType());
 		}
 	}
 
@@ -77,7 +103,7 @@ public abstract class AbstractManagedFile implements ManagedFile{
 		case VIRTUAL:
 			return doCreateFolder();
 		default:
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("Cannot create folder of type " + this.getType());
 		}
 	}
 

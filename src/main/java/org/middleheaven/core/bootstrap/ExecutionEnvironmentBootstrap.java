@@ -172,7 +172,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 			fire (new BootstrapEvent(false,true));
 		}
 		
-		protected void fire(BootstrapEvent event) {
+		private void fire(BootstrapEvent event) {
 			for (BootstapListener listener : listeners){
 				listener.onBoostapEvent(event);
 			}

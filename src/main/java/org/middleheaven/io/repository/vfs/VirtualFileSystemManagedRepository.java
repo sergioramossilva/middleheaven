@@ -100,7 +100,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 	@Override
 	public boolean delete(ManagedFile file) throws ManagedIOException {
 		
-		return delete(file.getName());
+		return delete(file.getPath().getBaseName());
 	}
 
 
@@ -112,7 +112,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 		}
 		
 		try {
-			FileObject nfo = root.resolveFile(file.getName());
+			FileObject nfo = root.resolveFile(file.getPath().getBaseName());
 			if (!nfo.exists()){
 				nfo.createFile();
 				
@@ -135,7 +135,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 	@Override
 	public void addFileChangelistener(FileChangeListener listener,ManagedFile file) {
 		try {
-			this.root.getFileSystem().addListener( root.resolveFile(file.getName()),new FileListenerAdapter(listener));
+			this.root.getFileSystem().addListener( root.resolveFile(file.getPath().getBaseName()),new FileListenerAdapter(listener));
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
@@ -144,7 +144,7 @@ public class VirtualFileSystemManagedRepository implements ManagedFileRepository
 	@Override
 	public void removeFileChangelistener(FileChangeListener listener,ManagedFile file) {
 		try {
-			this.root.getFileSystem().removeListener( root.resolveFile(file.getName()),new FileListenerAdapter(listener));
+			this.root.getFileSystem().removeListener( root.resolveFile(file.getPath().getBaseName()),new FileListenerAdapter(listener));
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}

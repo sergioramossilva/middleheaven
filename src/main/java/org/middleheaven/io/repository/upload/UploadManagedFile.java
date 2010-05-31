@@ -14,6 +14,7 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.io.repository.MediaManagedFileContent;
+import org.middleheaven.io.repository.SimpleManagedFilePath;
 import org.middleheaven.io.repository.UnexistantManagedFile;
 
 public class UploadManagedFile extends AbstractContentManagedFile implements MediaManagedFile {
@@ -22,6 +23,7 @@ public class UploadManagedFile extends AbstractContentManagedFile implements Med
 	private final ManagedFile parent;
 	
 	UploadManagedFile(FileItem fileItem, ManagedFile parent){
+		super(new SimpleManagedFilePath(parent.getPath() , fileItem.getFieldName()));
 		this.fileItem = fileItem;
 		this.parent = parent;
 	}
@@ -55,9 +57,21 @@ public class UploadManagedFile extends AbstractContentManagedFile implements Med
 	}
 
 	@Override
-	public String getName() {
-		return fileItem.getFieldName();
+	public void renameTo(String name) {
+		throw new ManagedIOException("unsuppported operation");
 	}
+
+	/**
+	 * Names are not mutable for this class
+	 */
+	public boolean canRenameTo(String newName){
+		return false;
+	}
+	
+//	@Override
+//	public String getName() {
+//		return fileItem.getFieldName();
+//	}
 
 	@Override
 	public ManagedFile getParent() {
@@ -130,10 +144,6 @@ public class UploadManagedFile extends AbstractContentManagedFile implements Med
 		return fileItem.getSize();
 	}
 
-	@Override
-	public void setName(String name) {
-		throw new ManagedIOException("unsuppported operation");
-	}
 
 
 }

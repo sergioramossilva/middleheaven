@@ -17,6 +17,7 @@ public class BufferedMediaVirtualFile extends AbstractContentManagedFile impleme
 
 	
 	public BufferedMediaVirtualFile(String name){
+		super (new SimpleManagedFilePath("/".concat(name)));
 		this.name = name;
 	}
 	
@@ -58,11 +59,6 @@ public class BufferedMediaVirtualFile extends AbstractContentManagedFile impleme
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
 	public ManagedFile getParent() {
 		return null;
 	}
@@ -79,7 +75,7 @@ public class BufferedMediaVirtualFile extends AbstractContentManagedFile impleme
 	}
 
 	@Override
-	public void setName(String name) {
+	public void renameTo(String name) {
 		this.name = name;
 	}
 

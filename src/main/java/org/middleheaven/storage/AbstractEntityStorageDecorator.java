@@ -1,6 +1,6 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.storage.criteria.Criteria;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.identity.Identity;
 
 public abstract class AbstractEntityStorageDecorator implements EntityStore {
@@ -17,12 +17,12 @@ public abstract class AbstractEntityStorageDecorator implements EntityStore {
 	}
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria) {
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria) {
 		return original().createQuery(criteria);
 	}
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria, ReadStrategy strategy) {
 		return original().createQuery(criteria, strategy);
 	}
 
@@ -37,7 +37,7 @@ public abstract class AbstractEntityStorageDecorator implements EntityStore {
 	}
 
 	@Override
-	public <T> void remove(Criteria<T> criteria) {
+	public <T> void remove(EntityCriteria<T> criteria) {
 		this.original().remove(criteria);
 	}
 

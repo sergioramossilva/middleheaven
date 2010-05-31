@@ -56,7 +56,7 @@ public class LicenseServiceActivator extends Activator {
 
 			@Override
 			public Boolean classify(ManagedFile file) {
-				return file.getName().endsWith(".lic");
+				return file.getPath().getBaseName().endsWith(".lic");
 			}
 
 		}));
@@ -65,7 +65,7 @@ public class LicenseServiceActivator extends Activator {
 
 			@Override
 			public Boolean classify(ManagedFile file) {
-				return file.getName().endsWith(".lic");
+				return file.getPath().getBaseName().endsWith(".lic");
 			}
 
 		}));
@@ -75,7 +75,7 @@ public class LicenseServiceActivator extends Activator {
 
 			@Override
 			public Boolean classify(ManagedFile file) {
-				return file.getName().endsWith(".cert");
+				return file.getPath().getBaseName().endsWith(".cert");
 			}
 
 		}));

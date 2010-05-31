@@ -12,7 +12,6 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileResolver;
 import org.middleheaven.io.repository.QueryableRepository;
-import org.middleheaven.io.repository.UnexistantManagedFile;
 import org.middleheaven.io.repository.UnsupportedSchemeException;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;

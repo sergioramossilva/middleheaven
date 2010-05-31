@@ -13,11 +13,13 @@ public class CharSequenceManagedFile extends AbstractContentManagedFile implemen
 	private String contentType;
 
 	public CharSequenceManagedFile(CharSequence body, String name, String contentType){
+		super (new SimpleManagedFilePath("/".concat(name)));
 		this.body = body;
 		this.name = name;
 		this.contentType = contentType;
 	}
 	
+
 	
 	public String getText(){
 		return body.toString();
@@ -62,11 +64,6 @@ public class CharSequenceManagedFile extends AbstractContentManagedFile implemen
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
 	public ManagedFile getParent() {
 		return null;
 	}
@@ -79,7 +76,7 @@ public class CharSequenceManagedFile extends AbstractContentManagedFile implemen
 
 
 	@Override
-	public void setName(String name) {
+	public void renameTo(String name) {
 		this.name = name;
 	}
 
@@ -87,6 +84,8 @@ public class CharSequenceManagedFile extends AbstractContentManagedFile implemen
 	public ManagedFile retrive(String filepath) {
 		return new UnexistantManagedFile(this,filepath);
 	}
+
+
 
 	
 }

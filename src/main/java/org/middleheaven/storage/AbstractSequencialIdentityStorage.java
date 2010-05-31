@@ -10,7 +10,7 @@ public abstract class AbstractSequencialIdentityStorage extends AbstractDataStor
 	}
 
 	/**
-	 * Returns a sequence of longs under registered for a given name
+	 * Returns a sequence of Identity objects registered for a given name
 	 * This method is intended to provide universal support for
 	 * storage unique key generation in a store dependent manner.
 	 * DatabaseStorages can use native sequence support where available. 

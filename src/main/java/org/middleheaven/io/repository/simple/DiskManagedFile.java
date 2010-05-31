@@ -17,9 +17,11 @@ import org.middleheaven.io.repository.AbstractManagedFile;
 import org.middleheaven.io.repository.EmptyFileContent;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
+import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.QueryableRepository;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
+import org.middleheaven.io.repository.SimpleManagedFilePath;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
@@ -29,8 +31,23 @@ public class DiskManagedFile  extends AbstractManagedFile implements QueryableRe
 	private ManagedFile parent;
 
 	public DiskManagedFile(ManagedFile parent, File file) {
+		super(new SimpleManagedFilePath(readPath(parent), ensureNotNull(file).getName()));
 		this.file = file;
 		this.parent = parent;
+	}
+	
+	private static ManagedFilePath readPath(ManagedFile parent){
+		if (parent == null){
+			return null;
+		}
+		return parent.getPath();
+	}
+	
+	private static File ensureNotNull(File file){
+		if(file == null){
+			throw new IllegalArgumentException("File is null");
+		}
+		return file;
 	}
 
 	public boolean equals(Object other){
@@ -47,7 +64,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements QueryableRe
 	
 	@Override
 	public boolean contains(ManagedFile other) {
-		return this.resolveFile(other.getName()).exists();
+		return this.resolveFile(other.getPath().getBaseName()).exists();
 	}
 
 	@Override
@@ -133,12 +150,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements QueryableRe
 		}
 		return size;
 	}
-
-	@Override
-	public String getName() {
-		return file.getName();
-	}
-
+	
 	@Override
 	public ManagedFile getParent() {
 		if (parent !=null && file.getParentFile() !=null){
@@ -150,7 +162,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements QueryableRe
 
 	@Override
 	public ManagedFileType getType() {
-		return this.file.isFile() ? ManagedFileType.FILE : ManagedFileType.FOLDER;
+		return this.file.exists() ? ( this.file.isFile() ? ManagedFileType.FILE : ManagedFileType.FOLDER) : ManagedFileType.VIRTUAL;
 	}
 
 	@Override
@@ -194,7 +206,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements QueryableRe
 
 
 	@Override
-	public void setName(String name) {
+	public void renameTo(String name) {
 		file.renameTo(new File(file.getParent(), name));
 	}
 
@@ -214,7 +226,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements QueryableRe
 
 	@Override
 	public boolean delete(ManagedFile file) throws ManagedIOException {
-		return this.retrive(file.getName()).delete();
+		return this.retrive(file.getPath().getBaseName()).delete();
 	}
 
 	@Override
@@ -238,7 +250,7 @@ public class DiskManagedFile  extends AbstractManagedFile implements QueryableRe
 			throw new RepositoryNotWritableException(this.getClass().getName());
 		}
 		
-		ManagedFile myFile = this.resolveFile(file.getName());
+		ManagedFile myFile = this.resolveFile(file.getPath().getBaseName());
 		if (!myFile.exists()){
 			myFile = myFile.createFile();
 		}

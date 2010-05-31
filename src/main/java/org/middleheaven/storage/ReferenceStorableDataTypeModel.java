@@ -8,9 +8,12 @@ public interface ReferenceStorableDataTypeModel extends StorableDataTypeModel , 
 	
 	public String getTargetFieldHardName();
 
-	public void setTargetFieldHardname(String fieldHardname);
-
-	public void setTargetFieldname(String fieldname);
-
-	
+//	public void setTargetFieldHardname(String fieldHardname);
+//
+//	public void setTargetFieldname(String fieldname);
+//
+//	public void setTargetType( Class<?> type);
+//
+//	public void setAggregationType(Class<?> type);
+//	public void setTargetFieldType(Class<?> type);
 }

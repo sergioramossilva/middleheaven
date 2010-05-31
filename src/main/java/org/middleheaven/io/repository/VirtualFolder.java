@@ -1,16 +1,12 @@
 package org.middleheaven.io.repository;
 
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.Walker;
 
 public class VirtualFolder extends AbstractContainerManagedFile  {
 
@@ -19,6 +15,7 @@ public class VirtualFolder extends AbstractContainerManagedFile  {
 	private String name;
 	
 	public VirtualFolder(String name, ManagedFile parent){
+		super(new SimpleManagedFilePath(parent.getPath() , name));
 		this.parent = parent;
 		this.name = name;
 	}
@@ -59,11 +56,6 @@ public class VirtualFolder extends AbstractContainerManagedFile  {
 	@Override
 	public ManagedFileContent getContent() {
 		return null;
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -118,12 +110,12 @@ public class VirtualFolder extends AbstractContainerManagedFile  {
 	}
 
 	public void add(ManagedFile file) {
-		this.files.put(file.getName(),file);
+		this.files.put(file.getPath().getBaseName(),file);
 		
 	}
 
 	public void remove(ManagedFile file) {
-		this.files.remove(file.getName());
+		this.files.remove(file.getPath().getBaseName());
 	}
 
 	public void clear() {
@@ -134,7 +126,7 @@ public class VirtualFolder extends AbstractContainerManagedFile  {
 	}
 
 	@Override
-	public void setName(String name) {
+	public void renameTo(String name) {
 		this.name = name;
 	}
 
