@@ -55,7 +55,10 @@ public class AttributeContextBeanLoader {
 			} 
 
 			if (isPrimitive){
-				return context.getAttribute(inScope, name, type);
+				Object value = context.getAttribute(inScope, name, type);
+				//outject
+				context.setAttribute(ContextScope.REQUEST, name.toLowerCase(), value);
+				return type.cast(value);
 			} else {
 				T object = null;
 
@@ -89,8 +92,11 @@ public class AttributeContextBeanLoader {
 									ContextScope.PARAMETERS,
 									name
 							).assemble(type);
+					
 				}
-
+				
+				//outject
+				context.setAttribute(ContextScope.REQUEST, name.toLowerCase(), object);
 				return object;
 
 			}

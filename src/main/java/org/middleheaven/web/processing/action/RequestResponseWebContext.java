@@ -3,16 +3,14 @@ package org.middleheaven.web.processing.action;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.middleheaven.io.repository.EmptyFileRepository;
 import org.middleheaven.io.repository.ManagedFileRepository;
-import org.middleheaven.io.repository.upload.UploadManagedFileRepository;
+import org.middleheaven.io.repository.upload.UploadFilesContext;
+import org.middleheaven.io.repository.upload.UploadFilesRequestAnalyzer;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.web.processing.HttpProcessingUtils;
 import org.middleheaven.web.processing.HttpUrl;
@@ -26,7 +24,6 @@ public class RequestResponseWebContext extends ServletWebContext {
 	private final Map<String,String> parameters;
 	private ManagedFileRepository uploadRepository;
 
-	@SuppressWarnings("unchecked")
 	public RequestResponseWebContext(HttpServletRequest request,HttpServletResponse response, HttpCultureResolver httpCultureResolveService) {
 		super(httpCultureResolveService);
 		
@@ -35,15 +32,11 @@ public class RequestResponseWebContext extends ServletWebContext {
 		
 		this.request.setAttribute("__" + HttpCultureResolver.class.getName(), httpCultureResolveService);
 		
-		if (ServletFileUpload.isMultipartContent(request)){
-
-			parameters = new TreeMap<String,String>();
-			uploadRepository = UploadManagedFileRepository.repositoryOf(request,parameters);
-
-		} else {
-			parameters = request.getParameterMap();
-			uploadRepository = EmptyFileRepository.repository();
-		}
+		UploadFilesContext context = UploadFilesRequestAnalyzer.getContext(request);
+		
+		this.parameters = context.getParametersMap();
+		this.uploadRepository = context.getManagedFileRepository();
+		
 	}
 
 	@Override

@@ -2,8 +2,8 @@ package org.middleheaven.storage.db;
 
 import org.middleheaven.domain.DataType;
 import org.middleheaven.storage.StorableFieldModel;
-import org.middleheaven.storage.criteria.CriterionOperator;
-import org.middleheaven.storage.criteria.FieldValueHolder;
+import org.middleheaven.util.criteria.CriterionOperator;
+import org.middleheaven.util.criteria.FieldValueHolder;
 
 
 public class ColumnValueHolder {

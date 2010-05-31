@@ -6,12 +6,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.middleheaven.storage.DataStorage;
 import org.middleheaven.storage.Storable;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.util.collections.ComposedMapKey;
 import org.middleheaven.util.collections.DualMapKey;
 import org.middleheaven.util.identity.Identity;
-import org.middleheaven.validation.Consistencies;
 
 public class StoreQuerySession {
 

@@ -8,6 +8,20 @@ public enum UIReadState {
 	INPUT_ENABLED;
 	
 	
+	public static UIReadState computeFrom(boolean visible , boolean enabled, boolean readOnly){
+		if (visible){
+			if (readOnly){
+				return OUTPUT_ONLY;
+			} else if (enabled) {
+				return INPUT_ENABLED;
+			} else {
+				return INPUT_DISABLED;
+			}
+		} else {
+			return INVISIBLE;
+		}
+	}
+	
 	public boolean isVisible(){
 		return this!= INVISIBLE;
 	}

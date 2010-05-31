@@ -12,38 +12,38 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.criteria.CountOperator;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
-import org.middleheaven.storage.criteria.Criterion;
-import org.middleheaven.storage.criteria.CriterionOperator;
-import org.middleheaven.storage.criteria.EmptyCriterion;
-import org.middleheaven.storage.criteria.FieldCriterion;
-import org.middleheaven.storage.criteria.FieldInSetCriterion;
-import org.middleheaven.storage.criteria.FieldValueCriterion;
-import org.middleheaven.storage.criteria.FieldValueHolder;
-import org.middleheaven.storage.criteria.IdentityCriterion;
-import org.middleheaven.storage.criteria.JunctionCriterion;
-import org.middleheaven.storage.criteria.LogicCriterion;
-import org.middleheaven.storage.criteria.MaxFieldOperator;
-import org.middleheaven.storage.criteria.MinFieldOperator;
-import org.middleheaven.storage.criteria.OrderingCriterion;
-import org.middleheaven.storage.criteria.Projection;
-import org.middleheaven.storage.criteria.ProjectionOperator;
-import org.middleheaven.storage.criteria.SingleObjectValueHolder;
-import org.middleheaven.storage.criteria.SumFieldOperator;
 import org.middleheaven.util.classification.LogicOperator;
 import org.middleheaven.util.collections.Interval;
+import org.middleheaven.util.criteria.Criterion;
+import org.middleheaven.util.criteria.CriterionOperator;
+import org.middleheaven.util.criteria.EmptyCriterion;
+import org.middleheaven.util.criteria.FieldCriterion;
+import org.middleheaven.util.criteria.FieldValueCriterion;
+import org.middleheaven.util.criteria.FieldValueHolder;
+import org.middleheaven.util.criteria.LogicCriterion;
+import org.middleheaven.util.criteria.OrderingCriterion;
+import org.middleheaven.util.criteria.SingleObjectValueHolder;
+import org.middleheaven.util.criteria.entity.CountOperator;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
+import org.middleheaven.util.criteria.entity.FieldInSetCriterion;
+import org.middleheaven.util.criteria.entity.IdentityCriterion;
+import org.middleheaven.util.criteria.entity.JunctionCriterion;
+import org.middleheaven.util.criteria.entity.MaxFieldOperator;
+import org.middleheaven.util.criteria.entity.MinFieldOperator;
+import org.middleheaven.util.criteria.entity.Projection;
+import org.middleheaven.util.criteria.entity.ProjectionOperator;
+import org.middleheaven.util.criteria.entity.SumFieldOperator;
 
 
 public class CriteriaInterpreter {
 
 	private DataBaseDialect dataBaseDialect;
-	private Criteria<?> criteria;
+	private EntityCriteria<?> criteria;
 	private StorableModelReader reader;
 	private StorableEntityModel model;
 
-	public CriteriaInterpreter(DataBaseDialect dataBaseDialect,Criteria<?> criteria, StorableModelReader reader) {
+	public CriteriaInterpreter(DataBaseDialect dataBaseDialect,EntityCriteria<?> criteria, StorableModelReader reader) {
 		this.dataBaseDialect = dataBaseDialect;
 		this.criteria = criteria;
 		this.reader = reader;
@@ -54,7 +54,7 @@ public class CriteriaInterpreter {
 		return this.dataBaseDialect;
 	}
 
-	protected Criteria<?> criteria(){
+	protected EntityCriteria<?> criteria(){
 		return this.criteria;
 	}
 
@@ -469,7 +469,7 @@ public class CriteriaInterpreter {
 		// [NOT] IN ( foo ) 
 		// where foo is return nothing select 
 		// made using range(0)
-		Criteria<?> emptyCriteria =  CriteriaBuilder.search(criteria.getTargetClass()).limit(0).all();
+		EntityCriteria<?> emptyCriteria =  EntityCriteriaBuilder.search(criteria.getTargetClass()).limit(0).all();
 
 		emptyCriteria.setKeyOnly(true);
 
@@ -494,7 +494,7 @@ public class CriteriaInterpreter {
 	protected void translateFieldInQueryCriteriaToWhereClause(Clause criteriaBuffer,FieldInSetCriterion criterion,StorableEntityModel  model){
 
 		// [NOT] IN ( Select field FROM table ... ) 
-		Criteria<?> c = (Criteria<?>)criterion.valueHolder().getValue();
+		EntityCriteria<?> c = (EntityCriteria<?>)criterion.valueHolder().getValue();
 		c.setDistinct(true);
 
 		CriteriaInterpreter ci = dialect().newCriteriaInterpreter(c, reader);

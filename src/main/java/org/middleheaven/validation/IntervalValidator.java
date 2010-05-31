@@ -40,7 +40,7 @@ public class IntervalValidator<T extends Comparable<T>> implements Validator<T> 
 	public ValidationResult validate(T object) {
 		DefaultValidationResult result = new DefaultValidationResult();
 		if (!interval.contains(object,includeStart,includeEnd)){
-			result.add(MessageInvalidationReason.invalid());
+			result.add(MessageInvalidationReason.invalid(object));
 		}
 		return result;
 	}

@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 
 import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.DomainModel;
+import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
 import org.middleheaven.domain.TextDataTypeModel;
 import org.middleheaven.logging.Log;
@@ -22,6 +23,7 @@ import org.middleheaven.sequence.DefaultToken;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.storage.AbstractSequencialIdentityStorage;
+import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.ReferenceStorableDataTypeModel;
@@ -31,14 +33,13 @@ import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.datasource.DataSourceProvider;
+import org.middleheaven.util.criteria.Criteria;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IdentitySequence;
 import org.middleheaven.util.identity.IntegerIdentity;
-import org.middleheaven.util.identity.IntegerIdentitySequence;
-import org.middleheaven.util.identity.LongIdentity;
 
 /**
  * Keeps data stored in a relational database.
@@ -102,10 +103,10 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 	}
 
 	class DBStorageQuery<T> implements Query<T>{
-		Criteria<T> criteria;
+		EntityCriteria<T> criteria;
 		private ReadStrategy hints;
 
-		public DBStorageQuery(Criteria<T> criteria,  ReadStrategy hints) {
+		public DBStorageQuery(EntityCriteria<T> criteria,  ReadStrategy hints) {
 			super();
 			this.criteria = criteria;
 			this.hints = hints;
@@ -134,7 +135,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 		@Override
 		public Query<T> limit(int startAt, int maxCount) {
-			Criteria<T> rangeCriteria = this.criteria.duplicate();
+			EntityCriteria<T> rangeCriteria = this.criteria.duplicate();
 			rangeCriteria.setRange(startAt, maxCount);
 
 			return new DBStorageQuery<T>( rangeCriteria, hints);
@@ -142,7 +143,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 	} 
 
-	<T> long countByCriteria(Criteria<T> criteria ){
+	<T> long countByCriteria(EntityCriteria<T> criteria ){
 
 		Connection con = null;
 		try {
@@ -180,7 +181,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		}
 	} 
 
-	<T> Collection<T> findByCriteria(Criteria<T> criteria,ReadStrategy hints){
+	<T> Collection<T> findByCriteria(EntityCriteria<T> criteria,ReadStrategy hints){
 
 		StoreQuerySession session = StoreQuerySession.getInstance(this);
 
@@ -268,6 +269,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 		}
 	}
 
+	
 	protected Storable copyStorable(Storable from, Storable to,StorableEntityModel model) {	
 		StoreQuerySession session = StoreQuerySession.getInstance(this);
 		try{
@@ -281,17 +283,12 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria, ReadStrategy strategy) {
 
 		StorableEntityModel model = this.reader().read(criteria.getTargetClass());
 		return new DBStorageQuery<T>(dialect.mergeCriteria(criteria,model ),strategy);
 
 	}
-
-
-
-
-
 
 	@Override
 	public void insert(Collection<Storable> collection) {
@@ -317,7 +314,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 				keys.add(s.getIdentity());
 			}
 
-			Criteria<?> c = CriteriaBuilder.search(s.getPersistableClass())
+			EntityCriteria<?> c = EntityCriteriaBuilder.search(s.getPersistableClass())
 			.and(model.identityFieldModel().getHardName().getName()).in(keys)
 			.all();
 
@@ -326,7 +323,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 	}
 
 	@Override
-	public void remove(Criteria<?> criteria) {
+	public void remove(EntityCriteria<?> criteria) {
 		StorableEntityModel model = reader().read(criteria.getTargetClass());
 		if (model != null){
 			executeCommand(dialect.createDeleteCommand(criteria, reader()) );
@@ -490,6 +487,28 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 	protected DataSource getDataSource() {
 		return this.datasource;
+	}
+
+	Object readFieldValue(Storable s, StorableFieldModel fm) {
+		if (fm.getDataType().isToOneReference()){
+			Object referenced = s.getFieldValue(fm);
+			
+			Storable ref = this.getStorableStateManager().merge(referenced);
+			
+			ReferenceStorableDataTypeModel mo =  (ReferenceStorableDataTypeModel)fm.getDataTypeModel();
+			
+			EntityFieldModel efm = ref.getEntityModel().fieldModel(
+					QualifiedName.qualify(
+							ref.getPersistableClass().getSimpleName().toLowerCase(),
+							mo.getTargetFieldName()
+						)
+					);
+			
+			return ref.getFieldValue(efm);
+			
+		} else {
+			return s.getFieldValue(fm);
+		}
 	}
 
 }

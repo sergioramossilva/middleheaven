@@ -10,15 +10,15 @@ import org.junit.Test;
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.StandaloneBootstrap;
 import org.middleheaven.core.bootstrap.client.AbstractStandaloneContainer;
-import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
+import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.io.repository.ManagedFiles;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.quantity.time.CalendarDate;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.inmemory.InMemoryStorage;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 import org.middleheaven.util.identity.Identity;
 
 
@@ -50,7 +50,7 @@ public class NaiveStorageManagerTeste {
 	@Test
 	public void testInsert(){
 		
-		Query<TestSubject> q = manager.createQuery(CriteriaBuilder.search(TestSubject.class).all());
+		Query<TestSubject> q = manager.createQuery(EntityCriteriaBuilder.search(TestSubject.class).all());
 		
 		subj = manager.store(subj);
 		// verify correct types

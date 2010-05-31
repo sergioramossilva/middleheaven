@@ -5,17 +5,17 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
-import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
+import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFiles;
 import org.middleheaven.sequence.service.FileSequenceStorageActivator;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.testdomain.TestSubject;
 import org.middleheaven.storage.xml.XMLStorage;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 
 
 public class XMLStorageTest extends MiddleHeavenTestCase{
@@ -41,7 +41,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 	
 	@Test 
 	public void test(){
-		Query<TestSubject> q = ds.createQuery(CriteriaBuilder.search(TestSubject.class).all());
+		Query<TestSubject> q = ds.createQuery(EntityCriteriaBuilder.search(TestSubject.class).all());
 		
 		assertTrue(q.count()>1);
 		
@@ -50,8 +50,8 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		assertTrue(a.getName().equals("Ana"));
 		assertTrue(a.getBirthdate()!=null);
 		
-		q = ds.createQuery(CriteriaBuilder.search(TestSubject.class)
-				.and("name").not().startsWith("Jo�o")
+		q = ds.createQuery(EntityCriteriaBuilder.search(TestSubject.class)
+				.and("name").not().startsWith("João")
 				.and("activo").not().eq(false)
 				.all()
 		);
@@ -63,7 +63,7 @@ public class XMLStorageTest extends MiddleHeavenTestCase{
 		assertFalse(a==b);
 		assertTrue(b.getName().equals("Ana"));
 		
-		q = ds.createQuery(CriteriaBuilder.search(TestSubject.class)
+		q = ds.createQuery(EntityCriteriaBuilder.search(TestSubject.class)
 				.and("name").eq("Ana")
 				.and("activo").eq(false)
 				.all()

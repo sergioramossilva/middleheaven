@@ -22,12 +22,13 @@ import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.assembly.AssemblyContext;
 import org.middleheaven.storage.assembly.AssemblyLineService;
 import org.middleheaven.storage.assembly.SimpleAssemblyLine;
-import org.middleheaven.storage.criteria.AbstractCriteria;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.Criterion;
-import org.middleheaven.storage.criteria.FieldCriterion;
-import org.middleheaven.storage.criteria.JunctionCriterion;
-import org.middleheaven.storage.criteria.LogicCriterion;
+import org.middleheaven.util.criteria.Criteria;
+import org.middleheaven.util.criteria.Criterion;
+import org.middleheaven.util.criteria.FieldCriterion;
+import org.middleheaven.util.criteria.LogicCriterion;
+import org.middleheaven.util.criteria.entity.AbstractEntityCriteria;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
+import org.middleheaven.util.criteria.entity.JunctionCriterion;
 
 public abstract class DataBaseDialect implements AliasResolver{
 
@@ -117,7 +118,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return new StorageException(e.getMessage());
 	}
 
-	public final <T> RetriveDataBaseCommand createSelectCommand (Criteria<T> criteria, StorableModelReader reader){
+	public final <T> RetriveDataBaseCommand createSelectCommand (EntityCriteria<T> criteria, StorableModelReader reader){
 
 		return newCriteriaInterpreter(mergeCriteria(criteria,reader.read(criteria.getTargetClass())),reader).translateRetrive();
 	}
@@ -188,20 +189,20 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
 
-	protected <T> Criteria<T> mergeCriteria(Criteria<T> criteria, StorableEntityModel model){
+	protected <T> EntityCriteria<T> mergeCriteria(EntityCriteria<T> criteria, StorableEntityModel model){
 		if (criteria instanceof DBCriteria){
 			final DBCriteria<T> dbCriteria = (DBCriteria<T>)criteria;
 			return dbCriteria;
 		}
-		DBCriteria<T> merged = new DBCriteria<T>((AbstractCriteria<T>)criteria);
+		DBCriteria<T> merged = new DBCriteria<T>((AbstractEntityCriteria<T>)criteria);
 		merged.restrictAll(model);
 		return merged;
 
 	}
 
-	private class DBCriteria<T> extends AbstractCriteria<T>{
+	private class DBCriteria<T> extends AbstractEntityCriteria<T>{
 
-		public DBCriteria(AbstractCriteria<T> other) {
+		public DBCriteria(AbstractEntityCriteria<T> other) {
 			super(other);
 		}
 
@@ -235,12 +236,12 @@ public abstract class DataBaseDialect implements AliasResolver{
 		}
 
 		@Override
-		public Criteria<T> duplicate() {
+		public EntityCriteria<T> duplicate() {
 			return new DBCriteria<T>(this);
 		}
 	}
 
-	public <T> DataBaseCommand createDeleteCommand(Criteria<T> criteria, StorableModelReader reader ){
+	public <T> DataBaseCommand createDeleteCommand(EntityCriteria<T> criteria, StorableModelReader reader ){
 
 		return newCriteriaInterpreter(mergeCriteria(criteria,reader.read(criteria.getTargetClass())), reader).translateDelete();
 
@@ -274,7 +275,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return new SQLStoreCollectionCommand(this,data,sql.toString(),fields);
 	}
 
-	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,StorableModelReader reader) {
+	public CriteriaInterpreter newCriteriaInterpreter(EntityCriteria<?> criteria,StorableModelReader reader) {
 		return new CriteriaInterpreter(this, criteria, reader);
 
 	}

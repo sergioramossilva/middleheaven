@@ -26,14 +26,15 @@ public class IteratorsIterator<T> implements Iterator<T>{
 			return false;
 		}
 		
-		do{
+		while (index < iterators.size()){
 			
 			if(iterators.get(index).hasNext()){
 				return true;
 			}
 			index++;
-		} while (index < iterators.size());
-
+		};
+		
+		index=0;
 		return false;
 	}
 

@@ -45,7 +45,8 @@ public interface Enumerable<T> extends Iterable<T>, Walkable<T>{
 	public EnhancedCollection<T> findAll (Classifier<Boolean,T> classifier);
 	
 	/**
-	 * collect the return value of calling a classifier on each item in a collection
+	 * Collect the return value of calling a classifier on each item in a collection into a new collection.
+	 * If the classifier returns {@code null} for a value, it will not be added to the result collection
 	 * @param classifier
 	 * @return
 	 */

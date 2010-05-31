@@ -25,6 +25,22 @@ public class TagContext extends ServletWebContext {
 		this.pageContex = pageContext;
 	}
 	
+	public <T> T getAttribute(ContextScope scope, String name, Class<T> type) {
+		if(ContextScope.RENDERING.equals(scope)){
+			return type.cast(pageContex.getAttribute(name));
+		} else {
+			return super.getAttribute(scope, name, type);
+		}
+	}
+	
+	public void setAttribute(ContextScope scope , String name, Object value){
+		if(ContextScope.RENDERING.equals(scope)){
+			pageContex.setAttribute(name, value);
+		} else {
+			super.setAttribute(scope, name, value);
+		}
+	}
+	
 	private static HttpCultureResolver resolveHttpCultureResolveService (PageContext pageContext){
 		
 		return (HttpCultureResolver)pageContext.getRequest().getAttribute("__" + HttpCultureResolver.class.getName());

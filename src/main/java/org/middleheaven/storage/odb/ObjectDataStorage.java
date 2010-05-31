@@ -10,24 +10,20 @@ import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ObjectInstrospector;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.WrapperProxy;
-import org.middleheaven.domain.EntityModel;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.storage.AbstractDataStorage;
-import org.middleheaven.storage.DecoratorStorableEntityModel;
 import org.middleheaven.storage.ExecutableQuery;
 import org.middleheaven.storage.Query;
 import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.SimpleExecutableQuery;
 import org.middleheaven.storage.Storable;
-import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
-import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaFilter;
+import org.middleheaven.util.criteria.entity.CriteriaFilter;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.identity.Identity;
 import org.neodatis.odb.ODB;
 import org.neodatis.odb.ODBFactory;
@@ -36,6 +32,9 @@ import org.neodatis.odb.Objects;
 import org.neodatis.odb.core.query.IQuery;
 import org.neodatis.odb.core.query.nq.NativeQuery;
 
+/**
+ * TODO In construction
+ */
 public class ObjectDataStorage extends AbstractDataStorage {
 
 	private ManagedFile dataFile;
@@ -149,7 +148,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria, ReadStrategy strategy) {
 		return new SimpleExecutableQuery<T>(criteria,null,neoDatisQueryExecuter);
 	}
 	
@@ -157,7 +156,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 
 		@Override
 		public <T> Collection<T> execute(final ExecutableQuery<T> query) {
-			final Criteria<T> criteria = query.getCriteria();
+			final EntityCriteria<T> criteria = query.getCriteria();
 			final CriteriaFilter<T> filter = new CriteriaFilter<T>(criteria,query.getModel(), ObjectDataStorage.this);
 			
 			ODB odb = getDataBase();
@@ -245,7 +244,7 @@ public class ObjectDataStorage extends AbstractDataStorage {
 	}
 
 	@Override
-	public void remove(Criteria<?> criteria) {
+	public void remove(EntityCriteria<?> criteria) {
 		// TODO implement StoreKeeper.remove
 
 	}

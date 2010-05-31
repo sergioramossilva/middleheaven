@@ -1,27 +1,37 @@
 package org.middleheaven.validation;
 
+
 public class PropertyInvalidationReason implements InvalidationReason {
 
-	public PropertyInvalidationReason(String name, ValidationResult propertyResult) {
-		// TODO Auto-generated constructor stub
+	String message;
+	Object[] params;
+	InvalidationSeverity severity;
+	
+	public PropertyInvalidationReason(String name, InvalidationReason reason) {
+
+		message = reason.getMessage();
+		
+		params = new Object[reason.getParams().length + 1];
+		params[0] = reason.getParams()[0];
+		params[1] = name;
+		System.arraycopy(reason.getParams(), 1, params, 2, reason.getParams().length-1);
+
+		severity = reason.getSeverity();
 	}
 
 	@Override
 	public String getMessage() {
-		// TODO implement InvalidationReason.getMessage
-		return null;
+		return message;
 	}
 
 	@Override
 	public Object[] getParams() {
-		// TODO implement InvalidationReason.getParams
-		return null;
+		return params;
 	}
 
 	@Override
 	public InvalidationSeverity getSeverity() {
-		// TODO implement InvalidationReason.getSeverity
-		return null;
+		return severity;
 	}
 
 }

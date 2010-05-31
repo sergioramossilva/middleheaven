@@ -6,13 +6,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.middleheaven.ui.ContextScope;
+import org.middleheaven.ui.web.Browser;
+import org.middleheaven.ui.web.BrowserClientModel;
 import org.middleheaven.web.processing.HttpProcessException;
 import org.middleheaven.web.processing.Outcome;
 import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
 import org.middleheaven.web.processing.action.RequestResponseWebContext;
 
-public class DefaultJspRenderingProcessorResolver implements RenderingProcessorResolver {
+public class DefaultJspRenderingProcessorResolver extends AbstractJspProcessorResolver {
 
 	DefaultJspRendingProcessor processor = new DefaultJspRendingProcessor();
 	private String path;
@@ -51,9 +54,12 @@ public class DefaultJspRenderingProcessorResolver implements RenderingProcessorR
 		public void process(RequestResponseWebContext context, Outcome outcome,String contentType)
 		throws HttpProcessException {
 
-
+			injectBrowserClient(context);
+			
 			HttpServletResponse response = context.getResponse();
 			HttpServletRequest request = context.getRequest();
+	
+		
 
 			try{
 				request.getRequestDispatcher(realPath(outcome.getUrl())).include(request, response);
@@ -64,6 +70,7 @@ public class DefaultJspRenderingProcessorResolver implements RenderingProcessorR
 				throw new HttpProcessServletException(e);
 			}
 		}
+
 
 
 	}

@@ -62,7 +62,11 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 		if (getRequest() instanceof HttpServletRequest){
 			return HttpProcessingUtils.parse((HttpServletRequest)getRequest());
 		} else {
-			return new HttpUserAgent(BrowserInfo.unkownBrowser(Culture.valueOf(getRequest().getLocale())),OperatingSystemInfo.unkown());
+			// it is not a HttpRequest, create unkown info
+			return new HttpUserAgent(BrowserInfo.unkownBrowser(
+					Collections.singletonList(Culture.valueOf(getRequest().getLocale()))),
+					OperatingSystemInfo.unkown()
+			);
 		}
 		
 	}
@@ -104,7 +108,7 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 			}
 			
 			@Override
-			public void setName(String newName) {
+			public void renameTo(String newName) {
 				this.name = newName;
 				if (getResponse() instanceof HttpServletResponse){
 					((HttpServletResponse)getResponse()).setHeader("Content-disposition", "attachment; filename=".concat(newName));

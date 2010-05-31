@@ -19,8 +19,6 @@ import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.sequence.service.FileSequenceStorageActivator;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.db.DataBaseStorage;
 import org.middleheaven.storage.db.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.db.datasource.EmbeddedDSProvider;
@@ -28,6 +26,9 @@ import org.middleheaven.storage.testdomain.TestSubject;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 import org.middleheaven.transactions.Transaction;
 import org.middleheaven.transactions.TransactionService;
+import org.middleheaven.util.criteria.Criteria;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 
 
 public class DataStorageTest extends MiddleHeavenTestCase {
@@ -86,7 +87,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		});
 
-		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
+		EntityCriteria<TestSubject> all = EntityCriteriaBuilder.search(TestSubject.class).all();
 		queryAll = service.getStore().createQuery(all);
 
 	}
@@ -139,7 +140,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		assertStoreHasElements(1);
 
-		to = service.getStore().createQuery(CriteriaBuilder.search(TestSubject.class).all()).fetchFirst();
+		to = service.getStore().createQuery(EntityCriteriaBuilder.search(TestSubject.class).all()).fetchFirst();
 
 		assertTrue(to.getNumber() == 10);
 		assertTrue(to.getBirthdate().equals(birthdate));
@@ -170,7 +171,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 	}
 
 	private void clean(){
-		final Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
+		final Criteria<TestSubject> all = EntityCriteriaBuilder.search(TestSubject.class).all();
 
 		Transaction t = transactionService.getTransaction();
 		try {
@@ -274,7 +275,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		assertStoreHasElements(3);
 
 		// order by name
-		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class)
+		EntityCriteria<TestSubject> some = EntityCriteriaBuilder.search(TestSubject.class)
 		.orderBy("name").asc()
 		.all();
 
@@ -289,7 +290,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 			assertEquals(names[i],objects.get(i).getName());
 		}
 
-		some = CriteriaBuilder.search(TestSubject.class)
+		some = EntityCriteriaBuilder.search(TestSubject.class)
 		.orderBy("name").desc()
 		.all();
 
@@ -332,7 +333,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		assertStoreHasElements(3);
 
 		// select all not named Name C
-		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class)
+		EntityCriteria<TestSubject> some = EntityCriteriaBuilder.search(TestSubject.class)
 		.and("name").not().eq("Name A")
 		.orderBy("name").asc()
 		.all();
@@ -341,7 +342,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 
 		assertEquals(2L, q.count());
 
-		some = CriteriaBuilder.search(TestSubject.class)
+		some = EntityCriteriaBuilder.search(TestSubject.class)
 		.and("name").eq("Name A")
 		.orderBy("name").asc()
 		.all();
@@ -380,7 +381,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		toc.setName("Name C");
 		toc = storeIt(toc);
 
-		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class).limit(2).all();
+		EntityCriteria<TestSubject> some = EntityCriteriaBuilder.search(TestSubject.class).limit(2).all();
 
 		Query<TestSubject> q = service.getStore().createQuery(some);
 
@@ -415,7 +416,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 		toc.setName("Name C");
 		toc = storeIt(toc);
 
-		Criteria<TestSubject> some = CriteriaBuilder.search(TestSubject.class).limit(3).all();
+		EntityCriteria<TestSubject> some = EntityCriteriaBuilder.search(TestSubject.class).limit(3).all();
 
 		some = some.duplicate()
 		.setRange(2);
@@ -429,7 +430,7 @@ public class DataStorageTest extends MiddleHeavenTestCase {
 	@Test
 	public void testQueryReuse(){
 
-		Criteria<TestSubject> all = CriteriaBuilder.search(TestSubject.class).all();
+		EntityCriteria<TestSubject> all = EntityCriteriaBuilder.search(TestSubject.class).all();
 		Query<TestSubject> q = service.getStore().createQuery(all);
 
 		long count = q.count(); 

@@ -15,10 +15,10 @@ import org.middleheaven.storage.QueryExecuter;
 import org.middleheaven.storage.ReadStrategy;
 import org.middleheaven.storage.SimpleExecutableQuery;
 import org.middleheaven.storage.Storable;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaFilter;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.TransformedCollection;
+import org.middleheaven.util.criteria.entity.CriteriaFilter;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentitySequence;
 
@@ -80,7 +80,7 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 
 		@Override
 		public <T> Collection<T> execute(final ExecutableQuery<T> query) {
-			Criteria<T> criteria = query.getCriteria();
+			EntityCriteria<T> criteria = query.getCriteria();
 			Collection<Storable> all = getBulkData(criteria.getTargetClass().getName());
 			if (all.isEmpty()){
 				return Collections.emptySet();
@@ -102,7 +102,7 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 	};
 
 	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria, ReadStrategy strategy) {
 		return new SimpleExecutableQuery<T>(criteria, null, queryExecuter);
 	}
 
@@ -133,7 +133,7 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 
 	@SuppressWarnings("unchecked") // all objects in collection are Storable
 	@Override
-	public void remove(Criteria<?> criteria) {
+	public void remove(EntityCriteria<?> criteria) {
 		Query all = this.createQuery(criteria, null);
 
 		this.remove(all.fetchAll());

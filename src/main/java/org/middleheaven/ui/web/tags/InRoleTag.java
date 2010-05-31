@@ -63,4 +63,9 @@ public class InRoleTag extends AbstractBodyTagSupport{
 		}
 	}
 
+	@Override
+	public void releaseState() {
+		// no-op
+	}
+
 }

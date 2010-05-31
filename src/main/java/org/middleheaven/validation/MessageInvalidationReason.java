@@ -1,5 +1,7 @@
 package org.middleheaven.validation;
 
+import org.middleheaven.util.collections.CollectionUtils;
+
 public class MessageInvalidationReason implements InvalidationReason{
 
 	
@@ -7,32 +9,32 @@ public class MessageInvalidationReason implements InvalidationReason{
 	private String message;
 	private Object[] params;
 	
-	public static MessageInvalidationReason invalid(){
-		return new MessageInvalidationReason(InvalidationSeverity.ERROR, "invalid");
+	public static MessageInvalidationReason invalid(Object validatedObject){
+		return new MessageInvalidationReason(InvalidationSeverity.ERROR, "invalid",validatedObject);
 	}
 	
-	public static MessageInvalidationReason error(String message){
-		return new MessageInvalidationReason(InvalidationSeverity.ERROR, message);
+	public static MessageInvalidationReason error(Object validatedObject,String message){
+		return new MessageInvalidationReason(InvalidationSeverity.ERROR, message,validatedObject);
 	}
 	
-	public static MessageInvalidationReason warn(String message){
-		return new MessageInvalidationReason(InvalidationSeverity.ERROR, message);
+	public static MessageInvalidationReason warn(Object validatedObject,String message){
+		return new MessageInvalidationReason(InvalidationSeverity.ERROR, message,validatedObject);
 	}
 	
-	public static MessageInvalidationReason error(String message, Object ... params){
-		return new MessageInvalidationReason(InvalidationSeverity.ERROR, message, params);
+	public static MessageInvalidationReason error(Object validatedObject,String message, Object ... params){
+		return new MessageInvalidationReason(InvalidationSeverity.ERROR, message, validatedObject,params);
 	}
 	
-	public static MessageInvalidationReason warn(String message, Object ... params){
-		return new MessageInvalidationReason(InvalidationSeverity.ERROR, message, params);
+	public static MessageInvalidationReason warn(Object validatedObject,String message, Object ... params){
+		return new MessageInvalidationReason(InvalidationSeverity.ERROR, message,validatedObject, params);
 	}
 	
 
-	private MessageInvalidationReason(InvalidationSeverity severity, String message, Object ... params) {
+	private MessageInvalidationReason(InvalidationSeverity severity, String message,Object validatedObject, Object ... params) {
 		super();
 		this.severity = severity;
 		this.message = message;
-		this.params = params;
+		this.params =CollectionUtils.addToArray(new Object[]{validatedObject}, params);
 	}
 
 	@Override

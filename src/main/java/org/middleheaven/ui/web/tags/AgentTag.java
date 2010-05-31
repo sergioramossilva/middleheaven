@@ -47,7 +47,13 @@ public class AgentTag extends AbstractBodyTagSupport{
 		if (query!=null){
 			write(query);
 		}
-		query =null;
+		releaseState();
 		return EVAL_PAGE;
+	}
+
+
+	@Override
+	public void releaseState() {
+		query =null;
 	}
 }

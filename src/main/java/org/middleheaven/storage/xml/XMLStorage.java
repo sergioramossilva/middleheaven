@@ -25,8 +25,8 @@ import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.criteria.Criteria;
 import org.middleheaven.storage.db.StoreQuerySession;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.identity.Identity;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -107,14 +107,6 @@ public class XMLStorage extends AbstractSequencialIdentityStorage {
 	
 
 
-	
-	@Override
-	public <T> Query<T> createQuery(Criteria<T> criteria, ReadStrategy strategy) {
-		
-		final StorableEntityModel model = reader().read(criteria.getTargetClass());
-		return new SimpleExecutableQuery<T>(criteria,model, this.xmlQueryExecuter);
-
-	}
 
 	@Override
 	public void insert(Collection<Storable> obj) {
@@ -128,11 +120,6 @@ public class XMLStorage extends AbstractSequencialIdentityStorage {
 
 	}
 
-	@Override
-	public void remove(Criteria<?> criteria) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void update(Collection<Storable> obj) {
@@ -144,6 +131,19 @@ public class XMLStorage extends AbstractSequencialIdentityStorage {
 	public <I extends Identity> Sequence<I> getSequence(Class<?> type) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public <T> Query<T> createQuery(EntityCriteria<T> criteria,ReadStrategy strategy) {
+		final StorableEntityModel model = reader().read(criteria.getTargetClass());
+		return new SimpleExecutableQuery<T>(criteria,model, this.xmlQueryExecuter);
+
+	}
+
+	@Override
+	public void remove(EntityCriteria<?> criteria) {
+		// TODO implement DataStorage.remove
+		
 	}
 
 

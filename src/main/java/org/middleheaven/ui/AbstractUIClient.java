@@ -1,7 +1,6 @@
 package org.middleheaven.ui;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +15,7 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	
 	private UIClientModel uiModel;
 
+	public AbstractUIClient(){}
 	
 	@Override
 	public void setUIModel(UIModel model) {
@@ -139,7 +139,7 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	
 	@Override
 	public void setSize(UIDimension size) {
-		throw new UnsupportedOperationException("Cannto change " + this.getClass().getSimpleName() + " size");
+		throw new UnsupportedOperationException("Can not change " + this.getClass().getSimpleName() + " size");
 	}
 	
 	@Override

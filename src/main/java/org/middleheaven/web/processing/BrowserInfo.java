@@ -1,5 +1,7 @@
 package org.middleheaven.web.processing;
 
+import java.util.List;
+
 import org.middleheaven.global.Culture;
 import org.middleheaven.util.Version;
 
@@ -19,24 +21,44 @@ public class BrowserInfo {
 	String name;
 	String baseEngine;
 	Version version;
-	private Culture culture;
+	boolean bot;
+	private boolean isUnkown;
+	private List<Culture> acceptableCultures;
 	
-	public static BrowserInfo unkownBrowser(Culture culture){
-		return new BrowserInfo(culture,"","",Version.from(0, 0, 0));
+	public static BrowserInfo unkownBrowser(List<Culture> acceptableCultures){
+		return new BrowserInfo(acceptableCultures,"","",Version.unknown(),false, true);
 	}
 	
-	public static BrowserInfo browser(Culture culture, String name, String baseEngine, Version version){
-		return new BrowserInfo(culture,name,baseEngine,version);
+	/**
+	 * 
+	 * @param acceptableCultures acceptable display cultures in preference order
+	 * @param name
+	 * @param baseEngine
+	 * @param version
+	 * @return
+	 */
+	public static BrowserInfo browser(List<Culture> acceptableCultures, String name, String baseEngine, Version version){
+		return new BrowserInfo(acceptableCultures,name,baseEngine,version, false, false);
 	}
 	
-	private BrowserInfo(Culture culture , String name, String baseEngine, Version version) {
+	private BrowserInfo(List<Culture> acceptableCultures , String name, String baseEngine, Version version, boolean isBot, boolean isUnkown) {
 		super();
 		this.name = name;
 		this.baseEngine = baseEngine;
 		this.version = version;
-		this.culture = culture;
+		this.acceptableCultures = acceptableCultures;
+		this.bot = isBot;
+		this.isUnkown =isUnkown;
 	}
 
+	public boolean isUnkown(){
+		return isUnkown;
+	}
+	
+	public boolean isBot(){
+		return bot;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -49,14 +71,10 @@ public class BrowserInfo {
 		return version;
 	}
 	
-	public Culture getCulture(){
-		return this.culture;
+	public List<Culture> getCultures(){
+		return this.acceptableCultures;
 	}
 
-	public boolean isUnkown(){
-		return this.name.isEmpty();	
-	}
-	
 	public boolean is(CommonBrowsers browser){
 		return this.name.equalsIgnoreCase(browser.name());
 	}

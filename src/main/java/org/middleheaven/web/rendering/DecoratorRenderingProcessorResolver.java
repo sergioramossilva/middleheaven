@@ -19,7 +19,7 @@ import org.middleheaven.web.processing.action.HttpProcessIOException;
 import org.middleheaven.web.processing.action.HttpProcessServletException;
 import org.middleheaven.web.processing.action.RequestResponseWebContext;
 
-public class DecoratorRenderingProcessorResolver implements RenderingProcessorResolver {
+public class DecoratorRenderingProcessorResolver extends AbstractJspProcessorResolver  {
 
 	private final DecoratorRendingProcessor processor = new DecoratorRendingProcessor();
 	private final Map<String, Decorator> decorators = new LinkedHashMap<String,Decorator>();
@@ -83,7 +83,8 @@ public class DecoratorRenderingProcessorResolver implements RenderingProcessorRe
 		public void process(RequestResponseWebContext context, Outcome outcome, String contentType)
 		throws HttpProcessException {
 
-
+			injectBrowserClient(context);
+			
 			HttpServletRequest  request  = context.getRequest();
 			// force creation of the session now because Tomcat  had problems with
 			// creating sessions after the response had been committed
@@ -91,6 +92,7 @@ public class DecoratorRenderingProcessorResolver implements RenderingProcessorRe
 			request.getSession(true);
 			//			}
 	
+
 			HttpServletResponse  response = context.getResponse();
 			try{
 				if (request.getAttribute(FILTER_APPLIED) != null /*|| factory.isPathExcluded(extractRequestPath(request))*/) {

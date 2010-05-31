@@ -31,7 +31,7 @@ public class InvalidationReasonsListTag extends AbstractBodyTagSupport {
 	}
 
 	public void setReasons(Iterable<InvalidationReason> result){
-		this.iterator = result.iterator();
+		this.iterator = result== null ? null :result.iterator();
 	}
 
 	public void setSeverity(String severity){
@@ -40,15 +40,20 @@ public class InvalidationReasonsListTag extends AbstractBodyTagSupport {
 
 	public int doStartTag() throws JspException{
 		if (iterator==null){
-			if (severity==null){
-				this.iterator = result.iterator();
-			} else {
-				this.iterator = result.iterator(severity);
+			if (result!=null){
+				if (severity==null){
+					this.iterator = result.iterator();
+				} else {
+					this.iterator = result.iterator(severity);
+				}
+				
+				if (iterator.hasNext()){
+					return EVAL_BODY_BUFFERED;
+				}
 			}
 		}
-		if (iterator.hasNext()){
-			return EVAL_BODY_BUFFERED;
-		}
+		
+		releaseState();
 		return SKIP_BODY;
 	}
 
@@ -76,11 +81,15 @@ public class InvalidationReasonsListTag extends AbstractBodyTagSupport {
 
 	}
 
-	public int doEndTag() throws JspTagException {
+	public int doEndTag() throws JspException {
+		releaseState();
 		return EVAL_PAGE;
 	}
-
-	public void release(){
+	
+	@Override
+	public void releaseState() {
 		this.iterator = null;
+		this.result = null;
 	}
+
 }

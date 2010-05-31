@@ -56,6 +56,8 @@ public class MessageLocalizationTag extends AbstractTagSupport {
 		} else {
 			write(localize(new GlobalLabel( key,paramsObj),ContextScope.valueOf(scope)));
 		}
+		
+		this.params.clear();
 
 		return EVAL_PAGE;
 	}

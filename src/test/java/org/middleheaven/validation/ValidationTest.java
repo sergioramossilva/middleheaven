@@ -11,7 +11,6 @@ import org.middleheaven.global.gov.us.USSocialSecurityNumberValidator;
 import org.middleheaven.validation.DefaultValidationResult;
 import org.middleheaven.validation.LogicValidator;
 
-
 public class ValidationTest {
 
 	@Test

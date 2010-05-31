@@ -18,10 +18,12 @@ import org.middleheaven.core.reflection.PropertyAccessor;
 public class BeanValidator<T> extends CompositeValidator<T> {
 
 	
+	@SuppressWarnings("unchecked")
 	private Map<String , CompositeValidator> propertyValidators = new HashMap<String , CompositeValidator>(); 
 	
+	
 	public <E> BeanValidator<T> addPropertyValidator(String propertyName, Validator<E> validator, Validator<E> ... validators){
-		CompositeValidator<E> comp = propertyValidators.get(propertyName.toLowerCase());
+		@SuppressWarnings("unchecked") CompositeValidator<E> comp = propertyValidators.get(propertyName.toLowerCase());
 		
 		if (comp==null){
 			
@@ -48,6 +50,7 @@ public class BeanValidator<T> extends CompositeValidator<T> {
 		return this;
 	}
 	
+	
 	@Override
 	public final ValidationResult validate(T object) {
 		DefaultValidationResult result = new DefaultValidationResult();
@@ -56,12 +59,17 @@ public class BeanValidator<T> extends CompositeValidator<T> {
 		
 		for (Iterator<PropertyAccessor> it =  properties.iterator(); result.isStrictlyValid() && it.hasNext();){
 			final PropertyAccessor pa = it.next();
-			Validator validator = propertyValidators.get(pa.getName().toLowerCase());
 			
-			ValidationResult propertyResult = validator.validate(pa.getValue(object));
+			@SuppressWarnings("unchecked") Validator<Object> validator = propertyValidators.get(pa.getName().toLowerCase());
 			
-			if (!propertyResult.isStrictlyValid()){
-				result.add(new PropertyInvalidationReason(pa.getName(), propertyResult));
+			if(validator != null){
+				ValidationResult propertyResult = validator.validate(pa.getValue(object));
+				
+				if (!propertyResult.isStrictlyValid()){
+					for (InvalidationReason r : propertyResult){
+						result.add(new PropertyInvalidationReason(pa.getName(), r));
+					}
+				}
 			}
 		}
 		

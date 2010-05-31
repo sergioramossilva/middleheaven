@@ -42,4 +42,10 @@ public class SelectTag extends AbstractBodyTagSupport{
 		query =null;
 		return EVAL_PAGE;
 	}
+
+	@Override
+	public void releaseState() {
+		// TODO implement AbstractBodyTagSupport.releaseState
+		
+	}
 }

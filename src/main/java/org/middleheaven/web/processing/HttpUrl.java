@@ -29,6 +29,10 @@ public class HttpUrl {
 		return UrlStringUtils.filename(url.toString(), excludeExtention);
 	}
 	
+	/**
+	 * 
+	 * @return the path with the context removed.
+	 */
 	public String getContexlessPath(){
 		return UrlStringUtils.path(url.toString(), context);
 	}

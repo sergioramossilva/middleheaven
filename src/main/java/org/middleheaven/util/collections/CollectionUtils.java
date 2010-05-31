@@ -254,7 +254,7 @@ public class CollectionUtils {
 		
 		return (T[]) newArray;
 	}
-	
+
 	public static <T> T[] addToArray(T[] array,T element , T ... elements) {
 		
 		Class<?> componentType = array.getClass().getComponentType();

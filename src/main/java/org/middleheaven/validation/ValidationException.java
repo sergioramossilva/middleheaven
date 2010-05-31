@@ -10,7 +10,7 @@ public class ValidationException extends RuntimeException {
 		this.context = context;
 	}
 
-	public ValidationResult getContext() {
+	public ValidationResult getResult() {
 		return context;
 	}
 	

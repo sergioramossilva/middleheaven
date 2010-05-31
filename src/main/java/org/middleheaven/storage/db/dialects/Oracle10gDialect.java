@@ -5,7 +5,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -18,16 +17,12 @@ import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriterionOperator;
 import org.middleheaven.storage.db.Clause;
 import org.middleheaven.storage.db.ColumnModel;
 import org.middleheaven.storage.db.ColumnValueHolder;
 import org.middleheaven.storage.db.CriteriaInterpreter;
 import org.middleheaven.storage.db.DataBaseModel;
 import org.middleheaven.storage.db.DataBaseObjectAlreadyExistsException;
-import org.middleheaven.storage.db.DataBaseObjectModel;
-import org.middleheaven.storage.db.DataBaseObjectType;
 import org.middleheaven.storage.db.EditionDataBaseCommand;
 import org.middleheaven.storage.db.RetriveDataBaseCommand;
 import org.middleheaven.storage.db.SQLEditCommand;
@@ -35,6 +30,8 @@ import org.middleheaven.storage.db.SQLRetriveCommand;
 import org.middleheaven.storage.db.SequenceModel;
 import org.middleheaven.storage.db.SequenceSupportedDBDialect;
 import org.middleheaven.storage.db.TableModel;
+import org.middleheaven.util.criteria.CriterionOperator;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
 
 public class Oracle10gDialect extends SequenceSupportedDBDialect{
 
@@ -43,7 +40,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 	}
 
 	@Override
-	public CriteriaInterpreter newCriteriaInterpreter(Criteria<?> criteria,
+	public CriteriaInterpreter newCriteriaInterpreter(EntityCriteria<?> criteria,
 			StorableModelReader reader ) {
 		return new OracleCriteriaInterpreter(criteria, reader);
 
@@ -187,7 +184,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 
 	private  class OracleCriteriaInterpreter extends CriteriaInterpreter{
 
-		public OracleCriteriaInterpreter(Criteria<?> criteria, StorableModelReader reader) {
+		public OracleCriteriaInterpreter(EntityCriteria<?> criteria, StorableModelReader reader) {
 			super(Oracle10gDialect.this, criteria, reader);
 		}
 

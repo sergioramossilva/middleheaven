@@ -6,15 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 
 import org.junit.Test;
-import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.domain.DomainClasses;
 import org.middleheaven.domain.DomainModel;
+import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFiles;
-import org.middleheaven.storage.criteria.Criteria;
-import org.middleheaven.storage.criteria.CriteriaBuilder;
 import org.middleheaven.storage.odb.ObjectDataStorage;
 import org.middleheaven.storage.testdomain.TestSubject;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
+import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 
 
 public class TestODB {
@@ -32,7 +32,7 @@ public class TestODB {
 		EntityStore ds = new SessionAwareEntityStore(new StorableStateManager(keeper,model));
 		
 		// read all
-		Criteria<TestSubject> c = CriteriaBuilder.search(TestSubject.class).all();
+		EntityCriteria<TestSubject> c = EntityCriteriaBuilder.search(TestSubject.class).all();
 		
 		Query<TestSubject> q=  ds.createQuery(c);
 		

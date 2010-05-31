@@ -28,7 +28,7 @@ public class VersionReader {
                 }
             }
         }
-        return new Version();
+        return Version.unknown();
 
     }
 
@@ -52,7 +52,7 @@ public class VersionReader {
 
     public static Version fromString(String versionStr){
         String[] parts =StringUtils.split(versionStr.trim(),".");
-        Version version = new Version();
+        Version version = new Version(false);
         try{
             if (parts.length>0){
 
@@ -94,7 +94,7 @@ public class VersionReader {
 
     public static Version fromProperties(Properties p) throws IOException{
 
-        Version version = new Version();
+        Version version = new Version(false);
         try{
             version.setMajor(Integer.parseInt(p.getProperty("version.major")));
         } catch (NumberFormatException e){}

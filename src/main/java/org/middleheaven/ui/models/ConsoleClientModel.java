@@ -7,7 +7,6 @@ package org.middleheaven.ui.models;
  * 
  * Concrete console clients should implement the <code>main</code> method
  *  
- * @author Sergio Taborda
  */
 public abstract class ConsoleClientModel extends AbstractUIClientModel {
 
