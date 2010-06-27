@@ -27,6 +27,7 @@ import org.middleheaven.logging.Log;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimePoint;
+import org.middleheaven.util.identity.Identity;
 
 public class DefaultAnnotatedModelReader implements ModelReader {
 
@@ -62,7 +63,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 	}
 
-	
+
 	private <T> Class<T> resolveValidIdentityType(Class<T> type){
 		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())){
 			throw new ModelingException("Cannot use interfaces or abstract types as identity type. Please use a concrete type.");
@@ -70,7 +71,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 		return type;
 	}
-	
+
 	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em, ModelBuilder builder){
 
 		FieldModelBuilder fm = em.getField(pa.getName())
@@ -90,60 +91,38 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			fm.setIdentity(true);
 			fm.setUnique(true);
 			fm.setNullable(false);
+
+			Class<?> identityType = mapAsIdentityField(fm,  key.type() , valueType, builder);
 			
-			Class<?> identityType = valueType;
-			if(identityType.isInterface() || Modifier.isAbstract(identityType.getModifiers())){
-				identityType = key.type();
-				if(identityType==null || Void.class.equals(identityType)){
-					throw new ModelingException("Illegal identity type for " + pa.getDeclaringClass() + ".When using interfaces or abstract types as identity type you must specify a non interface, non abstract, class for identity");
-				}
-			}
 			
 			em.setIdentityType(resolveValidIdentityType(identityType));
-			fm.setDataType(DataType.fromClass(identityType));
-
+			
 		} else if (pa.isAnnotadedWith(ManyToOne.class)){
-			fm.setDataType(DataType.MANY_TO_ONE);
+
 			ManyToOne ref = pa.getAnnotation(ManyToOne.class);
 			String fieldName = ref.targetIdentityField();
-			
-			
-			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_ONE);
-			
-			model.setTargetType(valueType);
-			
-			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
 
-			if (fieldName.isEmpty()){
-				fieldName = targetModel.getIdentityField().getName();
-			}else {
-				// TODO validate field exists
-			}
-			model.setTargetFieldName(fieldName);
-			model.setTargetFieldType(this.resolveValidIdentityType(targetModel.getIdentityType()));
-			
-			fm.setDataTypeModel(model);
-
+			mapAsManyToOne(fm,fieldName,valueType,builder);
 
 		} else if (pa.isAnnotadedWith(OneToOne.class)){
 			fm.setDataType(DataType.ONE_TO_ONE);
 			OneToOne ref = pa.getAnnotation(OneToOne.class);
 			String fieldName = ref.targetIdentityField();
-	
+
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ONE_TO_ONE);
-		
+
 			model.setTargetType(valueType);
-			
+
 			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
-			
+
 			if (fieldName.isEmpty()){
 				fieldName = targetModel.getIdentityField().getName();
 			} else {
 				// TODO validate field exists
 			}
-			
+
 			model.setTargetFieldType(this.resolveValidIdentityType(targetModel.getIdentityType()));
-			
+
 			fm.setDataTypeModel(model);
 
 
@@ -185,7 +164,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 					model.setEmailAddress(true);
 					model.setMaxLength(255);
 					model.setMinLength(0);
-					
+
 				} else if(pa.isAnnotadedWith(Length.class)){
 					Length ref = pa.getAnnotation(Length.class);
 					model.setMaxLength(ref.max());
@@ -196,12 +175,12 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 					model.setEmptyable(false);
 				}
 
-				
-				
+
+
 				if(pa.isAnnotadedWith(Url.class)){
 					model.setUrl(true);
 				}
-				
+
 			} else if (matchTypes(valueType,Integer.class ,int.class, Byte.class, byte.class, Short.class, short.class)  ){
 				fm.setDataType(DataType.INTEGER);
 			} else if (matchTypes(valueType,CalendarDate.class)){
@@ -230,14 +209,10 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			} else if (matchTypes(valueType, Collection.class, Map.class)){
 				fm.setDataType( DataType.ONE_TO_MANY);
 			} else {
-				fm.setDataType(DataType.MANY_TO_ONE);
 
-				DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_ONE);
+				Log.onBookFor(this.getClass()).info("Implicitly composing many-to-one relation for property " + pa.toString());
 
-				model.setTargetType(valueType);
-				fm.setDataTypeModel(model);
-
-
+				mapAsManyToOne(fm, "",valueType,builder);
 			}
 		}
 
@@ -245,8 +220,56 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 	}
 
 
+	private void mapAsManyToOne(FieldModelBuilder fm,String fieldName,Class<?> valueType ,ModelBuilder builder ){
+
+		
+		if (valueType.isEnum()){
+			fm.setDataType(DataType.ENUM);
+			
+			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ENUM);
+
+			model.setTargetType(valueType);
+			
+			fm.setDataTypeModel(model);
+		} else if (Identity.class.isAssignableFrom(valueType)){
+			mapAsIdentityField(fm, null , valueType, builder);
+		} else {
+			fm.setDataType(DataType.MANY_TO_ONE);
 
 
+			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_ONE);
+
+			model.setTargetType(valueType);
+			
+
+			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
+
+			if (fieldName==null || fieldName.isEmpty()){
+				fieldName = targetModel.getIdentityField().getName();
+			}else {
+				// TODO validate field exists
+			}
+			model.setTargetFieldName(fieldName);
+			model.setTargetFieldType(this.resolveValidIdentityType(targetModel.getIdentityType()));
+
+			fm.setDataTypeModel(model);
+		}
+	}
+
+	
+	private Class<?> mapAsIdentityField (FieldModelBuilder fm,Class<?> idType ,Class<?> valueType, ModelBuilder builder ){
+		Class<?> identityType = valueType;
+		if(identityType.isInterface() || Modifier.isAbstract(identityType.getModifiers())){
+			identityType = idType;
+			if(identityType==null || Void.class.equals(identityType)){
+				throw new ModelingException("Illegal identity type for " + fm.toString() + ".When using interfaces or abstract types as identity type you must specify a non interface, non abstract, class for identity");
+			}
+		}
+		fm.setDataType(DataType.fromClass(identityType));
+
+		
+		return identityType;
+	}
 
 
 }
