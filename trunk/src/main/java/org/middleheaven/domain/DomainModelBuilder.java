@@ -217,6 +217,11 @@ public final class DomainModelBuilder {
 			this.fm = fm;
 		}
 
+		
+		public String toString(){
+			return fm.name.toString();
+		}
+		
 		@Override
 		public DataType getDataType() {
 			return fm.getDataType();
