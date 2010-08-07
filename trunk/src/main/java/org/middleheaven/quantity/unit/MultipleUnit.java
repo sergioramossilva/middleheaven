@@ -9,18 +9,18 @@ import org.middleheaven.quantity.measure.DecimalMeasure;
 
 public class MultipleUnit<E extends Measurable> extends Unit<E> {
 
-	private final static Map<Real, String> prefixes = new HashMap<Real,String>();
+	private static final  Map<Real, String> PREFIXES = new HashMap<Real,String>();
 	
 	static {
-		prefixes.put(Real.valueOf("1000000000"), "G"); // giga
-		prefixes.put(Real.valueOf("1000000"), "M"); // mega
-		prefixes.put(Real.valueOf("1000"), "K"); // kilo
-		prefixes.put(Real.valueOf("100"), "h"); // hecto
-		prefixes.put(Real.valueOf("0.1"), "d"); // deci
-		prefixes.put(Real.valueOf("0.01"), "c"); // centi
-		prefixes.put(Real.valueOf("0.001"), "m"); // mili
-		prefixes.put(Real.valueOf("0.000001"), "u"); // micro
-		prefixes.put(Real.valueOf("0.000000001"), "n"); // nano
+		PREFIXES.put(Real.valueOf("1000000000"), "G"); // giga
+		PREFIXES.put(Real.valueOf("1000000"), "M"); // mega
+		PREFIXES.put(Real.valueOf("1000"), "K"); // kilo
+		PREFIXES.put(Real.valueOf("100"), "h"); // hecto
+		PREFIXES.put(Real.valueOf("0.1"), "d"); // deci
+		PREFIXES.put(Real.valueOf("0.01"), "c"); // centi
+		PREFIXES.put(Real.valueOf("0.001"), "m"); // mili
+		PREFIXES.put(Real.valueOf("0.000001"), "u"); // micro
+		PREFIXES.put(Real.valueOf("0.000000001"), "n"); // nano
 	}
 	private Real scale;
 	private Unit<E> base;
@@ -71,7 +71,7 @@ public class MultipleUnit<E extends Measurable> extends Unit<E> {
 
 	@Override
 	public String symbol() {
-		String prefix = prefixes.get(scale);
+		String prefix = PREFIXES.get(scale);
 		return (prefix == null ?"" : prefix )+ base.symbol();
 	}
 
