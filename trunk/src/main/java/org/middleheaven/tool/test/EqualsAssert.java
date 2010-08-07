@@ -119,14 +119,14 @@ public class EqualsAssert {
 	private void assertCAllowedToBeNull( final Class clazz ) {
 		int i;
 
-		final Constructor constructors[] = clazz.getConstructors();
+		final Constructor[] constructors  = clazz.getConstructors();
 		for( i = 0; i < constructors.length; i++ ) {
 			if( constructors[i].getParameterTypes().length != 0 ) {
 				fail( "Duplicate may not be null because it has a public non-default constructor: " + constructors[i] );
 			}
 		}
 
-		final Method methods[] = clazz.getMethods();
+		final Method[] methods = clazz.getMethods();
 		for( i = 0; i < methods.length; i++ ) {
 			if( methods[i].getName().startsWith( "set" ) ) {
 				fail( "Duplicate may not be null because it has public set methods: " + methods[i] );
