@@ -100,11 +100,11 @@ public class RoutableServletOutputStream extends ServletOutputStream  {
 	         getDestination().println(v);
 	     }
 	
-	     public void write(byte b[]) throws IOException  {
+	     public void write(byte[] b) throws IOException  {
 	         getDestination().write(b);
 	     }
 	
-	     public void write(byte b[], int off, int len) throws IOException  {
+	     public void write(byte[] b, int off, int len) throws IOException  {
 	         getDestination().write(b, off, len);
 	     }
 	

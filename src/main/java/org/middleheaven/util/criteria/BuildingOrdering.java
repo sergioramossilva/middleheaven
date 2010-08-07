@@ -3,7 +3,7 @@
  */
 package org.middleheaven.util.criteria;
 
-import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.domain.store.QualifiedName;
 
 public class BuildingOrdering<T,B extends AbstractCriteriaBuilder<T,B>> implements OrderingConstrain<T, B>{
 

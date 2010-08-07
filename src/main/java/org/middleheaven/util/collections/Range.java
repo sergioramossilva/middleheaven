@@ -285,7 +285,7 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	}
 
 	@Override
-	public <C> EnhancedMap<C, T> groupBy(Classifier<C, T> classifier) {
+	public <C> EnhancedMap<C, EnhancedCollection<T>> groupBy(Classifier<C, T> classifier) {
 		return this.toList().groupBy(classifier);
 	}
 
