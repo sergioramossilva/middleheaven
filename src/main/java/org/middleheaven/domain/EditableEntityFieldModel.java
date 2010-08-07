@@ -1,6 +1,6 @@
 package org.middleheaven.domain;
 
-import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.domain.store.QualifiedName;
 
 public class EditableEntityFieldModel implements EntityFieldModel{
 

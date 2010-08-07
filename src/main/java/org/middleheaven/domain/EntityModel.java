@@ -1,20 +1,42 @@
 package org.middleheaven.domain;
 
-import java.util.Collection;
+import org.middleheaven.domain.store.QualifiedName;
 
-import org.middleheaven.storage.QualifiedName;
+/**
+ * The entity metadata holder.
+ */
+public interface EntityModel extends Iterable<EntityFieldModel>{
 
-public interface EntityModel {
-
-	public Object newInstance();
+	/**
+	 * 
+	 * @return the name of the entity.
+	 */
 	public String getEntityName();
+	
+	/**
+	 * 
+	 * @return the entity class
+	 */
 	public Class<?> getEntityClass();
 	
+	/**
+	 * 
+	 * @param logicName the field's logic name
+	 * @return the field entity model
+	 */
 	public EntityFieldModel fieldModel(QualifiedName logicName);
 	
+	/**
+	 * 
+	 * @return the identity field entity model
+	 */
 	public EntityFieldModel identityFieldModel();
 	
+	/**
+	 * 
+	 * @return the identity type
+	 */
 	public Class<?> getIdentityType();
 	
-	public Collection<? extends EntityFieldModel> fields();
+
 }

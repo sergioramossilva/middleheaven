@@ -1,14 +1,25 @@
 package org.middleheaven.domain;
 
-import java.util.Collection;
+import org.middleheaven.util.collections.Enumerable;
 
-import org.middleheaven.domain.repository.Repository;
-
+/**
+ * Holds the individual {@code EntityModel}s for all entities in the domain.
+ * 
+ */
 public interface DomainModel {
+
+	/**
+	 * 
+	 * @param <T> the EntityModel type
+	 * @return and Enumerable  with all the EntityModel of the domain.
+	 */
+	public <T extends EntityModel> Enumerable<T> entitiesModels();	
 	
-	public <E> Repository<E>  repositoryOf (Class<E> entityType);
-	public <E,R extends Repository<E>> R repository(Class<R> repositoryType);
-	public <T extends EntityModel> Collection<T> entitiesModels();	
+	/**
+	 * 
+	 * @param entityType the entity class
+	 * @return the class's corresponding EntityModel.
+	 */
 	public EntityModel getEntityModelFor(Class<?> entityType);
 
 	
