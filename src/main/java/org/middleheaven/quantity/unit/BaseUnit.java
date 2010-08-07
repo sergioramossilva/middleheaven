@@ -26,6 +26,10 @@ class BaseUnit<E extends Measurable> extends Unit<E> {
 		return symbol;
 	}
 	
+	public boolean equals(Object other){
+		return super.equals(other);
+	}
+	
 	public boolean equals(Unit<?> other) {
 		return this.symbol.equals(other.symbol()) && this.dim.equals(other.dimension());
 	}
