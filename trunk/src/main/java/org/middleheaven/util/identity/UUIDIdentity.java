@@ -28,6 +28,10 @@ public class UUIDIdentity extends Identity implements Serializable {
 		return other instanceof UUIDIdentity && equals((UUIDIdentity)other);
 	}
 	
+	public boolean equals(Object other) {
+		return other instanceof UUIDIdentity && equals((UUIDIdentity)other);
+	}
+	
 	public boolean equals(UUIDIdentity other) {
 		return this.value == other.value;
 	}

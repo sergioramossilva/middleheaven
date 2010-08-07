@@ -35,7 +35,7 @@
 
     <!-- Checks that a package.html file exists for each package.     -->
     <!-- See http://checkstyle.sf.net/config_javadoc.html#PackageHtml -->
-    <module name="PackageHtml"/>
+    <module name="JavadocPackage"/>
 
     <!-- Checks whether files end with a new line.                        -->
     <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
@@ -45,18 +45,39 @@
     <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
     <module name="Translation"/>
 
-
+     <!-- Checks for Size Violations.                    -->
+     <!-- See http://checkstyle.sf.net/config_sizes.html -->
+    <module name="FileLength"/>
+        
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
         <module name="JavadocMethod">
+        	<property name="scope" value="protected"/>
+        	
+        	<property name="allowThrowsTagsForSubclasses" value="true"/>
+        	<property name="allowUndeclaredRTE" value="true"/>
+        	
+        	
             <property name="logLoadErrors" value="true"/>
             <property name="suppressLoadErrors" value="true"/>
         </module>
-        <module name="JavadocType"/>
-        <module name="JavadocStyle"/>
+       	
+		<module name="JavadocType">
+		   <property name="scope" value="public"/>
+		</module>
+
+		<module name="JavadocVariable" >
+			<property name="scope" value="protected"/>
+		</module>
+		
+        <module name="JavadocStyle">
+         	<property name="scope" value="protected"/>
+         	<property name="checkFirstSentence" value="false"/>
+         	<property name="checkEmptyJavadoc" value="false"/>
+        </module>
 
 
         <!-- Checks for Naming Conventions.                  -->
@@ -98,10 +119,10 @@
         <module name="UnusedImports"/>
 
 
-        <!-- Checks for Size Violations.                    -->
-        <!-- See http://checkstyle.sf.net/config_sizes.html -->
-        <module name="FileLength"/>
-        <module name="LineLength"/>
+   
+        <module name="LineLength">
+          <property name="max" value="160"/>
+        </module>
         <module name="MethodLength"/>
     	<module name="ParameterNumber">
 	   		<property name="max" value="5"/>
@@ -151,7 +172,7 @@
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
 		<module name="MissingCtor"/>
-        <module name="HiddenField"/>
+   
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber"/>
@@ -163,13 +184,11 @@
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 		<module name="CovariantEquals"/>
-		<module name="RequireThis"/>
 		<module name="MultipleVariableDeclarations"/>
 	
 
         <!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
-        <module name="DesignForExtension"/>
         <module name="FinalClass"/>
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>
@@ -179,7 +198,7 @@
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
-        <module name="FinalParameters"/>
+ 
         <module name="GenericIllegalRegexp">
             <property name="severity" value="ignore"/>
             <property name="format" value="\s+$"/>

@@ -8,6 +8,11 @@ import java.util.Map;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.classification.Classifier;
 
+/**
+ * Base implementation of the Enumerable interface.
+ *
+ * @param <T>
+ */
 public abstract class AbstractAdapter<T> implements Enumerable<T>{
 
 
@@ -73,17 +78,24 @@ public abstract class AbstractAdapter<T> implements Enumerable<T>{
 	}
 
 	@Override
-	public <C> EnhancedMap<C, T> groupBy(Classifier<C, T> classifier) {
-		Map<C, T> result = new HashMap<C,T>();
+	public final <C> EnhancedMap<C, EnhancedCollection<T>> groupBy(Classifier<C, T> classifier) {
+		Map<C, EnhancedCollection<T>> result = new HashMap<C,EnhancedCollection<T>>();
 		for (Iterator<T> it = iterator();it.hasNext();){
 			T object = it.next();
-			result.put(classifier.classify(object), object);
+			
+			EnhancedCollection<T> items = result.get(classifier.classify(object));
+			
+			if (items == null){
+				items = new EnhancedArrayList<T>();
+			}
+			
+			items.add(object);
 		}
 		return CollectionUtils.enhance(result);
 	}
 
 	@Override
-	public String join(String separator) {
+	public final String join(String separator) {
 		return StringUtils.join(separator, this);
 
 	}

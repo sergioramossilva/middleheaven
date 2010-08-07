@@ -1,5 +1,7 @@
 package org.middleheaven.util.collections;
 
+import org.middleheaven.util.Hash;
+
 
 /**
  * Holds two values as a single key. 
@@ -13,12 +15,11 @@ public final class DualMapKey<A,B> extends ComposedMapKey {
 	public static <X,Y> DualMapKey<X,Y> of(X x, Y y) {
 		return new DualMapKey<X,Y>(x,y);
 	}
-
 	
 	private A a;
 	private B b;
 
-	private DualMapKey (A a , B b){
+	private DualMapKey(A a , B b){
 		if(a==null || b ==null){
 			throw new IllegalArgumentException("null value is not acceped for dual keys");
 		}
@@ -28,14 +29,14 @@ public final class DualMapKey<A,B> extends ComposedMapKey {
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof DualMapKey<?,?> && 
-		((DualMapKey<?,?>) obj).a.equals(a) && 
-		((DualMapKey<?,?>) obj).b.equals(b);
+		return obj instanceof DualMapKey<?,?> 
+		&& ((DualMapKey<?,?>) obj).a.equals(this.a) 
+		&& ((DualMapKey<?,?>) obj).b.equals(this.b);
 	}
 
 	@Override
 	public int hashCode() {
-		return 31 * a.hashCode() +  b.hashCode();
+		return Hash.hash(this.a).hash(this.b).hashCode();
 	}
 
 

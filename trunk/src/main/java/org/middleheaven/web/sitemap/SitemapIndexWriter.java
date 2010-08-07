@@ -21,7 +21,7 @@ public class SitemapIndexWriter {
 		return new SitemapIndexWriter(domain);
 	}
 
-	private final static ISO8601Format dateFormat = new ISO8601Format();
+	private static final ISO8601Format DATE_FORMAT = new ISO8601Format();
 
 	private String domain;
 	private List<Sitemap> sitemaps = new LinkedList<Sitemap>();
@@ -65,7 +65,7 @@ public class SitemapIndexWriter {
 					writer.println("	<sitemap>");
 					writer.println("		<loc>" + domain + "/" + sm.getName() + ".xml.gz" + "</loc>");
 					if (sm.getLastModified() != null){
-						writer.println("		<lastmod>" + dateFormat.format(TimeUtils.toDate(sm.getLastModified())) +"</lastmod>");
+						writer.println("		<lastmod>" + DATE_FORMAT.format(TimeUtils.toDate(sm.getLastModified())) +"</lastmod>");
 					}
 					writer.println("	</sitemap>");  
 				}
@@ -117,7 +117,7 @@ public class SitemapIndexWriter {
 
 		if(entry.getLastModified() != null){
 			writer.print("<lastmod>");
-			writer.print(dateFormat.format(TimeUtils.toDate(entry.getLastModified())));
+			writer.print(DATE_FORMAT.format(TimeUtils.toDate(entry.getLastModified())));
 			writer.println("</lastmod>");
 		}
 

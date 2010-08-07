@@ -49,7 +49,7 @@ public class RoutablePrintWriter extends PrintWriter  {
 	         getDestination().println(x);
 	     }
 	
-	     public void println(char x[]) {
+	     public void println(char[] x) {
 	         getDestination().println(x);
 	     }
 	
@@ -89,7 +89,7 @@ public class RoutablePrintWriter extends PrintWriter  {
 	         getDestination().print(s);
 	     }
 	
-	     public void print(char s[]) {
+	     public void print(char[] s) {
 	         getDestination().print(s);
 	     }
 	
@@ -125,11 +125,11 @@ public class RoutablePrintWriter extends PrintWriter  {
 	         getDestination().write(s, off, len);
 	     }
 	
-	     public void write(char buf[]) {
+	     public void write(char[] buf) {
 	         getDestination().write(buf);
 	     }
 	
-	     public void write(char buf[], int off, int len) {
+	     public void write(char[] buf, int off, int len) {
 	         getDestination().write(buf, off, len);
 	     }
 	
@@ -154,7 +154,7 @@ public class RoutablePrintWriter extends PrintWriter  {
 	             super();
 	         }
 	
-	         public void write(char cbuf[], int off, int len) throws IOException  {
+	         public void write(char[] cbuf, int off, int len) throws IOException  {
 	             throw new UnsupportedOperationException ();
 	         }
 	
