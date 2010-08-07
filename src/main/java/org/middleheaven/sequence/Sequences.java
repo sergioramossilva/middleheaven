@@ -10,14 +10,14 @@ public class Sequences {
 
 	private Sequences(){}
 	
-	private static final Map<String, String> sequences = new TreeMap<String, String>();
+	private static final Map<String, String> SEQUENCES = new TreeMap<String, String>();
 
 	static {
 		setSequence(Long.class, LongSequence.class);
 	}
 	
 	public static <T> Sequence<T> newSequenceFor (Class<T> elementType){
-		String sequenceType = sequences.get(elementType);
+		String sequenceType = SEQUENCES.get(elementType);
 		if (sequenceType==null){
 			throw new RuntimeException("Sequence not found for type " + elementType);
 		}
@@ -25,7 +25,7 @@ public class Sequences {
 	}
 	
 	public static <T, S extends Sequence<T>> void setSequence(Class<T> elementType,Class<S> sequenceType){
-		sequences.put(elementType.getName(), sequenceType.getName());
+		SEQUENCES.put(elementType.getName(), sequenceType.getName());
 	}
 	
 	public static <T> Sequence<T> over (T ... elements){

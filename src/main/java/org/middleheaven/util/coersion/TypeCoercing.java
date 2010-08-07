@@ -15,7 +15,7 @@ import org.middleheaven.util.identity.StringIdentityCoersor;
 
 public class TypeCoercing {
 
-	private final static Map<Key, TypeCoersor> converters = new HashMap<Key, TypeCoersor>();
+	private static final Map<Key, TypeCoersor> CONVERTERS = new HashMap<Key, TypeCoersor>();
 
 	static {
 		// text
@@ -108,13 +108,13 @@ public class TypeCoercing {
 		}
 	}
 	public static <O,R> void addCoersor(Class<O> from , Class<R> to, TypeCoersor<O,R> converter){
-		converters.put(new Key(from,to), converter);
-		converters.put(new Key(to,from), converter.inverse());
+		CONVERTERS.put(new Key(from,to), converter);
+		CONVERTERS.put(new Key(to,from), converter.inverse());
 	}
 
 	public static <O,R> void removeCoersor(Class<O> from, Class<R> to) {
-		converters.remove(new Key(from,to));
-		converters.remove(new Key(to,from));
+		CONVERTERS.remove(new Key(from,to));
+		CONVERTERS.remove(new Key(to,from));
 	}  
 	
 	
@@ -131,7 +131,7 @@ public class TypeCoercing {
 			
 		}
 		Key key = new Key(from,to);
-		TypeCoersor<O,R> converter = converters.get(key);
+		TypeCoersor<O,R> converter = CONVERTERS.get(key);
 
 		if (converter==null){
 			throw new CoersionException("TypeCoersor from " + from + " to " + to + " has not found");

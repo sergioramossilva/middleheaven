@@ -30,7 +30,7 @@ class BigDecimalMath {
 	 * @see http://sci.tech-archive.net/Archive/sci.math/2006-04/msg01661.html
 	 */
 	protected static BigDecimal gcd(BigDecimal a , BigDecimal b){
-		
+	
 			if (a.compareTo(BigDecimal.ZERO)==0 && b.compareTo(BigDecimal.ZERO)==0){
 				return BigDecimal.ZERO;
 			} else if (b.compareTo(BigDecimal.ZERO)==0){

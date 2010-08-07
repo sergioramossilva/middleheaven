@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.middleheaven.quantity.time.Duration;
 import org.middleheaven.quantity.time.Period;
 
 public class CacheControlTag extends AbstractTagSupport{
