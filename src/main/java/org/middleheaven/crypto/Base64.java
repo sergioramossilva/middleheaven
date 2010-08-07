@@ -186,7 +186,7 @@ class Base64 {
 	 *
 	 * @since ostermillerutils 1.00.00
 	 */
-	protected static final byte[] base64Chars = {
+	protected static final byte[] BASE_64_CHARS = {
 		'A','B','C','D','E','F','G','H',
 		'I','J','K','L','M','N','O','P',
 		'Q','R','S','T','U','V','W','X',
@@ -202,25 +202,25 @@ class Base64 {
 	 * reversebase64Chars[byte] gives n for the nth Base64
 	 * character or negative if a character is not a Base64 character.
 	 *
-	 * @since ostermillerutils 1.00.00
+	 * 
 	 */
-	protected static final byte[] reverseBase64Chars = new byte[0x100];
+	protected static final byte[] REVERSED_BASE_64_CHARS = new byte[0x100];
 	static {
 		// Fill in NON_BASE_64 for all characters to start with
-		for (int i=0; i<reverseBase64Chars.length; i++){
-			reverseBase64Chars[i] = NON_BASE_64;
+		for (int i=0; i<REVERSED_BASE_64_CHARS.length; i++){
+			REVERSED_BASE_64_CHARS[i] = NON_BASE_64;
 		}
 		// For characters that are base64Chars, adjust
 		// the reverse lookup table.
-		for (byte i=0; i < base64Chars.length; i++){
-			reverseBase64Chars[base64Chars[i]] = i;
+		for (byte i=0; i < BASE_64_CHARS.length; i++){
+			REVERSED_BASE_64_CHARS[BASE_64_CHARS[i]] = i;
 		}
-		reverseBase64Chars[' '] = NON_BASE_64_WHITESPACE;
-		reverseBase64Chars['\n'] = NON_BASE_64_WHITESPACE;
-		reverseBase64Chars['\r'] = NON_BASE_64_WHITESPACE;
-		reverseBase64Chars['\t'] = NON_BASE_64_WHITESPACE;
-		reverseBase64Chars['\f'] = NON_BASE_64_WHITESPACE;
-		reverseBase64Chars['='] = NON_BASE_64_PADDING;
+		REVERSED_BASE_64_CHARS[' '] = NON_BASE_64_WHITESPACE;
+		REVERSED_BASE_64_CHARS['\n'] = NON_BASE_64_WHITESPACE;
+		REVERSED_BASE_64_CHARS['\r'] = NON_BASE_64_WHITESPACE;
+		REVERSED_BASE_64_CHARS['\t'] = NON_BASE_64_WHITESPACE;
+		REVERSED_BASE_64_CHARS['\f'] = NON_BASE_64_WHITESPACE;
+		REVERSED_BASE_64_CHARS['='] = NON_BASE_64_PADDING;
 	}
 	
 	/**
@@ -378,25 +378,25 @@ class Base64 {
 			// the four bytes are then mapped to common ASCII symbols
 
 			// A's: first six bits of first byte
-			out.write(base64Chars[ inBuffer[0] >> 2 ]);
+			out.write(BASE_64_CHARS[ inBuffer[0] >> 2 ]);
 			if (inBuffer[1] != END_OF_INPUT){
 				// B's: last two bits of first byte, first four bits of second byte
-				out.write(base64Chars [(( inBuffer[0] << 4 ) & 0x30) | (inBuffer[1] >> 4) ]);
+				out.write(BASE_64_CHARS [(( inBuffer[0] << 4 ) & 0x30) | (inBuffer[1] >> 4) ]);
 				if (inBuffer[2] != END_OF_INPUT){
 					// C's: last four bits of second byte, first two bits of third byte
-					out.write(base64Chars [((inBuffer[1] << 2) & 0x3c) | (inBuffer[2] >> 6) ]);
+					out.write(BASE_64_CHARS [((inBuffer[1] << 2) & 0x3c) | (inBuffer[2] >> 6) ]);
 					// D's: last six bits of third byte
-					out.write(base64Chars [inBuffer[2] & 0x3F]);
+					out.write(BASE_64_CHARS [inBuffer[2] & 0x3F]);
 				} else {
 					// C's: last four bits of second byte
-					out.write(base64Chars [((inBuffer[1] << 2) & 0x3c)]);
+					out.write(BASE_64_CHARS [((inBuffer[1] << 2) & 0x3c)]);
 					// an equals sign for a character that is not a Base64 character
 					out.write('=');
 					done = true;
 				}
 			} else {
 				// B's: last two bits of first byte
-				out.write(base64Chars [(( inBuffer[0] << 4 ) & 0x30)]);
+				out.write(BASE_64_CHARS [(( inBuffer[0] << 4 ) & 0x30)]);
 				// an equal signs for characters that is not a Base64 characters
 				out.write('=');
 				out.write('=');
@@ -714,7 +714,7 @@ class Base64 {
 		do {
 			read = in.read();
 			if (read == END_OF_INPUT) return END_OF_INPUT;
-			read = reverseBase64Chars[(byte)read];
+			read = REVERSED_BASE_64_CHARS[(byte)read];
 			if (throwExceptions && (read == NON_BASE_64 || (numPadding > 0 && read > NON_BASE_64))){
 				throw new Base64DecodingException ("unexpected",
 					(char)read
@@ -999,7 +999,7 @@ class Base64 {
 		int read;
 
 		while ((read = in.read()) != -1){
-			read = reverseBase64Chars[read];
+			read = REVERSED_BASE_64_CHARS[read];
 			if (read == NON_BASE_64){
 				return false;
 			} else if (read == NON_BASE_64_WHITESPACE){
