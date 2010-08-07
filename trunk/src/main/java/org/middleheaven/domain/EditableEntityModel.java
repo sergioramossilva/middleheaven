@@ -1,15 +1,16 @@
 package org.middleheaven.domain;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.domain.store.QualifiedName;
 import org.middleheaven.logging.Log;
-import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.identity.IntegerIdentity;
 
+/**
+ * Editable implementation of EntityModel
+ */
 public final class EditableEntityModel implements EntityModel {
 
 	private Class<?> type;
@@ -17,13 +18,18 @@ public final class EditableEntityModel implements EntityModel {
 	private EntityFieldModel identityFieldModel;
 	private Class<?> identityType;
 	
+	/**
+	 * 
+	 * @param type the entity class.
+	 */
 	public EditableEntityModel(Class<?> type) {
 		this.type = type;
 	}
 
 	@Override
 	public EntityFieldModel identityFieldModel() {
-		if (identityFieldModel == null){
+		if (this.identityFieldModel == null){
+			
 			for (EntityFieldModel fieldModel : this.fields.values()){
 				if(fieldModel.isIdentity()){
 					this.identityFieldModel = fieldModel;
@@ -31,7 +37,7 @@ public final class EditableEntityModel implements EntityModel {
 				}
 			}
 			
-			if (identityFieldModel == null){
+			if (this.identityFieldModel == null){
 				Log.onBookFor(this.getClass()).warn("{0} has no identity field defined.",this.type);
 				EditableEntityFieldModel eidentityFieldModel = new EditableEntityFieldModel(this.getEntityName(), "identity");
 				eidentityFieldModel.setIsIdentity(true);
@@ -47,50 +53,56 @@ public final class EditableEntityModel implements EntityModel {
 		return identityFieldModel;
 	}
 
+	/**
+	 * 
+	 * @param fieldModel {@code EntityFieldModel} to add
+	 */
 	public void addField(EntityFieldModel fieldModel) {
 		if(fieldModel.isIdentity()){
 			this.identityFieldModel = fieldModel;
 		}
-		fields.put(fieldModel.getLogicName().getName(), fieldModel);
+		this.fields.put(fieldModel.getLogicName().getName(), fieldModel);
 	}
 	
 	@Override
 	public EntityFieldModel fieldModel(QualifiedName logicName) {
-		return fields.get(logicName.getName());
-	}
-
-	@Override
-	public Collection<? extends EntityFieldModel> fields() {
-		return Collections.unmodifiableCollection(fields.values());
+		return this.fields.get(logicName.getName());
 	}
 
 	@Override
 	public Class<?> getEntityClass() {
-		return type;
+		return this.type;
 	}
 
 	@Override
 	public String getEntityName() {
-		return type.getSimpleName();
+		return this.type.getSimpleName();
 	}
 
-	@Override
-	public Object newInstance() {
-		return Introspector.of(type).newInstance();
-	}
-
-	public void setIdentityType(Class<?> type) {
-		this.identityType = type;
+	/**
+	 * 
+	 * @param identityType the identity's type
+	 */
+	public void setIdentityType(Class<?> identityType) {
+		this.identityType = identityType;
 		
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public Class<?> getIdentityType(){
 		return this.identityType;
 	}
 
 	@Override
 	public String toString() {
-		return "EditableEntityModel [type=" + type + "]";
+		return "EditableEntityModel [type=" + this.type + "]";
+	}
+
+	@Override
+	public Iterator<EntityFieldModel> iterator() {
+		return this.fields.values().iterator();
 	}
 
 

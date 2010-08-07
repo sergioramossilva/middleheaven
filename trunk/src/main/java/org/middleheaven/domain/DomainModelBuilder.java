@@ -14,7 +14,6 @@ import org.middleheaven.core.dependency.InicializationNotResolvedException;
 import org.middleheaven.core.dependency.Starter;
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.domain.annotations.Entity;
 import org.middleheaven.domain.repository.Repository;
 import org.middleheaven.logging.Log;
 import org.middleheaven.util.classification.Classifier;
@@ -172,7 +171,7 @@ public final class DomainModelBuilder {
 			@Override
 			public EntityModelBuilder<E> setRepository(Repository<? extends E> repository) {
 				@SuppressWarnings("unchecked") Class<E> type = (Class<E>) model.getEntityClass();
-				domainModel.addEntityRepository(type, repository);
+				//domainModel.addEntityRepository(type, repository);
 				return this;
 			}
 
