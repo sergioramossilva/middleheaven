@@ -37,7 +37,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	private final Class<?> controllerClass;
 	private Object controllerObject;
 	private final List<Interceptor> interceptors = new LinkedList<Interceptor>();
-	private final Map<String, Map<OutcomeStatus, Outcome>> outcomes = new HashMap<String, Map<OutcomeStatus, Outcome>>();
+	private final Map<String, Map<OutcomeStatus, OutcomeResolver>> outcomes = new HashMap<String, Map<OutcomeStatus, OutcomeResolver>>();
 	private final Map<String , Method> actions = new TreeMap<String,Method>();
 	private final List<String> patterns = new LinkedList<String>();
 	private final AttributeContextBeanLoader beanLoader = new AttributeContextBeanLoader();
@@ -46,18 +46,26 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 	private Method doService=null;
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public String toString(){
 		return controllerClass.getName() + "->" + patterns.toString();
 	}
 
+	/**
+	 * Constructor.
+	 * @param presenterClass the presenter class.
+	 */
 	public PresenterWebCommandMapping(Class<?> presenterClass) {
 		super();
 
-		Map<OutcomeStatus, Outcome> actionOutcome = new HashMap<OutcomeStatus, Outcome>();
+		Map<OutcomeStatus, OutcomeResolver> actionOutcome = new HashMap<OutcomeStatus, OutcomeResolver>();
 		this.outcomes.put(null,actionOutcome );
 
 		for (OutcomeStatus status : BasicOutcomeStatus.values()){
-			actionOutcome.put(status,new Outcome(status,HttpCode.NOT_IMPLEMENTED));
+			actionOutcome.put(status,new FixedOutcomeResolver(new Outcome(status,HttpCode.NOT_IMPLEMENTED)));
 		}
 
 		this.controllerClass = presenterClass;
@@ -150,24 +158,29 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 
 
-	public void addOutcome(String action, Outcome outcome){
-		Map<OutcomeStatus, Outcome> actionOutcome = this.outcomes.get(action);
+	public void addOutcome(String action, OutcomeStatus status, OutcomeResolver outcomeResolver){
+		Map<OutcomeStatus, OutcomeResolver> actionOutcome = this.outcomes.get(action);
 		if (actionOutcome==null){
-			actionOutcome = new HashMap<OutcomeStatus, Outcome>();
+			actionOutcome = new HashMap<OutcomeStatus, OutcomeResolver>();
 			this.outcomes.put(action,actionOutcome);
 		}
-		actionOutcome.put(outcome.getStatus(), outcome);
+		actionOutcome.put(status, outcomeResolver);
 	}
 
-	private Outcome resolveOutcome(String action, OutcomeStatus status){
-		Map<OutcomeStatus, Outcome> actionOutcome = this.outcomes.get(action);
+	public Outcome resolveOutcome(String action, OutcomeStatus status, HttpContext context){
+		Map<OutcomeStatus, OutcomeResolver> actionOutcome = this.outcomes.get(action);
 		if (actionOutcome==null || status.equals(BasicOutcomeStatus.TERMINATE)){
 			return new TerminalOutcome();
 		} else {
-			return actionOutcome.get(status);
+			OutcomeResolver resolver = actionOutcome.get(status);
+			if (resolver == null){
+				return null;
+			}
+			return resolver.resolveOutcome(status, context);
 		}
 	}
 
+	
 	@Override
 	public Outcome execute(HttpContext context) {
 
@@ -177,8 +190,8 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				return executeAction(context);
 			}
 
-			protected Outcome resolveOutcome (OutcomeStatus status){
-				return PresenterWebCommandMapping.this.resolveOutcome(null,status);
+			protected Outcome resolveOutcome (OutcomeStatus status, HttpContext context){
+				return PresenterWebCommandMapping.this.resolveOutcome(null,status, context);
 			}
 		};
 
@@ -222,7 +235,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 				if (actionMethod==null){
 					if (context.getHttpService().equals(HttpMethod.GET)){
-						return resolveOutcome(null,BasicOutcomeStatus.SUCCESS);
+						return resolveOutcome(null,BasicOutcomeStatus.SUCCESS, context);
 					} else {
 						throw new ActionHandlerNotFoundException(context.getHttpService() , this.controllerClass,actionNameFromURL);
 					}
@@ -240,12 +253,14 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 						return (Outcome)result;
 					} else {
 						Log.onBookFor(this.getClass()).warn("Illegal outcome class. Use URLOutcome.");
-						outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
+						outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE, context);
 					}
 				}else if (result==null || !(result instanceof OutcomeStatus)){
-					return resolveOutcome(action,BasicOutcomeStatus.SUCCESS);
+					return resolveOutcome(action,BasicOutcomeStatus.SUCCESS,context);
+				} else if (BasicOutcomeStatus.NOT_FOUND.equals(result)){
+					return new Outcome(BasicOutcomeStatus.ERROR, HttpCode.NOT_FOUND);
 				} else {
-					return resolveOutcome(action,(OutcomeStatus)result);
+					return resolveOutcome(action,(OutcomeStatus)result, context);
 				}
 				
 			} catch (InvocationTargetReflectionException e){
@@ -254,20 +269,20 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 			
 		} catch (ValidationException e){
 			context.setAttribute(ContextScope.REQUEST, "validationResult", e.getResult());
-			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID,context );
 		} catch (ActionHandlerNotFoundException e){
 			Log.onBookFor(this.getClass()).fatal(e,"Action not found");
-			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR, context);
 		}catch (Exception e){
 			Log.onBookFor(this.getClass()).error(e,"Exception found handling request");
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
-			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE, context);
 		} catch (Throwable e){
 			Log.onBookFor(this.getClass()).fatal(e,"Exception found handling request");
 			context.setAttribute(ContextScope.REQUEST, "exception", e);
-			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR);
+			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR, context);
 			if (outcome==null){
-				outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE);
+				outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE, context);
 			}
 		}
 		return outcome;

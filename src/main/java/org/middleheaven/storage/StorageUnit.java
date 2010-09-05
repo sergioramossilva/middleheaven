@@ -21,5 +21,5 @@ public interface StorageUnit {
 	
 	public void commitTo(DataStorage dataStorage);
 
-	public Collection<Storable> filter(Collection<Storable> all);
+	public Collection<Storable> filter(Collection<Storable> all, Class<?> type);
 }

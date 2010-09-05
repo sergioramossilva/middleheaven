@@ -11,7 +11,7 @@ import org.middleheaven.util.classification.Classifier;
 /**
  * Base implementation of the Enumerable interface.
  *
- * @param <T>
+ * @param <T> any type.
  */
 public abstract class AbstractAdapter<T> implements Enumerable<T>{
 

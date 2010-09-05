@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.middleheaven.logging.Log;
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableState;
@@ -53,6 +53,10 @@ public class FastlaneCollection<T> implements Collection<T> {
 		}
 	}
 
+	private <E> E newInstance(Class<E> type){
+		return Introspector.of(type).newInstance();
+	}
+	
 	@Override
 	public Iterator<T> iterator() {
 		return new Iterator <T>(){
@@ -74,7 +78,7 @@ public class FastlaneCollection<T> implements Collection<T> {
 				try {
 					if ( rs.next() ){
 						final ResultSetStorable s = new ResultSetStorable(rs,model);
-						Storable t = manager.merge(model.newInstance());
+						Storable t = manager.merge(newInstance(model.getEntityClass()));
 						t = dataStorage.copyStorable(s, t, model);
 						t.setStorableState(StorableState.RETRIVED);
 						return (T)t;

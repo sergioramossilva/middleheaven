@@ -1,11 +1,12 @@
 package org.middleheaven.domain;
 
-import org.middleheaven.domain.store.QualifiedName;
+import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.util.collections.Enumerable;
 
 /**
  * The entity metadata holder.
  */
-public interface EntityModel extends Iterable<EntityFieldModel>{
+public interface EntityModel {
 
 	/**
 	 * 
@@ -38,5 +39,9 @@ public interface EntityModel extends Iterable<EntityFieldModel>{
 	 */
 	public Class<?> getIdentityType();
 	
-
+	/**
+	 * 
+	 * @return all entity's field entity model.
+	 */
+	public Enumerable<? extends EntityFieldModel> fields();
 }

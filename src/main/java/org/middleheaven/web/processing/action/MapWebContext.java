@@ -125,5 +125,10 @@ public final class MapWebContext  extends WebContext{
 		return EmptyFileRepository.repository();
 	}
 
+	@Override
+	public HttpUrl getRefererUrl() {
+		return null;
+	}
+
 
 }

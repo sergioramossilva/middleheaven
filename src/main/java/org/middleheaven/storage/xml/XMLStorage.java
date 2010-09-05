@@ -85,7 +85,7 @@ public class XMLStorage extends AbstractSequencialIdentityStorage {
 				List<T> list = new ArrayList<T>(nodes.getLength());
 				
 				for (int i = 0; i < nodes.getLength(); i++) {
-					T t = (T)getStorableStateManager().merge(model.newInstance());
+					T t = (T)getStorableStateManager().merge(newInstance(model.getEntityClass()));
 					NodeStorable s = new NodeStorable(nodes.item(i),model);
 					copy(s, (Storable)t, model, session);
 					

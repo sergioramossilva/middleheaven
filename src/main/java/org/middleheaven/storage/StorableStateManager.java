@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 import org.middleheaven.core.reflection.ClassIntrospector;
@@ -20,7 +19,6 @@ import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.Walker;
-import org.middleheaven.util.criteria.Criteria;
 import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.identity.Identity;
 
@@ -48,7 +46,7 @@ public final class StorableStateManager {
 				
 				Collection all = storage.createQuery(criteria , strategy).fetchAll();
 				
-				all = unit.filter(all);
+				all = unit.filter(all, criteria.getTargetClass());
 				
 				return all;
 			}

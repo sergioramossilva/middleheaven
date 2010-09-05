@@ -16,7 +16,7 @@ public class BuildableWebCommandMappingService implements WebCommandMappingServi
 	 */
 	public PresenterCommandMappingBuilder map(Class<?> presenter){
 
-		PresenterCommandMappingBuilder builder = PresenterCommandMappingBuilder.map(presenter);
+		PresenterCommandMappingBuilder builder = PresenterCommandMappingBuilder.map(presenter, this);
 
 		this.mappings.add(builder.getMapping());
 		return builder;

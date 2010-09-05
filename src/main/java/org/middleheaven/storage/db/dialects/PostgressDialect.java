@@ -99,6 +99,22 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	}
 	
 	@Override
+	public void writeJoinTableHardname(Clause joinClause, String hardNameForEntity) {
+		joinClause.append(startDelimiter())
+		.append(hardNameForEntity.toLowerCase())
+		.append(endDelimiter());
+	}
+	
+	public void writeJoinField(Clause joinClause, String alias ,String fieldName) {
+		joinClause
+		.append(alias)
+		.append(fieldSeparator())
+		.append(startDelimiter())
+		.append(fieldName)
+		.append(endDelimiter());
+	}
+	
+	@Override
 	protected void writeEnclosureHardname(Clause buffer , String hardname){
 		buffer.append(startDelimiter());
 		buffer.append(hardname.toLowerCase());

@@ -12,6 +12,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.middleheaven.domain.DataType;
+import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
@@ -138,7 +139,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		Clause sql = new Clause("ALTER TABLE ");
 		writeEnclosureHardname(sql, tm.getName());
 		sql.append("\n");
-		for (ColumnModel cm : tm ){
+		for (ColumnModel cm : tm) {
 			sql.append("ADD ");
 			writeEnclosureHardname(sql,cm.getName());
 			sql.append(" ");
@@ -151,7 +152,13 @@ public abstract class DataBaseDialect implements AliasResolver{
 		return new SQLEditCommand(this,sql.toString());
 	}
 
-	public  DataBaseCommand createInsertCommand(Collection<Storable> data,StorableEntityModel model){
+	/**
+	 * Creates insert command.
+	 * @param data collection of storables to be inserted.
+	 * @param model entity store model.
+	 * @return the insert command.
+	 */
+	public  DataBaseCommand createInsertCommand(Collection<Storable> data, StorableEntityModel model) {
 		Clause names = new Clause();
 		Clause values = new Clause();
 		List<StorableFieldModel> fields = new ArrayList<StorableFieldModel>();
@@ -162,7 +169,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		fields.add(model.identityFieldModel());
 
 
-		for ( StorableFieldModel fm : model.fields()){
+		for (StorableFieldModel fm : model.fields()) {
 			if (fm.isIdentity() || fm.getDataType().isToManyReference()){
 				continue;
 			}
@@ -223,7 +230,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 
 		private Criterion restrict(Criterion c , StorableEntityModel model){
 
-			if (c instanceof JunctionCriterion){
+			if (c instanceof JunctionCriterion) {
 				
 			} else if (c instanceof FieldCriterion){
 				FieldCriterion fc = (FieldCriterion)c;
@@ -257,8 +264,8 @@ public abstract class DataBaseDialect implements AliasResolver{
 
 		List<StorableFieldModel> fields = new ArrayList<StorableFieldModel>();
 
-		for ( StorableFieldModel fm : model.fields()){
-			if( !fm.isTransient() && !fm.getDataType().isToManyReference()){
+		for (StorableFieldModel fm : model.fields()) {
+			if (!fm.isTransient() && !fm.getDataType().isToManyReference()) {
 				this.writeEditionHardname(sql, fm.getHardName());
 				sql.append("=? ,");
 				fields.add(fm);
@@ -344,7 +351,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 		} catch (SQLException e) {
 			throw this.handleSQLException(e);
 		} finally {
-			if(con!=null){
+			if(con != null){
 				try {
 					con.close();
 				} catch (SQLException e) {
@@ -379,6 +386,8 @@ public abstract class DataBaseDialect implements AliasResolver{
 		case Types.VARCHAR:
 		case Types.CHAR:
 			return DataType.TEXT;
+		case Types.SMALLINT:
+			return DataType.ENUM;
 		case Types.CLOB:
 			return DataType.MEMO;
 		}

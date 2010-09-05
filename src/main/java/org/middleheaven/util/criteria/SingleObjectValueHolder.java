@@ -11,7 +11,8 @@ public class SingleObjectValueHolder implements FieldValueHolder {
 	
 	private Object value;
 	private DataType dataType;
-
+	Map<String,String> params = new ParamsMap();
+	
 	public SingleObjectValueHolder(Object value,DataType dataType) {
 		this.value = value;
 		this.dataType = dataType;
@@ -24,7 +25,7 @@ public class SingleObjectValueHolder implements FieldValueHolder {
 
 	@Override
 	public boolean isEmpty() {
-		return value==null;
+		return false;
 	}
 
 	@Override
@@ -42,8 +43,7 @@ public class SingleObjectValueHolder implements FieldValueHolder {
 		return value.equals(valueHolder.getValue());
 	}
 
-	Map<String,String> params = new ParamsMap();
-	
+
 	@Override
 	public String getParam(String name) {
 		return params.get(name);

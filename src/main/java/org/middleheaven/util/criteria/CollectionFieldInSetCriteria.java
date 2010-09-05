@@ -2,7 +2,7 @@ package org.middleheaven.util.criteria;
 
 import java.util.Collection;
 
-import org.middleheaven.domain.store.QualifiedName;
+import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.criteria.entity.FieldInSetCriterion;
 
 public class CollectionFieldInSetCriteria implements FieldInSetCriterion {

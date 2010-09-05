@@ -11,4 +11,7 @@ public interface WebCommandMapping {
 	
 	public Outcome execute(HttpContext context);
 	
+	public Outcome resolveOutcome(String action, OutcomeStatus status, HttpContext context);
+	
+
 }

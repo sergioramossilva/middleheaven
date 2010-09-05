@@ -19,7 +19,7 @@ public class ContextAssembler implements BeanAssembler {
 		this.context = context;
 		this.scope = scope;
 		this.pool = pool;
-		this.objectName = objectName.toLowerCase();
+		this.objectName = objectName;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class ContextAssembler implements BeanAssembler {
 			public void doWith(PropertyAccessor acessor) {
 				acessor.setValue(instance,context.getAttribute(
 						scope,
-						(objectName ==null ? "" : objectName + ".") + acessor.getName().toLowerCase(), 
+						(objectName ==null ? "" : objectName + ".") + acessor.getName(), 
 						acessor.getValueType()
 						)
 				);

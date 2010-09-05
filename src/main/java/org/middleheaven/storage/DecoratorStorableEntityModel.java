@@ -9,7 +9,9 @@ import org.middleheaven.domain.EntityModel;
 import org.middleheaven.domain.ReferenceDataTypeModel;
 import org.middleheaven.domain.TextDataTypeModel;
 import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.collections.TransformedCollection;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.collections.TransformedEnumerable;
 import org.middleheaven.validation.Consistencies;
 
 public class DecoratorStorableEntityModel implements StorableEntityModel {
@@ -21,7 +23,10 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 		this.model = model;
 	}
 	
-	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public String toString(){
 		return model.toString();
 	}
@@ -32,7 +37,7 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 		return new StorableFieldModel(){
 
 			
-			StorableDataTypeModel model;
+			private StorableDataTypeModel model;
 			
 			@Override
 			public StorableEntityModel getEntityModel() {
@@ -117,20 +122,6 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 		return convertField(model.fieldModel(logicName));
 	}
 
-
-	@Override
-	public  Collection<StorableFieldModel> fields() {
-		@SuppressWarnings("unchecked")  Collection<EntityFieldModel> all = (Collection<EntityFieldModel>) model.fields();
-		return TransformedCollection.transform(all, new Classifier<StorableFieldModel,EntityFieldModel>(){
-
-			@Override
-			public StorableFieldModel classify(EntityFieldModel object) {
-				return convertField(object);
-			}
-			
-		});
-	}
-
 	@Override
 	public Class<?> getEntityClass() {
 		return model.getEntityClass();
@@ -152,11 +143,6 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 	}
 
 	@Override
-	public Object newInstance() {
-		return model.newInstance();
-	}
-
-	@Override
 	public Collection<StorableFieldModel> uniqueFields() {
 		// TODO implement DecoratorStorableEntityModel.uniqueFields
 		return Collections.emptySet();
@@ -174,7 +160,7 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 
 	@Override
 	public StorableFieldModel fieldReferenceTo(Class<?> type) {
-		for (EntityFieldModel tfm : this.model.fields()){
+		for (StorableFieldModel tfm : fields()){
 			StorableFieldModel sf = this.convertField(tfm);
 			
 			if (sf.getDataType().isToOneReference() && sf.getValueType().equals(type)){
@@ -182,6 +168,20 @@ public class DecoratorStorableEntityModel implements StorableEntityModel {
 			}
 		}
 		return null;
+	}
+
+
+
+	@Override
+	public Enumerable<? extends StorableFieldModel> fields() {
+		return CollectionUtils.enhance(TransformedEnumerable.transform(model.fields(), new Classifier<StorableFieldModel, EntityFieldModel>(){
+
+			@Override
+			public StorableFieldModel classify(EntityFieldModel object) {
+				return convertField(object);
+			}
+			
+		}));
 	}
 
 }

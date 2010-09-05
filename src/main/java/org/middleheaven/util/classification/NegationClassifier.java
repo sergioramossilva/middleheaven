@@ -6,7 +6,7 @@ package org.middleheaven.util.classification;
 
 /**
  * Filter that returns the opposite result  of a underlying filter.
- * @author  Sergio M. M. Taborda
+ *
  */
 public class NegationClassifier<T> implements Classifier<Boolean,T> {
 

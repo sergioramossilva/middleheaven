@@ -446,8 +446,7 @@ public class CriteriaInterpreter {
 
 	protected void writeWhereClause(String alias, Clause queryBuffer, List<ColumnValueHolder> params  ){
 		// WHERE CLAUSE
-		// Cria primeiro a sentença. 
-		// Se não houver nenhum o where não é adicionado
+		// if not constraint exists, no clause exists
 		if ( criteria().constraints().criteriaCount()==0){
 			return;
 		}
@@ -533,10 +532,6 @@ public class CriteriaInterpreter {
 
 
 			if (!jr.getSubCriteria().constraints().isEmpty()){
-				if (criteriaBuffer.toString().trim().length()>0){
-					criteriaBuffer.append(" AND ");
-				}
-
 				translateCriteriaToWhereClause(jr.getAlias(), criteriaBuffer, params, 
 						jr.getSubCriteria().constraints(), reader.read(jr.getTargetType())
 				);
@@ -724,20 +719,30 @@ public class CriteriaInterpreter {
 			Collection<Criterion> criterias = ((LogicCriterion)criterion).criterias();
 			if (!criterias.isEmpty()){
 
+				Clause joinConstraint = new Clause();
+				
 				// primeiro processa os criterios do tipo JuntionRestriction, se algum
 				List<Criterion> others = new ArrayList<Criterion>(criterias.size());
 				for (Iterator<Criterion> it = criterias.iterator(); it.hasNext();){
 					Criterion c = (Criterion)it.next();
 					if (c instanceof JunctionCriterion){
-						translateCriteriaToWhereClause(alias,criteriaBuffer,params,c,model);
+						translateCriteriaToWhereClause(alias,joinConstraint,params,c,model);
 					} else {
 						others.add(c);
 					}
 				}
 
+				if (joinConstraint.toString().trim().length()>0){
+					criteriaBuffer.append(joinConstraint);
+				}
+				
+				if (joinConstraint.toString().trim().length()>0 && !others.isEmpty()){
+					criteriaBuffer.append(" AND ");
+				}
+				
 				if (!others.isEmpty()){
 					// depois processa os criterios de outros tipos
-					LogicOperator opOperator = ((LogicCriterion)criterion).getOperator();
+					LogicOperator opOperator = ((LogicCriterion) criterion).getOperator();
 					final String op = opOperator.toString();
 					criteriaBuffer.append('(');
 					boolean writeOperator = false;
@@ -748,7 +753,7 @@ public class CriteriaInterpreter {
 						}
 						int len = criteriaBuffer.length();
 						translateCriteriaToWhereClause(alias,criteriaBuffer,params,c,model);
-						writeOperator = (criteriaBuffer.length()>len);
+						writeOperator = criteriaBuffer.length() > len;
 					}
 					criteriaBuffer.append(')');
 				}
@@ -766,33 +771,38 @@ public class CriteriaInterpreter {
 		criteriaBuffer.append(" LIKE ? ");
 	}
 
-	protected  void translateAggregationOperator (ProjectionOperator op , Clause selectBuffer ){
+	/**
+	 * Translates projection operators.
+	 * @param op operator
+	 * @param clause clause
+	 */
+	protected  void translateAggregationOperator (ProjectionOperator op , Clause clause ){
 		if (op instanceof CountOperator){
 			QualifiedName name = ((SumFieldOperator)op).getFieldName();
 			if (name==null){
-				selectBuffer.append("COUNT(*) AS count");
+				clause.append("COUNT(*) AS count");
 			} else {
-				selectBuffer.append("COUNT(").append(this.model().fieldModel(name).getHardName().toString()).append(") AS count");
+				clause.append("COUNT(").append(this.model().fieldModel(name).getHardName().toString()).append(") AS count");
 			}
 
 		} else if (op instanceof SumFieldOperator){
-			selectBuffer.append("SUM(");
+			clause.append("SUM(");
 			QualifiedName n = ((SumFieldOperator)op).getFieldName();
-			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
-			selectBuffer.append(") AS ");
-			selectBuffer.append(n.getName().toLowerCase());
+			dialect().writeQueryHardname(clause, this.model().fieldModel(n).getHardName());
+			clause.append(") AS ");
+			clause.append(n.getName().toLowerCase());
 		} else if (op instanceof MaxFieldOperator){
-			selectBuffer.append("MAX(");
+			clause.append("MAX(");
 			QualifiedName n = ((MaxFieldOperator)op).getFieldName();
-			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
-			selectBuffer.append(") AS ");
-			selectBuffer.append(n.getName().toLowerCase());
+			dialect().writeQueryHardname(clause, this.model().fieldModel(n).getHardName());
+			clause.append(") AS ");
+			clause.append(n.getName().toLowerCase());
 		} else if (op instanceof MinFieldOperator){
-			selectBuffer.append("MIN(");
+			clause.append("MIN(");
 			QualifiedName n = ((MinFieldOperator)op).getFieldName();
-			dialect().writeQueryHardname(selectBuffer, this.model().fieldModel(n).getHardName());
-			selectBuffer.append(") AS ");
-			selectBuffer.append(n.getName().toLowerCase());
+			dialect().writeQueryHardname(clause, this.model().fieldModel(n).getHardName());
+			clause.append(") AS ");
+			clause.append(n.getName().toLowerCase());
 		} else {
 			throw new StorageException("ProjectionOperator " + op.getClass().getName() + " is not supported by " + this.getClass().getName());
 		}

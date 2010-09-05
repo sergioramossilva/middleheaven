@@ -18,7 +18,7 @@ public class AnnotatedBeanValidator<T> extends BeanValidator<T>{
 	public static <U> AnnotatedBeanValidator<U> getInstanceFor(EntityModel model){
 		AnnotatedBeanValidator<U> validator = new AnnotatedBeanValidator<U>();
 		
-		for (EntityFieldModel efm : model){
+		for (EntityFieldModel efm : model.fields()){
 			CompositeValidator<?> comp = new CompositeValidator();
 			if (!efm.isNullable()){
 				comp.add(new NotNullValidator());

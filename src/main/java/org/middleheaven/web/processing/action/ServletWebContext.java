@@ -22,6 +22,7 @@ import org.middleheaven.io.repository.StreamBasedManagedFile;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.CulturalAttributeContext;
 import org.middleheaven.util.OperatingSystemInfo;
+import org.middleheaven.util.UrlStringUtils;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.web.processing.BrowserInfo;
 import org.middleheaven.web.processing.HttpProcessingUtils;
@@ -95,6 +96,22 @@ public abstract class ServletWebContext extends WebContext implements CulturalAt
 		}
 		
 	}
+	
+	@Override
+	public HttpUrl getRefererUrl() {
+		if (getRequest() instanceof HttpServletRequest){
+			HttpServletRequest hrequest = (HttpServletRequest)getRequest();
+			String referer = ((HttpServletRequest) hrequest).getHeader("Referer");
+			return new HttpUrl( referer,  hrequest.getContextPath());
+		} else {
+			return null;
+		}
+	
+	}
+
+	
+
+
 
 	public MediaManagedFile responseMediaFile(){
 		

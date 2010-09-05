@@ -1,11 +1,12 @@
 package org.middleheaven.domain;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.middleheaven.domain.store.QualifiedName;
 import org.middleheaven.logging.Log;
+import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.identity.IntegerIdentity;
 
 /**
@@ -58,15 +59,19 @@ public final class EditableEntityModel implements EntityModel {
 	 * @param fieldModel {@code EntityFieldModel} to add
 	 */
 	public void addField(EntityFieldModel fieldModel) {
-		if(fieldModel.isIdentity()){
+		if (fieldModel.isIdentity()) {
 			this.identityFieldModel = fieldModel;
 		}
 		this.fields.put(fieldModel.getLogicName().getName(), fieldModel);
 	}
-	
+
 	@Override
 	public EntityFieldModel fieldModel(QualifiedName logicName) {
-		return this.fields.get(logicName.getName());
+		EntityFieldModel model = this.fields.get(logicName.getName());
+		if (model == null){
+			throw new ModelingException("Field " + logicName + " does not exist in model");
+		}
+		return model;
 	}
 
 	@Override
@@ -95,15 +100,22 @@ public final class EditableEntityModel implements EntityModel {
 		return this.identityType;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "EditableEntityModel [type=" + this.type + "]";
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public Iterator<EntityFieldModel> iterator() {
-		return this.fields.values().iterator();
+	public Enumerable<? extends EntityFieldModel> fields() {
+		return CollectionUtils.enhance(this.fields.values());
 	}
+
 
 
 }

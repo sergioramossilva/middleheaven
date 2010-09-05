@@ -310,4 +310,8 @@ public class StringUtils {
 		
 		return builder.toString().replaceAll(" ", "");
 	}
+
+	public static String firstLetterToLower(String text) {
+		return text.substring(0,1).toLowerCase() + text.substring(1);
+	}
 }

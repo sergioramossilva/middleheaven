@@ -1,35 +1,34 @@
 package org.middleheaven.util.collections;
 
-import java.util.AbstractCollection;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.classification.NegationClassifier;
 
 /**
- * Allows type safe transformation from a collection of objects to another, using a {@link Classifier}.
+ * Allows type safe transformation from a {@link Enumerable} of objects to another, using a {@link Classifier}.
  * 
  * @param <O> original object type
  * @param <T> target object type
  */
-public final class TransformedCollection<O,T> extends AbstractCollection<T> {
+public final class TransformedEnumerable<O,T> extends AbstractAdapter<T>{
 
-	private Collection<? extends O> original;
+	private Enumerable<? extends O> original;
 	private Classifier<T, O> classifier;
 	
 	/**
-	 * Creates a TransformedCollection from the original objects and a classifier.
+	 * Creates a TransformedEnumerable from the original objects and a classifier.
 	 * @param <R> the original object type
 	 * @param <M> the target object type
-	 * @param original the original collection
+	 * @param original the original enumerable.
 	 * @param classifier the classifier that will transform the data
-	 * @return the resulting TransformedCollection.
+	 * @return the resulting TransformedEnumerable.
 	 */
-	public static <R,M> TransformedCollection<R,M> transform(Collection<? extends R> original, Classifier<M,R> classifier){
-		return new TransformedCollection<R,M>(original, classifier);
+	public static <R,M> TransformedEnumerable<R,M> transform(Enumerable<? extends R> original, Classifier<M,R> classifier){
+		return new TransformedEnumerable<R,M>(original, classifier);
 	}
 	
-	private TransformedCollection(Collection<? extends O> original, Classifier<T,O> classifier){
+	private TransformedEnumerable(Enumerable<? extends O> original, Classifier<T,O> classifier){
 		this.original = original;
 		this.classifier = classifier;
 	}
@@ -65,6 +64,16 @@ public final class TransformedCollection<O,T> extends AbstractCollection<T> {
 	@Override
 	public int size() {
 		return original.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return original.isEmpty();
+	}
+
+	@Override
+	public EnhancedCollection<T> reject(Classifier<Boolean, T> classifier) {
+		return findAll(new NegationClassifier<T>(classifier));
 	}
 
 }

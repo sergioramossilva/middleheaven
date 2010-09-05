@@ -7,15 +7,17 @@ import org.middleheaven.web.processing.Outcome;
 public class PresenterCommandMappingBuilder {
 
 	
-	public static PresenterCommandMappingBuilder map(Class<?> presenterClass){
-		return new PresenterCommandMappingBuilder(presenterClass);
+	public static PresenterCommandMappingBuilder map(Class<?> presenterClass, WebCommandMappingService webCommandMappingService){
+		return new PresenterCommandMappingBuilder(presenterClass, webCommandMappingService);
 	}
 	
 	
 	private PresenterWebCommandMapping mapping;
+	private WebCommandMappingService webCommandMappingService;
 
-	private PresenterCommandMappingBuilder (Class<?> presenterClass){
+	private PresenterCommandMappingBuilder (Class<?> presenterClass, WebCommandMappingService webCommandMappingService){
 		this.mapping = new PresenterWebCommandMapping(presenterClass);
+		this.webCommandMappingService = webCommandMappingService;
 	}
 	
 	public URLMappingBuilder to(String url){
@@ -122,7 +124,7 @@ public class PresenterCommandMappingBuilder {
 		@Override
 		public ActionMappingBuilder forwardTo(String url, String asContentType) {
 			Outcome outcome = new Outcome(status, url,asContentType);
-			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
+			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(), status, new FixedOutcomeResolver(outcome));
 			return actionBuilder;
 		}
 		
@@ -135,7 +137,7 @@ public class PresenterCommandMappingBuilder {
 		public ActionMappingBuilder redirectTo(HttpCode erroCode) {
 			
 			Outcome outcome = new Outcome(status, erroCode);
-			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
+			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(), status, new FixedOutcomeResolver(outcome));
 			return actionBuilder;
 		}
 
@@ -150,15 +152,29 @@ public class PresenterCommandMappingBuilder {
 					status,
 					url, 
 					true,
-					options.isPermanent() ? HttpCode.MOVED : HttpCode.MOVED_PERMANENTLY
+					options.isPermanent() ? HttpCode.MOVED_PERMANENTLY :  HttpCode.MOVED
 			);
-			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),outcome);
+			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(), status, new FixedOutcomeResolver(outcome));
+			return actionBuilder;
+		}
+
+		@Override
+		public ActionMappingBuilder forwardToLast(String lastAction) {
+			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(), status, new ForwardToLast(webCommandMappingService, lastAction));
+			return actionBuilder;
+		}
+
+		@Override
+		public ActionMappingBuilder redirectToLast() {
+			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),status, new RedirectToLast());
 			return actionBuilder;
 		}
 
 	
 
 	}
+
+
 
 
 

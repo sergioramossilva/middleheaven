@@ -63,7 +63,7 @@ public final class HashStorable implements Storable {
 
 	@Override
 	public void removeFieldElement(EntityFieldModel model, Object element) {
-		Collection<Object> collection = (Collection<Object>)getFieldValue(model);
+		Collection<Object> collection = (Collection<Object>) getFieldValue(model);
 		
 		if ( collection != null){
 			collection.remove(element);
@@ -72,7 +72,7 @@ public final class HashStorable implements Storable {
 	
 	@Override
 	public void addFieldElement(EntityFieldModel model, Object element) {
-		Collection<Object> collection = (Collection<Object>)getFieldValue(model);
+		Collection<Object> collection = (Collection<Object>) getFieldValue(model);
 		
 		if ( collection == null){
 			collection = new LinkedList<Object>();
