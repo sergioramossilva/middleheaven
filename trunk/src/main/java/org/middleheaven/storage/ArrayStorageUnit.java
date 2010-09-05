@@ -37,7 +37,7 @@ public class ArrayStorageUnit implements StorageUnit {
 	}
 
 	@Override
-	public Collection<Storable> filter(Collection<Storable> all) {
+	public Collection<Storable> filter(Collection<Storable> all, Class<?> type) {
 		if (actions.isEmpty()){
 			return all;
 		}
@@ -49,12 +49,13 @@ public class ArrayStorageUnit implements StorageUnit {
 		}
 		
 		for (StoreAction action : actions){
-			if( action instanceof DeleteAction){
-				result.remove(action.getStorable().getIdentity());
-			} else {
-				result.put(action.getStorable().getIdentity(), action.getStorable());
+			if (type.isInstance(action.getStorable())){
+				if( action instanceof DeleteAction){
+					result.remove(action.getStorable().getIdentity());
+				} else {
+					result.put(action.getStorable().getIdentity(), action.getStorable());
+				}
 			}
-
 		}
 		
 		return result.values();

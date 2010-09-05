@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
+import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.domain.DataType;
 import org.middleheaven.domain.DomainModel;
 import org.middleheaven.domain.EntityFieldModel;
@@ -34,6 +35,7 @@ import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.StorageException;
 import org.middleheaven.storage.db.datasource.DataSourceProvider;
+import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.criteria.Criteria;
 import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
@@ -185,6 +187,8 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 			throw dialect.handleSQLException(e);
 		}
 	}
+	
+
 
 	<T> Collection<T> findByCriteria(EntityCriteria<T> criteria,
 			ReadStrategy hints) {
@@ -241,9 +245,11 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					LinkedList<T> list = new LinkedList<T>();
 					while (rs.next()) {
 
+						@SuppressWarnings("unchecked")
 						T t = (T) this.getStorableStateManager().merge(
-								criteria.getTargetClass().cast(
-										model.newInstance()));
+							newInstance(model.getEntityClass())
+						);
+						
 						Storable st = this
 								.copy(s, (Storable) t, model, session);
 						st.setStorableState(StorableState.RETRIVED);
@@ -256,9 +262,11 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 					List<T> list = new ArrayList<T>(criteria.getCount());
 					while (rs.next() && count < criteria.getCount()) {
 
+						@SuppressWarnings("unchecked")
 						T t = (T) this.getStorableStateManager().merge(
-								criteria.getTargetClass().cast(
-										model.newInstance()));
+							newInstance(model.getEntityClass())
+						);
+						
 						Storable st = this
 								.copy(s, (Storable) t, model, session);
 						st.setStorableState(StorableState.RETRIVED);
@@ -377,7 +385,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 	 */
 	public void updateMetadata(DomainModel model, String catalog) {
 
-		Collection<EntityModel> allEntities = model.entitiesModels();
+		Enumerable<EntityModel> allEntities = model.entitiesModels();
 		DataBaseModel dbModel = new DataBaseModel();
 
 		for (EntityModel em : allEntities) {
@@ -430,7 +438,7 @@ public final class DataBaseStorage extends AbstractSequencialIdentityStorage {
 
 			String name = model.getTargetFieldHardName();
 			if (name != null) {
-				column.setName(name);
+				column.setTargetName(name);
 			}
 		}
 		if (column.getSize() == 0) {

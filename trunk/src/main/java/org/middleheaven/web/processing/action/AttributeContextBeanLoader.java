@@ -9,9 +9,9 @@ import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.global.text.LocalizationService;
 import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.quantity.time.CalendarDateTime;
-import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;
 import org.middleheaven.ui.CulturalAttributeContext;
+import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.coersion.StringCalendarDateTimeCoersor;
 import org.middleheaven.util.coersion.StringDateCoersor;
 import org.middleheaven.util.coersion.TypeCoercing;
@@ -83,7 +83,7 @@ public class AttributeContextBeanLoader {
 
 				if (object==null){
 					if(name.isEmpty()){
-						name = type.getSimpleName();
+						name = StringUtils.firstLetterToLower(type.getSimpleName());
 					}
 					// try to load from parameters
 					object =  new ContextAssembler(

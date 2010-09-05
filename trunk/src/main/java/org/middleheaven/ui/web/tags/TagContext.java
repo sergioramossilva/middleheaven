@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
 import org.middleheaven.ui.ContextScope;
+import org.middleheaven.web.processing.HttpUrl;
 import org.middleheaven.web.processing.action.ServletWebContext;
 import org.middleheaven.web.processing.global.HttpCultureResolver;
 
@@ -85,6 +86,7 @@ public class TagContext extends ServletWebContext {
 			return null;
 		}
 	}
+
 
 
 }

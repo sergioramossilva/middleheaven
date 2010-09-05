@@ -67,7 +67,7 @@ public abstract class AbstractUIComponentIterationTagSupport extends AbstractIte
 			if(parentTag != null){
 				parent = parentTag.getUIComponent();
 			}
-		} catch (ClassCastException e){
+		} catch (ClassCastException e) {
 			
 		}
 		

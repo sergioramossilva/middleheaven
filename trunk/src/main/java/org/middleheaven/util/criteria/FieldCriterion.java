@@ -1,6 +1,6 @@
 package org.middleheaven.util.criteria;
 
-import org.middleheaven.domain.store.QualifiedName;
+import org.middleheaven.storage.QualifiedName;
 
 public interface FieldCriterion extends Criterion {
 

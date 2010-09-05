@@ -126,6 +126,7 @@ public final class DomainModelBuilder {
 		final Map<String, EntityModelBuilder> entities = new HashMap<String, EntityModelBuilder>();
 		EditableDomainModel domainModel = new EditableDomainModel();
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public <E> EntityModelBuilder<E> getEntity(Class<E> type) {
 			EntityModelBuilder<E> em = entities.get(type.getName());

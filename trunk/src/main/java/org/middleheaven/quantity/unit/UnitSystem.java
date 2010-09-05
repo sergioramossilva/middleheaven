@@ -15,7 +15,7 @@ import org.middleheaven.quantity.measurables.Measurable;
  */
 public abstract class UnitSystem {
 
-	private static final Map<String , Unit<?>> ALL_UNITS = new HashMap<String , Unit<?>>();
+	protected static final Map<String , Unit<?>> ALL_UNITS = new HashMap<String , Unit<?>>();
 	
 
 	/**

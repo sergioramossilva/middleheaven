@@ -14,6 +14,7 @@ public class ColumnModel implements Cloneable{
 	private int size;
 	private int precision;
 	TableModel tableModel;
+	private String targetName;
 
 
 	public ColumnModel(String name, DataType type) {
@@ -116,4 +117,14 @@ public class ColumnModel implements Cloneable{
 	public String toString(){
 		return this.getTableModel().getName() + "." + this.name;
 	}
+
+	public void setTargetName(String name) {
+		this.targetName = name;
+	}
+
+	public String getTargetName() {
+		return targetName;
+	}
+	
+	
 }

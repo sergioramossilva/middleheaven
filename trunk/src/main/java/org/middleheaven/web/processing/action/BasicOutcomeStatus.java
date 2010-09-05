@@ -7,6 +7,7 @@ public enum BasicOutcomeStatus implements OutcomeStatus{
 	ERROR,// error thrown
 	INVALID ,// validation failed
 	TERMINATE,// presenter write the response. do not forward
-	REDIRECT,// redirect
+	REDIRECT, // redirect
+	NOT_FOUND; // page not found
 	
 }

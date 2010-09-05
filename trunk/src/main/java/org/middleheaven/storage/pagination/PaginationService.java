@@ -1,6 +1,7 @@
 package org.middleheaven.storage.pagination;
 
 
+
 public interface PaginationService {
 
 	

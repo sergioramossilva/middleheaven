@@ -35,6 +35,29 @@ public class UrlStringUtils extends StringUtils {
 		}
 		
 	}
+	
+	/**
+	 * Adds the context do the url.
+	 * Only is added if the url begins with /
+	 * @param ctx the corrent context
+	 * @param url the url
+	 * @return the url with the correct context
+	 */
+	public static String addContextPath(String ctx, String url){
+		String result;
+		if (ctx.length() > 1 && url.startsWith("/")){
+			result = ctx.concat(url);
+		} else {
+			result = url;
+		}
+		
+		while(result.startsWith("//")){
+			result = result.substring(1);
+		}
+		return result;
+	} 
+	
+	
 	/**
 	 * 
 	 * @param url

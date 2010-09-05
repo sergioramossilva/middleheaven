@@ -3,6 +3,7 @@ package org.middleheaven.storage.pagination;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class MappedPaginationService implements PaginationService {
 
 	private Map<String, Integer> sizes = new HashMap<String,Integer>();

@@ -75,4 +75,8 @@ public enum DataType {
 	public boolean isTextual() {
 		return this.equals(TEXT);
 	}
+
+	public boolean isEnum() {
+		return this.equals(ENUM);
+	}
 }

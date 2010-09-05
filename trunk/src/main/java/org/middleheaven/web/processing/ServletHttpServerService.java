@@ -62,7 +62,7 @@ class ServletHttpServerService extends AbstractHttpServerService {
 			} else if (outcome.isError){
 				response.sendError(outcome.getHttpCode().intValue());
 			}else if (outcome.isDoRedirect()){
-				if (outcome.getHttpCode().equals(HttpCode.MOVED_PERMANENTLY)){
+				if (HttpCode.MOVED_PERMANENTLY.equals(outcome.getHttpCode())){
 					response.setStatus(HttpCode.MOVED_PERMANENTLY.intValue());
 					response.setHeader( "Location", addContextPath(request.getContextPath(), outcome.getParameterizedURL()));
 					response.setHeader( "Connection", "close" );

@@ -3,6 +3,7 @@ package org.middleheaven.storage;
 import java.util.Collection;
 
 import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.storage.db.StoreQuerySession;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.criteria.entity.EntityCriteria;
@@ -30,6 +31,15 @@ public abstract class AbstractDataStorage implements DataStorage {
 		return reader;
 	}
 
+	/**
+	 * Instantiate a new object.
+	 * @param <E> the object type
+	 * @param type the object class
+	 * @return the object instance
+	 */
+	protected <E> E newInstance(Class<E> type){
+		return Introspector.of(type).newInstance();
+	}
 
 	/* (non-Javadoc)
 	 * @see org.middleheaven.storage.StorableModelResolver#resolveModel(java.util.Collection)

@@ -50,7 +50,7 @@ public class InMemoryStorage extends AbstractSequencialIdentityStorage {
 					return null;
 				}
 				
-				Storable s = getStorableStateManager().merge(obj.getEntityModel().newInstance());
+				Storable s = getStorableStateManager().merge(newInstance(obj.getEntityModel().getEntityClass()));
 				
 				obj.copyTo(s);
 				

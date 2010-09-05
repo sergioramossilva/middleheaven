@@ -9,6 +9,8 @@ import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import org.middleheaven.global.text.GlobalLabel;
+import org.middleheaven.util.StringUtils;
+import org.middleheaven.util.UrlStringUtils;
 
 public class FormTag extends AbstractBodyTagSupport {
 
@@ -48,6 +50,10 @@ public class FormTag extends AbstractBodyTagSupport {
 			super.id = Integer.toString((int)Math.random()); // FIX
 		}
 
+		action = UrlStringUtils.addContextPath(
+				((HttpServletRequest)pageContext.getRequest()).getContextPath(),
+				StringUtils.ensureStartsWith(action, "/")
+		);
 
 		writeValidationHookScript();
 		writeMessages();
@@ -67,18 +73,18 @@ public class FormTag extends AbstractBodyTagSupport {
 		}
 		final String contextPath = ((HttpServletRequest)this.pageContext.getRequest()).getContextPath();
 
-		
+
 		write("<script type=\"text/javascript\" encoding=\"ISO-8859-1\"");
 		write("src=\""+ contextPath +"/scripts/ui.datepicker.js\"");
 		writeLine("></script>");
 		writeLine("<script type='text/javascript' encoding=\"ISO-8859-1\">");
 		writeLine("	$(document).ready(function(){");
-		
+
 		// add datepick dropdown calendar
 		for (String id : dateFieldsIDs){
 			writeLine("		$('#" + id +"').datepicker();");
 		}
-		
+
 		// add character restriction for numeric fields
 		if ( hasIntegerFields){
 			writeLine("$(\".digits\").keypress(function (e){");
@@ -87,7 +93,7 @@ public class FormTag extends AbstractBodyTagSupport {
 			writeLine(" }");
 			writeLine("});");
 		}
-		
+
 		if( hasDecimalFields){
 			writeLine("$(\".number\").keypress(function (e){");
 			writeLine(" if( e.which!=8 && e.which!=0 && (e.which<48 || e.which>57)){");
@@ -95,9 +101,9 @@ public class FormTag extends AbstractBodyTagSupport {
 			writeLine(" }");
 			writeLine("});");
 		}
-		
+
 		writeLine("	});");
-		
+
 		writeLine("</script>");
 
 	}
@@ -119,7 +125,7 @@ public class FormTag extends AbstractBodyTagSupport {
 	}
 
 	private void writeMessages () throws JspTagException{
-
+		/*
 		writeLine("<script type=\"text/javascript\" >");
 		writeLine("jQuery.extend(jQuery.validator.messages, {");
 		writeLine("required: \"" + this.getL10NMessage("invalid.required")+"\",");
@@ -138,7 +144,7 @@ public class FormTag extends AbstractBodyTagSupport {
 		writeLine("creditcard: \"" + this.getL10NMessage("invalid.creditcard")+"\"");
 		writeLine("});");
 		writeLine("</script>");
-
+		 */
 	}
 
 	private String getL10NMessage(String label){

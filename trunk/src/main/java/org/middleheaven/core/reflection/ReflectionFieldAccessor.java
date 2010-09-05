@@ -11,7 +11,7 @@ public  class ReflectionFieldAccessor implements FieldAcessor{
 
 	public ReflectionFieldAccessor(Class<?> type, String fieldName){
 		this.type = type;
-		this.name = fieldName.toLowerCase();
+		this.name = fieldName;
 
 		load();
 	}

@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.middleheaven.util.StringUtils;
+
 public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 
-	public PropertyAccessor getPropertyAccessor(Class<?> type, String fieldName){
-		return new ReflectionPropertyAccessor(this.getRealType(type),fieldName);
+	public PropertyAccessor getPropertyAccessor(Class<?> type, String propertyName){
+		return new ReflectionPropertyAccessor(this.getRealType(type),propertyName);
 	}
 	
 	@Override
@@ -24,9 +26,9 @@ public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 			
 			if (!m.getName().startsWith("getClass") && m.getParameterTypes().length==0){
 				if (m.getName().startsWith("get") ){
-					result.add(getPropertyAccessor(type, m.getName().substring(3)));
+					result.add(getPropertyAccessor(type, StringUtils.firstLetterToLower(m.getName().substring(3))));
 				} else if (m.getName().startsWith("is")){
-					result.add(getPropertyAccessor(type, m.getName().substring(2)));
+					result.add(getPropertyAccessor(type, StringUtils.firstLetterToLower(m.getName().substring(2))));
 				}
 
 			}

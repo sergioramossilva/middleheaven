@@ -5,6 +5,8 @@ import java.sql.SQLException;
 
 import org.middleheaven.domain.EntityFieldModel;
 import org.middleheaven.domain.EntityModel;
+import org.middleheaven.storage.StorableEnum;
+import org.middleheaven.storage.StorableEnumUtils;
 import org.middleheaven.storage.StorableState;
 import org.middleheaven.storage.Storable;
 import org.middleheaven.storage.StorableEntityModel;
@@ -36,6 +38,9 @@ public class ResultSetStorable implements Storable {
 			Object value =  rs.getObject(model.fieldModel(fieldModel.getLogicName()).getHardName().getName());
 			if (fieldModel.getDataType().isReference()){
 				return value;
+			} else if (fieldModel.getDataType().isEnum()){
+				Class<StorableEnum> storableEnum = (Class<StorableEnum>) fieldModel.getValueType();
+				return StorableEnumUtils.valueForId(storableEnum, TypeCoercing.coerce(value, Integer.class));
 			} else {
 				return TypeCoercing.coerce(value, fieldModel.getValueType());
 			}

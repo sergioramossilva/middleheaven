@@ -2,7 +2,7 @@ package org.middleheaven.util.criteria;
 
 import java.util.Collection;
 
-import org.middleheaven.domain.store.QualifiedName;
+import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.collections.Interval;
 
 public abstract class AbstractBuildingConstraint<T,B extends AbstractCriteriaBuilder<T,B>> {
@@ -12,7 +12,7 @@ public abstract class AbstractBuildingConstraint<T,B extends AbstractCriteriaBui
 	private QualifiedName qname;
 
 
-	protected AbstractBuildingConstraint (B builder,QualifiedName qualifiedFileName){
+	protected AbstractBuildingConstraint (B builder, QualifiedName qualifiedFileName){
 		this.qname = qualifiedFileName;
 		this.builder = builder;
 	}
@@ -104,7 +104,7 @@ public abstract class AbstractBuildingConstraint<T,B extends AbstractCriteriaBui
 	}
 
 	public B isNull() {
-		return eq(null);
+		return constrainField(CriterionOperator.IS_NULL,null);
 	}
 
 	public <V> B in(Collection<V> values) {

@@ -25,11 +25,11 @@ public class TestSubject {
 	@Column(persistable=false)
 	private String transientField;
 	
-	@Column("ativo")
+	@Column("active")
 	private boolean active;
 	private String name;
 	
-	@Column("aniversario")
+	@Column("birth")
 	private Date birthdate;
 
 	private int number;

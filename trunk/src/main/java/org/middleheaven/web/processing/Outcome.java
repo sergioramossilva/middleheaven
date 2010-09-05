@@ -2,6 +2,7 @@ package org.middleheaven.web.processing;
 
 import org.middleheaven.web.processing.action.BasicOutcomeStatus;
 import org.middleheaven.web.processing.action.OutcomeStatus;
+import org.middleheaven.web.processing.action.WebContext;
 
 public class Outcome {
 

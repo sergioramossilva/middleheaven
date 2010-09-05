@@ -14,6 +14,7 @@ import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.storage.ReferenceStorableDataTypeModel;
 import org.middleheaven.storage.Storable;
+import org.middleheaven.storage.StorableEnum;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
@@ -25,7 +26,7 @@ public class PreparedStatementStorable {
 
 	PreparedStatement ps;
 	DataBaseStorage keeper;
-	
+
 	public PreparedStatementStorable(DataBaseStorage keeper, PreparedStatement ps) {
 		this.ps = ps; 
 		this.keeper = keeper;
@@ -36,7 +37,7 @@ public class PreparedStatementStorable {
 		int index = 1;
 		for ( StorableFieldModel fm : fields){
 			Object value = keeper.readFieldValue(s, fm);
-			
+
 			setField(index, value , fm.getDataTypeModel());
 			index++;
 		}
@@ -54,6 +55,8 @@ public class PreparedStatementStorable {
 			return Types.DATE;
 		case LOGIC:
 			return Types.BIT;
+		case ENUM:
+			return Types.SMALLINT;
 		case TEXT:
 		default:
 			return Types.VARCHAR;
@@ -63,24 +66,24 @@ public class PreparedStatementStorable {
 
 	private DataType resolveDataType(Object value){
 		DataType dt = DataType.fromClass(value.getClass());
-//		if (dt.equals(DataType.UNKWON)){
-//			if (value instanceof LongIdentity || value instanceof IntegerIdentity){
-//				return DataType.INTEGER;
-//			} else if (value instanceof StringIdentity || value instanceof UUIDIdentity){
-//				return DataType.TEXT;
-//			} else {
-//				throw new UnsupportedOperationException(value.getClass() + " cannot be preseved");
-//			}
-//		}
+		//		if (dt.equals(DataType.UNKWON)){
+		//			if (value instanceof LongIdentity || value instanceof IntegerIdentity){
+		//				return DataType.INTEGER;
+		//			} else if (value instanceof StringIdentity || value instanceof UUIDIdentity){
+		//				return DataType.TEXT;
+		//			} else {
+		//				throw new UnsupportedOperationException(value.getClass() + " cannot be preseved");
+		//			}
+		//		}
 		return dt;
 	}
-	
+
 	public void setField(int i, Object value, StorableFieldModel fm ) throws SQLException {
 		setField(i,value, fm.getDataTypeModel());
 	}
-	
+
 	private void setField(int i, Object value, DataTypeModel dataTypeModel ) throws SQLException {
-		
+
 		if (value == null){
 			ps.setNull(i, infereSQLType(dataTypeModel.getDataType())); 
 		} else if (value instanceof LongIdentity){
@@ -114,6 +117,16 @@ public class PreparedStatementStorable {
 			case LOGIC:
 				ps.setBoolean(i, Boolean.parseBoolean(value.toString()));
 				break;
+			case ENUM:
+				try {
+					StorableEnum enumObj = (StorableEnum)value;
+
+					ps.setInt(i, enumObj.getIdentity());
+					break;
+				} catch (ClassCastException e){
+					throw new UnsupportedOperationException(value.getClass() + " must implement " + StorableEnum.class + " in order to be stored");
+				}
+
 			default:
 				throw new UnsupportedOperationException(value.getClass() + " cannot be set");
 			}

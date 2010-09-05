@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
+import org.middleheaven.util.UrlStringUtils;
+
 
 /**
  * Adds context information to an URL
@@ -17,25 +19,12 @@ public class UrlTag extends AbstractTagSupport{
 		this.href = value;
 	}
 	
-	private String addContextPath(String ctx, String url){
-		String result;
-		if (ctx.length() > 1 && url.startsWith("/")){
-			result = ctx.concat(url);
-		} else {
-			result = url;
-		}
-		
-		while(result.startsWith("//")){
-			result = result.substring(1);
-		}
-		return result;
-	} 
 
 	public int doStartTag() throws JspException {
 		try {
 
 			
-			pageContext.getOut().print(addContextPath(((HttpServletRequest)pageContext.getRequest()).getContextPath(), href));
+			pageContext.getOut().print(UrlStringUtils.addContextPath(((HttpServletRequest)pageContext.getRequest()).getContextPath(), href));
 
 			return SKIP_BODY;
 		} catch (Exception e) {

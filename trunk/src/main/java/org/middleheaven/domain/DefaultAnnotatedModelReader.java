@@ -42,12 +42,17 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 	@Override
 	public void read(Class<?> type, ModelBuilder builder) {
+		
+		if (!isEntityType(type)){
+			return;
+		}
+		
 		EntityModelBuilder<?> em = builder.getEntity(type);
 
 		Collection<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
 
 		if (propertyAccessors.isEmpty()){
-			throw new ModelingException("No public fields found for entity " + type.getName() + ".");
+			throw new ModelingException("No public properties found for entity " + type.getName() + ".");
 		} else {
 
 			for (PropertyAccessor pa : propertyAccessors){
@@ -57,12 +62,16 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 			}
 
 			if (em.getIdentityField() == null){
-				throw new ModelingException("No identity field found for entity " + type.getName() + ".");
+				throw new ModelingException("No identity properties found for entity " + type.getName() + ".");
 			}
 		}
 
 	}
 
+
+	private boolean isEntityType(Class<?> type) {
+		return !type.isEnum();
+	}
 
 	private <T> Class<T> resolveValidIdentityType(Class<T> type){
 		if (type.isInterface() || Modifier.isAbstract(type.getModifiers())){
@@ -150,6 +159,8 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 			fm.setDataTypeModel(model);
 
+		} else if( pa.getValueType().isEnum()) {
+			fm.setDataType(DataType.ENUM);
 		}
 
 		if ( fm.getDataType() == null){
@@ -183,13 +194,13 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 
 			} else if (matchTypes(valueType,Integer.class ,int.class, Byte.class, byte.class, Short.class, short.class)  ){
 				fm.setDataType(DataType.INTEGER);
-			} else if (matchTypes(valueType,CalendarDate.class)){
-				fm.setDataType(DataType.DATE);
-			} else if (matchTypes(valueType,CalendarDateTime.class)){
+			}  else if (matchTypes(valueType,CalendarDateTime.class)){
 				fm.setDataType(DataType.DATETIME);
 				if (pa.isAnnotadedWith(Temporal.class)){
 					fm.setDataType(pa.getAnnotation(Temporal.class).value());
 				} 
+			} else if (matchTypes(valueType,CalendarDate.class)){
+				fm.setDataType(DataType.DATE);
 			} else if (matchTypes(valueType, Date.class,Calendar.class)){
 				if (pa.isAnnotadedWith(Temporal.class)){
 					fm.setDataType(pa.getAnnotation(Temporal.class).value());
@@ -210,7 +221,7 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 				fm.setDataType( DataType.ONE_TO_MANY);
 			} else {
 
-				Log.onBookFor(this.getClass()).info("Implicitly composing many-to-one relation for property " + pa.toString());
+				Log.onBookFor(this.getClass()).warn("Implicitly composing many-to-one relation for property " + pa.toString());
 
 				mapAsManyToOne(fm, "",valueType,builder);
 			}
@@ -262,7 +273,9 @@ public class DefaultAnnotatedModelReader implements ModelReader {
 		if(identityType.isInterface() || Modifier.isAbstract(identityType.getModifiers())){
 			identityType = idType;
 			if(identityType==null || Void.class.equals(identityType)){
-				throw new ModelingException("Illegal identity type for " + fm.toString() + ".When using interfaces or abstract types as identity type you must specify a non interface, non abstract, class for identity");
+				throw new ModelingException("Illegal identity type for " 
+						+ fm.toString() 
+						+ ".When using interfaces or abstract types as identity type you must specify a non interface, non abstract, class for identity");
 			}
 		}
 		fm.setDataType(DataType.fromClass(identityType));

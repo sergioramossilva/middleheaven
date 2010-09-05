@@ -9,6 +9,9 @@ import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.ui.CulturalAttributeContext;
 import org.middleheaven.web.processing.action.HttpMethod;
 
+/**
+ * A context that is scoped inside an HTTP request.
+ */
 public interface HttpContext extends CulturalAttributeContext{
 
 	public ManagedFileRepository getUploadRepository();
@@ -16,6 +19,12 @@ public interface HttpContext extends CulturalAttributeContext{
 	public Map<String,String> getParameters();
 	
 	public HttpUrl getRequestUrl();
+	
+	/**
+	 * 
+	 * @return the origin of the request.
+	 */
+	public HttpUrl getRefererUrl();
 	
 	public  HttpMethod getHttpService();
 	

@@ -1,6 +1,5 @@
 package org.middleheaven.quantity.unit;
 
-import org.middleheaven.domain.annotations.Length;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measurables.Angle;
 import org.middleheaven.quantity.measurables.Area;
@@ -69,11 +68,11 @@ public final class SI extends UnitSystem{
 	}
 	
 	static {
-		allUnits.put(Time.class.getName(), SECOND);
-		allUnits.put(Distance.class.getName(), METER);
-		allUnits.put(Area.class.getName(), SQUARE_METER);
-		allUnits.put(Volume.class.getName(), CUBIC_METER);
-		allUnits.put(Dimensionless.class.getName(), DIMENTIONLESS);
+		ALL_UNITS.put(Time.class.getName(), SECOND);
+		ALL_UNITS.put(Distance.class.getName(), METER);
+		ALL_UNITS.put(Area.class.getName(), SQUARE_METER);
+		ALL_UNITS.put(Volume.class.getName(), CUBIC_METER);
+		ALL_UNITS.put(Dimensionless.class.getName(), DIMENTIONLESS);
 		// TODO complete
 	}
 	
