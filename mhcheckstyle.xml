@@ -37,10 +37,6 @@
     <!-- See http://checkstyle.sf.net/config_javadoc.html#PackageHtml -->
     <module name="JavadocPackage"/>
 
-    <!-- Checks whether files end with a new line.                        -->
-    <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
-    <module name="NewlineAtEndOfFile"/>
-
     <!-- Checks that property files contain the same keys.         -->
     <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
     <module name="Translation"/>
@@ -131,12 +127,13 @@
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+        <!-- 
         <module name="EmptyForIteratorPad"/>
         <module name="MethodParamPad"/>
         <module name="OperatorWrap"/>
         <module name="ParenPad"/>
         <module name="TypecastParenPad"/>
-        
+         -->
      
         <!-- 
         <module name="TabCharacter">
