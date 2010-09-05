@@ -181,6 +181,31 @@
 	</tag>
 	
 	<tag>
+	    <name>countTo</name>
+	    <tagclass>org.middleheaven.ui.web.tags.CountToTag</tagclass>
+	    <teiclass>org.middleheaven.ui.web.tags.CountToTagExtraInfo</teiclass>
+	    <bodycontent>JSP</bodycontent>
+	    
+	    <attribute>
+	      <name>var</name>
+	      <required>true</required>
+	      <rtexprvalue>false</rtexprvalue>
+	    </attribute>
+	    
+	    <attribute>
+	      <name>first</name>
+	      <required>false</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	    
+	     <attribute>
+	      <name>to</name>
+	      <required>true</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	</tag>
+	
+	<tag>
 	    <name>tbody</name>
 	    <tagclass>org.middleheaven.ui.web.tags.TBodyTag</tagclass>
 	    <bodycontent>JSP</bodycontent>
