@@ -3,6 +3,8 @@ package org.middleheaven.storage;
 import java.util.Collection;
 
 import org.middleheaven.util.criteria.entity.EntityCriteria;
+import org.middleheaven.util.criteria.entity.projection.Projection;
+import org.middleheaven.util.criteria.entity.projection.ProjectionOperator;
 
 /**
  * Abstraction for a real physical data storage.
@@ -45,6 +47,15 @@ public interface DataStorage extends IdentityManager{
 	 */
 	public <T> Query<T> createQuery(EntityCriteria<T> criteria, ReadStrategy strategy);
 
+	
+	/**
+	 * Executes a projection.
+	 * @param <T> the projection result type.
+	 * @param projection the projection to execute.
+	 * @return the result value of the projection.
+	 */
+	public <T> T executeProjection(Projection<T> projection);
+	
 	/**
 	 * Register the controlling state manager
 	 * @param storableStateManager

@@ -3,7 +3,7 @@ package org.middleheaven.storage;
 import java.util.Collection;
 
 import org.middleheaven.core.reflection.Introspector;
-import org.middleheaven.domain.EntityFieldModel;
+import org.middleheaven.model.domain.EntityFieldModel;
 import org.middleheaven.storage.db.StoreQuerySession;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.criteria.entity.EntityCriteria;

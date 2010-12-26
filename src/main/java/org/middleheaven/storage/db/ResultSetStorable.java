@@ -3,8 +3,8 @@ package org.middleheaven.storage.db;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.middleheaven.domain.EntityFieldModel;
-import org.middleheaven.domain.EntityModel;
+import org.middleheaven.model.domain.EntityFieldModel;
+import org.middleheaven.model.domain.EntityModel;
 import org.middleheaven.storage.StorableEnum;
 import org.middleheaven.storage.StorableEnumUtils;
 import org.middleheaven.storage.StorableState;

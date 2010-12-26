@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
-import org.middleheaven.domain.annotations.Id;
-import org.middleheaven.domain.annotations.OneToMany;
+import org.middleheaven.domain.model.annotations.Id;
+import org.middleheaven.domain.model.annotations.OneToMany;
 import org.middleheaven.storage.model.Column;
 import org.middleheaven.storage.model.Table;
 import org.middleheaven.util.identity.Identity;

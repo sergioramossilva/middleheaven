@@ -1,7 +1,7 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.domain.DataType;
-import org.middleheaven.domain.TextDataTypeModel;
+import org.middleheaven.model.domain.DataType;
+import org.middleheaven.model.domain.TextDataTypeModel;
 
 public class TextStorableDataTypeAdapter extends TextDataTypeModel implements StorableDataTypeModel {
 

@@ -5,11 +5,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
-import org.middleheaven.domain.DomainClasses;
-import org.middleheaven.domain.DomainModel;
-import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFiles;
+import org.middleheaven.model.domain.DomainClasses;
+import org.middleheaven.model.domain.DomainModel;
+import org.middleheaven.model.domain.DomainModelBuilder;
 import org.middleheaven.sequence.service.FileSequenceStorageActivator;
 import org.middleheaven.storage.db.datasource.DataSourceServiceActivator;
 import org.middleheaven.storage.testdomain.TestSubject;

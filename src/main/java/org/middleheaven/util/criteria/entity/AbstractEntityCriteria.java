@@ -10,6 +10,8 @@ import org.middleheaven.util.criteria.AbstractCriteria;
 import org.middleheaven.util.criteria.Criterion;
 import org.middleheaven.util.criteria.LogicCriterion;
 import org.middleheaven.util.criteria.OrderingCriterion;
+import org.middleheaven.util.criteria.entity.projection.Projection;
+import org.middleheaven.util.criteria.entity.projection.ProjectionOperator;
 
 
 public abstract class AbstractEntityCriteria <T> extends AbstractCriteria<T> implements EntityCriteria<T>{

@@ -1,7 +1,7 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.domain.DataType;
-import org.middleheaven.domain.ReferenceDataTypeModel;
+import org.middleheaven.model.domain.DataType;
+import org.middleheaven.model.domain.ReferenceDataTypeModel;
 
 public class ReferenceStorableDataTypeModelAdapter implements ReferenceStorableDataTypeModel {
 

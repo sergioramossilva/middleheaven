@@ -7,6 +7,7 @@ import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.criteria.Criteria;
 import org.middleheaven.util.criteria.Criterion;
 import org.middleheaven.util.criteria.OrderingCriterion;
+import org.middleheaven.util.criteria.entity.projection.Projection;
 
 
 public interface EntityCriteria<T> extends Criteria<T> {

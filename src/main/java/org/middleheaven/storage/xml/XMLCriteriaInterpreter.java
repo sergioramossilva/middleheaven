@@ -1,6 +1,6 @@
 package org.middleheaven.storage.xml;
 
-import org.middleheaven.domain.DataType;
+import org.middleheaven.model.domain.DataType;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.util.criteria.Criteria;
 import org.middleheaven.util.criteria.Criterion;

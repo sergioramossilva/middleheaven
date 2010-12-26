@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.domain.DomainModel;
+import org.middleheaven.model.domain.DomainModel;
 import org.middleheaven.transactions.TransactionService;
 
 public class HashEntityStoreService implements EntityStoreService {

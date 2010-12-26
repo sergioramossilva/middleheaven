@@ -7,9 +7,9 @@ import java.sql.Types;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.middleheaven.domain.DataType;
-import org.middleheaven.domain.DataTypeModel;
-import org.middleheaven.domain.ReferenceDataTypeModel;
+import org.middleheaven.model.domain.DataType;
+import org.middleheaven.model.domain.DataTypeModel;
+import org.middleheaven.model.domain.ReferenceDataTypeModel;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.storage.ReferenceStorableDataTypeModel;

@@ -95,13 +95,13 @@ public final class IOUtils {
 	/**
 	 * The copy does not closes the steams.
 	 * @param data - the data to write to the output stream
-	 * @param out
+	 * @param out out the stream to write to
 	 * 
 	 * @see IOUtils#close(Closeable)
 	 */
-	public static void copy(byte[] data,OutputStream out) {
+	public static void copy(byte[] data, OutputStream out) {
 		if(out == null){
-			throw new IllegalArgumentException("Cannot copy a non existent stream");
+			throw new IllegalArgumentException("Cannot copy to a non existent stream");
 		}
 		try {
 			out.write(data);
@@ -113,10 +113,12 @@ public final class IOUtils {
 	
 	/**
 	 * The copy does not closes the steams.
-	 * @param in
-	 * @param out
+	 * @param in the stream to read from
+	 * @param out the stream to write to
+	 * @throws IOException if something goes wrong
+	 * @throws IllegalArgumentException if any argument is <code>null</code>
 	 */
-	public static void copy(InputStream in,OutputStream out) throws IOException{
+	public static void copy(InputStream in, OutputStream out) throws IOException {
 		if (in==null || out ==null){
 			throw new IllegalArgumentException("Cannot copy a non existent stream");
 		}
@@ -150,10 +152,10 @@ public final class IOUtils {
 
 	/**
 	 * Copies the data in one file to another existing file. 
-	 * @param in
-	 * @param out
+	 * @param in the file to read 
+     * @param out the file to write
 	 */
-	public static void copy(File in,File out) {
+	public static void copy(File in, File out) {
 		FileInputStream fis =null;
 		FileOutputStream fos =null;
 

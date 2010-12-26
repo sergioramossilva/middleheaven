@@ -6,11 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 
 import org.junit.Test;
-import org.middleheaven.domain.DomainClasses;
-import org.middleheaven.domain.DomainModel;
-import org.middleheaven.domain.DomainModelBuilder;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFiles;
+import org.middleheaven.model.domain.DomainClasses;
+import org.middleheaven.model.domain.DomainModel;
+import org.middleheaven.model.domain.DomainModelBuilder;
 import org.middleheaven.storage.odb.ObjectDataStorage;
 import org.middleheaven.storage.testdomain.TestSubject;
 import org.middleheaven.util.criteria.entity.EntityCriteria;

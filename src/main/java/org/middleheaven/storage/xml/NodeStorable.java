@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.domain.EntityFieldModel;
-import org.middleheaven.domain.EntityModel;
+import org.middleheaven.model.domain.EntityFieldModel;
+import org.middleheaven.model.domain.EntityModel;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableState;
