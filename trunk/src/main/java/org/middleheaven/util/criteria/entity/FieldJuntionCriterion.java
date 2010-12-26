@@ -5,23 +5,33 @@ import org.middleheaven.util.criteria.Criterion;
 import org.middleheaven.util.criteria.CriterionOperator;
 import org.middleheaven.util.criteria.FieldValueHolder;
 
-
+/**
+ * Junction criterion based on a field.
+ */
 public class FieldJuntionCriterion implements JunctionCriterion {
 
-	QualifiedName fieldName;
-	Class<?> targetType;
-	Class<?> sourceType;
-	EntityCriteria<?> subCriteria;
+	private QualifiedName fieldName;
+	private Class<?> targetType;
+	private Class<?> sourceType;
+	private EntityCriteria<?> subCriteria;
 	private String alias;
+	private boolean reversed;
 
-
-	public FieldJuntionCriterion(QualifiedName fieldName, Class<?> targetType, Class<?>  sourceType){
+	/**
+	 * 
+	 * @param fieldName the field's name
+	 * @param targetType the target junction type
+	 * @param sourceType the source junction type
+	 * @param reversed if the junction is reversed.
+	 */
+	public FieldJuntionCriterion(QualifiedName fieldName, Class<?> targetType, Class<?>  sourceType, boolean reversed){
 		if (targetType == null){
 			throw new IllegalArgumentException("Target type is required");
 		}
 		this.fieldName = fieldName;
 		this.targetType = targetType;
 		this.sourceType = sourceType;
+		this.reversed = reversed;
 	}
 	
 	@Override
@@ -75,5 +85,10 @@ public class FieldJuntionCriterion implements JunctionCriterion {
 	@Override
 	public Criterion simplify() {
 		return this;
+	}
+
+	@Override
+	public boolean isReversed() {
+		return this.reversed;
 	}
 }

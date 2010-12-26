@@ -2,7 +2,7 @@ package org.middleheaven.util.criteria;
 
 import java.util.Map;
 
-import org.middleheaven.domain.DataType;
+import org.middleheaven.model.domain.DataType;
 import org.middleheaven.util.collections.ParamsMap;
 
 public class SingleObjectValueHolder implements FieldValueHolder {

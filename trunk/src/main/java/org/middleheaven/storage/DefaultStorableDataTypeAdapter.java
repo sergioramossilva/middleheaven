@@ -1,7 +1,7 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.domain.DataType;
-import org.middleheaven.domain.DataTypeModel;
+import org.middleheaven.model.domain.DataType;
+import org.middleheaven.model.domain.DataTypeModel;
 
 public class DefaultStorableDataTypeAdapter implements StorableDataTypeModel {
 

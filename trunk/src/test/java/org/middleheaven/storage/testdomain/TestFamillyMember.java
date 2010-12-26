@@ -1,6 +1,6 @@
 package org.middleheaven.storage.testdomain;
 
-import org.middleheaven.domain.annotations.ManyToOne;
+import org.middleheaven.domain.model.annotations.ManyToOne;
 
 
 public class TestFamillyMember {

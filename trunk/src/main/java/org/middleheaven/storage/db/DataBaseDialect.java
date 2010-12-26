@@ -11,8 +11,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.domain.DataType;
-import org.middleheaven.domain.EntityFieldModel;
+import org.middleheaven.model.domain.DataType;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.Storable;
@@ -20,10 +19,6 @@ import org.middleheaven.storage.StorableEntityModel;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;
 import org.middleheaven.storage.StorageException;
-import org.middleheaven.storage.assembly.AssemblyContext;
-import org.middleheaven.storage.assembly.AssemblyLineService;
-import org.middleheaven.storage.assembly.SimpleAssemblyLine;
-import org.middleheaven.util.criteria.Criteria;
 import org.middleheaven.util.criteria.Criterion;
 import org.middleheaven.util.criteria.FieldCriterion;
 import org.middleheaven.util.criteria.LogicCriterion;
@@ -31,6 +26,9 @@ import org.middleheaven.util.criteria.entity.AbstractEntityCriteria;
 import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.criteria.entity.JunctionCriterion;
 
+/**
+ * Holds informations for a specific DBMS providers.
+ */
 public abstract class DataBaseDialect implements AliasResolver{
 
 	private final String startDelimiter;
@@ -39,6 +37,12 @@ public abstract class DataBaseDialect implements AliasResolver{
 	private final AliasResolver aliasResolver = new DefaultAliasResolver(); 
 	
 
+	/**
+	 * 
+	 * @param startDelimiter delimiter for the start of the table or column name
+	 * @param endDelimiter delimiter for the start of the table or column name
+	 * @param fieldSeparator separator between the table and column names.
+	 */
 	protected DataBaseDialect(String startDelimiter, String endDelimiter,String fieldSeparator) {
 
 		this.startDelimiter = startDelimiter;
@@ -131,7 +135,7 @@ public abstract class DataBaseDialect implements AliasResolver{
 
 	/**
 	 * Only creates, does not remove
-	 * @param tm
+	 * @param tm table model
 	 * @return
 	 */
 	public EditionDataBaseCommand createAlterTableCommand(TableModel tm) {

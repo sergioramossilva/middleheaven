@@ -2,7 +2,7 @@ package org.middleheaven.util.criteria;
 
 import java.io.Serializable;
 
-import org.middleheaven.domain.DataType;
+import org.middleheaven.model.domain.DataType;
 
 public interface FieldValueHolder extends Serializable{
 

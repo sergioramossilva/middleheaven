@@ -109,12 +109,13 @@ public interface EntityFieldConstraint<T, B extends AbstractEntityCriteriaBuilde
 	/**
 	 * The attribute value is an entity equals to {@code candidate}
 	 * @param <O>
-	 * @param other
+	 * @param candidate candidate to be tested
 	 * @return
 	 */
 	public <O> B is(O candidate);
 	
 	/**
+	 * Transfers criteria building to the <code>referencedEntityType</code>
 	 * 
 	 * @param <N> the referencedEntityType
 	 * @param referencedEntityType
@@ -122,4 +123,12 @@ public interface EntityFieldConstraint<T, B extends AbstractEntityCriteriaBuilde
 	 */
 	public <N> JunctionCriteriaBuilder<N, T, ?> navigateTo(Class<N> referencedEntityType);
 	
+	/**
+	 * Transfers criteria building to the <code>referencedEntityType</code>
+	 * 
+	 * @param <N> the referencedEntityType
+	 * @param referencedEntityType
+	 * @return
+	 */
+	public <N> JunctionCriteriaBuilder<N, T, ?> navigateFrom(Class<N> referencedEntityType);
 }

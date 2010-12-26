@@ -23,24 +23,31 @@ public final class DatabaseDialectFactory {
 
 	private DatabaseDialectFactory(){}
 
+	/**
+	 * Determine the dialect that applies to the given {@link DataSource}
+	 * @param dataSource the DataSource to connect to
+	 * @return the correct {@link DataBaseDialect}
+	 */
 	public static DataBaseDialect getDialect(DataSource dataSource){
 
 		// finds dialect dynamically
 		Connection con =null;
 		try {
 			con =  dataSource.getConnection();
+			
 			DatabaseMetaData dbm = con.getMetaData();
 			return getDialectForDataBase(dbm);
 
 		} catch (SQLException e) {
 			throw new StorageException(e);
 		} finally {
-			if (con!=null)
+			if (con!=null) {
 				try {
 					con.close();
 				} catch (SQLException e) {
 					throw new StorageException(e);
 				}
+			}
 		}
 
 
@@ -51,7 +58,13 @@ public final class DatabaseDialectFactory {
 		String driverName = dbm.getDriverName();
 		String driverVersion = dbm.getDriverVersion();
 
-		Log.onBookFor(DatabaseDialectFactory.class).info("Inicializing dialect for: {0} {1} usign driver {2} {3}" ,  product , version,driverName, driverVersion);
+		Log.onBookFor(DatabaseDialectFactory.class).info(
+				"Inicializing dialect for: {0} {1} usign driver {2} {3}" ,  
+				product, 
+				version,
+				driverName, 
+				driverVersion
+		);
 
 		if (product.equalsIgnoreCase("Microsoft SQL Server")){
 			if (driverName.toLowerCase().startsWith("sqlserver")){
@@ -60,9 +73,9 @@ public final class DatabaseDialectFactory {
 				return new SQLServerDialect(); // version 08.00.0760 jTDS
 			}
 		} else if (product.equalsIgnoreCase("PostgreSQL")){
-			return new PostgressDialect(); // 8.1.3 any driver
+			return new PostgressDialect(); // 8.1.3 with corresponding driver, 9.0 with corresponding driver
 		} else if (product.toUpperCase().startsWith("HSQL")){
-			return new HSQLDialect(); // 1.8.0 any driver
+			return new HSQLDialect(); // 1.8.0 with corresponding driver
 		} else {
 			throw new StorageException("Dialect not found for product " + product + "  " + version);
 		}

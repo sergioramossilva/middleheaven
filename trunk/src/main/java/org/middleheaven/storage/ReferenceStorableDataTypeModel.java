@@ -1,6 +1,6 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.domain.ReferenceDataTypeModel;
+import org.middleheaven.model.domain.ReferenceDataTypeModel;
 
 
 public interface ReferenceStorableDataTypeModel extends StorableDataTypeModel , ReferenceDataTypeModel {

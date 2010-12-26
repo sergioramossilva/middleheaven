@@ -1,6 +1,6 @@
 package org.middleheaven.storage.db;
 
-import org.middleheaven.domain.DataType;
+import org.middleheaven.model.domain.DataType;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.util.criteria.CriterionOperator;
 import org.middleheaven.util.criteria.FieldValueHolder;

@@ -3,11 +3,11 @@ package org.middleheaven.storage;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.middleheaven.domain.DataType;
-import org.middleheaven.domain.EntityFieldModel;
-import org.middleheaven.domain.EntityModel;
-import org.middleheaven.domain.ReferenceDataTypeModel;
-import org.middleheaven.domain.TextDataTypeModel;
+import org.middleheaven.model.domain.DataType;
+import org.middleheaven.model.domain.EntityFieldModel;
+import org.middleheaven.model.domain.EntityModel;
+import org.middleheaven.model.domain.ReferenceDataTypeModel;
+import org.middleheaven.model.domain.TextDataTypeModel;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Enumerable;

@@ -6,7 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.middleheaven.domain.DataType;
+import org.middleheaven.model.domain.DataType;
 
 /**
  * Market annotation that signifies the fields is

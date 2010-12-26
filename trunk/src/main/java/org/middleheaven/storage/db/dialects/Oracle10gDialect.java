@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.PropertyNotFoundException;
-import org.middleheaven.domain.DataType;
+import org.middleheaven.model.domain.DataType;
 import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.storage.StorableFieldModel;
 import org.middleheaven.storage.StorableModelReader;

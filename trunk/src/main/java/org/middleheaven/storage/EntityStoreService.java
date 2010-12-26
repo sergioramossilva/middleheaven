@@ -1,7 +1,7 @@
 package org.middleheaven.storage;
 
 import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.domain.DomainModel;
+import org.middleheaven.model.domain.DomainModel;
 
 @Service
 public interface EntityStoreService {

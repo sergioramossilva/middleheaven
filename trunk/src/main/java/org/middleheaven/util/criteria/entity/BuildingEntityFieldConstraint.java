@@ -42,7 +42,17 @@ implements EntityFieldConstraint<T, B> {
 
 	@Override
 	public <N> JunctionCriteriaBuilder<N, T , B> navigateTo(Class<N> referencedEntityType) {
-		FieldJuntionCriterion criterion = new FieldJuntionCriterion(this.getQualifiedName(),referencedEntityType,getBuilder().getCurrentType());
+		FieldJuntionCriterion criterion = new FieldJuntionCriterion(this.getQualifiedName(),referencedEntityType,getBuilder().getCurrentType(), true);
+		getBuilder().addCriterion(criterion);
+		return new JunctionCriteriaBuilder<N,T,B>(criterion,referencedEntityType,getBuilder());
+	}
+
+
+	@Override
+	public <N> JunctionCriteriaBuilder<N, T, ?> navigateFrom(
+			Class<N> referencedEntityType) {
+		
+		FieldJuntionCriterion criterion = new FieldJuntionCriterion(this.getQualifiedName(),referencedEntityType,getBuilder().getCurrentType(), false);
 		getBuilder().addCriterion(criterion);
 		return new JunctionCriteriaBuilder<N,T,B>(criterion,referencedEntityType,getBuilder());
 	}

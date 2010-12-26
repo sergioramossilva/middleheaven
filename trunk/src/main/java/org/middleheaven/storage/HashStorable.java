@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.middleheaven.domain.EntityFieldModel;
-import org.middleheaven.domain.EntityModel;
+import org.middleheaven.model.domain.EntityFieldModel;
+import org.middleheaven.model.domain.EntityModel;
 import org.middleheaven.util.identity.Identity;
 
 public final class HashStorable implements Storable {

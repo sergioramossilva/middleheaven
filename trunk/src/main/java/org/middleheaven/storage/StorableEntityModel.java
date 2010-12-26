@@ -2,7 +2,7 @@ package org.middleheaven.storage;
 
 import java.util.Collection;
 
-import org.middleheaven.domain.EntityModel;
+import org.middleheaven.model.domain.EntityModel;
 import org.middleheaven.util.collections.Enumerable;
 
 /**

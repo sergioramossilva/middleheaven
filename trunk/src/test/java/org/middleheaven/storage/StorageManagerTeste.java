@@ -7,9 +7,9 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.middleheaven.domain.DomainClasses;
-import org.middleheaven.domain.DomainModel;
-import org.middleheaven.domain.DomainModelBuilder;
+import org.middleheaven.model.domain.DomainClasses;
+import org.middleheaven.model.domain.DomainModel;
+import org.middleheaven.model.domain.DomainModelBuilder;
 import org.middleheaven.storage.inmemory.InMemoryStorage;
 import org.middleheaven.storage.testdomain.TestSubject;
 import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;

@@ -2,6 +2,9 @@ package org.middleheaven.util.criteria.entity;
 
 import org.middleheaven.util.criteria.FieldCriterion;
 
+/**
+ * A criterion that can join two entites.
+ */
 public interface JunctionCriterion extends FieldCriterion {
 
 	
@@ -15,5 +18,11 @@ public interface JunctionCriterion extends FieldCriterion {
 	public void setSubCriteria(EntityCriteria<?> criteria);
 	
 	public String getAlias();
+	
+	/**
+	 * 
+	 * @return true if the juction is reversed.
+	 */
+	public boolean isReversed();
 
 }

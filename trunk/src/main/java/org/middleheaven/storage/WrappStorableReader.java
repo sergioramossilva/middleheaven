@@ -1,7 +1,7 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.domain.DomainModel;
-import org.middleheaven.domain.EntityModel;
+import org.middleheaven.model.domain.DomainModel;
+import org.middleheaven.model.domain.EntityModel;
 
 public final class WrappStorableReader implements StorableModelReader {
 

@@ -23,17 +23,17 @@ import org.middleheaven.util.criteria.FieldValueHolder;
 import org.middleheaven.util.criteria.LogicCriterion;
 import org.middleheaven.util.criteria.OrderingCriterion;
 import org.middleheaven.util.criteria.SingleObjectValueHolder;
-import org.middleheaven.util.criteria.entity.CountOperator;
 import org.middleheaven.util.criteria.entity.EntityCriteria;
 import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 import org.middleheaven.util.criteria.entity.FieldInSetCriterion;
 import org.middleheaven.util.criteria.entity.IdentityCriterion;
 import org.middleheaven.util.criteria.entity.JunctionCriterion;
-import org.middleheaven.util.criteria.entity.MaxFieldOperator;
-import org.middleheaven.util.criteria.entity.MinFieldOperator;
-import org.middleheaven.util.criteria.entity.Projection;
-import org.middleheaven.util.criteria.entity.ProjectionOperator;
-import org.middleheaven.util.criteria.entity.SumFieldOperator;
+import org.middleheaven.util.criteria.entity.projection.CountOperator;
+import org.middleheaven.util.criteria.entity.projection.MaxFieldOperator;
+import org.middleheaven.util.criteria.entity.projection.MinFieldOperator;
+import org.middleheaven.util.criteria.entity.projection.Projection;
+import org.middleheaven.util.criteria.entity.projection.ProjectionOperator;
+import org.middleheaven.util.criteria.entity.projection.SumFieldOperator;
 
 
 public class CriteriaInterpreter {
@@ -73,7 +73,7 @@ public class CriteriaInterpreter {
 		writeStartLimitClause(sqlBuilder);
 
 		// RETURN CLAUSE
-		writeResultColumnsClause(alias,sqlBuilder);
+		writeResultProjection(alias,sqlBuilder);
 
 		// FROM CLAUSE 
 		writeFromClause(alias,sqlBuilder);
@@ -122,7 +122,7 @@ public class CriteriaInterpreter {
 
 
 
-	protected void writeResultColumnsClause (String alias, Clause queryBuffer){
+	protected void writeResultProjection (String alias, Clause queryBuffer){
 
 		if (this.criteria().isCountOnly()){
 

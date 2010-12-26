@@ -14,12 +14,12 @@ import java.util.TreeMap;
 import javax.sql.DataSource;
 
 import org.middleheaven.core.reflection.Introspector;
-import org.middleheaven.domain.DataType;
-import org.middleheaven.domain.DomainModel;
-import org.middleheaven.domain.EntityFieldModel;
-import org.middleheaven.domain.EntityModel;
-import org.middleheaven.domain.TextDataTypeModel;
 import org.middleheaven.logging.Log;
+import org.middleheaven.model.domain.DataType;
+import org.middleheaven.model.domain.DomainModel;
+import org.middleheaven.model.domain.EntityFieldModel;
+import org.middleheaven.model.domain.EntityModel;
+import org.middleheaven.model.domain.TextDataTypeModel;
 import org.middleheaven.sequence.DefaultToken;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.sequence.SequenceToken;

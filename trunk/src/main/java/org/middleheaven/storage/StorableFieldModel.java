@@ -1,6 +1,6 @@
 package org.middleheaven.storage;
 
-import org.middleheaven.domain.EntityFieldModel;
+import org.middleheaven.model.domain.EntityFieldModel;
 
 public interface StorableFieldModel extends EntityFieldModel{
 
