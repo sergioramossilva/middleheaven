@@ -7,7 +7,6 @@ import org.middleheaven.domain.model.FieldModelBuilder;
 
 public interface FieldModelBuilder {
 
-	FieldModelBuilder setTransient(boolean annotatedWith);
 
 	FieldModelBuilder setIdentity(boolean b);
 	

@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.core.reflection.inspection.Introspector;
 
 /**
  * Validates a bean object using a {@code Validator} for each property of interest

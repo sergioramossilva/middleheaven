@@ -1,9 +1,11 @@
 package org.middleheaven.core.reflection;
 
+import org.middleheaven.util.collections.Enumerable;
+
 public interface ReflectionStrategy {
 
 	public PropertyAccessor getPropertyAccessor(Class<?> type, String fieldName);
-	public Iterable<PropertyAccessor> getPropertyAccessors(Class<?> type) throws ReflectionException;
+	public Enumerable<PropertyAccessor> getPropertyAccessors(Class<?> type) throws ReflectionException;
 
 
 	public <T> T proxyType (Class<T> facadeClass , ProxyHandler handler);

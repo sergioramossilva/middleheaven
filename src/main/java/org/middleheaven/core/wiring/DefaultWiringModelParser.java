@@ -6,8 +6,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.middleheaven.core.reflection.ClassIntrospector;
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.annotations.BindingSpecification;
 import org.middleheaven.core.wiring.annotations.Name;
 import org.middleheaven.core.wiring.annotations.Params;

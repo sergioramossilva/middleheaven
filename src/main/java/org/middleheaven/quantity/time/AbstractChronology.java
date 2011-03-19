@@ -1,6 +1,6 @@
 package org.middleheaven.quantity.time;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 
 
 

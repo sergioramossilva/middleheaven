@@ -2,7 +2,7 @@ package org.middleheaven.global.text.writeout;
 
 import java.util.Locale;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.global.Culture;
 
 public abstract class NumberWriteoutFormat {

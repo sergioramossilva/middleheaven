@@ -3,12 +3,12 @@ package org.middleheaven.ui;
 import java.io.File;
 import java.util.Collection;
 
-import org.middleheaven.core.reflection.ClassIntrospector;
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.PropertyBagProxyHandler;
 import org.middleheaven.core.reflection.ReflectionException;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.BindingNotFoundException;

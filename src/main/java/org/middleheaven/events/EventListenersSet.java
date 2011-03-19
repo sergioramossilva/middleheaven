@@ -3,9 +3,9 @@ package org.middleheaven.events;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.core.reflection.inspection.Introspector;
 
 /**
  * 

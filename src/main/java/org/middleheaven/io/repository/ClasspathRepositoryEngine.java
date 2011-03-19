@@ -1,6 +1,6 @@
 package org.middleheaven.io.repository;
 
-import org.middleheaven.core.reflection.ClassIntrospector;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.io.repository.simple.SystemDrivesRepositoryEngine;
 import org.middleheaven.io.repository.vfs.CommonsVSFRepositoryEngine;
 

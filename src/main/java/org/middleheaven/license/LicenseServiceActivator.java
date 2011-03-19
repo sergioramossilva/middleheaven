@@ -8,9 +8,9 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;

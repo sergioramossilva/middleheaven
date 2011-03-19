@@ -1,6 +1,6 @@
 package org.middleheaven.util.criteria.text;
 
-import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.domain.model.QualifiedName;
 import org.middleheaven.text.indexing.IndexableDocument;
 import org.middleheaven.util.collections.Interval;
 import org.middleheaven.util.criteria.AbstractBuildingConstraint;

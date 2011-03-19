@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.middleheaven.quantity.measure.AngularMeasure;
-import org.middleheaven.storage.EntityStore;
+import org.middleheaven.storage2.EntityStore;
 import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 
 public class LandmarkDataStorageRepository extends LandmarkRepository {

@@ -5,9 +5,9 @@ import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.ReflectionException;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.EnhancedCollection;
 

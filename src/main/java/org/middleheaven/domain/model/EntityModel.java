@@ -1,13 +1,12 @@
 package org.middleheaven.domain.model;
 
 import org.middleheaven.domain.model.EntityFieldModel;
-import org.middleheaven.storage.QualifiedName;
 import org.middleheaven.util.collections.Enumerable;
 
 /**
  * The entity metadata holder.
  */
-public interface EntityModel {
+public interface EntityModel  {
 
 	/**
 	 * 

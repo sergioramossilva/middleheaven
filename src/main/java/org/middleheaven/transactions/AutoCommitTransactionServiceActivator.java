@@ -3,8 +3,8 @@ package org.middleheaven.transactions;
 import java.lang.reflect.Method;
 
 import org.middleheaven.core.reflection.InterceptorProxyHandler;
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.ConnectableBinder;
 import org.middleheaven.core.wiring.InterceptionContext;
 import org.middleheaven.core.wiring.InterceptorChain;

@@ -1,7 +1,7 @@
 package org.middleheaven.core.wiring;
 import java.lang.annotation.Annotation;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.annotations.BindingSpecification;
 import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 

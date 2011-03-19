@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.util.coersion.TypeCoercing;
 
 public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor implements PropertyAccessor {

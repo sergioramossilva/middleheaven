@@ -10,11 +10,11 @@ import java.util.Date;
 
 import org.junit.Test;
 import org.middleheaven.core.reflection.ClassCastReflectionException;
-import org.middleheaven.core.reflection.ClassIntrospector;
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MemberAccess;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.EnhancedList;
 

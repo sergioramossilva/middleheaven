@@ -4,7 +4,7 @@
 	<groupId>middleHeaven</groupId>
 	<artifactId>middleHeaven</artifactId>
 	<name>MiddleHeaven</name>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<description>MiddleHeaven aims to be a full-featured
 		business application framework that minimizes all effort concerning non-functional requirements
 		and dependency of third-party libraries, thus maximizing extensability and reusability of business code and logic.  

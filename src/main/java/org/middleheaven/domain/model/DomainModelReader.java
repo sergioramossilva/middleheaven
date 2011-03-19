@@ -1,9 +1,11 @@
 package org.middleheaven.domain.model;
 
-import org.middleheaven.domain.model.ModelBuilder;
+import org.middleheaven.model.ModelReader;
 
-public interface DomainModelReader {
+/**
+ * Marker interface for domain model readers.
+ * 
+ */
+public interface DomainModelReader extends ModelReader<EntityModelBuilder> {
 
-	
-	public void read(Class<?> type, ModelBuilder builder);
 }

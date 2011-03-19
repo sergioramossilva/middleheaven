@@ -3,6 +3,9 @@ package org.middleheaven.core.reflection;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+import org.middleheaven.core.reflection.inspection.Introspector;
+
+
 public  class ReflectionFieldAccessor implements FieldAcessor{
 
 	protected Class<?> type;

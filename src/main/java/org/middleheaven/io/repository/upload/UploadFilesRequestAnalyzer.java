@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.middleheaven.core.reflection.ClassIntrospector;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.io.repository.EmptyFileRepository;
 import org.middleheaven.io.repository.ManagedFileRepository;
 

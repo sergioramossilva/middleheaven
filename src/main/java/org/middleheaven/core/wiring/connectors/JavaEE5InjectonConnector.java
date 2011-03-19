@@ -10,8 +10,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.middleheaven.core.reflection.ClassIntrospector;
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.AbstractAnnotationBasedWiringModelParser;
 import org.middleheaven.core.wiring.ConnectableBinder;
 import org.middleheaven.core.wiring.ConstructorWiringPoint;

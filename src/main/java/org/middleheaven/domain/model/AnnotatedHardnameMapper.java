@@ -1,10 +1,10 @@
 package org.middleheaven.domain.model;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.domain.model.HardnameMapper;
-import org.middleheaven.storage.model.Column;
-import org.middleheaven.storage.model.Table;
+import org.middleheaven.storage.model.annotations.Column;
+import org.middleheaven.storage.model.annotations.Table;
 
 
 public class AnnotatedHardnameMapper extends HardnameMapper {
@@ -38,7 +38,7 @@ public class AnnotatedHardnameMapper extends HardnameMapper {
 		if (type.isAnnotationPresent(Table.class)){
 			
 			Table table = type.getAnnotation(Table.class);
-			hardEntityName = table.value();
+			hardEntityName = table.name();
 			if (hardEntityName.trim().isEmpty()){
 				hardEntityName = null;
 			}
