@@ -1,6 +1,6 @@
 package org.middleheaven.core.exception;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 
 public abstract class ExceptionUtils {
 
