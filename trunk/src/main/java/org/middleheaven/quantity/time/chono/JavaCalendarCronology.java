@@ -3,7 +3,7 @@ package org.middleheaven.quantity.time.chono;
 import java.util.Calendar;
 import java.util.Locale;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.quantity.time.AbstractChronology;
 import org.middleheaven.quantity.time.DayOfMonth;
 import org.middleheaven.quantity.time.DayOfWeek;

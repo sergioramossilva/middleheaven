@@ -3,7 +3,7 @@ package org.middleheaven.core.wiring.activation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.ConfigurationException;
 import org.middleheaven.core.wiring.DefaultWiringModelParser;
 import org.middleheaven.util.collections.ParamsMap;

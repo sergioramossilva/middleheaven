@@ -13,7 +13,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.FileChangeEvent;

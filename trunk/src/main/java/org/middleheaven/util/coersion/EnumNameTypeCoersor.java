@@ -2,8 +2,8 @@ package org.middleheaven.util.coersion;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.ReflectionException;
+import org.middleheaven.core.reflection.inspection.Introspector;
 
 public class EnumNameTypeCoersor<E extends Enum> extends AbstractTypeCoersor<String, E> {
 

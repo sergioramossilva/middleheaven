@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 
-import org.middleheaven.core.reflection.ClassIntrospector;
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.Interval;
 import org.middleheaven.util.collections.Range;

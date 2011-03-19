@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.util.classification.BooleanClassifier;
 

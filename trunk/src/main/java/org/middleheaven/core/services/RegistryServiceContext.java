@@ -13,7 +13,7 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.WiringService;

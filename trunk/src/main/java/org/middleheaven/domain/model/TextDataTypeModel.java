@@ -1,8 +1,8 @@
 package org.middleheaven.domain.model;
 
-import org.middleheaven.domain.model.DataType;
-import org.middleheaven.domain.model.DataTypeModel;
-
+/**
+ * Text Data type.
+ */
 public class TextDataTypeModel implements DataTypeModel{
 
 	private Integer minLength;

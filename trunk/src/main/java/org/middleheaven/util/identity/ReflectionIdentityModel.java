@@ -1,6 +1,6 @@
 package org.middleheaven.util.identity;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 
 public class ReflectionIdentityModel extends AbstractIdentityModel {
 

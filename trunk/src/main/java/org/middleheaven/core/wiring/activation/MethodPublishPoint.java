@@ -3,7 +3,7 @@ package org.middleheaven.core.wiring.activation;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.middleheaven.core.reflection.MethodIntrospector;
+import org.middleheaven.core.reflection.inspection.MethodIntrospector;
 
 public final class MethodPublishPoint implements PublishPoint {
 

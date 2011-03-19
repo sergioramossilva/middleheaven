@@ -1,8 +1,8 @@
 package org.middleheaven.web.processing.action;
 
 import org.middleheaven.core.reflection.BeanAssembler;
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.ObjectPool;
 import org.middleheaven.ui.AttributeContext;
 import org.middleheaven.ui.ContextScope;

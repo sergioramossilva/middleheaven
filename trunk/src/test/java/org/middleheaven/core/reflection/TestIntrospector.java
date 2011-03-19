@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.lang.reflect.Method;
 
 import org.junit.Test;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.mail.service.NameDirectoryMailSessionSendingService;
 import org.middleheaven.transactions.Transactional;

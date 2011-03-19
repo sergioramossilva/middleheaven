@@ -2,7 +2,7 @@ package org.middleheaven.util.identity;
 
 import java.lang.reflect.Method;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.util.coersion.CoersionException;
 
 /**

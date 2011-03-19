@@ -1,9 +1,10 @@
 package org.middleheaven.domain.model;
 
-import org.middleheaven.domain.model.EntityModelBuilder;
+import org.middleheaven.model.ModelSet;
 
-public interface ModelBuilder {
 
-	public <E> EntityModelBuilder<E> getEntity(Class<E> type);
+public interface ModelBuilder <M , MODELSET extends ModelSet<M> >{
 
+	public  abstract MODELSET build(ClassSet classes);
+	
 }

@@ -7,35 +7,32 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.domain.model.DataType;
-import org.middleheaven.domain.model.DefaultReferenceDataTypeModel;
-import org.middleheaven.domain.model.EntityModelBuilder;
-import org.middleheaven.domain.model.FieldModelBuilder;
-import org.middleheaven.domain.model.ModelBuilder;
-import org.middleheaven.domain.model.ModelingException;
-import org.middleheaven.domain.model.TextDataTypeModel;
-import org.middleheaven.domain.model.annotations.EmailAddress;
-import org.middleheaven.domain.model.annotations.Id;
-import org.middleheaven.domain.model.annotations.Length;
-import org.middleheaven.domain.model.annotations.ManyToMany;
-import org.middleheaven.domain.model.annotations.ManyToOne;
-import org.middleheaven.domain.model.annotations.NotEmpty;
-import org.middleheaven.domain.model.annotations.NotNull;
-import org.middleheaven.domain.model.annotations.OneToMany;
-import org.middleheaven.domain.model.annotations.OneToOne;
-import org.middleheaven.domain.model.annotations.Temporal;
-import org.middleheaven.domain.model.annotations.Transient;
-import org.middleheaven.domain.model.annotations.Unique;
-import org.middleheaven.domain.model.annotations.Url;
-import org.middleheaven.domain.model.annotations.Version;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.logging.Log;
+import org.middleheaven.model.annotations.EmailAddress;
+import org.middleheaven.model.annotations.Id;
+import org.middleheaven.model.annotations.Length;
+import org.middleheaven.model.annotations.ManyToMany;
+import org.middleheaven.model.annotations.ManyToOne;
+import org.middleheaven.model.annotations.NotEmpty;
+import org.middleheaven.model.annotations.NotNull;
+import org.middleheaven.model.annotations.OneToMany;
+import org.middleheaven.model.annotations.OneToOne;
+import org.middleheaven.model.annotations.Temporal;
+import org.middleheaven.model.annotations.Transient;
+import org.middleheaven.model.annotations.Unique;
+import org.middleheaven.model.annotations.Url;
+import org.middleheaven.model.annotations.Version;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimePoint;
 import org.middleheaven.util.identity.Identity;
 
+/**
+ * Reader that relies on annotations within the class.
+ * 
+ */
 public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 	private boolean matchTypes(Class<?> candidate , Class<?> ... types){
@@ -48,13 +45,13 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 	}
 
 	@Override
-	public void read(Class<?> type, ModelBuilder builder) {
+	public void read(Class<?> type, EntityModelBuilder builder) {
 		
 		if (!isEntityType(type)){
 			return;
 		}
 		
-		EntityModelBuilder<?> em = builder.getEntity(type);
+		EditableDomainEntityModel em = builder.getEditableModelOf(type);
 
 		Collection<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
 
@@ -68,7 +65,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 			}
 
-			if (em.getIdentityField() == null){
+			if (em.identityFieldModel() == null){
 				throw new ModelingException("No identity properties found for entity " + type.getName() + ".");
 			}
 		}
@@ -88,14 +85,15 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 		return type;
 	}
 
-	private FieldModelBuilder processField (PropertyAccessor pa ,EntityModelBuilder<?> em, ModelBuilder builder){
+	private void processField (PropertyAccessor pa ,EditableDomainEntityModel em, EntityModelBuilder builder){
 
-		FieldModelBuilder fm = em.getField(pa.getName())
-		.setTransient(pa.isAnnotadedWith(Transient.class))
-		.setVersion( pa.isAnnotadedWith(Version.class))
-		.setUnique( pa.isAnnotadedWith(Unique.class))
-		.setNullable(!pa.isAnnotadedWith(NotNull.class))
-		;
+	
+		EditableEntityFieldModel fm = em.fieldModel(QualifiedName.qualify(em.getEntityName(), pa.getName()));
+		
+		//fm.setTransient(pa.isAnnotadedWith(Transient.class));
+		fm.setVersion( pa.isAnnotadedWith(Version.class));
+		fm.setUnique( pa.isAnnotadedWith(Unique.class));
+		fm.setNullable(!pa.isAnnotadedWith(NotNull.class));
 
 		Class<?> valueType = pa.getValueType();
 
@@ -129,10 +127,10 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 			model.setTargetType(valueType);
 
-			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
+			 EditableDomainEntityModel targetModel = builder.getEditableModelOf(valueType);
 
 			if (fieldName.isEmpty()){
-				fieldName = targetModel.getIdentityField().getName();
+				fieldName = targetModel.identityFieldModel().getName().getName();
 			} else {
 				// TODO validate field exists
 			}
@@ -234,11 +232,10 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 			}
 		}
 
-		return fm;
 	}
 
 
-	private void mapAsManyToOne(FieldModelBuilder fm,String fieldName,Class<?> valueType ,ModelBuilder builder ){
+	private void mapAsManyToOne(EditableEntityFieldModel fm,String fieldName,Class<?> valueType , final EntityModelBuilder builder ){
 
 		
 		if (valueType.isEnum()){
@@ -260,10 +257,10 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 			model.setTargetType(valueType);
 			
 
-			EntityModelBuilder<?> targetModel = builder.getEntity(valueType);
+			 EditableDomainEntityModel targetModel = builder.getEditableModelOf(valueType);
 
 			if (fieldName==null || fieldName.isEmpty()){
-				fieldName = targetModel.getIdentityField().getName();
+				fieldName = targetModel.identityFieldModel().getName().getName();
 			}else {
 				// TODO validate field exists
 			}
@@ -275,7 +272,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 	}
 
 	
-	private Class<?> mapAsIdentityField (FieldModelBuilder fm,Class<?> idType ,Class<?> valueType, ModelBuilder builder ){
+	private Class<?> mapAsIdentityField (EditableEntityFieldModel fm,Class<?> idType ,Class<?> valueType, EntityModelBuilder builder ){
 		Class<?> identityType = valueType;
 		if(identityType.isInterface() || Modifier.isAbstract(identityType.getModifiers())){
 			identityType = idType;

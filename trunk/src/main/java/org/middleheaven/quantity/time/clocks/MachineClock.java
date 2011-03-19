@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.ReflectionException;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.quantity.time.Clock;
 import org.middleheaven.quantity.time.EpocTimePoint;
 import org.middleheaven.quantity.time.TimePoint;

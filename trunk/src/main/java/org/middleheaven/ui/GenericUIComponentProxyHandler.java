@@ -2,9 +2,9 @@ package org.middleheaven.ui;
 
 import java.lang.reflect.Method;
 
-import org.middleheaven.core.reflection.Introspector;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.PropertyBagProxyHandler;
+import org.middleheaven.core.reflection.inspection.Introspector;
 
 class GenericUIComponentProxyHandler extends PropertyBagProxyHandler {
 

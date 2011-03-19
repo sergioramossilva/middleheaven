@@ -2,7 +2,7 @@ package org.middleheaven.util.coersion;
 
 import java.util.Date;
 
-import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimeUtils;
