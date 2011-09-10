@@ -1,0 +1,17 @@
+Complex e BigComplex
+Modifications in Numberfactory
+Adicionado Amount. Conversão de Money, ElapsedTime e Measure
+adicionado DateTimeHolder
+pacote global.text para formatadores e afins PT, ES, EN, FR
+---------
+changed ReflectionUtils
+created mh.web package 
+modified unitconverter
+creadted scalable
+angularpositions renamed to angularmeasure and extends decimalmeasure
+modified typeconverter
+changed CollectionUtils
+created CollectionUtilsTest in same package
+adicionar Mesaurable em Quantity
+Alterações em Currency e ISOCurrency
+Atualizado global.location com GeoCoordinate em vez de Coordinate
