@@ -1,0 +1,41 @@
+<document>
+  <body>
+    <news>
+      <entry name="01.11.2008">
+        <p>Site reorganized (again). Storage Toolbox added with permilinary Database support for PostgreSQL </p>
+      </entry>
+      <entry name="19.07.2008">
+        <p>Site reorganized. Storage Toolbox added with permilinary Database support for PostgreSQL </p>
+      </entry>
+      <entry name="15.06.2008">
+        <p>Atlas Toolbox added.</p>
+      </entry>
+      <entry name="09.03.2008">
+        <p>Sequence Toolbox added. Needed by Data Storage Toolbox</p>
+      </entry>
+      <entry name="09.03.2008">
+        <p>Data Storage Toolbox added. Very alfa version. Just putting ideas in code.
+        This is a DomainStore pattern implementation that does not assume data is stored in a database. 
+        However is design to provide database storage with the more efficient possible manner</p>
+      </entry>
+       <entry name="09.03.2008">
+        <p>Measures Toolbox moved to util package. Range and Interval moved directly to utils and out of measures</p>
+      </entry>
+      <entry name="16.02.2008">
+        <p>Core funcionatility rewritten to use OSGi Framework based on Apache Felix.
+        This new core and <a href="environmentbootstrap.html">bootstrap mechanism</a> will effectively deprecates the use of the Service Toolbox and integrates a powerfull
+        service lookup  and dependency resolution mechanisms. More details on </p>
+      </entry>
+      <entry name="09.02.2008">
+        <p>ManagedFileRepository toolbox will be rewriten to use diferente engines and a
+        engine based on Commons-VSF will be provided. </p>
+      </entry>
+      <entry name="08.12.2007">
+        <p>Site goes online at SourceForge.net</p>
+      </entry>
+      <entry name="08.12.2007">
+        <p>Inicial CVS commit with the first module: Measure</p>
+      </entry>
+    </news>
+  </body>
+</document>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title>Bootstrap Toolbox </title>
+	</properties>
+	<body>
+	<section name="Bootstrap Toolbox">
+	<p>
+	O MiddleHeaven é uma plataforma para a construção de aplicações em Java de uma forma
+	orientada a objectos e não a tecnologias. Para que o MiddleHeaven possa correr dentro
+	de um servidor web , um servidor de aplicações, no desktop via JWS ou simplesmente no seu desktop
+	como aplicação <estrang>standalone</estrang> é necessário que exista uma casca isoladora
+	entre o miolo do MiddleHeaven que as suas aplicações usaram e o ambiente onde o MiddleHeaven está sendo executado.
+	Construir esta casta é o objectivo do <toolbox>Bootstrap Toolbox</toolbox>.
+	</p>
+	<p>
+	A plataforma do MiddleHeaven é fortemente baseada em serviços e em injeção de dependencia.
+	Os serviços podem ser fornecidos pelo ambiente onde o MiddleHeaven roda, pelo MiddleHeaven ele mesmo, 
+	ou por modulos da aplicação que roda dentro do MiddleHeaven. 
+	</p>
+	<p>
+	O processo de <estrang>bootstraping</estrang> (inicialização) é o processo pelo qual o middleheaven
+	é posto em funcionamento, o motor de injeção é ligado e todos os serviços e 
+	modulos da aplicação são inicializados.
+	</p>
+	</section>
+	<section name="Arquitetura" >
+	<p>
+	A arquitetura do MiddleHeaven é baseada em um <code>Container</code> que é inicializado
+	pelo ambiente de execução (<code>ExecutionEnvironmentBootstrap</code>).
+	<figure>
+		<img src="../../resources/images/diagramabootstrap.jpg"/>
+	</figure>
+	</p>
+	<p>
+	Dependendo do ambiente em que o MiddleHeaven está sendo executado, um <code>ExecutionEnvironmentBootstrap</code>
+	diferente é usado para o iniciar. A instancia de <code>ExecutionEnvironmentBootstrap</code> especifica para esse ambiente
+	sabe então quais serviços o ambiente pode oferecer e os registra no motor de inejção para uso futuro pelo resto do sistema. 
+	</p>
+	<p>
+	Feito isso, o <code>ExecutionEnvironmentBootstrap</code> descobre qual o container que pode ser usado. Diferentes containers
+	são possiveis para cada ambiente. Por exemplo, para o <code>WebContainerBootstrap</code> que utiliza os ganchos da Servlet API 
+	para inicilizar o MiddleHeaven é possivel utilizar o <code>CatalinaContainer</code> quando no Tomcat, ou o <code>JBossContainer</code>
+	quando no JBoss, que dando acesso a um servidor de aplicação completo fornece muito mais serviços.
+	O container tem então a oportunidade de registrar os seus serviços.
+	</p>
+	</section>
+	<section name="BootstrapService" >
+	<p>
+	O primeiro serviço que é carregado e pertence ao coração do MiddleHeaven é o WiringService que contém o motor de injeção e o pool de objectos.
+	O segundo serviço a ser carregado é o <code>BootstrapService</code>. Este serviço permite que outros serviços e classes se registrem como 
+	observadodes ( padrão <pattern>Observer</pattern>) do ciclo de inicialização. Isso é importante, por exemplo, para
+	o serviço de clientes de interface quando em modo desktop para poder apresentar a interface swing.
+	</p>
+	<p>
+	O <code>BootstrapService</code> também permite acesso ao próprio objecto <code>ExecutionEnvironmentBootstrap</code>. Isto é principalmente util
+	para ter acesso ao objecto <code>BootstrapContainer</code>.
+	</p>
+	<section name="BootstrapContainer">
+	<p>
+	O objecto <code>BootstrapContainer</code> inicializa serviços presente no container. Estes serviços mappeiam , até onde possivel, os serviços
+	presentes no ambiente.
+	</p>
+	<p>
+	O <code>BootstrapContainer</code> define ainda um conjunto de localizações em sistema de arquivos virtual onde é possivel
+	o MiddleHeaven e em particular as aplicações lerem e/ou escreverem logs, configurações, dados, etc...
+	</p>
+	</section>
+	<section name="Ativação" >
+	<p>
+	O processo se bootstrap é muito simples. O real processo que coloca tudo a funcionar é o de ativação.
+	O processo de ativação é guiado pelo <code>WiringService</code>. Contudo é preciso reunir um conjunto inicial de ativadores.
+	Este processo de recolher os ativadores é o segundo passo do <code>ExecutionEnvironmentBootstrap</code>. Os ativadores são
+	recolhidos primeiro do proprio <code>ExecutionEnvironmentBootstrap</code>. Cada um pode adicionar os ativadores que desejar.
+	Alguns ativadores são adicionados em todos os ambient; nomeadamente o <code>LoggingActivator</code> , o <code>FileRepositoryActivator</code>
+	e o <code>AtlasActivator</code>. O <code>WebContainerBootstrap</code> ainda ativa,por exemplo, o <code>HttpService</code>.
+	Depois é a vez do <code>BootstrapContainer</code> adicionar os seus ativadores à lista. 
+	Depois o <code>ExecutionEnvironmentBootstrap</code> ainda adiciona ativadores como o <code>LocalizationServiceActivator</code>
+	e o <code>AlarmClockScheduleWorkExecutionServiceActivator</code>. Após isso o <code>WiringService</code>
+	inicia todos os ativadores tendo em consideração as suas dependencias.
+	</p>
+	<p>
+	A adição de ativadores é feita na sequencia e alguns ativadores são apenas adiconados no fim porque se o container tiver adicionado
+	o mesmo ativador ou algum que seja equivalente, os ultimos ativadores são serão adicionados. O objetivo é fornecer o máximo de 
+	serviços, mas aproveitar ao máximo as implementações nativas ao container e ao ambiente.
+	</p>
+	</section>
+	</section>
+	<section name="Por detrás dos panos">
+	<p>
+	Também aqui não ha surpresa. Todo o processo é definido na plataforma Java padrão utilizando objetos do MiddleHeaven.
+	O conceito de bootstrap é comum e várias plataformas o usam (JEE, JME, OSGI). O mecanismo do MiddleHeaven foi desenhado para permitir 
+	que o MiddleHeaven execute no máximo de ambientes possivel fornecendo outra prespectivado do slogan Write Once, Run Everywehre da plataforma
+	Java.
+	</p>
+	<p>
+	O plano inicial é prover <estrang>bootstraping</estrang> para os containers web e servidores de aplicações principais que sejam livres.
+	Depois para o ambiente desktop desconetado ( corre apenas na máquina) seguido do connectado (acessa um servidor mas correndo locamente) e finalmente
+	do ambiente descktop distribuido através do Java Wed Start ( tudo vem de um servidor). Com o advento do JavaFX as interfaces Desktop tendem a se popularizar mesmo no ambiente corporativo. 
+	</p>
+	</section>
+	</body>
+</document>

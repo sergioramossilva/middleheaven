@@ -1,0 +1,44 @@
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title>Toolboxes</title>
+	</properties>
+	<body>
+<section name="Toolboxes">
+		<p>
+				MiddleHeaven is devided in a set of Toolboxes; mini frameworks for specific task that integrate
+				using configurable servies.
+		</p>
+			
+		<table>
+			<tr>
+				<td>Managed File Repository Toolbox</td>
+				<td>
+				<p>
+					This toolbox abstracts real file locations. This permits
+					to treat remote files as local and compressed files as folders.
+				</p>
+				<p>
+					The toolbox is based on engines. An engine based Commons-VSF is provided
+					as default. <a href="">More...</a>
+				</p>
+				</td>
+			</tr>
+			<tr>
+				<td>Services Toolbox</td>
+				<td>
+				<p>
+					Allows for a service component oriented arquitecture for MiddleHeaven.
+					A service is simply a contract (an interface). Many different implementations can exist for
+					the same service. <br/>
+					MiddleHeaven is in essence a service agregation. Services are activated 
+					for a specific enviroment. Applications are modules, and modules are also services.
+					
+				</p>
+				
+				</td>
+			</tr>
+		</table>
+</section>
+	</body>
+</document>

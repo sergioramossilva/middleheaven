@@ -1,0 +1,185 @@
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title>Time toolbox</title>
+	</properties>
+	<body>
+	<section name="Quantity and Measure: Time Toolbox">
+		<p>
+			The Time Toolbox is an expansion of the Quantity and Measure Toolbox in order to extend the concept of quantity to time periods and 
+			incorporate time related concepts and operations.
+			This toolbox contains a data type API and the foundations for many time related operations that other toolboxes will leverage. 
+		</p>
+		<p>
+			MiddleHeaven understands time as a continuum even thought most operations are discreet to the millisecond. This continuum is commonly know as the <i>time-line</i>.
+			The points in the line are called <code>TimePoint</code>s. <br/> 
+			Clocks do not measure time, they measure elapsed time, i.e. the "lenght" in the time-line between two time points.
+			<code>ElapsedTime</code> is, thus, the fundamental quantity for the Time Toolbox. The SI unit is the second. <br/>	
+		</p>
+	</section>
+	<section name="Reference Frame">
+		<p>
+			Although time is really measured in intervals in practice we need to refer and distinguish the several time points.
+			Because no time point is physically distinguishable from another is required to choose one specific point in the line 
+			to be the reference and measure the time elapsed since then. The time point reference will then be the time elapsed since the reference point.
+			This reference time point chosen defines an Epoch.<br/>
+			Java uses Unix epoch  (00:00:00 of January 1st 1970) for reference and keeps track of time in milliseconds since then.
+			In Java is possible to obtain the current elapsed number of milliseconds from the epoch invoking <code>System.currentTimeMillis()</code>.
+		</p>
+	</section>
+	<section name="Current Time and Clocks" >
+		<p>
+			Obtaining the current time directly with <code>System.currentTimeMillis()</code> is a problem. 
+			When you need to test the application (e.g. unit test some class) you cannot wait until a certain time 
+			to make the test. You need to control the concept of "current time". <br/>
+			MiddleHeaven introduces the concept of Clock. A clock is an object capable of specifying the "current time".
+		</p>
+		<p>
+			A <code>Clock</code> has three main properties:
+			<ul>
+			<li>Current Time - The time point that is considered "now". The current time point it self.</li>
+			<li>TimeZone - not all clocks in every city in the world show the same time. The differences are created by the geographic distance, relative position to the Sun apparent movement
+			and also politic or economical conventions like day light saving policies. Time in different clocks only can be related if a time zone is attached to each one and the different time zones related to each other.</li>
+			<li>Cadence - the rate has time "passes". The time in a "normal" clock elapses at a rate of 1 second per second meaning that for each second of 
+			real time elapsed the clock changes the current time it presents by the same amount.
+			Defectuous clocks (or those under strong gravitational influence) have different cadences and that is why they slow down or speed up. 
+			Providing clocks with different cadences can simulate time events faster ,or slower, without having to wait for the real time period to elapse.
+			A task triggered every hour can thus be triggered every minute , second or day instead.
+			</li>
+			</ul>
+		</p>
+		<p>
+		 <figure>
+			 <img src="clocks.png" />
+		 </figure>
+			MiddleHeaven comes with a variety of clocks. <code>MachineClock</code> is the one to use if you want to mimic <code>System.currentTimeMillis()</code>. 
+			The time zone is default and cadence is 1. <code>StaticClock</code> is a clock with cadence 0 (means the time does not change). You can set any time point and time zone for it.
+			Very useful for tests. <code>SpeedyClock</code> utilizes the real cadence of another underlying clock (pattern Decorator) and multiplies it by a configurable cadence factor.
+			With SpeedyClock you can make time run faster, or slower. <code>SNTPUniversalTimeClock</code> is an experimental clock implementation whose propose is to always be in synch with an external time server.
+			This can be very useful if you system is distributed. Different parts of the application can have its onw clock sincronized with a central time server so 
+			all timestamps for the applications events are meaningful and correlatable.
+		</p>
+		<p>
+			<code>AlarmClock</code>	is a special type of Clock that raises an event for a registered <code>ClockTickListener</code> on a certain <code>Schedule</code>.
+			The mechanics of the clock can be obtain from any another clock implementation (pattern Decorator), thus, you can run the AlarmClock normally embedding a MachineClock, or faster embedding a SpeedyClock.
+			AlarmClock is used for work scheduling in the Work Toolbox and these mechanism allow for test in "not-real time" so you can test several work loads and cycles in an minimum amount of real test time.<br/>
+		</p>
+	</section>
+	<section name="Chronology">
+		<p>
+			Once we have a clock and viable means to define "current time" we need to further define the reference time frame. 
+			This is because different cultures choose different specific time points to start their evaluation of elapsed time
+			and different concepts in order to group those periods.  
+			The chosen reference time points are traditionally related to cultural events and together define the order of
+			subsequent events in the time-line. Cultures, thus, define certain <code>Chronology</code>s. 
+		    A Chronology is a sequence of reference events proper to a culture (or set of cultures) that permit the members of that culture 
+			determine the relative position of events in the time-line by mapping them to an elapsed time from a specific, pre-define, time point. 
+		</p>
+		<p>
+			Different cultures also devise different models to evaluate, count and refer to time points along with measuring time.
+			Almost every culture has the concept of day, month and year, but their definition is not the same for every one. 
+			Adicionally political events in the history of the cultures create gaps between subsequent models. 
+		</p>
+		<p>
+			The <code>Chronology</code> object encapsulates all calculation logic needed to the Time Toolbox. Different chronologies can be implement according to different
+			cultures and rules. Also, chronologies can be implemented according to different technologies and/or underlying APIs.
+		</p>
+	</section>
+	<section name="Calendar and Ephemeris">
+		<p>
+			Different sub-cultures also define their own specific categories and classifications of days and groups of days. 
+			(i.e. companies can define working days acconding to their work schedule). To keep track of all this informations the concept of Calendar was created.
+			A calendar is not a meary grouping of days but a reminder of events for the different days, the ephemeris. 
+		</p>
+		<p>
+			MiddleHeaven introduces the <code>EphemerisModel</code> to model this daily use of calendars. The EphemerisModel can be used to define
+			the ephemeris for a given day. The EphemerisModel depends on an underlying Chronology for computations and culture related modifications.<br/>
+			MiddleHeaven includes the <code>EasterBasedCalculatedEphemerisModel</code> that calculates several holidays related to Easter. The day for Easter, 
+			it self is calculated, by an algorithm, from the Gregorian Calendar year. The other holidays are related to it by a fixed number of days.
+		</p>
+		<p>
+			<code>EphemerisModel</code> can be used for nay calendar related propose as it can be implemented to interface other calendar systems. 
+			Remember that ephemeris is only a fancy name for "event that occurs in specific date". Any business or personal appointment can fill this category.
+		</p>
+    </section>
+	<section name="Model" >
+		<p>
+		The next diagram shows the Time Toolbox types and the relation between them
+		 <figure>
+			 <img src="timetoolbox.png" />
+		 </figure>
+		 The blue area is the border for the relation with Quantity and Measure Toolbox.
+		 <code>TimeInterval</code> makes the transition to the Time Toolbox data type core. It leverages <code>Interval</code> generic type implementation an
+		 the fact TimePoint is a <code>Comparable</code> (it has a natural order given by the time-line).
+		 The clocks give meaning to the concept of "current time" and allow to really asset the passage of time.
+		 Clock are related to time zones witch are also related to cultures and geographic position. 
+		 <code>Chronology</code> provides the culture and tecnologic mechanics to count time and correlate it between cultures and eras.
+		 The <code>EphemerisModel</code> keeps track of those day-by-day events like Easter, Chrismas, Tree Day, or your appointment with your dentist.  
+		</p>
+		<p>
+			A complete time model is only complete by selecting an implementation for each concept. MiddleHeaven supports this by introducing the 
+			<code>TimeContext</code> type. A time context if formed by:
+			<ul>
+			<li>A Clock - to acknowledge the current time, and its rate of change</li>
+			<li>A TimeZoneTable - to correlate clocks arround the world</li>
+			<li>A Chronology - to give meaning to concepts like day an month in a cultural dependent way and compute calculations between them</li>
+			<li>A EphemerisModel - to keep track of the events relevant in the day-by-day life. </li>
+			</ul> 
+			<code>TimeContext</code> acts like a register for it self so you can define, for each application, witch time context is relevant.
+		</p>
+	</section>
+	<section name="Use" >
+		<p>
+		Here is an extract from the junit test that exemplifies how to use the Time Toolbox API data types and EphemerisModel.
+		EphemerisModel can be used to work with holidays/working days arithmetic. The code tests if 5 working days after 2008-5-28 is 
+		2008-6-4. In the end it test that 2008-6-6 is the 5th working day of June 2008.
+		<source>
+			EphemerisModel model = new EasterBasedCalculatedEphemerisModel();
+		
+			DateHolder start = CalendarDate.date(2008,5,28);
+			DateHolder end = CalendarDate.date(2008,6,4);
+			
+			assertEquals(end, model.addWorkingDays(5, start));
+			assertEquals(start, model.subtractWorkingDays(5, end));
+			
+			start = CalendarDate.date(2008,6,2);
+			end = CalendarDate.date(2008,6,9);
+			
+			assertEquals(end, model.addWorkingDays(5, start));
+			assertEquals(start, model.subtractWorkingDays(5, end));
+			
+			assertEquals(CalendarDate.date(2008,6,6),model.getOrdinalWorkingDayOfMonth(Month.ofYear(2008,6), 6));
+
+		</source>
+		
+		</p>
+	
+	</section>
+	<section name="Under the Hood">
+		<p>
+		At this point you may be asking : "Is the Time Toolbox a clone of JSR 310" ? The answer is no. MiddleHeaven Time Toolbox was developed with several goals 
+		of unification in mind by expanding Quantity and Measure Toolbox's concept of quantity into the realm of time. 
+		<a href="http://joda-time.sourceforge.net/">Joda Time</a> and the Time and Money API where the main inspirations ( as their where for <a href="https://jsr-310.dev.java.net/">JSR 310</a> as well) 
+		but an effort as may to dry the data type API and some concepts were aligned (we may see that Joda's Duration concept is named Period in MiddleHeaven, and Joda's Period is named Duration.
+	    This alteration was made name of coherence with the rest of MiddleHeaven as periods are physical measurable and duration are just conventions)
+		MiddleHeaven embraced a larger scope from the beginning. MiddleHeaven Time Toolbox aims to be independent of a given time API implementations, an thus
+		can be implemented either with java standard Date and Calendar API, the new JSR 310 API, Joda Time, or any other future API. 
+		</p>
+		<p>
+		Also JSR 310 and Joda Time do not provide  means to model time context or ephemeris so an abstraction would be necessary any way. 
+		MiddleHeaven only opts to make the trade-off simplier by not making it at all. MiddleHeaven currently only defines a Chronology 
+		based on the GregorianCalendar from standard Java, however as early as Java 1.7 is released a new chronology based on JSR 310 will be added.
+		</p>
+		<p>
+		Work Scheduling can be achieved by an API such as <a href="http://www.opensymphony.com/quartz/">Quartz</a> or java standard or EE timers, however on those API 
+	    only the machine clock can be used to schedule. This is very cumberstone for test and development as not concept of "permutable clock" is gieven. 
+	    MiddleHeaven embraces the real, practical ( you may say pragmatically) issue of testing and developing favoring testability over simple execution. 
+		We will be back to this issue when we discuss the Work Toolbox later on.
+		</p>	
+		<p>
+		<code>EphemerisModel</code> goal is to be provide a simple, extensible, hook that any last-mile developer can implement with real - important to the application - domain rules.
+		Normally this will be related to holidays and working days has many business features depend upon this information, but also appointment related software can be take advantage of this component.
+		</p>
+	</section>
+	</body>
+</document>

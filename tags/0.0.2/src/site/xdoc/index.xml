@@ -1,0 +1,41 @@
+<document>
+	<properties>
+		<author>Sérgio Taborda</author>
+		<title>Welcome</title>
+	</properties>
+	<body>
+
+		<section name="Welcome">
+		
+			<p>
+				Welcome to Middleheaven, the only framework you will ever need.
+			</p>
+			
+
+<p>
+MiddleHeaven aims to be a full-featured business application framework with theses goals: 
+<ul>
+<li>Minimize all effort concerning non-functional requirements implementation.</li> 
+<li>Maximize reusability of business code and logics</li> 
+<li>Minimize dependency of third-party libraries (but used them under the hood) </li>
+<li>Maximize extensibility</li>
+</ul>
+
+These goals are expressed by the following features:
+<ul>
+<li> Universal MVC : You code your logic in a totally view independent way, MiddleHeaven plugs it on Web or Desktop UI on demand.</li> 
+<li> Ubiquous Data Access: Access you data from any node on the system. Let MiddleHeaven worry with the details of data consistency and database persistence. </li>
+<li> Out-of-box application patterns implementations like Money and UnitOfWork </li>
+</ul>
+</p>
+			<p>
+				MiddleHeaven builds up on the concept of a service/component oriented arquitecture
+				abstracting application infrastructure execution environment.
+			</p>
+			<p>
+				MiddleHeaven is composed by a set of <a href="toolboxes.html">Toolboxes</a>; mini frameworks for specific tasks that integrate
+				using configurable services
+			</p>
+		</section>
+	</body>
+</document>

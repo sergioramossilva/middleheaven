@@ -1,0 +1,307 @@
+package org.middleheaven.storage.db.dialects;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+import org.middleheaven.core.reflection.Introspector;
+import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.core.reflection.PropertyNotFoundException;
+import org.middleheaven.model.domain.DataType;
+import org.middleheaven.storage.QualifiedName;
+import org.middleheaven.storage.StorableFieldModel;
+import org.middleheaven.storage.StorableModelReader;
+import org.middleheaven.storage.StorageException;
+import org.middleheaven.storage.db.Clause;
+import org.middleheaven.storage.db.ColumnModel;
+import org.middleheaven.storage.db.ColumnValueHolder;
+import org.middleheaven.storage.db.CriteriaInterpreter;
+import org.middleheaven.storage.db.DataBaseModel;
+import org.middleheaven.storage.db.DataBaseObjectAlreadyExistsException;
+import org.middleheaven.storage.db.EditionDataBaseCommand;
+import org.middleheaven.storage.db.RetriveDataBaseCommand;
+import org.middleheaven.storage.db.SQLEditCommand;
+import org.middleheaven.storage.db.SQLRetriveCommand;
+import org.middleheaven.storage.db.SequenceModel;
+import org.middleheaven.storage.db.SequenceSupportedDBDialect;
+import org.middleheaven.storage.db.TableModel;
+import org.middleheaven.util.criteria.CriterionOperator;
+import org.middleheaven.util.criteria.entity.EntityCriteria;
+
+public class Oracle10gDialect extends SequenceSupportedDBDialect{
+
+	public Oracle10gDialect() {
+		super("\"", "\"", ".");
+	}
+
+	@Override
+	public CriteriaInterpreter newCriteriaInterpreter(EntityCriteria<?> criteria,
+			StorableModelReader reader ) {
+		return new OracleCriteriaInterpreter(criteria, reader);
+
+	}
+
+	public void writeEditionHardname(Clause buffer , QualifiedName hardname){
+
+			buffer.append(startDelimiter());
+			buffer.append(hardname.getName().toLowerCase());
+			buffer.append(endDelimiter());
+		
+	}
+	
+	public List<String> resolveCatalog(DataSource ds) {
+		try {
+			// the catalog is in fact the user schema.
+			// the user must be returned
+			ds = unwrapp(ds);
+			
+			// faster
+			PropertyAccessor pa = Introspector.of(ds.getClass()).inspect().properties().named("login").retrive();
+
+			return Collections.singletonList(pa.getValue(ds).toString().toUpperCase());
+		} catch (PropertyNotFoundException e){
+			
+			return Collections.emptyList();
+		}
+
+	}
+	
+	protected static DataSource unwrapp(DataSource ds){
+		try{
+			if (ds.isWrapperFor(DataSource.class)){
+				return unwrapp(ds.unwrap(DataSource.class));
+			} else {
+				return ds;
+			}
+		} catch (SQLException e) {
+			throw new StorageException(e);
+		}
+	}
+	
+	public StorageException handleSQLException(SQLException e) {
+		String msg = e.getMessage();
+		int code = e.getErrorCode();
+		
+		if (code==955){
+			throw new DataBaseObjectAlreadyExistsException();
+		}
+		if (e.getNextException()!=null){
+			msg += "\n" + e.getNextException().getMessage();
+		}
+		return new StorageException("[" + this.getClass().getSimpleName()+ "]" + msg);
+	}
+
+	public DataBaseModel readDataBaseModel(String catalog, DataSource ds) {
+		Connection con=null;
+		try{
+			con = ds.getConnection();
+			DatabaseMetaData md = con.getMetaData();
+			if (md==null){
+				throw new StorageException("Metadata is not supported");
+			}
+			DataBaseModel dbm = new DataBaseModel();
+
+			ResultSet tables = md.getTables( null ,catalog ,null,null);
+			try{
+				while (tables.next()) {
+					if ("TABLE".equals(tables.getString(4))){
+						TableModel tm = new TableModel(tables.getString(3));
+
+						ResultSet columns = md.getColumns(null, catalog, tm.getName(), null);
+						try{
+							while (columns.next()) {
+
+								DataType type = this.typeFromNative(columns.getInt(5));
+								ColumnModel col = new ColumnModel(columns.getString(4), type);
+								if (type.isTextual()){
+									col.setSize(columns.getInt(7));
+								}
+								if (type.isDecimal()){
+									col.setPrecision((columns.getInt(7)));
+									col.setSize(columns.getInt(9));
+								}
+
+								col.setNullable("YES".equals(columns.getString(18)));
+								tm.addColumn(col);
+							}
+
+						} finally {
+							columns.close();
+						}
+						dbm.addDataBaseObjectModel(tm);
+					} else if ("SEQUENCE".equals(tables.getString(4))){
+						dbm.addDataBaseObjectModel(new SequenceModel(logicSequenceName(tables.getString(3)),1,1));
+					}
+				}
+			} finally{
+				tables.close();
+			}
+
+
+
+
+			return dbm;
+		} catch (SQLException e) {
+			throw this.handleSQLException(e);
+		} finally {
+			if(con!=null){
+				try {
+					con.close();
+				} catch (SQLException e) {
+					throw this.handleSQLException(e);
+				}
+			}
+		}
+	}
+
+	public  EditionDataBaseCommand createCreateTableCommand(TableModel tm){
+
+		Clause sql = new Clause("CREATE TABLE ");
+		writeEnclosureHardname(sql, tm.getName());
+		sql.append("(\n ");
+		for (ColumnModel cm : tm){
+			writeEnclosureHardname(sql,cm.getName());
+			sql.append(" ");
+			appendNativeTypeFor(sql , cm);
+			if(!cm.isNullable()){
+				sql.append(" NOT ");
+			} 
+			sql.append(" NULL ");
+			if (cm.isKey()){
+				sql.append("PRIMARY KEY ");
+			} 
+			sql.append(",\n");
+		}
+		sql.removeLastCharacters(2);
+		sql.append(")");
+		return new SQLEditCommand(this,sql.toString());
+	}
+
+	private  class OracleCriteriaInterpreter extends CriteriaInterpreter{
+
+		public OracleCriteriaInterpreter(EntityCriteria<?> criteria, StorableModelReader reader) {
+			super(Oracle10gDialect.this, criteria, reader);
+		}
+
+		@Override
+		protected void writeAliasSeparator(Clause queryBuffer){
+			queryBuffer.append(" ");
+		}
+		
+		@Override
+		protected void writeAlias(Clause queryBuffer , String alias){
+			queryBuffer.append(startDelimiter())
+			.append(alias)
+			.append(endDelimiter());
+		}	
+
+		@Override
+		protected void writeEndLimitClause(Clause selectBuffer){
+			if (criteria().getCount()>0 && criteria().getStart()>1){
+				
+				if (selectBuffer.endsWith(')')){
+					selectBuffer.append(" AND ");
+				}
+				selectBuffer.append("rownum between ")
+				.append(criteria().getStart())
+				.append(" and ")
+				.append(criteria().getStart() + criteria().getCount()-1);
+			}
+		}
+
+		protected void writeLikeClause(StorableFieldModel fm,Clause criteriaBuffer,
+				boolean caseSensitive, CriterionOperator op,String alias) {
+		
+				if (caseSensitive){
+					writeQueryHardname(criteriaBuffer, aliasFor(fm.getHardName(),alias));
+
+					if (op.isNegated()){
+						criteriaBuffer.append(" NOT");
+					}
+					
+					criteriaBuffer.append(" LIKE ? "); // case sensitive
+				} else {
+					
+					if (op.isNegated()){
+						criteriaBuffer.append(" NOT");
+					}
+					
+				
+					writeQueryHardname(criteriaBuffer, aliasFor(fm.getHardName(),alias));
+					criteriaBuffer.append(" LIKE ?");
+							
+				}
+				
+			}
+		
+	}
+
+	@Override
+	protected <T> RetriveDataBaseCommand createNextSequenceValueCommand(String sequenceName) {
+		return new SQLRetriveCommand(this,
+				new StringBuilder("SELECT ")
+				.append(hardSequenceName(sequenceName))
+				.append(".nextval FROM dual")
+				.toString() ,
+				Collections.<ColumnValueHolder>emptySet()
+		);
+	}
+
+	@Override
+	public boolean supportsCountLimit() {
+		return true;
+	}
+
+	@Override
+	public boolean supportsOffSet() {
+		return true;
+	}
+
+	@Override
+	protected void appendNativeTypeFor(Clause sql, ColumnModel column) {
+		switch (column.getType()){ 
+		case DATE:
+			sql.append("timestamp");
+			break;
+		case DATETIME:
+			sql.append("timestamp");
+			break;
+		case TIME:
+			sql.append("timestamp");
+			break;
+		case TEXT:
+			sql.append("nvarchar2 (").append(column.getSize()).append(")");
+			break;
+		case INTEGER:
+			sql.append("number");
+			break;
+		case LOGIC:
+		case ENUM:
+			sql.append("number (1)");
+			break;
+		case DECIMAL:
+			sql.append("number (").append(column.getPrecision()).append(",").append(column.getSize()).append(")");
+			break;
+		default:
+			throw new StorageException(column.getType() + " is not convertible to a native column type");
+		}
+	}
+
+	@Override
+	public EditionDataBaseCommand createCreateSequenceCommand(SequenceModel sequence) {
+
+		StringBuilder sql = new StringBuilder("CREATE SEQUENCE ")
+		.append(hardSequenceName(sequence.getName())) // avoid name colision
+		.append(" INCREMENT BY ").append(sequence.getIncrementBy())
+		.append(" MINVALUE ").append(sequence.getStartWith())
+		.append(" START WITH " ).append(sequence.getStartWith());
+
+
+		return new SQLEditCommand(this,sql.toString());
+	}
+}

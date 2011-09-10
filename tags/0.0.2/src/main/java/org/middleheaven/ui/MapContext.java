@@ -1,0 +1,57 @@
+package org.middleheaven.ui;
+
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.middleheaven.util.coersion.TypeCoercing;
+
+public class MapContext extends AbstractContext {
+
+	EnumMap<ContextScope, ParamMap> contextMap = new EnumMap<ContextScope, ParamMap>(ContextScope.class);
+
+
+	static class ParamMap extends TreeMap<String, Object>{
+		
+	}
+	
+	public MapContext(){
+		for ( ContextScope scope : ContextScope.values()){
+			contextMap.put(scope, new ParamMap());
+		}
+	}
+	
+	@Override
+	public <T> T getAttribute(ContextScope scope, String name, Class<T> type) {
+		return TypeCoercing.coerce(contextMap.get(scope).get(name), type);
+	}
+
+	@Override
+	public Enumeration<String> getAttributeNames(ContextScope scope) {
+		return Collections.enumeration(contextMap.get(scope).keySet());
+	}
+
+	@Override
+	public void setAttribute(ContextScope scope, String name, Object value) {
+		contextMap.get(scope).put(name, value);
+	}
+	
+
+	public <O> Map<String, O> getScopeMap(ContextScope scope, Class<O> type) {
+		
+		ParamMap map = contextMap.get(scope);
+		if ( map == null){
+			return Collections.emptyMap();
+		}
+		Map<String,O> result = new TreeMap<String,O>();
+		for (Map.Entry<String,Object> entry : map.entrySet()){
+			result.put(entry.getKey(), TypeCoercing.coerce(entry.getValue(), type));
+		}
+		return result;
+	}
+
+
+
+}

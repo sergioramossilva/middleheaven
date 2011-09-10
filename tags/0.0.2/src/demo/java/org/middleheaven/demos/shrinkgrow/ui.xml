@@ -1,0 +1,61 @@
+<ui type="desktop" name="twobuttons">
+	<uic type="client">
+		<model>
+			<renderkit>SwingRenderKit</renderkit>
+		</model>
+		<uic name="window" type="window">
+			<model>
+				<title>Grow and Shrink Window</title>
+			</model>
+			<uic type="commandset" familly="menu">
+				<uic type="commandset" familly="menu">
+					<model>
+						<text>Menu</text>
+					</model>
+					<uic name="buttonA" type="command" familly="button">
+						<model>
+							<text>Grow</text>
+						</model>
+					</uic>
+					<uic name="buttonB" type="command" familly="button">
+						<model>
+							<text>Grow</text>
+						</model>
+					</uic>
+					<uic name="buttonC" type="command" familly="button">
+						<model>
+							<text>Grow</text>
+						</model>
+					</uic>
+					<uic name="submenu" type="commandset" familly="menu">
+						<model>
+							<text>Grow</text>
+						</model>
+						<uic name="buttonD" type="command" familly="button">
+							<model>
+								<text>Grow</text>
+							</model>
+						</uic>
+						<uic name="buttonE" type="command" familly="button">
+							<model>
+								<text>Grow</text>
+							</model>
+						</uic>
+					</uic>
+				</uic>
+			</uic>
+			<uic name="layout" type="layout" familly="flow">
+				<uic name="buttonA" type="command" familly="button">
+					<model class="org.middleheaven.demos.shrinkgrow.GrowButtonModel">
+						<text>Grow</text>
+					</model>
+				</uic>
+				<uic name="buttonB" type="command" familly="button">
+					<model class="org.middleheaven.demos.shrinkgrow.ShrinkButtonModel">
+						<text>Shrink</text>
+					</model>
+				</uic>
+			</uic>
+		</uic>
+	</uic>
+</ui>
