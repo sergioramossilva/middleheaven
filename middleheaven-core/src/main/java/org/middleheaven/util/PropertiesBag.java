@@ -1,0 +1,266 @@
+/**
+ * 
+ */
+package org.middleheaven.util;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+
+import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.classification.NegationClassifier;
+import org.middleheaven.util.coersion.TypeCoercing;
+import org.middleheaven.util.collections.AbstractEnumerableAdapter;
+import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.IteratorAdapter;
+
+/**
+ * 
+ */
+public class PropertiesBag extends AbstractEnumerableAdapter<PropertiesBag.Entry>{
+
+	
+	/**
+	 * 
+	 */
+	public interface Entry {
+
+		public String getPropertyName();
+		public String getPropertyValue();
+		
+	}
+
+	public static PropertiesBag bagOfSystemProperties(){
+		return bagOf(System.getProperties());
+	}
+	
+	public static PropertiesBag newBag(){
+		return new PropertiesBag();
+	}
+	
+	public static PropertiesBag bagOf(Properties p){
+		return new PropertiesBag( new JavaPropertiesBagStategy(p));
+	}
+	
+	public static PropertiesBag bagOf(Map<String, String> p){
+		return new PropertiesBag(new MapPropertiesBagStategy(p));
+	}
+	
+	private PropertiesBagStategy bag;
+	
+	private PropertiesBag (){
+		this.bag = new MapPropertiesBagStategy(new HashMap<String,String>());
+	}
+	
+	private PropertiesBag (PropertiesBagStategy bag){
+		this.bag = bag;
+	}
+	
+	public final <T> T getProperty(String name, Class<T> type){
+		return getProperty(name, null, type);
+	}
+	
+	public <T> T getProperty(String name, T defaultValue, Class<T> type){
+		Object value = this.bag.get(name);
+		if (value == null) {
+			return defaultValue;
+		}
+		return TypeCoercing.coerce(value, type);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterator<Entry> iterator() {
+		return bag.iterator();
+	}
+	
+	/**
+	 * Set a property value. 
+	 * This action can be presented by a running {@link SecurityManager}.
+	 * 
+	 * @param name the name of the property.
+	 * @param value the property value. This object must be coercible to {@link String}.
+	 */
+	public void setProperty(String name, Object value){
+
+		this.bag.set(name, TypeCoercing.coerce(value, String.class));
+	}
+	
+	private static interface PropertiesBagStategy{
+		
+		public String get(String name);
+		public void set(String name, String value);
+		/**
+		 * @return
+		 */
+		public Iterator<Entry> iterator();
+		/**
+		 * @return
+		 */
+		public int size();
+		/**
+		 * @return
+		 */
+		public boolean isEmpty();
+	}
+	
+	private static class JavaPropertiesBagStategy implements PropertiesBagStategy{
+
+		
+		private Properties properties;
+
+		public JavaPropertiesBagStategy (Properties p){
+			this.properties = p;
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String get(String name) {
+			return properties.getProperty(name);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void set(String name, String value) {
+			properties.setProperty(name, value);
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Iterator<Entry> iterator() {
+			return  new IteratorAdapter<Entry, Map.Entry<Object, Object>>(this.properties.entrySet().iterator()) {
+
+				@Override
+				public Entry adaptNext(java.util.Map.Entry<Object, Object> next) {
+					return new StringEntry (next.getKey().toString(), next.getValue().toString());
+				}
+
+			};
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int size() {
+			return properties.size();
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isEmpty() {
+			return properties.isEmpty();
+		}
+		
+	}
+	
+	private static class MapPropertiesBagStategy implements PropertiesBagStategy{
+
+		
+		private Map<String, String> properties;
+
+		public MapPropertiesBagStategy (Map<String, String> p){
+			this.properties = p;
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String get(String name) {
+			return properties.get(name);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void set(String name, String value) {
+			properties.put(name, value);
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Iterator<Entry> iterator() {
+			return new IteratorAdapter<Entry, Map.Entry<String, String>>(this.properties.entrySet().iterator()) {
+
+				@Override
+				public Entry adaptNext(java.util.Map.Entry<String, String> next) {
+					return new StringEntry(next.getKey(), next.getValue());
+				}
+
+			};
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int size() {
+			return properties.size();
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isEmpty() {
+			return properties.isEmpty();
+		}
+		
+	}
+
+	private static class StringEntry implements Entry {
+
+		private String name;
+		private String value;
+
+		public StringEntry (String name, String value){
+			this.name = name;
+			this.value = value;
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String getPropertyName() {
+			return name;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String getPropertyValue() {
+			return value;
+		}
+		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int size() {
+		return bag.size();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isEmpty() {
+		return bag.isEmpty();
+	}
+
+	
+}
