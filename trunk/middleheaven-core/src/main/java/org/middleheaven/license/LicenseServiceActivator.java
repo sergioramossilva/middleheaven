@@ -59,7 +59,7 @@ public class LicenseServiceActivator extends Activator {
 
 			@Override
 			public void doWith(ManagedFile file) {
-				if (file.getPath().getExtension().equals(".lic")){
+				if (file.getPath().getFileNameExtension().equals(".lic")){
 					licences.add(file);
 				}
 			}
@@ -72,7 +72,7 @@ public class LicenseServiceActivator extends Activator {
 
 			@Override
 			public void doWith(ManagedFile file) {
-				if (file.getPath().getExtension().equals(".lic")){
+				if (file.getPath().getFileNameExtension().equals(".lic")){
 					licences.add(file);
 				}
 			}
@@ -86,7 +86,7 @@ public class LicenseServiceActivator extends Activator {
 
 			@Override
 			public void doWith(ManagedFile file) {
-				if (file.getPath().getExtension().equals(".cert")){
+				if (file.getPath().getFileNameExtension().equals(".cert")){
 					certifcates.add(file);
 				}
 			}

@@ -4,22 +4,22 @@ import java.net.URI;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
-import org.middleheaven.io.repository.engines.FileRepositoryProvider;
+import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 import org.middleheaven.io.repository.watch.WatchService;
 
 /**
  * 
  */
-public class AutoLoadRepositoryProvider implements FileRepositoryProvider {
+public class AutoLoadRepositoryProvider implements ManagedFileRepositoryProvider {
 
-	FileRepositoryProvider provider;
+	ManagedFileRepositoryProvider provider;
 	
 	
 	public AutoLoadRepositoryProvider (){
 		if (ClassIntrospector.isInClasspath("org.apache.commons.vfs.FileObject") && 
 				ClassIntrospector.isInClasspath("org.middleheaven.io.repository.vfs.CommonsVSFRepositoryEngine")){
 			// ok, load 
-			provider =  (FileRepositoryProvider) ClassIntrospector.loadFrom("org.middleheaven.io.repository.vfs.CommonsVSFRepositoryEngine").newInstance();
+			provider =  (ManagedFileRepositoryProvider) ClassIntrospector.loadFrom("org.middleheaven.io.repository.vfs.CommonsVSFRepositoryEngine").newInstance();
 		} else {
 			provider = MachineFileSystemRepositoryProvider.getProvider();
 		}

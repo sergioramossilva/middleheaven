@@ -6,7 +6,7 @@ import java.util.Map;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.RepositoryCreationException;
 
-public interface FileRepositoryProvider  {
+public interface ManagedFileRepositoryProvider  {
 
 
 	/**

@@ -86,7 +86,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 				public void doWith(ManagedFile file) {
 					if (file.isReadable() && file.getType().isFile()){
 						for (Pattern pattern : filePatterns){
-							if ( pattern.matcher(file.getPath().getBaseName()).find()){
+							if ( pattern.matcher(file.getPath().getFileNameWithoutExtension()).find()){
 								allFiles.add(file);
 							}
 							return;
@@ -149,7 +149,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 					Log.onBookFor(this.getClass()).warn("{0} is not a valid application module activator",className);
 				}
 			}else {
-				Log.onBookFor(this.getClass()).warn( "{0} does not present an application module.",jar.getPath().getBaseName());
+				Log.onBookFor(this.getClass()).warn( "{0} does not present an application module.",jar.getPath().getFileNameWithoutExtension());
 			}
 
 		}catch (IOException e) {

@@ -44,7 +44,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle {
 			public void onChange(WatchEvent event) {
 				LocalizedMessagesFormatHandler format = fileFormat.newFormatHandler(event.getFile().getContent().getInputStream());
 				synchronized(files){
-					files.put(filesMapping.get(event.getFile().getPath().getBaseName()), format);
+					files.put(filesMapping.get(event.getFile().getPath().getFileNameWithoutExtension()), format);
 				}
 			}
 		});
@@ -101,7 +101,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle {
 
 
 			files.put(key, format);
-			filesMapping.put(file.getPath().getBaseName(), key);
+			filesMapping.put(file.getPath().getFileNameWithoutExtension(), key);
 		}
 		return format.findLabel(label);
 

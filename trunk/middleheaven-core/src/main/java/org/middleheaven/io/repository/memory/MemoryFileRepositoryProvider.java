@@ -8,12 +8,12 @@ import java.util.Map;
 
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.RepositoryCreationException;
-import org.middleheaven.io.repository.engines.FileRepositoryProvider;
+import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
  * 
  */
-public class MemoryFileRepositoryProvider implements FileRepositoryProvider {
+public class MemoryFileRepositoryProvider implements ManagedFileRepositoryProvider {
 
 	/**
 	 * {@inheritDoc}

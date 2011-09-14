@@ -36,4 +36,8 @@ public class ModuleID implements Serializable {
 	public int hashCode() {
 		return this.identifier.hashCode() ^ version.hashCode();
 	}
+	
+	public String toString(){
+		return identifier + " " + version;
+	}
 }
