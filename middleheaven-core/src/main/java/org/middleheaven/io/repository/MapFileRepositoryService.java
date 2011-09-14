@@ -6,7 +6,7 @@ package org.middleheaven.io.repository;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.io.repository.engines.FileRepositoryProvider;
+import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
  * 
@@ -14,13 +14,13 @@ import org.middleheaven.io.repository.engines.FileRepositoryProvider;
 public class MapFileRepositoryService extends AbstractFileRepositoryService {
 
 	
-	private Map<String, FileRepositoryProvider> providers = new HashMap<String, FileRepositoryProvider>();
+	private Map<String, ManagedFileRepositoryProvider> providers = new HashMap<String, ManagedFileRepositoryProvider>();
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void registerProvider(FileRepositoryProvider provider) {
+	public void registerProvider(ManagedFileRepositoryProvider provider) {
 		providers.put(provider.getScheme().toLowerCase(), provider);
 	}
 
@@ -28,7 +28,7 @@ public class MapFileRepositoryService extends AbstractFileRepositoryService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void unRegisterProvider(FileRepositoryProvider provider) {
+	public void unRegisterProvider(ManagedFileRepositoryProvider provider) {
 		providers.remove(provider.getScheme().toLowerCase());
 	}
 
@@ -36,7 +36,7 @@ public class MapFileRepositoryService extends AbstractFileRepositoryService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected FileRepositoryProvider resolveProviderByScheme(String scheme) {
+	protected ManagedFileRepositoryProvider resolveProviderByScheme(String scheme) {
 		return providers.get(scheme.toLowerCase());
 	}
 

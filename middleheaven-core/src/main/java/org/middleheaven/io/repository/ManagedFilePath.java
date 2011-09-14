@@ -13,13 +13,20 @@ public interface ManagedFilePath {
 	public boolean isAbsolute();
 
 	/**
+	 * Returns the file name or the last element of the sequence of name elements.
+	 * 
+	 * @return Returns the file name or the last element of the sequence of name elements.
+	 */
+	public String getFileName();
+	
+	/**
 	 *     Returns the base name of this file. The base name is the last element of the file name. For example the base name of /somefolder/somefile is somefile.
 	 *     The root of a file system has an empty base name.
 	 *     Returns:
 	 *      The base name. Never returns null.
 	 * @return
 	 */
-	public String getBaseName();
+	public String getFileNameWithoutExtension();
 
 	/**
 	 *     Returns the extension of this file name.
@@ -28,7 +35,7 @@ public interface ManagedFilePath {
         The extension. Returns an empty string if the name has no extension.
 	 * @return
 	 */
-	public String getExtension();
+	public String getFileNameExtension();
 
 
 	/**

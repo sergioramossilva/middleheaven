@@ -1,15 +1,16 @@
 package org.middleheaven.io.repository;
 
 
+import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
-import org.middleheaven.io.repository.engines.FileRepositoryProvider;
+import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
  * {@link FileRepositoryProvider} based upon the machines file system.
  */
-public class MachineFileSystemRepositoryProvider implements FileRepositoryProvider {
+public class MachineFileSystemRepositoryProvider implements ManagedFileRepositoryProvider {
 
 
 	private static final MachineFileSystemRepositoryProvider provider = new MachineFileSystemRepositoryProvider();

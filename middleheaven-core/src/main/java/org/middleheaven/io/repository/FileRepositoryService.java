@@ -7,7 +7,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.io.repository.engines.FileRepositoryProvider;
+import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
  * 
@@ -16,9 +16,9 @@ import org.middleheaven.io.repository.engines.FileRepositoryProvider;
 public interface FileRepositoryService {
 
 	
-	public void registerProvider(FileRepositoryProvider provider);
+	public void registerProvider(ManagedFileRepositoryProvider provider);
 	
-	public void unRegisterProvider(FileRepositoryProvider provider);
+	public void unRegisterProvider(ManagedFileRepositoryProvider provider);
 	
 	public ManagedFileRepository newRepository(URI uri) throws RepositoryCreationException;
 	

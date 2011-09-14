@@ -85,7 +85,7 @@ public interface ManagedFileRepository extends Closeable{
      * @throws RepositoryNotWritableException
      * @throws ManagedIOException
      */
-    public  void store(ManagedFile file) throws RepositoryNotWritableException,ManagedIOException;
+   // public  void store(ManagedFile file) throws RepositoryNotWritableException,ManagedIOException;
 
 	/**
 	 * @param string

@@ -7,7 +7,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
-import org.middleheaven.io.repository.engines.FileRepositoryProvider;
+import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
  * 
@@ -51,7 +51,7 @@ public abstract class AbstractFileRepositoryService implements FileRepositorySer
 	 */
 	@Override
 	public ManagedFileRepository newRepository(URI uri, Map<String, Object> params) throws RepositoryCreationException {
-		FileRepositoryProvider provider = resolveProviderByScheme(uri.getScheme().toLowerCase());
+		ManagedFileRepositoryProvider provider = resolveProviderByScheme(uri.getScheme().toLowerCase());
 		
 		if (provider == null) {
 			throw new RepositoryCreationException("No provider found that could process shceme "  + uri.getScheme());
@@ -64,6 +64,6 @@ public abstract class AbstractFileRepositoryService implements FileRepositorySer
 	 * @param lowerCase
 	 * @return
 	 */
-	protected abstract FileRepositoryProvider resolveProviderByScheme(String scheme);
+	protected abstract ManagedFileRepositoryProvider resolveProviderByScheme(String scheme);
 	
 }

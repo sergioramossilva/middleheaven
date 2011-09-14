@@ -43,12 +43,6 @@ public class EmptyFileRepository implements ManagedFileRepository {
 	}
 
 	@Override
-	public void store(ManagedFile file) throws RepositoryNotWritableException,
-			ManagedIOException {
-		throw new RepositoryNotWritableException(this.getClass().getName());
-	}
-
-	@Override
 	public boolean isWatchable() {
 		return false;
 	}

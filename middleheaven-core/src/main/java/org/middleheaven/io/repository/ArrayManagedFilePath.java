@@ -45,6 +45,8 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 		return root != null;
 	}
 	
+	
+	
 	/**
 	 * Constructor.
 	 * @param repository
@@ -79,7 +81,7 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 	}
 
 	@Override
-	public String getBaseName() {
+	public String getFileNameWithoutExtension() {
 		return lastNameBase;
 	}
 
@@ -89,7 +91,7 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 	}
 
 	@Override
-	public String getExtension() {
+	public String getFileNameExtension() {
 		return this.lastNameExtention;
 	}
 
@@ -213,6 +215,14 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 	public ManagedFilePath relativize(ManagedFilePath path) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getFileName() {
+		return names.length > 0 ? this.names[this.names.length -1] : null; 
 	}
 }
 

@@ -11,16 +11,16 @@ import java.util.Map;
 import org.middleheaven.io.repository.FileRepositoryService;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.RepositoryCreationException;
-import org.middleheaven.io.repository.engines.FileRepositoryProvider;
+import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
- * This {@link FileRepositoryProvider} uses the class provided in the URI and uses the {@link Class#getResource(String)} to find
+ * This {@link ManagedFileRepositoryProvider} uses the class provided in the URI and uses the {@link Class#getResource(String)} to find
  * the base URL for the {@link ManagedFileRepository}. Then it uses the  {@link FileRepositoryService} to find the final {@link ManagedFileRepository}.
  * 
- * This {@link FileRepositoryProvider} understands URI in the form <code>classpath:org.company.packageA.ClassName</code> 
+ * This {@link ManagedFileRepositoryProvider} understands URI in the form <code>classpath:org.company.packageA.ClassName</code> 
  * 
  */
-public class ClassPathRepositoryProvider implements FileRepositoryProvider {
+public class ClassPathRepositoryProvider implements ManagedFileRepositoryProvider {
 
 	
 	private FileRepositoryService fileService;
