@@ -8,16 +8,18 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.RepositoryCreationException;
-import org.middleheaven.io.repository.engines.FileRepositoryProvider;
+import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
 
 // TODO change to an activator
-public class CommonsVSFRepositoryProvider implements FileRepositoryProvider {
+public class CommonsVSFRepositoryProvider implements ManagedFileRepositoryProvider {
 
 	private VirtualFileWatchService virtualFileWatchService = new VirtualFileWatchService();
+	private String scheme;
 
-	public CommonsVSFRepositoryProvider (){}
+	public CommonsVSFRepositoryProvider (String scheme){
+		this.scheme = scheme;
+	}
 	
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -33,13 +35,12 @@ public class CommonsVSFRepositoryProvider implements FileRepositoryProvider {
 		}
 	}
 
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String getScheme() {
-		// TODO Auto-generated method stub
-		return ""; //VFS.getManager().getSchemes()[0];
+		return scheme; 	
 	}
+	
 }

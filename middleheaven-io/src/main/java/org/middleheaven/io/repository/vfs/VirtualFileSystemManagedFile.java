@@ -17,8 +17,6 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileType;
-import org.middleheaven.io.repository.watch.WatchEvent.Kind;
-import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.CollectionUtils;
@@ -297,11 +295,6 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile implements 
 		}
 	}
 
-	@Override
-	public WatchEventChannel watch(Kind... events) {
-		return watchService.register(this, this, events);
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -344,6 +337,24 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile implements 
 	protected void doRenameAndChangePath(ManagedFilePath resolveSibling) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Iterable<ManagedFile> childrenIterable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected int childrenCount() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 

@@ -12,6 +12,7 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystem;
 import org.apache.commons.vfs.FileSystemException;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.watch.SimpleWatchEvent;
 import org.middleheaven.io.repository.watch.StandardWatchEvent;
 import org.middleheaven.io.repository.watch.WatchEvent;
@@ -29,8 +30,11 @@ public class VirtualFileWatchService implements WatchService {
 	private BlockingQueue<VirtualFileWatchServiceWatchEventChannel> ready = new LinkedBlockingQueue<VirtualFileWatchServiceWatchEventChannel>();
 	
 	@Override
-	public WatchEventChannel register(Watchable watchable, ManagedFile managedFile, Kind... events) {
+	public WatchEventChannel watch(Watchable watchable, Kind... events) {
 		try {
+			
+			ManagedFile managedFile = fileForWatchable(watchable);
+			
 			FileObject fileObject = ((VirtualFileSystemManagedFile) managedFile).file;
 			
 			FileSystem fileSystem = fileObject.getParent().getFileSystem();
@@ -47,6 +51,17 @@ public class VirtualFileWatchService implements WatchService {
 		}
 	}
 
+	private ManagedFile fileForWatchable(Watchable watchable){
+		if (watchable instanceof ManagedFilePath) {
+			ManagedFilePath path = (ManagedFilePath) watchable;
+			return path.getManagedFileRepository().retrive(path);
+		} else if (watchable instanceof ManagedFile) {
+			return (ManagedFile) watchable;
+		} else {
+			throw new IllegalArgumentException(watchable.getClass() + " is not an acceptable watchable for this  watch service");
+		}
+	}
+	
 	@Override
 	public void close() {
 		for (VirtualFileWatchServiceWatchEventChannel wec : channels){
