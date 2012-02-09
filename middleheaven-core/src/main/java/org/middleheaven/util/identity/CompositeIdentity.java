@@ -37,7 +37,7 @@ public class CompositeIdentity extends Identity {
 
 	@Override
 	public String toString() {
-		return identities.toString();
+		return Arrays.toString(identities);
 	}
 
 

@@ -33,6 +33,9 @@ public final class RegistryServiceContext implements ServiceContext{
 
 	public RegistryServiceContext(LogBook book){
 		this.logBook = book;
+		
+		// this is intended to set the default context in a static variable
+		// TODO devise a more elegant way.
 		ServiceRegistry.context = this;
 
 		/* should bing all to shared ?
@@ -99,6 +102,10 @@ public final class RegistryServiceContext implements ServiceContext{
 	@Override
 	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String,String> properties) {
 
+		if (properties == null){
+			properties = Collections.<String,String>emptyMap();
+		}
+		
 		// find current binding
 		ServiceBinding<T> binding = this.selectedServiceBinding(serviceClass, properties);
 

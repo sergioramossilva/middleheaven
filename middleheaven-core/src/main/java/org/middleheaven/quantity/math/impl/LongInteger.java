@@ -128,13 +128,8 @@ public class LongInteger extends BigInt {
 		return this.times(new LongInteger(n.longValue()));
 	}
 
-	/*
-	public boolean equals(Object other){
-		return other instanceof LongInteger && equals((LongInteger)other);
-	}
-	*/
 
-	public boolean equals(LongInteger other){
+	protected boolean equals(LongInteger other){
 		return  this.value == other.value;
 	}
 

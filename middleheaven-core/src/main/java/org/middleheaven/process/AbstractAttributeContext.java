@@ -1,20 +1,17 @@
 package org.middleheaven.process;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.middleheaven.util.collections.AbstractEnumerableAdapter;
-import org.middleheaven.util.collections.IteratorAdapter;
 
 
-
+/**
+ * {@link AttributeContext} base implementation.
+ */
 public abstract class AbstractAttributeContext implements AttributeContext {
 
+	private final static ContextScope[] scopes = new ContextScope[]{ContextScope.PARAMETERS, ContextScope.REQUEST, ContextScope.SESSION , ContextScope.APPLICATION};
+	
 	@Override
 	public <T> T getAttribute(String name, Class<T> type) {
-		ContextScope[] scopes = ContextScope.values(); 
-		
+
 		for (ContextScope scope : scopes){
 			T obj = this.getAttribute(scope, name, type);
 			if (obj!=null){

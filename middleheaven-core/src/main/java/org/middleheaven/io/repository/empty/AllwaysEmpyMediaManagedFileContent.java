@@ -1,13 +1,14 @@
 /**
  * 
  */
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.empty;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.MediaManagedFileContent;
 
 /**
  * 

@@ -13,7 +13,6 @@ import org.middleheaven.io.repository.watch.FileWatchChannelProcessor;
 import org.middleheaven.io.repository.watch.StandardWatchEvent;
 import org.middleheaven.io.repository.watch.WatchEvent;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
-import org.middleheaven.io.repository.watch.Watchable;
 
 /**
  * Uses a key-value property file named {@code domain_language_country.properties} as source for 
@@ -110,13 +109,15 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle {
 	/**
 	 * Registers as a <code>FileChangeObserver<code> for the passed file.
 	 * this way when/if the base file is changed changes will automaticly be propagated
-	 * This can only be used if the repository is a <code>WatchableRepository<code>
+	 * This can only be used if the file is watchable.
 	 * @param file
 	 */
 	private void createWatcher(ManagedFile file ){
-		if (this.repository instanceof Watchable){
+		if (file.isWatchable()){
 			
-			WatchEventChannel channel = ((Watchable)this.repository).watch(StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
+			WatchEventChannel channel = file.register(
+					file.getRepository().getWatchService(),
+					StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
 			fileWatchChannelProcessor.add(channel);		
 
 		}

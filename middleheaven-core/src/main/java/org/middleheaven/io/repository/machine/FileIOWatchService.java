@@ -1,24 +1,24 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.machine;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.watch.SimpleWatchEvent;
 import org.middleheaven.io.repository.watch.StandardWatchEvent;
 import org.middleheaven.io.repository.watch.WatchEvent;
+import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.io.repository.watch.Watchable;
-import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Walker;
 
@@ -234,18 +234,35 @@ public class FileIOWatchService implements WatchService {
 
 
 	@Override
-	public WatchEventChannel register(Watchable watchable, ManagedFile managedFile, Kind... events) {
+	public WatchEventChannel watch(Watchable watchable, Kind... events) {
+		
+		ManagedFile managedFile = fileForWatchable(watchable);
+		
 		EventsReader reader;
+		
+		
 		if (managedFile.getType().isFile()) {
 			reader = new FileEventsReader(managedFile);
 		} else {
 			reader = new FolderEventsReader(managedFile);
 		}
-		LegacyStrategyWatchEventChannel c = new LegacyStrategyWatchEventChannel(watchable , new HashSet(Arrays.asList(events)) , reader);
+		
+		LegacyStrategyWatchEventChannel c = new LegacyStrategyWatchEventChannel(watchable , new HashSet<Kind>(Arrays.asList(events)) , reader);
 		
 		this.channels.add(c);
 		
 		return c;
+	}
+	
+	private ManagedFile fileForWatchable(Watchable watchable){
+		if (watchable instanceof ManagedFilePath) {
+			ManagedFilePath path = (ManagedFilePath) watchable;
+			return path.getManagedFileRepository().retrive(path);
+		} else if (watchable instanceof ManagedFile) {
+			return (ManagedFile) watchable;
+		} else {
+			throw new IllegalArgumentException(watchable.getClass() + " is not an acceptable watchable for this  watch service");
+		}
 	}
 
 	@Override

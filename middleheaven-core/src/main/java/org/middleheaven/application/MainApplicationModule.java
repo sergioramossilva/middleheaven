@@ -18,5 +18,8 @@ public abstract class MainApplicationModule extends AbstractApplicationModule {
 		return new ModuleID(this.getApplicationID().getIdentifier(), this.getApplicationID().getVersion());
 	}
 
-
+	
+	public String toString(){
+		return this.getModuleID().toString();
+	}
 }

@@ -28,7 +28,7 @@ public class IntegerIdentity extends Identity implements Serializable {
 		return other instanceof IntegerIdentity && equals((IntegerIdentity)other);
 	}
 	
-	public boolean equals(IntegerIdentity other) {
+	protected boolean equals(IntegerIdentity other) {
 		return this.value == other.value;
 	}
 

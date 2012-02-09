@@ -1,6 +1,7 @@
 package org.middleheaven.core.reflection;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Invokes methods on the underliyng object only based on their signature
@@ -22,7 +23,7 @@ public class SignatureProxy implements ProxyHandler {
 		);
 		
 		if (method == null){
-			throw new ReflectionException("Method " + delegator.getName() + delegator.getInvoked().getParameterTypes() + " not found in " + original.getClass());
+			throw new ReflectionException("Method " + delegator.getName() + Arrays.toString(delegator.getInvoked().getParameterTypes()) + " not found in " + original.getClass());
 		}
 		
 		return method.invoke(original, args);

@@ -16,8 +16,8 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.middleheaven.io.FileNotFoundManagedException;
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.io.repository.FileNotFoundManagedException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

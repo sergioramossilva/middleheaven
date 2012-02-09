@@ -68,7 +68,7 @@ public class Consistencies {
 	}
 
 	public static <E extends Exception > void consistIsBoolean(boolean value, Object object, Class<E> exceptionType) throws E{
-		consistIsBoolean(value,null,exceptionType);
+		consistIsBoolean(value,null,"",exceptionType);
 	}
 
 	public static <E extends Exception > void consistIsBoolean(boolean value,Object obj,  String message,Class<E> exceptionType) throws E{

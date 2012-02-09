@@ -158,7 +158,8 @@ public class EqualsAssert {
 
 	private static void assertNotEqualsNull( Object a ) {
 		try {
-			if( a.equals( null ) == true ) {
+			// explicitly compare with null 
+			if( a.equals( null ) ) {
 				fail( "original.equals(null) returned true");
 			}
 		} catch( final NullPointerException e ) {

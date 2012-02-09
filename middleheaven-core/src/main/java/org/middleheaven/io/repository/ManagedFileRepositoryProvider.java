@@ -1,11 +1,11 @@
-package org.middleheaven.io.repository.engines;
+package org.middleheaven.io.repository;
 
 import java.net.URI;
 import java.util.Map;
 
-import org.middleheaven.io.repository.ManagedFileRepository;
-import org.middleheaven.io.repository.RepositoryCreationException;
-
+/**
+ * 
+ */
 public interface ManagedFileRepositoryProvider  {
 
 

@@ -1,9 +1,14 @@
-package org.middleheaven.util.criteria;
+package org.middleheaven.util;
 
 import java.io.Serializable;
 
+/**
+ * 
+ */
 public class QualifiedName implements Serializable{
 
+	private static final long serialVersionUID = 5242278443994899317L;
+	
 	private String qualifier;
 	private String name;
 	private boolean alias;
@@ -39,7 +44,7 @@ public class QualifiedName implements Serializable{
 	}
 
 	public int hashCode() {
-		return name.hashCode() ^ qualifier.hashCode();
+		return Hash.hash(name).hash(qualifier).hashCode();
 	}
 
 	public void setAlias(boolean alias) {

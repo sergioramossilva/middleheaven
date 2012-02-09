@@ -1,10 +1,14 @@
 /**
  * 
  */
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.machine;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Collections;
+
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFileRepository;
 
 /**
  * Utility class to provide access to recurrently used machine file system's {@link ManagedFile}. 
@@ -15,7 +19,7 @@ public class MachineFiles {
 	
 	
 	public static ManagedFile getDefaultFolder(){
-		 return resolveFile(new File("."));
+		 return resolveFile(new File(System.getProperty("user.dir")).getAbsoluteFile());
 	}
 	
 	/**
@@ -38,8 +42,12 @@ public class MachineFiles {
 	 * @see java.io.File#toURI()
 	 */
 	public static ManagedFile resolveFile(File file){
+		
+		if (!file.isAbsolute()){
+			throw new IllegalArgumentException("Cannot resolve a relative file path");
+		}
 		ManagedFileRepository repo = MachineFileSystemRepositoryProvider.getProvider().newRepository(
-				file.toURI(), 
+				URI.create("file:/"), 
 				Collections.<String, Object>emptyMap() 
 		);
 		

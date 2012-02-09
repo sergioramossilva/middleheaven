@@ -49,9 +49,7 @@ public final class ConstructorWiringPoint extends AbstractProducingWiringPoint i
 			for (int i=0;i< length; i++){
 				params[i] = binder.getInstance(paramsSpecifications[i]);
 				if (params[i]==null){ // constructor params are always mandatory even if configured otherwise 
-					throw new BindingException("Value to bind with parameter of index " + i +  
-							" in constructor " + constructor.getDeclaringClass().getName() +"." + 
-							constructor.getName()+ " was not found ");
+					throw new WiringSpecificationNotSatisfiedException(this.constructor.getDeclaringClass(), paramsSpecifications[i]);
 				}
 			}
 

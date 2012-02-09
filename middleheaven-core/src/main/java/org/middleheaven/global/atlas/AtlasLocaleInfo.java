@@ -51,7 +51,7 @@ public class AtlasLocaleInfo {
 	}
 
 	public boolean equals(AtlasLocaleInfo other) {
-		return other.isoCode.equals(other.isoCode);
+		return this.isoCode.equals(other.isoCode);
 	}
 
 	public int hashCode() {

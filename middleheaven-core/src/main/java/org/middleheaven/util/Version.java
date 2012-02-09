@@ -3,16 +3,19 @@
  */
 package org.middleheaven.util;
 
+import java.io.Serializable;
+
 import org.middleheaven.util.coersion.TypeCoercing;
 
 
 /**
  * Represents a version number. A version number as 4 parts The major version number, the minor version number, the revision number and the build version number
  */
-public final class Version implements Comparable<Version>{
+public final class Version implements Comparable<Version>, Serializable{
 
-
-    private int major;
+	private static final long serialVersionUID = -4584274753011801993L;
+	
+	private int major;
     private int minor;
     private int revision;
     private int build;
@@ -42,21 +45,26 @@ public final class Version implements Comparable<Version>{
 		}
 		String[] pars = StringUtils.split(number, ".");
 		
-		Integer[] res = TypeCoercing.coerceArray(pars, Integer.class);
+		String tag = null;
+		if (pars.length > 4){
+			tag = pars[4];
+		}
+		
+		Integer[] res = TypeCoercing.coerceArray(pars, Integer.class, 4);
 		
 
 		switch (res.length){
 		case 0:
 			return new Version(true);
 		case 1:
-			return new Version(res[0], 0, 0, 0, null);
+			return new Version(res[0], 0, 0, 0, tag);
 		case 2:
-			return new Version(res[0],res[1], 0, 0, null);
+			return new Version(res[0],res[1], 0, 0, tag);
 		case 3:
-			return new Version(res[0],res[1], res[2], 0, null);
+			return new Version(res[0],res[1], res[2], 0, tag);
 		case 4:
 		default:
-			return new Version(res[0],res[1], res[2], res[3], null);
+			return new Version(res[0],res[1], res[2], res[3], tag);
 		}
 	
 	}
@@ -113,7 +121,17 @@ public final class Version implements Comparable<Version>{
         this.revision = revision;
     }
 
-    public String toString(){
+    
+    
+    public String getTag() {
+		return tag;
+	}
+
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+
+	public String toString(){
     	if (this.isUnknown()){
     		return "UNKNOWN";
     	}
@@ -151,7 +169,9 @@ public final class Version implements Comparable<Version>{
 		(this.tag == null ? other.tag == null : this.tag.equals(other.tag));
 	}
 
-
+    public int hashCode(){
+    	return Hash.hash(major).hash(revision).hashCode();
+    }
 
 
 }

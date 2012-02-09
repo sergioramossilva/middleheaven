@@ -14,7 +14,7 @@ import org.middleheaven.io.repository.watch.Watchable;
  * A repository for {@link ManagedFile}s. 
  * 
  */
-public interface ManagedFileRepository extends Closeable{
+public interface ManagedFileRepository extends Closeable {
 
 	/**
 	 * 
@@ -72,20 +72,13 @@ public interface ManagedFileRepository extends Closeable{
     public  boolean delete(ManagedFilePath path) throws ManagedIOException;
 
     /**
-     * Retrieves a ManagedFile representing the file with the specified path
+     * Retrieves a ManagedFile representing the file with the specified path.
+     * The file might not exist.
+     * 
      * @param path the path to the file.
      * @return 
      */
     public  ManagedFile retrive(ManagedFilePath path) throws ManagedIOException;
-
-
-    /**
-     * If the file already exists in the repository  do nothing. Else, copy the file to the repository
-     * @param file to be stored
-     * @throws RepositoryNotWritableException
-     * @throws ManagedIOException
-     */
-   // public  void store(ManagedFile file) throws RepositoryNotWritableException,ManagedIOException;
 
 	/**
 	 * @param string

@@ -2,6 +2,10 @@ package org.middleheaven.io.repository;
 
 import java.util.Arrays;
 
+import org.middleheaven.io.repository.watch.WatchEvent.Kind;
+import org.middleheaven.io.repository.watch.WatchEventChannel;
+import org.middleheaven.io.repository.watch.WatchService;
+import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.collections.CollectionUtils;
 
@@ -9,7 +13,7 @@ import org.middleheaven.util.collections.CollectionUtils;
 /**
  * Simple implementation of {@link ManagedFilePath} based in an array.
  */
-public class ArrayManagedFilePath implements ManagedFilePath {
+public class ArrayManagedFilePath implements ManagedFilePath , Watchable {
 
 	private final String[] names;
 	private final ManagedFileRepository repository;
@@ -107,7 +111,7 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 	@Override
 	public String getPath() {
 		if (root == null){
-			return "./" + StringUtils.join("/", names); // relative
+			return "/" + StringUtils.join("/", names); // relative
 		} else {
 			return root + "/" + StringUtils.join("/", names); // absolute
 		}
@@ -120,7 +124,7 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 	 */
 	@Override
 	public String getLastName() {
-		return names.length == 0 ? root : names[names.length-1];
+		return names.length == 0 ? null : names[names.length-1];
 	}
 
 	public int hashCode(){
@@ -183,6 +187,36 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public ManagedFilePath resolve(ManagedFilePath path) {
+		
+		if (path == null){
+			throw new IllegalArgumentException("Path is required.");
+		}
+		
+		if (path.isAbsolute()){
+			throw new IllegalArgumentException("Path is not relative");
+		}
+		
+		final int nameCount = path.getNameCount();
+		
+		String[] newPath = new String[ this.names.length + nameCount];
+		
+		if (names.length > 0){
+			System.arraycopy(this.names, 0, newPath, 0, this.names.length);
+		}
+		
+		for (int i = 0; i < nameCount; i++){
+			newPath[this.names.length + i] = path.getName(0);
+		}
+		
+		return new ArrayManagedFilePath(this.repository, this.root,  newPath);
+	}
+
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public ManagedFilePath resolveSibling(String name) {
 		String[] names = StringUtils.split(name, "/");
 	
@@ -199,14 +233,6 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 		return this.getPath();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ManagedFilePath resolve(ManagedFilePath path) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -223,6 +249,22 @@ public class ArrayManagedFilePath implements ManagedFilePath {
 	@Override
 	public String getFileName() {
 		return names.length > 0 ? this.names[this.names.length -1] : null; 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWatchable() {
+		return this.repository.isWatchable();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public WatchEventChannel register(WatchService watchService, Kind... events) {
+		return watchService.watch(this, events);
 	}
 }
 

@@ -2,26 +2,25 @@ package org.middleheaven.logging;
 
 import java.net.MalformedURLException;
 
+import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.container.CommonRepositories;
-import org.middleheaven.io.repository.container.FileRepositoryRegistryService;
 import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.logging.config.LoggingConfigurator;
 import org.middleheaven.logging.config.XMLLoggingConfigurator;
 
 public class LoggingActivator extends Activator {
 
-	FileRepositoryRegistryService fileRepositoryService;
+	ContainerFileSystem fileRepositoryService;
 	LoggingService loggingService;
 	
 	public LoggingActivator(){}
 
 	@Wire
-	public void setFileRepositoryService(FileRepositoryRegistryService fileRepositoryService) {
+	public void setFileRepositoryService(ContainerFileSystem fileRepositoryService) {
 		this.fileRepositoryService = fileRepositoryService;
 	}
 
@@ -33,7 +32,7 @@ public class LoggingActivator extends Activator {
 	@Override
 	public void activate(ActivationContext context) {
 
-		ManagedFile configFolder = fileRepositoryService.getRepository(CommonRepositories.ENV_CONFIGURATION);
+		ManagedFile configFolder = fileRepositoryService.getEnvironmentConfigRepository();
 
 		LoggingConfigurator configurator = new BasicConfigurator();
 		LoggingConfiguration configuration = new LoggingConfiguration(null);
@@ -46,7 +45,7 @@ public class LoggingActivator extends Activator {
 				} catch (MalformedURLException e) {
 					throw new IllegalArgumentException(e);
 				}
-				ManagedFile logFolder = fileRepositoryService.getRepository(CommonRepositories.APP_LOG);
+				ManagedFile logFolder = fileRepositoryService.getAppLogRepository();
 				configuration = new LoggingConfiguration(logFolder);
 			}
 		} 

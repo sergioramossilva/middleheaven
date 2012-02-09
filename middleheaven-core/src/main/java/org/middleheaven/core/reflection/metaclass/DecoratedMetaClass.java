@@ -1,5 +1,6 @@
 package org.middleheaven.core.reflection.metaclass;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,6 +67,14 @@ public class DecoratedMetaClass implements MetaClass {
 	@Override
 	public boolean containsProperty(String name) {
 		return this.original.containsProperty(name) || this.acessors.containsKey(name);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <A extends Annotation> A getAnnotation(Class<A> annotation) {
+		return (A) original.getAnnotation(annotation);
 	}
 
 }

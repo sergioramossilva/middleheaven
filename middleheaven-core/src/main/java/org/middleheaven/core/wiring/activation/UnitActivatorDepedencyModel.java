@@ -43,7 +43,7 @@ public class UnitActivatorDepedencyModel extends WiringModel{
 	
 	public boolean equals(Object other){
 		return other instanceof UnitActivatorDepedencyModel && 
-			((UnitActivatorDepedencyModel)other).activatorType.equals(this.activatorType);
+			((UnitActivatorDepedencyModel)other).activatorType.getName().equals(this.activatorType.getName());
 	}
 
 	

@@ -12,6 +12,9 @@ import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
+import org.middleheaven.io.repository.watch.WatchEvent.Kind;
+import org.middleheaven.io.repository.watch.WatchEventChannel;
+import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
@@ -168,6 +171,28 @@ class MemoryFolder extends AbstractContainerManagedFile  {
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Iterable<ManagedFile> childrenIterable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected int childrenCount() {
+		return files.size();
+	}
+
+
+
 
 
 

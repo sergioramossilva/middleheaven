@@ -2,7 +2,6 @@ package org.middleheaven.util.criteria;
 
 import java.util.Map;
 
-import org.apache.tools.ant.types.DataType;
 import org.middleheaven.util.collections.ParamsMap;
 
 public class SingleObjectValueHolder implements FieldValueHolder {
@@ -10,12 +9,10 @@ public class SingleObjectValueHolder implements FieldValueHolder {
 	private static final long serialVersionUID = 2756122283381728051L;
 	
 	private Object value;
-	private DataType dataType;
 	private Map<String,String> params = new ParamsMap();
 	
-	public SingleObjectValueHolder(Object value,DataType dataType) {
+	public SingleObjectValueHolder(Object value) {
 		this.value = value;
-		this.dataType = dataType;
 	}
 
 	@Override
@@ -28,15 +25,6 @@ public class SingleObjectValueHolder implements FieldValueHolder {
 		return false;
 	}
 
-	@Override
-	public DataType getDataType() {
-		return dataType;
-	}
-
-	@Override
-	public void setDataType(DataType type) {
-		dataType = type;
-	}
 
 	@Override
 	public boolean equalsValue(FieldValueHolder valueHolder) {

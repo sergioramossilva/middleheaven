@@ -93,10 +93,12 @@ public class DependencyResolver {
 	private <T> void processFailedDependencies (List<T> failedDependencies, Starter<T> starter){
 
 		for (Iterator<T> it  = failedDependencies.iterator(); it.hasNext(); ){
-			if (!starter.isRequired(it.next())){
+			
+			final T next = it.next();
+			if (!starter.isRequired(next)){
 				it.remove();
 			} else {
-				log.fatal("Impossible to resolve dependencies for " + it.next() );
+				log.fatal("Impossible to resolve dependencies for " + next );
 			}
 		}
 

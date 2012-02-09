@@ -143,10 +143,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 			constructors = introspector.inspect().constructors().withAccess(MemberAccess.PUBLIC).retriveAll();
 			if (constructors.size()>1 && !Introspector.of(type).isEnhanced()){
 				throw new ConfigurationException("Multiple constructors found for " + type + ". Annotate only one with @" + Wire.class.getSimpleName());
-			} else if (constructors.isEmpty()) {
-				// no public constructors.
-				throw new ConfigurationException("No public constructors found for " + type + ". Maybe you want to use @" + Factory.class.getSimpleName());
-			}
+			} 
 		} else if (constructors.size()>1){
 			throw new ConfigurationException("Only one constructor may be annotated with @" + Wire.class.getSimpleName());
 		} 

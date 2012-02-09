@@ -26,10 +26,6 @@ class VoidLogBook extends LogBook{
     @Override
     public void doLog(LoggingEvent event) {}
 
-    @Override
-    public LogBook addWriter(LogBookWriter writer) {
-    	return this;
-    }
 
     public boolean isEnabled(LoggingLevel testlevel){
         return false;

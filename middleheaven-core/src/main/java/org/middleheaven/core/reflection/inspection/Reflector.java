@@ -124,7 +124,7 @@ class Reflector {
 				try {
 					return m.invoke(obj, new Object[0]);
 				} catch (IllegalArgumentException e) {
-					new IllegalAccessReflectionException(e);
+					throw new IllegalAccessReflectionException(e);
 				} catch (IllegalAccessException e) {
 					throw new IllegalAccessReflectionException(e);
 				} catch (InvocationTargetException e) {
@@ -445,7 +445,7 @@ class Reflector {
 		}
 
 		public boolean equals(Object other){
-			return ((MethodKey)other).id.equals(this.id);
+			return (other instanceof MethodKey) && ((MethodKey)other).id.equals(this.id);
 		}
 
 		public int hashCode(){

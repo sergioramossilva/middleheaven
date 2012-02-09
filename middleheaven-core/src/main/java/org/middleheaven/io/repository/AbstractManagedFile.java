@@ -1,11 +1,18 @@
 package org.middleheaven.io.repository;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.Iterator;
 
 import org.middleheaven.io.IOUtils;
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.watch.WatchEvent.Kind;
+import org.middleheaven.io.repository.watch.WatchEventChannel;
+import org.middleheaven.io.repository.watch.WatchService;
+import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.collections.AbstractEnumerableAdapter;
+import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.EnhancedMap;
+import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.Walker;
 
 /**
@@ -31,6 +38,7 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	public ManagedFile getParent() {
 		return this.getRepository().retrive(this.getPath().getParent());
 	}
+	
 	
 	/**
 	 * 
@@ -104,34 +112,7 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	 */
 	protected abstract void doRenameAndChangePath(ManagedFilePath path);
 
-	public String getText(){
-		BufferedReader reader = null;
-		try{
-
-			reader = new BufferedReader(new InputStreamReader(this.getContent().getInputStream()));
-
-			StringBuilder builder = new StringBuilder();
-
-			String line;
-			while ((line = reader.readLine()) !=null){
-				builder.append(line).append("\n");
-			}
-
-			return builder.toString();
-
-
-		} catch (Exception e){
-			throw new RuntimeException(e);
-		} finally {
-			if (reader!=null){
-				try {
-					reader.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-	}
+	
 	
 	@Override
 	public final ManagedFile createFile() {
@@ -162,6 +143,18 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	
 	protected abstract boolean doContains(ManagedFile other);
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final WatchEventChannel register(WatchService watchService, Kind... events) {
+		if (this.isWatchable()){
+			return watchService.watch(this, events);
+		}
+	
+		throw new UnsupportedOperationException("This file is not watchable"); 
+	}
+	
 	@Override
 	public final ManagedFile createFolder() {
 		switch (this.getType()){
@@ -181,11 +174,14 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	protected abstract ManagedFile doCreateFile();
 	protected abstract ManagedFile doCreateFolder();
 
+
 	/**
 	 * @return
 	 */
-	protected abstract Iterable<ManagedFile> children();
-
+	public Enumerable<ManagedFile> children(){
+		return new ManagedFileEnumerable();
+	}
+	
 	@Override
 	public void eachParent(Walker<ManagedFile> walker) {
 		if(this.getParent()!=null){
@@ -196,7 +192,7 @@ public abstract class AbstractManagedFile implements ManagedFile {
 
 	@Override
 	public void eachRecursive(Walker<ManagedFile> walker) {
-		for (ManagedFile file  : this.children()){
+		for (ManagedFile file  : this.childrenIterable()){
 			walker.doWith(file);
 			file.eachRecursive(walker);
 		}
@@ -205,8 +201,45 @@ public abstract class AbstractManagedFile implements ManagedFile {
 
 	@Override
 	public void each(Walker<ManagedFile> walker) {
-		for (ManagedFile file  : this.children()){
+		for (ManagedFile file  : this.childrenIterable()){
 			walker.doWith(file);
 		}
+	}
+	
+	/**
+	 * @return
+	 */
+	protected abstract Iterable<ManagedFile> childrenIterable();
+	
+	protected abstract int childrenCount();
+
+	
+	private class ManagedFileEnumerable extends AbstractEnumerableAdapter<ManagedFile> {
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int size() {
+			return childrenCount();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isEmpty() {
+			return size() == 0;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Iterator<ManagedFile> iterator() {
+			return childrenIterable().iterator();
+		}
+		
+		
 	}
 }

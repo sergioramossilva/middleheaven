@@ -1,9 +1,13 @@
 package org.middleheaven.global.atlas;
 
+import java.io.Serializable;
 import java.util.Collection;
 
-public abstract class AbstractAtlasLocale implements AtlasLocale {
+public abstract class AbstractAtlasLocale implements AtlasLocale , Serializable{
 
+
+	private static final long serialVersionUID = -7228141508511762236L;
+	
 	private String isoCode;
 	private AtlasLocale parent;
 	protected String name;

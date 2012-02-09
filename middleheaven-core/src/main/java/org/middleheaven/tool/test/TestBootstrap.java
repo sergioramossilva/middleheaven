@@ -2,8 +2,8 @@ package org.middleheaven.tool.test;
 
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
-import org.middleheaven.io.repository.MachineFiles;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.machine.MachineFiles;
 
 public class TestBootstrap extends ExecutionEnvironmentBootstrap {
 

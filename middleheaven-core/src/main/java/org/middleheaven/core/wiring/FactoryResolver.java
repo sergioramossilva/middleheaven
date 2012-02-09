@@ -35,6 +35,7 @@ public final class FactoryResolver<T> implements Resolver<T> {
 		
 		Object instance = producingPoint.produceWith(binder);
 		
+		// pós-wire ?
 
 		// TODO intercep // call PostCreate
 

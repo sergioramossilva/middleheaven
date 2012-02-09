@@ -42,7 +42,7 @@ public class EncancedListAdapter<T> extends EnhancedCollectionAdapter<T> impleme
 
 	@Override
 	public EnhancedList<T> subList(int a, int b) {
-		return new EncancedListAdapter<T>(this.subList(a, b));
+		return new EncancedListAdapter<T>(original().subList(a, b));
 	}
 
 	@Override

@@ -100,17 +100,20 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 			allFiles.add(root);
 		}
 
-		Watchable wr = null;
 		if (root.isWatchable()){
-			wr = (Watchable)root;
+			
+			WatchEventChannel channel = root.register(
+					root.getRepository().getWatchService(),
+					StandardWatchEvent.ENTRY_CREATED, 
+					StandardWatchEvent.ENTRY_DELETED, 
+					StandardWatchEvent.ENTRY_MODIFIED
+			);
+			fileWatchChannelProcessor.add(channel);		
 		}
 
 		for (ManagedFile file : allFiles){
 			loadModuleFromFile(wiringService,file , activators);
-			if (wr != null) {
-				WatchEventChannel channel = wr.watch(StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
-				fileWatchChannelProcessor.add(channel);		
-			}
+		
 		}
 
 	}
@@ -144,7 +147,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 					}
 					activators.put(activator.getClass().getName(),activator);
 
-					fireDeployableFound(older.getClass());
+					fireDeployableFound(activator.getClass());
 				} catch (ClassCastException e){
 					Log.onBookFor(this.getClass()).warn("{0} is not a valid application module activator",className);
 				}

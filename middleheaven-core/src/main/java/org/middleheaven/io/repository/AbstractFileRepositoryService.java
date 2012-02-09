@@ -7,7 +7,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 
-import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
  * 

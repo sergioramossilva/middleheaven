@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.annotations.Default;
+import org.middleheaven.logging.Log;
 import org.middleheaven.util.collections.ParamsMap;
 
 
@@ -54,7 +55,12 @@ public class ScoopingModel {
 				 
 				WiringSpecification spec = WiringSpecification.search(i,params);
 				
-				binder.getScopePool(binding).add(spec, instance);
+				final ScopePool scopePool = binder.getScopePool(binding);
+				Object o = scopePool.getInScope(spec, NullResolver.instance());
+				if (o != null){
+					Log.onBookFor(this.getClass()).warn("Service {0} is beeing scoped more than once", type.getName());
+				}
+				scopePool.add(spec, instance);
 			}
 
 			

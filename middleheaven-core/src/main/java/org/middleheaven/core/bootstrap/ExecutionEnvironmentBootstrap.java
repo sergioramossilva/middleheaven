@@ -5,6 +5,7 @@
 package org.middleheaven.core.bootstrap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -20,8 +21,6 @@ import org.middleheaven.global.atlas.AtlasActivator;
 import org.middleheaven.global.text.LocalizationServiceActivator;
 import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileRepository;
-import org.middleheaven.io.repository.container.AppFoldersRepositoryActivator;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingActivator;
 import org.middleheaven.util.StopWatch;
@@ -67,7 +66,8 @@ public abstract class ExecutionEnvironmentBootstrap {
 		
 		ManagedFile rooFolder = this.getEnvironmentRootFolder();
 		
-		BootstrapContainer container = resolveContainer(rooFolder);
+		this.container = resolveContainer(rooFolder);
+		
 		ContainerFileSystem fileSystem = container.getFileSystem();
 		
 		log.info("Using {0} container", container.getContainerName());
@@ -84,16 +84,16 @@ public abstract class ExecutionEnvironmentBootstrap {
 	
 		log.debug("Register bootstrap services");
 
-		WiringService wiringService = new DefaultWiringService();
-		serviceRegistryContext.register(WiringService.class, wiringService,null);
+		WiringService wiringService = new DefaultWiringService(log);
+		serviceRegistryContext.register(WiringService.class, wiringService, null);
 		serviceRegistryContext.register(BootstrapService.class, bootstrapService,null);
-
+		serviceRegistryContext.register(ContainerFileSystem.class, fileSystem,null);
+		
 		// set scanner
 		final SetActivatorScanner scanner = new SetActivatorScanner()
 		.addActivator(FileRepositoryActivator.class)
 		.addActivator(AtlasActivator.class)
 		.addActivator(LoggingActivator.class)
-		.addActivator(AppFoldersRepositoryActivator.class)
 		.addActivator(LocalizationServiceActivator.class);
 		
 	

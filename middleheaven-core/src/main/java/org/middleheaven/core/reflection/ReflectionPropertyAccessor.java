@@ -3,22 +3,116 @@ package org.middleheaven.core.reflection;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.TreeMap;
 
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.util.coersion.TypeCoercing;
 
 public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor implements PropertyAccessor {
 
-
-	private Method acessor;
+	private Method assessor;
 	private Method modifier;
 	private boolean modifyByField = false;
+	private boolean readOnly = false;
+	private boolean writeOnly = false;
 
 	public ReflectionPropertyAccessor(Class<?> type, String fieldName) {
 		super(type,fieldName);
 		load();
 	}
 
+	private static class TypeData implements Comparable<TypeData> {
+		Class<?> type;
+		
+		
+		protected TypeData(Class<?> type) {
+			super();
+			this.type = type;
+		}
+
+		public boolean equals (Object other){
+			return other instanceof TypeData && this.type.equals(((TypeData) other).type);
+		}
+		
+		public int hashCode (){
+			return type.getName().hashCode();
+		}
+
+		/**
+		 * @param map
+		 */
+		public MethodsData getMethodsData(Map<TypeData, MethodsData> map) {
+			MethodsData md = map.get(this);
+			if (md == null){
+				md = new MethodsData();
+				map.put(this, md);
+			}
+			return md;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int compareTo(TypeData o) {
+			if (o.type.isAssignableFrom(this.type)){
+				if (this.type.isAssignableFrom(o.type)){
+					return 0;
+				} else {
+					return -1;
+				}
+			} else {
+				return 1;
+			}
+		}
+	}
+	
+	private static class MethodsData {
+		Method assessor;
+		Method modifier;
+		
+		public Method getAssesor() {
+			return assessor;
+		}
+		public Method getModifier() {
+			return modifier;
+		}
+		public void setAssesor(Method assesor) {
+			this.assessor = assesor;
+		}
+		public void setModifier(Method modifier) {
+			this.modifier = modifier;
+		}
+		/**
+		 * @return
+		 */
+		public int count() {
+			int count = 0;
+			if (assessor != null){
+				count++;
+			}
+			
+			if (modifier != null){
+				count++;
+			}
+			
+			return count;
+		}
+		
+		
+		
+		
+	}
+	
+	
 	protected void load(){
 
 		try {
@@ -34,34 +128,75 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 			}
 
 
-			// find assessor , modifier, adder and remover methods
+			// find assessor and modifier
+			
+			
+			Map<TypeData ,  MethodsData> map = new TreeMap<TypeData ,  MethodsData>();
 			
 			for (Method method : type.getMethods()){
+				
 				if (method.getParameterTypes().length==1 && method.getName().equalsIgnoreCase("set" + name)){
-					modifier = method;
-					modifier.setAccessible(true);
-				} else if (method.getParameterTypes().length==0 && (method.getName().equalsIgnoreCase("get" + name) || 
+					
+					method.setAccessible(true);
+					
+					TypeData td = new TypeData(method.getParameterTypes()[0]);
+					
+					
+					td.getMethodsData(map).modifier = method;
+					
+				} else if (method.getParameterTypes().length==0 && (method.getName().equalsIgnoreCase("get" + name) ||  
 						method.getName().equalsIgnoreCase("is" + name)) ){
-					acessor = method;
-					acessor.setAccessible(true);
+					
+				
+					method.setAccessible(true);
+					
+					TypeData td = new TypeData(method.getReturnType());
+					
+					
+					td.getMethodsData(map).assessor = method;
+					
 				} 
 				
-				if(modifier !=null && acessor !=null){ // we have what we need
-					break; 
+				
+			}
+			
+			if (map.size() == 1){
+				final MethodsData data = map.entrySet().iterator().next().getValue();
+				this.modifier = data.modifier;
+				this.assessor = data.assessor;
+			} else {
+				// take the more priority with two methods
+				MethodsData data = null;
+				for (Iterator<Entry<TypeData,MethodsData>> it = map.entrySet().iterator(); it.hasNext();){
+					Entry<TypeData,MethodsData> entry = it.next();
+					if (entry.getValue().count() == 2) {
+						data = entry.getValue();
+						break;
+					}
 				}
+				
+				if (data == null){
+					data = map.entrySet().iterator().next().getValue();
+				}
+				this.modifier = data.modifier;
+				this.assessor = data.assessor;
 			}
 			
 			
-			if (acessor ==null && field==null){
-				// no field and no get. the property does not exist 
-				throw new PropertyNotFoundException(name + " is not a property of " + type.getName());
+			
+			if (this.modifier == null && this.assessor == null){
+				throw new PropertyNotFoundException("No acessors, or modifiers, for  property '" + name + "' in class " + type);
 			}
 			
-			if (modifier==null && field!=null){
-				// use modification  by field
-				modifyByField = true;
+			if (field != null){
+				if (modifier==null){
+					// use modification  by field
+					modifyByField = true;
+				}
+			} else {
+				this.writeOnly = assessor == null && this.modifier != null;
+				this.readOnly = assessor != null && this.modifier == null;
 			}
-
 		} catch (SecurityException e) {
 			throw new ReflectionException(e);
 		} catch (IllegalArgumentException e) {
@@ -70,13 +205,20 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 	}
 
 	public Class<?> getValueType(){
-		return acessor != null ? acessor.getReturnType() : field.getType();
+		if (assessor != null){
+			return assessor.getReturnType();
+		} else {
+			return modifier.getParameterTypes()[0];
+		}
 	}
 
 	public Object getValue(Object target) throws ReflectionException{
+		if (this.writeOnly){
+			throw new WriteOnlyPropertyException();
+		}
 		try {
-			if (acessor!=null){
-				return acessor.invoke(target, new Object[0]);
+			if (assessor!=null){
+				return assessor.invoke(target, new Object[0]);
 			} else if (field !=null){
 				field.setAccessible(true);
 				return field.get(target);
@@ -89,6 +231,9 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 	}
 	
 	public void  setValue(Object target, Object value ){
+		if (this.readOnly){
+			throw new ReadOnlyPropertyException();
+		}
 		try {
 			
 			if( value == null && getValueType().isPrimitive()){
@@ -111,7 +256,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 
 	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass) {
 		return (field!=null && field.isAnnotationPresent(annotationClass)) || 
-		(acessor!=null && acessor.isAnnotationPresent(annotationClass)) || 
+		(assessor!=null && assessor.isAnnotationPresent(annotationClass)) || 
 		(modifier!=null && modifier.isAnnotationPresent(annotationClass));
 	}
 
@@ -122,7 +267,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 		} 
 		
 		if (a==null){
-			a = Introspector.of(acessor).getAnnotation(annotationClass);
+			a = Introspector.of(assessor).getAnnotation(annotationClass);
 		}
 		return a;
 

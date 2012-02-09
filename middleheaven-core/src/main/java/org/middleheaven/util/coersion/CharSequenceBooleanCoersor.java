@@ -14,6 +14,7 @@ public class CharSequenceBooleanCoersor extends AbstractTypeCoersor<CharSequence
 			 throw new IllegalArgumentException("Target class is required");
 		}
 		if (cvalue==null){
+			// if cvalue is null, return null
 			return null;
 		}
 		

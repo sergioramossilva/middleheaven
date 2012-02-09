@@ -22,6 +22,9 @@ public class ServiceScope implements ScopePool {
 	@Override
 	public <T> T getInScope(WiringSpecification<T> spec, Resolver<T> resolver) {
 
+		if (resolver == null){
+			throw new IllegalArgumentException("Argument 'resolver' is required");
+		}
 		try{
 			return  ServiceRegistry.getService(spec.getContract(), spec.getParams());
 

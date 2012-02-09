@@ -89,5 +89,5 @@ public abstract class LogBook {
     }
     
     protected abstract void doLog(LoggingEvent event);
-    public abstract LogBook addWriter(LogBookWriter writer);
+   
 }

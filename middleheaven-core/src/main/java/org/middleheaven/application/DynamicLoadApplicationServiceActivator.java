@@ -17,7 +17,7 @@ import org.middleheaven.io.repository.watch.FileWatchChannelProcessor;
 import org.middleheaven.io.repository.watch.StandardWatchEvent;
 import org.middleheaven.io.repository.watch.WatchEvent;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
-import org.middleheaven.io.repository.watch.Watchable;
+import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.Walker;
 
@@ -73,8 +73,9 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 		ManagedFile f =  getBootstrapService().getEnvironmentBootstrap().getContainer().getFileSystem().getAppConfigRepository();
 
 		if (f.isWatchable()){
-			Watchable wr = (Watchable)f;
-			WatchEventChannel channel = wr.watch(StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
+			WatchService ws = f.getRepository().getWatchService();
+			
+			WatchEventChannel channel = f.register(ws , StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
 			fileWatchChannelProcessor.add(channel);		
 		}
 

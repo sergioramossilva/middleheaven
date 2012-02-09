@@ -1,7 +1,8 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.machine;
 
 import java.net.URI;
 
+import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.watch.WatchService;
 
 /**

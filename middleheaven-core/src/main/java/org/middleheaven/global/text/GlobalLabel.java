@@ -7,6 +7,7 @@ package org.middleheaven.global.text;
 import java.io.Serializable;
 
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.util.Hash;
 import org.middleheaven.util.StringUtils;
 
 /**
@@ -91,6 +92,8 @@ public class GlobalLabel implements Serializable{
 		return other instanceof  GlobalLabel && ((GlobalLabel)other).label.equals(label);
 	}
 
-
+    public int hashCode(){
+    	return Hash.hash(label).hashCode();
+    }
 
 }

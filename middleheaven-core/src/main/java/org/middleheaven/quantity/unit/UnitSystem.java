@@ -26,7 +26,7 @@ public abstract class UnitSystem {
 	 */
 	@SuppressWarnings("unchecked")
 	public final <E extends Measurable> Unit<E> getMeasuableUnit(Class<E> measurable) {
-		return (Unit<E>) ALL_UNITS.get(measurable);
+		return (Unit<E>) ALL_UNITS.get(measurable.getName());
 	}
 	/**
 	 * 

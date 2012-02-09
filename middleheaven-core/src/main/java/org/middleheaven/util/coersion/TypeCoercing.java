@@ -205,6 +205,32 @@ public class TypeCoercing {
 		
 		return result;
 	}
+	
+	/**
+	 * 
+	 * @param array
+	 * @param type
+	 * @param length
+	 * @return
+	 */
+	public static <T, R> R[] coerceArray(T[] array, Class<R> type, int length) {
+		if (array == null){
+			return null;
+		}
+		
+		if (type == null){
+			throw new IllegalArgumentException("Type is required");
+		}
+		
+		@SuppressWarnings("unchecked")
+		R[] result = (R[])Array.newInstance(type, length);
+		
+		for (int i =0 ; i < length; i++) {
+			result[i] = coerce(array[i], type);
+		}
+		
+		return result;
+	}
 
 	
 }

@@ -1,10 +1,18 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.set;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.AbstractManagedRepository;
+import org.middleheaven.io.repository.AbstractMediaManagedFile;
+import org.middleheaven.io.repository.ArrayManagedFilePath;
+import org.middleheaven.io.repository.BufferedMediaManagedFileContent;
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFilePath;
+import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.MediaManagedFileContent;
 
 /**
  * {@link ManagedFileRepository} backed by a set for {@link ManagedFile}s.
@@ -127,6 +135,22 @@ public class SetManagedFileRepository extends AbstractManagedRepository  {
 		@Override
 		public ManagedFilePath getPath() {
 			return path;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Iterable<ManagedFile> childrenIterable() {
+			return Collections.<ManagedFile>emptySet();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected int childrenCount() {
+			return 0;
 		}
 		
 	}

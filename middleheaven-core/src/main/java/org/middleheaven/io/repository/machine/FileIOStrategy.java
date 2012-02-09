@@ -1,8 +1,10 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.machine;
 
 import java.io.File;
 import java.net.URI;
 
+import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.UnsupportedSchemeException;
 import org.middleheaven.io.repository.watch.WatchService;
 
 /**

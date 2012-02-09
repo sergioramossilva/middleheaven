@@ -2,6 +2,8 @@ package org.middleheaven.util.collections;
 
 import java.util.Comparator;
 
+import org.middleheaven.util.Hash;
+
 
 
 /**
@@ -233,6 +235,10 @@ public class Interval<T> {
 	public boolean equals(Object other){
 		return other instanceof Interval && this.equals((Interval)other);
 	}
+	
+    public int hashCode(){
+    	return Hash.hash(start).hash(end).hashCode();
+    }
 
 	/**
 	 * Intervals are equal if their starts are equal and their ends are equals

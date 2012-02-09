@@ -1,4 +1,4 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.machine;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,6 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.middleheaven.io.repository.machine.FileIOManagedFileAdapter;
+import org.middleheaven.io.repository.machine.FileIOStrategy;
+import org.middleheaven.io.repository.machine.FileIOWatchService;
 import org.middleheaven.io.repository.watch.FileChangeStrategy;
 import org.middleheaven.io.repository.watch.FileWatchChannelProcessor;
 import org.middleheaven.io.repository.watch.StandardWatchEvent;
@@ -29,11 +32,11 @@ public class WatchDogTest {
 		
 		FileIOManagedFileAdapter file = (FileIOManagedFileAdapter) strategy.openFileRepository(f.toURI());
 		
-		FileIOWatchService dog = (FileIOWatchService) strategy.getWatchService();
+		FileIOWatchService dogService = (FileIOWatchService) strategy.getWatchService();
 		
-		dog.setPeriod(2000);
+		dogService.setPeriod(2000);
 		
-		WatchEventChannel channel = dog.register(file, file, StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
+		WatchEventChannel channel = file.register(dogService, StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
 		
 		final List<WatchEvent> events = new LinkedList<WatchEvent>();
 		

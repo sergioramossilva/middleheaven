@@ -1,5 +1,7 @@
 package org.middleheaven.util.criteria;
 
+import org.middleheaven.util.QualifiedName;
+
 
 public class OrderingCriterion {
 
