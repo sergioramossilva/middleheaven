@@ -10,17 +10,15 @@ import javax.rmi.PortableRemoteObject;
 import org.middleheaven.core.reflection.SignatureProxy;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.NamingDirectoryException;
 
-@Service
+
 public class JNDINameDirectoryService implements NameDirectoryService{
 
 	private Properties properties;
 
-	
-	
+
 	public JNDINameDirectoryService(){
 		this.properties = System.getProperties();
 	}
