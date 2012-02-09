@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.middleheaven.domain.criteria.EntityCriteriaBuilder;
 import org.middleheaven.domain.store.DomainStore;
 import org.middleheaven.quantity.measure.AngularMeasure;
-import org.middleheaven.util.criteria.entity.EntityCriteriaBuilder;
 
 public class LandmarkDataStorageRepository extends LandmarkRepository {
 
