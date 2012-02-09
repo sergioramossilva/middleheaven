@@ -12,8 +12,8 @@ import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.io.repository.MachineFiles;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.logging.Log;
 import org.middleheaven.ui.desktop.service.DesktopUIServiceActivator;
 

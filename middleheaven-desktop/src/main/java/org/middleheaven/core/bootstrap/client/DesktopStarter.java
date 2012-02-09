@@ -5,7 +5,7 @@
 package org.middleheaven.core.bootstrap.client;
 
 import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.io.repository.MachineFiles;
+import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 
