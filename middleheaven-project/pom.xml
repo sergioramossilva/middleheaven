@@ -20,8 +20,10 @@
 		<!-- not official 
 		<module>../middleheaven-business/module>
 		-->
+		<module>../middleheaven-cache</module>
 		<module>../middleheaven-core</module>
 		<module>../middleheaven-chart</module>
+	
 		<module>../middleheaven-desktop</module>
 		<module>../middleheaven-reports</module>
 		<module>../middleheaven-io</module>
@@ -32,6 +34,8 @@
 		<!-- 
 		<module>../middleheaven-storage</module>
 		 -->
+	    <module>../middleheaven-storage-orm</module>
+	    <module>../middleheaven-storage-dataset</module>
 		<module>../middleheaven-text-indexing</module>
 		<module>../middleheaven-transactions</module>
 		<module>../middleheaven-ui</module>
@@ -204,11 +208,7 @@
 			<artifactId>jcs</artifactId>
 			<version>1.3</version>
 		</dependency>
-		<dependency>
-			<groupId>org.htmlparser</groupId>
-			<artifactId>htmlparser</artifactId>
-			<version>1.6</version>
-		</dependency>
+
 	</dependencies>
 	<distributionManagement>
 		<site>
