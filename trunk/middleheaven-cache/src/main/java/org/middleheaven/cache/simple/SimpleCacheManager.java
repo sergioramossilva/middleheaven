@@ -84,7 +84,7 @@ public class SimpleCacheManager implements CacheManager{
 		}
 
 		@Override
-		public void remove(Object key) {
+		public void evict(Object key) {
 			cache.remove(key);
 		}
 
@@ -132,7 +132,7 @@ public class SimpleCacheManager implements CacheManager{
 		}
 
 		@Override
-		public void remove(Object key) {
+		public void evict(Object key) {
 			cache.remove(key);
 		}
 

@@ -25,6 +25,6 @@ public interface Cache {
 	/**
 	 * 
 	 */
-	public void remove(Object key);
+	public void evict(Object key);
 
 }
