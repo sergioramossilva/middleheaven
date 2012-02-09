@@ -1,6 +1,7 @@
 package org.middleheaven.core.reflection.metaclass;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.middleheaven.core.reflection.inspection.Introspector;
@@ -12,7 +13,7 @@ public class ReflectionMetaPackage implements MetaPackage {
 
 	
 	private Package packageObject;
-	private Collection<MetaClass> classes;
+	private Collection<MetaClass> classes = new HashSet<MetaClass>();
 	
 	/**
 	 * 

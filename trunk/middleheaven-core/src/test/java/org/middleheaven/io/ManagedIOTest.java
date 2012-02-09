@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.repository.FileRepositoryService;
-import org.middleheaven.io.repository.MachineFiles;
-import org.middleheaven.io.repository.MachineFileSystemRepositoryProvider;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
+import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 import org.middleheaven.util.collections.Walker;
 

@@ -18,6 +18,7 @@ import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.NoSuchMethodReflectionException;
 import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.util.StringUtils;
 
 
 /**
@@ -235,5 +236,28 @@ public class ClassIntrospector<T> extends Introspector{
 			;
 	}
 
+	/**
+	 * 
+	 */
+	public boolean isPrimitive() {
+		return type.isPrimitive();
+	}
+
+	public Class getPrimitiveWrapper(){
+		if (!type.isPrimitive()) {
+			return null;
+		}
+		String name = type.getSimpleName();
+		
+		if ("int".equals(name)){
+			name = "integer";
+		} else if ("char".equals(name)){
+			name = "character";
+		}
+		
+		name = StringUtils.firstLetterToUpper(name);
+		
+		return loadFrom("java.lang.".concat(name)).getIntrospected();
+	}
 
 }

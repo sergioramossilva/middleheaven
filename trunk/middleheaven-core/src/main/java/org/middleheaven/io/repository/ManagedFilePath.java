@@ -88,6 +88,18 @@ public interface ManagedFilePath {
 	public ManagedFilePath resolve(String name);
 	
 	/**
+	 * This method transforms the given name to a path using this path as basis.
+	 * If this path represents /a/b then resolve will return /a/b/name.
+	 * The path given must be relative.
+	 * 
+	 * @param the path to compose , at the end, with this path.
+	 * @return a new path composed by this path and the given path.
+	 * @throw {@link IllegalArgumentException} if the path is not relative , or is <code>null</code>.
+	 */
+	public ManagedFilePath resolve(ManagedFilePath path);
+
+	
+	/**
 	 * This method transforms the given name to a path using this path parent as basis.
 	 * If this path represents /a/b/c then resolve will return /a/b/name
 	 * 
@@ -96,11 +108,6 @@ public interface ManagedFilePath {
 	 */
 	public ManagedFilePath resolveSibling(String name);
 
-	/**
-	 * @param path
-	 * @return
-	 */
-	public ManagedFilePath resolve(ManagedFilePath path);
 
 	/**
 	 * This method transforms the given name to a path using this path parent as basis.

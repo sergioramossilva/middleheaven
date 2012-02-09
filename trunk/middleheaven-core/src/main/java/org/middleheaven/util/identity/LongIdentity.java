@@ -30,7 +30,7 @@ public class LongIdentity extends Identity implements Serializable {
 		return other instanceof LongIdentity && equals((LongIdentity)other);
 	}
 
-	public boolean equals(LongIdentity other) {
+	protected boolean equals(LongIdentity other) {
 		return this.value == other.value;
 	}
 

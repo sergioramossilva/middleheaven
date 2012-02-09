@@ -11,6 +11,11 @@ public abstract class Address {
 	private PostalCode postalCode;
 	private Map<AddressPartType, String> parts = new EnumMap<AddressPartType, String>(AddressPartType.class);
 	
+	
+	public Address (){
+		
+	}
+	
 	public Country getCountry(){
 		return country;
 	}
@@ -24,6 +29,7 @@ public abstract class Address {
 			throw new IllegalArgumentException( type + " cannot be changed");
 		}
 		parts.put(type, part);
+		
 	}
 	
 	public void clearAddressPart(AddressPartType type){

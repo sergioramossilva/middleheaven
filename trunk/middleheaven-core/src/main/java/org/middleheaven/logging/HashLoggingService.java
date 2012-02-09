@@ -23,6 +23,8 @@ public class HashLoggingService  implements LoggingService{
 	public HashLoggingService(LoggingConfiguration configuration , LoggingConfigurator configurator) {
 		configurator.config(this,configuration);
 		
+		this.configuration = configuration;
+		
 		addBook(new WritableLogBook("",LoggingLevel.ALL).addWriter(new ConsoleLogWriter()));
 	}
 
@@ -37,7 +39,7 @@ public class HashLoggingService  implements LoggingService{
 
     public void removeBook(LogBook book) {
         synchronized (books){
-            books.remove(book);
+            books.remove(book.name);
         }
     }
 

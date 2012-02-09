@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
-import org.middleheaven.io.repository.FileNotFoundManagedException;
 
 /**
  * Wrapping exception for all {@link IOException} like exception.

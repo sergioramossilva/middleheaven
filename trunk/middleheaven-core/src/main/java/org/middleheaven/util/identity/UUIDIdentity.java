@@ -24,16 +24,12 @@ public class UUIDIdentity extends Identity implements Serializable {
 	}
 	
 	@Override
-	public boolean equals(Identity other) {
+	protected boolean equals(Identity other) {
 		return other instanceof UUIDIdentity && equals((UUIDIdentity)other);
 	}
 	
-	public boolean equals(Object other) {
-		return other instanceof UUIDIdentity && equals((UUIDIdentity)other);
-	}
-	
-	public boolean equals(UUIDIdentity other) {
-		return this.value == other.value;
+	protected boolean equals(UUIDIdentity other) {
+		return this.value.equals(other.value);
 	}
 
 	@Override

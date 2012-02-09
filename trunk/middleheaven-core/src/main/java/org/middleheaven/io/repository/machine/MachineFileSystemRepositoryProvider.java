@@ -1,11 +1,14 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.machine;
 
 
-import java.io.File;
 import java.net.URI;
 import java.util.Map;
 
-import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
+import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
+import org.middleheaven.io.repository.RepositoryCreationException;
+import org.middleheaven.io.repository.UnsupportedSchemeException;
+
 
 /**
  * {@link FileRepositoryProvider} based upon the machines file system.
@@ -15,7 +18,7 @@ public class MachineFileSystemRepositoryProvider implements ManagedFileRepositor
 
 	private static final MachineFileSystemRepositoryProvider provider = new MachineFileSystemRepositoryProvider();
 	
-	static MachineFileSystemRepositoryProvider getProvider(){
+	public static MachineFileSystemRepositoryProvider getProvider(){
 		return provider;
 	}
 	

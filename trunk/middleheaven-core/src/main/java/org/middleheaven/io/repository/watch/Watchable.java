@@ -21,6 +21,6 @@ public interface Watchable {
 	 * @param events an array of events that will be monitored for.
 	 * @return a {@link WatchEventChannel} to handle triggered events.
 	 */
-	public WatchEventChannel watch(WatchEvent.Kind ... events);
+	public WatchEventChannel register(WatchService watchService, WatchEvent.Kind ... events);
 	
 }

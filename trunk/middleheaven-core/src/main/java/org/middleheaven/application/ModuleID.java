@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import org.middleheaven.util.Version;
 
+/**
+ * 
+ */
 public class ModuleID implements Serializable {
 
 

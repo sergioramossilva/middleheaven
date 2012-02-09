@@ -29,7 +29,7 @@ public class ExpressionDifferenciator {
 
 
 		LinkedList<Term> exprTerms = new LinkedList<Term>();
-		EvaluationContext context = new EvaluationContext();
+
 		for (Term term : terms ){
 			if (term instanceof Operator){
 				Operator op = (Operator)term;

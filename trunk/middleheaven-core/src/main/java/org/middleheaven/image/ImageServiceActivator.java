@@ -53,15 +53,13 @@ public class ImageServiceActivator extends Activator {
 
 	@Override
 	public void activate(ActivationContext context) {
-		// TODO implement Activator.activate
-		
+		this.service  = new MapImageService();
 	}
 
 
 	@Override
 	public void inactivate(ActivationContext context) {
-		// TODO implement Activator.inactivate
-		
+		this.service = null;
 	}
 
 

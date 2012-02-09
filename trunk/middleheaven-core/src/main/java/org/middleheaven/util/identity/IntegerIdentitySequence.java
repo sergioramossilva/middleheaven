@@ -1,7 +1,6 @@
 package org.middleheaven.util.identity;
 
 import org.middleheaven.sequence.DefaultToken;
-import org.middleheaven.sequence.Sequence;
 import org.middleheaven.sequence.SequenceState;
 import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.sequence.StateEditableSequence;

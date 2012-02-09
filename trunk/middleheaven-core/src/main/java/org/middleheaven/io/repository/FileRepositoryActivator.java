@@ -7,6 +7,7 @@ import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.io.repository.classpath.ClassPathRepositoryProvider;
+import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
 
 /**
  * 

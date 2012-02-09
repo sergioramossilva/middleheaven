@@ -14,6 +14,8 @@ public final class ListLogBookWriter extends LogBookWriter{
 
 	private final LinkedList<LoggingEvent> events = new LinkedList<LoggingEvent>();
 	
+	public ListLogBookWriter(){}
+	
 	/**
 	 * No configuration is needed
 	 */

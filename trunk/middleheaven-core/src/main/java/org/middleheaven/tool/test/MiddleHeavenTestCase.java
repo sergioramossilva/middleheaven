@@ -10,10 +10,11 @@ import org.middleheaven.logging.LoggingLevel;
 
 public abstract class MiddleHeavenTestCase {
 
-	private TestBootstrap bootstrap = new TestBootstrap();
+	private TestBootstrap bootstrap;
 
 	@Before
 	public final void setUp(){
+		bootstrap = new TestBootstrap();
 		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 		
 		SetActivatorScanner scanner = new SetActivatorScanner();

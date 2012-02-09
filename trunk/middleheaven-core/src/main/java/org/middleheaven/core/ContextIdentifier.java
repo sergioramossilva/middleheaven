@@ -6,6 +6,8 @@ package org.middleheaven.core;
 
 import java.io.Serializable;
 
+import org.middleheaven.util.Hash;
+
 public class ContextIdentifier implements Serializable {
 
     
@@ -26,5 +28,9 @@ public class ContextIdentifier implements Serializable {
     
     public boolean equals(Object other){
         return other instanceof ContextIdentifier && id !=null && id.equals(other.toString());
+    }
+    
+    public int hashCode(){
+    	return Hash.hash(id).hashCode();
     }
 }

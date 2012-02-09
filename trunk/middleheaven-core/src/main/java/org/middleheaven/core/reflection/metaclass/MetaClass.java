@@ -1,5 +1,7 @@
 package org.middleheaven.core.reflection.metaclass;
 
+import java.lang.annotation.Annotation;
+
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.PropertyNotFoundException;
 import org.middleheaven.util.collections.Enumerable;
@@ -49,4 +51,10 @@ public interface MetaClass {
 	 * @return <code>true</code> if this MetaClass contains this property acessor.
 	 */
 	public boolean containsProperty(String name);
+
+	/**
+	 * @param class1
+	 * @return
+	 */
+	public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 }

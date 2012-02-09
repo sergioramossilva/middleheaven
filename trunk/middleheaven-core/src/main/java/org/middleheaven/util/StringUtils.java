@@ -110,6 +110,7 @@ public class StringUtils {
 
 	public static Boolean booleanValueOf (CharSequence value){
 		if (value==null || value.toString().trim().isEmpty()) {
+			// explicitly return null
 			return null;
 		}
 		return new Boolean(logicValueOf(value,false));
@@ -320,12 +321,32 @@ public class StringUtils {
 	public static String firstLetterToLower(String text) {
 		return text.substring(0,1).toLowerCase() + text.substring(1);
 	}
+	
+	/**
+	 * @param name
+	 * @return
+	 */
+	public static String firstLetterToUpper(String text) {
+		return text.substring(0,1).toUpperCase() + text.substring(1);
+	}
+
 
 	/**
-	 * @param number
+	 * @param value
 	 * @return
 	 */
 	public static boolean isEmptyOrBlank(CharSequence value) {
 		return value == null || value.toString().trim().length() == 0;
 	}
+
+	/**
+	 * Return a {@link CharSequence} constituted from the <code>max</code> first characters in the sequence.
+	 * @param value the source of characters
+	 * @param max the maximum of characters to return.
+	 * @return  a {@link CharSequence} constituted from the <code>max</code> first characters in the sequence, or <code>null</code> if <code>value</code> is null
+	 */
+	public static CharSequence subString(CharSequence value, int max) {
+		return value.subSequence(0, Math.min(value.length(), max));
+	}
+
 }

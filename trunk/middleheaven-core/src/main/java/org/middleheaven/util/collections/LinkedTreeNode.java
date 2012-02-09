@@ -62,7 +62,7 @@ public class LinkedTreeNode<E> implements TreeNode<E>{
 
 	@Override
 	public void eachParent(Walker<TreeNode<E>> walker) {
-		if (parent==null){
+		if (parent != null){
 			walker.doWith(this.parent);
 			parent.eachParent(walker);
 		}

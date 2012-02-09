@@ -1,4 +1,4 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.machine;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,13 +6,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Arrays;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.AbstractManagedFile;
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFileContent;
+import org.middleheaven.io.repository.ManagedFilePath;
+import org.middleheaven.io.repository.ManagedFileType;
+import org.middleheaven.io.repository.empty.EmptyFileContent;
 import org.middleheaven.io.repository.watch.WatchEvent;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
+import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
@@ -24,7 +30,6 @@ import org.middleheaven.util.collections.TransformedCollection;
 class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable{
 
 	private File systemFile;
-	private final MachineFileSystemAcessStrategy accessStrategy;
 	private final MachineIOSystemManagedFileRepository repository;
 	private ManagedFilePath path;
 
@@ -36,9 +41,8 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 	 * @param parent the parent file.
 	 * @param base the pivot file.
 	 */
-	public FileIOManagedFileAdapter(MachineFileSystemAcessStrategy accessStrategy, MachineIOSystemManagedFileRepository repository, File systemFile , ManagedFilePath path) {
+	public FileIOManagedFileAdapter(MachineIOSystemManagedFileRepository repository, File systemFile , ManagedFilePath path) {
 		super(repository);
-		this.accessStrategy = accessStrategy;
 		this.repository = repository;
 		this.systemFile = systemFile;
 		this.path = path;
@@ -191,7 +195,7 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 	}
 
 	@Override
-	public Iterable<ManagedFile> children() throws ManagedIOException {
+	protected Iterable<ManagedFile> childrenIterable() throws ManagedIOException {
 		
 		File[] children = systemFile.listFiles();
 
@@ -209,6 +213,20 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 			);
 		}
 		
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected int childrenCount() {
+		String[] childrenNames = systemFile.list();
+
+		if (childrenNames == null){ // not a folder
+			return 0;
+		} else {
+			return childrenNames.length;
+		}
 	}
 
 	protected ManagedFile doRetriveFromFolder(String path){
@@ -236,12 +254,7 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 		ManagedFile found = repository.retrive( other.getPath().relativize(this.path));
 		return found != null && found.exists();
 	}
-	
-	@Override
-	public WatchEventChannel watch(WatchEvent.Kind ... events) {
-		return this.accessStrategy.getWatchService().register(this, this, events);
-	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -262,6 +275,8 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 		this.systemFile = newFile;
 		
 	}
+
+
 
 
 }

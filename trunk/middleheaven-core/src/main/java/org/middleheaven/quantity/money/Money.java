@@ -9,6 +9,7 @@ import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measure.Amount;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.Unit;
+import org.middleheaven.util.Hash;
 
 public class Money implements Amount<Money, org.middleheaven.quantity.measurables.Currency>, Comparable<Money> {
 
@@ -135,6 +136,10 @@ public class Money implements Amount<Money, org.middleheaven.quantity.measurable
 		return this.unit().equals(other.unit()) && this.amount == other.amount;
 	}
 
+    public int hashCode(){
+    	return Hash.hash(amount).hashCode();
+    }
+    
 	/**
 	 * Allocate <code>this</code> money amount in n installments.
 	 * All money is divided. If the devision remainder is not zero it is added to the first amount

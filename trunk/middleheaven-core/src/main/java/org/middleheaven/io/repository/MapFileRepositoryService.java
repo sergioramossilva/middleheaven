@@ -6,12 +6,11 @@ package org.middleheaven.io.repository;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
  * 
  */
-public class MapFileRepositoryService extends AbstractFileRepositoryService {
+class MapFileRepositoryService extends AbstractFileRepositoryService {
 
 	
 	private Map<String, ManagedFileRepositoryProvider> providers = new HashMap<String, ManagedFileRepositoryProvider>();

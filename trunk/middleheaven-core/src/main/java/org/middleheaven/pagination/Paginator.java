@@ -1,6 +1,7 @@
 package org.middleheaven.pagination;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class Paginator<E> {
 
@@ -72,6 +73,10 @@ public class Paginator<E> {
 	}
 	
 	public Collection<E> getPageItens(){
+		
+		if (currentPageIndex < 1 || currentPageIndex > this.getPageCount() + 1 ) {
+			return Collections.emptySet();
+		}
 		int startAt = (this.currentPageIndex-1) * this.itemsPerPage;
 		
 		return model.getRange(startAt, itemsPerPage);

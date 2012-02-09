@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import org.middleheaven.util.Hash;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.IncrementableIncrementor;
 import org.middleheaven.util.Incrementor;
@@ -166,13 +167,27 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object other){
-		return other instanceof Range && this.equals((Range)other);
+		if (other instanceof Range){
+			return this.equals((Range)other);
+		} else if (other instanceof Interval){
+			return this.equals((Interval)other);
+		} else {
+			return false;
+		}
 	}
 
+    public int hashCode(){
+    	return Hash.hash(start).hash(end).hashCode();
+    }
 	/**
 	 * Ranges are equal if their starts are equal and their ends are equals
 	 */
 	public boolean equals(Range<T> other){
+		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
+		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
+	}
+	
+	public boolean equals(Interval<T> other){
 		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
 		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
 	}

@@ -36,6 +36,7 @@ import org.middleheaven.core.wiring.annotations.Default;
 import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
+import org.middleheaven.logging.CompositeLogBook;
 import org.middleheaven.logging.ListLogBookWriter;
 import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.LoggingLevel;
@@ -57,8 +58,12 @@ public class DefaultWiringService implements WiringService{
 	private final List<WiringInterceptor> interceptors = new CopyOnWriteArrayList<WiringInterceptor>();
 	private final Map<String,Class<? extends ScopePool>> scopes = new TreeMap<String,Class<? extends ScopePool>>();
 	private final Map<String, ScopePool> scopePools = new TreeMap<String,ScopePool>();
+	private CompositeLogBook containerLogBook = new CompositeLogBook("wiringLog");
 
-	public DefaultWiringService(){
+	public DefaultWiringService(LogBook containerLogBook){
+		
+		this.containerLogBook.addLogBook(containerLogBook);
+		
 		scopes.put(Shared.class.getName(), SharedScope.class);
 		scopes.put(Default.class.getName(), DefaultScope.class);
 		scopes.put(Service.class.getName(), ServiceScope.class);
@@ -245,7 +250,7 @@ public class DefaultWiringService implements WiringService{
 						final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(interceptors,resolver);
 						T obj = scopePool.getInScope(query, interceptorResolver);
 
-						wireMembers(obj);
+						//wireMembers(obj);
 
 						stack.remove(key);
 						// check if there is any proxy to complete
@@ -434,16 +439,17 @@ public class DefaultWiringService implements WiringService{
 
 
 	private void resolveDependencies(Collection<UnitActivatorDepedencyModel> dependencyModels){
+		
 
-		ListLogBookWriter writer = new ListLogBookWriter();
-		WritableLogBook bookProxy = new WritableLogBook("proxy", LoggingLevel.ALL).addWriter(writer);
-
-		final DependencyResolver dependencyResolver = new DependencyResolver(bookProxy);
+		final DependencyResolver dependencyResolver = new DependencyResolver(containerLogBook);
 		dependencyResolver.resolve(dependencyModels, new StarterMy());
 
 		final LogBook book = this.getObjectPool().getInstance(LoggingService.class).getLogBook(this.getClass().getName());
-
-		writer.writeTo(book);
+	
+		
+		containerLogBook.addLogBook(book);
+		
+	
 	}
 
 

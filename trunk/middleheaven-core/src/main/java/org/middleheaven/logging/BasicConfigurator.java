@@ -9,7 +9,7 @@ public class BasicConfigurator implements LoggingConfigurator {
 	@Override
 	public void config(LoggingService configurator, LoggingConfiguration configuration) {
 		
-		LogBook book = new WritableLogBook(null,LoggingLevel.DEBUG);
+		WritableLogBook book = new WritableLogBook(null,LoggingLevel.DEBUG);
 		book.addWriter(new ConsoleLogWriter());
 		
 		configurator.addBook(book);

@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.junit.Test;
-import org.middleheaven.io.repository.MachineFiles;
+import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 

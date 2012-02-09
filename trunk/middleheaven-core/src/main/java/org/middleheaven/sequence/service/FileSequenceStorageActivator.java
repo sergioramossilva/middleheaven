@@ -51,7 +51,8 @@ public class FileSequenceStorageActivator extends Activator  {
 		if (!appDataRepository.isWriteable()){
 			throw new IllegalArgumentException("Data repository must be writable");
 		}
-		ManagedFile file = appDataRepository.retrive("sequences.properties");
+		
+		file = appDataRepository.retrive("sequences.properties");
 		if (file.exists()){
 			try {
 				properties.load(file.getContent().getInputStream());

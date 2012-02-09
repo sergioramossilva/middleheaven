@@ -17,7 +17,7 @@ public class Sequences {
 	}
 	
 	public static <T> Sequence<T> newSequenceFor (Class<T> elementType){
-		String sequenceType = SEQUENCES.get(elementType);
+		String sequenceType = SEQUENCES.get(elementType.getName());
 		if (sequenceType==null){
 			throw new RuntimeException("Sequence not found for type " + elementType);
 		}

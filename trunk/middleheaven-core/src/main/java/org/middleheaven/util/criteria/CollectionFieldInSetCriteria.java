@@ -2,6 +2,8 @@ package org.middleheaven.util.criteria;
 
 import java.util.Collection;
 
+import org.middleheaven.util.QualifiedName;
+
 public class CollectionFieldInSetCriteria implements FieldInSetCriterion {
 
 	Collection<?> values;
@@ -37,7 +39,7 @@ public class CollectionFieldInSetCriteria implements FieldInSetCriterion {
 
 	@Override
 	public FieldValueHolder valueHolder() {
-		return new SingleObjectValueHolder(values,null);
+		return null; //new SingleObjectValueHolder(values,null);
 	}
 
 	@Override

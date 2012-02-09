@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
-import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
+import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
 import org.middleheaven.io.repository.watch.WatchService;
 
 /**

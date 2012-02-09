@@ -2,11 +2,10 @@
  * Created on 2006/08/12
  *
  */
-package org.middleheaven.io.repository;
+package org.middleheaven.io;
 
 import java.io.File;
 
-import org.middleheaven.io.ManagedIOException;
 
 
 public class FileNotFoundManagedException extends ManagedIOException {

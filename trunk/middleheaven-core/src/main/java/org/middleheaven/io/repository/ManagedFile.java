@@ -8,13 +8,15 @@ package org.middleheaven.io.repository;
 import java.net.URI;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.watch.Watchable;
+import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.TreeWalkable;
 
 
 /**
  * A common abstract for all types of files : disk files, url addresses, uploaded files, email attachments, etc ...
  */
-public interface ManagedFile extends TreeWalkable<ManagedFile>{
+public interface ManagedFile extends TreeWalkable<ManagedFile> , Watchable{
 
 	
 	public ManagedFileRepository getRepository();
@@ -157,5 +159,12 @@ public interface ManagedFile extends TreeWalkable<ManagedFile>{
 	 * @throws UnsupportedOperationException if {@ this} is not of VIRTUAL or FOLDER type, or this operation is not implemented on the target class.
 	 */
 	public ManagedFile createFolder() throws UnsupportedOperationException;
+
+	/**
+	 * @return
+	 */
+	public Enumerable<ManagedFile> children();
+
+
     
 }

@@ -1,6 +1,8 @@
 package org.middleheaven.core.reflection.inspection;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.ReflectionException;
@@ -25,16 +27,38 @@ public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 		
 		type = getRealType(type);
 		
+		
+		Set<String> propertyNames = new HashSet<String>();
 		EnhancedArrayList<PropertyAccessor> result = new EnhancedArrayList<PropertyAccessor> ();
+		
 		for (Method m : Reflector.getReflector().getMethods(type)){
 			
-			if (!m.getName().startsWith("getClass") && m.getParameterTypes().length==0){
-				if (m.getName().startsWith("get") ){
-					result.add(getPropertyAccessor(type, StringUtils.firstLetterToLower(m.getName().substring(3))));
-				} else if (m.getName().startsWith("is")){
-					result.add(getPropertyAccessor(type, StringUtils.firstLetterToLower(m.getName().substring(2))));
+			if (m.getParameterTypes().length==0){
+				if (!m.getName().startsWith("getClass")){
+					if (m.getName().startsWith("get") ){
+						final String propertyName = StringUtils.firstLetterToLower(m.getName().substring(3));
+	
+						if (propertyNames.add(propertyName)){
+							result.add(getPropertyAccessor(type, propertyName));
+						}
+					
+					} else if (m.getName().startsWith("is")){
+						final String propertyName = StringUtils.firstLetterToLower(m.getName().substring(2));
+						
+						if (propertyNames.add(propertyName)){
+							result.add(getPropertyAccessor(type, propertyName));
+						}
+					} 
 				}
+			} else if (m.getParameterTypes().length==1){
+				if (m.getName().startsWith("set") ){
+					final String propertyName = StringUtils.firstLetterToLower(m.getName().substring(3));
 
+					if (propertyNames.add(propertyName)){
+						result.add(getPropertyAccessor(type, propertyName));
+					}
+				
+				} 
 			}
 
 		}

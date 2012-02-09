@@ -1,9 +1,19 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.empty;
 
 import java.io.IOException;
 import java.util.Collections;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.AbstractMediaManagedFile;
+import org.middleheaven.io.repository.ArrayManagedFilePath;
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFilePath;
+import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.ManagedFileType;
+import org.middleheaven.io.repository.MediaManagedFileContent;
+import org.middleheaven.io.repository.RepositoryNotWritableException;
+import org.middleheaven.io.repository.watch.WatchEvent.Kind;
+import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
 
 public class EmptyFileRepository implements ManagedFileRepository {
@@ -163,6 +173,24 @@ public class EmptyFileRepository implements ManagedFileRepository {
 		@Override
 		protected ManagedFile doRetriveFromFolder(String path) {
 			return null;
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Iterable<ManagedFile> childrenIterable() {
+			return Collections.<ManagedFile>emptySet();
+		}
+
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected int childrenCount() {
+			return 0;
 		}
 
 

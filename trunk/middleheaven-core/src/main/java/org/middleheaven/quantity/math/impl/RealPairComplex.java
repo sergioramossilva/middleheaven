@@ -155,7 +155,7 @@ public class RealPairComplex extends Complex {
 
 
 
-	public boolean equals(RealPairComplex other){
+	protected boolean equals(RealPairComplex other){
 		return  this.real.equals(other.real) && this.imaginary.equals(other.imaginary);
 	}
 

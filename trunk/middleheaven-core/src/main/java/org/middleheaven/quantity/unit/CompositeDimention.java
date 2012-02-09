@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.middleheaven.util.Hash;
+
 @SuppressWarnings("unchecked")
 public class CompositeDimention extends Dimension {
 
@@ -111,4 +113,8 @@ public class CompositeDimention extends Dimension {
 	public boolean equals (Object other){
 		return other instanceof Dimension && this.toString().equals(other.toString());
 	}
+	
+    public int hashCode(){
+    	return Hash.hash(dims.size()).hashCode();
+    }
 }

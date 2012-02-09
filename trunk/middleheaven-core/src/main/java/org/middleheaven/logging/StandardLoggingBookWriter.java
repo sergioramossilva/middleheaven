@@ -37,15 +37,20 @@ public class StandardLoggingBookWriter extends LogBookWriter {
 		switch (event.getLevel()){
 		case TRACE:
 			level = Level.FINEST;
+			break;
 		case DEBUG:
 			level = Level.FINE;
+			break;
 		case INFO:
 			level = Level.INFO;
+			break;
 		case WARN:
 			level = Level.WARNING;
+			break;
 		case ERROR:
 		case FATAL:
 			level = Level.SEVERE;
+			break;
 		case NONE:
 		case ALL:
 		default:

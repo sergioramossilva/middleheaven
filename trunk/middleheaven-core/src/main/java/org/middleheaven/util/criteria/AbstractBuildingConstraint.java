@@ -2,6 +2,7 @@ package org.middleheaven.util.criteria;
 
 import java.util.Collection;
 
+import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.collections.Interval;
 
 public abstract class AbstractBuildingConstraint<T,B extends AbstractCriteriaBuilder<T,B>> {
@@ -48,7 +49,7 @@ public abstract class AbstractBuildingConstraint<T,B extends AbstractCriteriaBui
 				new UniqueFieldCriterion(
 						qname,
 						applyOperationNegation(op),
-						new SingleObjectValueHolder(value,null)
+						new SingleObjectValueHolder(value)
 				)
 		);
 		return builder;

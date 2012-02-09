@@ -133,6 +133,9 @@ public class CompositeUnit<E extends Measurable> extends Unit<E>{
 		return other instanceof CompositeUnit && equals((CompositeUnit<?>)other);
 	}
 	
+	public boolean equals(Object other) {
+		return  (other instanceof CompositeUnit<?>) && equals((CompositeUnit<?>) other);
+	}
 
 	public boolean equals(CompositeUnit<?> other) {
 		return this.currentDimention.equals(other.currentDimention);

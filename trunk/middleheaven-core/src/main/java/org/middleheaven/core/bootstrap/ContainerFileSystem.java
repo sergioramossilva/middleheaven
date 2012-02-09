@@ -2,8 +2,10 @@ package org.middleheaven.core.bootstrap;
 
 import org.middleheaven.io.repository.ManagedFile;
 
+/**
+ * Represent special meaning locations for the container.
+ */
 public interface ContainerFileSystem {
-
 
     /**
      * 
@@ -42,7 +44,7 @@ public interface ContainerFileSystem {
     public ManagedFile getAppLogRepository();
 
     /**
-     * TODO make into a repository
+     * 
      * @return ManagedFile representing a folder where to read application classapth
      */
     public ManagedFile getAppClasspathRepository();

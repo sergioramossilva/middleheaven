@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.middleheaven.io.repository.FileRepositoryService;
 import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
 import org.middleheaven.io.repository.RepositoryCreationException;
-import org.middleheaven.io.repository.engines.ManagedFileRepositoryProvider;
 
 /**
  * This {@link ManagedFileRepositoryProvider} uses the class provided in the URI and uses the {@link Class#getResource(String)} to find

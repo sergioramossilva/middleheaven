@@ -1,6 +1,5 @@
 package org.middleheaven.util.collections;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
-
-import org.middleheaven.core.wiring.annotations.Wire;
 
 
 public class CollectionUtils {
@@ -120,6 +117,11 @@ public class CollectionUtils {
 	
 	
 	public static <T> List<T> ensureSortable(Collection<T> collection){
+		
+		if (collection == null){
+			return null;
+		}
+		
 		if(collection instanceof RandomAccess && collection instanceof List && !collection.getClass().getName().toLowerCase().contains("unmodifiable")){
 			return (List<T>)collection;
 		}
@@ -331,6 +333,23 @@ public class CollectionUtils {
 		return new EnumerationIterator<T>(enumeration);
 	}
 
+	/**
+	 * @param values
+	 * @param class1
+	 * @return
+	 */
+	public static <T> Collection<T> secureCoerce(Collection<? extends T> values,Class<T> class1) {
+		return (Collection<T>) values;
+	}
+
+	/**
+	 * @param values
+	 * @param class1
+	 * @return
+	 */
+	public static <T> Iterator<T> secureCoerce(Iterator<? extends T> values,Class<T> class1) {
+		return (Iterator<T>) values;
+	}
 
 
 }

@@ -7,24 +7,22 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.regex.Pattern;
 
+import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.services.ServiceEvent;
-import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
+import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.container.FileRepositoryRegistryService;
-import org.middleheaven.logging.LogBook;
 import org.middleheaven.logging.Log;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.logging.LogBook;
 import org.middleheaven.util.collections.Walker;
 
 
@@ -32,7 +30,7 @@ public class LicenseServiceActivator extends Activator {
 
 	private LicenseService implementation;
 	private LicenseProvider provider = new VoidLicenseProvider();
-	private FileRepositoryRegistryService frs;
+	private ContainerFileSystem frs;
 
 	@Override
 	public void inactivate(ActivationContext context) {
@@ -45,14 +43,14 @@ public class LicenseServiceActivator extends Activator {
 	}
 
 	@Wire
-	public void setFileRepositoryService(FileRepositoryRegistryService fileService){
+	public void setFileRepositoryService(ContainerFileSystem fileService){
 		this.frs = fileService;
 	}
 
 	@Override
 	public void activate(ActivationContext context) {
 
-		ManagedFile f = frs.getRepository("ENV_CONFIGURATION");
+		ManagedFile f = frs.getEnvironmentConfigRepository();
 		final Collection<ManagedFile> licences = new HashSet<ManagedFile>();
 		
 		f.each(new Walker<ManagedFile>(){
@@ -67,7 +65,7 @@ public class LicenseServiceActivator extends Activator {
 		});
 
 		
-		f = frs.getRepository("APP_CONFIGURATION");
+		f = frs.getAppConfigRepository();
 		f.each(new Walker<ManagedFile>(){
 
 			@Override

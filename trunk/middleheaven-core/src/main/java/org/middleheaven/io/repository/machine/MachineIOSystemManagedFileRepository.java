@@ -1,15 +1,18 @@
-package org.middleheaven.io.repository;
+package org.middleheaven.io.repository.machine;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.middleheaven.io.FileNotFoundManagedException;
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.io.repository.watch.WatchEvent;
-import org.middleheaven.io.repository.watch.WatchEventChannel;
+import org.middleheaven.io.repository.AbstractManagedRepository;
+import org.middleheaven.io.repository.ArrayManagedFilePath;
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFilePath;
+import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.watch.WatchService;
-import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
@@ -18,7 +21,7 @@ import org.middleheaven.util.collections.TransformedCollection;
 /**
  * 
  */
-class MachineIOSystemManagedFileRepository extends AbstractManagedRepository implements ManagedFileRepository, Watchable{
+class MachineIOSystemManagedFileRepository extends AbstractManagedRepository implements ManagedFileRepository{
 
 
 	private final File root;
@@ -68,13 +71,12 @@ class MachineIOSystemManagedFileRepository extends AbstractManagedRepository imp
 			File[] roots = File.listRoots();
 			for (File  root : roots){
 				if (root.equals(file)){
-					return new FileIOManagedFileAdapter(accessStrategy, this, root, pathForFile(file));
+					return new FileIOManagedFileAdapter(this, root, pathForFile(file));
 				}
 			}
 			throw new FileNotFoundManagedException(file.getAbsolutePath());
 		} else {
 			return new FileIOManagedFileAdapter(
-					accessStrategy,
 					this,
 					file,
 					pathForFile(file)
@@ -102,7 +104,7 @@ class MachineIOSystemManagedFileRepository extends AbstractManagedRepository imp
 	}
 	
 	private boolean equals(MachineIOSystemManagedFileRepository other){
-		return this.root == null ? other.root == null  : this.root.equals(other);
+		return this.root == null ? other.root == null  : this.root.equals(other.root);
 	}
 	
 	/**
@@ -129,7 +131,6 @@ class MachineIOSystemManagedFileRepository extends AbstractManagedRepository imp
 	@Override
 	public ManagedFile retrive(ManagedFilePath path) throws ManagedIOException {
 		return new FileIOManagedFileAdapter(
-				accessStrategy,
 				this,
 				new File (path.getPath()).getAbsoluteFile(),
 				path
@@ -165,14 +166,6 @@ class MachineIOSystemManagedFileRepository extends AbstractManagedRepository imp
 		return root != null;
 	}
 	
-	@Override
-	public WatchEventChannel watch(WatchEvent.Kind ... events) {
-		if (!this.isWatchable()){
-			throw new UnsupportedOperationException();
-		}
-		return this.accessStrategy.getWatchService().register(this, this.resolveFile(root), events);
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */

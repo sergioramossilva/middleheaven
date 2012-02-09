@@ -12,7 +12,7 @@ import org.middleheaven.util.StringUtils;
 
 public class HTMLFormat implements LogFormat {
 
-    protected static final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
     public void setWriter(LogBookWriter writer) {}
 
     public void writerHeader(OutputStream stream) {
@@ -29,6 +29,8 @@ public class HTMLFormat implements LogFormat {
     }
 
     public void format(LoggingEvent event, OutputStream stream) {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        
         PrintWriter writer = new PrintWriter(stream);
         writer.println("<TR>");
         writer.println("<TD align='center' class='event'>");

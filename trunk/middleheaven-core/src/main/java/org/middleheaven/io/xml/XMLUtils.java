@@ -57,6 +57,7 @@ public class XMLUtils {
     public static final Boolean getBooleanAttribute(String attribName,Element el){
         String val = el.getAttribute(attribName);
         if (val==null || val.length()==0){
+        	// return null explicitly.
             return null;
         }else {
             return new Boolean(booleanAttribute(attribName, el, false));

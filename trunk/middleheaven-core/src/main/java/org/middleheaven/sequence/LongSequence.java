@@ -23,7 +23,7 @@ public class LongSequence implements StateEditableSequence<Long>{
 	}
 
 	@Override
-	public SequenceState getSequenceState() {
+	public synchronized SequenceState getSequenceState() {
 		return new SequenceState(this.current);
 	}
 
