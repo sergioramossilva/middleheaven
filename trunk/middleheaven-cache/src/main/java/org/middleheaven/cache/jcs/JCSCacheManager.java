@@ -1,8 +1,6 @@
 package org.middleheaven.cache.jcs;
 
 
-import java.util.Collection;
-
 import org.apache.jcs.JCS;
 import org.apache.jcs.access.exception.CacheException;
 import org.middleheaven.cache.AbstractCacheRegion;
@@ -70,7 +68,7 @@ public class JCSCacheManager implements CacheManager {
 		}
 
 		@Override
-		public void remove(Object key) {
+		public void evict(Object key) {
 			try{
 				cache.remove(key);
 			} catch (CacheException e) {

@@ -7,7 +7,7 @@
 	<version>1.0.0</version>
 	
 	<name>MiddleHeaven Cache</name>
-	<description>MiddleHeaven Cache eprovides interaction with cace
+	<description>MiddleHeaven Cache provides interaction with cache and cache providers.
 	</description>
 
  	<packaging>jar</packaging>
