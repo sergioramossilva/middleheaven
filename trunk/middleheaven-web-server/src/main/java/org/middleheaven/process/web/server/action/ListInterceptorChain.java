@@ -19,7 +19,7 @@ public class ListInterceptorChain extends AbstractInterruptableChain<ActionInter
 	}
 
 	@Override
-	protected void call(ActionInterceptor interceptor, HttpServerContext context,AbstractInterruptableChain chain) {
+	protected void call(ActionInterceptor interceptor, HttpServerContext context, AbstractInterruptableChain chain) {
 		interceptor.intercept(context, (ListInterceptorChain)chain);
 	}
 

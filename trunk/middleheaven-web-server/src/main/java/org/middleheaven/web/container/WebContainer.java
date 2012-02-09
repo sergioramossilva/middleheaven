@@ -11,8 +11,8 @@ import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.bootstrap.EditableContainerFileSystem;
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.io.repository.MachineFiles;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.machine.MachineFiles;
 
 /**
  * 

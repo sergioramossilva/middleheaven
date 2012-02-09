@@ -162,7 +162,7 @@ public class UploadRootFolder extends AbstractManagedFile {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Iterable<ManagedFile> children() {
+	protected Iterable<ManagedFile> childrenIterable() {
 		return files.values();
 	}
 
@@ -178,6 +178,14 @@ public class UploadRootFolder extends AbstractManagedFile {
 	 */
 	public void clear() {
 		files.clear();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected int childrenCount() {
+		return files.size();
 	}
 
 }

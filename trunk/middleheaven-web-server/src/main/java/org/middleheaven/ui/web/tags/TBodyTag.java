@@ -102,7 +102,7 @@ public class TBodyTag  extends AbstractBodyTagSupport {
 
 	private void createTFoot() throws JspException{
 		TagContext  context = new TagContext(pageContext);
-		String url = context.getRequest().getRequestUrl().toString();
+		String url = context.getRequestUrl().toString();
 		int beginIndex = url.lastIndexOf("/") + 1;
 		int endIndex = url.lastIndexOf(".");
 

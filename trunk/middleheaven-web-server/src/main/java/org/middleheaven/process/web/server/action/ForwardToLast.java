@@ -27,7 +27,7 @@ public class ForwardToLast implements OutcomeResolver {
 	@Override
 	public Outcome resolveOutcome(OutcomeStatus status, HttpServerContext context) {
 		
-		HttpUrl refererUrl = context.getRequest().getRefererUrl();
+		HttpUrl refererUrl = context.getRefererUrl();
 		
 		String newUrl = refererUrl.getContexlessPath() + refererUrl.getFilename();
 		

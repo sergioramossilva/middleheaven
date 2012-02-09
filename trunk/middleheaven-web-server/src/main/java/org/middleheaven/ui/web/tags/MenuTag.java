@@ -85,7 +85,7 @@ public class MenuTag extends AbstractBodyTagSupport {
 	private void exposeMenu(MenuItem item){
 		current = new StackItem(item);
 		if(!item.isTitleLocalized()){
-			Culture culture = new TagContext(pageContext).getRequest().getCulture();
+			Culture culture = new TagContext(pageContext).getCulture();
 			localizationService.getMessage(culture, new GlobalLabel(item.getTitle()), false);
 		} else {
 			item.setLabel(item.getTitle());

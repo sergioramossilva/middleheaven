@@ -84,7 +84,7 @@ public abstract class AbstractUIComponentBodyTagSupport extends AbstractBodyTagS
 		
 		UIRender render = renderKit.getRender(this.getComponentType(), familly);
 
-		RenderingContext context = new RenderingContext(tagContext.getRequest().getAttributes() , renderKit );
+		RenderingContext context = new RenderingContext(tagContext.getAttributes() , renderKit );
 		
 		UIComponent parent =null;
 		try{

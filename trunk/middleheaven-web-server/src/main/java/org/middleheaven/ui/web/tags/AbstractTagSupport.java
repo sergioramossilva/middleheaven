@@ -17,7 +17,7 @@ public class AbstractTagSupport extends TagSupport {
 
 
 	public String localize(CalendarDateTime date ,TimepointFormatter.Format format){
-		Culture culture =  new TagContext(pageContext).getRequest().getCulture();
+		Culture culture =  new TagContext(pageContext).getCulture();
 		
 		final LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 
@@ -27,12 +27,12 @@ public class AbstractTagSupport extends TagSupport {
 	public String localize(GlobalLabel message,ContextScope scope){
 		
 		LocalizationService service = ServiceRegistry.getService(LocalizationService.class);
-		return service.getMessage(new TagContext(pageContext).getRequest().getCulture(), message, false);
+		return service.getMessage(new TagContext(pageContext).getCulture(), message, false);
 		
 	}
 	
 	public String localize(Number number){
-		Culture culture =  new TagContext(pageContext).getRequest().getCulture();
+		Culture culture =  new TagContext(pageContext).getCulture();
 		
 		final LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 

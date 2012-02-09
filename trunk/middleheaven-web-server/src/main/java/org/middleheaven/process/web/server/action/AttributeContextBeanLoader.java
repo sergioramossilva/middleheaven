@@ -10,7 +10,7 @@ import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.process.Attribute;
 import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.web.HttpRequest;
+import org.middleheaven.process.web.server.HttpServerContext;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.coersion.StringCalendarDateTimeCoersor;
@@ -18,13 +18,13 @@ import org.middleheaven.util.coersion.StringDateCoersor;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.web.annotations.In;
 
-class AttributeContextBeanLoader {
+public class AttributeContextBeanLoader {
 
-	public <T> T loadBean(HttpRequest context, Class<T> type ){
+	public <T> T loadBean(HttpServerContext context, Class<T> type ){
 		return loadBean(context, type, new Annotation[0]);
 	}
 
-	public <T> T loadBean(HttpRequest context, Class<T> type ,Annotation[] annotations) {
+	public <T> T loadBean(HttpServerContext context, Class<T> type ,Annotation[] annotations) {
 		try{
 			// set up timestamp formatters and converter
 			LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);

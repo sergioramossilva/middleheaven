@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Collections;
 
 import org.apache.commons.fileupload.FileItem;
 import org.middleheaven.io.ManagedIOException;
@@ -159,6 +160,22 @@ class UploadManagedFile extends AbstractMediaManagedFile implements MediaManaged
 	@Override
 	public ManagedFilePath getPath() {
 		return path;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected Iterable<ManagedFile> childrenIterable() {
+		return Collections.<ManagedFile>emptySet();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected int childrenCount() {
+		return 0;
 	}
 
 

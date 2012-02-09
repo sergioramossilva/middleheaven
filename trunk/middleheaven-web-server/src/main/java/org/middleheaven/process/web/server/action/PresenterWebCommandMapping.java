@@ -207,7 +207,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	public Outcome executeAction(HttpServerContext context){ 
 		
 
-		AttributeContext attributes = context.getRequest().getAttributes();
+		AttributeContext attributes = context.getAttributes();
 		
 		Outcome outcome;
 		Method actionMethod = null;
@@ -218,12 +218,12 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 			// try the name match from url
 			
-			String actionNameFromURL = attributes.getAttribute(ContextScope.REQUEST, "action", String.class);
+			String actionNameFromURL = attributes.getAttribute("action", String.class);
 			actionMethod = actionNameFromURL==null ? null : actions.get(actionNameFromURL);
 
 			if (actionMethod==null){
 				// try the name match if there are any parameters
-				final ContextScopeStrategy parameters = context.getRequest().getAttributes().getScopeAttributeContext(ContextScope.PARAMETERS);
+				final ContextScopeStrategy parameters = context.getAttributes().getScopeAttributeContext(ContextScope.PARAMETERS);
 				if (!parameters.isEmpty()){
 					for ( Map.Entry<String,Method> entry : actions.entrySet()){
 						String act = parameters.getAttribute(entry.getKey(), String.class);
@@ -235,7 +235,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				}
 				if (actionMethod==null){
 					// try the service match by type of request
-					actionMethod = serviceMethods.get(context.getRequest().getMethod());
+					actionMethod = serviceMethods.get(context.getRequestMethod());
 				}
 
 				if (actionMethod==null && doService!=null){ 
@@ -244,10 +244,10 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				} 
 
 				if (actionMethod==null){
-					if (context.getRequest().getMethod().equals(HttpMethod.GET)){
+					if (context.getRequestMethod().equals(HttpMethod.GET)){
 						return resolveOutcome(null,BasicOutcomeStatus.SUCCESS, context);
 					} else {
-						throw new ActionHandlerNotFoundException(context.getRequest().getMethod() , this.controllerClass,actionNameFromURL);
+						throw new ActionHandlerNotFoundException(context.getRequestMethod() , this.controllerClass,actionNameFromURL);
 					}
 				}
 			}
@@ -305,20 +305,22 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		for (int i =0; i <argClasses.length; i++ ){
 			if (argClasses[i].isAssignableFrom(WebContext.class)){
 				args[i] = context;
+			} else if (argClasses[i].isAssignableFrom(AttributeContext.class)){
+				args[i] = context.getAttributes();
 			} else if (argClasses[i].isAssignableFrom(HttpServletRequest.class)){
 				if (context instanceof RequestResponseWebContext){
-					args[i] = ((RequestResponseWebContext)context).getRequest();
+					args[i] = ((RequestResponseWebContext)context).getServletRequest();
 				} else {
 					throw new IllegalStateException("Is not possible to inject " + HttpServletRequest.class.getName() + " on current environment");
 				}
 			} else if (argClasses[i].isAssignableFrom(HttpServletResponse.class)){
 				if (context instanceof RequestResponseWebContext){
-					args[i] = ((RequestResponseWebContext)context).getResponse();
+					args[i] = ((RequestResponseWebContext)context).getServletResponse();
 				} else {
 					throw new IllegalStateException("Is not possible to inject " + HttpServletResponse.class.getName() + " on current environment");
 				}
 			} else if (!argClasses[i].isPrimitive()){
-				args[i]=beanLoader.loadBean(context.getRequest(),argClasses[i], action.getParameterAnnotations()[i]);
+				args[i]=beanLoader.loadBean(context,argClasses[i], action.getParameterAnnotations()[i]);
 			}
 		}
 

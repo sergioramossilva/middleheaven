@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<groupId>middleheaven</groupId>
 	<artifactId>middleheaven-web-server</artifactId>
 	<version>1.0.0</version>
-	
+
 	<name>MiddleHeaven Web Server</name>
 	<description>MiddleHeaven web adds support to web content production.
 	</description>
 
- 	<packaging>jar</packaging>
- 
+	<packaging>jar</packaging>
+
 	<parent>
-	  <groupId>middleheaven</groupId>
-	  <artifactId>middleheaven-project</artifactId>
-	  <version>1.0.0</version>
-	  <relativePath>..\middleheaven-project\pom.xml</relativePath>
+		<groupId>middleheaven</groupId>
+		<artifactId>middleheaven-project</artifactId>
+		<version>1.0.0</version>
+		<relativePath>..\middleheaven-project\pom.xml</relativePath>
 	</parent>
 	<dependencies>
 		<dependency>
@@ -56,4 +57,12 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources/META-INF</directory>
+				<targetPath>META-INF</targetPath>
+			</resource>
+		</resources>
+	</build>
 </project>

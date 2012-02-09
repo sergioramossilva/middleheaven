@@ -78,11 +78,11 @@ public abstract class AbstractInterruptableChain<F> {
 				
 			} catch (Exception e){
 				Log.onBookFor(this.getClass()).error(e,"Exception found handling {0}", chainnable.getClass());
-				context.getRequest().getAttributes().setAttribute(ContextScope.REQUEST, "exception", e);
+				context.getAttributes().setAttribute(ContextScope.REQUEST, "exception", e);
 				this.interruptWithOutcome(resolveOutcome(BasicOutcomeStatus.FAILURE));
 			} catch (Error e){
 				Log.onBookFor(this.getClass()).fatal(e,"Exception found handling interceptor {0} " , chainnable.getClass());
-				context.getRequest().getAttributes().setAttribute(ContextScope.REQUEST, "exception", e);
+				context.getAttributes().setAttribute(ContextScope.REQUEST, "exception", e);
 				Outcome outcome =  resolveOutcome(BasicOutcomeStatus.ERROR);
 				if (outcome==null){
 					outcome =  resolveOutcome(BasicOutcomeStatus.FAILURE);
