@@ -1,10 +1,10 @@
 package org.middleheaven.util.criteria.text;
 
 import org.middleheaven.text.indexing.IndexableDocument;
+import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.criteria.AbstractCriteriaBuilder;
 import org.middleheaven.util.criteria.Criterion;
 import org.middleheaven.util.criteria.OrderingCriterion;
-import org.middleheaven.util.criteria.QualifiedName;
 
 public class AbstractTextCriteriaBuilder <D extends IndexableDocument, B extends AbstractTextCriteriaBuilder<D,B>> 
  extends AbstractCriteriaBuilder<D,B> {

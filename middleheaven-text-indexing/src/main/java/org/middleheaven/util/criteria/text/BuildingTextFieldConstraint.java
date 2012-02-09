@@ -1,9 +1,9 @@
 package org.middleheaven.util.criteria.text;
 
 import org.middleheaven.text.indexing.IndexableDocument;
+import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.collections.Interval;
 import org.middleheaven.util.criteria.AbstractBuildingConstraint;
-import org.middleheaven.util.criteria.QualifiedName;
 
 class BuildingTextFieldConstraint<D extends IndexableDocument, B extends AbstractTextCriteriaBuilder<D,B>> 
 extends AbstractBuildingConstraint<D, B>
