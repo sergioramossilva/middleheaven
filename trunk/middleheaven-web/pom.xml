@@ -4,8 +4,6 @@
 	
 	<groupId>middleheaven</groupId>
 	<artifactId>middleheaven-web</artifactId>
-	<version>1.0.0</version>
-	
 	<name>MiddleHeaven Web</name>
 	<description>MiddleHeaven web adds support to web content production.
 	</description>
@@ -47,6 +45,12 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.htmlparser</groupId>
+			<artifactId>htmlparser</artifactId>
+			<version>2.1</version>
+		</dependency>
 	</dependencies>
 
+	<version>1.0.0</version>
 </project>

@@ -6,7 +6,7 @@ package org.middleheaven.process.web;
 import java.net.InetAddress;
 
 /**
- * Aggregates all information about the communication is being established.
+ * Aggregates all information about the communication being established.
  * 
  */
 public interface HttpChannel {

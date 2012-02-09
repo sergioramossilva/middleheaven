@@ -22,14 +22,7 @@ public abstract class UrlMapping {
 	}
 
 	public static UrlMapping matchSimplePattern(final String pattern){
-		return new UrlMapping(){
-
-			@Override
-			public boolean match(String url) {
-				return StringUtils.simplePatternMatch(pattern, url);
-			}
-			
-		};
+		return new PatternUrlMapping(pattern);
 	}
 	
 	public static UrlMapping matchAll(){
