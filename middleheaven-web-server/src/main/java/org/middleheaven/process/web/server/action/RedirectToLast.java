@@ -9,7 +9,7 @@ public class RedirectToLast implements OutcomeResolver {
 	public Outcome resolveOutcome(OutcomeStatus status, HttpServerContext context) {
 		return new Outcome(
 				status,
-				context.getRequest().getRefererUrl().toString(),
+				context.getRefererUrl().toString(),
 				true,
 				null
 		);

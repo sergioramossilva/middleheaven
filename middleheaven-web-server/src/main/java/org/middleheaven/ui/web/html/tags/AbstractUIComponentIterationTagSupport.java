@@ -59,7 +59,7 @@ public abstract class AbstractUIComponentIterationTagSupport extends AbstractIte
 		
 		UIRender render = renderKit.getRender(UISelectOne.class, familly);
 
-		RenderingContext context = new RenderingContext(tagContext.getRequest().getAttributes() , renderKit );
+		RenderingContext context = new RenderingContext(tagContext.getAttributes() , renderKit );
 		
 		UIComponent parent =null;
 		try{

@@ -3,7 +3,7 @@ package org.middleheaven.process.web.server.global;
 import java.util.List;
 
 import org.middleheaven.global.Culture;
-import org.middleheaven.process.web.server.HttpServerRequest;
+import org.middleheaven.process.web.server.HttpServerContext;
 
 /**
  * Obtains the request culture directly from the information in the request.
@@ -21,9 +21,9 @@ public final class RequestAgentHttpCultureResolver implements HttpCultureResolve
 	}
 	
 	@Override
-	public Culture resolveFrom(HttpServerRequest request) {
+	public Culture resolveFrom(HttpServerContext context) {
 		// TODO compare with supported cultures an use culture with maximum prioriy that is also supported
-		final List<Culture> cultures = request.getCultures();
+		final List<Culture> cultures = context.getCultures();
 		return  cultures.isEmpty() ?  defaultCulture : cultures.get(0);
 	}
 

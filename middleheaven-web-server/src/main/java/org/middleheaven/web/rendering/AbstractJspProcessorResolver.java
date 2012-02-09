@@ -24,7 +24,7 @@ public abstract class AbstractJspProcessorResolver implements RenderingProcessor
 		browser.setUIModel(new BrowserClientModel());
 		browser.setFamily(context.getAgent().getBrowserInfo().getBaseEngine());
 		
-		context.getRequest().getAttributes().setAttribute(ContextScope.REQUEST,UIClient.class.getName(), browser);
+		context.getAttributes().setAttribute(ContextScope.REQUEST,UIClient.class.getName(), browser);
 	}
 
 }

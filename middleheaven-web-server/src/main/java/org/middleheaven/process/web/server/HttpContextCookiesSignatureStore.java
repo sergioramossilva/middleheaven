@@ -23,7 +23,7 @@ class HttpContextCookiesSignatureStore extends HttpContextSignatureStore {
 	
 	@Override
 	public Signature getSignature() {
-		HttpCookie cookie = context.getRequest().getAttributes().getAttribute(ContextScope.REQUEST_COOKIES, SIGNATURE_ATTRIBUTE, HttpCookie.class);
+		HttpCookie cookie = context.getAttributes().getAttribute(ContextScope.REQUEST_COOKIES, SIGNATURE_ATTRIBUTE, HttpCookie.class);
 		
 		if (cookie !=null){
 			String ticket = new String(new Base64CipherAlgorithm().revertCipher(cookie.getValue().getBytes()));
@@ -57,12 +57,12 @@ class HttpContextCookiesSignatureStore extends HttpContextSignatureStore {
 				String ticket = name + "@" + Integer.toHexString(name.hashCode() * 37);
 				String value = new String(new Base64CipherAlgorithm().cipher(ticket.getBytes()));
 				cookie = new HttpCookie(SIGNATURE_ATTRIBUTE, value);
-				cookie.setDomain(context.getRequest().getRequestUrl().getHost());
+				cookie.setDomain(context.getRequestUrl().getHost());
 				cookie.setPath(context.getContextPath());
 				cookie.setMaxAge(sessionTimeout);
 			}
 		} 
-		context.getRequest().getAttributes().setAttribute(ContextScope.REQUEST_COOKIES, SIGNATURE_ATTRIBUTE, cookie);
+		context.getAttributes().setAttribute(ContextScope.REQUEST_COOKIES, SIGNATURE_ATTRIBUTE, cookie);
 	}
 
 

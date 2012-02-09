@@ -18,7 +18,7 @@ import org.middleheaven.quantity.time.CalendarDateTime;
 public abstract class AbstractBodyTagSupport extends BodyTagSupport {
 
 	public String localize(CalendarDateTime date ,TimepointFormatter.Format format){
-		Culture culture =  new TagContext(pageContext).getRequest().getCulture();
+		Culture culture =  new TagContext(pageContext).getCulture();
 		
 		final LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 
@@ -30,7 +30,7 @@ public abstract class AbstractBodyTagSupport extends BodyTagSupport {
 	}
 	
 	public String localize(Number number){
-		Culture culture =  new TagContext(pageContext).getRequest().getCulture();
+		Culture culture =  new TagContext(pageContext).getCulture();
 		
 		final LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 
@@ -47,7 +47,7 @@ public abstract class AbstractBodyTagSupport extends BodyTagSupport {
 	
 	public String localize(GlobalLabel message,ContextScope scope){
 		
-		Culture culture = new TagContext(pageContext).getRequest().getCulture();
+		Culture culture = new TagContext(pageContext).getCulture();
 		
 		LocalizationService service = ServiceRegistry.getService(LocalizationService.class);
 		return service.getMessage(culture, message, false);

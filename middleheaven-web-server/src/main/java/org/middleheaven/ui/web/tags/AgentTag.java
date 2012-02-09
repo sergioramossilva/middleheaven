@@ -22,7 +22,7 @@ public class AgentTag extends AbstractBodyTagSupport{
 		TagContext context = new TagContext(this.pageContext);
 		
 	   
-		HttpUserAgent httpAgent = context.getRequest().getAgent();
+		HttpUserAgent httpAgent = context.getAgent();
 		
 		if (httpAgent.getBrowserInfo().getName().equalsIgnoreCase(this.agentName)){
 			return EVAL_BODY_BUFFERED;

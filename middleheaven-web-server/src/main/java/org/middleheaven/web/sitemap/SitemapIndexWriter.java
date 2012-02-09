@@ -47,7 +47,7 @@ public class SitemapIndexWriter {
 		PrintWriter writer=null;
 		try {
 
-			ManagedFile file = folder.retrive(folder.getPath().resolve("sitemap.xml")).createFile();
+			ManagedFile file = folder.retrive("sitemap.xml").createFile();
 
 			writer = new PrintWriter(new OutputStreamWriter(file.getContent().getOutputStream(), "UTF-8"));
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

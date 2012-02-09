@@ -11,7 +11,7 @@ public class ForwardToSame implements OutcomeResolver {
 	
 	@Override
 	public Outcome resolveOutcome(OutcomeStatus status, HttpServerContext context) {
-		final HttpUrl requestUrl = context.getRequest().getRequestUrl();
+		final HttpUrl requestUrl = context.getRequestUrl();
 		return new Outcome(status,  requestUrl.getContexlessPath() + requestUrl.getFilename() , "text/html");
 	}
 

@@ -53,13 +53,13 @@ public class AccessControlFilter implements HttpFilter{
 	}
 
 	private void letPass(HttpServerContext context,HttpFilterChain chain, AccessRequest request){
-		context.getRequest().getAttributes().setAttribute(ContextScope.REQUEST, AccessRequest.class.getName(), 	request);
+		context.getAttributes().setAttribute(ContextScope.REQUEST, AccessRequest.class.getName(), 	request);
 		chain.doChain(context);
 	}
 	@Override
 	public void doFilter(HttpServerContext context, HttpFilterChain chain) {
 
-		Permission[] permissions = getGuardPermission(context.getRequest().getRequestUrl());
+		Permission[] permissions = getGuardPermission(context.getRequestUrl());
 		final CallbacksSet set = new CallbacksSet();
 		
 		CallbackHandler handler = new CallbackHandler(){
@@ -110,11 +110,11 @@ public class AccessControlFilter implements HttpFilter{
 					
 					// all fine. go on
 					repeat=false;
-					HttpCookie redirectCookie =	context.getRequest().getAttributes().getAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", HttpCookie.class);
+					HttpCookie redirectCookie =	context.getAttributes().getAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", HttpCookie.class);
 					if (redirectCookie != null){ // read redirect cookie
 						RedirectAfterCookie rc = new RedirectAfterCookie(redirectCookie);
 						chain.interruptWithOutcome(rc.asOutcome());
-						context.getRequest().getAttributes().setAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", rc.expire());
+						context.getAttributes().setAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", rc.expire());
 					} else {
 					
 						letPass(context,chain, request);
@@ -128,12 +128,12 @@ public class AccessControlFilter implements HttpFilter{
 					// if was not possible, invoke login page
 					if (set.isBlank()){
 						repeat = false;
-						context.getRequest().getAttributes().setAttribute(ContextScope.REQUEST, "authentication.callbackset", set);
+						context.getAttributes().setAttribute(ContextScope.REQUEST, "authentication.callbackset", set);
 						chain.interruptWithOutcome(loginOutcome);
 						
 						// memorize target page
-						RedirectAfterCookie rc = new RedirectAfterCookie("redirect_after_login", context.getRequest().getRequestUrl().toString());
-						context.getRequest().getAttributes().setAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", rc);
+						RedirectAfterCookie rc = new RedirectAfterCookie("redirect_after_login", context.getRequestUrl().toString());
+						context.getAttributes().setAttribute(ContextScope.REQUEST_COOKIES, "redirect_after_login", rc);
 						break;
 					} 
 				}
@@ -143,7 +143,7 @@ public class AccessControlFilter implements HttpFilter{
 	}
 	
 	private void fillCallbacks(CallbacksSet set , HttpServerContext context){
-		AttributeContext attributes = context.getRequest().getAttributes();
+		AttributeContext attributes = context.getAttributes();
 		
 		for (Callback callback : set){
 			if (callback instanceof IPAddressCallback){
@@ -211,7 +211,7 @@ public class AccessControlFilter implements HttpFilter{
 
 		@Override
 		public InetAddress getCallerAddress() {
-			return context.getRequest().getHttpChannel().getRemoteAddress();
+			return context.getHttpChannel().getRemoteAddress();
 		}
 
 		Subject subject;

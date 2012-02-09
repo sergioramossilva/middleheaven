@@ -1,7 +1,7 @@
 package org.middleheaven.process.web.server.global;
 
 import org.middleheaven.global.Culture;
-import org.middleheaven.process.web.server.HttpServerRequest;
+import org.middleheaven.process.web.server.HttpServerContext;
 
 public class FixedHttpCultureResolver implements
 		HttpCultureResolver {
@@ -17,7 +17,7 @@ public class FixedHttpCultureResolver implements
 	}
 	
 	@Override
-	public Culture resolveFrom(HttpServerRequest request) {
+	public Culture resolveFrom(HttpServerContext request) {
 		return culture;
 	}
 

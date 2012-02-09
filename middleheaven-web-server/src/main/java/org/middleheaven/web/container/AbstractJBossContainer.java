@@ -10,8 +10,8 @@ import javax.servlet.ServletContext;
 
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.io.repository.MachineFiles;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
 

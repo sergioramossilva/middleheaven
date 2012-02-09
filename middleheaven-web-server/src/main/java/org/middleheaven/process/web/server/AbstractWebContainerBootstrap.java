@@ -20,6 +20,7 @@ import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.ServletContextLogBookWriter;
 import org.middleheaven.logging.WritableLogBook;
 import org.middleheaven.ui.service.AbstractUIServiceActivator;
+import org.middleheaven.ui.web.service.WebUIServiceActivator;
 import org.middleheaven.web.container.WebContainer;
 import org.middleheaven.web.container.WebContainerInfo;
 import org.middleheaven.web.container.WebContainerSwitcher;
@@ -65,7 +66,7 @@ public abstract class AbstractWebContainerBootstrap extends ExecutionEnvironment
 
 		context.addActivator(MetaInfApplicationServiceActivator.class)
 		.addActivator(DynamicLoadApplicationServiceActivator.class)
-		.addActivator(AbstractUIServiceActivator.class);
+		.addActivator(WebUIServiceActivator.class);
 		
 		ServletHttpServerService httpService = new ServletHttpServerService();
 		
@@ -92,12 +93,6 @@ public abstract class AbstractWebContainerBootstrap extends ExecutionEnvironment
 		
 		return container;
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected abstract ManagedFile getEnvironmentRootFolder();
 
 
 

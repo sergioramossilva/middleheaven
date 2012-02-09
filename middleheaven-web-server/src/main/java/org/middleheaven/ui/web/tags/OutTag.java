@@ -42,7 +42,7 @@ public class OutTag extends AbstractTagSupport {
 	}
 	
 	private void print(String str) throws IOException{
-		if (start>=0 && end >0){
+		if (start > 0 && end > 0){
 			str = str.substring(start, end);
 		} else if (start > 0){
 			str = str.substring(start);
@@ -59,7 +59,9 @@ public class OutTag extends AbstractTagSupport {
 	public int doStartTag() throws JspException {
 		try {		
 			
-			if (value instanceof Date){
+			if (value instanceof CharSequence) {
+				print(value.toString());
+			} else if (value instanceof Date){
 				print(localize(TimeUtils.from((Date)value), Format.DATE_ONLY));
 			} else if (value instanceof Calendar) {
 				print(localize(TimeUtils.from(((Calendar)value).getTime()), Format.DATE_ONLY));

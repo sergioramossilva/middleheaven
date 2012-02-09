@@ -5,11 +5,11 @@ import java.io.File;
 
 import javax.servlet.ServletContextListener;
 
-import org.middleheaven.io.repository.MachineFiles;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.machine.MachineFiles;
 
 /**
- * Bootstrap that run in a webcontainer as a {@link ServletContextListener}.
+ * Bootstrap that run in a web container as a {@link ServletContextListener}.
  */
 public class WebContainerBootstrap extends AbstractWebContainerBootstrap {
 

@@ -3,6 +3,7 @@ package org.middleheaven.ui.web.tags;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -11,7 +12,16 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
+import org.middleheaven.aas.Subject;
+import org.middleheaven.global.Culture;
+import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
+import org.middleheaven.process.web.HttpChannel;
+import org.middleheaven.process.web.HttpEntry;
+import org.middleheaven.process.web.HttpMethod;
+import org.middleheaven.process.web.HttpUrl;
+import org.middleheaven.process.web.HttpUserAgent;
+import org.middleheaven.process.web.server.HttpServerResponse;
 import org.middleheaven.process.web.server.ServletWebContext;
 import org.middleheaven.process.web.server.global.HttpCultureResolver;
 
@@ -29,7 +39,7 @@ public class TagContext extends ServletWebContext {
 		if(ContextScope.RENDERING.equals(scope)){
 			return type.cast(pageContex.getAttribute(name));
 		} else {
-			return super.getRequest().getAttributes().getAttribute(scope, name, type);
+			return super.getAttributes().getAttribute(scope, name, type);
 		}
 	}
 	
@@ -37,7 +47,7 @@ public class TagContext extends ServletWebContext {
 		if(ContextScope.RENDERING.equals(scope)){
 			pageContex.setAttribute(name, value);
 		} else {
-			super.getRequest().getAttributes().setAttribute(scope, name, value);
+			super.getAttributes().setAttribute(scope, name, value);
 		}
 	}
 	
@@ -86,7 +96,7 @@ public class TagContext extends ServletWebContext {
 		}
 	}
 
-
+	
 
 
 

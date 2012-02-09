@@ -2,16 +2,21 @@ package org.middleheaven.process.web.server;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 
+import org.middleheaven.aas.Subject;
 import org.middleheaven.global.Culture;
 import org.middleheaven.io.repository.BufferedMediaManagedFileContent;
-import org.middleheaven.io.repository.EmptyFileRepository;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.MediaManagedFile;
+import org.middleheaven.io.repository.empty.EmptyFileRepository;
+import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.MapContext;
 import org.middleheaven.process.ScopeAttributeContext;
+import org.middleheaven.process.web.HttpChannel;
+import org.middleheaven.process.web.HttpEntry;
 import org.middleheaven.process.web.HttpMethod;
 import org.middleheaven.process.web.HttpUrl;
 import org.middleheaven.process.web.HttpUserAgent;
@@ -69,14 +74,6 @@ public final class MapWebContext  extends WebContext{
 		return this.contextPath;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public HttpServerRequest getRequest() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -92,6 +89,87 @@ public final class MapWebContext  extends WebContext{
 	 */
 	@Override
 	public ManagedFileRepository getUploadRepository() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AttributeContext getAttributes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Culture> getCultures() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Culture getCulture() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HttpChannel getHttpChannel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HttpUrl getRequestUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HttpUrl getRefererUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HttpMethod getRequestMethod() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Subject getAuthenticatedSubject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HttpUserAgent getAgent() {
 		// TODO Auto-generated method stub
 		return null;
 	}
