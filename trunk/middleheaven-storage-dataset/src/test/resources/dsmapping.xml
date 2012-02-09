@@ -1,0 +1,36 @@
+<dataset-rdbs-mapping>
+
+	<user-types>
+		<type name="money" type="decimal" size="12" scale="2" />
+	</user-types>
+
+
+	<dataset name="person" hardname="TbPessoa">
+		
+		<column name="id" hardname="id" type="int" key="true" />
+		<column name="name" hardname="nome" indexed="true" type="text" size="150"/>
+		<column name="birthdate" hardname="aniversario" type="date" />
+	
+	</dataset>
+	
+	
+	<dataset name="veicle" hardname="TbVeiculo">
+	
+		<column name="id" hardname="id" type="int" key="true" />
+		<column name="ownerId" hardname="idPessoa" indexed="true" type="int" relateTo="person.id"/>
+		<column name="model" hardname="modelo" indexed="true" type="int"/>
+		<column name="year" hardname="ano"  type="int"/>
+		<column name="value" hardname="valor"  type="decimal" size="12" scale="2" />
+		
+	</dataset>
+	
+	<dataset name="rent" hardname="TbRenda">
+		<column name="id" hardname="id" type="int" key="true" />
+		<column name="personId" hardname="idPessoa" type="int" relateTo="person.id" />
+		<column name="income" hardname="renda" indexed="true" type="decimal" size="12" scale="2"   />
+		<column name="date" hardname="data" type="date" />
+	
+	</dataset>
+	
+
+</dataset-rdbs-mapping>
