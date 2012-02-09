@@ -26,7 +26,6 @@ import org.middleheaven.logging.Log;
 import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.ContextScopeStrategy;
-import org.middleheaven.process.ScopeAttributeContext;
 import org.middleheaven.process.web.BrowserInfo;
 import org.middleheaven.process.web.HttpEntry;
 import org.middleheaven.process.web.HttpProcessException;
@@ -89,7 +88,7 @@ class HttpClientAdapter implements HttpClient {
 		StringBuilder builder = new StringBuilder(request.getRequestUrl().toString());
 
 
-		 ContextScopeStrategy attributes = request.getAttributes().getScopeAttributeContext(ContextScope.PARAMETERS);
+		ContextScopeStrategy attributes = request.getAttributes().getScopeAttributeContext(ContextScope.PARAMETERS);
 		
 		List<NameValuePair> qparams = new ArrayList<NameValuePair>(attributes.size());
 		
