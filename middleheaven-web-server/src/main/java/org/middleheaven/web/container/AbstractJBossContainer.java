@@ -38,10 +38,10 @@ public abstract class AbstractJBossContainer extends StandardSevletContainer {
         System.setProperty("java.naming.factory.initial",  "org.jnp.interfaces.NamingContextFactory");
         System.setProperty("java.naming.provider.url", "localhost:1099");
         
-        // TODO register
+  
         JNDINameDirectoryService service = new JNDINameDirectoryService();
         
-        ServiceRegistry.register(NameDirectoryService.class, new JNDINameDirectoryService());
+        ServiceRegistry.register(NameDirectoryService.class, service);
         
         
     }

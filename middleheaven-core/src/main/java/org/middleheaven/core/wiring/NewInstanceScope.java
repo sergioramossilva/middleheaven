@@ -1,7 +1,9 @@
 package org.middleheaven.core.wiring;
 
 
-public class DefaultScope implements ScopePool {
+public class NewInstanceScope extends AbstractScopePool {
+	
+	public NewInstanceScope(){}
 
 	@Override
 	public <T> T getInScope(WiringSpecification<T> query, Resolver<T> resolver) {
@@ -10,20 +12,17 @@ public class DefaultScope implements ScopePool {
 
 	@Override
 	public <T> void add(WiringSpecification<T> spec, T object) {
-		// TODO implement ScopePool.add
-		
+		// no-op
 	}
 
 	@Override
 	public void clear() {
-		// TODO implement ScopePool.clear
-		
+		//no-op
 	}
 
 	@Override
 	public void remove(Object object) {
-		// TODO implement ScopePool.remove
-		
+		//no-op
 	}
 
 }

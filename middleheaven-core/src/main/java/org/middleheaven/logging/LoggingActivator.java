@@ -3,7 +3,6 @@ package org.middleheaven.logging;
 import java.net.MalformedURLException;
 
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -30,7 +29,7 @@ public class LoggingActivator extends Activator {
 	}
 
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 
 		ManagedFile configFolder = fileRepositoryService.getEnvironmentConfigRepository();
 
@@ -60,7 +59,7 @@ public class LoggingActivator extends Activator {
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		loggingService = null;
 	}
 

@@ -15,7 +15,7 @@ public class ScopeBindingBuilder<T> {
 	
 	public ScopeBindingBuilder<T> to(Class<? extends Annotation> scopeClass){
 		binder.removeBinding(binding);
-		this.binding.setStartType(scopeClass);
+		this.binding.setAbstractType(scopeClass);
 		binder.addBinding(binding);
 		return this;
 	}

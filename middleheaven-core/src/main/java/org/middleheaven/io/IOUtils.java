@@ -12,15 +12,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.channels.FileChannel;
 
+import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFilePath;
+import org.middleheaven.io.repository.ManagedFileRepository;
 
 public final class IOUtils {
 
 	private IOUtils(){}
 	
-	public static boolean deleteTree(File directory){
+	
+	public static boolean deleteTree(URI path){
+		
+		return deleteTree(new File(path));
+		
+	}
+	
+	private static boolean deleteTree(File directory){
+
 		if(!directory.isDirectory()){
 			throw new IllegalArgumentException(directory + " is not a directory");
 		}

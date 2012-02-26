@@ -1,18 +1,20 @@
 package org.middleheaven.core.wiring;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.core.wiring.mock.C;
 import org.middleheaven.core.wiring.mock.CyclicDisplayer;
 import org.middleheaven.core.wiring.mock.DictionaryService;
+import org.middleheaven.core.wiring.mock.DictionaryUser;
 import org.middleheaven.core.wiring.mock.Displayer;
+import org.middleheaven.core.wiring.mock.GermanDictionayService;
 import org.middleheaven.core.wiring.mock.Greeter;
 import org.middleheaven.core.wiring.mock.HashDictionaryService;
 import org.middleheaven.core.wiring.mock.HelloMessage;
@@ -25,19 +27,33 @@ import org.middleheaven.util.collections.ParamsMap;
 
 public class WiringTestCase extends MiddleHeavenTestCase {
 
+	@Test
+	public void testWiringModelReader(){
+		DefaultWiringModelParser  parser = new DefaultWiringModelParser();
+		
+		BeanModel model = new BeanModel(C.class);
+		parser.readBeanModel(C.class, model);
+		
+		assertNotNull(model.getProducingWiringPoint());
+		assertNotNull(model.getAfterPoints());
+		
+		assertFalse("no after points", model.getAfterPoints().isEmpty());
+	}
+	
 	
 	@Test
 	public void testInheritanceWiring(){
-		ObjectPool ctx = ServiceRegistry.getService(WiringService.class).getObjectPool();
+		ObjectPool pool = ServiceRegistry.getService(WiringService.class).getObjectPool();
 		
-		C c = ctx.getInstance(C.class);
+		C c = pool.getInstance(C.class);
 		
+		assertNotNull(c);
 		assertNotNull(c.getX());
 	}
 	
 	
 	@Test
-	public void simpleTest(){
+	public void testPropertiesWiring(){
 		final MockDisplay md = new MockDisplay();
 		
 		ServiceRegistry.getService(WiringService.class).getObjectPool()
@@ -47,8 +63,8 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 			public void configure(Binder binder) {
 				binder.bind(Displayer.class).toInstance(md);
 				binder.bind(Message.class).to(HelloMessage.class);
-				binder.bindProperty(String.class).named("hello.message").toInstance("Hello");
-				binder.bindProperty(String.class).named("hello.name").toInstance("World");
+				binder.bindProperty(String.class).labeled("hello.message").toInstance("Hello");
+				binder.bindProperty(String.class).labeled("hello.name").toInstance("World");
 			}
 			
 		})
@@ -61,41 +77,63 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 	@Test
 	public void testWiringServiceWithParams(){
 		
+		final HashDictionaryService en = new HashDictionaryService("en");
+		final HashDictionaryService pt = new HashDictionaryService("pt");
+		
+		
+		
+		final WiringService wiringService = this.getWiringService();
 
-		ObjectPool inj = this.getWiringService().getObjectPool()
+		
+		ObjectPool pool = wiringService.getObjectPool()
 		.addConfiguration(new BindConfiguration(){
 
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(DictionaryService.class).in(Service.class);
-				binder.bindScope(Service.class, ServiceScope.class);
+				binder.bind(DictionaryService.class).toInstance(en).named("en").in(Service.class);
+				binder.bind(DictionaryService.class).toInstance(pt).named("pt").in(Service.class);
+				binder.bind(DictionaryService.class).to(GermanDictionayService.class).in(Service.class);
+				binder.bind(DictionaryUser.class).to(DictionaryUser.class);
 			}
 			
 		});
 
-		ServiceContext serviceContext = inj.getInstance(ServiceContext.class);
 		
-		ParamsMap paramsEn = new ParamsMap();
-		paramsEn.put("lang", "en");
-		serviceContext.register(DictionaryService.class, new HashDictionaryService("en"),paramsEn);
+		DefaultWiringModelParser  parser = new DefaultWiringModelParser();
 		
-		ParamsMap paramsPT = new ParamsMap();
-		paramsPT.put("lang", "pt");
-		serviceContext.register(DictionaryService.class, new HashDictionaryService("pt"),paramsPT);
+		BeanModel model = new BeanModel(GermanDictionayService.class);
+		parser.readBeanModel(GermanDictionayService.class, model);
 		
 		
-		DictionaryService enDic = inj.getInstance(DictionaryService.class, paramsEn);
+		assertFalse("object is not qualified" , model.getParams().isEmpty());
 		
-		assertEquals("en", enDic.getLang());
+		GermanDictionayService ge = pool.getInstance(GermanDictionayService.class);
+		assertNotNull(ge);
 		
-		DictionaryService ptDic = inj.getInstance(DictionaryService.class, paramsPT);
 		
-		assertEquals("pt", ptDic.getLang());
+		ParamsMap params = new ParamsMap().setParam("name", "en");
 		
-		// with no params the service scope will choose one of the existing implementations
-		DictionaryService eDic = inj.getInstance(DictionaryService.class);
+		DictionaryService eDic = pool.getInstance(DictionaryService.class, params);
 		
 		assertNotNull(eDic);
+		assertEquals("en", eDic.getLang());
+		
+		
+		
+		
+		
+		model = new BeanModel(DictionaryUser.class);
+		parser.readBeanModel(DictionaryUser.class, model);
+		
+		
+		assertNotNull(model.getProducingWiringPoint());
+		assertNotNull(model.getProducingWiringPoint().getParamsSpecifications()[0]);
+		assertFalse("construtor injection point as no params", model.getProducingWiringPoint().getParamsSpecifications()[0].getParams().isEmpty());
+		
+		DictionaryUser user = pool.getInstance(DictionaryUser.class);
+		
+		assertNotNull(user);
+		assertEquals("ge", user.getLang());
 		
 	}
 	
@@ -135,8 +173,8 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 				binder.bind(Greeter.class).to(Greeter.class).in(Shared.class);
 				binder.bind(Displayer.class).toInstance(md);
 				binder.bind(Message.class).to(HelloMessage.class);
-				binder.bindProperty(String.class).named("hello.message").toInstance("Hello");
-				binder.bindProperty(String.class).named("hello.name").toInstance("World");
+				binder.bindProperty(String.class).labeled("hello.message").toInstance("Hello");
+				binder.bindProperty(String.class).labeled("hello.name").toInstance("World");
 			}
 			
 		});
@@ -158,8 +196,8 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 				binder.bind(Greeter.class).to(Greeter.class);
 				binder.bind(Displayer.class).to(CyclicDisplayer.class);
 				binder.bind(Message.class).to(HelloMessage.class);
-				binder.bindProperty(String.class).named("hello.message").toInstance("Hello");
-				binder.bindProperty(String.class).named("hello.name").toInstance("World");
+				binder.bindProperty(String.class).labeled("hello.message").toInstance("Hello");
+				binder.bindProperty(String.class).labeled("hello.name").toInstance("World");
 			}
 			
 		});
@@ -179,8 +217,8 @@ public class WiringTestCase extends MiddleHeavenTestCase {
 				binder.bind(Greeter.class).to(Greeter.class).in(Shared.class);
 				binder.bind(Displayer.class).to(CyclicDisplayer.class);
 				binder.bind(Message.class).to(HelloMessage.class);
-				binder.bindProperty(String.class).named("hello.message").toInstance("Hello");
-				binder.bindProperty(String.class).named("hello.name").toInstance("World");
+				binder.bindProperty(String.class).labeled("hello.message").toInstance("Hello");
+				binder.bindProperty(String.class).labeled("hello.name").toInstance("World");
 			}
 			
 		});

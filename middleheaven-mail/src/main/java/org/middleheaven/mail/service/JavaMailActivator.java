@@ -1,6 +1,5 @@
 package org.middleheaven.mail.service;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -23,7 +22,7 @@ public class JavaMailActivator extends Activator {
 	}
 	
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		
 		if(nameService!=null){
 			this.service = new NameDirectoryMailSessionSendingService(nameService);
@@ -33,7 +32,7 @@ public class JavaMailActivator extends Activator {
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		// no-op
 
 	}

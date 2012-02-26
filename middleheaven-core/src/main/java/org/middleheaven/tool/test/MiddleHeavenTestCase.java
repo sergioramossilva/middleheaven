@@ -2,7 +2,6 @@ package org.middleheaven.tool.test;
 
 import org.junit.After;
 import org.junit.Before;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.activation.SetActivatorScanner;
 import org.middleheaven.logging.ConsoleLogBook;
@@ -11,24 +10,26 @@ import org.middleheaven.logging.LoggingLevel;
 public abstract class MiddleHeavenTestCase {
 
 	private TestBootstrap bootstrap;
-
+	
 	@Before
 	public final void setUp(){
 		bootstrap = new TestBootstrap();
-		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 		
 		SetActivatorScanner scanner = new SetActivatorScanner();
-	
+		
 		configurateActivators(scanner);
 		
-		final WiringService wiringService = getWiringService();
-		wiringService.addActivatorScanner(scanner);
+		bootstrap.addActivatorScanner(scanner);
 		
-	
-		wiringService.scan();
+		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 		
-		wiringService.getObjectPool().wireMembers(this);
+		bootstrap.getWiringService().getObjectPool().wireMembers(this);
+		
 		configurateTest();
+	}
+	
+	public WiringService getWiringService(){
+		return  bootstrap.getWiringService();
 	}
 	
 	@After
@@ -48,7 +49,5 @@ public abstract class MiddleHeavenTestCase {
 		
 	}
 
-	public WiringService getWiringService(){
-		return  ServiceRegistry.getService(WiringService.class);
-	}
+	
 }

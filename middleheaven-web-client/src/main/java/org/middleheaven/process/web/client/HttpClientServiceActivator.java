@@ -3,7 +3,6 @@
  */
 package org.middleheaven.process.web.client;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.process.web.client.apache.ApacheHttpClientService;
@@ -24,7 +23,7 @@ public class HttpClientServiceActivator extends Activator{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		ApacheHttpClientService apacheService = new ApacheHttpClientService();
 		
 		apacheService.start();
@@ -36,7 +35,7 @@ public class HttpClientServiceActivator extends Activator{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		service.close();
 	}
 

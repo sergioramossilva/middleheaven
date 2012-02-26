@@ -1,6 +1,5 @@
 package org.middleheaven.global.atlas;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.global.atlas.modules.ModularAtlasService;
@@ -20,10 +19,10 @@ public class AtlasActivator extends Activator {
 	
 
 	@Override
-	public void activate(ActivationContext context) {}
+	public void activate() {}
 
 	@Override
-	public void inactivate(ActivationContext context) {}
+	public void inactivate() {}
 
 	
 }

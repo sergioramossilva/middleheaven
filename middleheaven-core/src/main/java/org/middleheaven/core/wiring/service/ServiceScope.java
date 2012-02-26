@@ -1,11 +1,9 @@
 package org.middleheaven.core.wiring.service;
 
-import javax.management.ServiceNotFoundException;
-
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.services.ServiceNotAvailableException;
+import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.wiring.AbstractScopePool;
 import org.middleheaven.core.wiring.Resolver;
-import org.middleheaven.core.wiring.ScopePool;
 import org.middleheaven.core.wiring.WiringSpecification;
 
 /**
@@ -14,7 +12,7 @@ import org.middleheaven.core.wiring.WiringSpecification;
  * the pool in inject a proxy that can handle the service lifecycle.
  * 
  */
-public class ServiceScope implements ScopePool {
+public class ServiceScope extends AbstractScopePool {
 
 
 	public ServiceScope(){}
@@ -30,13 +28,16 @@ public class ServiceScope implements ScopePool {
 
 		} catch (ServiceNotAvailableException e){
 			T object = resolver.resolve(spec);
+			
 			if(object ==null){
 				return null;
 			}
 			
 			ServiceRegistry.register(spec.getContract(),object  , spec.getParams());
+			this.fireObjectAdded(object);
 			
 			return ServiceRegistry.getService(spec.getContract(), spec.getParams());
+			
 		}
 
 	}
@@ -44,6 +45,7 @@ public class ServiceScope implements ScopePool {
 	@Override
 	public <T> void add(WiringSpecification<T> spec, T object) {
 		ServiceRegistry.register(spec.getContract(), object,spec.getParams());
+		this.fireObjectAdded(object);
 	}
 
 	@Override
@@ -54,6 +56,7 @@ public class ServiceScope implements ScopePool {
 	@Override
 	public void remove(Object object) {
 		ServiceRegistry.unRegister(object);
+		this.fireObjectRemoved(object);
 	}
 
 }

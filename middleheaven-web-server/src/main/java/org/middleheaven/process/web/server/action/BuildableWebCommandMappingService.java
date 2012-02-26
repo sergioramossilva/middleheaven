@@ -3,10 +3,13 @@ package org.middleheaven.process.web.server.action;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.middleheaven.process.web.HttpRelativeUrl;
+
 public class BuildableWebCommandMappingService implements WebCommandMappingService{
 
 	private final List<WebCommandMapping> mappings = new CopyOnWriteArrayList<WebCommandMapping>();
 
+	public BuildableWebCommandMappingService (){}
 	
 	/**
 	 * Maps all requests directed to the specified internal URL to be handle by the specified presenter class
@@ -18,12 +21,17 @@ public class BuildableWebCommandMappingService implements WebCommandMappingServi
 
 		PresenterCommandMappingBuilder builder = PresenterCommandMappingBuilder.map(presenter, this);
 
-		this.mappings.add(builder.getMapping());
+		addWebMapping(builder.getMapping());
 		return builder;
 	}
 	
+	
+	protected void addWebMapping(WebCommandMapping webCommandMapping){
+		this.mappings.add(webCommandMapping);
+	}
+	
 	@Override
-	public WebCommandMapping resolve(CharSequence url) {
+	public WebCommandMapping resolve(HttpRelativeUrl url) {
 		for (WebCommandMapping m : mappings){
 			if (m.matches(url)){
 				return m;

@@ -8,18 +8,21 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.middleheaven.aas.AccessControlService;
-import org.middleheaven.aas.SimpleAccessControlService;
+import org.middleheaven.aas.StandardAccessControlService;
 import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
 import org.middleheaven.application.MetaInfApplicationServiceActivator;
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.wiring.BindConfiguration;
+import org.middleheaven.core.wiring.Binder;
+import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.ServletContextLogBookWriter;
 import org.middleheaven.logging.WritableLogBook;
-import org.middleheaven.ui.service.AbstractUIServiceActivator;
 import org.middleheaven.ui.web.service.WebUIServiceActivator;
 import org.middleheaven.web.container.WebContainer;
 import org.middleheaven.web.container.WebContainerInfo;
@@ -45,19 +48,45 @@ public abstract class AbstractWebContainerBootstrap extends ExecutionEnvironment
 		
 		try{
 			
+		
+			
+			final ServletHttpServerService httpService = this.getServletHttpServerService();
+			final AccessControlService accessControlService = this.getAccessControlService();
+
+			this.getWiringService().getObjectPool().addConfiguration(new BindConfiguration(){
+
+				@Override
+				public void configure(Binder binder) {
+					
+					binder.bind(HttpServerService.class).in(Service.class).toInstance(httpService);
+					binder.bind(AccessControlService.class).in(Service.class).toInstance(accessControlService);
+				}
+				
+			});
+
+			// hook for Frontend servlet
+			this.servletContext.setAttribute("httpService", httpService);
+			
 			start(
 					new WritableLogBook("",LoggingLevel.ALL)
 					.addWriter(new ServletContextLogBookWriter(servletContext))
 			);
 			
-		
-			HttpServerService httpService = ServiceRegistry.getService(HttpServerService.class);
-
+			
 			httpService.start();
+			
 			servletContext.log("[MiddleHeaven] Bootstap completed");
 		}catch (Throwable t){
 			servletContext.log("[MiddleHeaven] Unexpected error", t);
 		}
+	}
+	
+	protected ServletHttpServerService getServletHttpServerService(){
+		return new ServletHttpServerService();	
+	}
+	
+	protected AccessControlService getAccessControlService(){
+		return new StandardAccessControlService();
 	}
 	
 	@Override
@@ -67,16 +96,7 @@ public abstract class AbstractWebContainerBootstrap extends ExecutionEnvironment
 		context.addActivator(MetaInfApplicationServiceActivator.class)
 		.addActivator(DynamicLoadApplicationServiceActivator.class)
 		.addActivator(WebUIServiceActivator.class);
-		
-		ServletHttpServerService httpService = new ServletHttpServerService();
-		
-		// hook for Frontend servlet
-		this.servletContext.setAttribute("httpService", httpService);
 
-		ServiceRegistry.register(HttpServerService.class, httpService);
-
-		// access service
-		ServiceRegistry.register(AccessControlService.class, new SimpleAccessControlService());
 	}
 	
 

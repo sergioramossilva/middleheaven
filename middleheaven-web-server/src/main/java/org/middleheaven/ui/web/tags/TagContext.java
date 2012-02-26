@@ -58,7 +58,7 @@ public class TagContext extends ServletWebContext {
 	}
 
 	@Override
-	public Map<String, String> getParameters() {
+	public Map<String, String[]> getParameters() {
 		return Collections.emptyMap();
 	}
 	

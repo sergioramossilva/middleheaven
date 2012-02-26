@@ -10,6 +10,7 @@ import org.middleheaven.core.dependency.DependencyResolver;
 import org.middleheaven.core.dependency.InicializationNotPossibleException;
 import org.middleheaven.core.dependency.InicializationNotResolvedException;
 import org.middleheaven.core.dependency.Starter;
+import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.reflection.metaclass.ReflectionMetaClass;
@@ -31,7 +32,7 @@ public final class DomainModelBuilder extends AbstractModelBuilder<EntityModel, 
 
 		final SimpleModelBuilder builder = new SimpleModelBuilder();
 
-		new DependencyResolver(Log.onBookFor(this.getClass())).resolve(classes.entities, new Starter<Class<?>>(){
+		new DependencyResolver(Log.onBookFor(this.getClass())).resolve(classes.getClasses(), new Starter<Class<?>>(){
 
 			@Override
 			public void inicialize(Class<?> type)

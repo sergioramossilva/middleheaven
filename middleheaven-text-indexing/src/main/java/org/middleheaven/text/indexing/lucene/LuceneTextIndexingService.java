@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.text.indexing.DocumentModel;
 import org.middleheaven.text.indexing.TextIndex;
 import org.middleheaven.text.indexing.TextIndexingException;
@@ -30,8 +32,13 @@ public class LuceneTextIndexingService implements TextIndexingService{
 		this.debug = debug;
 	}
 
-	public void configurateIndex(Object indexIdentifier,File directory, Analyzer analizer) {
+	public void configurateIndex(Object indexIdentifier, ManagedFile managedFile, Analyzer analizer) {
 		try {
+			
+			managedFile = MachineFiles.ensureMachineFile(managedFile);
+			
+			File directory = new File(managedFile.getURI());
+			
 			this.configurateIndex(indexIdentifier, new NIOFSDirectory(directory), analizer);
 
 		} catch (IOException e) {
@@ -54,7 +61,12 @@ public class LuceneTextIndexingService implements TextIndexingService{
 	public void configureDocument(Object indexIdentifier, DocumentModel docModel) {
 		LucenceTextIndex textIndex = indexes.get(indexIdentifier);
 		
-		textIndex.addDocumentModel(docModel);
+		if (textIndex != null){
+			textIndex.addDocumentModel(docModel);
+		} else {
+			throw new IllegalStateException("Cannot config documents without configuring index first.");
+		}
+		
 	}
 
 	

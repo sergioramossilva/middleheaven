@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import org.middleheaven.core.reflection.MemberAccess;
@@ -13,7 +14,8 @@ import org.middleheaven.util.collections.EnhancedCollection;
 
 public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMemberIntrospectionCriteriaBuilder<T,Method>{
 
-
+	Resolver resolver = new StandardResolver();
+	
 	MethodIntrospectionCriteriaBuilder(IntrospectionCriteriaBuilder<T> builder){
 		super(builder);
 	}
@@ -72,10 +74,7 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 		return member.getParameterTypes().length;
 	}
 
-	@Override
-	protected EnhancedCollection<Method> getAllMembersInType(Class<T> type) {
-		return CollectionUtils.enhance(Reflector.getReflector().getMethods(type));
-	}
+
 
 	@Override
 	protected int getModifiers(Method method) {
@@ -143,10 +142,62 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 		return this;
 	}
 
+	/**
+	 * @return
+	 */
+	public MethodIntrospectionCriteriaBuilder<T>  searchHierarchy() {
+		resolver = new HierarchyResolver();
+		return this;
+	}
 
 
+	@Override
+	protected EnhancedCollection<Method> getAllMembersInType(Class<T> type) {
+		return resolver.resolve(type);
+	}
+	
+	private static interface Resolver {
+		
+		public EnhancedCollection<Method> resolve(Class<?> type);
+	}
+	
+	private static class StandardResolver implements Resolver{
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public EnhancedCollection<Method> resolve(Class<?> type) {
+			return CollectionUtils.enhance(Reflector.getReflector().getMethods(type));
+		}
+		
+	}
+	
+	private static class HierarchyResolver implements Resolver{
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public EnhancedCollection<Method> resolve(Class<?> type) {
+			
+			
+			LinkedList<Method> stack = new LinkedList<Method>();
+			
+			while ( type != null && !type.equals(Object.class) ){
+				for (Method m : Reflector.getReflector().getMethods(type)){
+					stack.addFirst(m);
+				}
+				
+				type = type.getSuperclass();
+			}
+			
+			
+			
+			return CollectionUtils.enhance(stack);
+		}
+		
+	}
 
 
 }

@@ -3,12 +3,12 @@ package org.middleheaven.aas;
 import org.middleheaven.core.wiring.service.Service;
 
 @Service
-public final class SimpleAccessControlService implements AccessControlService {
+public final class StandardAccessControlService implements AccessControlService {
 
 
 	AccessRequestBroker broker = new AccessRequestBroker();
 	
-	public SimpleAccessControlService(){};
+	public StandardAccessControlService(){};
 
 
 	@Override

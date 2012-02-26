@@ -24,11 +24,11 @@ import org.middleheaven.io.repository.watch.WatchService;
 public class UploadManagedFileRepository extends AbstractManagedRepository implements  ManagedFileRepository {
 
 
-	public static ManagedFileRepository newInstance(HttpServletRequest request, Map<String, String> parameters) {
+	public static ManagedFileRepository newInstance(HttpServletRequest request, Map<String, String[]> parameters) {
 		return repositoryOf(request, parameters , null);
 	}
 	
-	public static ManagedFileRepository repositoryOf(HttpServletRequest request, Map<String, String> parameters,ManagedFile temporary) {
+	public static ManagedFileRepository repositoryOf(HttpServletRequest request, Map<String, String[]> parameters,ManagedFile temporary) {
 		if (temporary != null && !(temporary.isWriteable() && temporary.getType().isOnlyFolder())){
 			throw new ManagedIOException("Temporary location must be a writable folder");
 		}
@@ -44,7 +44,7 @@ public class UploadManagedFileRepository extends AbstractManagedRepository imple
 	
 	private HttpServletRequest request;
 	
-	private UploadManagedFileRepository(HttpServletRequest request, Map<String, String> parameters, ManagedFile temporary){
+	private UploadManagedFileRepository(HttpServletRequest request, Map<String, String[]> parameters, ManagedFile temporary){
 
 		root = new UploadRootFolder(this);
 		
@@ -78,7 +78,7 @@ public class UploadManagedFileRepository extends AbstractManagedRepository imple
 						root.add(new UploadManagedFile(this, item, root));
 						
 					} else if (parameters != null){
-						parameters.put(item.getFieldName(), item.getString());
+						parameters.put(item.getFieldName(), new String[]{item.getString()});
 					}
 				}
 

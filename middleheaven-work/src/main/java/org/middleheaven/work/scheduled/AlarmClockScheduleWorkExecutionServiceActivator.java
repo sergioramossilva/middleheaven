@@ -1,6 +1,5 @@
 package org.middleheaven.work.scheduled;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 
@@ -17,13 +16,13 @@ public class AlarmClockScheduleWorkExecutionServiceActivator extends Activator {
 	
 	
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		service = new AlarmClockScheduleWorkExecutionService();
 		
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		// no-op
 	}
 }

@@ -18,7 +18,7 @@ public class WebContainerBootstrap extends AbstractWebContainerBootstrap {
 	 */
 	@Override
 	protected ManagedFile getEnvironmentRootFolder() {
-		return MachineFiles.resolveFile(new File(this.servletContext.getRealPath(".")));
+		return MachineFiles.resolveFile(new File(this.servletContext.getRealPath("")));
 	}
 
 

@@ -24,6 +24,24 @@ public abstract class Address {
 		return postalCode;
 	}
 	
+	/**
+	 * Attributes {@link Country}.
+	 * @param country the country to set
+	 */
+	protected void setCountry(Country country) {
+		this.country = country;
+		parts.put(AddressPartType.COUNTRY, country.toString());
+	}
+
+	/**
+	 * Attributes {@link PostalCode}.
+	 * @param postalCode the postalCode to set
+	 */
+	protected void setPostalCode(PostalCode postalCode) {
+		this.postalCode = postalCode;
+		parts.put(AddressPartType.POSTAL_CODE, postalCode.toString());
+	}
+
 	public void setAddressPart(AddressPartType type, String part){
 		if (type.equals(AddressPartType.COUNTRY) || type.equals(AddressPartType.COUNTRY_CODE)|| type.equals(AddressPartType.POSTAL_CODE)){
 			throw new IllegalArgumentException( type + " cannot be changed");

@@ -65,6 +65,10 @@ public class StringUtils {
 		return join(separator, 0,original.length, original);
 	}
 
+	public static String join(String separator, String first,  String second){
+		return join(separator, 0, new String[]{first,second});
+	}
+	
 	public static String join(String separator, String first,  String ... original){
 		return join(separator, 0,original.length + 1, CollectionUtils.appendToArrayBegining(original, first));
 	}
@@ -95,6 +99,14 @@ public class StringUtils {
 		return builder.toString();
 	}
 
+	public static String concatIfNotEmptyPrefix(CharSequence prefix, CharSequence content, CharSequence separator ){
+		if (isEmptyOrBlank(prefix)){
+			return content.toString();
+		} else {
+			return new StringBuilder(prefix).append(separator).append(content).toString();
+		}
+	}
+	
 	public static boolean isInArray(CharSequence candidate, CharSequence ... set){
 		if (candidate==null || set.length == 0){
 			return false;

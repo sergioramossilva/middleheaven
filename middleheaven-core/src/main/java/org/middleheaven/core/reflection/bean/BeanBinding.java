@@ -34,7 +34,7 @@ public class BeanBinding implements PropertyChangeListener{
 			throw new ReflectionException(source + " is not a bean");
 		}
 		try {
-			list.getFist().invoke(source, new Object[]{this});
+			list.getFirst().invoke(source, new Object[]{this});
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionException(e);
 		} catch (IllegalAccessException e) {

@@ -3,7 +3,6 @@
  */
 package org.middleheaven.io.repository;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.io.repository.classpath.ClassPathRepositoryProvider;
@@ -26,7 +25,7 @@ public class FileRepositoryActivator extends Activator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		service.registerProvider(new ClassPathRepositoryProvider(service));
 		service.registerProvider(MachineFileSystemRepositoryProvider.getProvider());
 		
@@ -37,7 +36,7 @@ public class FileRepositoryActivator extends Activator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		// no-op
 	}
 

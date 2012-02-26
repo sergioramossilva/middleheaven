@@ -4,6 +4,7 @@
 package org.middleheaven.domain.model;
 
 import org.junit.Test;
+import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.storage.testdomain.TestSubject;
 
 /**

@@ -1,5 +1,6 @@
 package org.middleheaven.process.web.server.action;
 
+import org.middleheaven.process.web.HttpRelativeUrl;
 import org.middleheaven.process.web.HttpUrl;
 import org.middleheaven.process.web.server.HttpServerContext;
 import org.middleheaven.process.web.server.Outcome;
@@ -29,7 +30,7 @@ public class ForwardToLast implements OutcomeResolver {
 		
 		HttpUrl refererUrl = context.getRefererUrl();
 		
-		String newUrl = refererUrl.getContexlessPath() + refererUrl.getFilename();
+		HttpRelativeUrl newUrl = new HttpRelativeUrl(refererUrl.getFilename(), refererUrl.getContext());
 		
 		WebCommandMapping mapping = mappingService.resolve(newUrl);
 		

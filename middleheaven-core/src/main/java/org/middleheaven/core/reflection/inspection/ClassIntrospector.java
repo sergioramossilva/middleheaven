@@ -163,6 +163,13 @@ public class ClassIntrospector<T> extends Introspector{
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		return type.getAnnotation(annotationClass);
 	}
+	
+	/**
+	 * 
+	 */
+	public Annotation[] getAnnotations() {
+		return type.getAnnotations();
+	}
 
 	@Override
 	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass) {
@@ -259,5 +266,15 @@ public class ClassIntrospector<T> extends Introspector{
 		
 		return loadFrom("java.lang.".concat(name)).getIntrospected();
 	}
+
+	/**
+	 * @param class1
+	 * @return
+	 */
+	public boolean isSubtypeOf(Class<?> otherType) {
+		return otherType.isAssignableFrom(type);
+	}
+
+
 
 }

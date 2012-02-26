@@ -9,7 +9,7 @@ package org.middleheaven.core.wiring;
 public class InstanceResolver<T> implements Resolver<T> {
 
 	T object;
-	InstanceResolver(T object){
+	public InstanceResolver(T object){
 		this.object = object;
 	}
 	

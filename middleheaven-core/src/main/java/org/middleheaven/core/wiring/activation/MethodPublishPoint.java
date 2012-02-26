@@ -8,9 +8,9 @@ import org.middleheaven.core.reflection.inspection.MethodIntrospector;
 public final class MethodPublishPoint implements PublishPoint {
 
 	private Method method;
-	private Map<String, String> params;
+	private Map<String, Object> params;
 
-	public MethodPublishPoint(Method method , Map<String, String> params) {
+	public MethodPublishPoint(Method method , Map<String,Object> params) {
 		this.method = method;
 		this.params = params;
 	}
@@ -26,7 +26,7 @@ public final class MethodPublishPoint implements PublishPoint {
 	}
 
 	@Override
-	public Map<String, String> getParams() {
+	public Map<String, Object> getParams() {
 		return params;
 	}
 

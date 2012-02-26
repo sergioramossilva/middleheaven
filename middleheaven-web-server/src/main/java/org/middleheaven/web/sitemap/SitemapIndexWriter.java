@@ -20,7 +20,6 @@ public class SitemapIndexWriter {
 		return new SitemapIndexWriter(domain);
 	}
 
-	private static final ISO8601Format DATE_FORMAT = new ISO8601Format();
 
 	private String domain;
 	private List<Sitemap> sitemaps = new LinkedList<Sitemap>();
@@ -39,6 +38,7 @@ public class SitemapIndexWriter {
 	}
 
 	public void writeTo(ManagedFile folder) throws ManagedIOException{
+		ISO8601Format dateFormat = new ISO8601Format();
 
 		if(!folder.getType().isOnlyFolder()){
 			throw new IllegalArgumentException("Argument must resolve to a folder in a file system");
@@ -54,7 +54,7 @@ public class SitemapIndexWriter {
 
 			if(this.sitemaps.size() == 1){
 				for (Sitemap sm : this.sitemaps){
-					write(writer,sm);
+					write(writer,sm, dateFormat);
 				}
 			} else {
 				// index file
@@ -64,7 +64,7 @@ public class SitemapIndexWriter {
 					writer.println("	<sitemap>");
 					writer.println("		<loc>" + domain + "/" + sm.getName() + ".xml.gz" + "</loc>");
 					if (sm.getLastModified() != null){
-						writer.println("		<lastmod>" + DATE_FORMAT.format(TimeUtils.toDate(sm.getLastModified())) +"</lastmod>");
+						writer.println("		<lastmod>" + dateFormat.format(TimeUtils.toDate(sm.getLastModified())) +"</lastmod>");
 					}
 					writer.println("	</sitemap>");  
 				}
@@ -77,7 +77,7 @@ public class SitemapIndexWriter {
 					ManagedFile smFile = folder.retrive(sm.getName() + ".xml.gz").createFile();
 
 					PrintWriter smWriter = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(smFile.getContent().getOutputStream()), "UTF-8"));
-					write(smWriter,sm);
+					write(smWriter,sm, dateFormat);
 					smWriter.close();
 				}
 
@@ -91,17 +91,16 @@ public class SitemapIndexWriter {
 		}
 	}
 
-	private void write(PrintWriter writer, Sitemap map) throws UnsupportedEncodingException{
+	private void write(PrintWriter writer, Sitemap map, ISO8601Format dateFormat) throws UnsupportedEncodingException{
 		writer.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
 
 		for (SitemapEntry entry : map){
-			write(writer,entry);
+			write(writer,entry, dateFormat);
 		}
 
 		writer.println("</urlset>"); 
 	}
-	private void write(PrintWriter writer, SitemapEntry entry) throws UnsupportedEncodingException{
-
+	private void write(PrintWriter writer, SitemapEntry entry , ISO8601Format dateFormat) throws UnsupportedEncodingException{
 
 		writer.println("<url>");
 		writer.print("<loc>");
@@ -116,7 +115,7 @@ public class SitemapIndexWriter {
 
 		if(entry.getLastModified() != null){
 			writer.print("<lastmod>");
-			writer.print(DATE_FORMAT.format(TimeUtils.toDate(entry.getLastModified())));
+			writer.print(dateFormat.format(TimeUtils.toDate(entry.getLastModified())));
 			writer.println("</lastmod>");
 		}
 

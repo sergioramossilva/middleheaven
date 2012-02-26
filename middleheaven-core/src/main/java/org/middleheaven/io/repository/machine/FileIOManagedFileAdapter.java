@@ -197,7 +197,7 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 	@Override
 	protected Iterable<ManagedFile> childrenIterable() throws ManagedIOException {
 		
-		File[] children = systemFile.listFiles();
+		File[] children = systemFile.getAbsoluteFile().listFiles();
 
 		if (children == null){ // not a folder
 			return CollectionUtils.emptyCollection();

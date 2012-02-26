@@ -97,5 +97,8 @@ public class EnhancedMapAdapter<K,V> extends AbstractEnumerableAdapter<Map.Entry
 		return new EnhancedMapAdapter<K, V>(Collections.unmodifiableMap(this.original));
 	}
 
+	public String toString(){
+		return this.original.toString();
+	}
 
 }

@@ -1,6 +1,5 @@
 package org.middleheaven.util.collections;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -109,7 +108,7 @@ public class EncancedListAdapter<T> extends EnhancedCollectionAdapter<T> impleme
 	}
 
 	@Override
-	public T getFist() {
+	public T getFirst() {
 		return original().isEmpty() ? null : original().get(0);
 	}
 }

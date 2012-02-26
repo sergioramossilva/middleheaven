@@ -3,7 +3,6 @@ package org.middleheaven.domain.store;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -15,7 +14,7 @@ public class DomainStoreServiceActivator extends Activator {
 	private WiringService wiringService;
 	
 	@Publish
-	public HashDomainStoreService getDomainStoreService(){
+	public DomainStoreService getDomainStoreService(){
 		return storeService;
 	} 
 	
@@ -30,7 +29,7 @@ public class DomainStoreServiceActivator extends Activator {
 	}
 	
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		storeService = new HashDomainStoreService();
 		
 		// install an EntityStore provider
@@ -47,5 +46,5 @@ public class DomainStoreServiceActivator extends Activator {
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {}
+	public void inactivate() {}
 }

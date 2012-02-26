@@ -25,5 +25,5 @@ import java.lang.annotation.ElementType;
 public @interface Wire {
 
 	boolean required() default true;
-	boolean shareabled() default true;
+	boolean shareable() default true;
 }

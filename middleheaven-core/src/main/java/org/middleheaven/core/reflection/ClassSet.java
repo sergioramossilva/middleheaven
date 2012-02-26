@@ -1,5 +1,6 @@
-package org.middleheaven.domain.model;
+package org.middleheaven.core.reflection;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,7 +12,7 @@ import org.middleheaven.core.reflection.inspection.Introspector;
  */
 public final class ClassSet implements Iterable<Class<?>>{
 
-	Set<Class<?>> entities = new HashSet<Class<?>>();
+	Set<Class<?>> types = new HashSet<Class<?>>();
 	
 	
 	public ClassSet(){}
@@ -22,9 +23,13 @@ public final class ClassSet implements Iterable<Class<?>>{
 	 * @return <code>this</code> object
 	 */
 	public ClassSet add(Package thePackage){
-		entities.addAll(Introspector.of(thePackage).getClasses());
+		types.addAll(Introspector.of(thePackage).getClasses());
 
 		return this;
+	}
+	
+	public Set<Class<?>> getClasses(){
+		return Collections.unmodifiableSet(types);
 	}
 	
 	/**
@@ -33,13 +38,13 @@ public final class ClassSet implements Iterable<Class<?>>{
 	 * @return <code>this</code> object
 	 */
 	public ClassSet add(Class<?> theClass){
-		entities.add(theClass);
+		types.add(theClass);
 		
 		return this;
 	}
 
 	@Override
 	public Iterator<Class<?>> iterator() {
-		return entities.iterator();
+		return types.iterator();
 	}
 }

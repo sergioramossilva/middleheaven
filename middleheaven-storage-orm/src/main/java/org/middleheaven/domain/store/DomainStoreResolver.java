@@ -18,7 +18,8 @@ class DomainStoreResolver implements Resolver<DomainStore> {
 	@Override
 	public DomainStore resolve(WiringSpecification<DomainStore> specification) {
 		
-		return new NamedEntityStore(specification.getParam("name"));
+		final Object name = specification.getParam("name");
+		return new NamedEntityStore(name == null ? null : name.toString());
 	}
 	
 	

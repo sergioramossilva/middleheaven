@@ -20,12 +20,13 @@ public class UploadFilesRequestAnalyzer {
 	public static UploadFilesContext getContext(HttpServletRequest request){
 		ManagedFileRepository uploadRepository = EmptyFileRepository.repository();
 		
-		@SuppressWarnings("unchecked") Map<String, String > parameters = request.getParameterMap();
+		@SuppressWarnings("unchecked") // Servlet API documentation states that getParameterMap returns a String->String[] map
+		Map<String, String[] > parameters = request.getParameterMap();
 
 		if (ClassIntrospector.isInClasspath("org.apache.commons.fileupload.servlet.ServletFileUpload")){
 			if (ServletFileUpload.isMultipartContent(request)){
 
-				parameters = new HashMap<String,String>();
+				parameters = new HashMap<String,String[]>();
 				
 				uploadRepository = UploadManagedFileRepository.newInstance(request, parameters);
 

@@ -19,6 +19,7 @@ class HttpContextCookiesSignatureStore extends HttpContextSignatureStore {
 
 	public HttpContextCookiesSignatureStore(HttpServerContext context, Period sessionTimeout) {
 		this.sessionTimeout = sessionTimeout;
+		this.context = context;
 	}
 	
 	@Override

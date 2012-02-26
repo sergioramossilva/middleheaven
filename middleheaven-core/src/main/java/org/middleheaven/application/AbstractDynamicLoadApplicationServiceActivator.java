@@ -4,7 +4,6 @@ import org.middleheaven.core.bootstrap.BootstapListener;
 import org.middleheaven.core.bootstrap.BootstrapEvent;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -53,7 +52,7 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Act
 	}
 
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		log = loggingService.getLogBook(this.getClass().getName());
 	
 		bootstrapService.addListener(this);
@@ -64,7 +63,7 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Act
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		cycle.stop();
 		log=null;
 	}
@@ -80,7 +79,7 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Act
 		}
 	};
 	
-	@Service
+	
 	private class DynamicLoadApplicationService implements ApplicationLoadingService {
 		
 		public DynamicLoadApplicationService() {	}

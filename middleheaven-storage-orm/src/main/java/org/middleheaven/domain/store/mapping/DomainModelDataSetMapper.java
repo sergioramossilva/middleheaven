@@ -22,8 +22,6 @@ public interface DomainModelDataSetMapper {
 	public void registerTypeMapper(TypeMapper typeMapper);
 	public void unregisterTypeMapper(TypeMapper typeMapper);
 	
-	void initialize();
-
 	/**
 	 * @param fieldName
 	 */

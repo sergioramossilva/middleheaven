@@ -21,8 +21,7 @@ abstract class AbstractEnumerationBasedContextScopeStrategy implements ContextSc
 
 	
 	private ContextScope scope;
-	private Collection<String> names;
-	
+
 	public AbstractEnumerationBasedContextScopeStrategy (ContextScope scope){
 		this.scope = scope;
 	}
@@ -58,12 +57,7 @@ abstract class AbstractEnumerationBasedContextScopeStrategy implements ContextSc
 	 */
 	@Override
 	public Iterator<Attribute> iterator() {
-		Iterator<String> it;
-		if (names == null){
-			it = CollectionUtils.enumationIterator(this.getEnumeration());
-		} else {
-			it = names.iterator();
-		}
+		Iterator<String> it = CollectionUtils.enumationIterator(this.getEnumeration());
 		
 		return new IteratorAdapter <Attribute, String>(it){
 

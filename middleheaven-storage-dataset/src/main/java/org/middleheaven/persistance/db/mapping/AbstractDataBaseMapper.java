@@ -64,7 +64,7 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 		 DBTableModel tb = tableMappings.get(modelName);
 
 		 if (tb == null){
-			 throw new IllegalModelStateException(modelName + " is not mapped");
+			 throw new IllegalModelStateException("Data set " + modelName + " is not mapped");
 		 }
 
 		 return tb;

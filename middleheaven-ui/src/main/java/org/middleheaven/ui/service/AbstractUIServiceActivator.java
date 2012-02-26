@@ -2,11 +2,10 @@ package org.middleheaven.ui.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.service.Service;
@@ -25,23 +24,23 @@ public abstract class AbstractUIServiceActivator extends Activator {
 	}
 
 	@Override
-	public final void activate(ActivationContext context) {
-		registerEnvironment(service, context);
+	public final void activate() {
+		registerEnvironment(service);
 	}
 	
-	protected abstract void registerEnvironment(UIService uiService, ActivationContext context);
+	protected abstract void registerEnvironment(UIService uiService);
 	
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		
 	}
 
 	@Service
 	private static class SimpleUIService implements UIService{
 
-		Map<String, UIEnvironment> envs = new TreeMap<String, UIEnvironment>();
-		Map<UIEnvironmentType , List<UIEnvironment>> environmentTypes = new TreeMap<UIEnvironmentType , List<UIEnvironment>>();
-		Map<UIEnvironmentType , UIEnvironment> typeDefaults = new TreeMap<UIEnvironmentType , UIEnvironment>();
+		Map<String, UIEnvironment> envs = new HashMap<String, UIEnvironment>();
+		Map<UIEnvironmentType , List<UIEnvironment>> environmentTypes = new HashMap<UIEnvironmentType , List<UIEnvironment>>();
+		Map<UIEnvironmentType , UIEnvironment> typeDefaults = new HashMap<UIEnvironmentType , UIEnvironment>();
 		
 		@Override
 		public UIEnvironment getUIEnvironment(String envID) {

@@ -18,7 +18,7 @@ public final class ServiceRegistry {
      * @throws ServiceNotFoundException if no implementation is found for the service
      */
     public static <T> T getService(Class<T> serviceClass){
-    	return getService(serviceClass, Collections.<String,String>emptyMap());
+    	return getService(serviceClass, Collections.<String,Object>emptyMap());
     }
     
     /**
@@ -30,7 +30,7 @@ public final class ServiceRegistry {
      * @return a service implementation compatible with <code>serviceClass</code> contract.
      * @throws ServiceNotFoundException if no implementation is found for the service or the properties
      */
-    public static <T> T getService(Class<T> serviceClass, Map<String,String> properties){
+    public static <T> T getService(Class<T> serviceClass, Map<String, Object> properties){
     	if (context == null){
     		throw new ServiceContextUndefinedException();
     	}
@@ -45,7 +45,7 @@ public final class ServiceRegistry {
 		context.register(serviceClass, implementation, null);
 	}
     
-	public static <T, I extends T> void register(Class<T> serviceClass,I implementation, Map<String,String> properties) {
+	public static <T, I extends T> void register(Class<T> serviceClass,I implementation, Map<String,Object> properties) {
 		context.register(serviceClass, implementation, properties);
 	}
 

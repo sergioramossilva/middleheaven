@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.service.Service;
@@ -52,13 +51,13 @@ public class ImageServiceActivator extends Activator {
 
 
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		this.service  = new MapImageService();
 	}
 
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		this.service = null;
 	}
 

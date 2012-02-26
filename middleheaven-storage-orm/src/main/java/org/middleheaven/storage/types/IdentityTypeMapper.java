@@ -3,7 +3,9 @@
  */
 package org.middleheaven.storage.types;
 
+import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.persistance.DataColumn;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.util.coersion.TypeCoercing;
@@ -35,9 +37,12 @@ public class IdentityTypeMapper implements TypeMapper {
 	public Object read(DataRow row, Object aggregateParent, DataColumnModel... columns) {
 	
 		
-		Object value = row.getColumn(columns[0].getName()).getValue();
+		final DataColumn column = row.getColumn(columns[0].getName());
 		
-		return Introspector.of(type).newInstance(value);
+		Object value = column.getValue();
+		
+		return TypeCoercing.coerce(value, type);
+		
 		
 	}
 
