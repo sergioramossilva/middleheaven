@@ -35,5 +35,5 @@ public interface EnhancedCollection<T> extends Collection<T> , Enumerable<T> {
 	public EnhancedList<T> asList();
 	public EnhancedSet<T> asSet();
 
-	public T getFist();
+	public T getFirst();
 }

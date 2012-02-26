@@ -45,7 +45,7 @@ public class FieldAfterWiringPoint implements AfterWiringPoint{
 	 * {@inheritDoc}
 	 */
 	public <T> T writeAtPoint(EditableBinder binder, T object){
-		if(object ==null){
+		if(object == null){
 			return null;
 		}
 		

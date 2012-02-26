@@ -11,13 +11,14 @@ import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.ContextScopeStrategy;
 import org.middleheaven.process.ObjectAttribute;
+import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.IteratorAdapter;
 
 class ParametersContextScopeStrategy implements ContextScopeStrategy {
 
-	private Map<String, String> parameters;
+	private Map<String, String[]> parameters;
 	
-	public ParametersContextScopeStrategy (Map<String, String> parameters){
+	public ParametersContextScopeStrategy (Map<String, String[]> parameters){
 		this.parameters= parameters;
 	}
 
@@ -26,10 +27,10 @@ class ParametersContextScopeStrategy implements ContextScopeStrategy {
 	 */
 	@Override
 	public Iterator<Attribute> iterator() {
-		return new IteratorAdapter<Attribute, Map.Entry<String, String>>(parameters.entrySet().iterator()){
+		return new IteratorAdapter<Attribute, Map.Entry<String, String[]>>(parameters.entrySet().iterator()){
 
 			@Override
-			public Attribute adaptNext(Entry<String, String> next) {
+			public Attribute adaptNext(Entry<String, String[]> next) {
 				return new ObjectAttribute(next.getKey(), next.getValue());
 			}
 			
@@ -65,24 +66,26 @@ class ParametersContextScopeStrategy implements ContextScopeStrategy {
 	 */
 	@Override
 	public <T> T getAttribute(String name, Class<T> type) {
-		Object value = parameters.get(name);
+		String[] valueArray = parameters.get(name);
 		
-		if (value != null){
+		if (valueArray != null){
 			// the result is an array and the expected type is array
-			if (type.isArray() && value.getClass().isArray()){
+			if (type.isArray()){
 				try{
-					return type.cast(value);
+					return type.cast(valueArray);
 				} catch (ClassCastException e ){
-					throw new ClassCastException("Cannot cast " + value.getClass() + " to " + type);
+					throw new ClassCastException("Cannot cast " + valueArray.getClass() + " to " + type);
 				}
-			} else if (value.getClass().isArray()){
-				value = ((String[]) value)[0];
+			} else {
+				return TypeCoercing.coerce(valueArray[0], type);
 			}
 		} else if (type.isArray()){ // value is null and is expected array
-			value = new String[0]; // parameters can only be Strings, so an array can only of string
+			// parameters can only be Strings, so an array can only of string
+			return TypeCoercing.coerce(new String[0], type);
 		}
 		
-		return type.cast(value);
+		return null;
+	
 	}
 
 	/**

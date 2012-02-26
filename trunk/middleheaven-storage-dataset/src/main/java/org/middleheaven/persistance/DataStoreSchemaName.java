@@ -19,8 +19,8 @@ public class DataStoreSchemaName {
 	 * @param name
 	 * @return
 	 */
-	public static DataStoreSchemaName name(String database, String name) {
-		return new DataStoreSchemaName(database, name);
+	public static DataStoreSchemaName name(String database, String schema) {
+		return new DataStoreSchemaName(database, schema);
 	}
 	
 	private DataStoreSchemaName(String database,

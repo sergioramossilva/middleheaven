@@ -50,6 +50,7 @@ public class AccessControlFilter implements HttpFilter{
 		this.accessControlService = accessControlService;
 		this.failureOutcome = failureOutcome;
 		this.loginOutcome = loginOutcome;
+		this.accessDeniedOutcome = accessDeniedOutcome;
 	}
 
 	private void letPass(HttpServerContext context,HttpFilterChain chain, AccessRequest request){

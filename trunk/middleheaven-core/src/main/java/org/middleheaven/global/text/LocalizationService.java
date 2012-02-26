@@ -4,12 +4,13 @@
  */
 package org.middleheaven.global.text;
 
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.CultureModel;
 
 
 
-
+@Service
 public interface LocalizationService  {
 
     /**

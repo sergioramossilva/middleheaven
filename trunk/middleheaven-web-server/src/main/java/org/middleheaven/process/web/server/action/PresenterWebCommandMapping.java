@@ -1,6 +1,8 @@
 package org.middleheaven.process.web.server.action;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -21,14 +23,17 @@ import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.ContextScopeStrategy;
 import org.middleheaven.process.web.HttpMethod;
+import org.middleheaven.process.web.HttpRelativeUrl;
 import org.middleheaven.process.web.HttpStatusCode;
 import org.middleheaven.process.web.server.HttpServerContext;
 import org.middleheaven.process.web.server.Outcome;
 import org.middleheaven.process.web.server.WebContext;
+import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.Walker;
 import org.middleheaven.validation.ValidationException;
 import org.middleheaven.web.annotations.Delete;
 import org.middleheaven.web.annotations.Get;
+import org.middleheaven.web.annotations.PathVariable;
 import org.middleheaven.web.annotations.Post;
 import org.middleheaven.web.annotations.ProcessRequest;
 import org.middleheaven.web.annotations.Put;
@@ -42,10 +47,10 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	private Object controllerObject;
 	private final List<ActionInterceptor> interceptors = new LinkedList<ActionInterceptor>();
 	private final Map<String, Map<OutcomeStatus, OutcomeResolver>> outcomes = new HashMap<String, Map<OutcomeStatus, OutcomeResolver>>();
-	private final Map<String , Method> actions = new TreeMap<String,Method>();
-	private final List<String> patterns = new LinkedList<String>();
+	private final Map<String , Method> actions = new HashMap<String,Method>();
+	private final List<PathMatcher> patterns = new LinkedList<PathMatcher>();
 	private final AttributeContextBeanLoader beanLoader = new AttributeContextBeanLoader();
-	
+
 	private EnumMap<HttpMethod, Method> serviceMethods = new EnumMap<HttpMethod, Method>(HttpMethod.class);
 
 	private Method doService=null;
@@ -100,7 +105,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 					actions.put(m.getName().toLowerCase(),m);
 				}
 			}
-			
+
 		});
 
 		// singleton per mapper
@@ -108,51 +113,17 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	}
 
 	public void addPathMatcher(String regex){
-		patterns.add(regex);
+		patterns.add(PathMatcher.newInstance(regex));
 	}
 
 	@Override
-	public boolean matches(CharSequence url) {
-		for (String pattern : patterns){
+	public boolean matches(HttpRelativeUrl url) {
+		
+		String dynamicUrl = url.toString();
+		
+		for (PathMatcher pattern : patterns){
 
-			String dynamicUrl = url.toString();
-
-			/*
-			 * '*' is not a valid url 
-			 */
-			if(dynamicUrl.indexOf("*") >= 0){
-				return false;
-			}
-
-			// verify match
-			final int indexLeft = pattern.indexOf("*");		
-			final int indexRight = pattern.lastIndexOf("*");	
-
-			// has any *
-			if (indexLeft>=0 || indexRight>=0){
-
-				// is just a * an nothing else : match all
-				if (pattern.length()==1){
-					return true;
-				}
-
-				boolean found = false; 
-				if (indexLeft == indexRight){ // one *
-					if (indexLeft==0){ // is on the left *xxxx
-						found = dynamicUrl.endsWith(pattern.substring(1));
-					} else if (indexLeft == pattern.length()-1){ // is on the right xxxx*
-						found =  dynamicUrl.startsWith(pattern.substring(0,indexLeft));
-					} else { // is on the middle xxx*xx
-						found = dynamicUrl.startsWith(pattern.substring(0, indexLeft)) && dynamicUrl.endsWith(pattern.substring(indexLeft+1));
-					}
-				} else if (indexLeft == 0 &&  indexRight == pattern.length() -1 ){ 
-					found = dynamicUrl.contains(pattern.substring(indexLeft+1, indexRight));
-				}  // false in any other case
-
-				if (found){
-					return true;
-				} // else , try another pattern
-			} else if (pattern.equals(url)){
+			if (pattern.match(dynamicUrl)){
 				return true;
 			}
 
@@ -172,7 +143,9 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	}
 
 	public Outcome resolveOutcome(String action, OutcomeStatus status, HttpServerContext context){
+
 		Map<OutcomeStatus, OutcomeResolver> actionOutcome = this.outcomes.get(action);
+
 		if (actionOutcome==null || status.equals(BasicOutcomeStatus.TERMINATE)){
 			return new TerminalOutcome();
 		} else {
@@ -184,7 +157,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		}
 	}
 
-	
+
 	@Override
 	public Outcome execute(HttpServerContext context) {
 
@@ -194,9 +167,6 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				return executeAction(context);
 			}
 
-			protected Outcome resolveOutcome (OutcomeStatus status, HttpServerContext context){
-				return PresenterWebCommandMapping.this.resolveOutcome(null,status, context);
-			}
 		};
 
 		chain.doChain(context);
@@ -204,20 +174,20 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		return chain.getOutcome();
 	}
 
-	public Outcome executeAction(HttpServerContext context){ 
-		
+	protected final Outcome executeAction(HttpServerContext context){ 
+
 
 		AttributeContext attributes = context.getAttributes();
-		
+
 		Outcome outcome;
 		Method actionMethod = null;
 		String action = null;
-		
+
 		try {
 			// Determine action using different strategies
 
 			// try the name match from url
-			
+
 			String actionNameFromURL = attributes.getAttribute("action", String.class);
 			actionMethod = actionNameFromURL==null ? null : actions.get(actionNameFromURL);
 
@@ -257,7 +227,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 			try{
 				Object result = Introspector.of(actionMethod).invoke(actionMethod.getReturnType(), controllerObject, args);
-			
+
 				if (result instanceof Outcome){
 					if (result instanceof URLOutcome ){
 						return (Outcome)result;
@@ -265,18 +235,20 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 						Log.onBookFor(this.getClass()).warn("Illegal outcome class. Use URLOutcome.");
 						outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE, context);
 					}
-				}else if (result==null || !(result instanceof OutcomeStatus)){
+				}else if (result instanceof String) {
+					return new Outcome(BasicOutcomeStatus.SUCCESS, result.toString(), "text/html");
+				} else if (result==null || !(result instanceof OutcomeStatus)){
 					return resolveOutcome(action,BasicOutcomeStatus.SUCCESS,context);
 				} else if (BasicOutcomeStatus.NOT_FOUND.equals(result)){
 					return new Outcome(BasicOutcomeStatus.ERROR, HttpStatusCode.NOT_FOUND);
-				} else {
+				}  else {
 					return resolveOutcome(action,(OutcomeStatus)result, context);
 				}
-				
+
 			} catch (InvocationTargetReflectionException e){
 				throw e.getCause();
 			}
-			
+
 		} catch (ValidationException e){
 			attributes.setAttribute(ContextScope.REQUEST, "validationResult", e.getResult());
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID,context );
@@ -302,6 +274,8 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		Class<?>[] argClasses = action.getParameterTypes();
 		Object[] args = new Object[argClasses.length];
 
+		Map<String, String> variables = resolvePathVariablesValues(context.getRequestUrl().getContexlessPath() + context.getRequestUrl().getFilename(true));
+		
 		for (int i =0; i <argClasses.length; i++ ){
 			if (argClasses[i].isAssignableFrom(WebContext.class)){
 				args[i] = context;
@@ -319,7 +293,17 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 				} else {
 					throw new IllegalStateException("Is not possible to inject " + HttpServletResponse.class.getName() + " on current environment");
 				}
-			} else if (!argClasses[i].isPrimitive()){
+			}  else if (action.getParameterAnnotations()[i].length > 0){
+
+				for (int a = 0; a < action.getParameterAnnotations()[i].length; a++){
+					Annotation anot = action.getParameterAnnotations()[i][a];
+					if (anot instanceof PathVariable){
+						String pathVariableName = ((PathVariable) anot).value();
+						args[i] = readPathVariable(pathVariableName ,  argClasses[i], variables);
+						break;
+					}
+				}
+			}else if (!argClasses[i].isPrimitive()){
 				args[i]=beanLoader.loadBean(context,argClasses[i], action.getParameterAnnotations()[i]);
 			}
 		}
@@ -327,21 +311,27 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		return args;
 	}
 
-
-	
-
+	private Map<String, String> resolvePathVariablesValues(String contexlessPath){
+		for (PathMatcher p : this.patterns){
+			if (p.match(contexlessPath)){
+				return p.parse(contexlessPath);
+			}
+		}
+		return Collections.emptyMap();
+	}
+	/**
+	 * @param pathVariableName
+	 * @param class1
+	 * @param variables
+	 * @return
+	 */
+	private Object readPathVariable(String pathVariableName, Class<?> type, Map<String, String> variables) {
+		return TypeCoercing.coerce(variables.get(pathVariableName), type);
+	}
 
 
 	void addInterceptor(ActionInterceptor interceptor) {
 		this.interceptors.add(interceptor);
 	}
-
-
-
-
-
-
-
-
 
 }

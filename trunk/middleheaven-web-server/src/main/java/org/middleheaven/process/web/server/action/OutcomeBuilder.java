@@ -5,9 +5,10 @@ import org.middleheaven.process.web.HttpStatusCode;
 
 public interface OutcomeBuilder {
 
-	ActionMappingBuilder forwardTo(String url);
-	ActionMappingBuilder forwardTo(String url, String asContentType);
+	OutcomeBuilder withContentAs(String contentType);
 	
+	ActionMappingBuilder forwardTo(String url);
+
 	ActionMappingBuilder redirectTo(String url);
 	ActionMappingBuilder redirectTo(String url, RedirectOptions options);
 	ActionMappingBuilder redirectTo(HttpStatusCode error);

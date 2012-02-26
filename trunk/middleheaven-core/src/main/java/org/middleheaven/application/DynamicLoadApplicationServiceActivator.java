@@ -121,7 +121,7 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 					getLog().warn("{0} is not a valid application module activator",className);
 				}
 			}else {
-				getLog().warn("{0} does not present an application module.",jar.getPath().getFileNameWithoutExtension());
+				getLog().warn("{0} does not represent an application module.",jar.getPath().getFileNameWithoutExtension());
 			}
 
 		}catch (IOException e) {

@@ -2,26 +2,25 @@ package org.middleheaven.core.wiring;
 
 import java.lang.annotation.Annotation;
 
-import org.middleheaven.core.wiring.annotations.Name;
+import org.middleheaven.core.wiring.annotations.Named;
 
 public class PropertyBindingBuilder<T>  {
 
 	protected Binding binding;
 	protected EditableBinder binder;
-	protected String name;
+	protected String label;
 	protected T object;
 	
 	PropertyBindingBuilder (EditableBinder binder , Binding binding){
 		this.binder = binder;
 		this.binding = binding;
-		this.binding.addAnnotation(Name.class);
 		binder.addBinding(binding);
 	}
 
-	public PropertyBindingBuilder<T> named (String name){
-		this.name = name;
-		if (this.object != null && name!=null){
-			((PropertyResolver<T>)binding.getResolver()).setProperty(name , object);
+	public PropertyBindingBuilder<T> labeled (String label){
+		this.label = label;
+		if (this.object != null && label!=null){
+			((PropertyResolver<T>)binding.getResolver()).setProperty(label , object);
 		}
 		return this;
 	}
@@ -33,8 +32,8 @@ public class PropertyBindingBuilder<T>  {
 	
 	public PropertyBindingBuilder<T> toInstance(T object){
 		this.object = object;
-		if (this.object != null && name!=null){
-			((PropertyResolver<T>)binding.getResolver()).setProperty(name , object);
+		if (this.object != null && label!=null){
+			((PropertyResolver<T>)binding.getResolver()).setProperty(label , object);
 		}
 		return this;
 	} 
@@ -44,10 +43,10 @@ public class PropertyBindingBuilder<T>  {
 		return this;
 	}
 	
-	public PropertyBindingBuilder<T> annotatedWith(Class<? extends Annotation> type){
-		binder.removeBinding(binding);
-		binding.addAnnotation(type);
-		binder.addBinding(binding);
-		return this;
-	}
+//	public PropertyBindingBuilder<T> annotatedWith(Class<? extends Annotation> type){
+//		binder.removeBinding(binding);
+//		binding.addAnnotation(type);
+//		binder.addBinding(binding);
+//		return this;
+//	}
 }

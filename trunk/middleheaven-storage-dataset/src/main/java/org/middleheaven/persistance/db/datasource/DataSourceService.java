@@ -2,10 +2,13 @@ package org.middleheaven.persistance.db.datasource;
 
 import javax.sql.DataSource;
 
+import org.middleheaven.core.wiring.service.Service;
+
 
 /**
  * A service that provides {@link DataSource} objects.
  */
+@Service
 public interface DataSourceService {
 
 	public DataSource getDataSource(String name); 

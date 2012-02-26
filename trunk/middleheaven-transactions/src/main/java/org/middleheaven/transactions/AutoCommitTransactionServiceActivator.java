@@ -11,7 +11,6 @@ import org.middleheaven.core.wiring.InterceptorChain;
 import org.middleheaven.core.wiring.WiringConnector;
 import org.middleheaven.core.wiring.WiringInterceptor;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -34,7 +33,7 @@ public class AutoCommitTransactionServiceActivator extends Activator {
 	}
 	
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		
 		service.addConnector(new WiringConnector(){
 
@@ -47,7 +46,7 @@ public class AutoCommitTransactionServiceActivator extends Activator {
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {}
+	public void inactivate() {}
 
 	
 	

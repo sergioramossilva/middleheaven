@@ -27,22 +27,7 @@ public interface WiringService {
 	 */
 	public void addConnector(WiringConnector ... connectors); 
 	
-	/**
-	 * Add an {@link ActivatorScanner} to the service.
-	 * 
-	 * @param scanner the {@link ActivatorScanner} to add.
-	 */
-	public void addActivatorScanner(ActivatorScanner scanner);
+
 	
-	/**
-	 * Romed an {@link ActivatorScanner} from the service.
-	 * 
-	 * @param scanner the {@link ActivatorScanner} to remove.
-	 */
-	public void removeActivatorScanner(ActivatorScanner scanner);
-	
-	/**
-	 * Execute an activation scan.
-	 */
-	public void scan();
+
 }

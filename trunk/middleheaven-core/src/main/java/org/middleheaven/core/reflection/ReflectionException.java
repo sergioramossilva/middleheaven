@@ -16,6 +16,15 @@ public class ReflectionException extends RuntimeException {
 	protected ReflectionException() {
 	}
 
+	/**
+	 * Constructor.
+	 * @param string
+	 * @param e
+	 */
+	public ReflectionException(String message, Throwable t ) {
+		super(message, t);
+	}
+
 	public static RuntimeException manage(Exception t, Class<?> type) {
 		
 		try {

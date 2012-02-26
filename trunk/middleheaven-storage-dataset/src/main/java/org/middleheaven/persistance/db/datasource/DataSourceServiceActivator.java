@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.AtivationException;
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -69,7 +68,7 @@ public class DataSourceServiceActivator extends Activator {
 	}
 
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 
 		BootstrapContainer container =  bootstrapService.getEnvironmentBootstrap().getContainer();
 
@@ -132,9 +131,12 @@ public class DataSourceServiceActivator extends Activator {
 	}
 	
 
-	@Service
+	
 	private class HashDataSourceService implements DataSourceService{
 
+		
+		public HashDataSourceService(){}
+		
 		@Override
 		public DataSource getDataSource(String name) {
 			
@@ -152,7 +154,7 @@ public class DataSourceServiceActivator extends Activator {
 
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		// TODO implement Activator.inactivate
 		
 	}

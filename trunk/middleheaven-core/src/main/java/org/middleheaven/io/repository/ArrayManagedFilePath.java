@@ -55,7 +55,7 @@ public class ArrayManagedFilePath implements ManagedFilePath , Watchable {
 	 * Constructor.
 	 * @param repository
 	 * @param path
-	 * @param name
+	 * @param label
 	 */
 	public ArrayManagedFilePath(ManagedFilePath path, String lastName) {
 		this.repository = path.getManagedFileRepository();

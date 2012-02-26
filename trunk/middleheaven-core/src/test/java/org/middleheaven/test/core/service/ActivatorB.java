@@ -1,6 +1,5 @@
 package org.middleheaven.test.core.service;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -27,14 +26,14 @@ public class ActivatorB extends Activator {
 	}
 	
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		if (service == null){
 			 throw new IllegalArgumentException();
 		}
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		// TODO implement Activator.inactivate
 		
 	}

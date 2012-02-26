@@ -45,6 +45,8 @@ import org.middleheaven.storage.types.RealTypeMapper;
 import org.middleheaven.storage.types.StringTypeMapper;
 import org.middleheaven.storage.types.TypeMapper;
 import org.middleheaven.util.QualifiedName;
+import org.middleheaven.util.identity.IntegerIdentity;
+import org.middleheaven.util.identity.LongIdentity;
 
 /**
  * 
@@ -85,7 +87,10 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 		this.registerTypeMapper(new MoneyTypeMapper());
 		this.registerTypeMapper(new CurrencyTypeMapper());
 		this.registerTypeMapper(new RealTypeMapper());
-
+		this.registerTypeMapper(new IdentityTypeMapper(IntegerIdentity.class));
+		this.registerTypeMapper(new IdentityTypeMapper(LongIdentity.class));
+		
+		this.initialize();
 	}
 
 	/**
@@ -101,8 +106,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public void initialize() {
+	private void initialize() {
 		
 		// because of dependencies, a queue must be used
 		Map<String, EntityModel> queue = new HashMap<String, EntityModel>();

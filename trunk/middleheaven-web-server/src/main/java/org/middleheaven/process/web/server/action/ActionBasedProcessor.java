@@ -2,6 +2,7 @@ package org.middleheaven.process.web.server.action;
 
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.web.HttpProcessException;
+import org.middleheaven.process.web.HttpRelativeUrl;
 import org.middleheaven.process.web.HttpStatusCode;
 import org.middleheaven.process.web.server.AbstractHttpProcessor;
 import org.middleheaven.process.web.server.HttpServerContext;
@@ -40,7 +41,13 @@ public class ActionBasedProcessor extends AbstractHttpProcessor{
 
 	}
 
-	private CharSequence stripedRequestPath(HttpServerContext context) {
+	/**
+	 * Removes the context part of the url returning a relative path.
+	 * 
+	 * @param context
+	 * @return
+	 */
+	private HttpRelativeUrl stripedRequestPath(HttpServerContext context) {
 		StringBuilder requestURL = new StringBuilder(context.getRequestUrl().toString());
 		
 		// remove context from the start and suffix from end
@@ -70,7 +77,7 @@ public class ActionBasedProcessor extends AbstractHttpProcessor{
 		if ( url.length>1){
 			context.getAttributes().setAttribute(ContextScope.REQUEST, "action", url[1]);
 		}
-		return url[0];
+		return new HttpRelativeUrl( url[0], context.getContextPath());
 	}
 
 }

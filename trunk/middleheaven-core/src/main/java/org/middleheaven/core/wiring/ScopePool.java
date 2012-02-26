@@ -16,4 +16,8 @@ public interface ScopePool {
 	public void remove(Object object);
 	
 	public <T> T getInScope (WiringSpecification<T> spec, Resolver<T> resolver);
+	
+	
+	public void addScopeListener(ScopeListener listener);
+	public void removeScopeListener(ScopeListener listener);
 }

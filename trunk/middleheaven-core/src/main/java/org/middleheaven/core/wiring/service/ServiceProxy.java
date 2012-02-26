@@ -16,14 +16,14 @@ import org.middleheaven.util.collections.CollectionUtils;
 public class ServiceProxy<T> implements ServiceListener, ProxyHandler {
 
 	Class<T> serviceClass;
-	private Map<String, String> params;
+	private Map<String, Object> params;
 	BlockingQueue<T> queue;
 
-	public ServiceProxy(Class<T> serviceClass,Map<String,String> params){
+	public ServiceProxy(Class<T> serviceClass,Map<String,Object> params){
 		this(serviceClass,null,null,params);
 	}
 	
-	protected ServiceProxy(Class<T> serviceClass, Object lateBinderObject, Method lateBinder, Map<String,String> params){
+	protected ServiceProxy(Class<T> serviceClass, Object lateBinderObject, Method lateBinder, Map<String,Object> params){
 		this.serviceClass = serviceClass;
 		this.params = params;
 	}

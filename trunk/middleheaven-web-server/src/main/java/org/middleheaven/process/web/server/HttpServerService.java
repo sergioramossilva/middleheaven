@@ -1,5 +1,6 @@
 package org.middleheaven.process.web.server;
 
+import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.process.web.UrlMapping;
 import org.middleheaven.process.web.server.filters.HttpFilter;
 import org.middleheaven.process.web.server.global.HttpCultureResolver;
@@ -10,6 +11,7 @@ import org.middleheaven.web.rendering.RenderingProcessorResolver;
  * Service to process server-side HTTP requests.
  *
  */
+@Service
 public interface HttpServerService {
 
 	public void addFilter (HttpFilter filter);
@@ -28,10 +30,13 @@ public interface HttpServerService {
 	
 	/**
 	 * Discovers and returns the ViewProcessor that can, according to it's registered UrlMapping, render the given url.
-	 * @param url
+	 * @param incomingUrl the filename from the request
+	 * @param outcomeUrl the view name from the outcome
+	 * @param contentType the contentType for the result content.
+	 * 
 	 * @return or <code>null</code> if none matches 
 	 */
-	public RenderingProcessor resolverRenderingProcessor(String url , String contentType);
+	public RenderingProcessor resolverRenderingProcessor(String incomingUrl, String viewName , String contentType);
 	
 	/**
 	 * Discovers and returns the HttpProcessor that can, according to it's registered UrlMapping, process the given url.

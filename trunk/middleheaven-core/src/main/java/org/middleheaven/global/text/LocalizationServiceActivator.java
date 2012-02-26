@@ -11,7 +11,6 @@ import java.util.Map;
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -42,7 +41,7 @@ public class LocalizationServiceActivator extends Activator{
 	}
 	
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		ContainerFileSystem environment = bootstrapService.getEnvironmentBootstrap().getContainer().getFileSystem();
 
 		masterBundle = new RepositoryDomainBundle();
@@ -56,7 +55,7 @@ public class LocalizationServiceActivator extends Activator{
 
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		masterBundle = null;
 		service = null;
 	}

@@ -21,7 +21,7 @@ public class RequestResponseWebContext extends ServletWebContext {
 
 	private final HttpServletRequest request;
 	private final HttpServletResponse response;
-	private final Map<String,String> parameters;
+	private final Map<String,String[]> parameters;
 	private ManagedFileRepository uploadRepository;
 
 	public RequestResponseWebContext(HttpServletRequest request,HttpServletResponse response, HttpCultureResolver httpCultureResolveService) {
@@ -57,7 +57,7 @@ public class RequestResponseWebContext extends ServletWebContext {
 	}
 
 	@Override
-	public Map<String, String> getParameters() {
+	public Map<String, String[]> getParameters() {
 		return this.parameters;
 	}
 

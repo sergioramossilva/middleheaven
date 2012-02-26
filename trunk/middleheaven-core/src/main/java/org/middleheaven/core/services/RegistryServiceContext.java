@@ -33,7 +33,7 @@ public final class RegistryServiceContext implements ServiceContext{
 
 	public RegistryServiceContext(LogBook book){
 		this.logBook = book;
-		
+
 		// this is intended to set the default context in a static variable
 		// TODO devise a more elegant way.
 		ServiceRegistry.context = this;
@@ -56,7 +56,7 @@ public final class RegistryServiceContext implements ServiceContext{
 			}
 
 		});
-		*/
+		 */
 	}
 
 	@Override
@@ -100,12 +100,12 @@ public final class RegistryServiceContext implements ServiceContext{
 
 
 	@Override
-	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String,String> properties) {
+	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String, Object> properties) {
 
 		if (properties == null){
-			properties = Collections.<String,String>emptyMap();
+			properties = Collections.<String,Object>emptyMap();
 		}
-		
+
 		// find current binding
 		ServiceBinding<T> binding = this.selectedServiceBinding(serviceClass, properties);
 
@@ -116,40 +116,30 @@ public final class RegistryServiceContext implements ServiceContext{
 			this.fireServiceTemporaryRemoved(binding);
 
 		} 
-		
+
 		// init binding set for the service
 		ServiceBinding<T> b = new ServiceBinding<T>(properties,implementation,serviceClass);
 		Set<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list==null ){
 			list = new CopyOnWriteArraySet<ServiceBinding>();
 			registry.put(serviceClass.getName(), list);
-		}
+		} 
+
 
 		// create and registry a proxy for the service
-		proxify(b,implementation);
-		
+		proxify(b);
+
 		try{
 			list.add(b); // add new binding
 			fireServiceAdded(b);
-
-			// special bind 
-
-			this.getService(WiringService.class, null).getObjectPool().addConfiguration(new BindConfiguration(){
-
-				@Override
-				public void configure(Binder binder) {
-					binder.bind(serviceClass).in(Service.class).toInstance(implementation);
-					// register the ServiceContext 
-					binder.bind(ServiceContext.class).in(Service.class).toInstance(RegistryServiceContext.this);
-					binder.bind(ServiceContext.class).in(Shared.class).toInstance(RegistryServiceContext.this);
-				}
-
-			});
 
 		} catch (RuntimeException e){
 			list.remove(b);
 			throw e;
 		}
+
+
+
 
 	}
 
@@ -166,14 +156,14 @@ public final class RegistryServiceContext implements ServiceContext{
 			}
 			list.clear(); // remove all for the service
 			registry.remove(serviceClass.getName());
-		
+
 		}
 	}
 
 	@Override
-	public <T, I extends T> void unRegister(Class<T> serviceClass,I implementation, Map<String,String> properties) {
+	public <T, I extends T> void unRegister(Class<T> serviceClass,I implementation, Map<String,Object> properties) {
 		ServiceBinding<T> registeredBinding = selectedServiceBinding(serviceClass, properties);
-		
+
 		if (registeredBinding!=null){
 			// already exists. remove it
 			Set<ServiceBinding> list = registry.get(serviceClass.getName());
@@ -205,7 +195,7 @@ public final class RegistryServiceContext implements ServiceContext{
 	}
 
 
-	private <T> ServiceBinding<T> selectedServiceBinding(Class<T> serviceClass, Map<String,String> properties){
+	private <T> ServiceBinding<T> selectedServiceBinding(Class<T> serviceClass, Map<String,Object> properties){
 		ServiceBinding selected = null;
 		Set<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list!=null && !list.isEmpty()){
@@ -226,50 +216,50 @@ public final class RegistryServiceContext implements ServiceContext{
 		return selected;
 	}
 	@Override
-	public <T> T getService(Class<T> serviceClass, Map<String,String> properties) {
+	public <T> T getService(Class<T> serviceClass, Map<String,Object> properties) {
 		ServiceBinding<T> selected = selectedServiceBinding(serviceClass, properties);
 
-		if (selected !=null){
-			return proxify(selected,null);
+		if (selected != null){
+			return proxify(selected);
 		}
 
 		throw new ServiceNotAvailableException(serviceClass.getName());
 	}
 
 	Map<ServiceKey, Object> proxies = new HashMap<ServiceKey, Object>();
-	
-	private <T> T proxify(ServiceBinding<T> binding, T implementation){
+
+	private <T> T proxify(ServiceBinding<T> binding){
 		ServiceKey key = new ServiceKey(binding.serviceClass,binding.properties);
 		T proxy = (T)proxies.get(key);
-		
+
 		if (proxy==null){
 			ServiceProxy<T> handler = new ServiceProxy<T>(binding.serviceClass,binding.properties);
-			
-			if(implementation!=null){
-				handler.setImplementation(implementation);
-			}
-			
+
+
+			handler.setImplementation((T) binding.implementation);
+
+
 			this.addServiceListener(handler);
-			
+
 			proxy = Introspector.of(binding.serviceClass).newProxyInstance(handler);
-			
+
 			proxies.put(key,proxy);
 		}
-		
+
 		return proxy;
 	}
-	
+
 	private static class ServiceKey {
 
-		Map<String,String> properties;
+		Map<String,Object> properties;
 		String contractName;
 		private Class<?> contractClass;
 
-		public ServiceKey(Class<?> contractClass , Map<String,String> properties) {
+		public ServiceKey(Class<?> contractClass , Map<String,Object> properties) {
 			if (properties==null || properties.isEmpty()){
 				this.properties = Collections.emptyMap();
 			} else if (!(properties instanceof SortedMap)){
-				this.properties = new ParamsMap(properties);
+				this.properties = new HashMap<String,Object>(properties);
 			} else {
 				this.properties = properties;
 			}
@@ -290,18 +280,18 @@ public final class RegistryServiceContext implements ServiceContext{
 		}
 
 	}
-	
+
 	private void addServiceListener(ServiceListener s) {
 		serviceListeners.add(s);
 	}
 
 	private static class ServiceBinding<C> {
 
-		Map<String,String> properties;
+		Map<String,Object> properties;
 		Object implementation;
 		Class<C> serviceClass;
 
-		public <I extends C> ServiceBinding(Map<String,String> properties, I implementation, Class<C> serviceClass) {
+		public <I extends C> ServiceBinding(Map<String,Object> properties, I implementation, Class<C> serviceClass) {
 			super();
 			this.serviceClass = serviceClass;
 			this.implementation = implementation;
@@ -309,13 +299,13 @@ public final class RegistryServiceContext implements ServiceContext{
 			if (properties==null || properties.isEmpty()){
 				this.properties = Collections.emptyMap();
 			} else {
-				this.properties = new TreeMap<String,String>(properties);
+				this.properties = new HashMap<String,Object>(properties);
 			}
 
 		}
 
-		
-		
+
+
 		public boolean equals(Object other){
 			return other instanceof ServiceBinding && equals((ServiceBinding)other);
 		}
@@ -334,13 +324,13 @@ public final class RegistryServiceContext implements ServiceContext{
 		 * @param properties
 		 * @return
 		 */
-		public double match (Map<String,String> properties){
+		public double match (Map<String,Object> properties){
 			if (this.properties.size() < properties.size()){
 				return 0d;
 			}
 
 			int count=0;
-			for (Map.Entry<String,String> entry : properties.entrySet() ){
+			for (Map.Entry<String,Object> entry : properties.entrySet() ){
 				if (entry.getValue()!=null && entry.getValue().equals(this.properties.get(entry.getKey()))){
 					count++;
 				}

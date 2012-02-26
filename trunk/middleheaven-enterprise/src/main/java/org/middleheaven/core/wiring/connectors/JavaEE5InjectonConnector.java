@@ -4,23 +4,21 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.AbstractAnnotationBasedWiringModelParser;
+import org.middleheaven.core.wiring.BeanModel;
 import org.middleheaven.core.wiring.ConnectableBinder;
 import org.middleheaven.core.wiring.ConstructorWiringPoint;
 import org.middleheaven.core.wiring.FieldAfterWiringPoint;
 import org.middleheaven.core.wiring.MethodAfterWiringPoint;
-import org.middleheaven.core.wiring.ScoopingModel;
 import org.middleheaven.core.wiring.WiringConnector;
-import org.middleheaven.core.wiring.WiringModel;
 import org.middleheaven.core.wiring.WiringSpecification;
-import org.middleheaven.core.wiring.namedirectory.NameDirectoryScope;
-import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.Walker;
 
@@ -49,7 +47,7 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 		private JavaEE5InjectonParser (){}
 		
 		@Override
-		public <T> void readWiringModel(Class<T> type, final WiringModel model) {
+		public <T> void readBeanModel(Class<T> type, final BeanModel model) {
 
 
 			// constructor
@@ -59,18 +57,11 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 			.constructors().retriveAll();
 
 			if (constructors.size()==1){
-				Constructor constructor = constructors.getFist();
+				Constructor constructor = constructors.getFirst();
 				//ok, use this one
-				WiringSpecification[] params = this.readParamsSpecification(constructor, new BooleanClassifier<Annotation>(){
+				WiringSpecification[] params = this.readParamsSpecification(constructor);
 
-					@Override
-					public Boolean classify(Annotation a) {
-						return a.annotationType().isAnnotationPresent(Resource.class);
-					}
-
-				});
-
-				model.setProducingWiringPoint(new ConstructorWiringPoint(constructors.getFist(),null,params));
+				model.setProducingWiringPoint(new ConstructorWiringPoint(constructors.getFirst(),null,params));
 			} else {
 				// search for one with parameters annotated with @Resource or @Resources
 
@@ -106,14 +97,7 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 
 				@Override
 				public void doWith(Field f) {
-					WiringSpecification spec = readParamsSpecification(f, new BooleanClassifier<Annotation>(){
-
-						@Override
-						public Boolean classify(Annotation a) {
-							return a.annotationType().isAnnotationPresent(Resource.class);
-						}
-
-					});
+					WiringSpecification spec = readParamsSpecification(f);
 
 					model.addAfterWiringPoint(new FieldAfterWiringPoint(f, spec));
 				}
@@ -127,14 +111,7 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 
 				@Override
 				public void doWith(Method method) {
-					WiringSpecification[] spec = readParamsSpecification(method, new BooleanClassifier<Annotation>(){
-
-						@Override
-						public Boolean classify(Annotation a) {
-							return a.annotationType().equals(Resource.class);
-						}
-
-					});
+					WiringSpecification[] spec = readParamsSpecification(method);
 
 					model.addAfterWiringPoint(new MethodAfterWiringPoint(method,null,spec));
 				}
@@ -143,22 +120,39 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 
 		}
 
+		/*
+		 * {@inheritDoc}
+		 */
 		@Override
-		public void readScoopingModel(Object obj, ScoopingModel model) {
+		protected WiringSpecification parseAnnotations(
+				Annotation[] annnnotations, Class<?> type) {
 
-			Set<Annotation> all = Introspector.of(obj.getClass()).inspect().annotations().retrive();
+			boolean isParamRequired = true;
+			boolean isParamShareable = true;
 
-			for (Annotation a : all){
-				if (a.annotationType().isAnnotationPresent(Resource.class)){
-					Resource resource = a.annotationType().getAnnotation(Resource.class);
-					model.addScope(NameDirectoryScope.class);
-					model.addParam("name", resource.name());
-					model.addParam("shareable",Boolean.valueOf(resource.shareable()).toString());
+			Map<String, Object> params = new HashMap<String, Object>();
 
+			for (Annotation a : annnnotations){
+
+				if (Resource.class.isAssignableFrom(a.annotationType())){
+					Resource resource = (Resource)a;
+					
+					params.put("name", resource.name());
+					
+					isParamShareable = resource.shareable();
 				}
+				
 			}
 
+			WiringSpecification spec = WiringSpecification.search(type,params);
+
+			spec.setRequired(isParamRequired);
+			spec.setShareable(isParamShareable);
+
+			return spec;
+			
 		}
+
 
 	}
 }

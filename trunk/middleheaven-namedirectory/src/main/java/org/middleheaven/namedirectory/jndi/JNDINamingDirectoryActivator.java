@@ -1,6 +1,5 @@
 package org.middleheaven.namedirectory.jndi;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.namedirectory.NameDirectoryService;
@@ -25,12 +24,12 @@ public class JNDINamingDirectoryActivator extends Activator {
 	}
 	
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 		service =  new JNDINameDirectoryService();
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		service = null;
 	}
 

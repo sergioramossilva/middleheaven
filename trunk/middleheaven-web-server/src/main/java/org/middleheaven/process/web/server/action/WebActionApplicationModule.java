@@ -2,35 +2,38 @@ package org.middleheaven.process.web.server.action;
 
 import org.middleheaven.application.ApplicationContext;
 import org.middleheaven.application.ApplicationID;
-import org.middleheaven.application.web.WebApplicationModule;
+import org.middleheaven.application.web.WebMainApplicationModule;
+import org.middleheaven.core.reflection.ClassSet;
+import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.process.web.UrlMapping;
-import org.middleheaven.process.web.server.HttpServerService;
-
+import org.middleheaven.process.web.server.action.ActionBasedProcessor;
 /**
  * Represent an action based application running the the web container.
  */
-public abstract class WebActionApplicationModule  extends WebApplicationModule{
+public abstract class WebActionApplicationModule  extends WebMainApplicationModule{
 
 
-	private BuildableWebCommandMappingService mappingService  = new BuildableWebCommandMappingService();
-	private HttpServerService serverService;
-	
+	private AnnotationDrivenWebCommandMappingService mappingService;
 	public WebActionApplicationModule(ApplicationID applicationID) {
 		super(applicationID);
 	}
-
-	protected HttpServerService getHttpServerService(){
-		return this.serverService;
-	} 
 	
+	@Wire
+	public void setBuildableMappingService(AnnotationDrivenWebCommandMappingService mappingService){
+		this.mappingService = mappingService;
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
-	protected final void doLoad(ApplicationContext context,HttpServerService serverService) {
-		
-		this.serverService = serverService;
+	public final void load(ApplicationContext context) {
+
 		ActionBasedProcessor processor = new ActionBasedProcessor(mappingService);
-		
-		serverService.registerHttpProcessor(this.getApplicationID().toString() + "_processor", processor, UrlMapping.matchAll());
-		
+
+		this.getHttpServerService().registerHttpProcessor(this.getApplicationID().toString() + "_processor", processor, UrlMapping.matchAll());
+
 		configurate(context);
 	}
 
@@ -38,10 +41,7 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 		return mappingService  ;
 	}
 
-	public void setBuildableMappingService(BuildableWebCommandMappingService mappingService) {
-		this.mappingService = mappingService;
-	}
-	
+
 	/**
 	 * utility method
 	 * @param presenter
@@ -49,6 +49,10 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 	 */
 	public PresenterCommandMappingBuilder map(Class<?> presenter){
 		return this.mappingService.map(presenter);
+	}
+
+	public void scan(ClassSet classSet){
+		this.mappingService.scan(classSet);
 	}
 	
 	protected void setDefaults(URLMappingBuilder builder ,String url ){
@@ -63,15 +67,18 @@ public abstract class WebActionApplicationModule  extends WebApplicationModule{
 			.onError().forwardTo("error.jsp");
 		}
 	}
-	
-	@Override
-	protected void doUnload(ApplicationContext context,
-			HttpServerService serverService) {
 
-		serverService.unRegisterHttpProcessor("id");
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void unload(ApplicationContext context) {
+
+		this.getHttpServerService().unRegisterHttpProcessor("id");
 	}
-	
+
 	protected abstract void configurate(ApplicationContext context);
-	
-	
+
+
 }

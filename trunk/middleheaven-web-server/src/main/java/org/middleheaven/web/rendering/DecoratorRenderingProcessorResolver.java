@@ -63,15 +63,26 @@ public class DecoratorRenderingProcessorResolver extends AbstractJspProcessorRes
 	}
 	
 	private String realDecoratorPath(String url){
-		url = url.substring(0, url.lastIndexOf('.'));
-		return decoratorPath + "/" + url + ".jsp";
+		return decoratorPath + "/" + stripExtention(url) + ".jsp";
 	}
 
 	private String realContentPath(String url){
-		url = url.substring(0, url.lastIndexOf('.'));
-		return contentPath + "/" + url + ".jsp";
+
+		return contentPath + "/" + stripExtention(url) + ".jsp";
 	}
 	
+	
+	private String stripExtention (String name){
+		int pos = name.lastIndexOf('.');
+		if (pos == 0) {
+			return "";
+		} else if (pos > 0){
+			return name.substring(0, pos);
+		} else {
+			return name;
+		}
+		
+	}
 	@Override
 	public RenderingProcessor resolve(String url, String contentType) {
 		return processor;

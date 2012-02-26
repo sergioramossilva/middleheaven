@@ -40,9 +40,9 @@ public class PresenterCommandMappingBuilder {
 	private class MyURLMappingBuilder implements URLMappingBuilder {
 
 		String url;
-		public MyURLMappingBuilder(String url) {
-			this.url = url;
-			mapping.addPathMatcher(url);
+		public MyURLMappingBuilder(String urlPattern) {
+			this.url = urlPattern;
+			mapping.addPathMatcher(urlPattern);
 		}
 
 		/**
@@ -117,24 +117,22 @@ public class PresenterCommandMappingBuilder {
 	}
 
 	private class MyOutcomeBuilder implements OutcomeBuilder {
-		OutcomeStatus status;
-		ActionMappingBuilder actionBuilder;
+		private OutcomeStatus status;
+		private ActionMappingBuilder actionBuilder;
+		private String contentType= "text/html";
 		
 		public MyOutcomeBuilder(ActionMappingBuilder actionBuilder, OutcomeStatus status){
 			this.actionBuilder = actionBuilder;
 			this.status = status;
 		}
 		
-		@Override
-		public ActionMappingBuilder forwardTo(String url, String asContentType) {
-			Outcome outcome = new Outcome(status, url,asContentType);
-			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(), status, new FixedOutcomeResolver(outcome));
-			return actionBuilder;
-		}
+
 		
 		@Override
 		public ActionMappingBuilder forwardTo(String url) {
-			return forwardTo(url, "text/html");
+			Outcome outcome = new Outcome(status, url,contentType);
+			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(), status, new FixedOutcomeResolver(outcome));
+			return actionBuilder;
 		}
 
 		@Override
@@ -172,6 +170,15 @@ public class PresenterCommandMappingBuilder {
 		public ActionMappingBuilder redirectToLast() {
 			PresenterCommandMappingBuilder.this.mapping.addOutcome(actionBuilder.getActionMame(),status, new RedirectToLast());
 			return actionBuilder;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public OutcomeBuilder withContentAs(String contentType) {
+			this.contentType = contentType;
+			return this;
 		}
 
 	

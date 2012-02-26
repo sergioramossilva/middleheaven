@@ -14,7 +14,7 @@ public interface ObjectPool {
 	 */
 	public <T> T getInstance(Class<T> type);
 
-	public <T> T getInstance(Class<T> type, Map<String,String> params);
+	public <T> T getInstance(Class<T> type, Map<String, ? extends Object> params);
 	
 	/**
 	 * Inspects the passed object and wire the correct dependencies defined for this object class
@@ -30,6 +30,7 @@ public interface ObjectPool {
 	public ObjectPool addConfiguration(BindConfiguration ... configuration);
 
 	
-
+	public void addObjectCycleListener(ObjectPoolListener listener);
+	public void removeObjectCycleListener(ObjectPoolListener listener);
 
 }

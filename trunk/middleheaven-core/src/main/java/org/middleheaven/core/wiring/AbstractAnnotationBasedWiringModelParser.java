@@ -4,85 +4,43 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.annotations.Wire;
-import org.middleheaven.util.classification.BooleanClassifier;
-
+/**
+ * 
+ */
+@SuppressWarnings("rawtypes")
 public abstract class AbstractAnnotationBasedWiringModelParser implements WiringModelReader {
 
-	protected WiringSpecification[] readParamsSpecification(Constructor constructor, BooleanClassifier<Annotation> filter){
+	
+	protected WiringSpecification[] readParamsSpecification(Constructor constructor){
 		return parseAnnotations(
 				constructor.getParameterAnnotations(),
-				constructor.getParameterTypes(),
-				filter,
-				true,
-				true
-				
-		);
-	}
-	protected WiringSpecification[] readParamsSpecification(Method method, BooleanClassifier<Annotation> filter){
-		boolean required =true;
-		boolean shareable = true;
-		if(method.isAnnotationPresent(Wire.class)){
-			Wire wire = Introspector.of(method).getAnnotation(Wire.class);
-			required = wire.required();
-			shareable = wire.shareabled();
-		}
-		return parseAnnotations(
-				method.getParameterAnnotations(),
-				method.getParameterTypes(),
-				filter, required , shareable
-		);
+				constructor.getParameterTypes()
+				);
 	}
 	
-	protected WiringSpecification readParamsSpecification(Field field, BooleanClassifier<Annotation> filter){
-		boolean required =true;
-		boolean shareable = true;
-		if(field.isAnnotationPresent(Wire.class)){
-			Wire wire = Introspector.of(field).getAnnotation(Wire.class);
-			required = wire.required();
-			shareable = wire.shareabled();
-		}
+	protected WiringSpecification[] readParamsSpecification(Method method){
+
+		return parseAnnotations(
+				method.getParameterAnnotations(),
+				method.getParameterTypes()
+				);
+	}
+
+	protected WiringSpecification readParamsSpecification(Field field){
+		
 		return parseAnnotations(
 				field.getAnnotations(),
-				field.getType(),
-				filter, required , shareable
-		);
+				field.getType()
+				
+				);
 	}
 
-	private WiringSpecification parseAnnotations(Annotation[] annnnotations ,Class<?> type,BooleanClassifier<Annotation> filter,boolean isRequired, boolean isShareable){
+	protected final WiringSpecification[] parseAnnotations(Annotation[][] annnnotations ,Class<?>[] types){
 
-			Set specs = new HashSet();
-			boolean isParamRequired = isRequired;
-			boolean isParamShareable = isShareable;
-			for (Annotation a : annnnotations){
-
-				if (Wire.class.isAssignableFrom(a.annotationType())){
-					Wire wire = (Wire)a;
-					isParamRequired = wire.required();
-					isParamShareable = wire.shareabled();
-				}
-
-				if (filter.classify(a).booleanValue()){
-					specs.add(a);	
-				}
-			}
-
-			WiringSpecification params = WiringSpecification.search(type,specs);
-
-			params.setRequired(isParamRequired);
-			params.setShareable(isParamShareable);
-		
-			return params;
-	}
-
-	private WiringSpecification[] parseAnnotations(Annotation[][] annnnotations ,Class<?>[] types,BooleanClassifier<Annotation> filter,boolean isRequired, boolean isShareable){
-
-		Set[] specs = new Set[types.length];
-		WiringSpecification[] params = new WiringSpecification[types.length];
+		WiringSpecification[] specs = new WiringSpecification[types.length];
 
 		for (int p =0; p< annnnotations.length;p++){
 			// inner classes have a added parameter on index 0 that 
@@ -92,28 +50,22 @@ public abstract class AbstractAnnotationBasedWiringModelParser implements Wiring
 			int typeIndex = types.length - 1 - p;
 			int annotIndex = annnnotations.length - 1 -p;
 
-			specs[typeIndex] = new HashSet();
+			boolean isParamRequired = true;
+			boolean isParamShareable = true;
+			
+			specs[typeIndex] = parseAnnotations(annnnotations[annotIndex],types[typeIndex]);
 
-			boolean isParamRequired = isRequired;
-			boolean isParamShareable = isShareable;
-			for (Annotation a : annnnotations[annotIndex]){
-
-				if (Wire.class.isAssignableFrom(a.annotationType())){
-					Wire wire = (Wire)a;
-					isParamRequired = wire.required();
-					isParamShareable = wire.shareabled();
-				}
-				if (filter.classify(a).booleanValue()){
-					specs[typeIndex].add(a);	
-				}
-			}
-
-			params[typeIndex] = WiringSpecification.search(types[typeIndex],specs[typeIndex]);
-
-			params[typeIndex].setRequired(isParamRequired);
-			params[typeIndex].setShareable(isParamShareable);
+			specs[typeIndex].setRequired(isParamRequired);
+			specs[typeIndex].setShareable(isParamShareable);
 		}
 
-		return params;
+		return specs;
 	}
+	
+	protected abstract WiringSpecification parseAnnotations(Annotation[] annnnotations ,Class<?> type);
+
+	
+	
+	
+
 }

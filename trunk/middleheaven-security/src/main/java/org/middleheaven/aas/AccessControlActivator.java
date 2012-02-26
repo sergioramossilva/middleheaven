@@ -1,6 +1,5 @@
 package org.middleheaven.aas;
 
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 
@@ -15,12 +14,12 @@ public class AccessControlActivator extends Activator {
 	}
 
 	@Override
-	public void activate(ActivationContext context) {
-		controler = new SimpleAccessControlService();
+	public void activate() {
+		controler = new StandardAccessControlService();
 	}
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		controler = null;
 	}
 

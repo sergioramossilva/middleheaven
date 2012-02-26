@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -43,7 +42,7 @@ public class FileSequenceStorageActivator extends Activator  {
 	}
 	
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 
 		BootstrapContainer container = bootstrapService.getEnvironmentBootstrap().getContainer();
 
@@ -67,7 +66,7 @@ public class FileSequenceStorageActivator extends Activator  {
 
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		// no-op
 	}
 

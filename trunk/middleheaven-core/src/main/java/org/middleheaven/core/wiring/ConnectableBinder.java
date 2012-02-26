@@ -1,6 +1,6 @@
 package org.middleheaven.core.wiring;
 
-public interface ConnectableBinder {
+public interface ConnectableBinder  {
 
 	
 	public void addWiringModelParser(WiringModelReader parser);

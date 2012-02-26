@@ -211,7 +211,7 @@ public class EnhancedCollectionAdapter<T> extends AbstractEnumerableAdapter<T> i
 	}
 
 	@Override
-	public T getFist() {
+	public T getFirst() {
 		return original.isEmpty() ? null : original.iterator().next();
 	}
 }

@@ -1,5 +1,6 @@
 package org.middleheaven.domain.model;
 
+import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.model.ModelSet;
 
 

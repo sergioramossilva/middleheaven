@@ -15,7 +15,6 @@ import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
 import org.middleheaven.core.services.ServiceListener;
-import org.middleheaven.core.wiring.activation.ActivationContext;
 import org.middleheaven.core.wiring.activation.Activator;
 import org.middleheaven.core.wiring.activation.Publish;
 import org.middleheaven.core.wiring.annotations.Wire;
@@ -33,7 +32,7 @@ public class LicenseServiceActivator extends Activator {
 	private ContainerFileSystem frs;
 
 	@Override
-	public void inactivate(ActivationContext context) {
+	public void inactivate() {
 		implementation = null;
 	}
 
@@ -48,7 +47,7 @@ public class LicenseServiceActivator extends Activator {
 	}
 
 	@Override
-	public void activate(ActivationContext context) {
+	public void activate() {
 
 		ManagedFile f = frs.getEnvironmentConfigRepository();
 		final Collection<ManagedFile> licences = new HashSet<ManagedFile>();

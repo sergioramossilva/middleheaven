@@ -1,4 +1,7 @@
-package org.middleheaven.core.wiring.namedirectory;
+/**
+ * 
+ */
+package org.middleheaven.process.web.server.action.annotaions;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -6,16 +9,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.middleheaven.core.wiring.annotations.ScopeSpecification;
+import org.middleheaven.process.web.server.action.ActionInterceptor;
 
+/**
+ * 
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
-	ElementType.FIELD, 
-	ElementType.PARAMETER,
 	ElementType.TYPE
 	})
 @Documented
-@ScopeSpecification
-public @interface NameDirectoryScope {
+public @interface Interceptor {
 
+	Class<? extends ActionInterceptor> value();
+	
 }

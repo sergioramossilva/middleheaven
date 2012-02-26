@@ -43,8 +43,20 @@ public class DefaultJspRenderingProcessorResolver extends AbstractJspProcessorRe
 		}
 		
 		private String realPath(String url){
-			url = url.substring(0, url.lastIndexOf('.'));
-			return path + "/" + url + ".jsp";
+			return path + "/" +stripExtention(url) + ".jsp";
+		}
+		
+		private String stripExtention (String name){
+			int pos = name.lastIndexOf('.');
+			 
+			if (pos == 0) {
+				return "";
+			} else if (pos > 0){
+				return name.substring(0, pos);
+			} else {
+				return name;
+			}
+			
 		}
 		
 		@Override

@@ -86,13 +86,22 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 
 	@Override
 	public <T> T proxyType(Class<T> facadeClass, ProxyHandler handler) {
+		
+		if (facadeClass == null){
+			throw new IllegalArgumentException("facadeClass is required");
+		}
+		
+		if (handler == null){
+			throw new IllegalArgumentException("handler is required");
+		}
+	
 		try{
 			return facadeClass.cast(Enhancer.create(
 					facadeClass,
 					new ProxyHandlerInterceptor(facadeClass,handler)
 			));
 		}catch (RuntimeException e){
-			throw new ReflectionException(e);
+			throw new ReflectionException("Not possible to proxy type " + facadeClass + "." + e.getMessage());
 		}
 	}
 	

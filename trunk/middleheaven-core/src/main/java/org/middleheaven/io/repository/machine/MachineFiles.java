@@ -53,4 +53,20 @@ public class MachineFiles {
 		
 		return repo.retrive(repo.getPath(file.toURI().getPath()));
 	}
+
+
+	/**
+	 * Ensures the managedFile is a machine file.
+	 * @param managedFile
+	 * @return
+	 */
+	public static ManagedFile ensureMachineFile(ManagedFile managedFile) throws IllegalArgumentException {
+		try {
+			URI uri = managedFile.getURI();
+			MachineFileSystemRepositoryProvider.getProvider().systemFileStrategy.openFileRepository(uri);
+			return managedFile;
+		} catch (Exception e){
+			throw new IllegalArgumentException("File " + managedFile.getURI() + " is not a machine file");
+		}
+	}
 }

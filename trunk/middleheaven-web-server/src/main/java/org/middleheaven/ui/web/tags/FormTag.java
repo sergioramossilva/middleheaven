@@ -2,6 +2,7 @@ package org.middleheaven.ui.web.tags;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -16,6 +17,8 @@ public class FormTag extends AbstractBodyTagSupport {
 
 	// http://docs.jquery.com/Plugins/Validation#Validate_forms_like_you.27ve_never_been_validating_before.21
 
+	private static 	Random random = new Random();
+	
 	private String action;
 	String query;
 	boolean isUpload = false;
@@ -47,7 +50,7 @@ public class FormTag extends AbstractBodyTagSupport {
 
 	public int doStartTag() throws JspException {
 		if (id==null){
-			super.id = Integer.toString((int)Math.random()); // FIX
+			super.id = Integer.toString(random.nextInt());
 		}
 
 		action = UrlStringUtils.addContextPath(

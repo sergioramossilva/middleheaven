@@ -167,12 +167,7 @@ class ServletBasedHttpServerResponse implements HttpServerResponse {
 		public MediaManagedFileContent getContent() {
 			return new MediaManagedFileContent(){
 				boolean streamIsOpen = false;
-				String name = "";
 				
-				public String getName(){
-					return name;
-				}
-			
 				@Override
 				public InputStream getInputStream() {
 					throw new UnsupportedOperationException("Response Virtual File as no input stream associated");

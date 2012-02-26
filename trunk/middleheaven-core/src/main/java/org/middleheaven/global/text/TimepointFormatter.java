@@ -44,10 +44,11 @@ public class TimepointFormatter implements Formatter<TimePoint> {
 		case DATE_ONLY:
 			formater = DateFormat.getDateInstance(DateFormat.SHORT, culture.toLocale());
 			break;
-		case DATE_AND_TIME:
+		case TIME_ONLY:
 			formater = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, culture.toLocale());
 			break;
-		case TIME_ONLY:
+		case DATE_AND_TIME:
+		default:
 			formater = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, culture.toLocale());
 			break;
 		}
@@ -73,10 +74,11 @@ public class TimepointFormatter implements Formatter<TimePoint> {
 		case DATE_ONLY:
 			formater = DateFormat.getDateInstance(DateFormat.SHORT, culture.toLocale());
 			break;
-		case DATE_AND_TIME:
+		case TIME_ONLY:
 			formater = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, culture.toLocale());
 			break;
-		case TIME_ONLY:
+		case DATE_AND_TIME:
+		default:
 			formater = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, culture.toLocale());
 			break;
 		}

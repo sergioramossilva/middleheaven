@@ -28,7 +28,4 @@ public final class InterceptionContext <T>{
 		return specification.getContract();
 	}
 
-	public Set<Annotation> getAnnotations() {
-		return specification.getSpecifications();
-	}
 }

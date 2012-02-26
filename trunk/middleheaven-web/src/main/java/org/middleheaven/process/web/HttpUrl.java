@@ -10,7 +10,7 @@ import org.middleheaven.util.UrlStringUtils;
  */
 public class HttpUrl {
 
-	private URL url;
+	protected URL url;
 	private CharSequence context;
 
 	/**
@@ -33,7 +33,9 @@ public class HttpUrl {
 	}
 
 	/**
-	 * The file name. If any.
+	 * The file name. If any. 
+	 * The filename includes any extension, if present.
+	 * 
 	 * @return the filename the url refers to or a blank string if no file is present in the name.
 	 */
 	public String getFilename(){
@@ -75,10 +77,6 @@ public class HttpUrl {
 		return url.getPort();
 	}
 
-	public URL toUrl(){
-		return url;
-	}
-
 	public String toString(){
 		return this.url.toString();
 	}
@@ -89,6 +87,13 @@ public class HttpUrl {
 	
 	public String getQueryString(){
 		return null; // TODO
+	}
+
+	/**
+	 * @return
+	 */
+	public CharSequence getContext() {
+		return context;
 	}
 	
 }

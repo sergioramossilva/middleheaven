@@ -9,6 +9,7 @@ import org.apache.lucene.util.Version;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.text.indexing.DocumentModel;
 import org.middleheaven.text.indexing.IndexableDocument;
 import org.middleheaven.text.indexing.SearchHits;
@@ -42,33 +43,33 @@ public class TestTextIndex {
 
 
 		DocumentModel docModel = new DocumentModel("ALFA");
-		docModel.addFieldModel(SimpleDocumentFieldModel.field("texto", true));
+		docModel.addFieldModel(SimpleDocumentFieldModel.field("text", true));
 		docModel.addFieldModel(SimpleDocumentFieldModel.field("age", true));
 
 		LuceneTextIndexingService service = new LuceneTextIndexingService();
 
-		service.configurateIndex("index", file , new  StopAnalyzer(Version.LUCENE_30));
+		service.configurateIndex( "index", MachineFiles.resolveFile(file) , new  StopAnalyzer(Version.LUCENE_30));
 		service.configureDocument("index", docModel);
 
 		TextIndex ti = service.getIndex("index");
 
 		SimpleIndexableDocument doc = new SimpleIndexableDocument("ALFA");
 
-		doc.addField("texto", "The quick brown fox jump over the lazy dog");
+		doc.addField("text", "The quick brown fox jump over the lazy dog");
 		doc.addField("age", "13");
 
 		ti.addDocument(doc);
 
 		SimpleIndexableDocument doc2 = new SimpleIndexableDocument("ALFA");
 
-		doc2.addField("texto", "The lazy dog cross over the stree");
+		doc2.addField("text", "The lazy dog cross over the stree");
 		doc2.addField("age", "14");
 
 		ti.addDocument(doc2);
 		
 
 		SearchHits<IndexableDocument> hits = ti.search(TextCriteriaBuilder.search()
-				.and("texto").contains("quick").all());
+				.and("text").contains("quick").all());
 
 		assertEquals(1, hits.getSize());
 
@@ -77,18 +78,18 @@ public class TestTextIndex {
 		assertEquals("ALFA",indexableDocument.getDocumentModelIdentifier());
 		
 		hits = ti.search(TextCriteriaBuilder.search()
-				.and("texto").contains("cross").all());
+				.and("text").contains("cross").all());
 		
 		assertEquals(1, hits.getSize());
 
 		hits = ti.search(TextCriteriaBuilder.search()
-				.and("texto").contains("over").all());
+				.and("text").contains("over").all());
 
 		assertEquals(2, hits.getSize());
 		
 		hits = ti.search(TextCriteriaBuilder.search()
-				.and("texto").contains("over")
-				.and("texto").contains("dog")
+				.and("text").contains("over")
+				.and("text").contains("dog")
 				.all());
 
 		assertEquals(2, hits.getSize());

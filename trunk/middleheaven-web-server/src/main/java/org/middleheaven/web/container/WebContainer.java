@@ -87,12 +87,12 @@ public abstract class WebContainer implements BootstrapContainer  {
 		fileSystem.setEnvironmentConfigRepository(root.retrive("./../conf"));
 		
 		fileSystem.setEnvironmentDataRepository(
-				root.retrive("./../data").createFolder()
+				root.retrive("../../data").createFolder()
 		);
 		
 		fileSystem.setAppConfigRepository(root.retrive(("./META-INF")));
 		fileSystem.setAppDataRepository( // TODO must contain appID
-				root.retrive("./../data").createFolder()
+				root.retrive("../../data").createFolder()
 		);
 		
 		// TODO must contain appID

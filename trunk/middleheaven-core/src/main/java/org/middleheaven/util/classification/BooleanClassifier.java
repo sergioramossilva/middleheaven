@@ -7,6 +7,4 @@ package org.middleheaven.util.classification;
  */
 public interface BooleanClassifier<T> extends Classifier<Boolean, T> {
 
-	
-
 }

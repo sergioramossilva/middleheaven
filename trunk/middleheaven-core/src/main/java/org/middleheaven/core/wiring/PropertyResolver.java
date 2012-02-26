@@ -18,9 +18,9 @@ public class PropertyResolver<T> implements Resolver<T> {
 	@Override
 	public T resolve(WiringSpecification<T> query) {
 
-		String name = query.getParam("name");
+		Object name = query.getParam("name");
 
-		if (name!=null){
+		if (name != null){
 			Object obj = map.get(name);
 			if (query.getContract().isAssignableFrom(obj.getClass())){
 				return query.getContract().cast(obj);
@@ -29,7 +29,7 @@ public class PropertyResolver<T> implements Resolver<T> {
 			}
 		}
 
-		throw new CannotResolveException(query.getContract(), name);
+		throw new CannotResolveException(query.getContract(), String.valueOf(name));
 	}
 
 	public void setProperty(String name, Object value){

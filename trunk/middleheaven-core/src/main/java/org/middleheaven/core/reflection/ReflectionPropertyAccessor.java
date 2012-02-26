@@ -266,7 +266,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 			a = Introspector.of(field).getAnnotation(annotationClass);
 		} 
 		
-		if (a==null){
+		if (a==null && assessor != null){
 			a = Introspector.of(assessor).getAnnotation(annotationClass);
 		}
 		return a;

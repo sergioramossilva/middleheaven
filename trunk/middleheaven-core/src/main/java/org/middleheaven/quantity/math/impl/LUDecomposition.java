@@ -136,7 +136,7 @@ public class LUDecomposition<F extends Field<F>> {
 
 			// Compute multipliers.
 
-			if (j < LU.rowsCount() & !LU.get(j,j).equals(ZERO)) {
+			if (j < LU.rowsCount() && !LU.get(j,j).equals(ZERO)) {
 				for (int i = j+1; i < LU.rowsCount(); i++) {
 					LU.set(i,j , LU.get(i,j).over(LU.get(j,j)));
 				}

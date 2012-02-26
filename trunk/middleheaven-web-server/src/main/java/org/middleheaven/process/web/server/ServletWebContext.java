@@ -56,7 +56,7 @@ public abstract class ServletWebContext extends WebContext {
 	/**
 	 * @return
 	 */
-	protected abstract Map<String, String> getParameters();
+	protected abstract Map<String, String[]> getParameters();
 
 
 	public ServletWebContext (){
