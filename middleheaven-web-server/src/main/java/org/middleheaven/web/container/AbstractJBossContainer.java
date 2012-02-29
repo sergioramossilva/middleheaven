@@ -20,14 +20,13 @@ import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
  */
 public abstract class AbstractJBossContainer extends StandardSevletContainer {
 
-    public AbstractJBossContainer(ServletContext context, ManagedFile root){
-       super(context, root);
+    public AbstractJBossContainer(ServletContext context){
+       super(context);
     }
 
     @Override
     public String getContainerName() {
-        // TODO add more details like System: versao , OS , etc 
-        return "JBoss";
+        return "jboss";
     }
 
     

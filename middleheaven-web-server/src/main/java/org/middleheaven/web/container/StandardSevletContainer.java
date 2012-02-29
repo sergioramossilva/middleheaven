@@ -2,15 +2,15 @@ package org.middleheaven.web.container;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.bootstrap.ContainerFileSystem;
-import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
+import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
 import org.middleheaven.process.web.CommonHttpServerContainers;
 import org.middleheaven.util.Version;
 
 public class StandardSevletContainer extends WebContainer{
 
-	public StandardSevletContainer(ServletContext context, ManagedFile root) {
-		super(context, root);
+	public StandardSevletContainer(ServletContext context) {
+		super(context);
 	}
 
 	@Override
@@ -24,6 +24,14 @@ public class StandardSevletContainer extends WebContainer{
 	@Override
 	public WebContainerInfo getWebContainerInfo() {
 		return new WebContainerInfo(CommonHttpServerContainers.UNKNOW, Version.unknown());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ManagedFileRepositoryProvider getManagedFileRepositoryProvider() {
+		return MachineFileSystemRepositoryProvider.getProvider();
 	}
 
 

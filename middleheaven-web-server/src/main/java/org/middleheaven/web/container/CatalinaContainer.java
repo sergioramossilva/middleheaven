@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.core.bootstrap.BootstrapContext;
-import org.middleheaven.core.bootstrap.EditableContainerFileSystem;
+import org.middleheaven.core.bootstrap.EditableContainerFileRepositoryManager;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.io.repository.ManagedFile;
@@ -27,8 +27,8 @@ import org.middleheaven.util.Version;
 public class CatalinaContainer extends StandardSevletContainer  {
 
 
-	public CatalinaContainer(ServletContext context, ManagedFile root){
-		super(context, root);
+	public CatalinaContainer(ServletContext context){
+		super(context);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class CatalinaContainer extends StandardSevletContainer  {
 	}
 
 	@Override
-	protected void setupDefaultFilesRepositories(ServletContext context,EditableContainerFileSystem fileSystem){
+	protected void setupDefaultFilesRepositories(ServletContext context,EditableContainerFileRepositoryManager fileSystem){
 	
 		String catalinaBasePath = PropertiesBag.bagOfSystemProperties().getProperty("catalina.base", String.class);
 		
