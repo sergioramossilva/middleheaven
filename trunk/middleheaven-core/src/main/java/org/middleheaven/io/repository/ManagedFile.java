@@ -68,7 +68,7 @@ public interface ManagedFile extends TreeWalkable<ManagedFile> , Watchable{
 	
 	/**
 	 * 
-	 * @return <code>true</code> if this implements <code>WatchableRepository</code> and a <code>FileChangeListener</code> can be attached to this in order to listen to
+	 * @return <code>true</code> if this implements <code>Watchable</code> and a <code>FileChangeListener</code> can be attached to this in order to listen to
 	 * changes in the files container in this file.<code>false</code> otherwise.
 	 */
 	public boolean isWatchable();

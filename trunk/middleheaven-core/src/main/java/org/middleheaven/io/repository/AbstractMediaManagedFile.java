@@ -4,6 +4,7 @@ package org.middleheaven.io.repository;
 import java.net.URI;
 
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
@@ -79,4 +80,5 @@ public abstract class AbstractMediaManagedFile extends AbstractManagedFile imple
 	public boolean isWriteable() {
 		return false;
 	}
+
 }

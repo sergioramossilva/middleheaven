@@ -1,11 +1,13 @@
 package org.middleheaven.io.repository.watch;
 
+import java.io.Closeable;
+
 import org.middleheaven.io.repository.ManagedFile;
 
 /**
  * 
  */
-public interface WatchService {
+public interface WatchService extends Closeable  {
 
 
 	/**

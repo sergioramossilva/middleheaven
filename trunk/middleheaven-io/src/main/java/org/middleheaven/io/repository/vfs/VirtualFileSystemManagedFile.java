@@ -357,5 +357,4 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile implements 
 		return 0;
 	}
 
-
 }

@@ -14,18 +14,10 @@ public class JWSBootstrap extends ExecutionEnvironmentBootstrap{
 	}
 	
 	@Override
-	public BootstrapContainer resolveContainer(ManagedFile rooFolder) {
-		return new DesktopUIContainer(rooFolder);
+	public BootstrapContainer resolveContainer() {
+		return new DesktopUIContainer();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected ManagedFile getEnvironmentRootFolder() {
-		// TODO filesystme must be acessible from JWS
-		return null;
-	}
 
 
 

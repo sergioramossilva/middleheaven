@@ -2,7 +2,6 @@ package org.middleheaven.core.bootstrap.client;
 
 import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.Log;
 import org.middleheaven.process.MapContext;
 import org.middleheaven.ui.UIClient;
@@ -20,8 +19,8 @@ public class DesktopUIContainer extends AbstractStandaloneContainer {
 
 	RenderingContext renderedContext;
 
-	public DesktopUIContainer(ManagedFile rootFolder) {
-		super(rootFolder);
+	public DesktopUIContainer() {
+		super();
 	}
 
 	public void start(){
@@ -87,6 +86,14 @@ public class DesktopUIContainer extends AbstractStandaloneContainer {
 		} catch (ServiceNotAvailableException e){
 			Log.onBookFor(this.getClass()).trace("Stopping without UI client");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getContainerName() {
+		return "desktop";
 	}
 
 

@@ -1,24 +1,49 @@
 package org.middleheaven.io.repository.watch;
 
+import java.io.Closeable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import org.middleheaven.core.bootstrap.BootstapListener;
+import org.middleheaven.core.bootstrap.BootstrapEvent;
+import org.middleheaven.core.bootstrap.BootstrapService;
+import org.middleheaven.core.services.ServiceRegistry;
 
 
 /**
  * Handles {@link WatchEventChannel} events using a given {@link FileChangeStrategy}. 
  */
-public class FileWatchChannelProcessor {
+public class FileWatchChannelProcessor implements Closeable {
 
 
 	private final Set<WatchEventChannel> channels = new CopyOnWriteArraySet<WatchEventChannel>();
 
 	private final FileChangeStrategy stategy;
 
+	private final Collection<ProcessorThread> processors = new ArrayList<ProcessorThread>();
+
 	public FileWatchChannelProcessor(FileChangeStrategy fileChangeStratey){
 		this.stategy = fileChangeStratey;
+		
+		ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){
+
+			@Override
+			public void onBoostapEvent(BootstrapEvent event) {
+				if (event.isBootdown()){
+					close();
+				}
+			}
+
+		});
+	}	
+	
+	public synchronized void close() {
+		for (ProcessorThread p : this.processors){
+			p.interrupt();
+		}
 	}
 
 	public void add(WatchEventChannel channel){
@@ -28,7 +53,10 @@ public class FileWatchChannelProcessor {
 
 	public void start (){
 		for (Iterator<WatchEventChannel> it = channels.iterator(); it.hasNext();){
-			new ProcessorThread(it.next()).start();
+			ProcessorThread processorThread = new ProcessorThread(it.next());
+			
+			processors.add(processorThread);
+			processorThread.start();
 		}
 	}
 

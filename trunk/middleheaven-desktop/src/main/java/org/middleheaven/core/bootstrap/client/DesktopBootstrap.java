@@ -12,8 +12,6 @@ import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
 import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.logging.Log;
 import org.middleheaven.ui.desktop.service.DesktopUIServiceActivator;
 
@@ -65,16 +63,8 @@ public class DesktopBootstrap extends ExecutionEnvironmentBootstrap {
 	}
 
 	@Override
-	public BootstrapContainer resolveContainer(ManagedFile root) {
+	public BootstrapContainer resolveContainer() {
 		return container;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected ManagedFile getEnvironmentRootFolder() {
-		return MachineFiles.getDefaultFolder();
 	}
 
 

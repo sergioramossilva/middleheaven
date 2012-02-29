@@ -8,8 +8,12 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.middleheaven.core.bootstrap.BootstapListener;
+import org.middleheaven.core.bootstrap.BootstrapEvent;
+import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.quantity.time.EpocTimePoint;
 import org.middleheaven.quantity.time.TimePoint;
 import org.middleheaven.quantity.time.TimeZone;
@@ -21,6 +25,9 @@ import org.middleheaven.quantity.time.TimeZone;
  */
 public class MachineClock extends Clock {
 
+	
+	public MachineClock (){}
+	
 	@Override
 	public TimeZone getTimeZone() {
 		return TimeZone.getDefault();
@@ -39,15 +46,35 @@ public class MachineClock extends Clock {
 		return 1;
 	}
 
-	Map<Schedule, ClockTicked> timers = new  HashMap<Schedule, ClockTicked>();
+	final Map<Schedule, ClockTicked> timers = new  HashMap<Schedule, ClockTicked>();
 
-	final Timer timer = new Timer();
+	Timer timer = null;
 
 
 	@Override
 	protected ClockTicked schedule(Schedule chronogram,Clock clock) {
 		ClockTicked ticked = timers.get(chronogram);
 		if (ticked==null){
+			
+			synchronized (timers) {
+				// create only when first time is created
+				if (timer == null) {
+					timer = new Timer("Machine Clock Alert Timer");
+				}
+				
+				ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){
+
+					@Override
+					public void onBoostapEvent(BootstrapEvent event) {
+						if (timer != null){
+							timer.cancel();
+						}
+					}
+					
+				});
+				
+			}
+				
 			ticked =new TimerClockTicked(chronogram,clock);
 			timers.put(chronogram, ticked);
 		}

@@ -9,6 +9,7 @@ import org.middleheaven.quantity.time.clocks.MachineClock;
 public abstract class Chronology {
 
 	protected Clock referenceClock = new MachineClock();
+	
 	public void setClock(Clock referenceClock){
 		this.referenceClock = referenceClock;
 	}

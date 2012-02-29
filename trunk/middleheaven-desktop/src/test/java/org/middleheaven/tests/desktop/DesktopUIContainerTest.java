@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.client.DesktopBootstrap;
 import org.middleheaven.core.bootstrap.client.DesktopUIContainer;
-import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.logging.ConsoleLogBook;
 import org.middleheaven.logging.LoggingLevel;
 
@@ -14,7 +13,7 @@ public class DesktopUIContainerTest {
 	public void testInit() {
 		
 		
-		BootstrapContainer container = new DesktopUIContainer(MachineFiles.getDefaultFolder());
+		BootstrapContainer container = new DesktopUIContainer();
         DesktopBootstrap bootstrap = new DesktopBootstrap(this,container);
         bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
 

@@ -12,6 +12,7 @@ import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.io.repository.watch.WatchEvent.Kind;
+import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.Walker;
 
@@ -187,5 +188,6 @@ public class TextFile implements ManagedFile {
 	public Enumerable<ManagedFile> children() {
 		return original.children();
 	}
+
 	
 }
