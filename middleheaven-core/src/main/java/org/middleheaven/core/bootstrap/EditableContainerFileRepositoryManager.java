@@ -2,7 +2,7 @@ package org.middleheaven.core.bootstrap;
 
 import org.middleheaven.io.repository.ManagedFile;
 
-public class EditableContainerFileSystem implements ContainerFileSystem {
+public class EditableContainerFileRepositoryManager implements ContainerFileSystem {
 
 	
 	private ManagedFile appClasspathRepository;
@@ -13,7 +13,7 @@ public class EditableContainerFileSystem implements ContainerFileSystem {
 	private ManagedFile environmentConfigRepository;
 	private ManagedFile environmentDataRepository;
 
-	public EditableContainerFileSystem(){
+	public EditableContainerFileRepositoryManager(){
 		
 	}
 	@Override

@@ -186,7 +186,7 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 
 	@Override
 	public boolean isWatchable() {
-		return false;
+		return true;
 	}
 
 	@Override

@@ -12,6 +12,9 @@ import org.middleheaven.quantity.time.clocks.MachineClock;
 import org.middleheaven.quantity.time.clocks.WrappedClock;
 
 /**
+ * 
+ * Experimental.
+ * 
  * A Simple  Network Time Protocol (SNTP) synchronous clock. The NTP server must be selected at construction time
  * but can be changed afterwards 
  * 

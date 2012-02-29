@@ -92,7 +92,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 	}
 
 
-	protected abstract BootstrapContainer resolveContainer(ManagedFile rooFolder);
+	protected abstract BootstrapContainer resolveContainer();
 
 
 	public void addActivatorDependencyResolver(ActivatorDependencyResolver listener) {
@@ -109,34 +109,17 @@ public abstract class ExecutionEnvironmentBootstrap {
 	 */
 	public final void start(LogBook log){
 
+
+		StopWatch watch = StopWatch.start();
+		
 		this.log= log;
 
 		log.info("Inicializing Environment");
 
-		ManagedFile rooFolder = this.getEnvironmentRootFolder();
-
-		this.container = resolveContainer(rooFolder);
-
-		final ContainerFileSystem fileSystem = container.getFileSystem();
-
-		log.info("Using {0} container", container.getContainerName());
-
-
-		bootstrapService = new SimpleBootstrapService(this);
-
-		StopWatch watch = StopWatch.start();
-
 		serviceRegistryContext = new RegistryServiceContext(log);
-
-		doBeforeStart();
-
-
-		log.debug("Register bootstrap services");
-
-		this.containerLogBook.addLogBook(log);
-
-
-
+		
+		bootstrapService = new SimpleBootstrapService(this);
+		
 		final ObjectPool objectPool = wiringService.getObjectPool();
 		
 		objectPool.addConfiguration(new BindConfiguration(){
@@ -145,6 +128,27 @@ public abstract class ExecutionEnvironmentBootstrap {
 			public void configure(Binder binder) {
 				binder.bind(WiringService.class).in(Service.class).toInstance(wiringService);
 				binder.bind(BootstrapService.class).in(Service.class).toInstance(bootstrapService);
+			}
+
+		});
+		
+		this.container = resolveContainer();
+
+		final ContainerFileSystem fileSystem = container.getFileSystem();
+
+		log.info("Using container : '{0}'", container.getContainerName());
+
+		doBeforeStart();
+
+		log.debug("Register bootstrap services");
+
+		this.containerLogBook.addLogBook(log);
+
+
+		objectPool.addConfiguration(new BindConfiguration(){
+
+			@Override
+			public void configure(Binder binder) {
 				binder.bind(ContainerFileSystem.class).in(Service.class).toInstance(fileSystem);
 			}
 
@@ -419,11 +423,6 @@ public abstract class ExecutionEnvironmentBootstrap {
 			resolveDependencies(dependencyModels, wiringService);
 		}
 	}
-
-	/**
-	 * @return
-	 */
-	protected abstract ManagedFile getEnvironmentRootFolder();
 
 	protected void readExtentions(List<BootstrapContainerExtention> extentions){
 

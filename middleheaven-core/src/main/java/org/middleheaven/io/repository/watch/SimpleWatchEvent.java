@@ -1,6 +1,7 @@
 package org.middleheaven.io.repository.watch;
 
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.util.Hash;
 
 /**
  * 
@@ -32,5 +33,21 @@ public class SimpleWatchEvent implements WatchEvent{
 	@Override
 	public int count() {
 		return 1;
+	}
+	
+	public int hashCode(){
+		return Hash.hash(file).hash(kind).hashCode();
+	}
+	
+	public boolean equals(Object other){
+		return (other instanceof SimpleWatchEvent) && equalsOther((SimpleWatchEvent)other); 
+	}
+
+	/**
+	 * @param other
+	 * @return
+	 */
+	private boolean equalsOther(SimpleWatchEvent other) {
+		return other.kind.equals(this.kind) && other.file.equals(this.file);
 	}
 }

@@ -8,13 +8,14 @@ import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.bootstrap.StandardContainerFileSystem;
-import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFileRepository;
+import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
+import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
+import org.middleheaven.io.repository.machine.MachineFiles;
 
 /**
  *
  */
-public class AbstractStandaloneContainer implements BootstrapContainer {
+public abstract class AbstractStandaloneContainer implements BootstrapContainer {
 
 	
 	private StandardContainerFileSystem fileSystem;
@@ -24,9 +25,9 @@ public class AbstractStandaloneContainer implements BootstrapContainer {
 	 * Constructor.
 	 * @param rootFolder the root folder where the container information can be stored.
 	 */
-	public AbstractStandaloneContainer(ManagedFile rootFolder) {
+	public AbstractStandaloneContainer() {
 
-		this.fileSystem = new StandardContainerFileSystem(rootFolder);
+		this.fileSystem = new StandardContainerFileSystem(MachineFiles.getDefaultFolder());
 	}
 	
 	@Override
@@ -43,16 +44,18 @@ public class AbstractStandaloneContainer implements BootstrapContainer {
 	public void stop() {
 		//no-op
 	}
-
-    @Override
-    public String getContainerName() {
-    	// TODO details, OS, version.. 
-        return "standalone";
-    }
     
 	@Override
 	public ContainerFileSystem getFileSystem() {
 		return fileSystem;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ManagedFileRepositoryProvider getManagedFileRepositoryProvider() {
+		return MachineFileSystemRepositoryProvider.getProvider();
 	}
 
 
