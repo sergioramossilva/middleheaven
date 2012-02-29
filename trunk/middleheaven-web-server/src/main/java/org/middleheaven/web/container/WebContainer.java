@@ -2,6 +2,7 @@ package org.middleheaven.web.container;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -9,10 +10,11 @@ import javax.servlet.ServletContext;
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
-import org.middleheaven.core.bootstrap.EditableContainerFileSystem;
+import org.middleheaven.core.bootstrap.EditableContainerFileRepositoryManager;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.machine.MachineFiles;
+import org.middleheaven.io.repository.ManagedFilePath;
+import org.middleheaven.io.repository.ManagedFileRepository;
 
 /**
  * 
@@ -20,12 +22,10 @@ import org.middleheaven.io.repository.machine.MachineFiles;
 public abstract class WebContainer implements BootstrapContainer  {
 
 	private ServletContext context;
-	private EditableContainerFileSystem fileSystem;
-	private ManagedFile root;
-	
-	public WebContainer(ServletContext context, ManagedFile root) {
+	private EditableContainerFileRepositoryManager containerFileSystem;
+
+	public WebContainer(ServletContext context) {
 		this.context = context;
-		this.root = root;
 	}
 	
 	public void configurate(BootstrapContext context) {
@@ -39,38 +39,38 @@ public abstract class WebContainer implements BootstrapContainer  {
 
 	@Override
 	public final ContainerFileSystem getFileSystem() {
-		if (this.fileSystem==null){
-			fileSystem = new EditableContainerFileSystem();
+		if (this.containerFileSystem==null){
+			containerFileSystem = new EditableContainerFileRepositoryManager();
 			
-			setupDefaultFilesRepositories(context,fileSystem);
+			setupDefaultFilesRepositories(context,containerFileSystem);
 
 			String fileMapping = this.context.getInitParameter("filesMapping");
 			if(fileMapping!=null){
-				ManagedFile file = fileSystem.getEnvironmentConfigRepository().retrive(fileMapping);
+				ManagedFile file = containerFileSystem.getEnvironmentConfigRepository().retrive(fileMapping);
 				if(file.exists()){
-					setupConfigurationForFilesRepositories(file,fileSystem);
+					setupConfigurationForFilesRepositories(file,containerFileSystem);
 				}
 			} 
 			
 			
 		}
 		
-		return fileSystem;
+		return containerFileSystem;
 	}
 	
-	protected void setupConfigurationForFilesRepositories(ManagedFile configFile, EditableContainerFileSystem fileSystem){
+	protected void setupConfigurationForFilesRepositories(ManagedFile configFile, EditableContainerFileRepositoryManager fileSystem){
 
 		Properties params = new Properties();
 		try {
 			params.load(configFile.getContent().getInputStream());
 
-			fileSystem.setEnvironmentConfigRepository(resolveFile("environmentConfig", params , fileSystem.getEnvironmentConfigRepository()));
-			fileSystem.setEnvironmentDataRepository(resolveFile("environmentData" , params , fileSystem.getEnvironmentDataRepository()));
+			fileSystem.setEnvironmentConfigRepository(resolveFile("environmentConfig", params , fileSystem.getEnvironmentConfigRepository() , fileSystem.getAppRootRepository()));
+			fileSystem.setEnvironmentDataRepository(resolveFile("environmentData" , params , fileSystem.getEnvironmentDataRepository(), fileSystem.getAppRootRepository()));
 
-			fileSystem.setAppConfigRepository(resolveFile("appConfig" , params , fileSystem.getAppConfigRepository()));
-			fileSystem.setAppDataRepository(resolveFile("appData"  , params ,fileSystem.getAppDataRepository()));
-			fileSystem.setAppLogRepository(resolveFile("appLog" , params , fileSystem.getAppLogRepository()));
-			fileSystem.setAppClasspathRepository(resolveFile("appClasspath" , params ,fileSystem.getAppClasspathRepository()));
+			fileSystem.setAppConfigRepository(resolveFile("appConfig" , params , fileSystem.getAppConfigRepository(), fileSystem.getAppRootRepository()));
+			fileSystem.setAppDataRepository(resolveFile("appData"  , params ,fileSystem.getAppDataRepository(), fileSystem.getAppRootRepository()));
+			fileSystem.setAppLogRepository(resolveFile("appLog" , params , fileSystem.getAppLogRepository(), fileSystem.getAppRootRepository()));
+			fileSystem.setAppClasspathRepository(resolveFile("appClasspath" , params ,fileSystem.getAppClasspathRepository(), fileSystem.getAppRootRepository()));
 
 
 		} catch (IOException e) {
@@ -79,8 +79,20 @@ public abstract class WebContainer implements BootstrapContainer  {
 	}
 
 	
-	protected void setupDefaultFilesRepositories(ServletContext context, EditableContainerFileSystem fileSystem ){
-
+	protected ManagedFile getContainerRoot(ServletContext servletContext){
+		
+		ManagedFileRepository repo = this.getManagedFileRepositoryProvider().newRepository(
+				URI.create("file:/" + servletContext.getRealPath("").replace(File.separatorChar, '/')),
+				null
+		);
+		
+		ManagedFilePath path = repo.getRoots().iterator().next();
+		
+		return repo.retrive(path);
+	}
+	
+	protected void setupDefaultFilesRepositories(ServletContext context, EditableContainerFileRepositoryManager fileSystem ){
+		ManagedFile root =getContainerRoot(context);
 
 		fileSystem.setAppRootRepository(root);
 		
@@ -104,17 +116,21 @@ public abstract class WebContainer implements BootstrapContainer  {
 	}
 	
 	
-	private ManagedFile resolveFile(String name, Properties params, ManagedFile defaultLocation) {
+	private ManagedFile resolveFile(String name, Properties params, ManagedFile defaultLocation, ManagedFile root) {
 		String path = (String)params.get(name);
 		if(path == null || path.trim().isEmpty()){
 			return defaultLocation;
 		}
 
+		// relative path
 		if (path.startsWith(".")){
 			return root.retrive(path).createFolder();
 		} else {
-			// TODO handle withou depending on File 
-			return MachineFiles.resolveFile(new File(path)).createFolder();
+			// absolute path
+			final ManagedFileRepository repo = this.getManagedFileRepositoryProvider().newRepository(URI.create(path), null);
+			
+			return repo.retrive(repo.getPath("."));
+
 		}
 	}
 

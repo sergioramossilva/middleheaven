@@ -15,6 +15,7 @@ import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.io.repository.MediaManagedFileContent;
+import org.middleheaven.io.repository.watch.Watchable;
 
 /**
  * 
@@ -177,6 +178,8 @@ class UploadManagedFile extends AbstractMediaManagedFile implements MediaManaged
 	protected int childrenCount() {
 		return 0;
 	}
+
+
 
 
 

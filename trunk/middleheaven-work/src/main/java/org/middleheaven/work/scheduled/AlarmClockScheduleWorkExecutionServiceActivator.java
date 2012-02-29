@@ -9,6 +9,8 @@ public class AlarmClockScheduleWorkExecutionServiceActivator extends Activator {
 	
 	AlarmClockScheduleWorkExecutionService service;
 	
+	public AlarmClockScheduleWorkExecutionServiceActivator(){}
+	
 	@Publish
 	public ScheduleWorkExecutorService getScheduleWorkExecutorService(){
 		return service;

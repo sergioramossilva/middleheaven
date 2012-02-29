@@ -14,12 +14,9 @@ import org.middleheaven.application.MetaInfApplicationServiceActivator;
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.ServletContextLogBookWriter;
 import org.middleheaven.logging.WritableLogBook;
@@ -106,8 +103,8 @@ public abstract class AbstractWebContainerBootstrap extends ExecutionEnvironment
 	}
 
 	@Override
-	public BootstrapContainer resolveContainer(ManagedFile rooFolder) {
-		WebContainer container = new WebContainerSwitcher().getWebContainer(servletContext, rooFolder);
+	public BootstrapContainer resolveContainer() {
+		WebContainer container = new WebContainerSwitcher().getWebContainer(servletContext);
 		
 		this.servletContext.setAttribute(WebContainerInfo.ATTRIBUTE_NAME, container.getWebContainerInfo());
 		
