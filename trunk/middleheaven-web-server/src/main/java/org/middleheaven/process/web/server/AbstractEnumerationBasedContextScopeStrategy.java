@@ -3,7 +3,6 @@
  */
 package org.middleheaven.process.web.server;
 
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 
@@ -11,8 +10,9 @@ import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.ContextScopeStrategy;
 import org.middleheaven.process.ObjectAttribute;
+import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.IteratorAdapter;
+import org.middleheaven.util.collections.TransformedIterator;
 
 /**
  * 
@@ -59,14 +59,15 @@ abstract class AbstractEnumerationBasedContextScopeStrategy implements ContextSc
 	public Iterator<Attribute> iterator() {
 		Iterator<String> it = CollectionUtils.enumationIterator(this.getEnumeration());
 		
-		return new IteratorAdapter <Attribute, String>(it){
+		return TransformedIterator.transform(it, new Classifier<Attribute, String>(){
 
 			@Override
-			public Attribute adaptNext(String next) {
+			public Attribute classify(String next) {
 				return new ObjectAttribute(next, getValue(next));
 			}
 			
-		};
+		});
+		
 	}
 
 	/**

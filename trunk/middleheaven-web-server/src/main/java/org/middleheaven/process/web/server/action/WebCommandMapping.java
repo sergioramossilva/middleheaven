@@ -8,7 +8,7 @@ import org.middleheaven.process.web.server.Outcome;
 public interface WebCommandMapping {
 
 
-	public boolean matches(HttpRelativeUrl url);
+	public double matches(HttpRelativeUrl url);
 	
 	public Outcome execute(HttpServerContext context);
 	

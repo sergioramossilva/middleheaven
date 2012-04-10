@@ -42,6 +42,18 @@
 	      <required>false</required>
 	      <rtexprvalue>false</rtexprvalue>
 	    </attribute>
+	    	   	<attribute>
+	      <name>cut</name>
+	      <required>false</required>
+	      <rtexprvalue>true</rtexprvalue>
+	      <description>Determines a cut in the output at a cut position. If the text is bigger thant the cut position, it will be truncated and
+	      the cutTermination will be appended</description>
+	    </attribute>
+	    <attribute>
+	      <name>cutTermination</name>
+	      <required>false</required>
+	      <rtexprvalue>true</rtexprvalue>
+	    </attribute>
 	</tag>
 	
 	<tag>

@@ -9,9 +9,11 @@ import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.core.reflection.MemberAccess;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.ObjectPool;
+import org.middleheaven.core.wiring.BindConfiguration;
+import org.middleheaven.core.wiring.Binder;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.process.web.server.action.annotaions.Interceptor;
-import org.middleheaven.process.web.server.action.annotaions.Interceptors;
+import org.middleheaven.process.web.server.action.annotaions.Interceptable;
 import org.middleheaven.process.web.server.action.annotaions.Presenter;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
@@ -26,18 +28,14 @@ import org.middleheaven.web.annotations.Paths;
 public class AnnotationDrivenWebCommandMappingService extends BuildableWebCommandMappingService {
 
 
-	private ObjectPool objectPool;
+	private WiringService wiringService;
 
-	public AnnotationDrivenWebCommandMappingService (ObjectPool objectPool){
-		this.objectPool = objectPool;
+	public AnnotationDrivenWebCommandMappingService (WiringService wiringService){
+		this.wiringService = wiringService;
 	}
-	
-	/**
-	 * Atributes {@link ObjectPool}.
-	 * @param objectPool the objectPool to set
-	 */
-	public void setObjectPool(ObjectPool objectPool) {
-		this.objectPool = objectPool;
+
+	public void setObjectPool(WiringService wiringService) {
+		this.wiringService = wiringService;
 	}
 
 
@@ -46,6 +44,21 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 		for (Class<?> type : classSet){
 			add(type);
 		}
+	}
+	
+	public PresenterCommandMappingBuilder map(final Class<?> presenter){
+
+		wiringService.addConfiguration(new BindConfiguration(){
+
+			@Override
+			public void configure(Binder binder) {
+				Class c = presenter;
+				binder.bind(presenter).inSharedScope().to(c);
+			}
+			
+		});
+		
+		return super.map(presenter);
 	}
 
 
@@ -148,30 +161,21 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 	private void setupInterceptors(URLMappingBuilder urlMappingBuilder,
 			ClassIntrospector<?> introspector) {
 		
-		Interceptors inteceptors = introspector.getAnnotation(Interceptors.class);
+		Interceptable interceptable = introspector.getAnnotation(Interceptable.class);
 
-		Interceptor[] all;
-		if (inteceptors != null){
-			all = inteceptors.value();
-		} else {
-			Interceptor interceptor = introspector.getAnnotation(Interceptor.class);
-			if (interceptor != null){
-				all = new Interceptor[]{interceptor};
-			} else {
-				all = new Interceptor[0];
+		if (interceptable != null){
+			for (Class<? extends ActionInterceptor> type : interceptable.value()){
+				
+				final ActionInterceptor instance = this.wiringService.getInstance(type);
+				if (instance != null){
+					urlMappingBuilder.through(instance);
+				} else {
+					org.middleheaven.logging.Log.onBookFor(this.getClass()).warn("Instance not found for interceptor {0}", type.getName());
+				}
 			}
 		}
 
-		
-		for (Interceptor it : all){
-			
-			final ActionInterceptor instance = objectPool.getInstance(it.value());
-			if (instance != null){
-				urlMappingBuilder.through(instance);
-			} else {
-				org.middleheaven.logging.Log.onBookFor(this.getClass()).warn("Instance not found for interceptor {0}", it.value().getName());
-			}
-		}
+	
 		
 	}
 

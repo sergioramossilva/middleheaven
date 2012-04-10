@@ -8,7 +8,7 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.core.bootstrap.BootstrapContext;
+import org.middleheaven.core.bootstrap.ExecutionContext;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.bootstrap.EditableContainerFileRepositoryManager;
 import org.middleheaven.io.ManagedIOException;
@@ -17,7 +17,7 @@ import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
 
 /**
- * 
+ * Base abstraction for a {@link BootstrapContainer} that can process web requests based on a {@link ServletContext}.
  */
 public abstract class WebContainer implements BootstrapContainer  {
 
@@ -28,7 +28,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 		this.context = context;
 	}
 	
-	public void configurate(BootstrapContext context) {
+	public void configurate(ExecutionContext context) {
 		//no-op
 	}
 	
@@ -81,8 +81,11 @@ public abstract class WebContainer implements BootstrapContainer  {
 	
 	protected ManagedFile getContainerRoot(ServletContext servletContext){
 		
+		servletContext.log("Creating root from: " + servletContext.getRealPath(""));
+		
 		ManagedFileRepository repo = this.getManagedFileRepositoryProvider().newRepository(
-				URI.create("file:/" + servletContext.getRealPath("").replace(File.separatorChar, '/')),
+				new File(servletContext.getRealPath("")).toURI(),
+				//URI.create("file://" + servletContext.getRealPath("").replace(File.separatorChar, '/')),
 				null
 		);
 		
@@ -96,13 +99,13 @@ public abstract class WebContainer implements BootstrapContainer  {
 
 		fileSystem.setAppRootRepository(root);
 		
-		fileSystem.setEnvironmentConfigRepository(root.retrive("./../conf"));
+		fileSystem.setEnvironmentConfigRepository(root.retrive("../../conf"));
 		
 		fileSystem.setEnvironmentDataRepository(
 				root.retrive("../../data").createFolder()
 		);
 		
-		fileSystem.setAppConfigRepository(root.retrive(("./META-INF")));
+		fileSystem.setAppConfigRepository(root.retrive(("META-INF")));
 		fileSystem.setAppDataRepository( // TODO must contain appID
 				root.retrive("../../data").createFolder()
 		);
@@ -110,7 +113,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 		// TODO must contain appID
 		fileSystem.setAppLogRepository(fileSystem.getAppDataRepository().retrive("log").createFolder());
 		
-		fileSystem.setAppClasspathRepository(root.retrive("./WEB-INF/classes"));
+		fileSystem.setAppClasspathRepository(root.retrive("WEB-INF/classes"));
 		
 
 	}
@@ -129,7 +132,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 			// absolute path
 			final ManagedFileRepository repo = this.getManagedFileRepositoryProvider().newRepository(URI.create(path), null);
 			
-			return repo.retrive(repo.getPath("."));
+			return repo.retrive(repo.getPath(""));
 
 		}
 	}

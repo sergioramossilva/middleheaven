@@ -9,15 +9,18 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.EditableContainerFileRepositoryManager;
+import org.middleheaven.core.bootstrap.ExecutionContext;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
-import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.machine.MachineFiles;
+import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.logging.LoggingService;
+import org.middleheaven.logging.ServletContextLogListener;
 import org.middleheaven.namedirectory.jndi.JNDINamingDirectoryActivator;
 import org.middleheaven.process.web.CommonHttpServerContainers;
 import org.middleheaven.util.PropertiesBag;
+import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.Version;
 
 /**
@@ -32,16 +35,29 @@ public class CatalinaContainer extends StandardSevletContainer  {
 	}
 
 	@Override
-	public void configurate(BootstrapContext context) {
+	public void configurate(ExecutionContext context) {
 		super.configurate(context);
 		
 		Boolean useNaming = PropertiesBag.bagOfSystemProperties().getProperty("catalina.useNaming", Boolean.FALSE, Boolean.class);
 		
 		if(useNaming.booleanValue()){
 			context.addActivator(JNDINamingDirectoryActivator.class);
+
+	
 		}
 
-
+		final ServletContext servletContext = this.getServletContext();
+		final ServletContextLogListener listener = new ServletContextLogListener(servletContext);
+		
+		String level = servletContext.getInitParameter("logging.level");
+		
+		if (!StringUtils.isEmptyOrBlank(level)){
+			listener.setLevel(LoggingLevel.valueOf(level.toUpperCase()));
+		} else {
+			listener.setLevel(LoggingLevel.WARN);
+		}
+		
+		context.getServiceContext().getService(LoggingService.class).addLogListener(listener);
 	}
 
 	@Override

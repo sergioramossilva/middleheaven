@@ -3,31 +3,46 @@
  */
 package org.middleheaven.process.web.client;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
+import java.util.Collection;
+
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.process.web.client.apache.ApacheHttpClientService;
 
 /**
  * 
  */
-public class HttpClientServiceActivator extends Activator{
+public class HttpClientServiceActivator extends ServiceActivator{
 	
 	private HttpClientService service;
 
-	@Publish
-	public HttpClientService getHttpClientService(){
-		return service;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		//no-dependencies
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(HttpClientService.class));
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void activate() {
+	public void activate(ServiceContext serviceContext) {
 		ApacheHttpClientService apacheService = new ApacheHttpClientService();
 		
 		apacheService.start();
 		
+		
+		serviceContext.register(HttpClientService.class, apacheService);
 		this.service = apacheService;
 	}
 
@@ -35,7 +50,7 @@ public class HttpClientServiceActivator extends Activator{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void inactivate() {
+	public void inactivate(ServiceContext serviceContext) {
 		service.close();
 	}
 

@@ -10,6 +10,7 @@ import javax.servlet.jsp.JspTagException;
 import org.middleheaven.global.text.TimepointFormatter.Format;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimeUtils;
+import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.identity.Identity;
 
@@ -19,12 +20,34 @@ public class OutTag extends AbstractTagSupport {
 	private Object value;
 	private int start = 0;
 	private int end = -1;
+	private int cut = -1;
+	private String cutTermination = "...";
+	
 	private String exportName = "";
 	
 	public void setValue(Object value) {
 		this.value = value;
 	}
 	
+	
+	/**
+	 * Atributes {@link int}.
+	 * @param cut the cut to set
+	 */
+	public void setCut(int cut) {
+		this.cut = cut;
+	}
+
+
+	/**
+	 * Atributes {@link String}.
+	 * @param cutTermination the cutTermination to set
+	 */
+	public void setCutTermination(String cutTermination) {
+		this.cutTermination = cutTermination;
+	}
+
+
 	public void setExportTo(String exportName){
 		this.exportName = exportName;
 	}
@@ -42,7 +65,11 @@ public class OutTag extends AbstractTagSupport {
 	}
 	
 	private void print(String str) throws IOException{
-		if (start > 0 && end > 0){
+		if (cut > 0) {
+			if (str.length() > cut){
+				str = StringUtils.subString(str, cut) + this.cutTermination;
+			}
+		} else if (start > 0 && end > 0){
 			str = str.substring(start, end);
 		} else if (start > 0){
 			str = str.substring(start);

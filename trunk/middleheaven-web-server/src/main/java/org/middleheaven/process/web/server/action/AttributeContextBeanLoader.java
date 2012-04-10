@@ -70,7 +70,7 @@ public class AttributeContextBeanLoader {
 						ContextScope.REQUEST,
 						ContextScope.SESSION,
 						ContextScope.APPLICATION
-						};
+				};
 
 
 				OUTTER_LABEL: 
@@ -90,7 +90,7 @@ public class AttributeContextBeanLoader {
 					}
 					// try to load from parameters
 					object =  new ContextAssembler(
-									ServiceRegistry.getService(WiringService.class).getObjectPool(), 
+									ServiceRegistry.getService(WiringService.class), 
 									attributes,
 									ContextScope.PARAMETERS,
 									name

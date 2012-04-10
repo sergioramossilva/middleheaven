@@ -9,7 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.middleheaven.process.web.server.action.ActionInterceptor;
+import org.middleheaven.core.wiring.annotations.Component;
 
 /**
  * 
@@ -19,8 +19,7 @@ import org.middleheaven.process.web.server.action.ActionInterceptor;
 	ElementType.TYPE
 	})
 @Documented
+@Component
 public @interface Interceptor {
-
-	Class<? extends ActionInterceptor> value();
 	
 }
