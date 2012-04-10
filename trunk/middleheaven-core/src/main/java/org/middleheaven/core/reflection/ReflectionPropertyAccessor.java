@@ -160,7 +160,9 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 				
 			}
 			
-			if (map.size() == 1){
+			if (map.isEmpty()) {
+				
+			} else if (map.size() == 1){
 				final MethodsData data = map.entrySet().iterator().next().getValue();
 				this.modifier = data.modifier;
 				this.assessor = data.assessor;
