@@ -4,22 +4,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.middleheaven.core.bootstrap.BootstapListener;
-import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.core.wiring.annotations.Component;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.util.StringUtils;
+import org.middleheaven.util.collections.ParamsMap;
 
 /**
- * Provides an {@link ApplicationLoadingService} for loading application modules present at the application configuration path
+ * Provides an {@link ApplicationService} for loading application modules present at the application configuration path
  * Searches for a  a manifest file
- * with an {@code Application-Module} entry pointing to the {@link ApplicationModule} class.
+ * with an {@code Application-Module} entry pointing to the {@link ModuleListener} class.
  * 
  * 
  */
-public class MetaInfApplicationServiceActivator extends AbstractDynamicLoadApplicationServiceActivator implements BootstapListener  {
+@Component
+public class MetaInfApplicationServiceActivator extends AbstractDynamicLoadApplicationServiceActivator   {
 
 
 	public MetaInfApplicationServiceActivator(){}
+
 
 	protected void loadPresentModules() {
 
@@ -31,23 +34,20 @@ public class MetaInfApplicationServiceActivator extends AbstractDynamicLoadAppli
 			BufferedReader reader = new BufferedReader(new InputStreamReader(manifest.getContent().getInputStream()));
 			String line;
 			try {
+				
+				ParamsMap params = new ParamsMap();
+				
 				while (((line = reader.readLine())!=null)){
-					if (line.startsWith("Application-Module")){
-
-						String className = line.substring(line.indexOf(":")+1).trim();
-						if(className!=null && !className.isEmpty()){
-							try{
-								ApplicationModule module = Introspector.of(ApplicationModule.class)
-																.load(className).newInstance();
-							
-								getAppContext().addModule(module);
-							} catch (ClassCastException e){
-								getLog().warn("{0} is not a valid application module activator",className);
-							}
-						}
-						break;
+					
+					String[] split = StringUtils.split(line, ':');
+					
+					if ( split.length == 2){
+						params.setParam(split[0], split[1]);
 					}
+
 				}
+				
+				parseAttributes(params, this.getClass().getClassLoader());
 			} catch (IOException e) {
 				throw ManagedIOException.manage(e);
 			}

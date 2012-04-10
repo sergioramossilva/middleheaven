@@ -1,11 +1,23 @@
 package org.middleheaven.application;
 
-import org.middleheaven.util.Version;
+import java.util.Collection;
 
+import org.middleheaven.core.services.ServiceContext;
+
+
+/**
+ * The set of all modules of an application.
+ * 
+ */
 public interface ApplicationContext {
 
+	public ApplicationVersion getApplication();
 	
-	public void addModule(ApplicationModule module);
+	public Collection<Module> getModules();
 	
-	public boolean isCompatibleModulePresent(String identifier, Version version);
+	public boolean isModulePresent(String name);
+	
+	public boolean isCompatibleModulePresent(ModuleVersion version);
+	
+	public ServiceContext getServiceContext();
 }

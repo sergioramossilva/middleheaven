@@ -1,10 +1,10 @@
 package org.middleheaven.application;
 
-public class ApplicationCycleEvent {
+public class ApplicationEvent {
 
 	ApplicationCycleState phase;
 
-	public ApplicationCycleEvent(ApplicationCycleState phase) {
+	public ApplicationEvent(ApplicationCycleState phase) {
 		super();
 		this.phase = phase;
 	}
