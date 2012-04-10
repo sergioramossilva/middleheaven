@@ -1,34 +1,46 @@
-package org.middleheaven.aas;
+/**
+ * 
+ */
+package org.middleheaven.text.indexing.lucene;
 
 import java.util.Collection;
 
 import org.middleheaven.core.bootstrap.activation.ServiceActivator;
 import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.text.indexing.TextIndexingService;
 
-public class AccessControlActivator extends ServiceActivator {
+/**
+ * 
+ */
+public class LuceneTextSearchServiceActivator extends ServiceActivator {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		//no-dependencies
+		
 	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(AccessControlService.class));
+	public void collectPublishedServicesSpecifications(
+			Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(TextIndexingService.class));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void activate(ServiceContext serviceContext) {
-		serviceContext.register(AccessControlService.class, new StandardAccessControlService());
+		
+
+		serviceContext.register(TextIndexingService.class, new LuceneTextIndexingService());
+		
 	}
 
 	/**
@@ -36,7 +48,7 @@ public class AccessControlActivator extends ServiceActivator {
 	 */
 	@Override
 	public void inactivate(ServiceContext serviceContext) {
-		serviceContext.unRegister(AccessControlService.class);
+		throw new UnsupportedOperationException("Not implememented yet");
 	}
 
 }

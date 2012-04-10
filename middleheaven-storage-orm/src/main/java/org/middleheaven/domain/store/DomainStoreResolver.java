@@ -4,21 +4,22 @@
 package org.middleheaven.domain.store;
 
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.wiring.ResolutionContext;
 import org.middleheaven.core.wiring.Resolver;
-import org.middleheaven.core.wiring.WiringSpecification;
+import org.middleheaven.core.wiring.WiringQuery;
 
 /**
  * Resolver {@link DomainStore}s for wiring.
  */
-class DomainStoreResolver implements Resolver<DomainStore> {
+class DomainStoreResolver implements Resolver {
 
 	
 	public DomainStoreResolver(){}
 	
 	@Override
-	public DomainStore resolve(WiringSpecification<DomainStore> specification) {
+	public Object resolve(ResolutionContext context, WiringQuery query) {
 		
-		final Object name = specification.getParam("name");
+		final Object name = query.getParam("name");
 		return new NamedEntityStore(name == null ? null : name.toString());
 	}
 	

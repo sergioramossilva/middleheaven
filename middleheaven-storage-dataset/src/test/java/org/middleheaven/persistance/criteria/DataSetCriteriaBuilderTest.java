@@ -7,7 +7,8 @@ import java.net.MalformedURLException;
 import java.util.Date;
 
 import org.junit.Test;
-import org.middleheaven.core.wiring.activation.SetActivatorScanner;
+import org.middleheaven.core.reflection.ClassSet;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
@@ -80,9 +81,9 @@ public class DataSetCriteriaBuilderTest extends MiddleHeavenTestCase {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void configurateActivators(SetActivatorScanner scannerSet) {
-		scannerSet.addActivator(DataPersistanceServiceActivator.class);
-		scannerSet.addActivator(AutoCommitTransactionServiceActivator.class);
+	protected void setupWiringBundles(WiringService service) {
+	//	classSet.addActivator(DataPersistanceServiceActivator.class);
+	//	classSet.addActivator(AutoCommitTransactionServiceActivator.class);
 	}
 	
 	@Wire 
