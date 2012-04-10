@@ -1,40 +1,57 @@
 package org.middleheaven.mail.service;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Wire;
+import java.util.Collection;
+
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.mail.MailSendingService;
 import org.middleheaven.namedirectory.NameDirectoryService;
 
-public class JavaMailActivator extends Activator {
+public class JavaMailActivator extends ServiceActivator {
 
-	MailSendingService service;
-	private NameDirectoryService nameService ;
-	
-	@Publish
-	public MailSendingService getEmailService(){
-		return service;
-	}
-	
-	@Wire(required=false)
-	public void setNameDirectoryService(NameDirectoryService nameService){
-		this.nameService = nameService;
-	}
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void activate() {
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(NameDirectoryService.class, true));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(MailSendingService.class));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void activate(ServiceContext serviceContext) {
+		
+		NameDirectoryService nameService = serviceContext.getService(NameDirectoryService.class);
+		
+
+		MailSendingService service;
 		
 		if(nameService!=null){
-			this.service = new NameDirectoryMailSessionSendingService(nameService);
+			service = new NameDirectoryMailSessionSendingService(nameService);
 		} else {
-			this.service = new LocalMailSendingService();
+			service = new LocalMailSendingService();
 		}
+		
+		serviceContext.register(MailSendingService.class, service);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void inactivate() {
-		// no-op
-
+	public void inactivate(ServiceContext serviceContext) {
+		serviceContext.unRegister(MailSendingService.class);
 	}
 
 }

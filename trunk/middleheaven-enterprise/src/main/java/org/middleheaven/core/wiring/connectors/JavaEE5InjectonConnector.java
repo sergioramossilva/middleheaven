@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.AbstractAnnotationBasedWiringModelParser;
-import org.middleheaven.core.wiring.BeanModel;
+import org.middleheaven.core.wiring.BeanDependencyModel;
 import org.middleheaven.core.wiring.ConnectableBinder;
 import org.middleheaven.core.wiring.ConstructorWiringPoint;
 import org.middleheaven.core.wiring.FieldAfterWiringPoint;
@@ -47,7 +47,7 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 		private JavaEE5InjectonParser (){}
 		
 		@Override
-		public <T> void readBeanModel(Class<T> type, final BeanModel model) {
+		public <T> void readBeanModel(Class<T> type, final BeanDependencyModel model) {
 
 
 			// constructor
