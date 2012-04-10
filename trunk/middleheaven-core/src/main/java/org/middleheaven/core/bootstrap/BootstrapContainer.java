@@ -7,9 +7,6 @@ package org.middleheaven.core.bootstrap;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
 
 
-
-
-
 /**
  * The real container to complete the bootstrap cycle.
  */
@@ -26,7 +23,7 @@ public interface  BootstrapContainer  {
      */
     public ManagedFileRepositoryProvider getManagedFileRepositoryProvider();
     
-    public void configurate(BootstrapContext context);
+    public void configurate(ExecutionContext context);
     
     public void start();
     public void stop();

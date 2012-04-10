@@ -2,21 +2,23 @@ package org.middleheaven.core.bootstrap;
 
 import java.util.List;
 
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 
 public class BootstrapChain {
 
 	List<BootstrapContainerExtention> extentions;
 	private int current=0;
 	private BootstrapContainer container;
+	private Logger logger;
 	
-	public BootstrapChain(List<BootstrapContainerExtention> extentions, BootstrapContainer container){
+	public BootstrapChain(Logger logger, List<BootstrapContainerExtention> extentions, BootstrapContainer container){
 		this.extentions  = extentions;
 		this.container = container;
+		this.logger = logger;
 	}
 	
 	
-	public void doChain(BootstrapContext context) {
+	public void doChain(ExecutionContext context) {
 		if (current<extentions.size()){
 			current++;
 
@@ -27,9 +29,9 @@ public class BootstrapChain {
 				item.extend(context, this);
 				
 			} catch (Exception e){
-				Log.onBookFor(this.getClass()).error(e,"Exception found handling {0}", item.getClass());
+				logger.error(e,"Exception found handling {0}", item.getClass());
 			} catch (Error e){
-				Log.onBookFor(this.getClass()).fatal(e,"Exception found handling interceptor {0}" , item.getClass());
+				logger.fatal(e,"Exception found handling interceptor {0}" , item.getClass());
 
 			}
 			
