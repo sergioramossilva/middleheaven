@@ -25,17 +25,17 @@ public class ActivatorWiringTest extends MiddleHeavenTestCase{
 	@Test
 	public void testInit(){
 		
-		this.getWiringService().getObjectPool().addConfiguration(new BindConfiguration (){
+		this.getWiringService().addConfiguration(new BindConfiguration (){
 
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(NameDirectoryService.class).to(JNDINameDirectoryService.class).in(Shared.class);
-				binder.bind(JavaMailActivator.class).to(JavaMailActivator.class).in(Shared.class);
+				binder.bind(NameDirectoryService.class).in(Shared.class).to(JNDINameDirectoryService.class);
+				binder.bind(JavaMailActivator.class).in(Shared.class).to(JavaMailActivator.class);
 			}
 
 		});
 		
-		JavaMailActivator instance = this.getWiringService().getObjectPool().getInstance(JavaMailActivator.class);
+		JavaMailActivator instance = this.getWiringService().getInstance(JavaMailActivator.class);
 		
 		assertNotNull(instance);
 		
