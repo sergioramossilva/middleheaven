@@ -25,19 +25,19 @@ public class ActivatorWiringTest extends MiddleHeavenTestCase{
 	@Test
 	public void testInit(){
 		
-		this.getWiringService().getObjectPool().addConfiguration(new BindConfiguration (){
+		this.getWiringService().addConfiguration(new BindConfiguration (){
 
 			@Override
 			public void configure(Binder binder) {
 
 			
-				binder.bind(NameDirectoryService.class).to(JNDINameDirectoryService.class).in(Shared.class);
-				binder.bind(DataSourceServiceActivator.class).to(DataSourceServiceActivator.class).in(Shared.class);
-				binder.bind(DataPersistanceServiceActivator.class).to(DataPersistanceServiceActivator.class).in(Shared.class);
-				binder.bind(DomainStoreServiceActivator.class).to(DomainStoreServiceActivator.class).in(Shared.class);
+				binder.bind(NameDirectoryService.class).in(Shared.class).to(JNDINameDirectoryService.class);
+				binder.bind(DataSourceServiceActivator.class).in(Shared.class).to(DataSourceServiceActivator.class);
+				binder.bind(DataPersistanceServiceActivator.class).in(Shared.class).to(DataPersistanceServiceActivator.class);
+				binder.bind(DomainStoreServiceActivator.class).in(Shared.class).to(DomainStoreServiceActivator.class);
 				// the AutoCommitTransactionServiceActivator installs the TransactionService needed by the other activators. 
 				// this must work independently of the binding order
-				binder.bind(AutoCommitTransactionServiceActivator.class).to(AutoCommitTransactionServiceActivator.class).in(Shared.class);
+				binder.bind(AutoCommitTransactionServiceActivator.class).in(Shared.class).to(AutoCommitTransactionServiceActivator.class);
 			}
 
 		});

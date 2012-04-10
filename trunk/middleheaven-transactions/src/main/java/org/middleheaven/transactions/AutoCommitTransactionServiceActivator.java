@@ -1,97 +1,111 @@
 package org.middleheaven.transactions;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.reflection.InterceptorProxyHandler;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.wiring.ConnectableBinder;
 import org.middleheaven.core.wiring.InterceptionContext;
 import org.middleheaven.core.wiring.InterceptorChain;
 import org.middleheaven.core.wiring.WiringConnector;
 import org.middleheaven.core.wiring.WiringInterceptor;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.EnhancedCollection;
 
-public class AutoCommitTransactionServiceActivator extends Activator {
-	
-	private WiringService service;
-	private AutoCommitTransactionService autoCommitTransactionService = new AutoCommitTransactionService();
-	
-	@Publish 
-	public AutoCommitTransactionService getTestTransactionService(){
-		return autoCommitTransactionService;
-	}
-	
-	@Wire 
-	public void setWiringService(WiringService service){
-		this.service = service;
-	}
-	
+public class AutoCommitTransactionServiceActivator extends ServiceActivator {
+
+	protected AutoCommitTransactionService autoCommitTransactionService;
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void activate() {
-		
-		service.addConnector(new WiringConnector(){
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		//no-dependencies
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(TransactionService.class));
+	}
+
+	@Override
+	public void activate(ServiceContext serviceContext) {
+
+		WiringService wiringService = serviceContext.getService(WiringService.class);
+
+		wiringService.addConnector(new WiringConnector(){
 
 			@Override
 			public void connect(ConnectableBinder binder) {
-				binder.addInterceptor(new TransactionInterceptor());
+				binder.addInterceptor(transactionInterceptor);
 			}
 
 		});
+		autoCommitTransactionService =   new AutoCommitTransactionService();
+
+		serviceContext.register(TransactionService.class,autoCommitTransactionService);
 	}
 
 	@Override
-	public void inactivate() {}
+	public void inactivate(ServiceContext serviceContext) {
+		serviceContext.unRegister(TransactionService.class);
+	}
 
-	
-	
+	final TransactionInterceptor transactionInterceptor = new TransactionInterceptor();
+
 	private class TransactionInterceptor implements WiringInterceptor {
 
+
 		@Override
-		public <T> void intercept(InterceptionContext<T> context,	InterceptorChain<T> chain) {
-			 chain.doChain(context);
-			 
-			 T object = context.getObject();
-			 
-			 object = (T)proxyfy(object, context.getTarget());
-			 
-			 context.setObject(object);
+		public void intercept(InterceptionContext context,	InterceptorChain chain) {
+			chain.doChain(context);
+
+			Object object = context.getObject();
+
+			object = proxyfy(object, context.getTarget());
+
+			context.setObject(object);
 		}
-		
+
+		@SuppressWarnings("unchecked")
 		public Object proxyfy (final Object original, Class<?> type){
-			
+
 			EnhancedCollection<Method> all = Introspector.of(original.getClass()).inspect()
-			.methods()
-			.notInheritFromObject()
-			.annotatedWith(Transactional.class).retriveAll();
-			
+					.methods()
+					.notInheritFromObject()
+					.annotatedWith(Transactional.class).retriveAll();
+
 			if (all.isEmpty()){
 				return original;
 			} else {
-				
+
 				final EnhancedCollection<String> names = all.collect(new Classifier<String,Method>(){
 
 					@Override
 					public String classify(Method obj) {
 						return obj.getName();
 					}
-					
+
 				});
-				
+
 				return Introspector.of(type).newProxyInstance(new InterceptorProxyHandler (original){
 
 					@Override
 					protected boolean willIntercept(Object proxy,
 							Object[] args, MethodDelegator delegator)
-							throws Throwable {
+									throws Throwable {
 						return names.contains(delegator.getName());
 					}
-					
+
 					@Override
 					protected Object doInstead(Object proxy, Object[] args, MethodDelegator delegator) throws Throwable {
 						Transaction t = autoCommitTransactionService.getTransaction();
@@ -104,12 +118,12 @@ public class AutoCommitTransactionServiceActivator extends Activator {
 							t.roolback();
 							throw e;
 						}
-						
+
 					}
-					
+
 				});
 			}
 		}
-		
+
 	}
 }
