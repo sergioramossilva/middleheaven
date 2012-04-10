@@ -3,9 +3,10 @@
  */
 package org.middleheaven.web.server.action;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class PathMatcherTest {
 
 		PathMatcher m = PathMatcher.newInstance("/results/*");
 
-		assertTrue(m.match("/results/actor/"));
+		assertTrue(m.match("/results/actor/") > 0);
 
 		Map<String, String> result = m.parse("/results/actor/");
 
@@ -31,13 +32,13 @@ public class PathMatcherTest {
 
 		m = PathMatcher.newInstance("/results/*/actors");
 
-		assertTrue(m.match("/results/23/actors"));
-		assertFalse(m.match("/results/actors"));
+		assertTrue(m.match("/results/23/actors") > 0);
+		assertFalse(m.match("/results/actors") > 0);
 
 		m = PathMatcher.newInstance("/*/actors");
 
-		assertTrue(m.match("/23/actors"));
-		assertTrue(m.match("/results/actors"));
+		assertTrue(m.match("/23/actors") > 0);
+		assertTrue(m.match("/results/actors")> 0);
 
 	}
 
@@ -58,15 +59,30 @@ public class PathMatcherTest {
 	}
 
 	@Test
+	public void testStartPathMatcher() {
+
+
+		PathMatcher m = PathMatcher.newInstance("/{id}.html");
+
+		Map<String, String> result = m.parse("/23.html");
+
+		assertEquals(1, result.size());
+
+		assertEquals("23", result.get("id"));
+
+
+	}
+	
+	@Test
 	public void testUrlRead() {
 
 
 		PathMatcher m = PathMatcher.newInstance("/{head}/{category}/{mnemonic}.html");
 
-		assertTrue(m.match("/academy/java-platform/os-alicerces-da-plataforma-java.html"));
-		assertFalse(m.match("academy/java-platform/os-alicerces-da-plataforma-java.html"));
-		assertFalse(m.match("/academy/java-platform"));
-		assertFalse(m.match("/academy/"));
+		assertTrue(m.match("/academy/java-platform/os-alicerces-da-plataforma-java.html") > 0);
+		assertFalse(m.match("academy/java-platform/os-alicerces-da-plataforma-java.html") > 0);
+		assertFalse(m.match("/academy/java-platform") > 0);
+		assertFalse(m.match("/academy/")> 0 );
 
 
 		Map<String, String> result = m.parse("/academy/java-platform/os-alicerces-da-plataforma-java.html");
@@ -86,18 +102,18 @@ public class PathMatcherTest {
 
 		PathMatcher m = PathMatcher.newInstance("architecture/*");
 
-		assertTrue(m.match("architecture/configurations/arquitetura-com-domainstore-repositorio-e-query-object"));
-		assertFalse(m.match("architecture"));
+		assertTrue(m.match("architecture/configurations/arquitetura-com-domainstore-repositorio-e-query-object") > 0);
+		assertFalse(m.match("architecture") > 0);
 
 		m = PathMatcher.newInstance("architecture");
 
-		assertFalse(m.match("architecture/configurations/arquitetura-com-domainstore-repositorio-e-query-object"));
-		assertTrue(m.match("architecture"));
+		assertFalse(m.match("architecture/configurations/arquitetura-com-domainstore-repositorio-e-query-object") > 0);
+		assertTrue(m.match("architecture") > 0);
 
 		m = PathMatcher.newInstance("architecture/*/{key}");
 
-		assertTrue(m.match("architecture/configurations/arquitetura-com-domainstore-repositorio-e-query-object"));
-		assertFalse(m.match("architecture"));
+		assertTrue(m.match("architecture/configurations/arquitetura-com-domainstore-repositorio-e-query-object") > 0);
+		assertFalse(m.match("architecture") > 0);
 
 		Map<String, String> result = m.parse("architecture/configurations/arquitetura-com-domainstore-repositorio-e-query-object");
 	

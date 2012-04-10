@@ -12,7 +12,8 @@ import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.BindingNotFoundException;
-import org.middleheaven.core.wiring.ObjectPool;
+import org.middleheaven.core.wiring.WiringService;
+import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;
@@ -34,9 +35,9 @@ import org.w3c.dom.NodeList;
 
 public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> implements UIComponentBuilder {
 
-	ObjectPool wiringContext;
+	WiringService wiringContext;
 	
-	public XMLUIComponentBuilder(ObjectPool wiringContext){
+	public XMLUIComponentBuilder(WiringService wiringContext){
 		this.wiringContext = wiringContext;
 	}
 
@@ -239,7 +240,7 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 		
 		@Override
 		public void configure(Binder binder) {
-			binder.bind(uiModelClass).toInstance(uiModel);
+			binder.bind(uiModelClass).in(Shared.class).toInstance(uiModel);
 		}
 		
 	}

@@ -6,33 +6,49 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIEnvironmentType;
 import org.middleheaven.ui.UIException;
 import org.middleheaven.ui.UIService;
 
-public abstract class AbstractUIServiceActivator extends Activator {
+public abstract class AbstractUIServiceActivator extends ServiceActivator {
 
-	SimpleUIService service = new SimpleUIService();
 	
-	@Publish
-	public final UIService getUIService(){
-		return service;
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public final void activate() {
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		//no-dependencies
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(UIService.class));
+	}
+	
+	@Override
+	public final void activate(ServiceContext serviceContext) {
+		
+		SimpleUIService service = new SimpleUIService();
+		
 		registerEnvironment(service);
+		
+		serviceContext.register(UIService.class, service);
 	}
 	
 	protected abstract void registerEnvironment(UIService uiService);
 	
+	
 	@Override
-	public void inactivate() {
-		
+	public void inactivate(ServiceContext serviceContext) {
+		serviceContext.unRegister(UIService.class);
 	}
 
 	@Service

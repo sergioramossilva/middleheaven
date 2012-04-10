@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.middleheaven.aas.old.AccessDeniedException;
-import org.middleheaven.logging.Log;
+import org.middleheaven.aas.old.AccessDeniedException;import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.process.web.HttpProcessException;
 import org.middleheaven.process.web.HttpProcessIOException;
 import org.middleheaven.process.web.HttpStatusCode;
@@ -36,6 +35,7 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 	private boolean stopped = false;
 	
 	private HttpCultureResolver httpCultureResolveService = new RequestAgentHttpCultureResolver();
+	private Logger logger;
 	
 	private class HttpMapping{
 
@@ -47,6 +47,11 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 			this.mapping = mapping;
 		}
 
+	}
+	
+	
+	public AbstractHttpServerService (){
+		this.logger = Log.onBookFor(this.getClass());
 	}
 	
 	@Override
@@ -163,13 +168,13 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 	void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 
 		if (isStopped()){
-			Log.onBookFor(this.getClass()).warn("HttpServerService is stopped.");
+			logger.warn("HttpServerService is stopped.");
 			response.sendError(HttpStatusCode.NOT_FOUND.intValue()); 
 			return;
 		}
 
 		if (!isAvailable()){
-			Log.onBookFor(this.getClass()).warn("HttpServerService is not available.");
+			logger.warn("HttpServerService is not available.");
 			response.sendError(HttpStatusCode.SERVICE_UNAVAILABLE.intValue()); 
 			return;
 		}
@@ -178,7 +183,7 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 		HttpProcessor processor = resolveControlProcessor(request.getRequestURI());
 
 		if (processor == null){
-			Log.onBookFor(this.getClass()).warn("ControlProcessor has not found.");
+			logger.warn("ControlProcessor has not found for {0}", request.getRequestURI());
 			response.sendError(HttpStatusCode.NOT_IMPLEMENTED.intValue()); 
 			return;
 		}
@@ -192,10 +197,10 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 			Outcome outcome = this.doService(context, processor);
 
 			if(outcome == null){
-				Log.onBookFor(this.getClass()).warn("Outcome is null for {0}", request.getRequestURI());
+				logger.warn("Outcome is null for {0}", request.getRequestURI());
 				response.sendError(HttpStatusCode.NOT_FOUND.intValue());
 			} else if (outcome.isTerminal()){
-				Log.onBookFor(this.getClass()).debug("Outcome is terminal for {0} ", request.getRequestURI());
+				logger.debug("Outcome is terminal for {0} ", request.getRequestURI());
 				return; // do not process view. The response is already written.
 			} else if (outcome.isError){
 				response.sendError(outcome.getHttpCode().intValue());
@@ -219,7 +224,7 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 				RenderingProcessor render = this.resolverRenderingProcessor(context.getRequestUrl().getFilename(), outcome.getUrl(), contentType);
 
 				if (render == null){
-					Log.onBookFor(this.getClass()).error("Render could not be found for {0}" , outcome);
+					logger.error("Render could not be found for {0}" , outcome);
 					response.sendError(HttpStatusCode.NOT_FOUND.intValue());
 				} else {
 					render.process(context, outcome,contentType);
@@ -227,7 +232,7 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 			}
 
 		}catch (AccessDeniedException e){
-			Log.onBookFor(this.getClass()).warn("Access denied to {0}", request.getRequestURI());
+			logger.warn("Access denied to {0}", request.getRequestURI());
 			response.sendError(HttpStatusCode.FORBIDDEN.intValue());
 		}catch (HttpProcessIOException e){
 			throw e.getIOException();

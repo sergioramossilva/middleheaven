@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,11 +27,14 @@ import org.middleheaven.process.web.HttpStatusCode;
 import org.middleheaven.process.web.server.HttpServerContext;
 import org.middleheaven.process.web.server.Outcome;
 import org.middleheaven.process.web.server.WebContext;
+import org.middleheaven.util.Hash;
 import org.middleheaven.util.coersion.TypeCoercing;
+import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Walker;
 import org.middleheaven.validation.ValidationException;
 import org.middleheaven.web.annotations.Delete;
 import org.middleheaven.web.annotations.Get;
+import org.middleheaven.web.annotations.In;
 import org.middleheaven.web.annotations.PathVariable;
 import org.middleheaven.web.annotations.Post;
 import org.middleheaven.web.annotations.ProcessRequest;
@@ -62,7 +64,25 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	public String toString(){
 		return controllerClass.getName() + "->" + patterns.toString();
 	}
+	
+	public int hashCode(){
+		return Hash.hash(controllerClass.getName()).hash(patterns.size()).hashCode();
+	}
 
+	/**
+	 * {@inheritDoc}
+	*/
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof PresenterWebCommandMapping) && equalsPresenterWebCommandMapping((PresenterWebCommandMapping)obj); 
+	}
+	
+	
+	private boolean equalsPresenterWebCommandMapping(PresenterWebCommandMapping other) {
+		return this.controllerClass.equals(other.controllerClass) && this.patterns.size() == other.patterns.size() &&
+				CollectionUtils.equalContents(this.patterns, other.patterns);
+	}
+		
 	/**
 	 * Constructor.
 	 * @param presenterClass the presenter class.
@@ -109,7 +129,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		});
 
 		// singleton per mapper
-		controllerObject = ServiceRegistry.getService(WiringService.class).getObjectPool().getInstance(presenterClass);
+		controllerObject = ServiceRegistry.getService(WiringService.class).getInstance(presenterClass);
 	}
 
 	public void addPathMatcher(String regex){
@@ -117,18 +137,19 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 	}
 
 	@Override
-	public boolean matches(HttpRelativeUrl url) {
+	public double matches(HttpRelativeUrl url) {
 		
 		String dynamicUrl = url.toString();
 		
 		for (PathMatcher pattern : patterns){
 
-			if (pattern.match(dynamicUrl)){
-				return true;
+			final double match = pattern.match(dynamicUrl);
+			if (match > 0 ){
+				return match;
 			}
 
 		}
-		return false;
+		return 0d;
 	}
 
 
@@ -301,6 +322,9 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 						String pathVariableName = ((PathVariable) anot).value();
 						args[i] = readPathVariable(pathVariableName ,  argClasses[i], variables);
 						break;
+					} else if (anot instanceof In){
+						args[i] = context.getAttributes().getAttribute(((In) anot).value(), argClasses[i]);
+						break;
 					}
 				}
 			}else if (!argClasses[i].isPrimitive()){
@@ -313,7 +337,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 	private Map<String, String> resolvePathVariablesValues(String contexlessPath){
 		for (PathMatcher p : this.patterns){
-			if (p.match(contexlessPath)){
+			if (p.match(contexlessPath) > 0){
 				return p.parse(contexlessPath);
 			}
 		}

@@ -3,11 +3,10 @@ package org.middleheaven.ui.rendering;
 
 import java.io.Serializable;
 
-import org.apache.tools.ant.types.Parameterizable;
 import org.middleheaven.ui.UIComponent;
 
 
-public interface RenderTheme extends Serializable, Parameterizable{
+public interface RenderTheme extends Serializable{
     
     
     public void installTheme (RenderKit renderKit);

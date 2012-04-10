@@ -1,30 +1,46 @@
 package org.middleheaven.work.scheduled;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
+import java.util.Collection;
+
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 
 
-public class AlarmClockScheduleWorkExecutionServiceActivator extends Activator {
+public class AlarmClockScheduleWorkExecutionServiceActivator extends ServiceActivator {
 
 	
-	AlarmClockScheduleWorkExecutionService service;
-	
+
 	public AlarmClockScheduleWorkExecutionServiceActivator(){}
-	
-	@Publish
-	public ScheduleWorkExecutorService getScheduleWorkExecutorService(){
-		return service;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		//no-dependencies
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(AlarmClockScheduleWorkExecutionService.class));
 	}
 	
-	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void activate() {
-		service = new AlarmClockScheduleWorkExecutionService();
-		
+	public void activate(ServiceContext serviceContext) {
+		serviceContext.register(AlarmClockScheduleWorkExecutionService.class, new AlarmClockScheduleWorkExecutionService());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void inactivate() {
-		// no-op
+	public void inactivate(ServiceContext serviceContext) {
+		serviceContext.unRegister(AlarmClockScheduleWorkExecutionService.class);
 	}
 }

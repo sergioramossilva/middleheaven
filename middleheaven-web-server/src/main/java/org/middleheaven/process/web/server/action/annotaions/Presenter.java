@@ -9,6 +9,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.middleheaven.core.wiring.annotations.Component;
+
 /**
  * 
  */
@@ -17,6 +19,7 @@ import java.lang.annotation.Target;
 	ElementType.TYPE
 	})
 @Documented
+@Component
 public @interface Presenter {
 
 }

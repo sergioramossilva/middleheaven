@@ -6,10 +6,18 @@ import org.middleheaven.web.rendering.DefaultJspRenderingProcessorResolver;
 // created directly on the WebContainerBoostrap
 class ServletHttpServerService extends AbstractHttpServerService {
 
-	public ServletHttpServerService(){
-
+	/**
+	 * Constructor.
+	 * @param logger
+	 */
+	public ServletHttpServerService() {
+		super();
+		
 		addRenderingProcessorResolver("jsp",new DefaultJspRenderingProcessorResolver(),UrlMapping.matchAll());
+		
 	}
+
+
 
 
 }

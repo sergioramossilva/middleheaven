@@ -79,7 +79,7 @@ public abstract class AbstractUIComponentIterationTagSupport extends AbstractIte
 	}
 	
 	protected void prepareRender(TagContext attributeContext) {
-		this.getModel().setEnabled(enabled);		
+		//this.getModel().setEnabled(enabled);		
 	}
 
 	public int doEndTag() throws JspException{

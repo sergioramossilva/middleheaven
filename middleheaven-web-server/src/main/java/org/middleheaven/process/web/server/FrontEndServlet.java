@@ -50,7 +50,6 @@ public class FrontEndServlet extends HttpServlet {
 			throw e;
 		} catch (Throwable t){
 			this.getServletContext().log("Unexpected Exception", t);
-			t.printStackTrace();
 		}
 		
 		

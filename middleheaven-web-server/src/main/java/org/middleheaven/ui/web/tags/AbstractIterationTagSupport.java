@@ -44,7 +44,7 @@ public class AbstractIterationTagSupport extends AbstractBodyTagSupport {
 				return EVAL_BODY_BUFFERED;
 			}
 		}
-		releaseState();
+//		releaseState();
 		return SKIP_BODY;
 	}
 	

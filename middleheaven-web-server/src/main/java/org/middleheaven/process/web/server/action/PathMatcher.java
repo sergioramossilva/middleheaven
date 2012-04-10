@@ -30,7 +30,7 @@ public class PathMatcher {
 			int posStart = builder.indexOf("{");
 		    int posStartAll = builder.indexOf("*");
 		    
-			if ( posStartAll > 0 && posStartAll < posStart){
+			if ( posStartAll >= 0 && posStartAll < posStart){
 				builder.replace(posStartAll, posStartAll+1, "{??}");
 			}
 			
@@ -107,8 +107,15 @@ public class PathMatcher {
 	 * @param string
 	 * @return
 	 */
-	public boolean match(String url) {
-		return this.pattern.matcher(url).find();
+	public double match(String url) {
+		if(this.pattern.matcher(url).find()){
+			if(names.length==0){
+				return 1d;
+			} else {
+				return 0.5d;
+			}
+		}
+		return 0d;
 	}
 	
 	public String toString(){

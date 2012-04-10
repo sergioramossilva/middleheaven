@@ -1,41 +1,58 @@
 package org.middleheaven.process.web.server.action;
 
 import org.middleheaven.application.ApplicationContext;
-import org.middleheaven.application.ApplicationID;
-import org.middleheaven.application.web.WebMainApplicationModule;
+import org.middleheaven.application.web.WebModule;
 import org.middleheaven.core.reflection.ClassSet;
-import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.process.web.UrlMapping;
-import org.middleheaven.process.web.server.action.ActionBasedProcessor;
+import org.middleheaven.util.StringUtils;
 /**
  * Represent an action based application running the the web container.
  */
-public abstract class WebActionApplicationModule  extends WebMainApplicationModule{
+public abstract class WebActionModule  extends WebModule{
 
 
 	private AnnotationDrivenWebCommandMappingService mappingService;
-	public WebActionApplicationModule(ApplicationID applicationID) {
-		super(applicationID);
+	private WiringService wiringService;
+
+	public WebActionModule() {
+
 	}
 	
-	@Wire
-	public void setBuildableMappingService(AnnotationDrivenWebCommandMappingService mappingService){
-		this.mappingService = mappingService;
+	private String processorID() {
+		return this.getModuleVersion().toString() + "_processor";
 	}
-
+	
 	/**
 	 * 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void load(ApplicationContext context) {
-
+	protected void configurateModule(ApplicationContext context){
+	
+		WiringService wiringService = context.getServiceContext().getService(WiringService.class);
+		
+		this.mappingService = new AnnotationDrivenWebCommandMappingService(wiringService);
+		
 		ActionBasedProcessor processor = new ActionBasedProcessor(mappingService);
 
-		this.getHttpServerService().registerHttpProcessor(this.getApplicationID().toString() + "_processor", processor, UrlMapping.matchAll());
+		// TODO add module context suffix
+		this.getHttpServerService().registerHttpProcessor(processorID(), processor, UrlMapping.matchAll());
 
+	
 		configurate(context);
 	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void stop(ApplicationContext context) {
+
+		this.getHttpServerService().unRegisterHttpProcessor(processorID());
+	}
+
 
 	public BuildableWebCommandMappingService getBuildableMappingService() {
 		return mappingService  ;
@@ -58,7 +75,7 @@ public abstract class WebActionApplicationModule  extends WebMainApplicationModu
 	protected void setDefaults(URLMappingBuilder builder ,String url ){
 		// set defaults
 		if (url.indexOf(".")>=0){
-			String[] parts = url.substring(1).split("\\.");
+			String[] parts = StringUtils.split(url, '.');
 			String presenter = parts[0]; 
 			builder.withNoAction()
 			.onSuccess().forwardTo(presenter.concat("/sucess.jsp"))
@@ -68,15 +85,6 @@ public abstract class WebActionApplicationModule  extends WebMainApplicationModu
 		}
 	}
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void unload(ApplicationContext context) {
-
-		this.getHttpServerService().unRegisterHttpProcessor("id");
-	}
 
 	protected abstract void configurate(ApplicationContext context);
 

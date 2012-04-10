@@ -1,6 +1,9 @@
 package org.middleheaven.process.web.server.action;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.process.web.HttpRelativeUrl;
@@ -32,12 +35,23 @@ public class BuildableWebCommandMappingService implements WebCommandMappingServi
 	
 	@Override
 	public WebCommandMapping resolve(HttpRelativeUrl url) {
+		
+		
+		WebCommandMapping mapping = null;
+		double max = 0;
+		
 		for (WebCommandMapping m : mappings){
-			if (m.matches(url)){
-				return m;
+			double match = m.matches(url);
+			if (  match > max ){
+				mapping = m;
+				max = match;
+				if (max == 1d){
+					break;
+				}
 			}
 		}
-		return null;
+		
+		return mapping;
 	}
 
 }

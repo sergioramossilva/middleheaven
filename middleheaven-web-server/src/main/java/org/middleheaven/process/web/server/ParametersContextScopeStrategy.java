@@ -5,14 +5,14 @@ package org.middleheaven.process.web.server;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.ContextScopeStrategy;
 import org.middleheaven.process.ObjectAttribute;
+import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.coersion.TypeCoercing;
-import org.middleheaven.util.collections.IteratorAdapter;
+import org.middleheaven.util.collections.TransformedIterator;
 
 class ParametersContextScopeStrategy implements ContextScopeStrategy {
 
@@ -27,14 +27,15 @@ class ParametersContextScopeStrategy implements ContextScopeStrategy {
 	 */
 	@Override
 	public Iterator<Attribute> iterator() {
-		return new IteratorAdapter<Attribute, Map.Entry<String, String[]>>(parameters.entrySet().iterator()){
+		return TransformedIterator.transform(parameters.entrySet().iterator(), new Classifier<Attribute, Map.Entry<String, String[]>>(){
 
 			@Override
-			public Attribute adaptNext(Entry<String, String[]> next) {
+			public Attribute classify(Map.Entry<String, String[]> next) {
 				return new ObjectAttribute(next.getKey(), next.getValue());
 			}
 			
-		};
+		});
+
 	}
 
 	/**
