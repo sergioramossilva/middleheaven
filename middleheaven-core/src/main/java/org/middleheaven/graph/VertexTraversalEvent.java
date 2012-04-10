@@ -1,15 +1,17 @@
 package org.middleheaven.graph;
 
-public class VertexTraversalEvent<V> {
+import org.middleheaven.graph.Graph.Vertex;
+
+public class VertexTraversalEvent<V, E> {
 
 	
-	private V vertex;
+	private Vertex<V,E> vertex;
 	
-	public VertexTraversalEvent (V vertex){
+	public VertexTraversalEvent (Vertex<V,E> vertex){
 		this.vertex = vertex;
 	}
 
-	public V getVertex() {
+	public Vertex<V,E> getVertex() {
 		return vertex;
 	}
 

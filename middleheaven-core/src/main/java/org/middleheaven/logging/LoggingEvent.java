@@ -14,20 +14,20 @@ public class LoggingEvent {
 	private final CharSequence msg;
 	private final Throwable t;
     
-	private final Object[] params;
 	private final String bookName;
+	private final LoggingEventParametersCollector collector;
 
     public LoggingEvent(String bookName,LoggingLevel level, CharSequence msg){
-        this(bookName, level,msg,null);
+        this(bookName, level,msg, null, null);
     }
     
-    public LoggingEvent(String bookName, LoggingLevel level, CharSequence msg, Throwable t,Object ... params){
+    public LoggingEvent(String bookName, LoggingLevel level, CharSequence msg, Throwable t, LoggingEventParametersCollector collector){
         this.bookName = bookName;
     	this.timeStamp = System.currentTimeMillis();
         this.level = level;
         this.msg = msg;
         this.t = t;
-        this.params = params;
+        this.collector = collector;
         this.threadName = Thread.currentThread().getName();
     }
 
@@ -44,7 +44,7 @@ public class LoggingEvent {
     }
     
     public Object[] getMessageParameters(){
-    	return this.params == null ? new Object[0] : params;
+    	return this.collector == null ? new Object[0] : collector.collect();
     }
 
     public boolean hasThrowable(){

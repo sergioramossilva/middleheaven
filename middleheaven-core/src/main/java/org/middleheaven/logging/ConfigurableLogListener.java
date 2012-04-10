@@ -1,26 +1,25 @@
-
+/**
+ * 
+ */
 package org.middleheaven.logging;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.logging.config.LoggingConfigurator;
 import org.middleheaven.logging.writters.ConsoleLogWriter;
 
 /**
- * @author  Sergio M. M. Taborda 
+ * 
  */
-@Service
-public class HashLoggingService  implements LoggingService{
-
+public class ConfigurableLogListener implements LoggingEventListener {
 
 
     final Map<String, LogBook> books = new HashMap<String, LogBook>();
     LoggingConfiguration configuration ;
     
-	public HashLoggingService(LoggingConfiguration configuration , LoggingConfigurator configurator) {
+	public ConfigurableLogListener(LoggingConfiguration configuration , LoggingConfigurator configurator) {
 		configurator.config(this,configuration);
 		
 		this.configuration = configuration;
@@ -28,7 +27,8 @@ public class HashLoggingService  implements LoggingService{
 		addBook(new WritableLogBook("",LoggingLevel.ALL).addWriter(new ConsoleLogWriter()));
 	}
 
-	@Override
+
+
 	public LoggingConfiguration getConfiguration() {
 		return configuration;
 	}
@@ -43,7 +43,15 @@ public class HashLoggingService  implements LoggingService{
         }
     }
 
-    public final LogBook getLogBook(String name) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onLoggingEvent(LoggingEvent event) {
+		this.getLogBook(event.getBookName()).log(event);
+	}
+	
+    private final LogBook getLogBook(String name) {
         LogBook book;
         synchronized (books){
              book =  books.get(name);
@@ -60,9 +68,4 @@ public class HashLoggingService  implements LoggingService{
         return book;
 
     }
-
-
-
-
-
 }

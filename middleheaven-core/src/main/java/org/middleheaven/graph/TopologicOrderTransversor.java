@@ -8,10 +8,19 @@ import org.middleheaven.graph.Graph.Vertex;
 import org.middleheaven.graph.VertextInfoManager.VertexInfo;
 
 /**
+ * Transverses a graph in topologic order, meaning from the vertex with less edges to the one with more edges.
  * 
  */
 public class TopologicOrderTransversor extends AbstractGraphTransversor {
 
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * @param graph the graph to transverse.
+	 * @param startVertex not used. you can pass <code>null</code>.
+	 */
 	@Override
 	public <E, V> void transverse(Graph<E, V> graph, V startVertex) {
 		Collection<Vertex<V, E>> all = graph.getVertices();
@@ -20,13 +29,9 @@ public class TopologicOrderTransversor extends AbstractGraphTransversor {
 		
 		if (!all.isEmpty()){
 
-			
-			Vertex<V, E> start = graph.getVertex(startVertex);
-
-			LinkedList<Vertex<V, E>> q = new LinkedList<Vertex<V, E>>();
 		
-			manager.info(start).dist = 0;
-			
+			LinkedList<Vertex<V, E>> q = new LinkedList<Vertex<V, E>>();
+
 			// compute ingree
 
 			for (Vertex<V, E> v: all ){
@@ -49,11 +54,11 @@ public class TopologicOrderTransversor extends AbstractGraphTransversor {
 				
 				Vertex<V, E> v = q.remove();
 				
-				broadcastEvent.beginVertex(new VertexTraversalEvent<V>(v.getObject()));
+				broadcastEvent.beginVertex(new VertexTraversalEvent<V, E>(v));
 			
 				for (Edge<V, E> e : v.getOutjacentEdges() ){
 					
-					broadcastEvent.beginEdgeTraversed(new EdgeTraversalEvent(e.getObject()));
+					broadcastEvent.beginEdgeTraversed(new EdgeTraversalEvent(e));
 					
 					Vertex<V, E> w = e.getTargetVertex();
 					double cvw = e.getCost();
@@ -66,7 +71,7 @@ public class TopologicOrderTransversor extends AbstractGraphTransversor {
 						
 					VertexInfo infoV = manager.info(v);
 					
-					broadcastEvent.endEdgeTraversed(new EdgeTraversalEvent(e.getObject()));
+					broadcastEvent.endEdgeTraversed(new EdgeTraversalEvent(e));
 					
 					if (Double.compare(infoV.dist, Double.MAX_VALUE) == 0){
 						continue;
@@ -78,7 +83,7 @@ public class TopologicOrderTransversor extends AbstractGraphTransversor {
 					}
 				}
 				
-				broadcastEvent.endVertex(new VertexTraversalEvent<V>(v.getObject()));
+				broadcastEvent.endVertex(new VertexTraversalEvent(v));
 			}
 			
 		

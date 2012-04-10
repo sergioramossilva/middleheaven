@@ -1,22 +1,20 @@
 package org.middleheaven.image;
 
 import java.awt.Image;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.wiring.service.Service;
 
-public class ImageServiceActivator extends Activator {
+public class ImageServiceActivator extends ServiceActivator {
 
 	ImageService service;
 	
-	@Publish
-	public ImageService getImageService(){
-		return service;
-	}
 
 	@Service
 	public static class MapImageService implements ImageService{
@@ -49,15 +47,37 @@ public class ImageServiceActivator extends Activator {
 		
 	}
 
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void activate() {
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		//no-dependencies
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(ImageService.class));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void activate(ServiceContext serviceContext) {
 		this.service  = new MapImageService();
+		
+		serviceContext.register(ImageService.class, service);
 	}
 
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void inactivate() {
+	public void inactivate(ServiceContext serviceContext) {
 		this.service = null;
 	}
 

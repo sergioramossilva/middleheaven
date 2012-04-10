@@ -12,9 +12,9 @@ import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.MediaManagedFileContent;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
-import org.middleheaven.io.repository.watch.WatchEvent.Kind;
-import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.Enumerable;
 
 public class EmptyFileRepository implements ManagedFileRepository {
 
@@ -176,14 +176,6 @@ public class EmptyFileRepository implements ManagedFileRepository {
 		}
 
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		protected Iterable<ManagedFile> childrenIterable() {
-			return Collections.<ManagedFile>emptySet();
-		}
-
 
 		/**
 		 * {@inheritDoc}
@@ -193,6 +185,17 @@ public class EmptyFileRepository implements ManagedFileRepository {
 			return 0;
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Iterable<ManagedFile> childrenIterable() {
+			return Collections.emptySet();
+		}
+
+
+	
 
 
 	}

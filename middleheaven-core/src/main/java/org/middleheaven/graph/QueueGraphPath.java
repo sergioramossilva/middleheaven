@@ -51,7 +51,7 @@ public class QueueGraphPath<E, V> implements GraphPath<E, V> {
 	}
 
 	@Override
-	public void visit(GraphVisitor<E, V> visitor) {
+	public void visit(GraphPathVisitor<E, V> visitor) {
 		
 		visitor.beginVisitGraph(graph);
 		

@@ -18,5 +18,6 @@ public interface GraphTransversor {
 	
 	
 	public void addListener(GraphTranverseListener listener);
+	
 	public void removeListener(GraphTranverseListener listener);
 }

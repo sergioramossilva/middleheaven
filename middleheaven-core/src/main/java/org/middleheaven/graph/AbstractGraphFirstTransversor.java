@@ -33,24 +33,24 @@ public abstract class AbstractGraphFirstTransversor extends AbstractGraphTransve
 		while(!q.isEmpty()){
 			Vertex<V, E> v = this.nextVertex(q);
 
-			broadcastEvent.beginVertex(new VertexTraversalEvent<V>(v.getObject()));
+			broadcastEvent.beginVertex(new VertexTraversalEvent<V, E>(v));
 			
 			if (!visited.contains(v)){
 				for (Edge<V, E> e : v.getOutjacentEdges()) {
 
 					
-					broadcastEvent.beginEdgeTraversed(new EdgeTraversalEvent(e.getObject()));
+					broadcastEvent.beginEdgeTraversed(new EdgeTraversalEvent(e));
 					Vertex <V, E> w = e.getTargetVertex();
 					
 					if (visited.add(w)) {
 						q.add(w);
 					}
 					
-					broadcastEvent.endEdgeTraversed(new EdgeTraversalEvent(e.getObject()));
+					broadcastEvent.endEdgeTraversed(new EdgeTraversalEvent(e));
 				}
 			}
 			
-			broadcastEvent.endVertex(new VertexTraversalEvent<V>(v.getObject()));
+			broadcastEvent.endVertex(new VertexTraversalEvent<V, E>(v));
 			
 		}
 

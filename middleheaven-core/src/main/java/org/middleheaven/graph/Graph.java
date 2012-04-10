@@ -42,12 +42,23 @@ public interface Graph<E, V> {
 	}
 	
 	void addEdge( E edgeObject, V sourceVertex, V targetVertex, double cost);
-
+	void removeVertex(Vertex<V,E> vertex);
+	void removeEdge(Edge<V,E> edge);
+	
+	
+	void filter(GraphFilter<V, E> filter);
 	
 	public Vertex<V,E> getVertex(V vertex);
 	Collection<Vertex<V, E >> 	getVertices(); 
 	
-	Collection<Edge<V ,E>> 	getEdges(); 
+	Collection<Edge<V ,E>> 	getEdges();
+	/**
+	 * @param string
+	 * @return
+	 */
+	boolean containsEdge(E edge); 
 
-	
+	public void visit(GraphVisitor<E, V> visitor);
+
+	public List<Graph<E,V>> split();
 }

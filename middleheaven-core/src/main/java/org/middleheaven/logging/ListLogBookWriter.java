@@ -39,7 +39,7 @@ public final class ListLogBookWriter extends LogBookWriter{
 		}
 	}
 
-	public void writeTo(LogBook book){
+	public void writeTo(Logger book){
 		for (LoggingEvent event: events){
 			book.log(event);
 		}
