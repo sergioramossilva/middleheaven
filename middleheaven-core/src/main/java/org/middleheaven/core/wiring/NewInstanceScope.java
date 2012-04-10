@@ -6,14 +6,10 @@ public class NewInstanceScope extends AbstractScopePool {
 	public NewInstanceScope(){}
 
 	@Override
-	public <T> T getInScope(WiringSpecification<T> query, Resolver<T> resolver) {
-		return resolver.resolve(query);
+	public  Object getInScope(ResolutionContext context, WiringQuery query, Resolver resolver) {
+		return resolver.resolve(context, query);
 	}
 
-	@Override
-	public <T> void add(WiringSpecification<T> spec, T object) {
-		// no-op
-	}
 
 	@Override
 	public void clear() {

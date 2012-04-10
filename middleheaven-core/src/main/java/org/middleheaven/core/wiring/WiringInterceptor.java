@@ -6,5 +6,5 @@ package org.middleheaven.core.wiring;
 public interface WiringInterceptor {
 
 	
-	public  <T> void intercept (InterceptionContext<T> context, InterceptorChain<T> chain);
+	public void intercept (InterceptionContext context, InterceptorChain chain);
 }

@@ -2,7 +2,6 @@ package org.middleheaven.core.wiring;
 
 import java.lang.annotation.Annotation;
 
-import org.middleheaven.core.wiring.annotations.Named;
 
 public class PropertyBindingBuilder<T>  {
 
@@ -20,20 +19,25 @@ public class PropertyBindingBuilder<T>  {
 	public PropertyBindingBuilder<T> labeled (String label){
 		this.label = label;
 		if (this.object != null && label!=null){
-			((PropertyResolver<T>)binding.getResolver()).setProperty(label , object);
+			((PropertyResolver)binding.getResolver()).setProperty(label , object);
 		}
 		return this;
 	}
 	
-	public PropertyBindingBuilder<T> in(Class<? extends ScopePool> scope){
-		binding.setTargetScope(scope);
+	public PropertyBindingBuilder<T> in(Class<? extends Annotation> scope){
+		return in(WiringUtils.readScope(scope));
+	}
+	
+	public PropertyBindingBuilder<T> in(String scopeName){
+		binding.setScope(scopeName);
 		return this;
 	}
 	
 	public PropertyBindingBuilder<T> toInstance(T object){
 		this.object = object;
+		this.in("shared");
 		if (this.object != null && label!=null){
-			((PropertyResolver<T>)binding.getResolver()).setProperty(label , object);
+			((PropertyResolver)binding.getResolver()).setProperty(label , object);
 		}
 		return this;
 	} 

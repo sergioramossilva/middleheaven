@@ -15,6 +15,6 @@ public interface WiringModelReader {
 	 * @param type
 	 * @param model
 	 */
-	public <T> void readBeanModel(Class<T> type, BeanModel model);
+	public <T> void readBeanModel(Class<T> type, BeanDependencyModel model);
 
 }

@@ -11,10 +11,10 @@ public interface ObjectPoolListener {
 	/**
 	 * @param objectPoolEvent
 	 */
-	void onObjectAdded(ObjectPoolEvent objectPoolEvent);
+	void onObjectAdded(ObjectEvent objectPoolEvent);
 
 	/**
 	 * @param objectPoolEvent
 	 */
-	void onObjectRemoved(ObjectPoolEvent objectPoolEvent);
+	void onObjectRemoved(ObjectEvent objectPoolEvent);
 }

@@ -1,31 +1,35 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
 
-public final class InterceptionContext <T>{
+public final class InterceptionContext {
 
-	private T object;
-	private WiringSpecification<T> specification;
+	private Object object;
+	private WiringQuery query;
+	protected ResolutionContext relContext;
 
-	public InterceptionContext(WiringSpecification<T> query) {
-		this.specification = query;
+	public InterceptionContext(ResolutionContext relContext, WiringQuery query) {
+		this.query = query;
+		this.relContext = relContext;
 	}
 
-	public T getObject() {
+	public String getScopeName(){
+		return relContext.getScopeName();
+	}
+	
+	public Object getObject() {
 		return object;
 	}
 
-	public void setObject(T object) {
+	public void setObject(Object object) {
 		this.object = object;
 	}
 
-	public WiringSpecification<T> getWiringSpecification(){
-		return specification;
+	public WiringQuery getWiringQuery(){
+		return query;
 	}
 	
 	public Class<?> getTarget() {
-		return specification.getContract();
+		return query.getContract();
 	}
 
 }

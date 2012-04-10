@@ -6,22 +6,22 @@ package org.middleheaven.core.wiring;
 /**
  * {@link Resolver} implementation that always returns <code>null</code>.
  */
-@SuppressWarnings("rawtypes")
-public class NullResolver<T> implements Resolver<T> {
+public class NullResolver implements Resolver {
 
 	private static final NullResolver INSTANCE = new NullResolver();
 	
 	
-	public static <X> NullResolver<X> instance(){
+	public static  NullResolver instance(){
 		return INSTANCE;
 	}
 	
+	private NullResolver(){}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public T resolve(WiringSpecification<T> specification) {
+	public Object resolve(ResolutionContext context, WiringQuery query) {
 		return null;
 	}
 

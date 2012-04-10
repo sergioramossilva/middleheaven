@@ -8,7 +8,6 @@ class Key {
 
 	private Class targetClass;
 	private Map<String, Object> params;
-	
 
 	public String toString(){
 		return targetClass.getName() + "+" + params.toString();
@@ -20,9 +19,7 @@ class Key {
 	
 	private Key(Class<?> targetClass, Map<String, Object> params) {
 		this.targetClass = targetClass;
-		this.params = params;
-		
-		
+		this.params = params;	
 	}
 	
 	public int hashCode(){

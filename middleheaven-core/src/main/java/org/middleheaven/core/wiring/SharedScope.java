@@ -8,31 +8,20 @@ public final class SharedScope extends AbstractScopePool {
 	
 	private final Map<Key , Object> objects = new HashMap<Key , Object>();
 	
+	public SharedScope (){}
 	
 	@Override
-	public <T> T getInScope(WiringSpecification<T> spec, Resolver<T> resolver) {
-		Key key = Key.keyFor(spec.getContract(),spec.getParams());
+	public  Object getInScope(ResolutionContext context, WiringQuery query, Resolver resolver) {
+		Key key = Key.keyFor(query.getContract(), query.getParams());
 		
-		@SuppressWarnings("unchecked") T obj = (T)objects.get(key);
+		Object obj = objects.get(key);
+		
 		if (obj==null){
-			obj = resolver.resolve(spec);
+			obj = resolver.resolve(context, query);
 			objects.put(key,obj);
 			this.fireObjectAdded(obj);
 		}
 		return obj;
-	}
-
-
-	@Override
-	public <T> void add(WiringSpecification<T> spec, T object) {
-		Key key = Key.keyFor(spec.getContract(),spec.getParams());
-		@SuppressWarnings("unchecked") T obj = (T)objects.get(key);
-		if (obj==null){
-			objects.put(key,object);
-			this.fireObjectAdded(obj);
-		} else {
-			throw new UnsupportedOperationException("Trying to alter shared object " + obj + " to " + object);
-		}
 	}
 
 

@@ -10,7 +10,7 @@ import org.middleheaven.core.reflection.ReflectionException;
 public class FieldAfterWiringPoint implements AfterWiringPoint{
 
 	private Field field;
-	private WiringSpecification<?> specs;
+	private WiringSpecification specs;
 	
 	/**
 	 * 
@@ -18,12 +18,16 @@ public class FieldAfterWiringPoint implements AfterWiringPoint{
 	 * @param f the field that objects will be wired to..
 	 * @param specs the wiring specification. 
 	 */
-	public FieldAfterWiringPoint(Field f, WiringSpecification<?> specs) {
+	public FieldAfterWiringPoint(Field f, WiringSpecification specs) {
 		super();
 		this.field = f;
 		this.specs = specs;
 	}
 
+	public WiringSpecification[] getSpecifications(){
+		return new WiringSpecification[]{specs};
+	}
+	
 	/**
 	 * 
 	 * {@inheritDoc}
@@ -37,29 +41,37 @@ public class FieldAfterWiringPoint implements AfterWiringPoint{
 	 * {@inheritDoc}
 	 */
 	public boolean equals(Object other){
-		return other instanceof FieldAfterWiringPoint && this.field.equals(((FieldAfterWiringPoint)other).field);
+		return (other instanceof FieldAfterWiringPoint) && this.field.equals(((FieldAfterWiringPoint)other).field);
+	}
+	
+	
+	public String toString(){
+		return this.field.toString();
 	}
 	
 	/**
 	 * 
 	 * {@inheritDoc}
 	 */
-	public <T> T writeAtPoint(EditableBinder binder, T object){
+	public <T> T writeAtPoint(InstanceFactory factory, T object){
 		if(object == null){
 			return null;
 		}
 		
 		field.setAccessible(true);
 
-		Object value = binder.getInstance(specs);
+		WiringTarget fieldTarget = new FieldWiringTarget(field, object);
 		
-		if(!field.getType().isAssignableFrom(value.getClass())){
+		Object value = factory.getInstance(WiringQuery.search(specs).on(fieldTarget));
+		
+		if (value==null && specs.isRequired()){
+			throw new BindingException("Cannot find instance to bind at " + field.getDeclaringClass().getName() +"." + field.getName());
+		}
+		
+		if(!field.getType().isInstance(value)){
 			throw new BindingException(value.getClass().getName() + " can not be assigned to " + field.getType().getName());
 		}
-		try {
-			if (value==null && specs.isRequired()){
-				throw new BindingException("Value to bind with " + field.getDeclaringClass().getName() +"." + field.getName()+ "was not found ");
-			}
+		try {	
 			field.set( object, value );
 		} catch (Exception e) {
 			ReflectionException.manage(e, object.getClass());

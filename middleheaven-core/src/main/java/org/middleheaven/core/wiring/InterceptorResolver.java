@@ -7,27 +7,27 @@ import java.util.List;
  *
  * @param <T>
  */
-public class InterceptorResolver<T> implements Resolver<T> {
+public class InterceptorResolver implements Resolver {
 
 	
-	private final Resolver<T> original;
+	private final Resolver  original;
 	private final List<WiringInterceptor> interceptors;
-	
-	public InterceptorResolver(List<WiringInterceptor> interceptors,Resolver<T> original) {
+
+	public InterceptorResolver(List<WiringInterceptor> interceptors,Resolver original) {
 		super();
 		this.original = original;
 		this.interceptors = interceptors;
 	}
 
 	@Override
-	public T resolve(WiringSpecification<T> query) {
+	public Object resolve(ResolutionContext context, WiringQuery query) {
 
-		InterceptorChain<T> chain = new InterceptorChain<T>(interceptors,original);
-		InterceptionContext<T> context = new InterceptionContext<T>(query);
+		InterceptorChain chain = new InterceptorChain(interceptors,original);
+		InterceptionContext interceptionContext = new InterceptionContext(context, query);
 
-		chain.doChain(context);
+		chain.doChain(interceptionContext);
 
-		return context.getObject();
+		return interceptionContext.getObject();
 
 	}
 

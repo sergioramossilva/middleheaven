@@ -9,13 +9,13 @@ package org.middleheaven.core.wiring;
 public class ScopePoolEvent {
 
 	private Object object;
-	private ScopePool scopePool;
+	private Scope scopePool;
 
 	/**
 	 * Constructor.
 	 * @param object
 	 */
-	public ScopePoolEvent(Object object, ScopePool pool) {
+	public ScopePoolEvent(Object object, Scope pool) {
 		this.object = object;
 		this.scopePool = pool;
 	}
@@ -29,10 +29,10 @@ public class ScopePoolEvent {
 	}
 
 	/**
-	 * Obtains {@link ScopePool}.
+	 * Obtains {@link Scope}.
 	 * @return the scopePool
 	 */
-	public ScopePool getScopePool() {
+	public Scope getScopePool() {
 		return scopePool;
 	}
 	
