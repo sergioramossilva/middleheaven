@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 	})
 @Documented
 @Inherited
-@ScopeSpecification
+@ScopeSpecification(name = "shared")
 public @interface Shared {
 
 }
