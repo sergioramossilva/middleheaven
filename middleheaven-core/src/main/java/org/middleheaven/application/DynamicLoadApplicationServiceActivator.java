@@ -9,7 +9,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
-import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.core.wiring.annotations.Component;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.watch.FileChangeStrategy;
@@ -19,15 +19,17 @@ import org.middleheaven.io.repository.watch.WatchEvent;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.collections.ParamsMap;
 import org.middleheaven.util.collections.Walker;
 
 /**
- * Provides an {@link ApplicationLoadingService} for loading application modules present at the application configuration path
+ * Provides an {@link ApplicationService} for loading application modules present at the application configuration path
  * Application Modules are jar files with extension .apm that contain a manifest file
- * with an {@code Application-Module} entry pointing to the {@link ApplicationModule} class.
+ * with an {@code Application-Module} entry pointing to the {@link ModuleListener} class.
  * 
  * 
  */
+@Component
 public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadApplicationServiceActivator  {
 
 	
@@ -48,20 +50,13 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 	
 	public DynamicLoadApplicationServiceActivator(){
 		
-		this.fileWatchChannelProcessor = new FileWatchChannelProcessor(new FileChangeStrategy() {
-			
-			@Override
-			public void onChange(WatchEvent event) {
-				if (StandardWatchEvent.ENTRY_CREATED.equals(event.kind())){
-					ManagedFile file = event.getFile();
-					if (appModulesFilter.classify(file)){
-						getCycle().setState(ApplicationCycleState.PAUSED);
-						loadModuleFromFile(file);
-						getCycle().setState(ApplicationCycleState.READY);
-					}
-				}
-			}
-		});
+	}
+	
+	
+	public void inactivate(){
+		if (fileWatchChannelProcessor != null){
+			fileWatchChannelProcessor.close();
+		}
 	}
 	
 	protected void loadPresentModules(){
@@ -76,7 +71,25 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 			WatchService ws = f.getRepository().getWatchService();
 			
 			WatchEventChannel channel = f.register(ws , StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
-			fileWatchChannelProcessor.add(channel);		
+				
+			this.fileWatchChannelProcessor = new FileWatchChannelProcessor(new FileChangeStrategy() {
+				
+				@Override
+				public void onChange(WatchEvent event) {
+					if (StandardWatchEvent.ENTRY_CREATED.equals(event.kind())){
+						ManagedFile file = event.getFile();
+						if (appModulesFilter.classify(file)){
+							setState(ApplicationCycleState.PAUSED);
+							loadModuleFromFile(file);
+							setState(ApplicationCycleState.READY);
+						}
+					}
+				}
+			});
+			
+			fileWatchChannelProcessor.add(channel);	
+			
+			fileWatchChannelProcessor.start();
 		}
 
 		f.each(new Walker<ManagedFile>(){
@@ -96,6 +109,7 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 
 	}
 
+
 	private void loadModuleFromFile(ManagedFile jar) {
 
 		try{
@@ -103,25 +117,18 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 
 			JarInputStream jis = new JarInputStream(jar.getContent().getInputStream());
 			Manifest manifest = jis.getManifest();
-			String className=null;
 			
 			if (manifest!=null){
 				Attributes at = manifest.getMainAttributes();
-				className = at.getValue("Application-Module");
-			}
 
-			if(className!=null && !className.isEmpty()){
-				TransientApplicationContext appContext = getAppContext();
-				try{
-					ApplicationModule module = Introspector.of(ApplicationModule.class)
-													.load(className,cloader).newInstance();
-
-					appContext.addModule(module);
-				} catch (ClassCastException e){
-					getLog().warn("{0} is not a valid application module activator",className);
-				}
-			}else {
-				getLog().warn("{0} does not represent an application module.",jar.getPath().getFileNameWithoutExtension());
+				ParamsMap map = new ParamsMap()
+				.setParam("Application", at.getValue("Application").trim())
+				.setParam("Application-Listeners", at.getValue("Application-Listeners").trim())
+				.setParam("Application-Modules", at.getValue("Application-Modules").trim())
+				.setParam("Application-Module-Listeners", at.getValue("Application-Module-Listeners").trim())
+				;
+				
+				parseAttributes(map, cloader);
 			}
 
 		}catch (IOException e) {
@@ -129,6 +136,7 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 		} 
 
 	}
+
 
 
 }
