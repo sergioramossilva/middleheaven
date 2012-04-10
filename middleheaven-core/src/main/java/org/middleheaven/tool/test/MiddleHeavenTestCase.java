@@ -2,39 +2,33 @@ package org.middleheaven.tool.test;
 
 import org.junit.After;
 import org.junit.Before;
+import org.middleheaven.core.wiring.TypeWiringItem;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.activation.SetActivatorScanner;
-import org.middleheaven.logging.ConsoleLogBook;
-import org.middleheaven.logging.LoggingLevel;
+import org.middleheaven.core.wiring.annotations.Component;
 
-public abstract class MiddleHeavenTestCase {
+@Component
+public abstract class MiddleHeavenTestCase extends TestBootstrap {
 
-	private TestBootstrap bootstrap;
-	
+
 	@Before
 	public final void setUp(){
-		bootstrap = new TestBootstrap();
+	
+		getWiringService().addItem(new TypeWiringItem(this.getClass()));
 		
-		SetActivatorScanner scanner = new SetActivatorScanner();
+		setupWiringBundles(getWiringService());
+
 		
-		configurateActivators(scanner);
+		this.start();
 		
-		bootstrap.addActivatorScanner(scanner);
-		
-		bootstrap.start(new ConsoleLogBook(LoggingLevel.ALL));
-		
-		bootstrap.getWiringService().getObjectPool().wireMembers(this);
+		getWiringService().wireMembers(this);
 		
 		configurateTest();
 	}
-	
-	public WiringService getWiringService(){
-		return  bootstrap.getWiringService();
-	}
+
 	
 	@After
 	public void tearDown(){
-		bootstrap.stop();
+		this.stop();
 	}
 	
 	protected void configurateTest() {
@@ -43,9 +37,9 @@ public abstract class MiddleHeavenTestCase {
 	
 	/**
 	 * Override to configure activators needed for the test.
-	 * @param scannerSet a SetActivatorScanner to add the necessary activators.
+	 * @param classSet a SetActivatorScanner to add the necessary activators.
 	 */
-	protected void configurateActivators(SetActivatorScanner scannerSet){
+	protected void setupWiringBundles(WiringService service){
 		
 	}
 
