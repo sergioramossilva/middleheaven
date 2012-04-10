@@ -5,7 +5,7 @@
 package org.middleheaven.core.bootstrap.client;
 
 import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.core.bootstrap.BootstrapContext;
+import org.middleheaven.core.bootstrap.ExecutionContext;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
 import org.middleheaven.core.bootstrap.StandardContainerFileSystem;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
@@ -31,7 +31,7 @@ public abstract class AbstractStandaloneContainer implements BootstrapContainer 
 	}
 	
 	@Override
-	public void configurate(BootstrapContext context) {
+	public void configurate(ExecutionContext context) {
 		//no-op
 	}
 	
