@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class CompositeLogBook extends LogBook{
 
 
-    protected final Set<LogBook> books = new CopyOnWriteArraySet<LogBook>();
+    protected final Set<Logger> books = new CopyOnWriteArraySet<Logger>();
 
 	public CompositeLogBook(String name) {
 		super(name, LoggingLevel.ALL);
@@ -32,18 +32,18 @@ public class CompositeLogBook extends LogBook{
 	 */
 	@Override
 	protected void doLog(LoggingEvent event) {
-		for (LogBook book : books){
+		for (Logger book : books){
 			book.log(event);
 		}
 	}
 
 	
-	public CompositeLogBook addLogBook(LogBook book){
+	public CompositeLogBook addLogBook(Logger book){
 		books.add(book);
 		return this;
 	}
 
-	public CompositeLogBook removeLogBook(LogBook book){
+	public CompositeLogBook removeLogBook(Logger book){
 		books.remove(book);
 		return this;
 	}

@@ -8,48 +8,59 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceEvent;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
 import org.middleheaven.core.services.ServiceListener;
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.Log;
-import org.middleheaven.logging.LogBook;
 import org.middleheaven.util.collections.Walker;
 
 
-public class LicenseServiceActivator extends Activator {
+public class LicenseServiceActivator extends ServiceActivator {
 
 	private LicenseService implementation;
 	private LicenseProvider provider = new VoidLicenseProvider();
-	private ContainerFileSystem frs;
 
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void inactivate() {
+	public void inactivate(ServiceContext serviceContext) {
 		implementation = null;
 	}
 
-	@Publish
-	public LicenseService getLicenceService(){
-		return implementation;
-	}
-
-	@Wire
-	public void setFileRepositoryService(ContainerFileSystem fileService){
-		this.frs = fileService;
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void activate() {
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(BootstrapService.class));
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(LicenseService.class));
+	}
+	
+	@Override
+	public void activate(ServiceContext serviceContext) {
 
+		ContainerFileSystem frs = serviceContext.getService(BootstrapService.class).getEnvironmentBootstrap().getContainer().getFileSystem();
+		
 		ManagedFile f = frs.getEnvironmentConfigRepository();
+		
 		final Collection<ManagedFile> licences = new HashSet<ManagedFile>();
 		
 		f.each(new Walker<ManagedFile>(){
@@ -99,6 +110,8 @@ public class LicenseServiceActivator extends Activator {
 		implementation = new LicenceServiceImpl();
 
 		//context.addServiceListener(new ServiceLock());
+		
+		serviceContext.register(LicenseService.class, implementation);
 	}
 
 	private class ServiceLock implements ServiceListener{
@@ -127,7 +140,7 @@ public class LicenseServiceActivator extends Activator {
 	private ComposedProvider load(ComposedProvider providers ,Collection<ManagedFile> licences , ManagedFile certificate ){
 		AddocClassLoader cloader = new AddocClassLoader();
 
-		LogBook logBook = Log.onBookFor(this.getClass());
+
 		Base64CipherAlgorithm base64 = new Base64CipherAlgorithm();
 		
 		for (ManagedFile f : licences){
@@ -166,7 +179,7 @@ public class LicenseServiceActivator extends Activator {
 
 
 			} catch (Throwable e) {
-				logBook.error(e,"Licence {0} could not be loaded", f.getURI());
+				Log.onBookFor(this.getClass()).error(e,"Licence {0} could not be loaded", f.getURI());
 			} 
 
 
@@ -233,6 +246,10 @@ public class LicenseServiceActivator extends Activator {
 		}
 
 	}
+
+
+
+
 
 
 

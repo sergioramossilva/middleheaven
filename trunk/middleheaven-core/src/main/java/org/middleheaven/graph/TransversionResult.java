@@ -33,7 +33,7 @@ public class TransversionResult<E, V> {
 	}
 	
 	
-	public void visit(GraphVisitor <E, V> visitor, V destination){
+	public void visit(GraphPathVisitor <E, V> visitor, V destination){
 		doVisit(graph, visitor, graph.getVertex(destination));
 	}
 	
@@ -42,7 +42,7 @@ public class TransversionResult<E, V> {
 	 * @param graph
 	 * @param visitor
 	 */
-	protected void doVisit(Graph<E, V> graph, GraphVisitor <E,V> visitor, Vertex<V, E> goal){
+	protected void doVisit(Graph<E, V> graph, GraphPathVisitor <E,V> visitor, Vertex<V, E> goal){
 		
 		visitor.beginVisitGraph(graph);
 		
@@ -52,7 +52,7 @@ public class TransversionResult<E, V> {
 
 	}
 
-	protected void doVisitVertex(GraphVisitor <E,V> visitor, Vertex<V, E> v){
+	protected void doVisitVertex(GraphPathVisitor <E,V> visitor, Vertex<V, E> v){
 		
 		visitor.beginVisitVertex(v.getObject());
 		

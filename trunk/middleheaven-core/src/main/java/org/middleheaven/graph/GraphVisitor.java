@@ -1,16 +1,24 @@
+/**
+ * 
+ */
 package org.middleheaven.graph;
 
+import org.middleheaven.graph.Graph.Edge;
+import org.middleheaven.graph.Graph.Vertex;
 
-public interface GraphVisitor<E, V> {
+/**
+ * 
+ */
+public interface GraphVisitor<E,V> {
 
-	public void beginVisitGraph(Graph<E, V> graph);
+	public void onBeginGraph(Graph<E, V> g);
 	
-	public void beginVisitVertex(V vertex);
+	public void onEndGraph(Graph<E, V> g);
 	
-	public void endVisitVertex(V vertex);
+	public void onBeginVertex(Vertex<V, E> vertex);
 	
-	public void endVisitGraph(Graph<E, V> graph);
+	public void onEndVertex(Vertex<V, E> vertex);
+	
+	public void onEdge(Edge<V, E> edge);
 
-	public void visitEdge(E connectingEdge);
-	
 }

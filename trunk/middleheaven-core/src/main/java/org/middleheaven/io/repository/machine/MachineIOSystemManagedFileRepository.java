@@ -130,11 +130,15 @@ class MachineIOSystemManagedFileRepository extends AbstractManagedRepository imp
 
 	@Override
 	public ManagedFile retrive(ManagedFilePath path) throws ManagedIOException {
-		return new FileIOManagedFileAdapter(
-				this,
-				new File (path.getPath()).getAbsoluteFile(),
-				path
-		);
+		try {
+			return new FileIOManagedFileAdapter(
+					this,
+					new File (path.getPath()).getCanonicalFile(),
+					path
+			);
+		} catch (IOException e) {
+			throw ManagedIOException.manage(e); 
+		}
 	}
 
 	/**

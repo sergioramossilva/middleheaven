@@ -1,12 +1,16 @@
 package org.middleheaven.graph;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.middleheaven.graph.VertextInfoManager.VertexInfo;
 
 /**
  * 
@@ -16,32 +20,34 @@ import java.util.Set;
 public class DirectGraph<E,V> implements Graph<E,V>{
 
 
-	private class BeanEdge<V, E> implements Edge<V, E>{
-		
-		private E object;
-		private Vertex<V, E> targetVertex;
+	private class BeanEdge<Va, Ea> implements Edge<Va, Ea>{
+
+		private Ea object;
+		private Vertex<Va, Ea> targetVertex;
 		private double cost;
-		private Vertex<V, E> sourceVertex;
-		
-		public BeanEdge(E object, Vertex<V, E> sourceVertex, Vertex<V, E> targetVertex, double cost) {
+		private Vertex<Va, Ea> sourceVertex;
+
+		public BeanEdge(Ea object, Vertex<Va, Ea> sourceVertex, Vertex<Va, Ea> targetVertex, double cost) {
 			this.object = object;
 			this.targetVertex = targetVertex;
 			this.sourceVertex = sourceVertex;
 			this.cost = cost;
 		}
 
+
+
 		@Override
-		public E getObject() {
+		public Ea getObject() {
 			return object;
 		}
 
 		@Override
-		public Vertex<V, E> getTargetVertex() {
+		public Vertex<Va, Ea> getTargetVertex() {
 			return targetVertex;
 		}
-		
+
 		@Override
-		public Vertex<V, E> getSourceVertex() {
+		public Vertex<Va, Ea> getSourceVertex() {
 			return sourceVertex;
 		}
 
@@ -49,29 +55,29 @@ public class DirectGraph<E,V> implements Graph<E,V>{
 		public double getCost() {
 			return cost;
 		}
-		
+
 		public String toString(){
 			return object.toString();
 		}
 
 
 	}
-	
-	private class BeanVertex<V, E> implements Vertex<V, E> {
-		
-		private V object;
-		private List<Edge<V,E>> outjacentEdges = new LinkedList<Edge<V,E>>();
-		private List<Edge<V,E>> incidentEdges = new LinkedList<Edge<V,E>>();
-		
+
+	private class BeanVertex<Va, Ea> implements Vertex<Va, Ea> {
+
+		private Va object;
+		private List<Edge<Va,Ea>> outjacentEdges = new LinkedList<Edge<Va,Ea>>();
+		private List<Edge<Va,Ea>> incidentEdges = new LinkedList<Edge<Va,Ea>>();
+
 		private double dist;
-		public Vertex<V, E> previous;
+		public Vertex<Va, Ea> previous;
 		private int scratch;
-		
-		public BeanVertex(V object){
+
+		public BeanVertex(Va object){
 			this.object = object;
 			reset();
 		}
-		
+
 		public final void reset(){
 			dist = Double.MAX_VALUE;
 			previous = null;
@@ -79,25 +85,27 @@ public class DirectGraph<E,V> implements Graph<E,V>{
 		}
 
 		@Override
-		public V getObject() {
+		public Va getObject() {
 			return object;
 		}
 
-
+		public String toString(){
+			return String.valueOf(this.object);
+		}
 
 		@Override
-		public List<org.middleheaven.graph.Graph.Edge<V,E>> getOutjacentEdges() {
+		public List<org.middleheaven.graph.Graph.Edge<Va,Ea>> getOutjacentEdges() {
 			return outjacentEdges;
 		}
 
 		@Override
-		public List<org.middleheaven.graph.Graph.Edge<V, E>> getIncidentEdges() {
+		public List<org.middleheaven.graph.Graph.Edge<Va, Ea>> getIncidentEdges() {
 			return incidentEdges;
 		}
 
 
 	}
-	
+
 
 	private final Map<V, Vertex<V, E>> vertexes = new HashMap<V, Vertex<V, E>>();
 	private final Set<Edge<V, E>> edges = new HashSet<Edge<V, E>>();
@@ -106,7 +114,23 @@ public class DirectGraph<E,V> implements Graph<E,V>{
 	 * 
 	 */
 	public DirectGraph (){}
-	
+
+	/**
+	 * Constructor.
+	 * @param directGraph
+	 */
+	public DirectGraph(DirectGraph<E, V> other) {
+
+		for (Vertex<V,E> v : other.vertexes.values()){
+
+			for (Edge<V,E> edge: v.getOutjacentEdges()){
+				this.addEdge(edge.getObject(), v.getObject(), edge.getTargetVertex().getObject(), edge.getCost());
+			}
+
+		}
+
+	}
+
 	@Override
 	public Collection<org.middleheaven.graph.Graph.Vertex<V, E>> getVertices() {
 		return vertexes.values();
@@ -123,25 +147,25 @@ public class DirectGraph<E,V> implements Graph<E,V>{
 	public void addEdge(E edgeObject,
 			V sourceVertex,
 			V targetVertex, double cost) {
-		
+
 		Vertex<V, E> v = vertexes.get(sourceVertex);
-		
+
 		if (v == null){
 			v = new BeanVertex<V, E>(sourceVertex);
 			vertexes.put(sourceVertex,v);
 		}
-		
+
 		Vertex<V, E> w = vertexes.get(targetVertex);
-		
+
 		if (w == null){
 			w = new BeanVertex<V, E>(targetVertex);
 			vertexes.put(targetVertex, w);
 		}
-		
+
 		BeanEdge<V, E> edge = new BeanEdge<V, E>(edgeObject, v , w, cost);
 		v.getOutjacentEdges().add(edge);
 		w.getIncidentEdges().add(edge);
-		
+
 		this.edges.add(edge);
 	}
 
@@ -150,6 +174,333 @@ public class DirectGraph<E,V> implements Graph<E,V>{
 		return this.vertexes.get(vertex);
 	}
 
-	
-	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeVertex(Vertex<V, E> vertex) {
+
+		for( Edge <V, E> edge :vertex.getIncidentEdges()){
+
+			edge.getSourceVertex().getOutjacentEdges().remove(edge);
+
+			this.edges.remove(edge);
+		}
+
+		for( Edge <V, E> edge :vertex.getOutjacentEdges()){
+
+			edge.getSourceVertex().getIncidentEdges().remove(edge);
+
+			this.edges.remove(edge);
+		}
+
+		vertexes.remove(vertex.getObject());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeEdge(org.middleheaven.graph.Graph.Edge<V, E> edge) {
+		edge.getSourceVertex().getOutjacentEdges().remove(edge);
+		edge.getTargetVertex().getIncidentEdges().remove(edge);
+		this.edges.remove(edge);
+	}
+
+	public void filter(GraphFilter<V, E> filter){
+		Collection<Vertex<V, E>> all = this.getVertices();
+
+		VertextInfoManager manager = new VertextInfoManager();
+
+		if (!all.isEmpty()){
+
+
+			LinkedList<Vertex<V, E>> q = new LinkedList<Vertex<V, E>>();
+
+			// compute ingree
+
+			for (Vertex<V, E> v: all ){
+				for (Edge<V, E> e : v.getOutjacentEdges()){
+					manager.info(e.getTargetVertex()).scratch++;
+				}
+			}
+
+			// enqueue those with ingree zero
+			for (Vertex<V, E> v : all){
+				if (manager.info(v).scratch == 0){
+					q.add(v);
+				}
+			}
+
+
+			int iterations;
+			for (iterations = 0; !q.isEmpty(); iterations++ ){
+
+				Vertex<V, E> v = q.remove();
+
+				if(! filter.accepts(v)){
+					this.removeVertex(v);
+				} else {
+
+					Collection<Edge<V,E>> toremove = new HashSet<Edge<V,E>>();
+
+					for (Edge<V, E> e : v.getOutjacentEdges() ){
+
+
+						if (!filter.accepts(e)){
+							toremove.add(e);
+						} 
+
+						Vertex<V, E> w = e.getTargetVertex();
+						double cvw = e.getCost();
+
+						VertexInfo infoW = manager.info(w);
+
+						if ( --infoW.scratch == 0 ) {
+							q.add(w);
+						}
+
+						VertexInfo infoV = manager.info(v);
+
+
+						if (Double.compare(infoV.dist, Double.MAX_VALUE) == 0){
+							continue;
+						}
+						if (Double.compare(infoW.dist, infoV.dist + cvw) > 0){
+							infoW.dist = infoV.dist + cvw;
+							infoW.prev = v;
+							infoW.connectingEdge = e;
+						}
+					}
+
+					for (Edge<V,E> e : toremove){
+						this.removeEdge(e);
+					}
+
+				}
+
+
+
+			}
+
+
+			for (Iterator<Map.Entry<V , Vertex<V, E>>> it = this.vertexes.entrySet().iterator(); it.hasNext(); ){
+				Vertex<V, E> v = it.next().getValue();
+
+				if (v.getIncidentEdges().isEmpty() && v.getOutjacentEdges().isEmpty()){
+					it.remove();
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean containsEdge(E edge) {
+		for (Edge<V,E> e : this.edges){
+			if (e.getObject().equals(edge)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public List<Graph<E,V>> split(){
+
+
+		List<Graph<E,V>> result = new ArrayList<Graph<E,V>>();
+
+		DirectGraph<E, V> copy  = new DirectGraph<E,V>(this);
+
+
+		Collection<Vertex<V, E>> all = copy.getVertices();
+
+		
+		if (!all.isEmpty()){
+
+
+			LinkedList<Vertex<V, E>> q = new LinkedList<Vertex<V, E>>();
+
+			// compute ingree
+
+			Set<Vertex<V, E>> toVisit = new HashSet<Graph.Vertex<V,E>>(all);
+
+			while(!toVisit.isEmpty()) {
+				VertextInfoManager manager = new VertextInfoManager();
+
+				DirectGraph<E, V> current = new DirectGraph<E, V>();
+				
+				result.add(current);
+				
+				for (Vertex<V, E> v: toVisit ){
+					for (Edge<V, E> e : v.getOutjacentEdges()){
+						manager.info(e.getTargetVertex()).scratch++;
+					}
+				}
+
+				// enqueue those with ingree zero
+				for (Vertex<V, E> v : toVisit){
+					if (manager.info(v).scratch == 0){
+						q.add(v);
+					}
+				}
+
+
+				if (q.isEmpty()) {
+					// there is a cicle.
+					// pick one
+					q.add(toVisit.iterator().next());
+				}
+
+				for (int iterations = 0; !q.isEmpty(); iterations++ ){
+
+					Vertex<V, E> v = q.remove();
+
+					if (manager.info(v).visited ==0){
+
+						manager.info(v).visited++;
+						toVisit.remove(v);
+
+						for (Edge<V, E> e : v.getOutjacentEdges() ){
+
+
+
+							Vertex<V, E> w = e.getTargetVertex();
+							
+							current.addEdge(e.getObject(), v.getObject(), w.getObject(), e.getCost());
+							
+							double cvw = e.getCost();
+
+							VertexInfo infoW = manager.info(w);
+
+							if ( --infoW.scratch == 0 ) {
+								q.add(w);
+							}
+
+							VertexInfo infoV = manager.info(v);
+
+
+							if (Double.compare(infoV.dist, Double.MAX_VALUE) == 0){
+								continue;
+							}
+							if (Double.compare(infoW.dist, infoV.dist + cvw) > 0){
+								infoW.dist = infoV.dist + cvw;
+								infoW.prev = v;
+								infoW.connectingEdge = e;
+							}
+
+
+						}
+
+					}
+
+				}
+
+			}
+		}
+
+		return result;
+
+	}
+
+
+	/**
+	 * @param graphVisitor
+	 */
+	public void visit(GraphVisitor<E, V> visitor) {
+
+		Collection<Vertex<V, E>> all = this.getVertices();
+
+		VertextInfoManager manager = new VertextInfoManager();
+
+		if (!all.isEmpty()){
+
+
+			LinkedList<Vertex<V, E>> q = new LinkedList<Vertex<V, E>>();
+
+			// compute ingree
+
+			for (Vertex<V, E> v: all ){
+				for (Edge<V, E> e : v.getOutjacentEdges()){
+					manager.info(e.getTargetVertex()).scratch++;
+				}
+			}
+
+			// enqueue those with ingree zero
+			for (Vertex<V, E> v : all){
+				if (manager.info(v).scratch == 0){
+					q.add(v);
+				}
+			}
+
+
+			if (q.isEmpty()) {
+				// there is a cicle.
+				// pick one
+				q.add(all.iterator().next());
+			}
+
+			visitor.onBeginGraph(this);
+
+			Set<Vertex<V, E>> toVisit = new HashSet<Graph.Vertex<V,E>>(all);
+			Set<Vertex<V, E>> visited = new HashSet<Graph.Vertex<V,E>>();
+
+			for (int iterations = 0; !q.isEmpty(); iterations++ ){
+
+				Vertex<V, E> v = q.remove();
+
+				if (visited.add(v)){
+					visitor.onBeginVertex(v);
+					toVisit.remove(v);
+
+					for (Edge<V, E> e : v.getOutjacentEdges() ){
+
+						visitor.onEdge(e);
+
+						Vertex<V, E> w = e.getTargetVertex();
+						double cvw = e.getCost();
+
+						VertexInfo infoW = manager.info(w);
+
+						if ( --infoW.scratch == 0 ) {
+							q.add(w);
+						}
+
+						VertexInfo infoV = manager.info(v);
+
+
+						if (Double.compare(infoV.dist, Double.MAX_VALUE) == 0){
+							continue;
+						}
+						if (Double.compare(infoW.dist, infoV.dist + cvw) > 0){
+							infoW.dist = infoV.dist + cvw;
+							infoW.prev = v;
+							infoW.connectingEdge = e;
+						}
+
+
+					}
+					visitor.onEndVertex(v);
+				}
+
+			}
+
+			if (!toVisit.isEmpty()){
+				throw new CycleFoundException();
+			}
+
+
+		}
+
+
+		visitor.onEndGraph(this);
+
+
+	}
+
+
+
 }

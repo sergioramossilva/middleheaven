@@ -15,7 +15,7 @@ public interface GraphPath<E, V> {
 	 */
 	public Collection<E> getEdges();
 	
-	public void visit(GraphVisitor<E,V> visitor);
+	public void visit(GraphPathVisitor<E,V> visitor);
 	
 	public boolean isEmpty();
 	

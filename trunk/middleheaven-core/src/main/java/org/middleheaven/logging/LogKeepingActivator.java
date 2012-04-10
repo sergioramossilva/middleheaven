@@ -1,36 +1,51 @@
 package org.middleheaven.logging;
 
 import java.net.MalformedURLException;
+import java.util.Collection;
 
+import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.logging.config.BasicConfigurator;
 import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.logging.config.LoggingConfigurator;
 import org.middleheaven.logging.config.XMLLoggingConfigurator;
 
-public class LoggingActivator extends Activator {
+/**
+ * Ativates log keeping. This activator will create a {@link ConfigurableLogListener}
+ * and will register it with the environment {@link LoggingService}.
+ */
+public class LogKeepingActivator extends ServiceActivator {
 
-	ContainerFileSystem fileRepositoryService;
 	LoggingService loggingService;
 	
-	public LoggingActivator(){}
+	public LogKeepingActivator(){}
 
-	@Wire
-	public void setFileRepositoryService(ContainerFileSystem fileRepositoryService) {
-		this.fileRepositoryService = fileRepositoryService;
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(LoggingService.class));
 	}
-
-	@Publish
-	public LoggingService getLoggingService() {
-		return loggingService;
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		
 	}
+	
 
 	@Override
-	public void activate() {
+	public void activate(ServiceContext serviceContext) {
 
+		final ContainerFileSystem fileRepositoryService = serviceContext.getService(BootstrapService.class).getEnvironmentBootstrap().getContainer().getFileSystem();
 		ManagedFile configFolder = fileRepositoryService.getEnvironmentConfigRepository();
 
 		LoggingConfigurator configurator = new BasicConfigurator();
@@ -52,16 +67,16 @@ public class LoggingActivator extends Activator {
 		configurator = new BasicConfigurator();
 		configuration = new LoggingConfiguration(null);
 
+		ConfigurableLogListener listener = new ConfigurableLogListener(configuration, configurator);
 
-		// there are no special properties for this service
-		this.loggingService = new HashLoggingService(configuration, configurator);
-
+		this.loggingService.addLogListener(listener);
 	}
 
 	@Override
-	public void inactivate() {
+	public void inactivate(ServiceContext serviceContext) {
 		loggingService = null;
 	}
+
 
 
 }

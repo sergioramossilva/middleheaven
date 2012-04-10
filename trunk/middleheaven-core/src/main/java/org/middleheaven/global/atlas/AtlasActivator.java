@@ -1,28 +1,52 @@
 package org.middleheaven.global.atlas;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
+import java.util.Collection;
+
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.global.atlas.modules.ModularAtlasService;
 
-public class AtlasActivator extends Activator {
 
-	
-	private final AtlasService service = new ModularAtlasService();
-	
+public class AtlasActivator extends ServiceActivator {
+
 	public AtlasActivator(){
 	}
 	
-	@Publish 
-	public AtlasService getService(){
-		return service;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		//no-dependencies
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(AtlasService.class));
 	}
 	
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void activate() {}
+	public void activate(ServiceContext serviceContext) {
+		
+		serviceContext.register(AtlasService.class, new ModularAtlasService());
+		
 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void inactivate() {}
+	public void inactivate(ServiceContext serviceContext) {
+		
+		serviceContext.unRegister(AtlasService.class);
+	}
 
 	
 }

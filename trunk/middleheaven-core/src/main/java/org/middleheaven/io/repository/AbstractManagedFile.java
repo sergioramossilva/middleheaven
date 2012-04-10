@@ -20,7 +20,7 @@ import org.middleheaven.util.collections.Walker;
  */
 public abstract class AbstractManagedFile implements ManagedFile {
 
-
+	
 	private ManagedFileRepository repository;
 
 

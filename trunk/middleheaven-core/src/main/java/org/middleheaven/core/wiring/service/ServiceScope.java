@@ -3,8 +3,9 @@ package org.middleheaven.core.wiring.service;
 import org.middleheaven.core.services.ServiceNotAvailableException;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.AbstractScopePool;
+import org.middleheaven.core.wiring.ResolutionContext;
 import org.middleheaven.core.wiring.Resolver;
-import org.middleheaven.core.wiring.WiringSpecification;
+import org.middleheaven.core.wiring.WiringQuery;
 
 /**
  * Scope for services.
@@ -18,34 +19,29 @@ public class ServiceScope extends AbstractScopePool {
 	public ServiceScope(){}
 	
 	@Override
-	public <T> T getInScope(WiringSpecification<T> spec, Resolver<T> resolver) {
+	public Object getInScope(ResolutionContext context, WiringQuery query, Resolver resolver) {
 
 		if (resolver == null){
 			throw new IllegalArgumentException("Argument 'resolver' is required");
 		}
+
 		try{
-			return  ServiceRegistry.getService(spec.getContract(), spec.getParams());
+			return  ServiceRegistry.getService(query.getContract(), query.getParams());
 
 		} catch (ServiceNotAvailableException e){
-			T object = resolver.resolve(spec);
+			Object object = resolver.resolve(context, query);
 			
 			if(object ==null){
 				return null;
 			}
 			
-			ServiceRegistry.register(spec.getContract(),object  , spec.getParams());
+			ServiceRegistry.register(query.getContract(),object  , query.getParams());
 			this.fireObjectAdded(object);
 			
-			return ServiceRegistry.getService(spec.getContract(), spec.getParams());
+			return ServiceRegistry.getService(query.getContract(), query.getParams());
 			
 		}
 
-	}
-
-	@Override
-	public <T> void add(WiringSpecification<T> spec, T object) {
-		ServiceRegistry.register(spec.getContract(), object,spec.getParams());
-		this.fireObjectAdded(object);
 	}
 
 	@Override

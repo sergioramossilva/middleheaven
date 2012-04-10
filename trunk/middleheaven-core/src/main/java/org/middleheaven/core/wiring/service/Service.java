@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.middleheaven.core.wiring.annotations.Component;
 import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -17,7 +18,8 @@ import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 	})
 @Documented
 @Inherited
-@ScopeSpecification
+@Component
+@ScopeSpecification(name = "service")
 public @interface Service {
 
 }

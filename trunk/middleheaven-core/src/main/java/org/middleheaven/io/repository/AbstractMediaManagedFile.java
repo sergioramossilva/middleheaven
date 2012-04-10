@@ -4,7 +4,6 @@ package org.middleheaven.io.repository;
 import java.net.URI;
 
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
@@ -12,7 +11,7 @@ import org.middleheaven.util.collections.EnhancedCollection;
  * An abstract implementation of a {@link MediaManagedFile}.
  */
 public abstract class AbstractMediaManagedFile extends AbstractManagedFile implements MediaManagedFile {
-
+	
 
 	protected AbstractMediaManagedFile(ManagedFileRepository repositoy ) {
 		super(repositoy);

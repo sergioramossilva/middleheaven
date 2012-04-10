@@ -4,16 +4,17 @@
  */
 package org.middleheaven.global.text;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.bootstrap.ContainerFileSystem;
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.wiring.annotations.Component;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.CultureModel;
@@ -22,26 +23,35 @@ import org.middleheaven.global.CultureModel;
 /**
  *
  */
-public class LocalizationServiceActivator extends Activator{
+@Component
+public class LocalizationServiceActivator extends ServiceActivator{
 
 	RepositoryDomainBundle masterBundle;
 
 	private Map<String, CultureModel> models = new HashMap<String, CultureModel>();
-	LocalizationService service = new LocalizationServiceImpl();
-	private BootstrapService bootstrapService;
-	
-	@Wire
-	public void setBootstrapService(BootstrapService bootstrapService) {
-		this.bootstrapService = bootstrapService;
-	}
 
-	@Publish
-	public LocalizationService getLocalizationService(){
-		return service;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		//no-dependencies
 	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(LocalizationService.class));
+	}
+	
 	
 	@Override
-	public void activate() {
+	public void activate(ServiceContext serviceContext) {
+		
+		BootstrapService bootstrapService = serviceContext.getService(BootstrapService.class);
+		
 		ContainerFileSystem environment = bootstrapService.getEnvironmentBootstrap().getContainer().getFileSystem();
 
 		masterBundle = new RepositoryDomainBundle();
@@ -50,14 +60,14 @@ public class LocalizationServiceActivator extends Activator{
 		RepositoryDomainBundle childBundle = new RepositoryDomainBundle();
 		childBundle.setRepository(environment.getAppConfigRepository());
 		masterBundle.setChildBundle(childBundle);
-
+		
+		serviceContext.register(LocalizationService.class, new LocalizationServiceImpl());
 	}
 
 
 	@Override
-	public void inactivate() {
+	public void inactivate(ServiceContext serviceContext) {
 		masterBundle = null;
-		service = null;
 	}
 
 	@Service

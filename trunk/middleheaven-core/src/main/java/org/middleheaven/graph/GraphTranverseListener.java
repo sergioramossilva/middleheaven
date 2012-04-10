@@ -1,14 +1,14 @@
 package org.middleheaven.graph;
 
-public interface GraphTranverseListener<E,V> {
+public interface GraphTranverseListener<V, E> {
 
 	
 	void beginEdgeTraversed(EdgeTraversalEvent<E,V> e);
 	
 	void endEdgeTraversed(EdgeTraversalEvent<E,V> e);
 	
-	void endVertex(VertexTraversalEvent<V> e);
+	void endVertex(VertexTraversalEvent<V, E> e);
 	   
-	void beginVertex(VertexTraversalEvent<V> e);
+	void beginVertex(VertexTraversalEvent<V, E> e);
 	   
 }
