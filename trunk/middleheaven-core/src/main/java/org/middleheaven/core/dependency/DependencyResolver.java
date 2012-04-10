@@ -5,12 +5,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.logging.LogBook;
+import org.middleheaven.logging.Logger;
 
 public class DependencyResolver {
 
-	LogBook log;
-	public DependencyResolver(LogBook log){
+	Logger log;
+	public DependencyResolver(Logger log){
 		this.log = log;
 	}
 
