@@ -1,40 +1,54 @@
 package org.middleheaven.test.core.service;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Wire;
+import java.util.Collection;
 
-public class ActivatorB extends Activator {
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 
-	A service;
-	
-	@Wire 
-	public void setService(A service){
-		this.service = service;
+public class ActivatorB extends ServiceActivator {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(A.class));
 	}
 	
-	@Publish 
-	public B getService(){
-		return new B(){
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(B.class));
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void activate(ServiceContext serviceContext) {
+		
+		final A a = serviceContext.getService(A.class);
+		
+		
+		serviceContext.register(B.class, new B(){
 
 			@Override
 			public A getA() {
-				return service;
+				return a;
 			}
 			
-		};
-	}
-	
-	@Override
-	public void activate() {
-		if (service == null){
-			 throw new IllegalArgumentException();
-		}
+		});
+		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void inactivate() {
-		// TODO implement Activator.inactivate
+	public void inactivate(ServiceContext serviceContext) {
 		
 	}
 

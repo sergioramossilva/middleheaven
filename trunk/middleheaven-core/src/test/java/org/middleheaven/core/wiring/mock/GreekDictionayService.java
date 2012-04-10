@@ -4,21 +4,21 @@
 package org.middleheaven.core.wiring.mock;
 
 import org.middleheaven.core.wiring.annotations.Component;
-
+import org.middleheaven.core.wiring.annotations.Profile;
 
 /**
  * 
  */
-@GermanDicionary
+@Profile("production")
 @Component
-public class GermanDictionayService extends HashDictionaryService {
+public class GreekDictionayService extends HashDictionaryService {
 
 	/**
 	 * Constructor.
 	 * @param lang
 	 */
-	public GermanDictionayService() {
-		super("ge");
+	public GreekDictionayService() {
+		super("gr");
 	}
 
 }

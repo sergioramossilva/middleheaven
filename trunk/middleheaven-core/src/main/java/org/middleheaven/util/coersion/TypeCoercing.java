@@ -225,7 +225,9 @@ public class TypeCoercing {
 		@SuppressWarnings("unchecked")
 		R[] result = (R[])Array.newInstance(type, length);
 		
-		for (int i =0 ; i < length; i++) {
+		int top = Math.min(length, array.length);
+		
+		for (int i =0 ; i < top; i++) {
 			result[i] = coerce(array[i], type);
 		}
 		
