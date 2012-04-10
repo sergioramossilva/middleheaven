@@ -2,6 +2,7 @@ package org.middleheaven.core.reflection.inspection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.LinkedList;
 
 import org.middleheaven.core.reflection.MemberAccess;
 import org.middleheaven.util.collections.CollectionUtils;
@@ -9,7 +10,8 @@ import org.middleheaven.util.collections.EnhancedCollection;
 
 public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCriteriaBuilder<T,Field>{
 
-
+	Resolver resolver = new StandardResolver();
+	
 	FieldIntrospectionCriteriaBuilder(IntrospectionCriteriaBuilder<T> builder) {
 		super(builder);
 	}
@@ -50,7 +52,7 @@ public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCri
 
 	@Override
 	protected EnhancedCollection<Field> getAllMembersInType(Class<T> type) {
-		return CollectionUtils.enhance(type.getDeclaredFields());
+		return resolver.resolve(type);
 	}
 
 	@Override
@@ -64,8 +66,58 @@ public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCri
 		return obj.getName();
 	}
 
+	/**
+	 * @return
+	 */
+	public FieldIntrospectionCriteriaBuilder<T> searchHierarchy() {
+		resolver = new HierarchyResolver();
+		return this;
+	}
 
 
+
+	private static interface Resolver {
+		
+		public EnhancedCollection<Field> resolve(Class<?> type);
+	}
+	
+	private static class StandardResolver implements Resolver{
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public EnhancedCollection<Field> resolve(Class<?> type) {
+			return CollectionUtils.enhance(Reflector.getReflector().getFields(type));
+		}
+		
+	}
+	
+	private static class HierarchyResolver implements Resolver{
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public EnhancedCollection<Field> resolve(Class<?> type) {
+			
+			
+			LinkedList<Field> stack = new LinkedList<Field>();
+			
+			while ( type != null && !type.equals(Object.class) ){
+				for (Field m : Reflector.getReflector().getFields(type)){
+					stack.addFirst(m);
+				}
+				
+				type = type.getSuperclass();
+			}
+			
+			
+			
+			return CollectionUtils.enhance(stack);
+		}
+		
+	}
 
 
 }
