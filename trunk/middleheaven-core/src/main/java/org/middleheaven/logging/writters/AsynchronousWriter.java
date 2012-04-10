@@ -5,7 +5,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.middleheaven.logging.LogBookWriter;
-import org.middleheaven.logging.Log;
 import org.middleheaven.logging.LoggingEvent;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.config.LoggingConfiguration;

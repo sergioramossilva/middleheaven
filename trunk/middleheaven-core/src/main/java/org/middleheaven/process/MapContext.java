@@ -1,7 +1,5 @@
 package org.middleheaven.process;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -10,9 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.AbstractEnumerableAdapter;
-import org.middleheaven.util.collections.IteratorAdapter;
+import org.middleheaven.util.collections.TransformedIterator;
 
 public class MapContext extends AbstractAttributeContext {
 
@@ -97,14 +96,17 @@ public class MapContext extends AbstractAttributeContext {
 		 */
 		@Override
 		public Iterator<Attribute> iterator() {
-			return new IteratorAdapter<Attribute, Map.Entry<String, Object> > (contextMap.get(scope).entrySet().iterator()){
+			
+			return TransformedIterator.transform(contextMap.get(scope).entrySet().iterator(), new Classifier<Attribute, Map.Entry<String, Object>>(){
 
 				@Override
-				public Attribute adaptNext(Entry<String, Object> next) {
+				public Attribute classify(Entry<String, Object> next) {
 					return new ObjectAttribute(next.getKey(), next.getValue());
 				}
+			
 				
-			};
+			});
+			
 		}
 	
 		/**

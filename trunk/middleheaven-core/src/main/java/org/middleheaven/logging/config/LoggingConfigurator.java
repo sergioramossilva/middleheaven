@@ -4,10 +4,10 @@
  */
 package org.middleheaven.logging.config;
 
-import org.middleheaven.logging.LoggingService;
+import org.middleheaven.logging.ConfigurableLogListener;
 
 public interface LoggingConfigurator {
 
-    public void config(LoggingService configurator, LoggingConfiguration configuration);
+    public void config(ConfigurableLogListener configurable, LoggingConfiguration configuration);
 
 }
