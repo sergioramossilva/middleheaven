@@ -1,14 +1,17 @@
 package org.middleheaven.namedirectory.jndi;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
+import java.util.Collection;
+
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.NamingDirectoryException;
 
 /**
  * Activates a JNDI based {@link NamingDirectoryException} service.
  */
-public class JNDINamingDirectoryActivator extends Activator {
+public class JNDINamingDirectoryActivator extends ServiceActivator {
 
 	private JNDINameDirectoryService service;
 	
@@ -18,18 +21,36 @@ public class JNDINamingDirectoryActivator extends Activator {
 	 */
 	public JNDINamingDirectoryActivator (){}
 	
-	@Publish
-	public NameDirectoryService getNameDirectoryService(){
-		return service;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		//no-dependencies
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(NameDirectoryService.class));
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void activate() {
+	public void activate(ServiceContext serviceContext) {
 		service =  new JNDINameDirectoryService();
+		
+		serviceContext.register(NameDirectoryService.class, service);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void inactivate() {
+	public void inactivate(ServiceContext serviceContext) {
 		service = null;
 	}
 

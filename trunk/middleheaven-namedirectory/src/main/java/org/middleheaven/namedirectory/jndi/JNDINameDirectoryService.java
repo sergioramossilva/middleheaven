@@ -1,25 +1,35 @@
 package org.middleheaven.namedirectory.jndi;
 
 import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Properties;
 
+import javax.naming.Binding;
 import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 
 import org.middleheaven.core.reflection.SignatureProxy;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.namedirectory.NameDirectoryService;
+import org.middleheaven.namedirectory.NameObjectEntry;
+import org.middleheaven.namedirectory.NameTypeEntry;
 import org.middleheaven.namedirectory.NamingDirectoryException;
+import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.collections.TransformedIterator;
 
 
 public class JNDINameDirectoryService implements NameDirectoryService{
 
 	private Properties properties;
 
-	@Wire
 	public JNDINameDirectoryService(){
 		this.properties = System.getProperties();
 	}
@@ -63,6 +73,64 @@ public class JNDINameDirectoryService implements NameDirectoryService{
 		}
 
 
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<NameTypeEntry> listTypes(String nameFilter) throws NamingDirectoryException {
+
+		try {
+			NamingEnumeration<NameClassPair> enumeration = getContext().list(nameFilter);
+			
+			if(enumeration==null){
+				return Collections.emptySet();
+			}
+			
+			Collection<NameTypeEntry>  result = new LinkedList<NameTypeEntry>();
+			
+			while(enumeration.hasMoreElements()){
+				NameClassPair pair = enumeration.nextElement();
+				
+				result.add(new DetachedNameTypeEntry(pair.getName(), pair.getClassName()));
+			}
+			
+			
+			return result;
+		} catch (NamingException e) {
+			throw new NamingDirectoryException(e);
+		} 
+
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterable<NameObjectEntry> listObjects(String nameFilter)
+			throws NamingDirectoryException {
+		try {
+			NamingEnumeration<Binding> enumeration = getContext().listBindings(nameFilter);
+			
+			if(enumeration==null){
+				return Collections.emptySet();
+			}
+			
+			Collection<NameObjectEntry>  result = new LinkedList<NameObjectEntry>();
+			
+			while(enumeration.hasMoreElements()){
+				Binding binding = enumeration.nextElement();
+				
+				result.add(new DetachedNameObjectEntry(binding.getName(), binding.getClassName(), binding.getObject()));
+			}
+			
+			
+			return result;
+		} catch (NamingException e) {
+			throw new NamingDirectoryException(e);
+		} 
 	}
 
 
