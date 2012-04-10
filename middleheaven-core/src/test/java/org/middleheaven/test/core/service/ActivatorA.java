@@ -1,43 +1,56 @@
 package org.middleheaven.test.core.service;
 
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Wire;
+import java.util.Collection;
 
-public class ActivatorA extends Activator {
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 
-	B service;
-	
-	@Wire 
-	public void setService(B service){
-		this.service = service;
+public class ActivatorA extends ServiceActivator {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(B.class));
 	}
 	
-	@Publish 
-	public A getService(){
-		return new A(){
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(A.class));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void activate(ServiceContext serviceContext) {
+	
+		final B b = serviceContext.getService(B.class);
+		
+		serviceContext.register(A.class, new A(){
 
 			@Override
 			public B getB() {
-				return service;
+				return b;
 			}
 			
-		};
+		});
 	}
-	
 
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void activate() {
-		if (service == null){
-			 throw new IllegalArgumentException();
-		}
+	public void inactivate(ServiceContext serviceContext) {
+		throw new UnsupportedOperationException("Not implememented yet");
 	}
 
-	@Override
-	public void inactivate() {
-		// TODO implement Activator.inactivate
-		
-	}
+
 
 }

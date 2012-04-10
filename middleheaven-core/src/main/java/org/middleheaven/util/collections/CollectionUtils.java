@@ -82,7 +82,7 @@ public class CollectionUtils {
     	return new EnhancedMapAdapter<K,V>(map);
 	}
 	
-	public static <T> EnhancedCollection<T> enhance(Iterable<T> collection){
+	public static <T> EnhancedCollection<T> enhance(Enumerable<T> collection){
 		if (collection instanceof EnhancedCollection){
     		return (EnhancedCollection<T>)collection;
     	}
