@@ -17,4 +17,5 @@ public class DesktopUIServiceActivator extends AbstractUIServiceActivator {
 	protected void registerEnvironment(UIService uiService) {
 		uiService.registerEnvironment(new DesktopEnvironment(), true);
 	}
+
 }
