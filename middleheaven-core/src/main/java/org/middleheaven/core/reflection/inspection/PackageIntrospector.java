@@ -16,6 +16,7 @@ import java.util.jar.JarInputStream;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.EnhancedArrayList;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.TransformedCollection;
 
@@ -23,6 +24,11 @@ public class PackageIntrospector extends Introspector {
 
 	private Package typePackage;
 
+	public static PackageIntrospector of (Package typePackage){
+		return new PackageIntrospector(typePackage);
+	}
+	
+	
 	PackageIntrospector(Package typePackage) {
 		this.typePackage = typePackage;
 	}
@@ -31,6 +37,21 @@ public class PackageIntrospector extends Introspector {
 		return typePackage.getName();
 	}
 
+	public EnhancedCollection<PackageIntrospector> getSubpackages(){
+		final String name = this.getName();
+		
+		final Package[] packages = Package.getPackages();
+		EnhancedCollection<PackageIntrospector> all = new EnhancedArrayList<PackageIntrospector>();
+		
+		for (Package p : packages){
+			// if the lenght is the same is the same package. discar that
+			if (p.getName().startsWith(name) && p.getName().length() != name.length() ){
+				all.add(of(p));
+			}
+		}
+		
+		return all;
+	}
 
 	public EnhancedCollection<ClassIntrospector> getClassesIntrospectors(){
 		return CollectionUtils.enhance(
@@ -160,4 +181,11 @@ public class PackageIntrospector extends Introspector {
 
 
     }
+
+	/**
+	 * @return
+	 */
+	public Package getIntrospected() {
+		return this.typePackage;
+	}
 }

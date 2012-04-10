@@ -1,6 +1,8 @@
 package org.middleheaven.core.reflection.inspection;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -9,8 +11,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.middleheaven.core.reflection.ClassCastReflectionException;
 import org.middleheaven.core.reflection.IllegalAccessReflectionException;
@@ -18,6 +22,7 @@ import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.NoSuchMethodReflectionException;
 import org.middleheaven.core.reflection.ProxyHandler;
+import org.middleheaven.core.wiring.WiringInterceptor;
 import org.middleheaven.util.StringUtils;
 
 
@@ -38,22 +43,23 @@ public class ClassIntrospector<T> extends Introspector{
 			return false;
 		}
 	}
-	
+
 	ClassIntrospector(Class<T> type) {
 		this.type = type;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static ClassIntrospector<?> loadFrom( String className){
 		// this does not delegate to load(string,classloaded) because inicialization control
 		try{
+			// TODO do without creating the class object
 			Class type =  Class.forName(className, false, ClassIntrospector.class.getClassLoader());
 			return new ClassIntrospector(type);
 		} catch (ClassNotFoundException e) {
 			throw new NoSuchClassReflectionException(className);
 		}
 	}
-	
+
 	/**
 	 * Loads a subclass of the introspected class from its name.
 	 * 
@@ -75,6 +81,78 @@ public class ClassIntrospector<T> extends Introspector{
 		}
 	}
 
+
+	/**
+	 * Determines if the instrospected type is annotated with a sepecific annotation.
+	 * This method will process meta-annotations 
+	 * 
+	 * @param annotationClass the annotation type to search.
+	 * @return <code>true</code> if the instrospected type has this aanotation, <code>false</code> otherwise
+	 */
+	public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
+
+		if (this.type.isAnnotationPresent(annotationClass)){
+			return true;
+		}
+
+		if (isMetaAnnotation(annotationClass)){
+			
+			for (Annotation a : type.getAnnotations()){
+				if (isMetaAnnotationPresent(a, annotationClass)){;
+					return true;
+				}
+			}
+			
+		}
+		
+		return false;
+	}
+
+	private boolean isMetaAnnotationPresent(Annotation annotation,Class<? extends Annotation> annotationClass) {
+		return isMetaAnnotationPresent(annotation,annotationClass, new HashSet());
+	}
+
+	private boolean isMetaAnnotationPresent(Annotation a, Class<? extends Annotation> annotationClass, Set<Class<?>> visited) {
+
+		if (a.annotationType().equals(annotationClass)){
+			
+			return true;
+
+		} else if (a.annotationType().isAnnotationPresent(annotationClass)){
+
+			return true;
+
+		} else if (visited.add(a.annotationType())){
+	
+			for (Annotation b : a.annotationType().getAnnotations()){
+				if (isMetaAnnotationPresent(b, annotationClass, visited)){
+					return true;
+				}
+			}
+	
+		}
+		
+		return false;
+
+	}
+
+	
+
+	private boolean isMetaAnnotation(Class<? extends Annotation> annotationClass){
+		// detect meta-annotation
+		Target target = annotationClass.getAnnotation(Target.class);
+
+		if ( target != null){
+			for (ElementType element : target.value()){
+				if (element.equals(ElementType.ANNOTATION_TYPE)){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+
 	/**
 	 * Loads a subclass of the introspected class from its name using the given {@code ClassLoader}.
 	 * 
@@ -83,7 +161,7 @@ public class ClassIntrospector<T> extends Introspector{
 	 * @throws NoSuchClassReflectionException if the class is not found on the classpath
 	 * @throws ClassCastReflectionException if the loaded class is not a subclass of the introspected class 
 	 */
-	
+
 	public ClassIntrospector<T> load( String className, ClassLoader loader){
 		try{
 			@SuppressWarnings("unchecked")
@@ -94,11 +172,11 @@ public class ClassIntrospector<T> extends Introspector{
 		}
 	}
 
-	
+
 	public Class<T> getIntrospected(){
 		return this.type;
 	}
-	
+
 	public T cast (Object object){
 		return type.cast(object);
 	}
@@ -123,7 +201,7 @@ public class ClassIntrospector<T> extends Introspector{
 		} else {
 			return new Type[0];
 		}
-		
+
 	}
 	public IntrospectionCriteriaBuilder<T> inspect(){
 		return new IntrospectionCriteriaBuilder<T>(this.type);
@@ -142,12 +220,12 @@ public class ClassIntrospector<T> extends Introspector{
 	}
 
 	public T newProxyInstance(ProxyHandler handler){
-//		if(!type.isInterface()){
-//			throw new UnsupportedOperationException("Cannot proxy " + type.getName() + " as interface");
-//		}
+		//		if(!type.isInterface()){
+		//			throw new UnsupportedOperationException("Cannot proxy " + type.getName() + " as interface");
+		//		}
 		return Reflector.getReflector().proxyType(type, handler);
 	} 
-	
+
 	public <I> I newProxyInstance(ProxyHandler handler, Class<I> proxyInterface ,Class<?> ... adicionalInterfaces){
 		if(!type.isInterface()){
 			throw new UnsupportedOperationException("Cannot proxy " + type.getName() + ".Type is not an interface");
@@ -163,7 +241,7 @@ public class ClassIntrospector<T> extends Introspector{
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		return type.getAnnotation(annotationClass);
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -212,7 +290,7 @@ public class ClassIntrospector<T> extends Introspector{
 		Class<?> superType = type;
 		while (superType!=null && !superType.equals(Object.class)){
 			all.addAll(Arrays.asList(superType.getInterfaces())); // interfaces in class
-			
+
 			// up to super class
 			superType = superType.getSuperclass();
 		}
@@ -229,18 +307,18 @@ public class ClassIntrospector<T> extends Introspector{
 	 */
 	public boolean isFundamental() {
 		return type.isPrimitive()
-			|| String.class.isAssignableFrom(type)
-			|| Date.class.isAssignableFrom(type)
-			|| Integer.class.isAssignableFrom(type)
-			|| Long.class.isAssignableFrom(type)
-			|| BigInteger.class.isAssignableFrom(type)
-			|| BigDecimal.class.isAssignableFrom(type)
-			|| Byte.class.isAssignableFrom(type)
-			|| Short.class.isAssignableFrom(type)
-			|| Character.class.isAssignableFrom(type)
-			|| Double.class.isAssignableFrom(type)
-			|| Float.class.isAssignableFrom(type)
-			;
+				|| String.class.isAssignableFrom(type)
+				|| Date.class.isAssignableFrom(type)
+				|| Integer.class.isAssignableFrom(type)
+				|| Long.class.isAssignableFrom(type)
+				|| BigInteger.class.isAssignableFrom(type)
+				|| BigDecimal.class.isAssignableFrom(type)
+				|| Byte.class.isAssignableFrom(type)
+				|| Short.class.isAssignableFrom(type)
+				|| Character.class.isAssignableFrom(type)
+				|| Double.class.isAssignableFrom(type)
+				|| Float.class.isAssignableFrom(type)
+				;
 	}
 
 	/**
@@ -255,15 +333,15 @@ public class ClassIntrospector<T> extends Introspector{
 			return null;
 		}
 		String name = type.getSimpleName();
-		
+
 		if ("int".equals(name)){
 			name = "integer";
 		} else if ("char".equals(name)){
 			name = "character";
 		}
-		
+
 		name = StringUtils.firstLetterToUpper(name);
-		
+
 		return loadFrom("java.lang.".concat(name)).getIntrospected();
 	}
 
@@ -274,6 +352,9 @@ public class ClassIntrospector<T> extends Introspector{
 	public boolean isSubtypeOf(Class<?> otherType) {
 		return otherType.isAssignableFrom(type);
 	}
+
+
+
 
 
 

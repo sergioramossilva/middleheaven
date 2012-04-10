@@ -423,6 +423,7 @@ class Reflector {
 
 
 	private  Map<String, Map<MethodKey , Method >> classMethods = new WeakHashMap<String, Map<MethodKey , Method >>();
+	private  Map<String, Map<FieldKey , Field >> classFields = new WeakHashMap<String, Map<FieldKey , Field >>();
 
 	private final  class MethodKey {
 
@@ -452,6 +453,28 @@ class Reflector {
 			return hash;
 		}
 	}
+	
+	private final  class FieldKey {
+
+		String id;
+		int hash;
+
+		public FieldKey(Class<?> type, String name) {
+			StringBuilder builder = new StringBuilder( type.getName())
+			.append('#').append(name);
+
+			this.id = builder.toString();
+			hash = id.hashCode();
+		}
+
+		public boolean equals(Object other){
+			return (other instanceof FieldKey) && ((FieldKey)other).id.equals(this.id);
+		}
+
+		public int hashCode(){
+			return hash;
+		}
+	}
 
 	private  Map<MethodKey , Method> getClassMethods (Class<?> type){
 		Map<MethodKey , Method>  methods = classMethods.get(type.getName());
@@ -468,6 +491,23 @@ class Reflector {
 		}
 
 		return methods;
+	}
+	
+	private  Map<FieldKey , Field> getClassFields (Class<?> type){
+		Map<FieldKey , Field>  fields = classFields.get(type.getName());
+
+		if (fields == null){
+			fields = new HashMap<FieldKey , Field>();
+			classFields.put(type.getName(), fields);
+			for (Field m : type.getFields()){
+				fields.put(new FieldKey(type,m.getName()), m);
+			}
+			for (Field m : type.getDeclaredFields()){
+				fields.put(new FieldKey(type,m.getName()), m);
+			}
+		}
+
+		return fields;
 	}
 
 	public  Method getMethod (Class<?> type , String name, Class<?>[] paramTypes){
@@ -496,12 +536,15 @@ class Reflector {
 
 	}
 
-	/*
-	@SuppressWarnings("unchecked")
-	public  <T> Class<T> genericClass(T object) {
-		return (Class<T>) object.getClass();
-	}
+	/**
+	 * @param type
+	 * @return
 	 */
+	public List<Field> getFields(Class<?> type) {
+		return new ArrayList<Field>(getClassFields(type).values());
+	}
+
+
 
 
 
