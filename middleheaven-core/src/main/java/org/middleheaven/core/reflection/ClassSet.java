@@ -42,9 +42,19 @@ public final class ClassSet implements Iterable<Class<?>>{
 		
 		return this;
 	}
+	
+	public ClassSet add(ClassSet other){
+		types.addAll(other.types);
+		
+		return this;
+	}
 
 	@Override
 	public Iterator<Class<?>> iterator() {
 		return types.iterator();
+	}
+	
+	public int size(){
+		return types.size();
 	}
 }
