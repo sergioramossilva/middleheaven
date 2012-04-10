@@ -3,8 +3,6 @@
  */
 package org.middleheaven.core.wiring;
 
-import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.Mergable;
 
 /**
  * 
@@ -12,11 +10,11 @@ import org.middleheaven.util.collections.Mergable;
 public abstract class AbstractProducingWiringPoint implements ProducingWiringPoint {
 
 	
-	private WiringSpecification<?> methodSpecification;
-	private WiringSpecification<?>[] paramsSpecifications;
+	private WiringSpecification methodSpecification;
+	private WiringSpecification[] paramsSpecifications;
 	
 	
-	protected AbstractProducingWiringPoint (WiringSpecification<?> methodSpecification,WiringSpecification<?>[] paramsSpecifications){
+	protected AbstractProducingWiringPoint (WiringSpecification methodSpecification,WiringSpecification[] paramsSpecifications){
 		this.methodSpecification = methodSpecification;
 		this.paramsSpecifications = paramsSpecifications;
 	}
@@ -26,7 +24,7 @@ public abstract class AbstractProducingWiringPoint implements ProducingWiringPoi
 	 * {@inheritDoc}
 	 */
 	@Override
-	public WiringSpecification<?> getSpecification() {
+	public WiringSpecification getSpecification() {
 		return methodSpecification;
 	}
 
@@ -35,7 +33,7 @@ public abstract class AbstractProducingWiringPoint implements ProducingWiringPoi
 	 * {@inheritDoc}
 	 */
 	@Override
-	public WiringSpecification<?>[] getParamsSpecifications() {
+	public WiringSpecification[] getParamsSpecifications() {
 		return paramsSpecifications;
 	}
 	

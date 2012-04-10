@@ -18,7 +18,7 @@ public class WiringSpecificationNotSatisfiedException extends BindingException {
 	 * Constructor.
 	 * @param wiringSpecification
 	 */
-	public WiringSpecificationNotSatisfiedException(Class<?> type, WiringSpecification<?> wiringSpecification) {
+	public WiringSpecificationNotSatisfiedException(Class<?> type, WiringSpecification wiringSpecification) {
 		super(createMessage(type, wiringSpecification));
 	}
 
@@ -28,7 +28,7 @@ public class WiringSpecificationNotSatisfiedException extends BindingException {
 	 * @param wiringSpecification
 	 * @return
 	 */
-	private static String createMessage(Class<?> type, WiringSpecification<?> wiringSpecification) {
+	private static String createMessage(Class<?> type, WiringSpecification wiringSpecification) {
 		return "Cannot satisfy dependency " + wiringSpecification.getContract() + " for class " + type;
 	}
 

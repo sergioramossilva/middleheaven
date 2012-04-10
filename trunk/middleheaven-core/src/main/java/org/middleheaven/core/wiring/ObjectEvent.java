@@ -6,7 +6,7 @@ package org.middleheaven.core.wiring;
 /**
  * 
  */
-public class ObjectPoolEvent {
+public class ObjectEvent {
 
 	private Object object;
 
@@ -14,7 +14,7 @@ public class ObjectPoolEvent {
 	 * Constructor.
 	 * @param object
 	 */
-	public ObjectPoolEvent(Object object) {
+	public ObjectEvent(Object object) {
 		this.object = object;
 	}
 	

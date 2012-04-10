@@ -1,27 +1,31 @@
 package org.middleheaven.core.wiring;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Allows to retrieve instances form name-keyed , predetermined , values.
  *
- * @param <T>
+ * @param 
  */
-public class PropertyResolver<T> implements Resolver<T> {
+public class PropertyResolver implements Resolver {
 
-	private final Map<String, Object > map = new HashMap<String, Object >();
 
-	
-	public PropertyResolver(){}
+	private final HashPropertyManager propertyManager = new HashPropertyManager("properties.scope");
+	private final WiringService wiringService;
+
+	public PropertyResolver(WiringService wiringService){
+		this.wiringService = wiringService;
+		
+		wiringService.getPropertyManagers().addFirst(propertyManager);
+	}
 	
 	@Override
-	public T resolve(WiringSpecification<T> query) {
+	public Object resolve(ResolutionContext context, WiringQuery query) {
 
 		Object name = query.getParam("name");
 
-		if (name != null){
-			Object obj = map.get(name);
+		if (name instanceof String){
+			Object obj = wiringService.getPropertyManagers().getProperty((String) name);
+			
 			if (query.getContract().isAssignableFrom(obj.getClass())){
 				return query.getContract().cast(obj);
 			} else {
@@ -33,7 +37,7 @@ public class PropertyResolver<T> implements Resolver<T> {
 	}
 
 	public void setProperty(String name, Object value){
-		map.put(name, value);
+		propertyManager.putProperty(name, value);
 	}
 
 }

@@ -10,4 +10,5 @@ package org.middleheaven.core.wiring;
 public interface WiringPoint {
 
 	// no  methods 
+		
 }

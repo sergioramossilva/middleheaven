@@ -6,15 +6,16 @@ package org.middleheaven.core.wiring;
  * 
  * @param <T> the type for the instance to retrieve
  */
-public class InstanceResolver<T> implements Resolver<T> {
+public class InstanceResolver implements Resolver {
 
-	T object;
-	public InstanceResolver(T object){
+	Object object;
+	
+	public InstanceResolver(Object object){
 		this.object = object;
 	}
 	
 	@Override
-	public T resolve(WiringSpecification<T> query) {
+	public Object resolve(ResolutionContext context, WiringQuery query) {
 		return object;
 	}
 

@@ -1,105 +1,139 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.Binding.BindingScopeListener;
-import org.middleheaven.core.wiring.annotations.Default;
+import org.middleheaven.core.wiring.annotations.Component;
 import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceScope;
 import org.middleheaven.events.EventListenersSet;
+import org.middleheaven.graph.DirectGraph;
+import org.middleheaven.logging.Logger;
+import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.ClassMap;
 
 @Service
 public class StandardWiringService implements WiringService {
 
-	private final PropertyResolver<Object> propertyResolver = new PropertyResolver<Object>();
+	protected static final Introspector Instrospector = null;
 
-	private final StandardObjectPool objectPool = new StandardObjectPool();
+	private final Collection<WiringItemBundle> bundles = new CopyOnWriteArrayList<WiringItemBundle>();
+
+
 	private final BinderImpl binder = new BinderImpl();
 	private final List<WiringInterceptor> interceptors = new CopyOnWriteArrayList<WiringInterceptor>();
-	private final Map<String, Class<? extends ScopePool>> scopes = new TreeMap<String, Class<? extends ScopePool>>();
-	private final Map<String, ScopePool> scopePools = new TreeMap<String, ScopePool>();
+	private final Map<String, Scope> scopes = new LinkedHashMap<String, Scope>();
+
+	private NewInstanceScope newInstanceScope = new NewInstanceScope();
+	private SharedScope sharedScope = new SharedScope();
+
+	private final PropertyManagers propertyManagers = new PropertyManagers();
+	private final ProfilesBag activeProfiles = new ProfilesBag();
+
+	private final PropertyResolver propertyResolver;
 
 	public StandardWiringService() {
+		parsers.add(new DefaultWiringModelParser());
 
-		scopes.put(Shared.class.getName(), SharedScope.class);
-		scopes.put(Default.class.getName(), NewInstanceScope.class);
-		scopes.put(Service.class.getName(), ServiceScope.class);
+		propertyResolver = new PropertyResolver(this);
 
-		NewInstanceScope newInstanceScope = new NewInstanceScope();
-		SharedScope sharedScope = new SharedScope();
+		ClassSet contextClasses = new ClassSet();
 
-		// register scopes
-		scopePools.put(NewInstanceScope.class.getName(), newInstanceScope);
-		scopePools.put(SharedScope.class.getName(), sharedScope);
+		contextClasses.add(Logger.class.getPackage());
+
+		this.addItemBundle(new ClassSetWiringBundle(contextClasses));
+
+
+		propertyManagers.addFirst(new SytemEnvPropertyManager());
+		propertyManagers.addFirst(new SytemPropertyManager());
+
+
+		registerScope("service", new ServiceScope());
+		registerScope("shared", sharedScope);
+		registerScope("default", newInstanceScope);
 
 		// register scopes in shared scope.
-		binder.bind(SharedScope.class).in(Shared.class).toInstance(sharedScope);
-		binder.bind(NewInstanceScope.class).in(Shared.class)
-				.toInstance(newInstanceScope);
-		binder.bind(ServiceScope.class).in(Shared.class);
-		binder.bind(ObjectPool.class).in(Shared.class).toInstance(objectPool);
+		//		binder.bind(SharedScope.class).in(Shared.class).toInstance(sharedScope);
+		//		binder.bind(NewInstanceScope.class).in(Shared.class).toInstance(newInstanceScope);
+		//		binder.bind(ServiceScope.class).in(Shared.class);
 
 		// add connector
 
 		if (ClassIntrospector.isInClasspath("javax.annotation.Resource")
 				&& ClassIntrospector
-						.isInClasspath("org.middleheaven.core.wiring.connectors.JavaEE5InjectonConnector")) {
+				.isInClasspath("org.middleheaven.core.wiring.connectors.JavaEE5InjectonConnector")) {
 			this.addConnector((WiringConnector) ClassIntrospector
 					.loadFrom(
 							"org.middleheaven.core.wiring.connectors.JavaEE5InjectonConnector")
-					.newInstance());
+							.newInstance());
 		}
 
 	}
 
-	@Override
-	public ObjectPool getObjectPool() {
-		return objectPool;
+	public void close(){
+		for (Scope scopePool : scopes.values()){
+			scopePool.clear();
+		}
 	}
 
 	private BindingMap bindingMap = new BindingMap();
 
-	private class BinderImpl implements Binder, EditableBinder,
-			ConnectableBinder, BindingScopeListener {
+	ClassMap<BeanDependencyModel> models = new ClassMap<BeanDependencyModel>();
+	Set<WiringModelReader> parsers = new CopyOnWriteArraySet<WiringModelReader>();
 
-		Queue<Key> stack = new LinkedList<Key>();
-		Map<Key, CyclicProxy> cyclicProxies = new HashMap<Key, CyclicProxy>();
-		Set<WiringModelReader> parsers = new CopyOnWriteArraySet<WiringModelReader>();
+	private BeanDependencyModel revolveBeanModel(Class<?> type) {
+
+		BeanDependencyModel model = models.get(type);
+
+		if (model == null) {
+			model = new BeanDependencyModel(type);
+
+			models.put(type, model);
+
+			if (String.class.isAssignableFrom(type)
+					|| Number.class.isAssignableFrom(type)) {
+				return model;
+			}
+
+			for (WiringModelReader reader : this.parsers) {
+				reader.readBeanModel(type, model);
+			}
+		}
+
+		return model;
+	}
+
+	private class BinderImpl implements Binder, EditableBinder,
+	ConnectableBinder {
+
 
 		public BinderImpl() {
-			parsers.add(new DefaultWiringModelParser());
+
 
 		}
 
 		@Override
 		public <T> BindingBuilder<T> bind(Class<T> type) {
-			return new BindingBuilder<T>(this, type);
-		}
-
-		@Override
-		public <S extends ScopePool> void bindScope(
-				Class<? extends Annotation> annotation, Class<S> scopeClass) {
-			scopes.put(annotation.getName(), scopeClass);
+			return new StandardBindingBuilder<T>(this, type);
 		}
 
 		@Override
 		public <T> PropertyBindingBuilder<T> bindProperty(Class<T> type) {
 			Binding binding = new Binding();
-			binding.setAbstractType(type);
+			binding.setSourceType(type);
 			binding.setResolver(propertyResolver);
 
 			PropertyBindingBuilder<T> b = new PropertyBindingBuilder<T>(this,
@@ -111,58 +145,22 @@ public class StandardWiringService implements WiringService {
 
 		@Override
 		public void addBinding(Binding binding) {
-			bindingMap.add(binding);
 
-			// if (binding.getScope() != null){
-			// onScopeChange(binding);
-			// } else {
-			// binding.addListeners(this);
-			// }
-
+			if (getActiveProfiles().accepts(binding.getProfiles())){
+				bindingMap.add(binding);
+			} else {
+				org.middleheaven.logging.Log.onBook("binding").warn("Discarded binding {0} beacause does not match active profiles", binding);
+			}
 		}
 
-		@Override
-		public void onScopeChange(Binding binding) {
 
-			WiringSpecification spec = WiringSpecification.search(
-					binding.getAbstractType(), binding.getParams());
-
-			final ScopePool scopePool = binder.getScopePool(binding);
-			// Object o = scopePool.getInScope(spec, NullResolver.instance());
-			// if (o != null){
-			// Log.onBookFor(this.getClass()).warn("Service {0} is beeing scoped more than once",binding.getAbstractType().getName());
-			// }
-			scopePool.add(spec, binding.getResolver().resolve(spec));
-
-		}
-
-		ClassMap<BeanModel> models = new ClassMap<BeanModel>();
-
-		public BeanModel getBeanModel(Object object) {
+		public BeanDependencyModel getBeanModel(Object object) {
 			return getBeanModel(object.getClass());
 		}
 
 		@Override
-		public BeanModel getBeanModel(Class<?> type) {
-
-			BeanModel model = models.get(type);
-
-			if (model == null) {
-				model = new BeanModel(type);
-
-				models.put(type, model);
-
-				if (String.class.isAssignableFrom(type)
-						|| Number.class.isAssignableFrom(type)) {
-					return model;
-				}
-
-				for (WiringModelReader reader : this.parsers) {
-					reader.readBeanModel(type, model);
-				}
-			}
-
-			return model;
+		public BeanDependencyModel getBeanModel(Class<?> type) {
+			return revolveBeanModel(type);
 		}
 
 		@Override
@@ -176,143 +174,141 @@ public class StandardWiringService implements WiringService {
 		}
 
 		@Override
-		public <T> T getInstance(WiringSpecification<T> query) {
-			Key key = Key.keyFor(query.getContract(), query.getParams());
+		public Object getInstance(WiringQuery query) {
 
-			Binding binding = bindingMap.findNearest(query);
-			if (binding == null) {
-				// is binding is not found try to guess one automatically
+			return factory.getInstance(query);
 
-				// if its a concrete class create an auto-binding for it
-				if (!query.getContract().isAnnotation()
-						&& !query.getContract().isInterface()
-						&& !Modifier.isAbstract(query.getContract()
-								.getModifiers())) {
-
-					BeanModel model = this.getBeanModel(query.getContract());
-
-					binding = new Binding();
-
-					binding.addParams(model.getParams());
-					binding.setTargetScope(Shared.class);
-
-					binding.setAbstractType(query.getContract());
-
-					binding.setResolver(FactoryResolver.instanceFor(
-							query.getContract(), binder));
-
-					this.addBinding(binding);
-
-					return getInstance(query); // repeat search recursively
-				}
-
-				// try understand from which scope could be read
-				Set<Annotation> annotations = Introspector
-						.of(query.getContract()).inspect().annotations()
-						.retrive();
-
-				// find a scope annotation
-				Annotation found = null;
-				for (Annotation a : annotations) {
-					if (scopes.containsKey(a.annotationType().getName())) {
-						if (found != null) {
-							// already found one previouslly
-							throw new BindingException(
-									"To many auto-binding options");
-						}
-						found = a; // do not break
-					}
-				}
-
-				// if (found!=null){
-				// // found a scope
-				// // add a biding
-				//
-				//
-				// BeanModel model = this.getBeanModel(query.getContract());
-				//
-				// binding = new Binding();
-				//
-				// binding.addParams(model.getParams());
-				// binding.setTargetScope(found.annotationType());
-				//
-				// binding.setStartType(model.getContractType());
-				// binding.setResolver(FactoryResolver.instanceFor(query.getContract(),
-				// binder));
-				//
-				//
-				// this.addBinding(binding);
-				//
-				// return getInstance(query); // repeat search
-				// } else {
-				if (query.isRequired()) {
-					throw new BindingNotFoundException(query.getContract());
-				} else {
-					return null;
-				}
-				// }
-
-			}
-
-			// binding was found
-			// resolve target
-			if (stack.contains(key)) {
-				// cyclic reference
-				// return proxy
-				CyclicProxy proxy = cyclicProxies.get(key);
-				if (proxy == null) {
-					proxy = new CyclicProxy();
-					cyclicProxies.put(key, proxy);
-				}
-				return Introspector.of(query.getContract()).newProxyInstance(
-						proxy);
-
-			} else {
-				stack.offer(key);
-				try {
-					// resolve scope
-					ScopePool scopePool = getScopePool(binding);
-
-					// get resolver
-					Resolver<T> resolver = binding.getResolver();
-
-					if (resolver == null
-							&& !binding.getAbstractType().isInterface()) {
-						resolver = FactoryResolver.instanceFor(
-								binding.getAbstractType(), this);
-					}
-
-					if (resolver != null) {
-						// attach interceptors
-						final InterceptorResolver<T> interceptorResolver = new InterceptorResolver<T>(
-								interceptors, resolver);
-						T obj = scopePool
-								.getInScope(query, interceptorResolver);
-
-						stack.remove(key);
-
-						// check if there is any proxy to complete
-						CyclicProxy proxy = cyclicProxies.get(key);
-						if (proxy != null) {
-							proxy.setRealObject(obj);
-						}
-						return obj;
-					} else {
-						return null;
-					}
-				} catch (RuntimeException e) {
-					stack.remove(key);
-					throw e;
-				}
-			}
+			//			// specialcase of wiringTarget injection
+			//
+			//			if (query.getContract().equals(WiringTarget.class)){
+			//				return query.getTarget();
+			//			}
+			//
+			//			Key key = Key.keyFor(query.getContract(), query.getParams());
+			//
+			//			Binding binding = bindingMap.findNearest(query);
+			//			if (binding == null) {
+			//				// is binding is not found try to guess one automatically
+			//
+			//	
+			//				
+			//				// if its a concrete class create an auto-binding for it
+			//				if (!query.getContract().isAnnotation()
+			//						&& !query.getContract().isInterface()
+			//						&& !Modifier.isAbstract(query.getContract()
+			//								.getModifiers())) {
+			//
+			//					BeanDependencyModel model = this.getBeanModel(query.getContract());
+			//
+			//					binding = new Binding();
+			//
+			//					binding.addParams(model.getParams());
+			//					binding.setScope("shared");
+			//
+			//					binding.setSourceType(query.getContract());
+			//
+			//					binding.setResolver(FactoryResolver.instanceFor(model));
+			//
+			//					binding.setProfiles(model.getProfiles());
+			//
+			//					this.addBinding(binding);
+			//
+			//					return getInstance(query); // repeat search recursively
+			//				}
+			//
+			//				// try understand from which scope could be read
+			//				Set<Annotation> annotations = Introspector
+			//						.of(query.getContract()).inspect().annotations()
+			//						.retrive();
+			//
+			//				// find a scope annotation
+			//				String found = null;
+			//				for (Annotation a : annotations) {
+			//					final String scopeName = WiringUtils.readScope(a);
+			//					if (scopes.containsKey(scopeName)) {
+			//						if (found != null) {
+			//							// already found one previouslly
+			//							throw new BindingException(
+			//									"To many auto-binding options");
+			//						}
+			//						found = scopeName; // do not break
+			//					}
+			//				}
+			//
+			//				if (found == null && query.isRequired()) {
+			//					throw new CanSatisfyDependencyException(query.getContract(), query.getTarget());
+			//				} else {
+			//					return getOrCreate(query, key,  found , null);
+			//				}
+			//
+			//			}
+			//
+			//
+			//			// binding was found
+			//			// resolve target
+			//			if (stack.contains(key)) {
+			//				// cyclic reference
+			//				// return proxy
+			//				CyclicProxy proxy = cyclicProxies.get(key);
+			//				if (proxy == null) {
+			//					proxy = new CyclicProxy();
+			//					cyclicProxies.put(key, proxy);
+			//				}
+			//				return Introspector.of(query.getContract()).newProxyInstance(proxy);
+			//
+			//			} else {
+			//				stack.offer(key);
+			//				try {
+			//					return getOrCreate(query, key,  binding.getScope(),binding.getResolver());
+			//				} catch (RuntimeException e) {
+			//					stack.remove(key);
+			//					throw e;
+			//				}
+			//			}
 
 		}
 
+		private Object getOrCreate(WiringQuery query, Key key,String scopeName, Resolver resolver ) {
+			// resolve scope
+
+			Scope scopePool = getScopePool(scopeName);
+
+			if (resolver == null){
+
+				if (!query.getContract().isInterface()) {
+					resolver = FactoryResolver.instanceFor(this.getBeanModel(query.getContract()));
+				} else {
+					resolver = NullResolver.instance();
+				}
+
+			}
+
+			if (resolver != null) {
+				// attach interceptors
+
+				ResolutionContext context = new StandardResolutionContext(scopeName);
+
+				final InterceptorResolver interceptorResolver = new InterceptorResolver(interceptors, resolver);
+				Object obj = scopePool.getInScope(context, query, interceptorResolver);
+
+				stack.remove(key);
+
+				// check if there is any proxy to complete
+				CyclicProxy proxy = cyclicProxies.get(key);
+				if (proxy != null) {
+					proxy.setRealObject(obj);
+				}
+				return obj;
+			} else {
+				return null;
+			}
+		}
+
 		public void wireMembers(Object obj) {
-			BeanModel model = this.getBeanModel(obj.getClass());
+			BeanDependencyModel model = this.getBeanModel(obj.getClass());
 
 			for (AfterWiringPoint a : model.getAfterPoints()) {
-				obj = a.writeAtPoint(binder, obj);
+				obj = a.writeAtPoint(factory, obj);
 			}
 		}
 
@@ -322,43 +318,14 @@ public class StandardWiringService implements WiringService {
 
 		}
 
-		public ScopePool getScopePool(Binding binding) {
-			Class<? extends ScopePool> scopeClass;
-			if (binding.getScope() == null) {
-				scopeClass = scopes.get(Default.class.getName());
-			} else {
-				scopeClass = scopes.get(binding.getScope().getName());
-				if (scopeClass == null) {
-					throw new BindingNotFoundException(binding.getScope());
-				}
-			}
+		public Scope getScopePool(String scopeName ) {
 
 			// find scope class
-			ScopePool scopePool = scopePools.get(scopeClass.getName());
+			Scope scopePool = scopes.get(scopeName);
+
 			if (scopePool == null) {
-				// the pool is also injectable
-				scopePool = getInstance(WiringSpecification.search(scopeClass));
-				scopePools.put(scopeClass.getName(), scopePool);
+				throw new BindingScopeNotFoundException(scopeName);
 
-				scopePool.addScopeListener(new ScopeListener() {
-
-					@Override
-					public void onObjectAdded(ScopePoolEvent scopePoolEvent) {
-						objetEvent.broadcastEvent()
-								.onObjectAdded(
-										new ObjectPoolEvent(scopePoolEvent
-												.getObject()));
-					}
-
-					@Override
-					public void onObjectRemoved(ScopePoolEvent scopePoolEvent) {
-						objetEvent.broadcastEvent()
-								.onObjectRemoved(
-										new ObjectPoolEvent(scopePoolEvent
-												.getObject()));
-					}
-
-				});
 			}
 
 			return scopePool;
@@ -377,23 +344,56 @@ public class StandardWiringService implements WiringService {
 		/**
 		 * @param beanModel
 		 */
-		public void addBindings(BeanModel model, Resolver<?> resolver) {
+		public void addBindings(BeanDependencyModel model, Resolver resolver) {
 
-			for (Class<?> scope : model.getScopes()) {
-				Binding binding = new Binding();
+			for (String scope : model.getScopes()) {
 
-				binding.addParams(model.getParams());
-				binding.setTargetScope(scope);
+				for (Class<?> contract : model.getContractTypes()){
+					Binding binding = new Binding();
 
-				binding.setAbstractType(model.getContractType());
+					binding.addParams(model.getParams());
+					binding.setScope(scope);
+					binding.setProfiles(model.getProfiles());
 
-				binding.setResolver(resolver);
+					binding.setSourceType(contract);
 
-				this.addBinding(binding);
+					binding.setResolver(resolver);
 
-				initializeBinding(binding);
+					this.addBinding(binding);
+
+					initializeBinding(binding);
+				}
+
 			}
 
+		}
+
+	}
+
+	public class StandardResolutionContext implements ResolutionContext {
+
+		private String scopeName;
+
+
+		protected StandardResolutionContext(String scopeName) {
+			super();
+			this.scopeName = scopeName;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String getScopeName() {
+			return scopeName;
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public InstanceFactory getInstanceFactory() {
+			return factory;
 		}
 
 	}
@@ -401,7 +401,7 @@ public class StandardWiringService implements WiringService {
 	private final EventListenersSet<ObjectPoolListener> objetEvent = EventListenersSet
 			.newSet(ObjectPoolListener.class);
 
-	
+
 	protected void initializedAll(){
 		for (Binding b : bindingMap.getBindings()) {
 			initializeBinding(b);
@@ -413,75 +413,448 @@ public class StandardWiringService implements WiringService {
 				&& !b.isLazy()
 				&& (Service.class.equals(b.getScope()) || Shared.class.equals(b.getScope()))) {
 			try {
-			this.objectPool.getInstance(b.getAbstractType());
-			b.setInicialized(true);
+				getInstance(b.getSourceType());
+				b.setInicialized(true);
 			} catch (Exception e){
 				//no-op. eager loading fail. try lazy
 			}
 		}
 	}
-	
-	
-	private class StandardObjectPool implements ObjectPool {
 
-		private StandardObjectPool() {
-
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public WiringService addConfiguration(BindConfiguration... modules) {
+		for (BindConfiguration m : modules) {
+			m.configure(binder);
 		}
 
-		@Override
-		public ObjectPool addConfiguration(BindConfiguration... modules) {
-			for (BindConfiguration m : modules) {
-				m.configure(binder);
-			}
+		initializedAll();
 
-			initializedAll();
-
-			return this;
-		}
-
-		@Override
-		public <T> T getInstance(Class<T> type) {
-			return binder.getInstance(WiringSpecification.search(type));
-		}
-
-		@Override
-		public <T> T getInstance(Class<T> type,
-				Map<String, ? extends Object> params) {
-
-			@SuppressWarnings("unchecked")
-			Map<String, Object> p = (Map<String, Object>) params;
-
-			return binder.getInstance(WiringSpecification.search(type, p));
-		}
-
-		@Override
-		public void wireMembers(Object obj) {
-			binder.wireMembers(obj);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void addObjectCycleListener(ObjectPoolListener listener) {
-			objetEvent.addListener(listener);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void removeObjectCycleListener(ObjectPoolListener listener) {
-			objetEvent.removeListener(listener);
-		}
-
+		return this;
 	}
 
 	@Override
-	public void addConnector(WiringConnector... connectors) {
-		for (WiringConnector c : connectors) {
-			c.connect(binder);
+	public <T> T getInstance(Class<T> type) {
+		return type.cast(binder.getInstance(WiringQuery.search(type)));
+	}
+
+	@Override
+	public <T> T getInstance(Class<T> type,
+			Map<String, ? extends Object> params) {
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> p = (Map<String, Object>) params;
+
+		return type.cast(binder.getInstance(WiringQuery.search(type, p)));
+	}
+
+	@Override
+	public void wireMembers(Object obj) {
+		binder.wireMembers(obj);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addObjectCycleListener(ObjectPoolListener listener) {
+		objetEvent.addListener(listener);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeObjectCycleListener(ObjectPoolListener listener) {
+		objetEvent.removeListener(listener);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public PropertyManagers getPropertyManagers() {
+		return this.propertyManagers;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ProfilesBag getActiveProfiles() {
+		return activeProfiles;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void registerScope(String name, Scope scope) {
+		scopes.put(name, scope);
+
+		scope.addScopeListener(new ScopeListener() {
+
+			@Override
+			public void onObjectAdded(ScopePoolEvent scopePoolEvent) {
+				objetEvent.broadcastEvent()
+				.onObjectAdded(
+						new ObjectEvent(scopePoolEvent
+								.getObject()));
+			}
+
+			@Override
+			public void onObjectRemoved(ScopePoolEvent scopePoolEvent) {
+				objetEvent.broadcastEvent()
+				.onObjectRemoved(
+						new ObjectEvent(scopePoolEvent
+								.getObject()));
+			}
+
+		});
+
+	}
+
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addConnector(WiringConnector  connector) {
+		connector.connect(binder);
+
+	}
+
+	BooleanClassifier<Class> componentFilter = new BooleanClassifier<Class>(){
+
+		@Override
+		public Boolean classify(Class obj) {
+			return Instrospector.of(obj).isAnnotationPresent(Component.class);
+		}
+
+	};
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void refresh() {
+
+		Queue<BeanDependencyModel> wiringInterceptors = new LinkedList<BeanDependencyModel>();
+
+		for (WiringItemBundle bundle : this.bundles){
+
+			for (WiringItem item : bundle) {
+
+				if (item.isType()) {
+
+					Class<?> type = (Class<?>) item.getItem();
+
+					// if is component
+					if (componentFilter.classify(type).booleanValue()){
+						BeanDependencyModel model = this.binder.getBeanModel(type);
+
+						processDependableBean(null, null, model, FactoryResolver.instanceFor(model));
+
+						if (Introspector.of(model.getBeanClass()).isSubtypeOf(WiringInterceptor.class)){
+							wiringInterceptors.add(model);
+						}
+					}
+				} else {
+					// instance
+					Object instance = item.getItem();
+
+					BeanDependencyModel model = this.binder.getBeanModel(instance.getClass());
+
+					final InstanceResolver resolver = new InstanceResolver(instance);
+
+					processDependableBean(null, null, model, resolver);
+
+					if (Introspector.of(model.getBeanClass()).isSubtypeOf(WiringInterceptor.class)){
+						wiringInterceptors.add(model);
+					}
+
+					//binder.addBindings(model, resolver);
+				}
+			}
+
+		}
+		
+		// inicialize wiring interceptors
+
+		BeanDependencyModel im;
+
+		while ((im = wiringInterceptors.poll()) != null){
+			try {
+				WiringInterceptor obj = WiringInterceptor.class.cast( binder.getInstance(WiringQuery.search(im.getBeanClass())));
+				this.interceptors.add((WiringInterceptor) obj);
+			} catch (BindingException e){
+				wiringInterceptors.add(im);
+			}
+		}
+
+		// inicialize shared not lazy
+
+		for (Binding binding : bindingMap.getBindings()){
+			if (!binding.isInicialized() && binding.getScope().equals("shared") && !binding.isLazy()){
+				binder.getInstance(WiringQuery.search(binding.getSourceType(), binding.getParams()));
+
+				binding.setInicialized(true);
+			}
+		}
+
+	}
+
+
+
+	private void processDependableBean(
+			final Map<String, DependendableBean> beans,
+			final DirectGraph<DependencyRelation, Class<?>> graph,
+			BeanDependencyModel model,
+			Resolver resolver) {
+
+		if (activeProfiles.accepts(model.getProfiles())){
+
+			final Collection<DependendableBean> allbeans = DependendableBean.fromModel(model, resolver);
+
+
+			for (DependendableBean bean : allbeans){
+				Binding binding = new Binding();
+				binding.setSourceType(bean.getType());
+				binding.setResolver(bean.getResolver());
+				binding.setScope(bean.getScope());
+
+				binder.addBinding(binding);
+			}
+
+
+
+			if (!model.getPublishPoints().isEmpty()){
+
+				for (PublishPoint pp : model.getPublishPoints()){
+
+					BeanDependencyModel createdBeanModel = this.binder.getBeanModel(pp.getPublishedType());
+
+					final Collection<DependendableBean> publishedBeans = DependendableBean.fromPublishing(createdBeanModel, pp, model.getBeanClass());
+
+					for (DependendableBean bean : publishedBeans){
+						Binding binding = new Binding();
+						binding.setSourceType(bean.getType());
+						binding.setResolver(bean.getResolver());
+						binding.setScope(bean.getScope());
+						
+						binder.addBinding(binding);
+					}
+				}
+
+			}
+
+//			// treat interfaces as publishpoints
+//
+//			for (Class i : Instrospector.of(model.getBeanClass()).getDeclaredInterfaces()){
+//				BeanDependencyModel interfaceBean = this.binder.getBeanModel(i);
+//
+//				final DependendableBean iBean = DependendableBean.fromImplementation(interfaceBean, bean);
+//
+//
+//				Binding binding2 = new Binding();
+//				binding2.setSourceType(iBean.getType());
+//				binding2.setResolver(iBean.getResolver());
+//				binding2.setScope(iBean.getScope());
+//
+//				binder.addBinding(binding2);
+//
+//			}
+
 		}
 	}
 
+	StandardInstanceFactory factory = new StandardInstanceFactory();
+	Queue<Key> stack = new LinkedList<Key>();
+	Map<Key, CyclicProxy> cyclicProxies = new HashMap<Key, CyclicProxy>();
+
+	public class StandardInstanceFactory implements InstanceFactory{
+
+
+
+		public void addInstance(DependendableBean bean) {
+
+
+			final String scopeName = bean.getScope();
+
+			Scope pool = scopes.get(scopeName);
+
+
+			ResolutionContext context = new StandardResolutionContext(scopeName){
+				/**
+				 * {@inheritDoc}
+				 */
+				@Override
+				public InstanceFactory getInstanceFactory() {
+					return StandardInstanceFactory.this;
+				}
+			};
+
+
+
+			final InterceptorResolver interceptorResolver = new InterceptorResolver(interceptors, bean.getResolver());
+
+			pool.getInScope(context, WiringQuery.search(bean.getType()), interceptorResolver);
+
+
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Object getInstance(final WiringQuery query) {
+
+			if (query.getContract().equals(WiringTarget.class)){
+				return WiringTarget.class.cast(query.getTarget());
+			}
+
+
+
+			Binding binding = bindingMap.findNearest(query);
+			if (binding == null) {
+				if (query.getContract().isInterface()){
+					// search in service scope
+					Scope scope = scopes.get("service");
+				
+					ResolutionContext context = new StandardResolutionContext("service"){
+						/**
+						 * {@inheritDoc}
+						 */
+						@Override
+						public InstanceFactory getInstanceFactory() {
+							return factory;
+						}
+					};
+					
+					Object service= scope.getInScope(context, query, NullResolver.instance());
+					
+					if (service != null){
+						// there is a service for this interface
+						// create binding for future reference
+						// TODO create binding when registring service
+						
+						binding = new Binding();
+						
+						binding.setInicialized(true);
+						binding.setLazy(false);
+						binding.setScope("service");
+						binding.setSourceType(query.getContract());
+						binding.setResolver(NullResolver.instance());
+						
+						bindingMap.add(binding);
+					}
+					
+					return query.getContract().cast(service);
+				} else {
+					throw new BindingException("Can not satisfy binding: " + query);
+				}
+				
+				
+			} else {
+
+
+				Key key = Key.keyFor(query.getContract(), query.getParams());
+
+				// binding was found
+				// resolve target
+				if (stack.contains(key)) {
+					// cyclic reference
+
+					if (query.getContract().equals(String.class)){
+						throw new BindingException("Propery must be bound for String injection");
+					} else if (Modifier.isFinal(query.getContract().getModifiers())){
+						throw new BindingException("A cycle was detected up on a final type " + query.getContract() + ". Cycle can not be resolved.");
+					}
+
+					// return proxy
+					CyclicProxy proxy = cyclicProxies.get(key);
+					if (proxy == null) {
+						proxy = new CyclicProxy();
+						cyclicProxies.put(key, proxy);
+					}
+					return Introspector.of(query.getContract()).newProxyInstance(proxy);
+
+				} else {
+					stack.offer(key);
+					try {
+
+
+
+						Scope scope = scopes.get(binding.getScope());
+
+						ResolutionContext context = new StandardResolutionContext(binding.getScope()){
+							/**
+							 * {@inheritDoc}
+							 */
+							@Override
+							public InstanceFactory getInstanceFactory() {
+								return factory;
+							}
+						};
+
+
+						//FactoryResolver.instanceFor(revolveBeanModel(query.getContract())
+						final InterceptorResolver interceptorResolver = new InterceptorResolver(interceptors, binding.getResolver());
+
+
+						Object obj = scope.getInScope(context, query, interceptorResolver);
+
+
+						// check if there is any proxy to complete
+						CyclicProxy proxy = cyclicProxies.get(key);
+						if (proxy != null) {
+							proxy.setRealObject(obj);
+						}
+
+						binding.setInicialized(true);
+
+
+						return obj;
+
+
+
+					} catch (RuntimeException e) {
+						throw e;
+					} finally {
+						stack.remove(key);
+					}
+				}
+
+
+
+
+			} 
+
+		}
+
+
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public WiringService addItemBundle(WiringItemBundle bundle) {
+		this.bundles.add(bundle);
+		return this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public WiringService addItem(WiringItem item) {
+		this.bundles.add(new EditableWiringItemBundle().add(item));
+		return this;
+	}
 }

@@ -8,7 +8,7 @@ import org.middleheaven.events.EventListenersSet;
 /**
  * 
  */
-public abstract class AbstractScopePool implements ScopePool {
+public abstract class AbstractScopePool implements Scope {
 
 	
 	private final EventListenersSet<ScopeListener> event = EventListenersSet.newSet(ScopeListener.class);

@@ -2,16 +2,14 @@ package org.middleheaven.core.wiring;
 
 import java.lang.reflect.Method;
 
-import org.middleheaven.core.reflection.ReflectionException;
-
 /**
  * Used a {@link Method} as a {@link AfterWiringPoint}.
  */
-public class MethodAfterWiringPoint implements AfterWiringPoint{
+public class MethodAfterWiringPoint extends AbstractMethodWiringPoint implements AfterWiringPoint{
 
 	private Method method;
-	private WiringSpecification<?> methodSpecification;
-	private WiringSpecification<?>[] paramsSpecifications;
+	private WiringSpecification methodSpecification;
+	private WiringSpecification[] paramsSpecifications;
 
 	//	public WiringSpecification<?> getMethodSpecification() {
 	//		return methodSpecification;
@@ -21,6 +19,11 @@ public class MethodAfterWiringPoint implements AfterWiringPoint{
 	//		return paramsSpecifications;
 	//	}
 
+	
+	public WiringSpecification[] getSpecifications(){
+		return paramsSpecifications;
+	}
+	
 	/**
 	 * 
 	 * Constructor.
@@ -28,7 +31,7 @@ public class MethodAfterWiringPoint implements AfterWiringPoint{
 	 * @param methodSpecification the wiring specification of the method. 
 	 * @param paramsSpecifications the wiring specification for each method parameter.
 	 */
-	public MethodAfterWiringPoint(Method method, WiringSpecification<?> methodSpecification, WiringSpecification<?>[] paramsSpecifications) {
+	public MethodAfterWiringPoint(Method method, WiringSpecification methodSpecification, WiringSpecification[] paramsSpecifications) {
 		super();
 		this.method = method;
 		this.methodSpecification = methodSpecification;
@@ -56,37 +59,17 @@ public class MethodAfterWiringPoint implements AfterWiringPoint{
 	 * 
 	 * {@inheritDoc}
 	 */
-	public <T> T writeAtPoint(EditableBinder binder, T object){
+	public <T> T writeAtPoint(InstanceFactory factory, T object){
 		if(object ==null){
 			return null;
 		}
 
-		method.setAccessible(true);
-		Object[] params = new Object[paramsSpecifications.length];
-		for (int i=0;i<paramsSpecifications.length;i++){
-			try {
-				params[i] = binder.getInstance(paramsSpecifications[i]);
-				if (params[i]==null && paramsSpecifications[i].isRequired()){
-					throw new BindingException("Value to bind with parameter of index " + i +  
-							" in method " + method.getDeclaringClass().getName() +"." + 
-							method.getName()+ " was not found ");
-				}
-			} catch (BindingNotFoundException e){
-				throw new BindingException("Value to bind with parameter of index " + i +  
-						" in method " + method.getDeclaringClass().getName() +"." + 
-						method.getName()+ " was not found ");
-			}
-		}
-
-		try {
-
-			method.invoke(object, params);
-		} catch (Exception e) {
-			throw ReflectionException.manage(e, object.getClass());
-		} 
-
+		callMethodPoint(factory, method, object, paramsSpecifications);
+	
 		return object;
 	}
+	
+	
 
 	@Override
 	public boolean isRequired() {

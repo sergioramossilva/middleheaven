@@ -1,20 +1,19 @@
 package org.middleheaven.core.wiring;
 
 
-public class ProviderResolver<T> implements Resolver<T> {
+public class ProviderResolver implements Resolver {
 
-	Class<Provider<T>>  providerClass;
-	ObjectPool injector;
-	ProviderResolver(ObjectPool injector , Class<Provider<T>> providerClass){
+	Class<Provider<?>>  providerClass;
+	WiringService wiringService;
+	
+	ProviderResolver(WiringService wiringService , Class<Provider<?>> providerClass){
 		this.providerClass = providerClass;
-		this.injector = injector;
+		this.wiringService = wiringService;
 	}
 	
 	@Override
-	public T resolve(WiringSpecification<T> query) {
-		return injector.getInstance(providerClass).provide();
+	public Object resolve(ResolutionContext context, WiringQuery query) {
+		return wiringService.getInstance(providerClass).provide();
 	}
-
-
 
 }

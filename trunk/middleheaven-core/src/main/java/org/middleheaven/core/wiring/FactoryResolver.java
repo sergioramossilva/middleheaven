@@ -1,6 +1,5 @@
 package org.middleheaven.core.wiring;
 
-import org.middleheaven.core.wiring.activation.PublishPoint;
 
 
 /**
@@ -8,64 +7,60 @@ import org.middleheaven.core.wiring.activation.PublishPoint;
  *
  * @param <T>
  */
-public final class FactoryResolver<T> implements Resolver<T> {
+public final class FactoryResolver implements Resolver {
 
-	private EditableBinder binder;
-	private Class<T> type;
 
-	@SuppressWarnings("unchecked")
-	public static <I> FactoryResolver<I> instanceFor(Class<?> type , EditableBinder binder){
-		return new FactoryResolver(type,binder);
+	private BeanDependencyModel model;
+
+	public static  FactoryResolver instanceFor(BeanDependencyModel model){
+		return new FactoryResolver(model);
 	}
 
-	private FactoryResolver(Class<T> type , EditableBinder binder){
-		this.binder = binder;
-		this.type = type;
+	private FactoryResolver(BeanDependencyModel model){
+		this.model = model;
 	}
 
 	@Override
-	public T resolve(WiringSpecification<T> query) {
+	public Object resolve(ResolutionContext context, WiringQuery query) {
 		// Determine witch constructor to invoke
-
-		BeanModel model = binder.getBeanModel(type);
 
 		final ProducingWiringPoint producingPoint = model.getProducingWiringPoint();
 
 		if (producingPoint == null){
-			throw new ConfigurationException("Type " + type + " does not have a valid constructor");
+			throw new ConfigurationException("Type " + model.getBeanClass() + " does not have a valid constructor");
 		}
 
-		Object instance = producingPoint.produceWith(binder);
+		Object instance = producingPoint.produceWith(context.getInstanceFactory());
 
 		// fill requirements
 
 		for (AfterWiringPoint a : model.getAfterPoints()){
-			a.writeAtPoint(binder, instance);
+			a.writeAtPoint(context.getInstanceFactory(), instance);
 		}
 
 		// initialize
 		model.getPostCreatePoint().call(instance);
 
-		// publish services 
-		for (PublishPoint pp : model.getPublishPoints()){
-			Object object = pp.getObject(instance);
+//		// publish services 
+//		for (PublishPoint pp : model.getPublishPoints()){
+//			Object object = pp.getObject(context.getInstanceFactory(), instance);
+//
+//			if (object !=null){
+//				BeanDependencyModel objectBeanModel = binder.getBeanModel(object);
+//				// add parameters in the publishing point to the characteristics of the bean
+//				objectBeanModel.addParams(pp.getParams());
+//
+//				binder.addBindings(objectBeanModel, new InstanceResolver(object));
+//
+//
+//			} else {
+//				throw new IllegalStateException("");
+//			}
+//
+//		}
 
-			if (object !=null){
-				BeanModel objectBeanModel = binder.getBeanModel(object);
-				// add parameters in the publishing point to the characteristics of the bean
-				objectBeanModel.addParams(pp.getParams());
 
-				binder.addBindings(objectBeanModel, new InstanceResolver<Object>(object));
-
-
-			} else {
-				throw new IllegalStateException("");
-			}
-
-		}
-
-
-		return query.getContract().cast(instance);
+		return  query.getContract().cast(instance);
 
 
 	}

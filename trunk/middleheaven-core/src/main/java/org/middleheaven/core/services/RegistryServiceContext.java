@@ -7,32 +7,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.BindConfiguration;
-import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.annotations.Shared;
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.core.wiring.service.ServiceProxy;
-import org.middleheaven.logging.LogBook;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.ParamsMap;
 
 public final class RegistryServiceContext implements ServiceContext{
 
-	final static Set<ServiceListener> serviceListeners = new CopyOnWriteArraySet<ServiceListener>();
-	final static Map<String , Set<ServiceBinding>> registry = new TreeMap<String , Set<ServiceBinding>>();
-	private LogBook logBook;
+	final Set<ServiceListener> serviceListeners = new CopyOnWriteArraySet<ServiceListener>();
+	final Map<String , Set<ServiceBinding>> registry = new HashMap<String , Set<ServiceBinding>>();
+	
+	final Map<ServiceKey, Object> proxies = new HashMap<ServiceKey, Object>();
 
-	public RegistryServiceContext(LogBook book){
-		this.logBook = book;
+
+	public RegistryServiceContext(){
+
 
 		// this is intended to set the default context in a static variable
 		// TODO devise a more elegant way.
@@ -57,11 +51,6 @@ public final class RegistryServiceContext implements ServiceContext{
 
 		});
 		 */
-	}
-
-	@Override
-	public LogBook getLogBook() {
-		return logBook;
 	}
 
 	private void fireServiceTemporaryRemoved(ServiceBinding binding){
@@ -100,10 +89,10 @@ public final class RegistryServiceContext implements ServiceContext{
 
 
 	@Override
-	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String, Object> properties) {
+	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String, ? extends Object> properties) {
 
 		if (properties == null){
-			properties = Collections.<String,Object>emptyMap();
+			properties = Collections.<String, Object>emptyMap();
 		}
 
 		// find current binding
@@ -161,7 +150,7 @@ public final class RegistryServiceContext implements ServiceContext{
 	}
 
 	@Override
-	public <T, I extends T> void unRegister(Class<T> serviceClass,I implementation, Map<String,Object> properties) {
+	public <T, I extends T> void unRegister(Class<T> serviceClass,I implementation, Map<String,? extends Object> properties) {
 		ServiceBinding<T> registeredBinding = selectedServiceBinding(serviceClass, properties);
 
 		if (registeredBinding!=null){
@@ -195,7 +184,7 @@ public final class RegistryServiceContext implements ServiceContext{
 	}
 
 
-	private <T> ServiceBinding<T> selectedServiceBinding(Class<T> serviceClass, Map<String,Object> properties){
+	private <T> ServiceBinding<T> selectedServiceBinding(Class<T> serviceClass, Map<String, ? extends Object> properties){
 		ServiceBinding selected = null;
 		Set<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list!=null && !list.isEmpty()){
@@ -216,7 +205,7 @@ public final class RegistryServiceContext implements ServiceContext{
 		return selected;
 	}
 	@Override
-	public <T> T getService(Class<T> serviceClass, Map<String,Object> properties) {
+	public <T> T getService(Class<T> serviceClass, Map<String,? extends Object> properties) {
 		ServiceBinding<T> selected = selectedServiceBinding(serviceClass, properties);
 
 		if (selected != null){
@@ -226,7 +215,6 @@ public final class RegistryServiceContext implements ServiceContext{
 		throw new ServiceNotAvailableException(serviceClass.getName());
 	}
 
-	Map<ServiceKey, Object> proxies = new HashMap<ServiceKey, Object>();
 
 	private <T> T proxify(ServiceBinding<T> binding){
 		ServiceKey key = new ServiceKey(binding.serviceClass,binding.properties);
@@ -287,11 +275,11 @@ public final class RegistryServiceContext implements ServiceContext{
 
 	private static class ServiceBinding<C> {
 
-		Map<String,Object> properties;
+		Map<String, Object> properties;
 		Object implementation;
 		Class<C> serviceClass;
 
-		public <I extends C> ServiceBinding(Map<String,Object> properties, I implementation, Class<C> serviceClass) {
+		public <I extends C> ServiceBinding(Map<String,? extends Object> properties, I implementation, Class<C> serviceClass) {
 			super();
 			this.serviceClass = serviceClass;
 			this.implementation = implementation;
@@ -324,13 +312,13 @@ public final class RegistryServiceContext implements ServiceContext{
 		 * @param properties
 		 * @return
 		 */
-		public double match (Map<String,Object> properties){
+		public double match (Map<String, ? extends Object> properties){
 			if (this.properties.size() < properties.size()){
 				return 0d;
 			}
 
 			int count=0;
-			for (Map.Entry<String,Object> entry : properties.entrySet() ){
+			for (Map.Entry<String,? extends Object> entry : properties.entrySet() ){
 				if (entry.getValue()!=null && entry.getValue().equals(this.properties.get(entry.getKey()))){
 					count++;
 				}
@@ -338,6 +326,41 @@ public final class RegistryServiceContext implements ServiceContext{
 
 			return count * 1d / properties.size();
 		}
+	}
+
+	/**
+	 * 
+	 */
+	public void clear() {
+		this.registry.clear();
+		this.proxies.clear();
+		this.serviceListeners.clear();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <T, I extends T> void register(Class<T> serviceClass,
+			I implementation) {
+		this.register(serviceClass, implementation, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <T, I extends T> void unRegister(Class<T> serviceClass,
+			I implementation) {
+		 this.unRegister(serviceClass, implementation, null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <T> T getService(Class<T> serviceClass) {
+		return this.getService(serviceClass, null);
 	}
 
 

@@ -5,12 +5,13 @@ package org.middleheaven.core.wiring;
  * 
  * @param <T> The type of object to retrieve
  */
-public interface Resolver<T> {
+public interface Resolver {
 
 	/**
 	 * 
-	 * @param specification 
+	 * @param context the resolution context
+	 * @param query 
 	 * @return retrieves an object compatible with the specification
 	 */
-	public T resolve(WiringSpecification<T> specification);
+	public Object resolve(ResolutionContext context, WiringQuery query);
 }

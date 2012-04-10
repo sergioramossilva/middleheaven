@@ -1,14 +1,9 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import org.middleheaven.core.wiring.annotations.Named;
-import org.middleheaven.core.wiring.annotations.Params;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Mergable;
 
@@ -17,22 +12,22 @@ import org.middleheaven.util.collections.Mergable;
  *
  * @param <T> the type that must be retrieved
  */
-public class WiringSpecification<T> implements Mergable<WiringSpecification<T>> {
+public class WiringSpecification implements Mergable<WiringSpecification> {
 
-	private Class<T> contract;
+	private Class<?> contract;
 	private Map<String, Object> params;
 	private boolean shareable = true;
 	private boolean required = true;
 
-	public static <C> WiringSpecification<C> search(Class<C> contract) {
+	public static  WiringSpecification search(Class<?> contract) {
 		return search(contract, Collections.<String, Object>emptyMap());
 	}
 
-	public static <C> WiringSpecification<C> search(Class<C> contract, Map<String,Object> params) {
-		return  new WiringSpecification<C>(contract, params);
+	public static WiringSpecification search(Class<?> contract, Map<String,Object> params) {
+		return new WiringSpecification(contract, params);
 	}
 
-	private WiringSpecification(Class<T> contract, Map<String, Object> params) {
+	private WiringSpecification(Class<?> contract, Map<String, Object> params) {
 		this.contract = contract;
 		this.params = params;
 
@@ -50,7 +45,7 @@ public class WiringSpecification<T> implements Mergable<WiringSpecification<T>> 
 		return params.get(key);
 	}
 
-	public Class<T> getContract() {
+	public Class<?> getContract() {
 		return contract;
 	}
 
@@ -79,7 +74,7 @@ public class WiringSpecification<T> implements Mergable<WiringSpecification<T>> 
 		return other instanceof WiringSpecification && equals((WiringSpecification)other);
 	}
 	
-	private boolean equals(WiringSpecification<?> other){
+	private boolean equals(WiringSpecification other){
 		return this.contract.getName().equals(other.contract.getName()) && 
 		CollectionUtils.equalContents(this.params, other.params);
 	}
@@ -90,17 +85,17 @@ public class WiringSpecification<T> implements Mergable<WiringSpecification<T>> 
 
 
 	@Override
-	public boolean canMergeWith(WiringSpecification<T> other) {
+	public boolean canMergeWith(WiringSpecification other) {
 		return this.contract.getName().equals(other.contract.getName());
 	}
 
 	@Override
-	public WiringSpecification<T> merge(WiringSpecification<T> other) {
+	public WiringSpecification merge(WiringSpecification other) {
 		
 		Map<String,Object> params = new HashMap<String, Object>(this.params);
 		params.putAll(other.params);
 
-		return new WiringSpecification<T>(
+		return new WiringSpecification(
 			this.contract,
 			params
 		);

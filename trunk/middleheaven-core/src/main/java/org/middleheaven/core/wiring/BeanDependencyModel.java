@@ -1,6 +1,6 @@
 package org.middleheaven.core.wiring;
 
-import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,46 +9,48 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.middleheaven.core.wiring.activation.EmptyCallPoint;
-import org.middleheaven.core.wiring.activation.PostCreatePoint;
-import org.middleheaven.core.wiring.activation.PreDestroiPoint;
-import org.middleheaven.core.wiring.activation.PublishPoint;
 
 /**
  * A model for wiring.
  * The wiring model consists of construct-point where the object is created/retrieved and multiple after-points where the object is injected.
  * 
  */
-public class BeanModel {
+public class BeanDependencyModel {
 
 	private final Map<String, Object > params = new HashMap<String, Object>();
-	private final List<Class<?>> scopes = new LinkedList<Class<?>>();
-	private Collection<PublishPoint> publishPoints = new LinkedList<PublishPoint>();
+	private final List<String> scopes = new LinkedList<String>();
+	
 
-	private ProducingWiringPoint point;
+	private final Collection<PublishPoint> publishPoints = new LinkedList<PublishPoint>();
 	private final Collection<AfterWiringPoint> afterpoints = new HashSet<AfterWiringPoint>();
-	private Class<?> type;
-	private Class<?> contractType;
+	
+	private ProducingWiringPoint point;
 	private PostCreatePoint postCreatePoint = EmptyCallPoint.getInstance();
-	private PreDestroiPoint preDestroiPoint = EmptyCallPoint.getInstance();;
+	private PreDestroiPoint preDestroiPoint = EmptyCallPoint.getInstance();
+	
+	private Class<?> type;
+	private Collection<Class<?>> contractTypes = new ArrayList<Class<?>>();
 
+	private ProfilesBag profiles = new ProfilesBag();
+
+	private List<WiringSpecification> dependsOn = new ArrayList<WiringSpecification>();
+	
 	/**
 	 * 
 	 * Constructor.
 	 */
-	public BeanModel(Class<?> type){
+	public BeanDependencyModel(Class<?> type){
 		this.type = type;
-		this.contractType = type;
+		this.contractTypes.add(type);
 	}
-
 
 
 	/**
 	 * Obtains {@link Class<?>}.
 	 * @return the contractType
 	 */
-	public Class<?> getContractType() {
-		return contractType;
+	public Collection<Class<?>> getContractTypes() {
+		return contractTypes;
 	}
 
 
@@ -57,8 +59,8 @@ public class BeanModel {
 	 * Atributes {@link Class<?>}.
 	 * @param contractType the contractType to set
 	 */
-	public void setContractType(Class<?> contractType) {
-		this.contractType = contractType;
+	public void addContractType(Class<?> contractType) {
+		this.contractTypes.add(contractType);
 	}
 
 
@@ -137,11 +139,11 @@ public class BeanModel {
 	/**
 	 * @param annotationType
 	 */
-	public void addScope(Class<? extends Annotation> scopeAnnotation) {
-		this.scopes.add(scopeAnnotation);
+	public void addScope(String scopeName) {
+		this.scopes.add(scopeName);
 	}
 
-	public List<Class<?>> getScopes(){
+	public List<String> getScopes(){
 		return this.scopes;
 	}
 
@@ -157,8 +159,8 @@ public class BeanModel {
 	}
 
 	public boolean equals(Object other){
-		return other instanceof BeanModel && 
-				((BeanModel)other).type.getName().equals(this.type.getName());
+		return other instanceof BeanDependencyModel && 
+				((BeanDependencyModel)other).type.getName().equals(this.type.getName());
 	}
 
 	public Collection<PublishPoint> getPublishPoints() {
@@ -195,6 +197,18 @@ public class BeanModel {
 	 */
 	public void setPreDestroiPoint(PreDestroiPoint preDestroiPoint) {
 		this.preDestroiPoint = preDestroiPoint;
+	}
+
+
+
+	/**
+	 * @param profiles
+	 */
+	public void setProfiles(ProfilesBag profiles) {
+		this.profiles = profiles;
+	}
+	public ProfilesBag getProfiles() {
+		return this.profiles;
 	}
 
 

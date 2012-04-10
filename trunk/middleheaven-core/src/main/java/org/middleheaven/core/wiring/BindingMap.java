@@ -32,17 +32,17 @@ public class BindingMap {
 	 * @param binding
 	 */
 	public void add(Binding binding) {
-		getMap(binding.getAbstractType()).put(binding.getKey(), binding);
+		getMap(binding.getSourceType()).put(binding.getKey(), binding);
 	}
 
 	/**
 	 * @param binding
 	 */
 	public void remove(Binding binding) {
-		getMap(binding.getAbstractType()).remove(binding.getKey());
+		getMap(binding.getSourceType()).remove(binding.getKey());
 	}
 	
-	public Binding findNearest(WiringSpecification<?> query){
+	public Binding findNearest(WiringQuery query){
 		Map<Key, Binding> map = getMap(query.getContract());
 		
 		if (map.isEmpty()){
@@ -54,21 +54,43 @@ public class BindingMap {
 		} else {
 			
 			if(query.getParams().isEmpty()){
-				throw new BindingException("To many matching binding candidates for " + query.getContract() + ". Try qualify your search.");
-			}
-			
-			int max = 0;
-			Binding candidate = null;
-			for (Map.Entry<Key, Binding> entry : map.entrySet()){
-				int points = point(query.getParams(), entry.getValue().getParams());
-				
-				if (points > max) {
-					candidate = entry.getValue();
+				// find the one that as no params as well
+				// only one can exist
+				Binding candidate = null;
+				for (Map.Entry<Key, Binding> entry : map.entrySet()){
+					if(entry.getValue().getParams().isEmpty()){
+						if (candidate != null){
+							throw new BindingException("To many matching binding candidates for " + query.getContract() + ". Try qualify your search.");
+						} else {
+							candidate = entry.getValue();
+						}
+					}
 				}
 				
+				if (candidate == null){
+					throw new BindingException("To many matching binding candidates for " + query.getContract() + ". Try qualify your search.");
+				}
+				
+				return candidate;
+			} else {
+				// find the one thar matches the more params
+				int max = 0;
+				Binding candidate = null;
+				for (Map.Entry<Key, Binding> entry : map.entrySet()){
+					int points = point(query.getParams(), entry.getValue().getParams());
+					
+					if (points > max) {
+						candidate = entry.getValue();
+					}
+					
+				}
+				
+				return candidate;
 			}
 			
-			return candidate;
+		
+			
+			
 		}
 	}
 

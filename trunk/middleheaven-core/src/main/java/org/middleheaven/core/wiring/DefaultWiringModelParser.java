@@ -10,23 +10,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tools.ant.taskdefs.XSLTProcess.Param;
 import org.middleheaven.core.reflection.MemberAccess;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.activation.MethodCallPoint;
-import org.middleheaven.core.wiring.activation.MethodPublishPoint;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Default;
+import org.middleheaven.core.wiring.annotations.Component;
 import org.middleheaven.core.wiring.annotations.Factory;
 import org.middleheaven.core.wiring.annotations.Named;
 import org.middleheaven.core.wiring.annotations.Params;
 import org.middleheaven.core.wiring.annotations.PostCreate;
 import org.middleheaven.core.wiring.annotations.PreDestroy;
+import org.middleheaven.core.wiring.annotations.Profile;
+import org.middleheaven.core.wiring.annotations.Publish;
 import org.middleheaven.core.wiring.annotations.Qualifier;
 import org.middleheaven.core.wiring.annotations.ScopeSpecification;
 import org.middleheaven.core.wiring.annotations.Wire;
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.Walker;
@@ -93,44 +90,55 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 
 	@Override
-	public <T> void readBeanModel(Class<T> type, final BeanModel model) {
+	public <T> void readBeanModel(Class<T> type, final BeanDependencyModel model) {
 
 		ClassIntrospector<T> introspector = Introspector.of(type);
 
 		final Class<?>[] interfaces = Introspector.of(type).getDeclaredInterfaces();
 
+
+		ProfilesBag profiles = new ProfilesBag();
+
 		for (Annotation a : introspector.getAnnotations()){
 
 			if (a.annotationType().isAnnotationPresent(ScopeSpecification.class)){
-				model.addScope(a.annotationType());
-				
-				if (a.annotationType().equals(Service.class)){
-					if (interfaces.length == 0){
-						throw new IllegalStateException("A @Service must be declared on an annotation or the type must implement a interface");
+
+				String scopeName = WiringUtils.readScope(a);
+
+				model.addScope(scopeName);
+
+				if ("service".equals(scopeName)){
+					if (!type.isInterface()){
+						if (interfaces.length == 0){
+							throw new IllegalStateException("A @Service must be declared on an annotation or the type must implement an interface");
+						}
+						model.addContractType(interfaces[0]);
 					}
-					model.setContractType(interfaces[0]);
+
 				}
-			}
+			} 
+
+			this.parseProfileAnnotation(a , profiles);
 
 			this.parseSpecialAnnotations(a, model.getParams());
 		}
 
-		if(model.getScopes().isEmpty()){
-			for (Class i : interfaces){
-				for (Annotation a : i.getAnnotations()){
+		model.setProfiles(profiles);
 
-					if (a.annotationType().isAnnotationPresent(ScopeSpecification.class)){
-						model.addScope(a.annotationType());
-						model.setContractType(i);
-					}
 
+		for (Class i : interfaces){
+			for (Annotation a : i.getAnnotations()){
+
+				if (a.annotationType().isAnnotationPresent(ScopeSpecification.class)){
+					model.addScope(WiringUtils.readScope(a));
+					model.addContractType(i);
 				}
+
 			}
 		}
 
-		if(model.getScopes().isEmpty()){
-			model.addScope(Default.class);
-		}
+
+
 
 		// find publish points
 
@@ -140,9 +148,6 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 		for (Method method : methods){
 
 			if (method.isAnnotationPresent(Publish.class)){
-				if (method.getParameterTypes().length!=0){
-					throw new ConfigurationException("@" + Publish.class.getSimpleName() + " cannot be used on a method with parameters");
-				}
 
 				Publish p = method.getAnnotation(Publish.class);
 
@@ -158,7 +163,43 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 					}
 					params.put(values[0], values[1]);
 				}
-				model.addPublishPoint(new MethodPublishPoint(method, params));
+
+				Params paramsAnnotation = method.getAnnotation(Params.class);
+				if (paramsAnnotation != null){
+
+					for (String paramPair : paramsAnnotation.value()){
+						String[] values = paramPair.split("=");
+						if(values.length!=2){
+							throw new IllegalStateException("Param pair expected to be in format name=value but found" + paramPair);
+						}
+						params.put(values[0], values[1]);
+					}
+				}
+
+				String scope = null;
+				for (Annotation a : method.getAnnotations()){
+					scope = WiringUtils.readScope(a);
+
+					if (scope != null){
+						break;
+					}
+				}
+
+				if (scope == null){
+					for (Annotation a : method.getReturnType().getAnnotations()){
+						scope = WiringUtils.readScope(a);
+
+						if (scope != null){
+							break;
+						}
+					}
+				}
+
+				if (scope == null){
+					scope = "default";
+				}
+
+				model.addPublishPoint(new MethodPublishPoint(method, params , scope, readParamsSpecification(method)));
 			} else if (method.isAnnotationPresent(PostCreate.class)){
 				model.setPostCreatePoint(new MethodCallPoint(method));
 			} else if (method.isAnnotationPresent(PreDestroy.class)){
@@ -168,6 +209,19 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 		}
 
+
+		if(model.getScopes().isEmpty()){
+
+			if (model.getPublishPoints().isEmpty()) {
+				if (introspector.isAnnotationPresent(Component.class)){
+					model.addScope("shared");
+				}
+				model.addScope("default");
+			} else {
+				model.addScope("shared");
+			}
+
+		}
 
 
 		if (model.getProducingWiringPoint() == null && !type.isInterface()){ // only create the producing point if none is already readed.
@@ -188,7 +242,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 		// injection points
 
-		introspector.inspect().fields().beingStatic(false).annotatedWith(annotations).retriveAll()
+		introspector.inspect().fields().beingStatic(false).searchHierarchy().annotatedWith(annotations).retriveAll()
 		.each(new Walker<Field>(){
 
 			@Override
@@ -198,7 +252,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 		} );
 
-		introspector.inspect().methods().beingStatic(false).annotatedWith(annotations).retriveAll()
+		introspector.inspect().methods().beingStatic(false).searchHierarchy().annotatedWith(annotations).retriveAll()
 		.each(new Walker<Method>(){
 
 			@Override
@@ -212,8 +266,40 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 	}
 
+	/**
+	 * @param a
+	 * @param profiles
+	 */
+	private void parseProfileAnnotation(Annotation a, ProfilesBag profiles) {
+		parseProfileAnnotation(a,profiles, new HashSet());
+	}
+
+	private void parseProfileAnnotation(Annotation a, ProfilesBag profiles, Set<Class<?>> visited) {
+
+		if (a.annotationType().equals(Profile.class)){
+
+			String profile = ((Profile) a).value();
+
+			profiles.add(profile);
+
+
+		} else if (a.annotationType().isAnnotationPresent(Profile.class)){
+
+			Profile q = a.annotationType().getAnnotation(Profile.class);
+
+			String profile = ((Profile) q).value();
+
+			profiles.add(profile);
+
+
+		} else if (visited.add(a.annotationType())){
+			for (Annotation b : a.annotationType().getAnnotations()){
+				parseProfileAnnotation(b, profiles, visited);
+			}
+		}
+	}
 	private <T> void readConstructorProducingPoint(Class<T> type,
-			final BeanModel model, ClassIntrospector<T> introspector) {
+			final BeanDependencyModel model, ClassIntrospector<T> introspector) {
 		// constructor
 		EnhancedCollection<Constructor<T>> constructors = introspector.inspect()
 				.constructors().withAccess(MemberAccess.PUBLIC).annotathedWith(annotations).retriveAll();
@@ -246,7 +332,15 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 	private void processQualifier(Annotation a, Map<String, Object> params, Set<Class<?>> visited) {
 
-		if (a.annotationType().isAnnotationPresent(Qualifier.class)){
+		if (a.annotationType().equals(Qualifier.class)){
+
+			String quality = ((Qualifier) a).value();
+			if (quality.isEmpty()){
+				quality = a.annotationType().getName();
+			}
+			params.put(quality, a);
+
+		} else if (a.annotationType().isAnnotationPresent(Qualifier.class)){
 
 			Qualifier q = a.annotationType().getAnnotation(Qualifier.class);
 
