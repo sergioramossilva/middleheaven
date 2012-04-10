@@ -7,5 +7,5 @@ public interface BootstrapContainerExtention {
 	 * @param context
 	 * @param chain
 	 */
-	public void extend(BootstrapContext context, BootstrapChain chain);
+	public void extend(ExecutionContext context, BootstrapChain chain);
 }

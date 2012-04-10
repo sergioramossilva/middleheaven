@@ -9,44 +9,42 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.bootstrap.activation.ActivatorDependencyResolver;
+import org.middleheaven.core.bootstrap.activation.ActivatorScanner;
+import org.middleheaven.core.bootstrap.activation.ActivatorScannerEvent;
+import org.middleheaven.core.bootstrap.activation.ActivatorScannerListener;
+import org.middleheaven.core.bootstrap.activation.AnnotationBasedDependencyResolver;
+import org.middleheaven.core.bootstrap.activation.FileActivatorScanner;
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.SetActivatorScanner;
 import org.middleheaven.core.dependency.DependencyResolver;
 import org.middleheaven.core.dependency.InicializationNotPossibleException;
 import org.middleheaven.core.dependency.InicializationNotResolvedException;
 import org.middleheaven.core.dependency.Starter;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.services.RegistryServiceContext;
-import org.middleheaven.core.wiring.BeanModel;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.BindingException;
-import org.middleheaven.core.wiring.ObjectPool;
-import org.middleheaven.core.wiring.ObjectPoolEvent;
-import org.middleheaven.core.wiring.ObjectPoolListener;
+import org.middleheaven.core.wiring.InstanceWiringItem;
+import org.middleheaven.core.wiring.ProfilesBag;
 import org.middleheaven.core.wiring.StandardWiringService;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.ActivatorDependencyResolver;
-import org.middleheaven.core.wiring.activation.ActivatorScanner;
-import org.middleheaven.core.wiring.activation.ActivatorScannerEvent;
-import org.middleheaven.core.wiring.activation.ActivatorScannerListener;
-import org.middleheaven.core.wiring.activation.AnnotationBasedDependencyResolver;
-import org.middleheaven.core.wiring.activation.FileActivatorScanner;
-import org.middleheaven.core.wiring.activation.SetActivatorScanner;
-import org.middleheaven.core.wiring.annotations.Shared;
-import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.global.atlas.AtlasActivator;
 import org.middleheaven.global.text.LocalizationServiceActivator;
-import org.middleheaven.io.repository.FileRepositoryActivator;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.logging.CompositeLogBook;
-import org.middleheaven.logging.LogBook;
-import org.middleheaven.logging.LoggingActivator;
+import org.middleheaven.io.repository.PropertiesFile;
+import org.middleheaven.logging.BroadcastLoggingService;
+import org.middleheaven.logging.LogServiceDelegatorLogger;
+import org.middleheaven.logging.Logger;
+import org.middleheaven.logging.LoggingService;
 import org.middleheaven.util.StopWatch;
-import org.middleheaven.util.collections.ParamsMap;
+import org.middleheaven.util.StringUtils;
 
 /**
  * This is the entry point for all applications
@@ -58,29 +56,20 @@ import org.middleheaven.util.collections.ParamsMap;
  */
 public abstract class ExecutionEnvironmentBootstrap {
 
-
-	private final List<Activator> activators = new ArrayList<Activator>();
+	private final RegistryServiceContext serviceRegistryContext = new RegistryServiceContext();
+	private final List<ServiceActivatorModel> activators = new ArrayList<ServiceActivatorModel>();
 	private final Set<ActivatorScanner> scanners = new HashSet<ActivatorScanner>();
 	private final Set<ActivatorDependencyResolver> resolvers = new CopyOnWriteArraySet<ActivatorDependencyResolver>();
-
 	private WiringService wiringService = new StandardWiringService();
-
-	private CompositeLogBook containerLogBook = new CompositeLogBook("executionLog");
-
 	private SimpleBootstrapService bootstrapService;
-	private RegistryServiceContext serviceRegistryContext;
-
-	private LogBook log;
-
+	private LoggingService loggingService;
+	private Logger logger;
 	private BootstrapContainer container;
 
+	
+	
 	public ExecutionEnvironmentBootstrap (){
 		resolvers.add(new AnnotationBasedDependencyResolver());
-	}
-
-
-	public  BootstrapContainer getContainer(){
-		return container;
 	}
 
 	public WiringService getWiringService(){
@@ -91,9 +80,31 @@ public abstract class ExecutionEnvironmentBootstrap {
 		this.wiringService = wiringService;
 	}
 
-
+	protected final RegistryServiceContext getRegistryServiceContext (){
+		return serviceRegistryContext;
+	}
+	
+	protected LoggingService resolveLoggingService(){
+		return new BroadcastLoggingService();
+	}
+	
+	public LoggingService getLoggingService(){
+		return loggingService;
+	}
+	
+	
+	public BootstrapContainer getContainer(){
+		return this.container;
+	}
+	
 	protected abstract BootstrapContainer resolveContainer();
+	
+	protected abstract String getExecutionConfiguration(); 
 
+
+	protected  ActivatorScanner resolverActivatorScanner(ManagedFile appClasspathRepository){
+		return new FileActivatorScanner(appClasspathRepository, ".jar$");
+	}
 
 	public void addActivatorDependencyResolver(ActivatorDependencyResolver listener) {
 		resolvers.add(listener);
@@ -103,272 +114,296 @@ public abstract class ExecutionEnvironmentBootstrap {
 		resolvers.remove(listener);
 	}
 
-
 	/**
 	 * Start the environment 
 	 */
-	public final void start(LogBook log){
-
+	protected final void start(){
 
 		StopWatch watch = StopWatch.start();
 		
-		this.log= log;
+		// Determine Logging Service
+		this.loggingService = this.resolveLoggingService();
 
-		log.info("Inicializing Environment");
-
-		serviceRegistryContext = new RegistryServiceContext(log);
+		this.logger = new LogServiceDelegatorLogger(this.getClass().getName(), loggingService);
 		
+		logger.info("Inicializing Environment");
+
+		// Register Logging Service
+		serviceRegistryContext.register(LoggingService.class, loggingService);
+		
+		
+		// Determine Bootstrap Service
 		bootstrapService = new SimpleBootstrapService(this);
 		
-		final ObjectPool objectPool = wiringService.getObjectPool();
-		
-		objectPool.addConfiguration(new BindConfiguration(){
+		bootstrapService.addListener(new BootstapListener(){
 
 			@Override
-			public void configure(Binder binder) {
-				binder.bind(WiringService.class).in(Service.class).toInstance(wiringService);
-				binder.bind(BootstrapService.class).in(Service.class).toInstance(bootstrapService);
+			public void onBoostapEvent(BootstrapEvent event) {
+				if (event.isBootdown()){
+					wiringService.close();
+					serviceRegistryContext.clear();
+				}
 			}
-
+			
 		});
+		
+		// Register Bootstrap Service
+		serviceRegistryContext.register(BootstrapService.class, bootstrapService);
+		serviceRegistryContext.register(WiringService.class, wiringService);
+		
+		// Resolve Container
 		
 		this.container = resolveContainer();
 
+		logger.info("Using container : '{0}'", container.getContainerName());
+		
+		
+		// Resolve FileSystem
 		final ContainerFileSystem fileSystem = container.getFileSystem();
 
-		log.info("Using container : '{0}'", container.getContainerName());
-
-		doBeforeStart();
-
-		log.debug("Register bootstrap services");
-
-		this.containerLogBook.addLogBook(log);
-
-
-		objectPool.addConfiguration(new BindConfiguration(){
+		
+		wiringService.addConfiguration(new BindConfiguration(){
 
 			@Override
 			public void configure(Binder binder) {
-				binder.bind(ContainerFileSystem.class).in(Service.class).toInstance(fileSystem);
+				binder.bind(ContainerFileSystem.class).inSharedScope().toInstance(fileSystem);
 			}
-
+			
 		});
 
-		// force initialization
-		objectPool.getInstance(WiringService.class);
-		objectPool.getInstance(BootstrapService.class);
-		objectPool.getInstance(ContainerFileSystem.class);
+		doBeforeStart();
 		
-		// set scanner
-		final SetActivatorScanner scanner = new SetActivatorScanner()
-		.addActivator(FileRepositoryActivator.class)
-		.addActivator(AtlasActivator.class)
-		.addActivator(LoggingActivator.class)
-		.addActivator(LocalizationServiceActivator.class);
-
-
-		BootstrapContext context = new BootstrapContext(){
-
-			@Override
-			public BootstrapContext addActivator(Class<? extends Activator> activatorType) {
-				scanner.addActivator(activatorType);
-				return this;
-			}
-
-			@Override
-			public BootstrapContext removeActivator(Class<? extends Activator> activatorType) {
-				scanner.removeActivator(activatorType);
-				return this;
-			}
-
-			@Override
-			public boolean contains(Class<? extends Activator> activatorType) {
-				return scanner.contains(activatorType);
-			}
-
-		};
+		
+		logger.trace("Configuring active environment profiles");
+		
+		String profiles = (String) wiringService.getPropertyManagers().getProperty("middleheaven.profiles.active");
+		
+		if (profiles != null) {
+			String[] all = StringUtils.split(profiles, ',');
+			wiringService.getActiveProfiles().add(all);
+		}
+		
+		logger.debug("Register bootstrap services");
 
 		// activate services that can be overridden by the container or final environment	
 
-
-		preConfig(context);
-
-		bootstrapService.fireBootupStart();
-
-		log.debug("Inicialize service discovery engines");
-
-
-		// file aware scanner
-		ActivatorScanner fileScanner = new FileActivatorScanner(fileSystem.getAppClasspathRepository(), ".jar$");
-		addActivatorScanner(fileScanner);
-
-		log.debug("Scanning for extentions");
+		logger.debug("Scanning for extentions");
 
 		List<BootstrapContainerExtention> extentions = new ArrayList<BootstrapContainerExtention>();
+		
 		readExtentions(extentions);
 
-		// configurate container with chain of extentions
-		BootstrapChain chain = new BootstrapChain(extentions,container);
+		logger.debug("Inicialize service discovery");
+		// file aware scanner
+		ActivatorScanner fileScanner = this.resolverActivatorScanner(fileSystem.getAppClasspathRepository());
+		
+		addActivatorScanner(fileScanner);
 
-		chain.doChain(context);
+		
+		final SetActivatorScanner scanner = new SetActivatorScanner();
+		
+		scanner.addActivator(LocalizationServiceActivator.class);
+		
+		addActivatorScanner(scanner);
+		
+		// configurate container with chain of extentions
+		BootstrapChain chain = new BootstrapChain(logger, extentions,container);
+
+		ExecutionContext context = new ExecutionContext(){
+
+			public String getName(){
+				return getExecutionConfiguration();
+			}
+			
+			@Override
+			public ExecutionContext addActivator(
+					Class<? extends ServiceActivator> type) {
+				scanner.addActivator(type);
+				return this;
+			}
+
+			@Override
+			public ExecutionContext removeActivator(Class<? extends ServiceActivator> type) {
+				scanner.removeActivator(type);
+				return this;
+			}
+
+			@Override
+			public boolean contains(Class<? extends ServiceActivator> type) {
+				return scanner.contains(type);
+			}
+
+			@Override
+			public ProfilesBag getActiveProfiles() {
+				return wiringService.getActiveProfiles();
+			}
+
+			@Override
+			public ServiceContext getServiceContext() {
+				return serviceRegistryContext;
+			}
+			
+		};
+			
+		logger.debug("Configuring context");
+			
+		// config any specifica environment activators
+		preConfig(context);
+
+		// start bootstrap
+		// any participant that wishes to add activators can do so now.
+		bootstrapService.fireBootupStart();
+
+		// configure using extentions
+		chain.doChain(context); 
 
 		// call configuration
 		posConfig(context);
 
-
-		addActivatorScanner(scanner);
-
+		// at this point all needed activators are collected.
+		
 		// scan and activate all
-		scan(wiringService); 
+		activate(); 
+		
+		wiringService.refresh();
 
 		doAfterStart();
 
+		// start the container.
 		container.start();
 
-		log.info("Environment inicialized in {0}. " , watch.mark());
+
+		// inform the end of the bootstrap
 		bootstrapService.fireBootupEnd();
-	}
-
-
-	protected void scan(WiringService wiringService){
-
-		final String bookName = this.getClass().getName();
 		
-		wiringService.getObjectPool().addObjectCycleListener(new ObjectPoolListener() {
-			
-			@Override
-			public void onObjectRemoved(ObjectPoolEvent objectPoolEvent) {
-				
-				if (objectPoolEvent.getObject() instanceof LogBook){
-					containerLogBook.addLogBook((LogBook) objectPoolEvent.getObject());
-				}
-	
-			}
-			
-			@Override
-			public void onObjectAdded(ObjectPoolEvent objectPoolEvent) {
-				//no-op
-			}
-		});
-
-		final Collection<BeanModel> dependencyModels = new HashSet<BeanModel>();
-
-		for (ActivatorScanner scanner : scanners){
-			doScan(scanner, dependencyModels, wiringService);
-		}
-
-		resolveDependencies(dependencyModels, wiringService);
-
-		scanEarly = true;
-
+		logger.info("Environment inicialized in {0} ms. " , watch.mark().milliseconds());
+		
 	}
 
+	
+
+	protected void activate(){
+		final ScanActivatorScannerListener listener = new ScanActivatorScannerListener();
+		
+		for (ActivatorScanner scanner : scanners){
+			scanner.addScannerListener(listener);
+			scanner.scan();
+		}
+		
+		final DependencyResolver dependencyResolver = new DependencyResolver(new LogServiceDelegatorLogger("dependencyResolver", loggingService));
+		dependencyResolver.resolve(activators, new ActivatorsStarter());
+
+
+//
+//		final Collection<BeanDependencyModel> dependencyModels = new HashSet<BeanDependencyModel>();
+//
+//		for (ActivatorScanner scanner : scanners){
+//			doScan(scanner, dependencyModels, wiringService);
+//		}
+//
+//		resolveDependencies(dependencyModels, wiringService);
+//
+//		scanEarly = true;
+
+//		this.wiringService.refresh();
+		
+	}
+	
 	boolean scanEarly = false;
 
-	private void resolveDependencies(Collection<BeanModel> dependencyModels, WiringService wiringService){
-
-		final DependencyResolver dependencyResolver = new DependencyResolver(containerLogBook);
-		dependencyResolver.resolve(dependencyModels, new StarterMy(wiringService));
+//	private void doScan(ActivatorScanner scanner, final Collection<BeanDependencyModel> dependencyModels, WiringService wiringService){
+//	
+//
+//		scanner.addScannerListener(listener);
+//		scanner.scan();
+//
+//		for (Class<? extends ServiceActivator> activatorType : listener.activatorTypes){
+//			BeanDependencyModel model = new BeanDependencyModel(activatorType);
+//
+//			for (ActivatorDependencyResolver resolver : this.resolvers){
+//
+//				resolver.resolveDependency(activatorType, model);
+//			}
+//			dependencyModels.add(model);
+//		}
+//
+//		if (scanEarly){
+//			resolveDependencies(dependencyModels, wiringService);
+//		}
+//	}
 
 	
 
-	}
+	
+	class ActivatorsStarter implements Starter<ServiceActivatorModel>{
 
-	class StarterMy implements Starter<BeanModel>{
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public List<ServiceActivatorModel> sort(Collection<ServiceActivatorModel> dependencies) {
+			
+			List<ServiceActivatorModel> list = new ArrayList<ServiceActivatorModel>(dependencies);
 
-		private WiringService wiringService;
-
-		public StarterMy(WiringService wiringService){
-			this.wiringService = wiringService;
-		}
-
-		private Activator startActivator(final BeanModel model){
-
-			wiringService.getObjectPool().addConfiguration(new BindConfiguration(){
+			Collections.sort(list, new Comparator<ServiceActivatorModel>(){
 
 				@Override
-				public void configure(Binder binder) {
-
-					Class c = model.getBeanClass();
-					binder.bind(model.getBeanClass()).to(c).in(Shared.class).withParams(model.getParams());
-
-
-				}
-
-			});
-
-			Activator activator = (Activator) wiringService.getObjectPool().getInstance(model.getBeanClass());
-
-			return activator;
-		}
-
-		@Override
-		public void inicialize(BeanModel model) 
-				throws InicializationNotResolvedException, InicializationNotPossibleException {
-
-			try{
-				Activator activator = startActivator(model); 
-
-				// add activator to context for future inactivation
-				activators.add(activator);
-			}catch (BindingException e){
-				throw new InicializationNotResolvedException();
-			}catch (RuntimeException e){
-				throw new InicializationNotPossibleException(e);
-			}
-		}
-
-		@Override
-		public void inicializeWithProxy(BeanModel model)
-				throws InicializationNotResolvedException,InicializationNotPossibleException {
-
-			try{
-				// try for the last time
-				Activator activator = startActivator(model); 
-
-				// add activator to context for future inactivation
-				activators.add(activator);
-			}catch (RuntimeException e){
-				// will never work
-				throw new InicializationNotPossibleException(e);
-			}
-		}
-
-		@Override
-		public List<BeanModel> sort(Collection<BeanModel> dependencies) {
-
-			List<BeanModel> list = new ArrayList<BeanModel>(dependencies);
-
-			Collections.sort(list, new Comparator<BeanModel>(){
-
-				@Override
-				public int compare(BeanModel a,
-						BeanModel b) {
-					return a.getAfterPoints().size() - b.getAfterPoints().size();
+				public int compare(ServiceActivatorModel a,
+						ServiceActivatorModel b) {
+					return a.getRequiredServices().size() - b.getRequiredServices().size();
 				}
 
 			});
 
 			return list;
+			
 		}
 
-
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
-		public boolean isRequired(BeanModel dependency) {
-			return dependency.isRequired();
+		public void inicialize(ServiceActivatorModel model)
+				throws InicializationNotResolvedException,
+				InicializationNotPossibleException {
+			// no-op
+			
+			model.activate(serviceRegistryContext);
+			
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void inicializeWithProxy(
+				ServiceActivatorModel dependableProperties)
+				throws InicializationNotResolvedException,
+				InicializationNotPossibleException {
+			// no-op
+		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isRequired(ServiceActivatorModel dependency) {
+			return true; // TODO remove method as activators are always required
+		}
+
+		
+		
 	}
 
 
-	private static class ScanActivatorScannerListener implements ActivatorScannerListener{
-
-		public Collection<Class<? extends Activator>> activatorTypes = new LinkedList<Class<? extends Activator>>();
+	private class ScanActivatorScannerListener implements ActivatorScannerListener{
 
 		@Override
 		public void onActivatorFound(ActivatorScannerEvent event) {
-			activatorTypes.add(event.getActivatorType());
+			
+			ServiceActivator activator = ClassIntrospector.of(event.getActivatorType()).newInstance();
+			
+			activators.add(new ServiceActivatorModel(activator));
 		}
 
 		@Override
@@ -394,45 +429,33 @@ public abstract class ExecutionEnvironmentBootstrap {
 	 * @param wiringService 
 	 */
 	public void addActivatorScanner(ActivatorScanner scanner) {
-		scanners.add(scanner);
-
-		//		if(scanEarly){
-		//			doScan(scanner, new ArrayList<BeanModel>(1), wiringService);
-		//		}
+		scanners.add(scanner); // TODO remove activators scanned by it ?
 	}
 
 
-	private void doScan(ActivatorScanner scanner, final Collection<BeanModel> dependencyModels, WiringService wiringService){
-		final ScanActivatorScannerListener listener = new ScanActivatorScannerListener();
-
-
-		scanner.addScannerListener(listener);
-		scanner.scan(wiringService);
-
-		for (Class<? extends Activator> activatorType : listener.activatorTypes){
-			BeanModel model = new BeanModel(activatorType);
-
-			for (ActivatorDependencyResolver resolver : this.resolvers){
-
-				resolver.resolveDependency(activatorType, model);
-			}
-			dependencyModels.add(model);
-		}
-
-		if (scanEarly){
-			resolveDependencies(dependencyModels, wiringService);
-		}
-	}
 
 	protected void readExtentions(List<BootstrapContainerExtention> extentions){
 
+		ManagedFile file = this.getContainer().getFileSystem().getAppConfigRepository().retrive("extensions.config");
+		
+		if (file.exists()) {
+			Properties p = PropertiesFile.from(file).toProperties();
+			
+			
+			String[] all = StringUtils.split(p.getProperty("extentions"), ",");
+			
+			for (String extention : all){
+				extentions.add(Introspector.of(BootstrapContainerExtention.class).load(extention).newInstance());
+			}
+		}
+		
 	}
 
-	protected void preConfig(BootstrapContext contex) {
+	protected void preConfig(ExecutionContext context) {
 		// no-op
 	}
 
-	public void posConfig(BootstrapContext context){
+	public void posConfig(ExecutionContext context){
 
 	}
 
@@ -486,7 +509,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 	}
 
 	public final void stop(){
-		log.info("Terminating Environment");
+		logger.info("Terminating Environment");
 		bootstrapService.fireBootdownStart();
 		doBeforeStop();
 
@@ -496,13 +519,15 @@ public abstract class ExecutionEnvironmentBootstrap {
 		doAfterStop();
 
 		bootstrapService.fireBootdownEnd();
-		log.info("Environment terminated");
+		logger.info("Environment terminated");
 	}
 
 	protected void doBeforeStart(){};
 	protected void doAfterStart(){}; 
 	protected void doBeforeStop(){};
-	protected void doAfterStop(){}; 
+	protected void doAfterStop(){}
+
+
 
 
 
