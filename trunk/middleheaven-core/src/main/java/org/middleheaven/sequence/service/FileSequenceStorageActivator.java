@@ -2,20 +2,23 @@
 package org.middleheaven.sequence.service;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.wiring.activation.Activator;
-import org.middleheaven.core.wiring.activation.Publish;
-import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.bootstrap.activation.ServiceActivator;
+import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.ManagedIOException;
+import org.middleheaven.io.repository.FileRepositoryService;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.sequence.SequenceState;
 import org.middleheaven.sequence.StateChangedEvent;
 import org.middleheaven.sequence.StatePersistentSequence;
 import org.middleheaven.util.coersion.TypeCoercing;
+import org.middleheaven.util.collections.ParamsMap;
 
 /**
  * Activates  <code>SequenceStorageService</code> for sequence storing. 
@@ -23,28 +26,33 @@ import org.middleheaven.util.coersion.TypeCoercing;
  * 
  */
 @Service
-public class FileSequenceStorageActivator extends Activator  {
+public class FileSequenceStorageActivator extends ServiceActivator  {
 
 	private Properties properties = new Properties();
 	private ManagedFile file;
-	private BootstrapService bootstrapService;
+
 	private SequenceStorageService sequenceStorageService;
 
 	
-	@Wire
-	public void setBootstrapService(BootstrapService bootstrapService) {
-		this.bootstrapService = bootstrapService;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(BootstrapContainer.class));
 	}
-
-	@Publish({"type=file", "remote=no"})
-	public SequenceStorageService getSequenceStorageService() {
-		return sequenceStorageService;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
+		specs.add(new ServiceSpecification(SequenceStorageService.class));
 	}
 	
 	@Override
-	public void activate() {
+	public void activate(ServiceContext serviceContext) {
 
-		BootstrapContainer container = bootstrapService.getEnvironmentBootstrap().getContainer();
+		BootstrapContainer container = serviceContext.getService(BootstrapService.class).getEnvironmentBootstrap().getContainer();
 
 		final ManagedFile appDataRepository = container.getFileSystem().getAppDataRepository();
 		if (!appDataRepository.isWriteable()){
@@ -61,12 +69,18 @@ public class FileSequenceStorageActivator extends Activator  {
 		}
 
 		sequenceStorageService = new FileSequenceStorageService();
+		
+		final ParamsMap params = new ParamsMap().setParam("type", "file").setParam("remote", "no");
+		
+		serviceContext.register(SequenceStorageService.class, sequenceStorageService , params);
 	}
+	
+	
 
 
 
 	@Override
-	public void inactivate() {
+	public void inactivate(ServiceContext serviceContext) {
 		// no-op
 	}
 
@@ -101,6 +115,7 @@ public class FileSequenceStorageActivator extends Activator  {
 		}
 
 	}
+
 
 
 }

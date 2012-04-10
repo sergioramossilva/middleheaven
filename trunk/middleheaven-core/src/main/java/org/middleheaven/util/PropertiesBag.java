@@ -13,7 +13,7 @@ import org.middleheaven.util.classification.NegationClassifier;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.AbstractEnumerableAdapter;
 import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.IteratorAdapter;
+import org.middleheaven.util.collections.TransformedIterator;
 
 /**
  * 
@@ -135,14 +135,14 @@ public class PropertiesBag extends AbstractEnumerableAdapter<PropertiesBag.Entry
 		 */
 		@Override
 		public Iterator<Entry> iterator() {
-			return  new IteratorAdapter<Entry, Map.Entry<Object, Object>>(this.properties.entrySet().iterator()) {
+			return TransformedIterator.transform(this.properties.entrySet().iterator(), new Classifier<Entry, Map.Entry<Object, Object>>(){
 
 				@Override
-				public Entry adaptNext(java.util.Map.Entry<Object, Object> next) {
+				public Entry classify(java.util.Map.Entry<Object, Object> next) {
 					return new StringEntry (next.getKey().toString(), next.getValue().toString());
 				}
-
-			};
+				
+			});
 		}
 		/**
 		 * {@inheritDoc}
@@ -190,14 +190,14 @@ public class PropertiesBag extends AbstractEnumerableAdapter<PropertiesBag.Entry
 		 */
 		@Override
 		public Iterator<Entry> iterator() {
-			return new IteratorAdapter<Entry, Map.Entry<String, String>>(this.properties.entrySet().iterator()) {
+			return TransformedIterator.transform(this.properties.entrySet().iterator(), new Classifier<Entry, Map.Entry<String, String>>(){
 
 				@Override
-				public Entry adaptNext(java.util.Map.Entry<String, String> next) {
-					return new StringEntry(next.getKey(), next.getValue());
+				public Entry classify(java.util.Map.Entry<String, String> next) {
+					return new StringEntry (next.getKey().toString(), next.getValue().toString());
 				}
-
-			};
+				
+			});
 		}
 		
 		/**

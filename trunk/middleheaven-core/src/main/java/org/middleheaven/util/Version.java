@@ -53,7 +53,7 @@ public final class Version implements Comparable<Version>, Serializable{
 		Integer[] res = TypeCoercing.coerceArray(pars, Integer.class, 4);
 		
 
-		switch (res.length){
+		switch (pars.length){
 		case 0:
 			return new Version(true);
 		case 1:
