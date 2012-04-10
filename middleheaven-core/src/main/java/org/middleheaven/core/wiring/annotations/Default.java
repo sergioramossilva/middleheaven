@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 	ElementType.PARAMETER
 	})
 @Documented
-@ScopeSpecification
+@ScopeSpecification(name ="default")
 public @interface Default {
 
 }

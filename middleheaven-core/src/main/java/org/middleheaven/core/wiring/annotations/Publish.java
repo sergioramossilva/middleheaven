@@ -6,17 +6,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
-/**
- * Identifies that an annotation is a wiring scope defining annotation. 
- */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({
-	ElementType.ANNOTATION_TYPE
-	})
+@Target(ElementType.METHOD)
 @Documented
-public @interface ScopeSpecification {
+public @interface Publish {
 
-	
-	String name();
+	String[] value() default {};
+
 }

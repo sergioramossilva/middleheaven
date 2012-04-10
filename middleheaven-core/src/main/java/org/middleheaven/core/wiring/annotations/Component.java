@@ -1,22 +1,25 @@
+/**
+ * 
+ */
 package org.middleheaven.core.wiring.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.middleheaven.core.wiring.WiringService;
 
 /**
- * Identifies that an annotation is a wiring scope defining annotation. 
+ * Indicates the class is a candidate to be add to the {@link WiringService} object context. 
+ * 
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({
-	ElementType.ANNOTATION_TYPE
-	})
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Documented
-public @interface ScopeSpecification {
+@Inherited
+public @interface Component {
 
-	
-	String name();
 }
