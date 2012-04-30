@@ -6,7 +6,7 @@ package org.middleheaven.core.wiring;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.FileContext;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.logging.LoggingService;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
@@ -18,19 +18,19 @@ import org.middleheaven.tool.test.MiddleHeavenTestCase;
 public class ScopeWiringTest extends MiddleHeavenTestCase{
 
 	
-	ContainerFileSystem a;
-	ContainerFileSystem b;
+	FileContext a;
+	FileContext b;
 	
 	LoggingService c;
 	LoggingService d;
 	
 	@Wire
-	public void setA(ContainerFileSystem fs){
+	public void setA(FileContext fs){
 		a = fs;
 	}
 	
 	@Wire
-	public void setB(ContainerFileSystem fs){
+	public void setB(FileContext fs){
 		b = fs;
 	}
 	
