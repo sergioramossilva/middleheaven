@@ -1,0 +1,184 @@
+.code 
+{
+	border: 1px solid black;
+	background-color: #E8E8E8;
+	padding: 5px;
+}
+
+body 
+{
+	font: 12px Lucida Grande',Geneva,Verdana,Arial,sans-serif;
+	background-color: white;
+	color: black;
+}
+
+
+/* Link colors */
+a 
+{
+	color:#00258C; // dark blue
+	text-decoration:none; 
+}
+
+a:hover 
+{
+	text-decoration:underline;
+}
+
+/* Headings */
+h1 
+{ 
+	font-size:28px;
+	color:#0E60CC; 
+}
+
+/* Table colors */
+
+table
+{
+	border:none;
+}
+
+td
+{
+	border:none;
+	border-bottom:1px dotted black;
+}
+
+th
+{
+	border:none;
+}
+
+.TableHeadingColor th {
+    background-color: #00258C;
+    color: #D6F8FF;
+    font-size: 14px;
+    height: 26px;
+}
+
+
+
+.TableSubHeadingColor  
+{ 
+	background: #D6F8FF; // pale blue
+
+} 
+.TableRowColor         
+{ 
+	background: white;
+}
+
+.TableRowColor a {
+    border-bottom: medium none;
+    color: #052AA3; //dack blue
+    font-weight: normal;
+}
+
+tr.TableRowColor:hover
+{
+	background:#D6F8FF;
+}
+
+ 
+/* Font used in left-hand frame lists */
+.FrameTitleFont   
+{ 
+	font-size: 120%; 
+	font-weight:bold;
+}
+
+.FrameTitleFont a   
+{  
+	color: black;
+}
+
+.FrameHeadingFont 
+{ 
+	font-weight: bold;
+	font-size:95%;
+}
+
+.FrameItemFont    
+{ 
+	line-height:130%;
+	font-size: 95%; 
+}
+
+.FrameItemFont a
+{
+	color:#333;
+	text-decoration:none;
+}
+
+.FrameItemFont a[title^="class"]
+{
+	color:#333;
+	text-decoration:none;
+}
+
+.FrameItemFont a[title^="enum"]
+{
+	color:333;
+	text-decoration:none;
+}
+
+.FrameItemFont a[title^="interface"]
+{
+	color:#333;
+	text-decoration:none;
+}
+
+.FrameItemFont a:hover
+{
+	color: #052AA3; //dack blue
+	border-bottom:none;
+	text-decoration:none;
+}
+
+/* Navigation bar fonts and colors */
+.NavBarCell1    
+{ 
+	background-color:white;
+	border:none;
+} 
+
+.NavBarCell1Rev 
+{ 
+	background-color:#D6F8FF;
+	border:1px solid #00258C;
+	padding:0;
+	margin:0;
+} 
+
+.NavBarCell1 a  
+{ 
+	color:#333;
+	text-decoration:none;
+}
+
+.NavBarCell2 a {
+    color: #00258C;
+    font-size: 90%;
+}
+
+.NavBarFont1Rev 
+{ 
+
+}
+
+.NavBarCell2
+{
+	border:none;
+}
+
+.NavBarCell3    
+{ 
+	border:none;
+}
+
+/* Override sizes in font tags */
+font
+{
+	font: inherit !important;
+}
