@@ -3,6 +3,9 @@ package org.middleheaven.validation;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.middleheaven.util.validation.NotEmptyValidator;
+import org.middleheaven.util.validation.SimpleEmailAddressValidator;
+import org.middleheaven.util.validation.Validator;
 
 public class TestValidators {
 
