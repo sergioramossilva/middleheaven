@@ -4,7 +4,8 @@ import java.net.MalformedURLException;
 import java.util.Collection;
 
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.FileContext;
+import org.middleheaven.core.bootstrap.FileContextService;
 import org.middleheaven.core.bootstrap.activation.ServiceActivator;
 import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.services.ServiceContext;
@@ -45,7 +46,8 @@ public class LogKeepingActivator extends ServiceActivator {
 	@Override
 	public void activate(ServiceContext serviceContext) {
 
-		final ContainerFileSystem fileRepositoryService = serviceContext.getService(BootstrapService.class).getEnvironmentBootstrap().getContainer().getFileSystem();
+		final FileContext fileRepositoryService = serviceContext.getService(FileContextService.class).getFileContext();
+		
 		ManagedFile configFolder = fileRepositoryService.getEnvironmentConfigRepository();
 
 		LoggingConfigurator configurator = new BasicConfigurator();

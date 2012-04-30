@@ -9,7 +9,8 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.FileContext;
+import org.middleheaven.core.bootstrap.FileContextService;
 import org.middleheaven.core.bootstrap.activation.ServiceActivator;
 import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.reflection.MethodDelegator;
@@ -57,7 +58,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 	@Override
 	public void activate(ServiceContext serviceContext) {
 
-		ContainerFileSystem frs = serviceContext.getService(BootstrapService.class).getEnvironmentBootstrap().getContainer().getFileSystem();
+		FileContext frs = serviceContext.getService(FileContextService.class).getFileContext();
 		
 		ManagedFile f = frs.getEnvironmentConfigRepository();
 		

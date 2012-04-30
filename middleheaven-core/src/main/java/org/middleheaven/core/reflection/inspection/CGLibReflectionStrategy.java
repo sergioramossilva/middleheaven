@@ -110,14 +110,14 @@ public class CGLibReflectionStrategy extends AbstractReflectionStrategy{
 		try{
 			
 			Class[] interfaces = new Class[adicionalInterfaces.length + 1];
-			interfaces[0] = facadeType;
+			interfaces[0] = proxyInterface;
 			
 			for (int i =0; i < adicionalInterfaces.length; i++){
 				interfaces[i+1] = adicionalInterfaces[i];
 			}
 			
 			return proxyInterface.cast(Enhancer.create(
-					proxyInterface,
+					facadeType,
 					interfaces,
 					new ProxyHandlerInterceptor(facadeType,handler)
 			));

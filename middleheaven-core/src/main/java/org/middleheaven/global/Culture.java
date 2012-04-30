@@ -8,7 +8,7 @@ import org.middleheaven.global.atlas.Atlas;
 import org.middleheaven.global.atlas.Country;
 import org.middleheaven.quantity.time.Chonologies;
 import org.middleheaven.quantity.time.Chronology;
-import org.middleheaven.validation.Consistencies;
+import org.middleheaven.util.validation.Consistencies;
 
 /**
  * Representation of a culture.

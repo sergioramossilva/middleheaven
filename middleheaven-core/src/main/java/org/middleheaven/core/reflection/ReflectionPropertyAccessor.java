@@ -3,14 +3,9 @@ package org.middleheaven.core.reflection;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.TreeMap;
 
 import org.middleheaven.core.reflection.inspection.Introspector;
@@ -187,7 +182,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 			
 			
 			if (this.modifier == null && this.assessor == null){
-				throw new PropertyNotFoundException("No acessors, or modifiers, for  property '" + name + "' in class " + type);
+				throw new PropertyNotFoundException( name ,  type.getName());
 			}
 			
 			if (field != null){
@@ -225,7 +220,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 				field.setAccessible(true);
 				return field.get(target);
 			} else {
-				throw new PropertyNotFoundException("Property does not exist");
+				throw  new PropertyNotFoundException( this.name ,  target.getClass().getName());
 			}
 		} catch (Exception e) {
 			throw ReflectionException.manage(e, this.type);

@@ -5,7 +5,7 @@ import org.middleheaven.io.repository.ManagedFile;
 /**
  * Represent special meaning locations for the container.
  */
-public interface ContainerFileSystem {
+public interface FileContext {
 
     /**
      * 

@@ -66,7 +66,7 @@ public class UrlStringUtils extends StringUtils {
 	 */
 	public static String filename(CharSequence url, boolean excludeExtention){
 		String filename = filename(url);
-		final int pos = filename.indexOf('.');
+		final int pos = filename.lastIndexOf('.');
 		if (excludeExtention && pos> 0){
 			filename = filename.substring(0,pos);
 		}

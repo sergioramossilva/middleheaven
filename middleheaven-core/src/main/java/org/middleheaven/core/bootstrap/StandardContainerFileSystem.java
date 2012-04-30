@@ -2,7 +2,7 @@ package org.middleheaven.core.bootstrap;
 
 import org.middleheaven.io.repository.ManagedFile;
 
-public class StandardContainerFileSystem implements ContainerFileSystem{
+public class StandardContainerFileSystem implements FileContext{
 
 	private ManagedFile rootFolder;
 

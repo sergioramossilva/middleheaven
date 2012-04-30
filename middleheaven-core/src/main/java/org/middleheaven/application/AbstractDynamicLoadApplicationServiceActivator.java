@@ -13,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.middleheaven.core.bootstrap.BootstapListener;
 import org.middleheaven.core.bootstrap.BootstrapEvent;
 import org.middleheaven.core.bootstrap.BootstrapService;
+import org.middleheaven.core.bootstrap.FileContextService;
 import org.middleheaven.core.bootstrap.activation.ServiceActivator;
 import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.reflection.ClassSet;
@@ -37,13 +38,17 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Ser
 	private DynamicLoadApplicationService applicationService;
 
 	private ApplicationVersion application;
-	private BootstrapService bootstrapService; 
+	private FileContextService fileContextService;
 	private ServiceContext serviceContext;
 	
 	private Logger log;
 	
 	public AbstractDynamicLoadApplicationServiceActivator(){}
 
+	protected FileContextService getFileContextService(){
+		return this.fileContextService;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -66,9 +71,11 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Ser
 		
 		this.serviceContext = serviceContext;
 		
+		fileContextService = serviceContext.getService(FileContextService.class);
+		
 		log = new LogServiceDelegatorLogger(this.getClass().getName(), serviceContext.getService(LoggingService.class));
 		
-		this.bootstrapService = serviceContext.getService(BootstrapService.class);
+		BootstrapService bootstrapService = serviceContext.getService(BootstrapService.class);
 
 		bootstrapService.addListener(this);
 		applicationService =  new DynamicLoadApplicationService();
@@ -328,10 +335,6 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Ser
 		return log;
 	}
 
-	protected BootstrapService getBootstrapService() {
-		return bootstrapService;
-	}
-
 
 	protected final void parseAttributes(Map<String, String> attributes , ClassLoader cloader){
 
@@ -408,7 +411,7 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Ser
 	private ClassSet  parseApplicationListeners (String applicationListenersSignature , ClassLoader cloader){
 		ClassSet listeners = new ClassSet();
 
-		if (applicationListenersSignature.trim().length() == 0){
+		if (applicationListenersSignature == null || applicationListenersSignature.trim().length() == 0){
 			return listeners;
 		}
 		
@@ -424,7 +427,7 @@ public abstract class AbstractDynamicLoadApplicationServiceActivator extends Ser
 	private ClassSet  parseModulesListeners (String applicationModuleListenersSignature , ClassLoader cloader){
 		ClassSet listeners = new ClassSet();
 
-		if (applicationModuleListenersSignature.trim().length() == 0){
+		if (applicationModuleListenersSignature == null || applicationModuleListenersSignature.trim().length() == 0){
 			return listeners;
 		}
 		

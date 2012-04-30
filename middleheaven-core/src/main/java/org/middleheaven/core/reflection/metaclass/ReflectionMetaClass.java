@@ -32,7 +32,7 @@ public class ReflectionMetaClass implements MetaClass{
 		PropertyAccessor pa = Introspector.of(type).inspect().properties().named(name).retrive();
 
 		if (pa == null){
-			throw new PropertyNotFoundException("Property " + name + " not found in " + this.getName());
+			throw new PropertyNotFoundException(name , this.getName());
 		}
 		return pa;
 	}

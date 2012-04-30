@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.core.bootstrap.BootstrapService;
+import org.middleheaven.core.bootstrap.FileContext;
+import org.middleheaven.core.bootstrap.FileContextService;
 import org.middleheaven.core.bootstrap.activation.ServiceActivator;
 import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.io.repository.FileRepositoryService;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.sequence.SequenceState;
 import org.middleheaven.sequence.StateChangedEvent;
@@ -52,9 +52,9 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 	@Override
 	public void activate(ServiceContext serviceContext) {
 
-		BootstrapContainer container = serviceContext.getService(BootstrapService.class).getEnvironmentBootstrap().getContainer();
+		FileContext fileContext = serviceContext.getService(FileContextService.class).getFileContext();
 
-		final ManagedFile appDataRepository = container.getFileSystem().getAppDataRepository();
+		final ManagedFile appDataRepository = fileContext.getAppDataRepository();
 		if (!appDataRepository.isWriteable()){
 			throw new IllegalArgumentException("Data repository must be writable");
 		}
