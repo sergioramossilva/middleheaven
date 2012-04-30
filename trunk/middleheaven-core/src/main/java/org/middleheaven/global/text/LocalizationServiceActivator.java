@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.FileContext;
+import org.middleheaven.core.bootstrap.FileContextService;
 import org.middleheaven.core.bootstrap.activation.ServiceActivator;
 import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.services.ServiceContext;
@@ -50,15 +50,14 @@ public class LocalizationServiceActivator extends ServiceActivator{
 	@Override
 	public void activate(ServiceContext serviceContext) {
 		
-		BootstrapService bootstrapService = serviceContext.getService(BootstrapService.class);
-		
-		ContainerFileSystem environment = bootstrapService.getEnvironmentBootstrap().getContainer().getFileSystem();
+	
+		FileContext context = serviceContext.getService(FileContextService.class).getFileContext();
 
 		masterBundle = new RepositoryDomainBundle();
-		masterBundle.setRepository(environment.getEnvironmentConfigRepository());
+		masterBundle.setRepository(context.getEnvironmentConfigRepository());
 
 		RepositoryDomainBundle childBundle = new RepositoryDomainBundle();
-		childBundle.setRepository(environment.getAppConfigRepository());
+		childBundle.setRepository(context.getAppConfigRepository());
 		masterBundle.setChildBundle(childBundle);
 		
 		serviceContext.register(LocalizationService.class, new LocalizationServiceImpl());

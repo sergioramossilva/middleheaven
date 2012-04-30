@@ -14,7 +14,7 @@ public interface  BootstrapContainer  {
 
     public String getContainerName();
     
-    public ContainerFileSystem getFileSystem();
+    public FileContext getFileSystem();
     
     /**
      * Established and returns the {@link ManagedFileRepositoryProvider} to use with this container.

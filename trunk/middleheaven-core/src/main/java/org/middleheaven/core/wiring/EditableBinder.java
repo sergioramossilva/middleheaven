@@ -1,7 +1,7 @@
 package org.middleheaven.core.wiring;
 
 
-interface EditableBinder extends Binder{
+interface EditableBinder extends Binder {
 
 	public BeanDependencyModel getBeanModel(Class<?> type);
 	public BeanDependencyModel getBeanModel(Object instance);

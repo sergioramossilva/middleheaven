@@ -26,7 +26,7 @@ public class MetaInfApplicationServiceActivator extends AbstractDynamicLoadAppli
 
 	protected void loadPresentModules() {
 
-		ManagedFile f =  getBootstrapService().getEnvironmentBootstrap().getContainer().getFileSystem().getAppConfigRepository();
+		ManagedFile f =  this.getFileContextService().getFileContext().getAppConfigRepository();
 
 		ManagedFile manifest = f.retrive("MANIFEST.MF");
 

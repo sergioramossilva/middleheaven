@@ -30,9 +30,6 @@ import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.services.RegistryServiceContext;
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.wiring.BindConfiguration;
-import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.InstanceWiringItem;
 import org.middleheaven.core.wiring.ProfilesBag;
 import org.middleheaven.core.wiring.StandardWiringService;
 import org.middleheaven.core.wiring.WiringService;
@@ -159,14 +156,13 @@ public abstract class ExecutionEnvironmentBootstrap {
 		
 		
 		// Resolve FileSystem
-		final ContainerFileSystem fileSystem = container.getFileSystem();
+		final FileContext fileSystem = container.getFileSystem();
 
-		
-		wiringService.addConfiguration(new BindConfiguration(){
+		serviceRegistryContext.register(FileContextService.class, new FileContextService(){
 
 			@Override
-			public void configure(Binder binder) {
-				binder.bind(ContainerFileSystem.class).inSharedScope().toInstance(fileSystem);
+			public FileContext getFileContext() {
+				return fileSystem;
 			}
 			
 		});
@@ -501,9 +497,12 @@ public abstract class ExecutionEnvironmentBootstrap {
 			listeners.remove(listener);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
-		public ExecutionEnvironmentBootstrap getEnvironmentBootstrap() {
-			return executionEnvironmentBootstrap;
+		public void stop() {
+			executionEnvironmentBootstrap.stop();
 		}
 
 	}

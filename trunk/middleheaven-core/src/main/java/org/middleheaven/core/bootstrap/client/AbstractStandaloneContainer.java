@@ -6,7 +6,7 @@ package org.middleheaven.core.bootstrap.client;
 
 import org.middleheaven.core.bootstrap.BootstrapContainer;
 import org.middleheaven.core.bootstrap.ExecutionContext;
-import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.FileContext;
 import org.middleheaven.core.bootstrap.StandardContainerFileSystem;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
 import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
@@ -46,7 +46,7 @@ public abstract class AbstractStandaloneContainer implements BootstrapContainer 
 	}
     
 	@Override
-	public ContainerFileSystem getFileSystem() {
+	public FileContext getFileSystem() {
 		return fileSystem;
 	}
 

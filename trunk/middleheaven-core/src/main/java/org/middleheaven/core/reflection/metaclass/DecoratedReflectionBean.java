@@ -36,7 +36,7 @@ public class DecoratedReflectionBean implements MetaBean {
 		} else if (decoratedMetaClass.containsProperty(name)){
 			return values.get(name);
 		} else {
-			throw new PropertyNotFoundException("No property " + name + " found in " + this.getMetaClass().getName());
+			throw new PropertyNotFoundException(name , this.getMetaClass().getName());
 		}
 	}
 
@@ -47,7 +47,7 @@ public class DecoratedReflectionBean implements MetaBean {
 		} else if (decoratedMetaClass.containsProperty(name)){
 			values.put(name, value);
 		} else {
-			throw new PropertyNotFoundException("No property " + name + " found in " + this.getMetaClass().getName());
+			throw new PropertyNotFoundException( name , this.getMetaClass().getName());
 		}
 	}
 

@@ -368,6 +368,17 @@ public class StandardWiringService implements WiringService {
 
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void autobind(ClassSet set) {
+			
+			for (Class c : set){
+				this.bind(c).inSharedScope().to(c);
+			}
+		}
+
 	}
 
 	public class StandardResolutionContext implements ResolutionContext {

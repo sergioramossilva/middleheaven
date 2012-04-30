@@ -65,7 +65,7 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 		// these can be jar files
 		final Collection<ManagedFile> applicationModuleFiles = new HashSet<ManagedFile>();
 
-		ManagedFile f =  getBootstrapService().getEnvironmentBootstrap().getContainer().getFileSystem().getAppConfigRepository();
+		ManagedFile f =   this.getFileContextService().getFileContext().getAppConfigRepository();
 
 		if (f.isWatchable()){
 			WatchService ws = f.getRepository().getWatchService();
