@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
-import org.middleheaven.validation.Consistencies;
+import org.middleheaven.util.validation.Consistencies;
 
 
 public class TestConsistencies {
