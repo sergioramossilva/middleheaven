@@ -1,7 +1,8 @@
 package org.middleheaven.work;
 
-import org.middleheaven.work.scheduled.ScheduledWorkContext;
-
+/**
+ * The context of {@link Work} execution.
+ */
 public interface WorkContext {
 
 	/**

@@ -6,7 +6,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
-import org.middleheaven.global.text.Formatter;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.components.UIFieldInput;
 import org.middleheaven.ui.models.UIFieldInputModel;

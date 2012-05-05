@@ -1,6 +1,5 @@
 package org.middleheaven.process.web;
 
-import org.middleheaven.util.StringUtils;
 
 /**
  * A {@link UrlMapping} determines if a Url matches a certain criteria. 

@@ -117,7 +117,7 @@ public class SwingUtils {
     private static class OptionPaneCloseAction extends AbstractAction {
         public void actionPerformed(ActionEvent e) {
             JOptionPane optionPane = (JOptionPane) e.getSource();
-            optionPane.setValue(new Integer(JOptionPane.CLOSED_OPTION));
+            optionPane.setValue(Integer.valueOf(JOptionPane.CLOSED_OPTION));
         }
     }
 

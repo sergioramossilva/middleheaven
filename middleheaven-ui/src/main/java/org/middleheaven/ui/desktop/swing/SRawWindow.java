@@ -3,7 +3,6 @@ package org.middleheaven.ui.desktop.swing;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JMenuBar;
 import javax.swing.JWindow;
 
 import org.middleheaven.ui.UIComponent;

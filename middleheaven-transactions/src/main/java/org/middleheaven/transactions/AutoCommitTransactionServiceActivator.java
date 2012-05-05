@@ -3,12 +3,12 @@ package org.middleheaven.transactions;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.reflection.InterceptorProxyHandler;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.core.wiring.ConnectableBinder;
 import org.middleheaven.core.wiring.InterceptionContext;
 import org.middleheaven.core.wiring.InterceptorChain;

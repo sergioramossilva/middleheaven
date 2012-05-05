@@ -3,8 +3,8 @@ package org.middleheaven.ui.layout;
 import java.util.List;
 
 import org.middleheaven.ui.ComponentAggregationEvent;
-import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIComponent;
+import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.models.UILayoutModel;
 
 public class UIFlowLayoutModel implements UILayoutModel {

@@ -5,9 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.middleheaven.ui.components.UIContainer;
-import org.middleheaven.ui.rendering.RenderKit;
-
 
 
 /**
