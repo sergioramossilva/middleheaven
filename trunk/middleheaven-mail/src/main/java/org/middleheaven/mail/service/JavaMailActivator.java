@@ -2,9 +2,9 @@ package org.middleheaven.mail.service;
 
 import java.util.Collection;
 
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.mail.MailSendingService;
 import org.middleheaven.namedirectory.NameDirectoryService;
 

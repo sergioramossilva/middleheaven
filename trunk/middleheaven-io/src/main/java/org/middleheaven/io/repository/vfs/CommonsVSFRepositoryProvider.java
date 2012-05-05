@@ -7,8 +7,8 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.VFS;
 import org.middleheaven.io.repository.ManagedFileRepository;
-import org.middleheaven.io.repository.RepositoryCreationException;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
+import org.middleheaven.io.repository.RepositoryCreationException;
 
 // TODO change to an activator
 public class CommonsVSFRepositoryProvider implements ManagedFileRepositoryProvider {

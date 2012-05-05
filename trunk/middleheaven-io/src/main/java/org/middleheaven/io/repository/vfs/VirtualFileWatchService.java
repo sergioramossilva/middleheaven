@@ -2,7 +2,6 @@ package org.middleheaven.io.repository.vfs;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,10 +15,10 @@ import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.watch.SimpleWatchEvent;
 import org.middleheaven.io.repository.watch.StandardWatchEvent;
 import org.middleheaven.io.repository.watch.WatchEvent;
+import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.io.repository.watch.Watchable;
-import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 
 /**
  * 

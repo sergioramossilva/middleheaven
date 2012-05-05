@@ -17,16 +17,16 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileType;
-import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
-final class VirtualFileSystemManagedFile extends AbstractManagedFile implements Watchable {
+final class VirtualFileSystemManagedFile extends AbstractManagedFile {
 
-	final FileObject file;
-	final String finalPath;
-	boolean isfilefolder;
+	protected final FileObject file;
+	private final String finalPath;
+	private boolean isfilefolder;
+	
 	private VirtualFileWatchService watchService;
 
 	VirtualFileSystemManagedFile(VirtualFileWatchService watchService, FileObject file){
@@ -37,15 +37,15 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile implements 
 			if (file.getType().hasContent()){
 				final String ext = file.getName().getExtension();
 				if (ext.equals("jar") || ext.equals("zip") || ext.equals("tar") || ext.equals("tgz")){
-					finalPath = ext + ":" + file.getName().getURI().toString();
+					finalPath = ext + ":" + file.getName().getURI();
 					isfilefolder = true;
 				} else {
 					isfilefolder = false;
-					finalPath = file.getName().getURI().toString();
+					finalPath = file.getName().getURI();
 				}
 			} else {
 				isfilefolder = false;
-				finalPath = file.getName().getURI().toString();
+				finalPath = file.getName().getURI();
 			}
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
@@ -208,7 +208,7 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile implements 
 
 	@Override
 	public boolean equals(Object other){
-		return getClass().isInstance(other) && ((VirtualFileSystemManagedFile)other).file.equals(this.file);
+		return  (other instanceof VirtualFileSystemManagedFile) && ((VirtualFileSystemManagedFile)other).file.equals(this.file);
 	}
 
 	@Override
