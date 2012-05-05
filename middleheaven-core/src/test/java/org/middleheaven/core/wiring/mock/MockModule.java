@@ -2,7 +2,6 @@ package org.middleheaven.core.wiring.mock;
 
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.annotations.Component;
 import org.middleheaven.core.wiring.annotations.Shared;
 
 //@Component

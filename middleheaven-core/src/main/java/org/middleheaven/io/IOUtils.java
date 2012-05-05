@@ -15,10 +15,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.channels.FileChannel;
 
-import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.io.repository.ManagedFilePath;
-import org.middleheaven.io.repository.ManagedFileRepository;
-
 public final class IOUtils {
 
 	private IOUtils(){}

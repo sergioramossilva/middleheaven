@@ -24,7 +24,7 @@ public interface FileContext {
      * @return ManagedFile representing the aaplication's reference folder 
      */
     public ManagedFile getAppRootRepository();
-    
+
     /**
      * 
      * @return ManagedFile representing a folder where to read application configuration
@@ -49,5 +49,10 @@ public interface FileContext {
      */
     public ManagedFile getAppClasspathRepository();
 
+    /**
+     * 
+     * @return ManagedFile representing the aplication's library folder 
+     */
+    public ManagedFile getAppLibraryRepository();
     
 }

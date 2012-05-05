@@ -4,9 +4,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.NegationClassifier;
-
 public class EnhancedMapAdapter<K,V> extends AbstractEnumerableAdapter<Map.Entry<K, V>> implements EnhancedMap<K, V> {
 
 	

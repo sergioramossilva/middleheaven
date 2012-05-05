@@ -26,7 +26,7 @@ public class CompositeIdentity extends Identity {
 	}
 	
 	@Override
-	public boolean equals(Identity other) {
+	public boolean equalsIdentity(Identity other) {
 		return other instanceof CompositeIdentity && Arrays.equals(((CompositeIdentity)other).identities , this.identities);
 	}
 

@@ -5,9 +5,12 @@ import org.middleheaven.sequence.SequenceState;
 import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.sequence.StateEditableSequence;
 
+/**
+ * 
+ */
 public final class IntegerIdentitySequence implements IdentitySequence<IntegerIdentity> , StateEditableSequence<IntegerIdentity> {
 
-	private IntegerIdentity current = new IntegerIdentity(0);
+	private IntegerIdentity current = IntegerIdentity.valueOf(0);
 
 	public IntegerIdentitySequence(){}
 	

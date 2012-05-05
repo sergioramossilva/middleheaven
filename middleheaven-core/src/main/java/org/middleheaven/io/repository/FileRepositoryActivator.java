@@ -5,9 +5,9 @@ package org.middleheaven.io.repository;
 
 import java.util.Collection;
 
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.io.repository.classpath.ClassPathRepositoryProvider;
 import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
 

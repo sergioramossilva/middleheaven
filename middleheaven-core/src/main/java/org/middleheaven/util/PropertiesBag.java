@@ -9,10 +9,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.NegationClassifier;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.AbstractEnumerableAdapter;
-import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.TransformedIterator;
 
 /**

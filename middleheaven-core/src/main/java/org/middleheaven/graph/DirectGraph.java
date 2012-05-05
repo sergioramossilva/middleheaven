@@ -142,7 +142,12 @@ public class DirectGraph<E,V> implements Graph<E,V>{
 		return edges;
 	}
 
-
+	public void addEdge(E edgeObject,
+			V sourceVertex,
+			V targetVertex) {
+		this.addEdge(edgeObject, sourceVertex, targetVertex,1);
+		
+	}
 	@Override
 	public void addEdge(E edgeObject,
 			V sourceVertex,

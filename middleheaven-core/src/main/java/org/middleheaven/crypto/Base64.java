@@ -146,7 +146,7 @@ import java.io.UnsupportedEncodingException;
  * @author Stephen Ostermiller http://ostermiller.org/contact.pl?regarding=Java+Utilities
  * @since ostermillerutils 1.00.00
  */
-class Base64 {
+final class  Base64 {
 
 	/**
 	 * Symbol that represents the end of an input stream
@@ -280,7 +280,7 @@ class Base64 {
 			return new String(encode(bytes, lineBreaks), "ASCII");
 		} catch (UnsupportedEncodingException iex){
 			// ASCII should be supported
-			throw new RuntimeException(iex);
+			throw new CipherException(iex);
 		}
 	}
 
@@ -326,7 +326,7 @@ class Base64 {
 			// This can't happen.
 			// The input and output streams were constructed
 			// on memory structures that don't actually use IO.
-			throw new RuntimeException(x);
+			throw new CipherException(x);
 		}
 		return out.toByteArray();
 	}
@@ -454,7 +454,8 @@ class Base64 {
 	 * in the input.
 	 *
 	 * @param string The data to decode.
-	 * @param encIn Character encoding to use when converting input to bytes (should not matter because Base64 data is designed to survive most character encodings)
+	 * @param encIn Character encoding to use when converting input to bytes (should not matter because 
+	 * Base64 data is designed to survive most character encodings)
 	 * @param encOut Character encoding to use when converting decoded bytes to output.
 	 * @throws UnsupportedEncodingException if the character encoding specified is not supported.
 	 * @return A decoded String.
@@ -503,7 +504,8 @@ class Base64 {
 	 * in the input.
 	 *
 	 * @param string The data to decode.
-	 * @param encIn Character encoding to use when converting input to bytes (should not matter because Base64 data is designed to survive most character encodings)
+	 * @param encIn Character encoding to use when converting input to bytes (should not matter because 
+	 * Base64 data is designed to survive most character encodings)
 	 * @param encOut Character encoding to use when converting decoded bytes to output.
 	 * @throws UnsupportedEncodingException if the character encoding specified is not supported.
 	 * @return A decoded String.
@@ -544,7 +546,7 @@ class Base64 {
 	 *
 	 * @since ostermillerutils 1.02.16
 	 */
-	public static void decodeToStream(String string, String enc, OutputStream out) throws UnsupportedEncodingException, IOException {
+	public static void decodeToStream(String string, String enc, OutputStream out) throws IOException {
 		decode(new ByteArrayInputStream(string.getBytes(enc)), out);
 	}
 
@@ -656,7 +658,7 @@ class Base64 {
 			// This can't happen.
 			// The input and output streams were constructed
 			// on memory structures that don't actually use IO.
-			 throw new RuntimeException(x);
+			 throw new CipherException(x);
 		}
 		return out.toByteArray();
 	}
@@ -713,7 +715,9 @@ class Base64 {
 		int numPadding = 0;
 		do {
 			read = in.read();
-			if (read == END_OF_INPUT) return END_OF_INPUT;
+			if (read == END_OF_INPUT) {
+				return END_OF_INPUT;
+			}
 			read = REVERSED_BASE_64_CHARS[(byte)read];
 			if (throwExceptions && (read == NON_BASE_64 || (numPadding > 0 && read > NON_BASE_64))){
 				throw new Base64DecodingException ("unexpected",
@@ -1013,8 +1017,12 @@ class Base64 {
 				numBase64Chars++;
 			}
 		}
-		if (numBase64Chars == 0) return false;
-		if (numBase64Chars % 4 != 0) return false;
+		if (numBase64Chars == 0){
+			return false;
+		}
+		if (numBase64Chars % 4 != 0){
+			return false;
+		}
 		return true;
 	}
 }

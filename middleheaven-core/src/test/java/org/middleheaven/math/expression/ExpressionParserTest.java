@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigDecimal;
 
 import org.junit.Test;
-import org.middleheaven.math.expression.Expression;
-import org.middleheaven.math.expression.InfixParser;
 
 
 public class ExpressionParserTest {

@@ -4,17 +4,18 @@
  */
 package org.middleheaven.core.bootstrap;
 
+import org.middleheaven.application.ApplicationModulesResolver;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
 
 
 /**
  * The real container to complete the bootstrap cycle.
  */
-public interface  BootstrapContainer  {
+public interface BootstrapEnvironment  {
 
-    public String getContainerName();
+    public String getName();
     
-    public FileContext getFileSystem();
+    public FileContext getFileContext();
     
     /**
      * Established and returns the {@link ManagedFileRepositoryProvider} to use with this container.
@@ -23,10 +24,19 @@ public interface  BootstrapContainer  {
      */
     public ManagedFileRepositoryProvider getManagedFileRepositoryProvider();
     
-    public void configurate(ExecutionContext context);
+    /**
+     * 
+     * @param context the bootstrat context.
+     */
+    public void configurate(BootstrapContext context);
     
     public void start();
     public void stop();
+
+	/**
+	 * @return
+	 */
+	public ApplicationModulesResolver getApplicationModulesResolver();
     
 
 }

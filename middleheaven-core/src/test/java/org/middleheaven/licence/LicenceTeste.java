@@ -4,14 +4,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.license.CertificatedLicense;
 import org.middleheaven.license.License;
 import org.middleheaven.license.LicenseException;
 import org.middleheaven.license.LicenseService;
-import org.middleheaven.license.LicenseServiceActivator;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 

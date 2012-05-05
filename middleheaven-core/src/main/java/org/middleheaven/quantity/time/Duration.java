@@ -128,6 +128,9 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		return fields.get(DurationType.MILISECONDS).longValue();
 	}
 
+	/**
+	 * @return the unit of this time duration.
+	 */
 	@Override
 	public Unit<Time> unit() {
 		int count =0;
@@ -232,7 +235,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 
 	public Duration plus(Period other) throws IncompatibleUnitsException {
 		Duration r = new Duration(this);
-		Long p = new Long(other.milliseconds());
+		Long p =  Long.valueOf(other.milliseconds());
 		for (DurationType t : DurationType.values()){
 			if (fields.get(t)==null){
 				r.fields.put(t, sum(this.fields.get(t) , p ));
@@ -266,6 +269,8 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 				case MILISECONDS:
 					builder.append("ms");
 					break;
+				default:
+					builder.append(t.name());
 				}
 				builder.append(' ');
 			}
@@ -273,8 +278,7 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		return builder.toString().trim();
 	}
 
-	@Override
-	public Object clone() {
+	public Duration duplicate() {
 		return new Duration(this);
 	}
 

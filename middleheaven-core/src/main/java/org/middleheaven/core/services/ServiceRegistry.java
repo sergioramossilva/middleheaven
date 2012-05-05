@@ -3,6 +3,8 @@ package org.middleheaven.core.services;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.management.ServiceNotFoundException;
+
 public final class ServiceRegistry {
 
 	private ServiceRegistry(){}

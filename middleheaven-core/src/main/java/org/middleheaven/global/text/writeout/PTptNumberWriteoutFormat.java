@@ -1,6 +1,6 @@
 package org.middleheaven.global.text.writeout;
 
-class PTptNumberWriteoutFormat extends NumberWriteoutFormat{
+class PTptNumberWriteoutFormat extends NumberWriteoutFormatter{
 
 	public PTptNumberWriteoutFormat(){}
 	

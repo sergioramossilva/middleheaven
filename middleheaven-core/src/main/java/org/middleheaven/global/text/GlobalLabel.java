@@ -7,6 +7,7 @@ package org.middleheaven.global.text;
 import java.io.Serializable;
 
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.global.LocalizationService;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.StringUtils;
 
@@ -15,11 +16,18 @@ import org.middleheaven.util.StringUtils;
  */
 public class GlobalLabel implements Serializable{
 
+	private static final long serialVersionUID = 3624294714337027974L;
+	
 	private String label;
 	private String domain;
 	private Object[] params = new Object[0];
 	private LocalizationService service = ServiceRegistry.getService(LocalizationService.class);
 	
+	/**
+	 * 
+	 * @param template
+	 * @return
+	 */
 	public static GlobalLabel of(String template){
 		return new GlobalLabel (template);
 	}
@@ -36,6 +44,11 @@ public class GlobalLabel implements Serializable{
 		this.params = params;
 	}
 
+	public GlobalLabel(String domain, String label){
+		this.label = label;
+		this.domain = domain;
+	}
+	
 	public GlobalLabel(String domainlabel){
 		if (domainlabel.indexOf(":")<0){
 			throw new IllegalArgumentException("Label " + domainlabel + " is not qualified in a domain");
@@ -49,10 +62,7 @@ public class GlobalLabel implements Serializable{
 		this.domain = str[0];
 	}
 	
-	public GlobalLabel(String domain, String label){
-		this.label = label;
-		this.domain = domain;
-	}
+
 
 	public GlobalLabel(String domain, String label , Object[] params){
 		this.label = label;
@@ -76,16 +86,6 @@ public class GlobalLabel implements Serializable{
 
 	public Object[] getMessageParams() {
 		return this.params;
-	}
-
-	public String getLocalizedText(){
-		return service.getMessage(this, false);
-
-	}
-
-	public String getLocalizedMnemonic(){
-		return service.getMessage(this, true);
-
 	}
 
 	public boolean equals(Object other){

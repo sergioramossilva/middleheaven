@@ -3,8 +3,6 @@
  */
 package org.middleheaven.process;
 
-import java.util.Enumeration;
-
 import org.middleheaven.util.collections.Enumerable;
 
 /**

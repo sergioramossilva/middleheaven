@@ -36,8 +36,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
-					<outputDirectory>${basedir}/javadocs</outputDirectory>
-					<reportOutputDirectory>${basedir}/javadocs</reportOutputDirectory>
+					<outputDirectory>${basedir}</outputDirectory>
+					<reportOutputDirectory>${basedir}</reportOutputDirectory>
 					<stylesheetfile>${basedir}/../middleheaven-project/javadocstyle.css</stylesheetfile>
 				</configuration>
 			</plugin>

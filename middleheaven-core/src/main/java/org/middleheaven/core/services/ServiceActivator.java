@@ -1,8 +1,7 @@
-package org.middleheaven.core.bootstrap.activation;
+package org.middleheaven.core.services;
 
 import java.util.Collection;
 
-import org.middleheaven.core.services.ServiceContext;
 
 
 /**
@@ -15,6 +14,10 @@ import org.middleheaven.core.services.ServiceContext;
  */
 public abstract class ServiceActivator {
 	
+	/**
+	 * 
+	 * Constructor. All {@link ServiceActivator} must have a not argument constructor.
+	 */
 	public ServiceActivator(){}
 	
 	

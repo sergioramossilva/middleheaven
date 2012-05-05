@@ -17,18 +17,30 @@ import org.middleheaven.util.classification.NegationClassifier;
 
 
 /**
- * Provides mathematic interval semantics and operations 
+ * Provides range semantics and operations.
+ * A {@link Range} is like an {@link Interval} with iterator semantics over the interval values.
+ * An {@link Incrementor} is used to define how the iteration visits the values in the interval.
  * 
+ * @param <T> the type of the value in the range.
  */
 public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnumerable<T> {
 
 
 	private Incrementor<? super T> incrementor;
 
+	/**
+	 * An empty {@link Range}.
+	 * @return An empty {@link Range}
+	 */
 	public static <V> Range<V> emptyRange(){
 		return new Range<V>(new ComparableComparator<V>(), EmptyIncrementor.emptyIncrementor());
 	}
 
+	/**
+	 * An empty {@link Range} using a specified comparator.
+	 * @param comparator the comparator to use
+	 * @return An empty {@link Range}
+	 */
 	public static <V> Range<V> emptyRange(Comparator<? super V> comparator){
 		return new Range<V>(comparator,EmptyIncrementor.emptyIncrementor());
 	}
@@ -50,12 +62,18 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 
 
 
-	
+	/**
+	 * A {@link Range} from <code>start</code> to <code>end</code>
+	 * 
+	 * @param start the lower limit of the range
+	 * @param end the upper limit of the range
+	 * @return A {@link Range} from <code>start</code> to <code>end</code>
+	 */
 	public static <N extends java.lang.Number> Range<N> over(N start, N end){
 		if (start == null || end == null){
 			throw new IllegalArgumentException("Argument cannot be null");
 		}
-		return new Range<N>(start,end,new ComparableComparator<N>(),new NumberIncrementor(new Long(1)));
+		return new Range<N>(start,end,new ComparableComparator<N>(),new NumberIncrementor(Long.valueOf(1)));
 	}
 	
 	/**
@@ -76,6 +94,14 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	
 	}
 	
+	/**
+	 * A {@link Range} from <code>start</code> to <code>end</code>
+	 * 
+	 * @param start the lower limit of the range
+	 * @param end the upper limit of the range
+	 * @param incrementor the incrementor to use.
+	 * @return A {@link Range} from <code>start</code> to <code>end</code>
+	 */
 	public static <V> Range<V> overIncrementor( V start, V end, Incrementor<? super V> incrementor){
 		if (start == null || end == null || incrementor==null){
 			throw new IllegalArgumentException("Argument cannot be null");
@@ -88,12 +114,13 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	 * @param <V>
 	 * @param start start of the range
 	 * @param end end of the range
-	 * @param comparator <code>Comparator</code> encapsulating the rules of order for the passed object class
+	 * @param comparator <code>Comparator</code> encapsulating the rules of order for the passed object class.
+	 * @param incrementor the incrementor for <V> type.
 	 * @return a <code>Range</code> from <code>start</code> to <code>end</code>
 	 */
 	public static <V> Range<V> over(V start, V end, Comparator<V> comparator, Incrementor<V> incrementor  ){
 		if (comparator == null){
-			throw new NullPointerException("A comparator is required.");
+			throw new IllegalArgumentException("A comparator is required.");
 		}
 		if (comparator.compare(start,end)>0){
 			throw new IllegalArgumentException("Range`s start must preceed its end");
@@ -168,9 +195,9 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object other){
 		if (other instanceof Range){
-			return this.equals((Range)other);
+			return this.equalsRange((Range)other);
 		} else if (other instanceof Interval){
-			return this.equals((Interval)other);
+			return this.equalsInterval((Interval)other);
 		} else {
 			return false;
 		}
@@ -182,12 +209,12 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	/**
 	 * Ranges are equal if their starts are equal and their ends are equals
 	 */
-	public boolean equals(Range<T> other){
+	private boolean equalsRange(Range<T> other){
 		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
 		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
 	}
 	
-	public boolean equals(Interval<T> other){
+	private boolean equalsInterval(Interval<T> other){
 		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
 		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
 	}
@@ -197,6 +224,10 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 		return new RangeIterator<T>(start,end,comparator,incrementor);
 	}
 
+	/**
+	 * Collects all the values in the {@link Range} into an {@link EnhancedList}.
+	 * @return a list with the values in the {@link Range}
+	 */
 	public EnhancedList<T> toList(){
 		List<T> list = new LinkedList<T>();
 		for (T i : this){
@@ -207,6 +238,10 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 
 	private int size = -1;
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public int size(){
 		if(size>=0){
 			return size;

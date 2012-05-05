@@ -1,5 +1,7 @@
 package org.middleheaven.core.bootstrap.activation;
 
+import org.middleheaven.core.services.ServiceActivator;
+
 public final class ActivatorScannerEvent {
 
 	private Class<? extends ServiceActivator> activator;

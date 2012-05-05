@@ -1,7 +1,10 @@
-package org.middleheaven.core.bootstrap.activation;
+package org.middleheaven.core.services;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.middleheaven.core.bootstrap.activation.AbstractActivatorScanner;
+
 
 
 /**

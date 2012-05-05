@@ -3,10 +3,10 @@ package org.middleheaven.global.text;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 
+import org.middleheaven.global.Culture;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.watch.FileChangeStrategy;
 import org.middleheaven.io.repository.watch.FileWatchChannelProcessor;
@@ -72,9 +72,9 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle {
 	}
 
 	@Override
-	protected String findLabel(GlobalLabel label, Locale locale) throws MissingResourceException {
+	protected String findLabel(GlobalLabel label, Culture culture) throws MissingResourceException {
 
-		String key = label.getDomain()  + "_" +  locale.getLanguage()+ "_" + locale.getCountry();
+		String key = label.getDomain()  + "_" +  culture.getLanguage()+ "_" + culture.getCountry();
 		LocalizedMessagesFormatHandler format; 
 		synchronized(files){
 			format = files.get(key);

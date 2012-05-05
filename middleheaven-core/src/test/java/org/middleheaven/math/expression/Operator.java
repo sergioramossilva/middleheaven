@@ -1,8 +1,6 @@
 package org.middleheaven.math.expression;
 
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 public abstract class Operator implements Term {

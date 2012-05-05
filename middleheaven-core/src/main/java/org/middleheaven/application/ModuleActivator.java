@@ -7,7 +7,7 @@ package org.middleheaven.application;
 /**
  * 
  */
-public interface Module {
+public interface ModuleActivator {
 
 	
 	public ModuleVersion getModuleVersion();

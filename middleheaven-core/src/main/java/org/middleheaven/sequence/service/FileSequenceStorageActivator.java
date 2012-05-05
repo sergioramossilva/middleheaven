@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.middleheaven.core.bootstrap.BootstrapContainer;
+import org.middleheaven.core.bootstrap.BootstrapEnvironment;
 import org.middleheaven.core.bootstrap.FileContext;
 import org.middleheaven.core.bootstrap.FileContextService;
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
@@ -39,7 +39,7 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(BootstrapContainer.class));
+		specs.add(new ServiceSpecification(BootstrapEnvironment.class));
 	}
 	/**
 	 * {@inheritDoc}

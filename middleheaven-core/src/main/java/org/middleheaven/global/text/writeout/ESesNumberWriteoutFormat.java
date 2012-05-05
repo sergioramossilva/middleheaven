@@ -1,6 +1,6 @@
 package org.middleheaven.global.text.writeout;
 
-class ESesNumberWriteoutFormat extends NumberWriteoutFormat{
+class ESesNumberWriteoutFormat extends NumberWriteoutFormatter{
 
 	public ESesNumberWriteoutFormat(){}
 	

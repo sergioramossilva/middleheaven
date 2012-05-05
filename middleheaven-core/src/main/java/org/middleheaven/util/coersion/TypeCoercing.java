@@ -14,6 +14,13 @@ import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.NumberIdentityCoersor;
 import org.middleheaven.util.identity.StringIdentityCoersor;
 
+/**
+ * Main utility class for type coercing.
+ * 
+ * When type coercing from a type A to a type B, the value represented by type A is preserved in type B.
+ * <code>null</code> is coerced to <code>null</code>.
+ * 
+ */
 public class TypeCoercing {
 
 	private static final Map<Key, TypeCoersor> CONVERTERS = new HashMap<Key, TypeCoersor>();
@@ -38,13 +45,18 @@ public class TypeCoercing {
 		
 		addCoersor(CalendarDateTime.class ,java.util.Date.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.util.Date.class));
 		addCoersor(CalendarDateTime.class ,java.sql.Date.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Date.class));
-		addCoersor(CalendarDateTime.class ,java.sql.Timestamp.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Timestamp.class));
+		addCoersor(CalendarDateTime.class ,java.sql.Timestamp.class,  CalendarDateTypeCoersor.getInstance(
+				CalendarDateTime.class,
+				java.sql.Timestamp.class
+				)
+		);
 		addCoersor(CalendarDateTime.class ,java.sql.Time.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Time.class));
 		
 		addCoersor(String.class ,Enum.class,  new EnumNameTypeCoersor());
 		
 	}
 	
+	private TypeCoercing (){}
 	
 	/**
 	 * Converts a value represented in one type to the same value represented by another type.
@@ -76,23 +88,23 @@ public class TypeCoercing {
 			if (type.isInstance(value)){
 				return (T)value;
 			} else if (type.equals(Boolean.TYPE)){
-				return (T) new Boolean(((Boolean) coerce(value, Boolean.class)).booleanValue());
+				return (T) Boolean.valueOf(((Boolean) coerce(value, Boolean.class)).booleanValue());
 			} else {
 				BigInteger big = new BigInteger(value.toString());
 				if (type.equals(Byte.TYPE)){
-					checkOverflow(big, new BigInteger(new Byte(Byte.MAX_VALUE).toString()));
+					checkOverflow(big, new BigInteger(String.valueOf(Byte.MAX_VALUE)));
 					return (T)Byte.valueOf(big.byteValue());
 				} else if (type.equals(Short.TYPE)){
-					checkOverflow(big, new BigInteger(new Short(Short.MAX_VALUE).toString()));
+					checkOverflow(big, new BigInteger(String.valueOf(Short.MAX_VALUE)));
 					return (T)Short.valueOf(big.shortValue());
 				} else if (type.equals(Integer.TYPE)){
-					checkOverflow(big, new BigInteger(new Integer(Integer.MAX_VALUE).toString()));
+					checkOverflow(big, new BigInteger(String.valueOf(Integer.MAX_VALUE)));
 					return (T)Integer.valueOf(big.intValue());
 				} else if (type.equals(Character.TYPE)){
-					checkOverflow(big, new BigInteger(new Character(Character.MAX_VALUE).toString()));
-					return (T) new Character((char)big.intValue());
+					checkOverflow(big, new BigInteger(String.valueOf(Character.MAX_VALUE)));
+					return (T) Character.valueOf((char)big.intValue());
 				} else if (type.equals(Long.TYPE)){
-					checkOverflow(big, new BigInteger(new Long(Long.MAX_VALUE).toString()));
+					checkOverflow(big, new BigInteger(String.valueOf(Long.MAX_VALUE)));
 					return (T)Long.valueOf(big.longValue());
 				}
 			}
@@ -135,7 +147,7 @@ public class TypeCoercing {
 			if (to.getSimpleName().equals("int")){
 				wrapper = "Integer";
 			}
-			 to = (Class<R>)Introspector.of(Object.class).load("java.lang."+wrapper).getIntrospected();
+			to = (Class<R>)Introspector.of(Object.class).load("java.lang."+wrapper).getIntrospected();
 			
 		}
 		Key key = new Key(from,to);
@@ -148,8 +160,9 @@ public class TypeCoercing {
 	}
 
 	private static class Key{
-		Class<?> from;
-		Class<?> to;
+		
+		public Class<?> from;
+		public Class<?> to;
 
 
 		public Key(Class<?> from, Class<?> to) {

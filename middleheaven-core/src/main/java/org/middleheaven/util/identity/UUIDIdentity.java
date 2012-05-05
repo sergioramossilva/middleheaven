@@ -3,8 +3,15 @@ package org.middleheaven.util.identity;
 import java.io.Serializable;
 import java.util.UUID;
 
+/**
+ * Identity based on a Universal Unique Identifier (UUID).
+ * 
+ * This implementation uses the {@link UUID} class to produce the identifiers.
+ */
 public class UUIDIdentity extends Identity implements Serializable {
 
+	private static final long serialVersionUID = 3448207591627287085L;
+	
 	private UUID value;
 	
 	public static UUIDIdentity valueOf(String value) {
@@ -24,11 +31,11 @@ public class UUIDIdentity extends Identity implements Serializable {
 	}
 	
 	@Override
-	protected boolean equals(Identity other) {
-		return other instanceof UUIDIdentity && equals((UUIDIdentity)other);
+	protected boolean equalsIdentity(Identity other) {
+		return other instanceof UUIDIdentity && equalsUUIDIdentity((UUIDIdentity)other);
 	}
 	
-	protected boolean equals(UUIDIdentity other) {
+	protected boolean equalsUUIDIdentity(UUIDIdentity other) {
 		return this.value.equals(other.value);
 	}
 

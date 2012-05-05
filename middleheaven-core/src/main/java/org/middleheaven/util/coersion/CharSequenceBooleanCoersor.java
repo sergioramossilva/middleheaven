@@ -1,9 +1,5 @@
 package org.middleheaven.util.coersion;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class CharSequenceBooleanCoersor extends AbstractTypeCoersor<CharSequence, Boolean> {
 

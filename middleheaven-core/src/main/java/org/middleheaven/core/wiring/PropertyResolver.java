@@ -10,12 +10,13 @@ public class PropertyResolver implements Resolver {
 
 
 	private final HashPropertyManager propertyManager = new HashPropertyManager("properties.scope");
-	private final WiringService wiringService;
+	
+	private final PropertyManagers propertyManagers;
 
-	public PropertyResolver(WiringService wiringService){
-		this.wiringService = wiringService;
+	public PropertyResolver(PropertyManagers propertyManagers){
+		this.propertyManagers = propertyManagers;
 		
-		wiringService.getPropertyManagers().addFirst(propertyManager);
+		propertyManagers.addFirst(propertyManager);
 	}
 	
 	@Override
@@ -24,7 +25,7 @@ public class PropertyResolver implements Resolver {
 		Object name = query.getParam("name");
 
 		if (name instanceof String){
-			Object obj = wiringService.getPropertyManagers().getProperty((String) name);
+			Object obj = propertyManagers.getProperty((String) name);
 			
 			if (query.getContract().isAssignableFrom(obj.getClass())){
 				return query.getContract().cast(obj);

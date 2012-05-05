@@ -3,7 +3,6 @@ package org.middleheaven.graph;
 import java.util.Collection;
 import java.util.PriorityQueue;
 
-
 import org.middleheaven.graph.Graph.Edge;
 import org.middleheaven.graph.Graph.Vertex;
 import org.middleheaven.graph.VertextInfoManager.VertexInfo;

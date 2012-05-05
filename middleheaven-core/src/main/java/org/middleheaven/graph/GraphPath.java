@@ -1,7 +1,6 @@
 package org.middleheaven.graph;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface GraphPath<E, V> {
 

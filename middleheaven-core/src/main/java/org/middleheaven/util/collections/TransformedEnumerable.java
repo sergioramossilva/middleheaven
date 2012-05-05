@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.NegationClassifier;
 
 /**
  * Allows type safe transformation from a {@link Enumerable} of objects to another, using a {@link Classifier}.

@@ -3,6 +3,8 @@ package org.middleheaven.core.bootstrap.activation;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.services.ServiceActivator;
+
 /**
  * Abstract implementation of an {@link ActivatorScanner} the simplifies event firing.
  */

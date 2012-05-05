@@ -14,10 +14,19 @@ import java.util.regex.Pattern;
 
 import org.middleheaven.util.collections.CollectionUtils;
 
+/**
+ * Contains several utility methods when working with {@link String}s.
+ */
 public class StringUtils {
 
 	StringUtils(){}
 	
+	/**
+	 * Counts how much a given pattern appears in a given {@link CharSequence}.
+	 * @param text the given text.
+	 * @param pattern the given pattern.
+	 * @return
+	 */
 	public static int countMatches(CharSequence text, String pattern){
 		Pattern p = Pattern.compile(pattern);
 		int count=0;
@@ -80,7 +89,7 @@ public class StringUtils {
 	public static String join(String separator, int start, int end, String ... original){
 		StringBuilder builder = new StringBuilder();
 		for (int i=start; i < end;i++){
-			builder.append(original[i].toString()).append(separator);
+			builder.append(original[i]).append(separator);
 		}
 		if(builder.length()>0){
 			builder.delete(builder.length()-separator.length(), builder.length());
@@ -125,11 +134,11 @@ public class StringUtils {
 			// explicitly return null
 			return null;
 		}
-		return new Boolean(logicValueOf(value,false));
+		return Boolean.valueOf(logicValueOf(value,false));
 	}
 
 	public static Boolean booleanValueOf (CharSequence value, boolean defaultValue){
-		return new Boolean(logicValueOf(value,defaultValue));
+		return Boolean.valueOf(logicValueOf(value,defaultValue));
 	}
 
 	public static String objectToString(Object obj){
@@ -185,13 +194,17 @@ public class StringUtils {
 	}
 
 	public static boolean logicValueOf (final CharSequence value, boolean defaultValue){
-		if (value==null) return defaultValue;
+		if (value==null){
+			return defaultValue;
+		}
 		String v = value.toString().trim();
-		return v.indexOf("y")==0 || v.indexOf("t")==0 || v.indexOf("on")==0;
+		return v.indexOf('y')==0 || v.indexOf('t')==0 || v.indexOf("on")==0;
 	}
 
 	public static long longValueOf (final CharSequence value, long defaultValue){
-		if (value==null || value.toString().trim().isEmpty()) return defaultValue;
+		if (value==null || value.toString().trim().isEmpty()){
+			return defaultValue;
+		}
 		try {
 			return Long.parseLong(value.toString().trim());
 		} catch (NumberFormatException e){
@@ -251,12 +264,14 @@ public class StringUtils {
 		}
 
 		if (delimiter.equals(".")){
-			delimiter = "\\.";
+			return source.split("\\.");
 		}else  if (delimiter.equals(" ")){
-			delimiter = "\\s";
+			return source.split("\\s");
+		} else {
+			return source.split(delimiter);
 		}
 
-		return source.split(delimiter);
+		
 
 	}
 
@@ -355,7 +370,8 @@ public class StringUtils {
 	 * Return a {@link CharSequence} constituted from the <code>max</code> first characters in the sequence.
 	 * @param value the source of characters
 	 * @param max the maximum of characters to return.
-	 * @return  a {@link CharSequence} constituted from the <code>max</code> first characters in the sequence, or <code>null</code> if <code>value</code> is null
+	 * @return  a {@link CharSequence} constituted from the <code>max</code> first characters in the sequence, 
+	 * or <code>null</code> if <code>value</code> is null
 	 */
 	public static CharSequence subString(CharSequence value, int max) {
 		return value.subSequence(0, Math.min(value.length(), max));

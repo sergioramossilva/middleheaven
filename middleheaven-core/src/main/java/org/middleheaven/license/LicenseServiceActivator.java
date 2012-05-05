@@ -11,18 +11,18 @@ import java.util.HashSet;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.bootstrap.FileContext;
 import org.middleheaven.core.bootstrap.FileContextService;
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
 import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceEvent;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.core.services.ServiceEvent.ServiceEventType;
 import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.util.collections.Walker;
 
 
@@ -180,7 +180,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 
 
 			} catch (Throwable e) {
-				Log.onBookFor(this.getClass()).error(e,"Licence {0} could not be loaded", f.getURI());
+				Logger.onBookFor(this.getClass()).error(e,"Licence {0} could not be loaded", f.getURI());
 			} 
 
 

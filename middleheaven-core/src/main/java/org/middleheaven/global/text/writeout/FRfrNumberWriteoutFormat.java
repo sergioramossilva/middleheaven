@@ -1,6 +1,6 @@
 package org.middleheaven.global.text.writeout;
 
-class FRfrNumberWriteoutFormat extends NumberWriteoutFormat{
+class FRfrNumberWriteoutFormat extends NumberWriteoutFormatter{
 
 	public FRfrNumberWriteoutFormat(){}
 	

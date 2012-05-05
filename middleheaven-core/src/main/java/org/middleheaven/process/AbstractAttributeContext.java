@@ -7,7 +7,7 @@ package org.middleheaven.process;
  */
 public abstract class AbstractAttributeContext implements AttributeContext {
 
-	private final static ContextScope[] scopes = new ContextScope[]{ContextScope.PARAMETERS, ContextScope.REQUEST, ContextScope.SESSION , ContextScope.APPLICATION};
+	private final static ContextScope[] scopes = new ContextScope[]{ContextScope.REQUEST_PARAMETERS, ContextScope.REQUEST, ContextScope.SESSION , ContextScope.APPLICATION};
 	
 	@Override
 	public <T> T getAttribute(String name, Class<T> type) {

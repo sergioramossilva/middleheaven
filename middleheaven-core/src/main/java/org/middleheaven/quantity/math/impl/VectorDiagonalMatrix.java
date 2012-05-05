@@ -111,7 +111,7 @@ class VectorDiagonalMatrix<F extends Field<F>> extends DiagonalMatrix<F> {
 	@Override
 	public Matrix<F> plus(Matrix<F> other) {
 		if (other instanceof SingleValueVectorDiagonalMatrix){
-			return new VectorDiagonalMatrix<F>(diag.plus(((VectorDiagonalMatrix<F>)other).diag));
+			return new VectorDiagonalMatrix<F>(diag.plus(((SingleValueVectorDiagonalMatrix<F>)other).getDiagonal()));
 		} else {
 			return other.plus(this);
 		}
