@@ -4,8 +4,6 @@ package org.middleheaven.global.location;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.middleheaven.global.location.WGM84;
-import org.middleheaven.global.location.WorldGeodeticModel;
 import org.middleheaven.quantity.coordinate.GeoCoordinate;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measurables.Distance;

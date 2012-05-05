@@ -3,7 +3,6 @@ package org.middleheaven.global.phone;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.middleheaven.global.address.AddressPartType;
 import org.middleheaven.global.atlas.Country;
 
 public abstract class PhoneNumber {

@@ -1,11 +1,11 @@
 package org.middleheaven.quantity.time.clocks;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.DateHolder;
-import org.middleheaven.quantity.time.DayOfWeek;
 import org.middleheaven.quantity.time.Month;
 import org.middleheaven.quantity.time.ephemeris.EasterBasedCalculatedEphemerisModel;
 import org.middleheaven.quantity.time.ephemeris.EphemerisModel;
