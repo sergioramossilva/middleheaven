@@ -1,6 +1,5 @@
 package org.middleheaven.quantity.math.transforms;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -8,7 +7,6 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Vector;
-import org.middleheaven.quantity.math.transforms.FourierTransform;
 
 
 public class FFTTest {

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.text.writeout.FormatNotFoundException;
-import org.middleheaven.global.text.writeout.NumberWriteoutFormat;
+import org.middleheaven.global.text.writeout.NumberWriteoutFormatter;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 public class NumberWordsFormatTest extends MiddleHeavenTestCase{
@@ -14,14 +14,14 @@ public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 	@Test(expected=FormatNotFoundException.class)
 	public void testaNumberToWordsUnknown(){
 		
-		NumberWriteoutFormat.getInstance(Culture.valueOf("xx","XX"));
+		NumberWriteoutFormatter.getInstance(Culture.valueOf("xx","XX"));
 	}
 	
 	@Test
 	public void testaNumberToWordsPtPT(){
 		
 		
-		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("pt","PT"));
+		NumberWriteoutFormatter format = NumberWriteoutFormatter.getInstance(Culture.valueOf("pt","PT"));
 		
 		assertEquals("zero", format.inWords(0));
 		assertEquals("cem", format.inWords(100));
@@ -41,7 +41,7 @@ public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 	public void testaNumberToWordsEnGB(){
 		
 		
-		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("en", "GB"));
+		NumberWriteoutFormatter format = NumberWriteoutFormatter.getInstance(Culture.valueOf("en", "GB"));
 		
 		assertEquals("zero", format.inWords(0));
 		assertEquals("one hundred", format.inWords(100));
@@ -62,7 +62,7 @@ public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 	public void testaNumberToWordsEsES(){
 		
 		
-		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("es", "ES"));
+		NumberWriteoutFormatter format = NumberWriteoutFormatter.getInstance(Culture.valueOf("es", "ES"));
 		
 		assertEquals("cero", format.inWords(0));
 		assertEquals("cien", format.inWords(100));
@@ -85,7 +85,7 @@ public class NumberWordsFormatTest extends MiddleHeavenTestCase{
 	public void testaNumberToWordsFrFR(){
 		
 		
-		NumberWriteoutFormat format = NumberWriteoutFormat.getInstance(Culture.valueOf("fr", "FR"));
+		NumberWriteoutFormatter format = NumberWriteoutFormatter.getInstance(Culture.valueOf("fr", "FR"));
 		
 		assertEquals("z�ro", format.inWords(0));
 		assertEquals("cent", format.inWords(100));

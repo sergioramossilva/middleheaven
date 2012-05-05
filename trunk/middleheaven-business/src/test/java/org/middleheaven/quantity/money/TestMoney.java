@@ -1,6 +1,6 @@
 package org.middleheaven.quantity.money;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.middleheaven.quantity.math.Real;

@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.middleheaven.global.Culture;
-import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.math.BigInt;
+import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.measure.DecimalMeasure;
 import org.middleheaven.quantity.money.Money;
 import org.middleheaven.quantity.unit.SI;
@@ -33,7 +33,7 @@ public class TestFormatter {
 		
 		assertEquals("3.000,68 BRL" ,formatterPtPT.format(Money.money("3000.68", "BRL")));
 		assertEquals("3.000,68 USD" ,formatterPtPT.format(Money.money("3000.68", "USD")));
-		assertEquals("3.000,68 €" ,formatterPtPT.format(Money.money("3000.68", "EUR")));
+		assertEquals("3.000,68 ï¿½" ,formatterPtPT.format(Money.money("3000.68", "EUR")));
 		
 		QuantityFormatter formatterEnUS = new QuantityFormatter(Culture.valueOf("en", "US"));
 		

@@ -19,8 +19,6 @@ import org.middleheaven.quantity.measurables.Velocity;
 import org.middleheaven.quantity.measurables.Volume;
 import org.middleheaven.quantity.measure.AngularMeasure;
 import org.middleheaven.quantity.measure.DecimalMeasure;
-import org.middleheaven.quantity.measure.Measurable;
-import org.middleheaven.quantity.measure.Measure;
 import org.middleheaven.quantity.money.Money;
 import org.middleheaven.quantity.unit.Dimension;
 import org.middleheaven.quantity.unit.IncompatibleDimentionException;

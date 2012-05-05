@@ -1,14 +1,13 @@
 package org.middleheaven.global.atlas;
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Locale;
 
 import org.junit.Test;
-import org.middleheaven.global.atlas.ChronologicalCountryBuilder;
-import org.middleheaven.global.atlas.Country;
 import org.middleheaven.global.atlas.modules.DefaultAtlasModule;
 import org.middleheaven.global.atlas.modules.ISOFileAtlasModule;
 
