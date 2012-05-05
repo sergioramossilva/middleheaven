@@ -1,6 +1,6 @@
 package org.middleheaven.ui.swing;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Color;
 

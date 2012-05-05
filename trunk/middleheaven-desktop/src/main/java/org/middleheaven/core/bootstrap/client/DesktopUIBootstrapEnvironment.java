@@ -15,12 +15,12 @@ import org.middleheaven.ui.rendering.RenderKit;
 import org.middleheaven.ui.rendering.RenderingContext;
 
 
-public class DesktopUIContainer extends AbstractStandaloneContainer {
+public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEnvironment {
 
 	RenderingContext renderedContext;
 	private Logger logger;
 
-	public DesktopUIContainer(Logger logger) {
+	public DesktopUIBootstrapEnvironment(Logger logger) {
 		super();
 		this.logger = logger;
 	}
@@ -94,7 +94,7 @@ public class DesktopUIContainer extends AbstractStandaloneContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getContainerName() {
+	public String getName() {
 		return "desktop";
 	}
 

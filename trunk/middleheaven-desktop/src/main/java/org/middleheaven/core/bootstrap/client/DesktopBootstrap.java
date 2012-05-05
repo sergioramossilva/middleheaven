@@ -5,16 +5,18 @@
 package org.middleheaven.core.bootstrap.client;
 
 import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
-import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.core.bootstrap.ExecutionContext;
-import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.core.bootstrap.AbstractBootstrap;
+import org.middleheaven.core.bootstrap.BootstrapContext;
+import org.middleheaven.core.bootstrap.BootstrapEnvironment;
+import org.middleheaven.core.bootstrap.BootstrapEnvironmentResolver;
 import org.middleheaven.logging.LogServiceDelegatorLogger;
+import org.middleheaven.logging.LoggingService;
 import org.middleheaven.ui.desktop.service.DesktopUIServiceActivator;
 
 /**
  * 
  */
-public class DesktopBootstrap extends ExecutionEnvironmentBootstrap {
+public class DesktopBootstrap extends AbstractBootstrap {
 
 	
 	public static void main(String[] args){
@@ -22,11 +24,13 @@ public class DesktopBootstrap extends ExecutionEnvironmentBootstrap {
 		bootstrap.start();
 	}
 	
-	public DesktopBootstrap(){}
+	public DesktopBootstrap(){
+	
+	}
 
 
 	@Override
-	public void posConfig(ExecutionContext context){
+	public void posConfig(BootstrapContext context){
 
 		context.addActivator(DynamicLoadApplicationServiceActivator.class)
 		.addActivator(DesktopUIServiceActivator.class)
@@ -34,13 +38,8 @@ public class DesktopBootstrap extends ExecutionEnvironmentBootstrap {
 
 	}
 
-	protected void doAfterStop(){
+	protected void doAfterStop(BootstrapContext context){
 		System.exit(0);
-	}
-
-	@Override
-	public BootstrapContainer resolveContainer() {
-		return new DesktopUIContainer(new LogServiceDelegatorLogger(this.getClass().getName(), this.resolveLoggingService()));
 	}
 
 	/**
@@ -49,6 +48,25 @@ public class DesktopBootstrap extends ExecutionEnvironmentBootstrap {
 	@Override
 	protected String getExecutionConfiguration() {
 		return "desktop";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected BootstrapEnvironmentResolver bootstrapEnvironmentResolver() {
+		return new BootstrapEnvironmentResolver(){
+
+			@Override
+			public BootstrapEnvironment resolveEnvironment(
+					BootstrapContext context) {
+				
+				LoggingService loggingService = context.getServiceContext().getService(LoggingService.class);
+				
+				return new DesktopUIBootstrapEnvironment(new LogServiceDelegatorLogger(this.getClass().getName(), loggingService));
+			}
+			
+		};
 	}
 
 
