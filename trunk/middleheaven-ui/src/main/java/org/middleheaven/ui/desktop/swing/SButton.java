@@ -13,7 +13,6 @@ import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.components.UICommand;
-import org.middleheaven.ui.components.UILabel;
 import org.middleheaven.ui.events.UIActionEvent;
 import org.middleheaven.ui.models.UICommandModel;
 

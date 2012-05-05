@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIEnvironmentType;

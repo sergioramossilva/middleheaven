@@ -7,7 +7,6 @@ import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIReadState;
 import org.middleheaven.ui.components.UIInput;
-import org.middleheaven.ui.models.UIFieldInputModel;
 import org.middleheaven.ui.models.UIInputModel;
 
 public abstract class SBaseInput extends SBasePanel implements UIInput  {

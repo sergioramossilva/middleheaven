@@ -2,8 +2,6 @@ package org.middleheaven.ui;
 
 import java.util.Collection;
 
-import org.middleheaven.core.wiring.service.Service;
-
 
 public interface UIService {
 

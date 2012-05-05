@@ -10,7 +10,10 @@ import org.middleheaven.global.Culture;
 import org.middleheaven.util.OperatingSystemInfo;
 import org.middleheaven.util.VersionReader;
 
-public class HttpProcessingUtils {
+/**
+ * 
+ */
+public final class HttpProcessingUtils {
 
 	private HttpProcessingUtils() {
 	}
@@ -132,8 +135,9 @@ public class HttpProcessingUtils {
 	}
 
 	private static String getVersionNumber(String userAgent, int position) {
-		if (position < 0)
+		if (position < 0){
 			return "";
+		}
 		StringBuilder res = new StringBuilder();
 		int status = 0;
 
@@ -148,6 +152,7 @@ public class HttpProcessingUtils {
 					return "";
 				}
 				status = 1;
+				break;
 			case 1: // Version number in progress
 				if (c == ';' || c == '/' || c == ')' || c == '(' || c == '['){
 					return res.toString().trim();
@@ -166,24 +171,26 @@ public class HttpProcessingUtils {
 					return res.toString().trim();
 				}
 				break;
+			default:
 			}
 			position++;
 		}
 		return res.toString().trim();
 	}
 
-	private static String getFirstVersionNumber(String a_userAgent,
-			int a_position, int numDigits) {
-		String ver = getVersionNumber(a_userAgent, a_position);
-		if (ver == null)
-			return "";
+	private static String getFirstVersionNumber(String userAgent,
+			int position, int numDigits) {
+		String ver = getVersionNumber(userAgent, position);
+
 		int i = 0;
-		String res = "";
+		
+		StringBuilder res = new StringBuilder();
+	
 		while (i < ver.length() && i < numDigits) {
-			res += String.valueOf(ver.charAt(i));
+			res.append(String.valueOf(ver.charAt(i)));
 			i++;
 		}
-		return res;
+		return res.toString();
 	}
 
 
@@ -193,9 +200,8 @@ public class HttpProcessingUtils {
 	private static BrowserRawInfo getBotName(String userAgent) {
 		userAgent = userAgent.toLowerCase();
 		int pos = 0;
-		String res = null;
 
-		for (int i = 0; res == null && i < BOTS.length; i++) {
+		for (int i = 0; i < BOTS.length; i++) {
 			if ((pos = userAgent.indexOf(BOTS[i])) >= 0) {
 				if (BOTS[i].endsWith("/")) {
 					pos += BOTS[i].length();

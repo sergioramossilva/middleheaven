@@ -15,7 +15,6 @@ import org.middleheaven.ui.components.UICommand;
 import org.middleheaven.ui.components.UICommandSet;
 import org.middleheaven.ui.components.UIDateInput;
 import org.middleheaven.ui.components.UIDesktopTrayIcon;
-import org.middleheaven.ui.components.UIFieldInput;
 import org.middleheaven.ui.components.UIForm;
 import org.middleheaven.ui.components.UILabel;
 import org.middleheaven.ui.components.UILayout;

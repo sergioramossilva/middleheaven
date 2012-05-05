@@ -46,9 +46,10 @@ public class Desktop extends AbstractUIClient implements UIDesktop {
 	@Override
 	public void exit() {
 		
+		
 		BootstrapService service = ServiceRegistry.getService(BootstrapService.class);
 		
-		service.getEnvironmentBootstrap().stop();
+		service.stop();
 	}
 
 

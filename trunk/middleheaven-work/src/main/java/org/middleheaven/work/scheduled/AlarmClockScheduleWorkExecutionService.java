@@ -1,7 +1,7 @@
 package org.middleheaven.work.scheduled;
 
 import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.quantity.time.TimeContext;
 import org.middleheaven.quantity.time.TimePoint;
 import org.middleheaven.quantity.time.clocks.Clock;
@@ -9,8 +9,12 @@ import org.middleheaven.quantity.time.clocks.ClockTickListener;
 import org.middleheaven.quantity.time.clocks.Schedule;
 import org.middleheaven.quantity.time.clocks.StaticClock;
 import org.middleheaven.quantity.time.clocks.alarm.AlarmClock;
+import org.middleheaven.work.ScheduledWorkContext;
 import org.middleheaven.work.Work;
 
+/**
+ * 
+ */
 @Service
 public class AlarmClockScheduleWorkExecutionService implements ScheduleWorkExecutorService {
 
@@ -68,7 +72,7 @@ public class AlarmClockScheduleWorkExecutionService implements ScheduleWorkExecu
 			try{
 				work.execute(new AlarmScheduledWorkContext(StaticClock.forTime(point)));
 			}catch (Exception e){
-				Log.onBook("Schedule work").error(e,"Unexpected exception executing {0}", work.getClass());
+				Logger.onBook("Schedule work").error(e,"Unexpected exception executing {0}", work.getClass());
 			}
 		}
 

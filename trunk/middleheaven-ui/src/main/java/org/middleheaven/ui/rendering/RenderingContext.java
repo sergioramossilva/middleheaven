@@ -1,11 +1,9 @@
 package org.middleheaven.ui.rendering;
 
-import java.util.Collection;
-
 import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.ContextScopeStrategy;
 import org.middleheaven.process.MapContext;
+import org.middleheaven.process.ScopedAttributesResolutionStrategy;
 
 public class RenderingContext implements AttributeContext{
 
@@ -43,7 +41,7 @@ public class RenderingContext implements AttributeContext{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ContextScopeStrategy getScopeAttributeContext(ContextScope scope) {
+	public ScopedAttributesResolutionStrategy getScopeAttributeContext(ContextScope scope) {
 		return context.getScopeAttributeContext(scope);
 	}
 

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.middleheaven.global.Culture;
-import org.middleheaven.process.web.HttpProcessingUtils;
 
 
 public class TestHttpProcessingUtils {
