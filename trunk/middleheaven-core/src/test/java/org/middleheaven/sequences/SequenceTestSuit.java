@@ -9,7 +9,6 @@ import org.middleheaven.sequence.IterableBasedSequence;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.util.CharacterIncrementor;
-import org.middleheaven.util.NumberIncrementor;
 import org.middleheaven.util.collections.Range;
 
 

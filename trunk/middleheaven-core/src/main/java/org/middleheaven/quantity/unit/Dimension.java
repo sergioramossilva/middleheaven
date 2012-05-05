@@ -2,7 +2,6 @@ package org.middleheaven.quantity.unit;
 
 import java.io.Serializable;
 
-
 import org.middleheaven.quantity.measurables.Aceleration;
 import org.middleheaven.quantity.measurables.Action;
 import org.middleheaven.quantity.measurables.Angle;

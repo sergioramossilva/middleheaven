@@ -13,7 +13,7 @@ public interface ApplicationContext {
 
 	public ApplicationVersion getApplication();
 	
-	public Collection<Module> getModules();
+	public Collection<ModuleActivator> getModules();
 	
 	public boolean isModulePresent(String name);
 	

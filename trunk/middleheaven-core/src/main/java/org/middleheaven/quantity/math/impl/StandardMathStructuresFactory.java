@@ -2,8 +2,8 @@ package org.middleheaven.quantity.math.impl;
 
 import java.util.List;
 
-import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.BigInt;
+import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Matrix;
 import org.middleheaven.quantity.math.Numeral;
 import org.middleheaven.quantity.math.Real;

@@ -2,7 +2,6 @@ package org.middleheaven.core.services;
 
 import java.util.Map;
 
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
 
 /**
  * Primary interface to retrive and register services from {@link ServiceActivator}s.

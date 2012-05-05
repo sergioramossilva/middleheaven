@@ -16,7 +16,7 @@ public final class StringIdentity extends Identity implements Serializable {
 	}
 	
 	@Override
-	public boolean equals(Identity other) {
+	public boolean equalsIdentity(Identity other) {
 		return other instanceof StringIdentity && ((StringIdentity)other).value.equals(this.value);
 	}
 	

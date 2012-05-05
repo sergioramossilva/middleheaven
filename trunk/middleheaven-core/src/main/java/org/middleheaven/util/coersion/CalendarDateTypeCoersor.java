@@ -23,7 +23,7 @@ public class CalendarDateTypeCoersor<CD extends CalendarDateTime, D extends Date
 
 	@Override
 	public <T extends D> T coerceForward(CD value, Class<T> type) {
-		return type.cast(Introspector.of(dateType).newInstance(new Long(value.getMilliseconds())));
+		return type.cast(Introspector.of(dateType).newInstance(Long.valueOf(value.getMilliseconds())));
 	}
 
 	@Override

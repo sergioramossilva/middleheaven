@@ -22,7 +22,6 @@ import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.NoSuchMethodReflectionException;
 import org.middleheaven.core.reflection.ProxyHandler;
-import org.middleheaven.core.wiring.WiringInterceptor;
 import org.middleheaven.util.StringUtils;
 
 

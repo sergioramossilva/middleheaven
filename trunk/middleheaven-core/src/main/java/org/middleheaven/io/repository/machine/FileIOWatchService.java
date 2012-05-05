@@ -1,6 +1,5 @@
 package org.middleheaven.io.repository.machine;
 
-import java.io.Closeable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;

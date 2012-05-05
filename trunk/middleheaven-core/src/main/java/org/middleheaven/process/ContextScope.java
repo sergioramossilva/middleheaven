@@ -1,21 +1,29 @@
 package org.middleheaven.process;
 
-import java.util.Collection;
-import java.util.EnumSet;
 
 /**
  * Scope for context attributes.
  */
 public enum ContextScope {
 
-	RENDERING,
+	/**
+	 * Attributes present in this context are available to the intire application
+	 * and prevail as long as the JVM is running.
+	 */
 	APPLICATION,
+	
+	RENDERING,
+	
 	SESSION,
+	CONFIGURATION, // read only
+	
+	/**
+	 * Read only information sent with the request.
+	 */
+	REQUEST_PARAMETERS,
+	
 	REQUEST,
 	REQUEST_COOKIES,
-	REQUEST_HEADERS,
-	PARAMETERS, // read only
-	CONFIGURATION; // read only
-	
-
+	REQUEST_HEADERS
+	;
 }

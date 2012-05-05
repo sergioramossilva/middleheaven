@@ -5,8 +5,15 @@ import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Coersor for  {@link CharSequence} and {@link Number}.
+ */
 public class CharSequenceNumberConverter extends AbstractTypeCoersor<CharSequence, Number> {
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <T extends Number> T coerceForward(CharSequence cvalue, Class<T> targetClass) {
 		
@@ -20,21 +27,21 @@ public class CharSequenceNumberConverter extends AbstractTypeCoersor<CharSequenc
 		BigDecimal value = new BigDecimal(cvalue.toString());
 		
         if (targetClass.equals(Byte.class)){
-            return targetClass.cast(new Byte(value.byteValue()));
+            return targetClass.cast(Byte.valueOf(value.byteValue()));
         } else if (targetClass.equals(Short.class)){
-            return targetClass.cast(new Short(value.shortValue()));
+            return targetClass.cast(Short.valueOf(value.shortValue()));
         } else if (targetClass.equals(Integer.class)){
-            return targetClass.cast(new Integer(value.intValue()));
+            return targetClass.cast(Integer.valueOf(value.intValue()));
         } else if (targetClass.equals(Long.class)){
-            return targetClass.cast(new Long(value.longValue()));
+            return targetClass.cast(Long.valueOf(value.longValue()));
         } else if (targetClass.equals(BigDecimal.class)){
             return targetClass.cast(new BigDecimal(value.toString()));
         } else if (targetClass.equals(BigInteger.class)){
             return targetClass.cast(new BigInteger(value.toString()));
         } else if (targetClass.equals(Double.class)){
-            return targetClass.cast(new Double(value.doubleValue()));
+            return targetClass.cast(Double.valueOf(value.doubleValue()));
         } else if (targetClass.equals(Float.class)){
-            return targetClass.cast(new Float(value.floatValue()));
+            return targetClass.cast(Float.valueOf(value.floatValue()));
         } else if (targetClass.equals(AtomicLong.class)){
             return targetClass.cast(new AtomicLong(value.longValue()));
         } else if (targetClass.equals(AtomicInteger.class)){
@@ -44,6 +51,10 @@ public class CharSequenceNumberConverter extends AbstractTypeCoersor<CharSequenc
         }
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <T extends CharSequence> T coerceReverse(Number value, Class<T> targetClass) {
 		if (targetClass.equals(String.class)){

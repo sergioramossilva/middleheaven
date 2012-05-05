@@ -8,9 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
-import org.middleheaven.io.repository.machine.FileIOManagedFileAdapter;
-import org.middleheaven.io.repository.machine.FileIOStrategy;
-import org.middleheaven.io.repository.machine.FileIOWatchService;
 import org.middleheaven.io.repository.watch.FileChangeStrategy;
 import org.middleheaven.io.repository.watch.FileWatchChannelProcessor;
 import org.middleheaven.io.repository.watch.StandardWatchEvent;

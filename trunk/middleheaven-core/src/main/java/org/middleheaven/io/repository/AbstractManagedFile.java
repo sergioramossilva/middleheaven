@@ -8,10 +8,7 @@ import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.AbstractEnumerableAdapter;
-import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.EnhancedMap;
 import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.Walker;
 

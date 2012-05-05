@@ -4,5 +4,5 @@ import org.middleheaven.core.wiring.annotations.Component;
 
 @Component
 public class X {
-
+	
 }

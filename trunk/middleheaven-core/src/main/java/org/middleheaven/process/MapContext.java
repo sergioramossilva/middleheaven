@@ -64,15 +64,15 @@ public class MapContext extends AbstractAttributeContext {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ContextScopeStrategy getScopeAttributeContext(ContextScope scope) {
-		return new MapScopeAttributeContext(scope);
+	public ScopedAttributesResolutionStrategy getScopeAttributeContext(ContextScope scope) {
+		return new MapScopedAttributesResolutionStrategy(scope);
 	}
 
-	private class MapScopeAttributeContext extends AbstractEnumerableAdapter<Attribute> implements ContextScopeStrategy {
+	private class MapScopedAttributesResolutionStrategy extends AbstractEnumerableAdapter<Attribute> implements ScopedAttributesResolutionStrategy {
 
 		private ContextScope scope;
 		
-		public MapScopeAttributeContext (ContextScope scope){
+		public MapScopedAttributesResolutionStrategy (ContextScope scope){
 			this.scope = scope;
 		}
 		/**
@@ -136,6 +136,20 @@ public class MapContext extends AbstractAttributeContext {
 		@Override
 		public ContextScope getScope() {
 			return scope;
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isReaddable() {
+			throw new UnsupportedOperationException("Not implememented yet");
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public boolean isWritable() {
+			throw new UnsupportedOperationException("Not implememented yet");
 		}
 
 	}

@@ -40,25 +40,20 @@ public class StandardWiringService implements WiringService {
 	private NewInstanceScope newInstanceScope = new NewInstanceScope();
 	private SharedScope sharedScope = new SharedScope();
 
-	private final PropertyManagers propertyManagers = new PropertyManagers();
 	private final ProfilesBag activeProfiles = new ProfilesBag();
 
 	private final PropertyResolver propertyResolver;
 
-	public StandardWiringService() {
+	public StandardWiringService(PropertyManagers propertyManagers) {
 		parsers.add(new DefaultWiringModelParser());
 
-		propertyResolver = new PropertyResolver(this);
+		propertyResolver = new PropertyResolver(propertyManagers);
 
 		ClassSet contextClasses = new ClassSet();
 
 		contextClasses.add(Logger.class.getPackage());
 
 		this.addItemBundle(new ClassSetWiringBundle(contextClasses));
-
-
-		propertyManagers.addFirst(new SytemEnvPropertyManager());
-		propertyManagers.addFirst(new SytemPropertyManager());
 
 
 		registerScope("service", new ServiceScope());
@@ -149,7 +144,7 @@ public class StandardWiringService implements WiringService {
 			if (getActiveProfiles().accepts(binding.getProfiles())){
 				bindingMap.add(binding);
 			} else {
-				org.middleheaven.logging.Log.onBook("binding").warn("Discarded binding {0} beacause does not match active profiles", binding);
+				Logger.onBook("binding").warn("Discarded binding {0} beacause does not match active profiles", binding);
 			}
 		}
 
@@ -481,14 +476,6 @@ public class StandardWiringService implements WiringService {
 	@Override
 	public void removeObjectCycleListener(ObjectPoolListener listener) {
 		objetEvent.removeListener(listener);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public PropertyManagers getPropertyManagers() {
-		return this.propertyManagers;
 	}
 
 	/**

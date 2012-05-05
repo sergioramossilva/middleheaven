@@ -1,6 +1,7 @@
 package org.middleheaven.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.middleheaven.util.coersion.TypeCoercing;

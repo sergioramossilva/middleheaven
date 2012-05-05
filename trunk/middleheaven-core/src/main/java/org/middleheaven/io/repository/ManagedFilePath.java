@@ -20,7 +20,8 @@ public interface ManagedFilePath {
 	public String getFileName();
 	
 	/**
-	 *     Returns the base name of this file. The base name is the last element of the file name. For example the base name of /somefolder/somefile is somefile.
+	 *     Returns the base name of this file. The base name is the last element of the file name.
+	 *      For example the base name of /somefolder/somefile is somefile.
 	 *     The root of a file system has an empty base name.
 	 *     Returns:
 	 *      The base name. Never returns null.
@@ -39,8 +40,9 @@ public interface ManagedFilePath {
 
 
 	/**
-	 * Returns the depth of this file name, within its file system. The depth of the root of a file system is 0. The depth of any other file is 1 + the depth of its parent. 
-
+	 * Returns the depth of this file name, within its file system. 
+	 * The depth of the root of a file system is 0. 
+	 * The depth of any other file is 1 + the depth of its parent. 
 	 * @return
 	 */
 	int getNameCount();
@@ -49,15 +51,12 @@ public interface ManagedFilePath {
 	public String getName(int index);
 	
 	/**
-	 *     Returns the absolute path of this file, within its file system. This path is normalised, so that . and .. elements have been removed. Also, the path only contains / as its separator character. The path always starts with /
-
-    The root of a file system has / as its absolute path.
-
-    Returns:
-        The path. Never returns null.
-
-
-	 * @return
+	 *     Returns the absolute path of this file, within its file system. 
+	 *     This path is normalised, so that . and .. elements have been removed. 
+	 *     Also, the path only contains / as its separator character. The path always starts with /
+	 *     The root of a file system has / as its absolute path.
+	 *     
+	 * @return   The path. Never returns null.
 	 */
 	public String getPath();
 

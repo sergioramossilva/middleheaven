@@ -19,6 +19,8 @@ import org.middleheaven.quantity.time.Year;
  */
 public class EasterBasedCalculatedEphemerisModel extends EphemerisModel {
 
+	private static final long serialVersionUID = -1927771312432233408L;
+
 	/**
 	 * @param year
 	 * @return Easter date
@@ -42,7 +44,7 @@ public class EasterBasedCalculatedEphemerisModel extends EphemerisModel {
 		return CalendarDate.date(year,month,day);
 	}
 	
-	Map<DateHolder, Ephemeris> dateEphemeris = new HashMap<DateHolder, Ephemeris>();
+	private final Map<DateHolder, Ephemeris> dateEphemeris = new HashMap<DateHolder, Ephemeris>();
 	
 	@Override
 	public Set<Ephemeris> getEphemeris(DateHolder date) {
@@ -65,7 +67,7 @@ public class EasterBasedCalculatedEphemerisModel extends EphemerisModel {
 			DateHolder whitSunday = easterSunday.plus(Duration.of().days(49));
 			dateEphemeris.put(whitSunday, new DefaultEphemeris("Pentecost",false,whitSunday));
 			
-			// 39 days after easter
+			// 39 days after easter, 10 days before whit sunday
 			DateHolder ascensionDay = whitSunday.minus(Duration.of().days(10));
 			dateEphemeris.put(ascensionDay, new DefaultEphemeris("Ascension Day",false,ascensionDay));
 			

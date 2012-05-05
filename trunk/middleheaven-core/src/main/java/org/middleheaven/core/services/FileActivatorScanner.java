@@ -1,4 +1,4 @@
-package org.middleheaven.core.bootstrap.activation;
+package org.middleheaven.core.services;
 
 import java.io.IOException;
 import java.net.URL;
@@ -13,6 +13,8 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
+import org.middleheaven.core.bootstrap.activation.AbstractActivatorScanner;
+import org.middleheaven.core.bootstrap.activation.ActivatorScanner;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.annotations.Wire;

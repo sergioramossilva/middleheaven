@@ -6,7 +6,9 @@ package org.middleheaven.global;
 
 import java.text.Format;
 
-import org.middleheaven.global.text.writeout.NumberWriteoutFormat;
+import org.middleheaven.global.text.QuantityFormatter;
+import org.middleheaven.global.text.TimepointFormatter;
+import org.middleheaven.global.text.writeout.NumberWriteoutFormatter;
 
 /**
  * Represents an application specific Culture selection factory.
@@ -18,8 +20,34 @@ import org.middleheaven.global.text.writeout.NumberWriteoutFormat;
 public interface CultureModel {
 
 
-    public Format getDateFormat();
-    public Format getNumberFormat();
-    public NumberWriteoutFormat getNumberWriteoutFormat();
-    
+	/**
+	 * 
+	 * @return
+	 */
+	public Format getDateFormat();
+
+	public Format getNumberFormat();
+
+	/**
+	 * The culture specific {@link NumberWriteoutFormatter}.
+	 * @return The culture specific {@link NumberWriteoutFormatter}
+	 */
+	public NumberWriteoutFormatter getNumberWriteoutFormat();
+
+
+	/**
+	 * Returns a {@link TimepointFormatter} for the given {@link Culture}
+	 * 
+	 * @return a <code>TimepointFormatter</code> for the given {@link Culture}
+	 */
+	public TimepointFormatter getTimestampFormatter ();
+
+	/**
+	 * Returns an approriated {@link QuantityFormatter}.
+	 * 
+	 * 
+	 * @return an approriated {@link QuantityFormatter}.
+	 */
+	public QuantityFormatter getQuantityFormatter();
+
 }

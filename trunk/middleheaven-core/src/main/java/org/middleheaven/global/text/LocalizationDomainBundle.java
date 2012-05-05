@@ -4,8 +4,9 @@
  */
 package org.middleheaven.global.text;
 
-import java.util.Locale;
 import java.util.MissingResourceException;
+
+import org.middleheaven.global.Culture;
 
 /**
  * @author  Sergio M. M. Taborda 
@@ -13,17 +14,18 @@ import java.util.MissingResourceException;
 public abstract class LocalizationDomainBundle {
 
     private LocalizationDomainBundle child= null;
-    public  String localizeLabel(GlobalLabel label, Locale locale) throws MissingResourceException{
+    
+    public  String localizeLabel(GlobalLabel label, Culture culture) throws MissingResourceException{
         
         String message =null;
         if (child!=null){
             try {
-                message = child.localizeLabel(label, locale);
+                message = child.localizeLabel(label, culture);
             }catch (MissingResourceException e){
-                message = findLabel(label, locale);
+                message = findLabel(label, culture);
             }
         }else{
-            message = findLabel(label, locale);
+            message = findLabel(label, culture);
         }
         return message;
     }
@@ -32,5 +34,5 @@ public abstract class LocalizationDomainBundle {
         this.child = child;
     }
     
-    protected abstract  String findLabel(GlobalLabel label, Locale locale) throws MissingResourceException;
+    protected abstract  String findLabel(GlobalLabel label, Culture culture) throws MissingResourceException;
 }

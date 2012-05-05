@@ -3,13 +3,10 @@
  */
 package org.middleheaven.io.repository;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.net.URI;
 
 import org.junit.Test;
-import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 

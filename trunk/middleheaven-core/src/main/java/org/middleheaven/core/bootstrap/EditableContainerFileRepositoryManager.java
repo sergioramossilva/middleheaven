@@ -6,6 +6,7 @@ public class EditableContainerFileRepositoryManager implements FileContext {
 
 	
 	private ManagedFile appClasspathRepository;
+	private ManagedFile appLibraryRepository;
 	private ManagedFile appConfigRepository;
 	private ManagedFile appDataRepository;
 	private ManagedFile appLogRepository;
@@ -71,6 +72,20 @@ public class EditableContainerFileRepositoryManager implements FileContext {
 	}
 	public void setEnvironmentDataRepository(ManagedFile environmentDataRepository) {
 		this.environmentDataRepository = environmentDataRepository;
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ManagedFile getAppLibraryRepository() {
+		return appLibraryRepository;
+	}
+	/**
+	 * Atributes {@link ManagedFile}.
+	 * @param appLibraryRepository the appLibraryRepository to set
+	 */
+	public void setAppLibraryRepository(ManagedFile appLibraryRepository) {
+		this.appLibraryRepository = appLibraryRepository;
 	}
 	
 	

@@ -6,9 +6,9 @@ package org.middleheaven.core.bootstrap;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceSpecification;
 
 /**
  * 

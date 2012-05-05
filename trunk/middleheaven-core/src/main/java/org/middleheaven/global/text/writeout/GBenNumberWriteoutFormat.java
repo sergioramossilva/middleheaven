@@ -4,7 +4,7 @@ package org.middleheaven.global.text.writeout;
  * 
  * @see http://www.grammarbook.com/numbers/numbers.asp
  */
-class GBenNumberWriteoutFormat extends NumberWriteoutFormat{
+class GBenNumberWriteoutFormat extends NumberWriteoutFormatter{
 
 	public GBenNumberWriteoutFormat(){}
 	

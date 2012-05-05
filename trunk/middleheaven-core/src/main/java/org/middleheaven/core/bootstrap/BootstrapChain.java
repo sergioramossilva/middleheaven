@@ -8,17 +8,17 @@ public class BootstrapChain {
 
 	List<BootstrapContainerExtention> extentions;
 	private int current=0;
-	private BootstrapContainer container;
+	private BootstrapEnvironment container;
 	private Logger logger;
 	
-	public BootstrapChain(Logger logger, List<BootstrapContainerExtention> extentions, BootstrapContainer container){
+	public BootstrapChain(Logger logger, List<BootstrapContainerExtention> extentions, BootstrapEnvironment container){
 		this.extentions  = extentions;
 		this.container = container;
 		this.logger = logger;
 	}
 	
 	
-	public void doChain(ExecutionContext context) {
+	public void doChain(BootstrapContext context) {
 		if (current<extentions.size()){
 			current++;
 

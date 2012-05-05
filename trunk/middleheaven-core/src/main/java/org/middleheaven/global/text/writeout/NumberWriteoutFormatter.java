@@ -5,7 +5,7 @@ import java.util.Locale;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.global.Culture;
 
-public abstract class NumberWriteoutFormat {
+public abstract class NumberWriteoutFormatter {
 
 	public static Locale[] getAvailableLocales(){
 		return new Locale[]{
@@ -17,7 +17,7 @@ public abstract class NumberWriteoutFormat {
 		};
 	}
 
-	public static NumberWriteoutFormat getInstance(Culture culture){
+	public static NumberWriteoutFormatter getInstance(Culture culture){
 		try{
 			String lang = culture.getLanguage().toString();
 			String country;
@@ -27,8 +27,8 @@ public abstract class NumberWriteoutFormat {
 				country = culture.getCountry().ISOCode();
 			}
 
-			String name = NumberWriteoutFormat.class.getPackage().getName() + "."+ country + lang + NumberWriteoutFormat.class.getSimpleName();
-			return Introspector.of(NumberWriteoutFormat.class).newInstance(name);
+			String name = NumberWriteoutFormatter.class.getPackage().getName() + "."+ country + lang + NumberWriteoutFormatter.class.getSimpleName();
+			return Introspector.of(NumberWriteoutFormatter.class).newInstance(name);
 		} catch (Exception e){
 			throw new FormatNotFoundException("Cannot find format class for culture " + culture);
 		}

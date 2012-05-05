@@ -4,8 +4,9 @@
  */
 package org.middleheaven.core.bootstrap.client;
 
-import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.core.bootstrap.ExecutionContext;
+import org.middleheaven.application.ApplicationModulesResolver;
+import org.middleheaven.core.bootstrap.BootstrapContext;
+import org.middleheaven.core.bootstrap.BootstrapEnvironment;
 import org.middleheaven.core.bootstrap.FileContext;
 import org.middleheaven.core.bootstrap.StandardContainerFileSystem;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
@@ -15,7 +16,7 @@ import org.middleheaven.io.repository.machine.MachineFiles;
 /**
  *
  */
-public abstract class AbstractStandaloneContainer implements BootstrapContainer {
+public abstract class AbstractStandaloneBootstrapEnvironment implements BootstrapEnvironment {
 
 	
 	private StandardContainerFileSystem fileSystem;
@@ -25,13 +26,21 @@ public abstract class AbstractStandaloneContainer implements BootstrapContainer 
 	 * Constructor.
 	 * @param rootFolder the root folder where the container information can be stored.
 	 */
-	public AbstractStandaloneContainer() {
+	public AbstractStandaloneBootstrapEnvironment() {
 
 		this.fileSystem = new StandardContainerFileSystem(MachineFiles.getDefaultFolder());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void configurate(ExecutionContext context) {
+	public ApplicationModulesResolver getApplicationModulesResolver() {
+		throw new UnsupportedOperationException("Not implememented yet");
+	}
+	
+	@Override
+	public void configurate(BootstrapContext context) {
 		//no-op
 	}
 	
@@ -46,7 +55,7 @@ public abstract class AbstractStandaloneContainer implements BootstrapContainer 
 	}
     
 	@Override
-	public FileContext getFileSystem() {
+	public FileContext getFileContext() {
 		return fileSystem;
 	}
 

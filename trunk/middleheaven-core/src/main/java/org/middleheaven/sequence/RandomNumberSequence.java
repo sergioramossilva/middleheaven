@@ -40,7 +40,7 @@ public abstract class RandomNumberSequence <T> implements RandomSequence<T>{
 		@Override
 		public SequenceToken<Long> next() {
 
-			return new DefaultToken<Long>(new Long(random.nextLong()));
+			return new DefaultToken<Long>(Long.valueOf(random.nextLong()));
 
 		}
 
@@ -55,7 +55,7 @@ public abstract class RandomNumberSequence <T> implements RandomSequence<T>{
 		
 		@Override
 		public SequenceToken<Double> next() {
-			return new DefaultToken<Double>(new Double(random.nextDouble()));
+			return new DefaultToken<Double>(Double.valueOf(random.nextDouble()));
 		}
 
 	}

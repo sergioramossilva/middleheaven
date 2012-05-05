@@ -19,9 +19,9 @@ public class NumberIdentityCoersor<N extends Number> extends AbstractIdentityCoe
 			return null;
 		}
 		if (type.isAssignableFrom(IntegerIdentity.class)){
-			return type.cast(new IntegerIdentity(value.intValue()));
+			return type.cast(IntegerIdentity.valueOf(value.intValue()));
 		} else if (type.isAssignableFrom(LongIdentity.class)){
-			return type.cast(new LongIdentity(value.longValue()));
+			return type.cast(LongIdentity.valueOf(value.longValue()));
 		}
 		return null;
 	}

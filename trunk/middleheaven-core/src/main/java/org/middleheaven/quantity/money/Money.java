@@ -13,11 +13,15 @@ import org.middleheaven.util.Hash;
 
 public class Money implements Amount<Money, org.middleheaven.quantity.measurables.Currency>, Comparable<Money> {
 
+	private static int TEN = 10;
+	private static int ONE_HUNDRED = 100;
+	private static int TEN_CUBED= 1000;
+	
 	/**
 	 * Power of 10 has the value at position n in the arrays equals 10 to nth power. 
 	 * This is for internal use only.
 	 */
-	private static int[] powers = new int[]{1,10,100,1000};
+	private static int[] powers = new int[]{1,TEN,ONE_HUNDRED,TEN_CUBED};
 
 	private static int getPower(int n){
 		if (powers.length<=n){
@@ -27,7 +31,7 @@ public class Money implements Amount<Money, org.middleheaven.quantity.measurable
 			System.arraycopy(powers , 0 , newpowers , 0 , 0 );
 
 			for (int i = powers.length; i < newpowers.length; i++){
-				newpowers[i] = (int)Math.pow(10, i);
+				newpowers[i] = (int)Math.pow(TEN, i);
 			}
 			powers = newpowers;
 		}
@@ -35,9 +39,8 @@ public class Money implements Amount<Money, org.middleheaven.quantity.measurable
 	}
 
 
-	long amount;
-
-	Currency currency;
+	private long amount;
+	private Currency currency;
 
 	public static Money money (Real value, Currency currency){
 		return new Money (value , currency);
@@ -129,10 +132,10 @@ public class Money implements Amount<Money, org.middleheaven.quantity.measurable
 	}
 
 	public boolean equals(Object other){
-		return other instanceof Money && equals((Money)other);
+		return other instanceof Money && equalsMoney((Money)other);
 	}
 
-	public boolean equals(Money other){
+	private boolean equalsMoney(Money other){
 		return this.unit().equals(other.unit()) && this.amount == other.amount;
 	}
 
@@ -145,6 +148,7 @@ public class Money implements Amount<Money, org.middleheaven.quantity.measurable
 	 * All money is divided. If the devision remainder is not zero it is added to the first amount
 	 * 
 	 * @param percentages an int arrays containing the percentages. Example int[]{30,30,40}  
+	 * @param installments the quantity of required installments
 	 * @return an arrays of Money each of the same currency as <code>this</code> and containing the percentage of the amount
 	 */
 	public Money[] distribute(int installments){
@@ -214,14 +218,14 @@ public class Money implements Amount<Money, org.middleheaven.quantity.measurable
 		for (int i = 0; i < percentages.length ; i++){
 			total += percentages[i];
 		}
-		if (total!=100){
+		if (total != ONE_HUNDRED){
 			throw new IllegalArgumentException ("Percentages does not sum 100");
 		}
 
 		Money[] results = new Money[percentages.length];
 		long remainder = this.amount;
 		for (int i = 0; i < results.length; i++) {
-			results[i] = new Money(this,this.amount * percentages[i] / 100); // integer division
+			results[i] = new Money(this,this.amount * percentages[i] / this.currency.getDefaultFractionDigits()); // integer division
 			remainder -= results[i].amount;
 		}
 		for (int i = 0; i < remainder; i++) {

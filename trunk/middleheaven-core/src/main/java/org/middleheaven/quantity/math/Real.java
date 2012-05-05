@@ -1,8 +1,6 @@
 package org.middleheaven.quantity.math;
 
 import org.middleheaven.quantity.math.structure.MathStructuresFactory;
-import org.middleheaven.quantity.unit.SI;
-import org.middleheaven.quantity.unit.Unit;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.collections.Range;
 

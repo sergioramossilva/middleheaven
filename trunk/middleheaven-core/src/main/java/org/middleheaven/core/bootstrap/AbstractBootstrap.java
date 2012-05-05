@@ -19,9 +19,6 @@ import org.middleheaven.core.bootstrap.activation.ActivatorScanner;
 import org.middleheaven.core.bootstrap.activation.ActivatorScannerEvent;
 import org.middleheaven.core.bootstrap.activation.ActivatorScannerListener;
 import org.middleheaven.core.bootstrap.activation.AnnotationBasedDependencyResolver;
-import org.middleheaven.core.bootstrap.activation.FileActivatorScanner;
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.SetActivatorScanner;
 import org.middleheaven.core.dependency.DependencyResolver;
 import org.middleheaven.core.dependency.InicializationNotPossibleException;
 import org.middleheaven.core.dependency.InicializationNotResolvedException;
@@ -29,11 +26,17 @@ import org.middleheaven.core.dependency.Starter;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.services.RegistryServiceContext;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.SetActivatorScanner;
 import org.middleheaven.core.wiring.ProfilesBag;
+import org.middleheaven.core.wiring.PropertyManagers;
 import org.middleheaven.core.wiring.StandardWiringService;
+import org.middleheaven.core.wiring.SytemEnvPropertyManager;
+import org.middleheaven.core.wiring.SytemPropertyManager;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.global.text.LocalizationServiceActivator;
+import org.middleheaven.global.CultureModelLocalizationService;
+import org.middleheaven.global.LocalizationService;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.PropertiesFile;
 import org.middleheaven.logging.BroadcastLoggingService;
@@ -44,32 +47,53 @@ import org.middleheaven.util.StopWatch;
 import org.middleheaven.util.StringUtils;
 
 /**
- * This is the entry point for all applications
- * Subclasses of <code>ExecutionEnvironmentBootstrap</code> implement
- * bootstrap in different execution environments and allow
+ * Implements the generic inicilaization engine for the MiddleHeaven platform.
+ * 
+ * Subclasses of {@link AbstractBootstrap} implement
+ * bootstrap in different execution environments and enable
  * for the application's execution to be environment independent.
  * 
+ * Every bootstrap defines implementations for a set of pre-defined services.
+ * The provided services are:
+ * 
+ *  <ul>
+ *  	<li>{@link LoggingService} - Provides the generic mecanics to deliver logging messages</li>
+ *  <ul>
  *
  */
-public abstract class ExecutionEnvironmentBootstrap {
+public abstract class AbstractBootstrap  {
 
 	private final RegistryServiceContext serviceRegistryContext = new RegistryServiceContext();
+	private final PropertyManagers propertyManagers = new PropertyManagers();
+
 	private final List<ServiceActivatorModel> activators = new ArrayList<ServiceActivatorModel>();
 	private final Set<ActivatorScanner> scanners = new HashSet<ActivatorScanner>();
 	private final Set<ActivatorDependencyResolver> resolvers = new CopyOnWriteArraySet<ActivatorDependencyResolver>();
-	private WiringService wiringService = new StandardWiringService();
-	private SimpleBootstrapService bootstrapService;
-	private LoggingService loggingService;
-	private Logger logger;
-	private BootstrapContainer container;
 
 	
+	private BootstrapEnvironmentResolver bootstrapEnvironmentResolver;
 	
-	public ExecutionEnvironmentBootstrap (){
-		resolvers.add(new AnnotationBasedDependencyResolver());
+	private SimpleBootstrapService bootstrapService;
+	
+	private LoggingService loggingService;
+	private WiringService wiringService;
+	private Logger logger;
+	private BootstrapEnvironment environment;
+	private BootstrapContext context;
+	
+	public AbstractBootstrap (){
+		
+		// prepare properties.
+		this.propertyManagers.addFirst(new SytemEnvPropertyManager());
+		this.propertyManagers.addFirst(new SytemPropertyManager());
+
+		this.resolvers.add(new AnnotationBasedDependencyResolver());
+		
+		this.wiringService = new StandardWiringService(this.propertyManagers);
+		
 	}
 
-	public WiringService getWiringService(){
+	protected WiringService getWiringService(){
 		return this.wiringService;
 	}
 
@@ -85,23 +109,20 @@ public abstract class ExecutionEnvironmentBootstrap {
 		return new BroadcastLoggingService();
 	}
 	
-	public LoggingService getLoggingService(){
+	protected LocalizationService resolveLocalizationService(){
+		return new CultureModelLocalizationService();
+	}
+	
+	protected LoggingService getLoggingService(){
 		return loggingService;
 	}
 	
-	
-	public BootstrapContainer getContainer(){
-		return this.container;
+	protected BootstrapEnvironment getContainer(){
+		return this.environment;
 	}
-	
-	protected abstract BootstrapContainer resolveContainer();
 	
 	protected abstract String getExecutionConfiguration(); 
 
-
-	protected  ActivatorScanner resolverActivatorScanner(ManagedFile appClasspathRepository){
-		return new FileActivatorScanner(appClasspathRepository, ".jar$");
-	}
 
 	public void addActivatorDependencyResolver(ActivatorDependencyResolver listener) {
 		resolvers.add(listener);
@@ -110,24 +131,42 @@ public abstract class ExecutionEnvironmentBootstrap {
 	public void removeActivatorDependencyResolver(ActivatorDependencyResolver listener) {
 		resolvers.remove(listener);
 	}
+	
+	
+	/**
+	 * 
+	 * @return the {@link BootstrapEnvironmentResolver} implementations to use.
+	 */
+	protected abstract BootstrapEnvironmentResolver bootstrapEnvironmentResolver();
 
 	/**
 	 * Start the environment 
 	 */
 	protected final void start(){
 
+
 		StopWatch watch = StopWatch.start();
 		
-		// Determine Logging Service
-		this.loggingService = this.resolveLoggingService();
-
-		this.logger = new LogServiceDelegatorLogger(this.getClass().getName(), loggingService);
+		// Phase 1 - default services
 		
-		logger.info("Inicializing Environment");
-
+		// set Logging Service
+		this.loggingService = this.resolveLoggingService();
+		
 		// Register Logging Service
 		serviceRegistryContext.register(LoggingService.class, loggingService);
 		
+		// set default logger
+		this.logger = new LogServiceDelegatorLogger(this.getClass().getName(), loggingService);
+		
+		
+		serviceRegistryContext.register(LocalizationService.class, resolveLocalizationService());
+		
+		logger.info("Begin MiddleHeaven bootstrap");
+		
+		
+		
+		// set the environment resolver
+		this.bootstrapEnvironmentResolver = this.bootstrapEnvironmentResolver();
 		
 		// Determine Bootstrap Service
 		bootstrapService = new SimpleBootstrapService(this);
@@ -148,78 +187,23 @@ public abstract class ExecutionEnvironmentBootstrap {
 		serviceRegistryContext.register(BootstrapService.class, bootstrapService);
 		serviceRegistryContext.register(WiringService.class, wiringService);
 		
-		// Resolve Container
-		
-		this.container = resolveContainer();
-
-		logger.info("Using container : '{0}'", container.getContainerName());
-		
-		
-		// Resolve FileSystem
-		final FileContext fileSystem = container.getFileSystem();
-
-		serviceRegistryContext.register(FileContextService.class, new FileContextService(){
-
-			@Override
-			public FileContext getFileContext() {
-				return fileSystem;
-			}
-			
-		});
-
-		doBeforeStart();
-		
-		
-		logger.trace("Configuring active environment profiles");
-		
-		String profiles = (String) wiringService.getPropertyManagers().getProperty("middleheaven.profiles.active");
-		
-		if (profiles != null) {
-			String[] all = StringUtils.split(profiles, ',');
-			wiringService.getActiveProfiles().add(all);
-		}
-		
-		logger.debug("Register bootstrap services");
-
-		// activate services that can be overridden by the container or final environment	
-
-		logger.debug("Scanning for extentions");
-
-		List<BootstrapContainerExtention> extentions = new ArrayList<BootstrapContainerExtention>();
-		
-		readExtentions(extentions);
-
-		logger.debug("Inicialize service discovery");
-		// file aware scanner
-		ActivatorScanner fileScanner = this.resolverActivatorScanner(fileSystem.getAppClasspathRepository());
-		
-		addActivatorScanner(fileScanner);
-
-		
 		final SetActivatorScanner scanner = new SetActivatorScanner();
 		
-		scanner.addActivator(LocalizationServiceActivator.class);
-		
-		addActivatorScanner(scanner);
-		
-		// configurate container with chain of extentions
-		BootstrapChain chain = new BootstrapChain(logger, extentions,container);
-
-		ExecutionContext context = new ExecutionContext(){
+		BootstrapContext context = new BootstrapContext(){
 
 			public String getName(){
 				return getExecutionConfiguration();
 			}
 			
 			@Override
-			public ExecutionContext addActivator(
+			public BootstrapContext addActivator(
 					Class<? extends ServiceActivator> type) {
 				scanner.addActivator(type);
 				return this;
 			}
 
 			@Override
-			public ExecutionContext removeActivator(Class<? extends ServiceActivator> type) {
+			public BootstrapContext removeActivator(Class<? extends ServiceActivator> type) {
 				scanner.removeActivator(type);
 				return this;
 			}
@@ -238,12 +222,67 @@ public abstract class ExecutionEnvironmentBootstrap {
 			public ServiceContext getServiceContext() {
 				return serviceRegistryContext;
 			}
+
+			@Override
+			public PropertyManagers getPropertyManagers() {
+				return propertyManagers;
+			}
 			
 		};
+		
+		// Resolve Container
+		
+		// Phase 2 - enviroment
+		
+		this.environment = bootstrapEnvironmentResolver.resolveEnvironment(context);
+
+		logger.info("Using environment : '{0}'", environment.getName());
+		
+		
+		// Resolve FileSystem
+		final FileContext fileSystem = environment.getFileContext();
+
+		serviceRegistryContext.register(FileContextService.class, new FileContextService(){
+
+			@Override
+			public FileContext getFileContext() {
+				return fileSystem;
+			}
 			
+		});
+
+		doBeforeStart(context);
+		
+		// apply profiles to wiring service
+		logger.trace("Configuring active environment profiles");
+		
+		String profiles = (String) propertyManagers.getProperty("middleheaven.profiles.active");
+		
+		if (profiles != null) {
+			String[] all = StringUtils.split(profiles, ',');
+			wiringService.getActiveProfiles().add(all);
+		}
+		
+		logger.debug("Register environment services");
+
+		// activate services that can be overridden by the container or final environment	
+
+		logger.debug("Scanning for extentions");
+
+		List<BootstrapContainerExtention> extentions = new ArrayList<BootstrapContainerExtention>();
+		
+		readExtentions(extentions);
+
+		// configurate container with chain of extentions
+		BootstrapChain chain = new BootstrapChain(logger, extentions,environment);
+
 		logger.debug("Configuring context");
-			
-		// config any specifica environment activators
+
+		logger.debug("Inicialize service discovery");
+
+		addActivatorScanner(scanner);
+		
+		// config any specific environment activators
 		preConfig(context);
 
 		// start bootstrap
@@ -258,21 +297,31 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 		// at this point all needed activators are collected.
 		
-		// scan and activate all
+		// scan and activate all services
 		activate(); 
 		
+		// Phase 3 - inicilize modules
+		//ApplicationModulesResolver modulesResolver = environment.getApplicationModulesResolver();
+		
+		
+		//modulesResolver.resolveApplicationModules();
+		
+		//
 		wiringService.refresh();
 
-		doAfterStart();
-
-		// start the container.
-		container.start();
-
-
+		doAfterStart(context);
+		
 		// inform the end of the bootstrap
 		bootstrapService.fireBootupEnd();
 		
-		logger.info("Environment inicialized in {0} ms. " , watch.mark().milliseconds());
+		logger.info("MiddleHeaven bootstraped in {0} ms. " , watch.mark().milliseconds());
+		
+		logger.info("Starting environment");
+		
+		// start the environment. the ui is available.
+		environment.start();
+
+		
 		
 	}
 
@@ -286,7 +335,10 @@ public abstract class ExecutionEnvironmentBootstrap {
 			scanner.scan();
 		}
 		
-		final DependencyResolver dependencyResolver = new DependencyResolver(new LogServiceDelegatorLogger("dependencyResolver", loggingService));
+		final DependencyResolver dependencyResolver = new DependencyResolver(
+				new LogServiceDelegatorLogger("dependencyResolver", loggingService)
+		);
+		
 		dependencyResolver.resolve(activators, new ActivatorsStarter());
 
 
@@ -432,7 +484,7 @@ public abstract class ExecutionEnvironmentBootstrap {
 
 	protected void readExtentions(List<BootstrapContainerExtention> extentions){
 
-		ManagedFile file = this.getContainer().getFileSystem().getAppConfigRepository().retrive("extensions.config");
+		ManagedFile file = this.getContainer().getFileContext().getAppConfigRepository().retrive("extensions.config");
 		
 		if (file.exists()) {
 			Properties p = PropertiesFile.from(file).toProperties();
@@ -447,20 +499,20 @@ public abstract class ExecutionEnvironmentBootstrap {
 		
 	}
 
-	protected void preConfig(ExecutionContext context) {
+	protected void preConfig(BootstrapContext context) {
 		// no-op
 	}
 
-	public void posConfig(ExecutionContext context){
+	public void posConfig(BootstrapContext context){
 
 	}
 
 	private class SimpleBootstrapService implements BootstrapService{
 
-		private ExecutionEnvironmentBootstrap executionEnvironmentBootstrap;
+		private AbstractBootstrap executionEnvironmentBootstrap;
 		private Set<BootstapListener> listeners = new CopyOnWriteArraySet<BootstapListener>();
 
-		public SimpleBootstrapService(ExecutionEnvironmentBootstrap executionEnvironmentBootstrap) {
+		public SimpleBootstrapService(AbstractBootstrap executionEnvironmentBootstrap) {
 			this.executionEnvironmentBootstrap = executionEnvironmentBootstrap;
 		}
 
@@ -510,21 +562,23 @@ public abstract class ExecutionEnvironmentBootstrap {
 	public final void stop(){
 		logger.info("Terminating Environment");
 		bootstrapService.fireBootdownStart();
-		doBeforeStop();
+		doBeforeStop(context);
 
 		serviceRegistryContext.unRegister(BootstrapService.class);
 		serviceRegistryContext.unRegister(WiringService.class);
+		
+		// TODO unregister all
 
-		doAfterStop();
+		doAfterStop(context);
 
 		bootstrapService.fireBootdownEnd();
 		logger.info("Environment terminated");
 	}
 
-	protected void doBeforeStart(){};
-	protected void doAfterStart(){}; 
-	protected void doBeforeStop(){};
-	protected void doAfterStop(){}
+	protected void doBeforeStart(BootstrapContext context){};
+	protected void doAfterStart(BootstrapContext context){}; 
+	protected void doBeforeStop(BootstrapContext context){};
+	protected void doAfterStop(BootstrapContext context){}
 
 
 

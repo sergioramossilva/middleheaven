@@ -5,6 +5,8 @@
 package org.middleheaven.global.text;
 
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.global.Culture;
+import org.middleheaven.global.LocalizationService;
 
 
 /**
@@ -12,12 +14,19 @@ import org.middleheaven.core.services.ServiceRegistry;
  * making use of the <code>LocalizationService</code>
  * 
  * 
- * @see org.middleheaven.global.text.LocalizationService
+ * @see org.middleheaven.global.LocalizationService
  */
 public class GlobalFormatter implements Formatter<String> {
 
+	
+	private Culture culture;
+
+	public GlobalFormatter (Culture culture){
+		this.culture = culture;
+	}
+	
 	public String format(String object) {
-		return ServiceRegistry.getService(LocalizationService.class).getMessage( GlobalLabel.of(object) , false);
+		return ServiceRegistry.getService(LocalizationService.class).getMessage( GlobalLabel.of(object) , culture);
 
 	}
 

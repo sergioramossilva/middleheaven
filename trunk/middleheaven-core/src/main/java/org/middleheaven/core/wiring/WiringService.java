@@ -60,14 +60,7 @@ public interface WiringService  {
 	 */
 	public void removeObjectCycleListener(ObjectPoolListener listener);
 	
-	/**
-	 * Return the {@link PropertyManagers} with access to all {@link PropertyManager} objects registered in this service.
-	 * The property managers make it possible to inject named {@link String} objects on to other objects.
-	 * 
-	 * @return the  {@link PropertyManagers} with access to all {@link PropertyManager} objects registered in this service.
-	 */
-	public PropertyManagers getPropertyManagers();
-	
+
 	/**
 	 * Returns the {@link ProfilesBag} for active profiles. 
 	 * 

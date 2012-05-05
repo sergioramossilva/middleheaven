@@ -12,7 +12,6 @@ import java.util.Set;
 import org.middleheaven.util.classification.Classification;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.classification.MapClassification;
-import org.middleheaven.util.classification.NegationClassifier;
 
 public class EnhancedCollectionAdapter<T> extends AbstractEnumerableAdapter<T> implements EnhancedCollection<T> , EnhancedSet<T> {
 

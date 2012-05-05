@@ -1,6 +1,8 @@
 
 package org.middleheaven.logging;
 
+import org.middleheaven.core.services.ServiceRegistry;
+
 
 
 
@@ -11,6 +13,24 @@ package org.middleheaven.logging;
  */
 public abstract class Logger {
 
+
+	/**
+	 * Acquires a {@link Logger} for a specific log book. 
+	 * 
+	 * @param bookName the book's name
+	 * 
+	 * @return a {@link Logger} that will log events on the given book.
+	 */
+	public static Logger onBook(String bookName){
+		
+		return new LogServiceDelegatorLogger(bookName, ServiceRegistry.getService(LoggingService.class));
+		
+	}
+	
+	public static Logger onBookFor(Class<?> type){
+		return onBook(type.getName().toString());
+	}
+	
 	private String name;
 
 	protected Logger(String name){

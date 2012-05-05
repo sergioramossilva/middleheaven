@@ -1,5 +1,6 @@
 package org.middleheaven.core.bootstrap.activation;
 
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.wiring.BeanDependencyModel;
 
 public interface ActivatorDependencyResolver {

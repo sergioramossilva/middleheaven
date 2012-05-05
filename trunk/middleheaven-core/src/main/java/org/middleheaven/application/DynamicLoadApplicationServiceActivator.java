@@ -32,8 +32,8 @@ import org.middleheaven.util.collections.Walker;
 @Component
 public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadApplicationServiceActivator  {
 
-	
-	
+
+
 	public static void setAppModulesFilter(BooleanClassifier<ManagedFile> appModulesFilter) {
 		DynamicLoadApplicationServiceActivator.appModulesFilter = appModulesFilter;
 	}
@@ -42,38 +42,50 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 
 		@Override
 		public Boolean classify(ManagedFile file) {
-			return file.getPath().getFileNameWithoutExtension().endsWith(".apm");
+			if (file.getPath().getFileName().endsWith(".jar")){
+				JarInputStream jis;
+				try {
+					jis = new JarInputStream(file.getContent().getInputStream());
+				} catch (ManagedIOException e) {
+					return false;
+				} catch (IOException e) {
+					return false;
+				}
+				Manifest manifest = jis.getManifest();
+
+				return manifest != null ;
+			}
+			return false;
+
 		}
 	};
-	
+
 	private FileWatchChannelProcessor fileWatchChannelProcessor;
-	
+
 	public DynamicLoadApplicationServiceActivator(){
-		
+
 	}
-	
-	
+
+
 	public void inactivate(){
 		if (fileWatchChannelProcessor != null){
 			fileWatchChannelProcessor.close();
 		}
 	}
-	
+
 	protected void loadPresentModules(){
 
-		// look for all files ending in .apm (Application Module)
-		// these can be jar files
 		final Collection<ManagedFile> applicationModuleFiles = new HashSet<ManagedFile>();
 
-		ManagedFile f =   this.getFileContextService().getFileContext().getAppConfigRepository();
+		ManagedFile f =   this.getFileContextService().getFileContext().getAppLibraryRepository();
 
 		if (f.isWatchable()){
 			WatchService ws = f.getRepository().getWatchService();
-			
+
 			WatchEventChannel channel = f.register(ws , StandardWatchEvent.ENTRY_CREATED, StandardWatchEvent.ENTRY_DELETED, StandardWatchEvent.ENTRY_MODIFIED);
-				
+
 			this.fileWatchChannelProcessor = new FileWatchChannelProcessor(new FileChangeStrategy() {
-				
+
 				@Override
 				public void onChange(WatchEvent event) {
 					if (StandardWatchEvent.ENTRY_CREATED.equals(event.kind())){
@@ -86,9 +98,9 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 					}
 				}
 			});
-			
+
 			fileWatchChannelProcessor.add(channel);	
-			
+
 			fileWatchChannelProcessor.start();
 		}
 
@@ -100,9 +112,9 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 					applicationModuleFiles.add(file);
 				}
 			}
-			
+
 		});
-		
+
 		for (ManagedFile jar : applicationModuleFiles){
 			loadModuleFromFile(jar);
 		}
@@ -113,22 +125,24 @@ public class DynamicLoadApplicationServiceActivator extends AbstractDynamicLoadA
 	private void loadModuleFromFile(ManagedFile jar) {
 
 		try{
-			URLClassLoader cloader = URLClassLoader.newInstance(new URL[]{jar.getURI().toURL()});
-
+			URLClassLoader cloader = URLClassLoader.newInstance(new URL[]{jar.getURI().toURL()}, Thread.currentThread().getContextClassLoader());
+			
 			JarInputStream jis = new JarInputStream(jar.getContent().getInputStream());
 			Manifest manifest = jis.getManifest();
-			
+
 			if (manifest!=null){
 				Attributes at = manifest.getMainAttributes();
 
-				ParamsMap map = new ParamsMap()
-				.setParam("Application", at.getValue("Application").trim())
-				.setParam("Application-Listeners", at.getValue("Application-Listeners").trim())
-				.setParam("Application-Modules", at.getValue("Application-Modules").trim())
-				.setParam("Application-Module-Listeners", at.getValue("Application-Module-Listeners").trim())
-				;
-				
-				parseAttributes(map, cloader);
+				if (at.getValue("Application") != null){
+					ParamsMap map = new ParamsMap()
+					.setParam("Application", at.getValue("Application"))
+					.setParam("Application-Listeners", at.getValue("Application-Listeners"))
+					.setParam("Application-Modules", at.getValue("Application-Modules"))
+					.setParam("Application-Module-Listeners", at.getValue("Application-Module-Listeners"))
+					;
+
+					parseAttributes(map, cloader);
+				}
 			}
 
 		}catch (IOException e) {

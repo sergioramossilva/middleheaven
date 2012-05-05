@@ -3,7 +3,6 @@ package org.middleheaven.quantity.math.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.middleheaven.quantity.math.Conjugatable;
 import org.middleheaven.quantity.math.Matrix;
 import org.middleheaven.quantity.math.structure.Field;
 

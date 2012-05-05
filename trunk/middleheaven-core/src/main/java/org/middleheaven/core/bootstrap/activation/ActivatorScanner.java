@@ -1,5 +1,7 @@
 package org.middleheaven.core.bootstrap.activation;
 
+import org.middleheaven.core.services.ServiceActivator;
+
 
 /**
  * Searches for a set of {@link ServiceActivator}s.
