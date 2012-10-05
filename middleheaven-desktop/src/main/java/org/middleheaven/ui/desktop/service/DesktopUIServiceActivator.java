@@ -10,12 +10,5 @@ public class DesktopUIServiceActivator extends AbstractUIServiceActivator {
 	public DesktopUIServiceActivator (){
 		
 	}
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void registerEnvironment(UIService uiService) {
-		uiService.registerEnvironment(new DesktopEnvironment(), true);
-	}
 
 }

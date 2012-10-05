@@ -6,12 +6,11 @@ import org.middleheaven.logging.Logger;
 import org.middleheaven.process.MapContext;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIEnvironmentType;
 import org.middleheaven.ui.UIService;
 import org.middleheaven.ui.components.UIDesktop;
-import org.middleheaven.ui.models.DesktopClientModel;
-import org.middleheaven.ui.rendering.RenderKit;
+import org.middleheaven.ui.desktop.swing.SwingRenderKit;
+import org.middleheaven.ui.models.UIClientModel;
 import org.middleheaven.ui.rendering.RenderingContext;
 
 
@@ -23,33 +22,22 @@ public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEn
 	public DesktopUIBootstrapEnvironment(Logger logger) {
 		super();
 		this.logger = logger;
+		this.renderedContext = new RenderingContext(new MapContext(), new SwingRenderKit());
 	}
 
 	public void start(){
 
 		try{
-			UIService uiService=ServiceRegistry.getService(UIService.class);
+			UIService uiService = ServiceRegistry.getService(UIService.class);
 			
-			UIEnvironment env = uiService.getDefaultUIEnvironment(UIEnvironmentType.DESKTOP);
+			UIClient client = uiService.getUIClientRendering(UIEnvironmentType.DESKTOP).getComponent();
 
-			if (env.getClients().isEmpty()){
-				throw new RuntimeException("No UIClients defined for environment" + env.getName());
-			}
-			
-			UIClient client = env.getClients().iterator().next();
-			
-			final RenderKit renderKit = client.getUIModel().getRenderKit();
-			
-			this.renderedContext = new RenderingContext(new MapContext(),renderKit);
-	
-			client = renderKit.renderComponent(renderedContext, null, client);
-			
-			DesktopClientModel clientModel = (DesktopClientModel) client.getUIModel();
+			UIClientModel clientModel = (UIClientModel) client.getUIModel();
 			
 			
 			UIComponent mainWindow;
 			 if (client.getChildrenCount()>1){
-				mainWindow = clientModel.defineMainWindow((UIDesktop)client,renderedContext);
+				mainWindow = clientModel.resolveMainWindow((UIDesktop)client,renderedContext);
 			} else if (client.getChildrenCount()==0){
 				logger.error("No main window found");
 				return;
@@ -57,7 +45,7 @@ public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEn
 				mainWindow = client.getChildrenComponents().get(0);
 			}
 
-			renderKit.show(mainWindow);
+			 clientModel.getSceneNavigator().show(mainWindow);
 			
 		} catch (ServiceNotAvailableException e){
 			logger.warn("Executing without UI client");
@@ -70,20 +58,13 @@ public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEn
 		try{
 			UIService uiService=ServiceRegistry.getService(UIService.class);
 			
-			UIEnvironment env = uiService.getDefaultUIEnvironment(UIEnvironmentType.DESKTOP);
+			UIClient client =  uiService.getUIClientRendering(UIEnvironmentType.DESKTOP).getComponent();
+			
+			final UIClientModel clientModel = client.getUIModel();
+			
+			UIComponent mainWindow = clientModel.resolveMainWindow((UIDesktop)client,renderedContext);
 
-			if (env.getClients().isEmpty()){
-				return;
-			}
-			
-			UIClient client = env.getClients().iterator().next();
-			
-			final RenderKit renderKit = client.getUIModel().getRenderKit();
-			
-			DesktopClientModel clientModel = (DesktopClientModel) client.getUIModel();
-			UIComponent mainWindow = clientModel.defineMainWindow((UIDesktop)client,renderedContext);
-
-			renderKit.dispose(mainWindow);
+			clientModel.getSceneNavigator().dispose(mainWindow);
 			
 		} catch (ServiceNotAvailableException e){
 			logger.trace("Stopping without UI client");
