@@ -1,4 +1,4 @@
-package org.middleheaven.ui.testui;
+package org.middleheaven.ui;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -9,6 +9,8 @@ import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UIView;
 import org.middleheaven.ui.rendering.RenderingContext;
+import org.middleheaven.ui.testui.TestRenderKit;
+import org.middleheaven.ui.testui.TestUIComponent;
 
 
 

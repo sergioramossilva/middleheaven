@@ -2,6 +2,8 @@ package org.middleheaven.ui;
 
 import java.util.List;
 
+import org.middleheaven.ui.components.UIView;
+
 
 /**
  * Abstract base visual component.  
@@ -34,7 +36,7 @@ public interface UIComponent extends  Displayable {
      * 
      * @return component rendering type
      */
-    public <T extends UIComponent> Class<T> getType();
+    public <T extends UIComponent> Class<T> getComponentType();
     
     /**
      * @return component rendering family
@@ -81,15 +83,21 @@ public interface UIComponent extends  Displayable {
     
     public boolean isEnabled();
     
-    public void gainFocus();
-    public boolean hasFocus();
-    
     
     public boolean equals(Object other);
     
     public int hashCode();
 
 	void setEnabled(boolean enabled);
+
+	/**
+	 * Test if this component if of the given type.
+	 * 
+	 * @param type the component type to test.
+	 * 
+	 * @return <code>true</code> if this component is of the given type, <code>false</code> otherwise.
+	 */
+	public boolean isType(Class<? extends UIComponent> type);
 
 	
 

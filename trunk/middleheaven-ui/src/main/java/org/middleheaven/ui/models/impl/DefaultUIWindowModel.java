@@ -1,14 +1,16 @@
-package org.middleheaven.ui.models;
+package org.middleheaven.ui.models.impl;
 
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.ui.AbstractUIModel;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.events.UIPrespectiveEvent;
 import org.middleheaven.ui.events.UIWindowEvent;
+import org.middleheaven.ui.models.UIWindowModel;
 
 public class DefaultUIWindowModel extends AbstractUIModel implements UIWindowModel {
 
-	private String title;
+	private TextLocalizable title;
 	
 	@Override
 	public void onClosed(UIPrespectiveEvent event) {
@@ -37,12 +39,12 @@ public class DefaultUIWindowModel extends AbstractUIModel implements UIWindowMod
 	}
 
 	@Override
-	public String getTitle() {
+	public TextLocalizable getTitle() {
 		return title;
 	}
 
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(TextLocalizable title) {
 		this.title = title;
 	}
 

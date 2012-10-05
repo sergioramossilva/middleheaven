@@ -1,9 +1,9 @@
 package org.middleheaven.ui;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.List;
+
+import org.middleheaven.util.StringUtils;
 
 
 
@@ -20,7 +20,7 @@ public abstract class UIEnvironment implements Serializable{
 
 	private static final long serialVersionUID = -7807493488204561383L;
 
-	private Collection<UIClient> clients = new LinkedList<UIClient>();
+	private UIClient client;
 	private UIEnvironmentType type;
 	private String name;
 	
@@ -40,20 +40,17 @@ public abstract class UIEnvironment implements Serializable{
 		this.name = name;
 	}
 	
-	public Collection<UIClient> getClients(){
-		return Collections.unmodifiableCollection(this.clients);
+	public UIClient getClient(){
+		return client;
 	}
 	
-	public void addClient(UIClient client){
+	public void setClient(UIClient client){
 		if (!accept(client.getClass())){
 			throw new UIException(client.getClass().getName() + " cannot be added to " + this.getClass().getName());
 		} 
-		this.clients.add(client);
+		this.client = client;
 	}
 
-	public void removeClient(UIClient client){
-		this.clients.remove(client);
-	}
 	
 	public boolean equals(Object other){
 		return other instanceof UIEnvironment 
@@ -63,6 +60,31 @@ public abstract class UIEnvironment implements Serializable{
 	
 	public int hashCode(){
 		return name.hashCode();
+	}
+	
+	
+	public String toString(){
+		
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append(this.getClient().toString()).append("\n");
+		
+		toString(builder, this.getClient().getChildrenComponents(), 1);
+		
+		return builder.toString();
+	}
+	
+	private void toString(StringBuilder builder, List<UIComponent> children, int ident){
+		
+		String tabs = StringUtils.repeat("\t", ident);
+		
+		for (UIComponent c : children){
+			
+			builder.append(tabs).append(c.toString()).append("\n");
+			
+			toString(builder, c.getChildrenComponents(), ident+1);
+		}
+		
 	}
 	
 	protected abstract boolean accept(Class<? extends UIClient> type);

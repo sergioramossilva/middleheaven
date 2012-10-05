@@ -3,6 +3,7 @@ package org.middleheaven.ui.testui;
 import org.middleheaven.ui.Displayable;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
+import org.middleheaven.ui.rendering.SceneNavigator;
 import org.middleheaven.ui.rendering.UIRender;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
@@ -37,15 +38,26 @@ public class TestRenderKit extends AbstractRenderKit {
 	}
 
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void show(UIComponent component) {
-		component.setVisible(true);
-	}
+	public SceneNavigator getSceneNavigator() {
+		return new SceneNavigator() {
+			
+
+			@Override
+			public void show(UIComponent component) {
+				component.setVisible(true);
+			}
 
 
-	@Override
-	public void dispose(UIComponent splash) {
-		//no-op
+			@Override
+			public void dispose(UIComponent splash) {
+				//no-op
+			}
+
+		};
 	}
 	        
 }

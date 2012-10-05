@@ -19,14 +19,16 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;
 import org.middleheaven.io.xml.XMLObjectContructor;
 import org.middleheaven.io.xml.XMLUtils;
-import org.middleheaven.process.AttributeContext;
-import org.middleheaven.ui.desktop.swing.SwingRenderKit;
+import org.middleheaven.ui.components.UILayout;
 import org.middleheaven.ui.models.AbstractUIFieldInputModel;
-import org.middleheaven.ui.models.DefaultUIWindowModel;
-import org.middleheaven.ui.models.DesktopClientModel;
 import org.middleheaven.ui.models.UIClientModel;
 import org.middleheaven.ui.models.UIFieldInputModel;
+import org.middleheaven.ui.models.UIFlowLayoutModel;
+import org.middleheaven.ui.models.UILayoutModel;
 import org.middleheaven.ui.models.UIWindowModel;
+import org.middleheaven.ui.models.impl.DefaultUIWindowModel;
+import org.middleheaven.ui.models.impl.SimpleUIClientModel;
+import org.middleheaven.ui.models.impl.UIBorderLayoutModel;
 import org.middleheaven.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -36,9 +38,11 @@ import org.w3c.dom.NodeList;
 public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> implements UIComponentBuilder {
 
 	WiringService wiringContext;
+	private UIEnvironmentType targetUIEnvironmentType;
 	
-	public XMLUIComponentBuilder(WiringService wiringContext){
+	public XMLUIComponentBuilder(WiringService wiringContext , UIEnvironmentType targetUIEnvironmentType){
 		this.wiringContext = wiringContext;
+		this.targetUIEnvironmentType = targetUIEnvironmentType;
 	}
 
 	@Override
@@ -63,11 +67,11 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 		// create environment and client
 		Element element = document.getDocumentElement();
 
-		UIEnvironmentType type = UIEnvironmentType.valueOf(XMLUtils.getStringAttribute("type", element).toUpperCase());
-		String name= XMLUtils.getStringAttribute("name", element);
+		//UIEnvironmentType type = UIEnvironmentType.valueOf(XMLUtils.getStringAttribute("type", element).toUpperCase());
+		//String name= XMLUtils.getStringAttribute("name", element);
 
-		BuildedUIEnvironment env = new BuildedUIEnvironment(type);
-		env.setName(name);
+		BuildedUIEnvironment env = new BuildedUIEnvironment(targetUIEnvironmentType);
+		//env.setName(name);
 
 		// set clients
 
@@ -76,9 +80,10 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			Node child = clients.item(i);
 			if (child.getNodeName().equals("uic")){
 
-				UIComponent uiclient = (build(type,child,null));
+				
+				UIComponent uiclient = (build(targetUIEnvironmentType, child,null));
 
-				env.addClient((UIClient)uiclient);
+				env.setClient((UIClient)uiclient);
 
 			}
 		}
@@ -102,6 +107,7 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 		String type = XMLUtils.getStringAttribute("type", node);
 		String familly = XMLUtils.getStringAttribute("familly", node, "default");
 		String name = XMLUtils.getStringAttribute("name", node, "");
+		String layoutConstraint = XMLUtils.getStringAttribute("layoutConstraint", node, "");
 
 		if ("default".equals(familly)){
 			familly = null;
@@ -112,7 +118,7 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 		UIComponent uiComponent =  GenericUIComponent.getInstance(uiClass, familly);
 		
 		if (!uiClass.isInstance(uiComponent)){
-			throw new Error();
+			throw new IllegalStateException("Incompatible ui types");
 		}
 		
 		if (!name.isEmpty()){
@@ -121,7 +127,12 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 
 		uiComponent.setUIParent(parent);
 		if (parent!=null){
-			parent.addComponent(uiComponent);
+			if (layoutConstraint.length() > 0 && parent instanceof UILayout){
+				((UILayout)parent).addComponent(uiComponent, XMLLayoutConstraintsParser.parseConstraint(layoutConstraint, (UILayoutModel) parent.getUIModel()));
+			} else {
+				parent.addComponent(uiComponent);
+			}
+			
 		}
 
 		// model read model from xml 
@@ -153,6 +164,18 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			try {
 				// infer class from contract
 				uiModelClass = (Class<? extends UIModel>) uiClass.getMethod("getUIModel", new Class[0]).getReturnType();
+				
+				if (uiComponent instanceof UILayout){
+					
+					if ("border".equals(familly)){
+						uiModel = new UIBorderLayoutModel();
+					} else if ("flow".equals(familly)){
+						uiModel = new UIFlowLayoutModel();
+					} 
+					
+				}
+				
+		
 			} catch (SecurityException e) {
 				throw new ReflectionException(e);
 			} catch (NoSuchMethodException e) {
@@ -160,27 +183,14 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			}
 
 
-			try {
-			
+			if (uiModel == null){
+				try {
+					
 					// load
 					if (UIClientModel.class.isAssignableFrom(uiModelClass)){
-						if (envType.equals(UIEnvironmentType.DESKTOP)){
-							uiModel = new DesktopClientModel(){
-
-								@Override
-								public UIComponent defineMainWindow(UIClient client,AttributeContext context) {
-									return client.getChildrenComponents().get(client.getChildrenCount()-1);
-								}
-
-								@Override
-								public UIComponent defineSplashWindow(UIClient client,AttributeContext context) {
-									return client.getChildrenCount() == 1 ? null : client.getChildrenComponents().get(0);
-								}
-
-							};
-						} else if (envType.equals(UIEnvironmentType.BROWSER)){
-							uiModel = null; // TODO
-						}  
+						
+						uiModel = new SimpleUIClientModel();
+						
 					} else if (UIWindowModel.class.isAssignableFrom(uiModelClass)) { 
 						uiModel = new DefaultUIWindowModel();
 					} else if (UIFieldInputModel.class.isAssignableFrom(uiModelClass)){
@@ -193,6 +203,8 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			} catch (SecurityException e) {
 				throw new ReflectionException(e);
 			} 
+			}
+			
 
 		}
 		uiComponent.setUIModel(uiModel);
@@ -205,11 +217,6 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 			Node pnode = XMLUtils.getChildNode(p.getName().toString(), modelNode);
 			if (pnode!=null){
 				Object obj = pnode.getFirstChild().getNodeValue();
-				if (p.getName().equals("renderkit")){
-					if (obj.toString().equalsIgnoreCase("SwingRenderKit")){
-						obj = new SwingRenderKit();
-					}
-				}
 				p.setValue(uiModel, obj);
 			}
 		}

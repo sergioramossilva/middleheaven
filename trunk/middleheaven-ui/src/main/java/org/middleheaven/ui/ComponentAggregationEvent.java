@@ -1,10 +1,19 @@
 package org.middleheaven.ui;
 
+/**
+ * Aggregation Event.
+ */
 public class ComponentAggregationEvent {
 
 	private UIComponent component;
 	private UILayoutConstraint constraint;
 	
+	/**
+	 * 
+	 * Constructor.
+	 * @param component the added/removed component, the associated constraint.
+	 * @param constraint
+	 */
 	public ComponentAggregationEvent(UIComponent component,
 			UILayoutConstraint constraint) {
 		super();

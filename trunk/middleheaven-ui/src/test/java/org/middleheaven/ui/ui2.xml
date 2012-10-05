@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui 
+xmlns="http://www.middleheaven.org/ui-schema"
+xmlns:xsi="http://www.middleheaven.org/ui-schema"
+xsi:schemaLocation="http://www.middleheaven.org/ui-schema.xsd"
+>
+	<uic type="client">
+		<model>
+			
+		</model>
+		<uic name="login" type="window" >
+			<model>
+				<title>ui:window.title.login</title>
+			</model>
+			<uic type="layout" familly="border" >
+				<uic name="centerPanel" type="view"  >
+					<constraints>
+						<side>center</side>
+					</constraints>
+					<model>
+						<title>Login</title>
+					</model>
+					<uic type="layout" familly="border" >
+						<uic name="titlePanel" type="view"  >
+							<constraints>
+							<side>north</side>
+							</constraints>
+							<uic type="layout" familly="flow"  >
+								<uic name="icon" type="image"  >
+									<model>
+										<imageName>loginIcon</imageName>
+									</model>
+								</uic>
+								<uic name="title" type="label"  >
+									<model>
+										<text>ui:window.title.login</text>
+									</model>
+								</uic>
+							</uic>
+						</uic>
+						<uic name="fromPanel" type="view"  >
+							<constraints>
+							<side>center</side>
+							</constraints>
+							<uic name="loginForm" type="form"  >
+								<model>
+									<text></text>
+								</model>
+								<uic name="username" type="textInput" >
+									<model>
+										<name>username</name>
+									</model>
+								</uic>
+								<uic name="password" type="secretInput" >
+									<model>
+										<name>password</name>
+									</model>
+								</uic>
+							</uic>
+						</uic>
+						<uic name="fromPanel" type="view"  >
+							<constraints>
+							<side>south</side>
+							</constraints>
+							<uic name="buttons" type="commandSet"  >
+								<uic name="register" type="command" familly="button"  >
+									<model>
+										<text>ui:wordbolt.login.register</text>
+										<name>register</name>
+									</model>
+								</uic>
+								<uic name="login" type="command" familly="button" >
+									<model>
+										<text>ui:wordbolt.login.submit</text>
+										<name>login</name>
+									</model>
+								</uic>
+							</uic>
+						</uic>
+					</uic>
+				</uic>
+				<uic name="bottomPanel" type="view" >
+					<constraints>
+						<side>south</side>
+					</constraints>
+					<uic type="label" >
+						<model>
+							<text>Copywrite 2012</text>
+						</model>
+					</uic>
+				</uic>
+			</uic>
+		</uic>
+		
+		<uic name="dashboard" type="window" >
+			<model>
+				<title>ui:window.title.dashboard</title>
+			</model>
+			<uic type="layout" familly="tabs:vertical">
+				<uic name="frameA" type="view" >
+					<model>
+						<title>Frame A</title>
+					</model>
+					<uic name="labelA" type="label" >
+						<model>
+							<text>Olá Mundo</text>
+						</model>
+					</uic>
+				</uic>
+				<uic name="frameB" type="view" >
+					<model>
+						<title>Frame B</title>
+					</model>
+					<uic name="labelB" type="label" >
+						<model>
+							<text>Olá Mundo Lado B</text>
+						</model>
+					</uic>
+				</uic>
+			</uic>
+		</uic>
+	</uic>
+</ui>

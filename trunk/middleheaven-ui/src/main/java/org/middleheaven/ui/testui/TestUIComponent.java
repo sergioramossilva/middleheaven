@@ -12,8 +12,7 @@ import org.middleheaven.ui.UIComponent;
 public class TestUIComponent<T extends UIComponent> extends GenericUIComponent<T> {
 
 
-	private boolean hasFocus = false;
-	
+
 	public TestUIComponent(Class<T> renderType, String familly) {
 		super(renderType, familly);
 	}
@@ -23,13 +22,5 @@ public class TestUIComponent<T extends UIComponent> extends GenericUIComponent<T
 		return true;
 	}
 	
-	@Override
-	public void gainFocus() {
-		hasFocus = true; // TODO remove focus from all others
-	}
 
-	@Override
-	public boolean hasFocus() {
-		return hasFocus;
-	}
 }

@@ -1,26 +1,24 @@
 package org.middleheaven.ui.models;
 
 import org.middleheaven.ui.ComponentAggregationEvent;
-import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.UIDimension;
+import org.middleheaven.ui.UISize;
+import org.middleheaven.ui.UIModel;
+import org.middleheaven.ui.components.UILayout;
 
 
-
-public interface UILayoutModel {
+/**
+ * A specific {@link UIModel} for the {@link UILayout} component.
+ */
+public interface UILayoutModel extends UIModel {
 
 	/**
 	 * Let the layout model calculate the correct UIArea
 	 * @param layoutable
 	 * @return
 	 */
-    public UIDimension getLayoutablePreferedSize(UIDimension layoutable);
+    public UISize getLayoutablePreferedSize(UISize layoutable);
     
-    /**
-     * Clears any cache the model may have
-     * @param container
-     */
-    public void invalidateCache(Object container);
-    
+  
     /**
      * Trigged when a new component is add to the container
      * @param event
@@ -33,5 +31,4 @@ public interface UILayoutModel {
      */
     public void componentRemoved(ComponentAggregationEvent event);
     
-    public void applyLayout(UIComponent container);
 }

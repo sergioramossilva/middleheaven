@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui 
+xmlns="http://www.middleheaven.org/ui-schema"
+xmlns:xsi="http://www.middleheaven.org/ui-schema"
+xsi:schemaLocation="http://www.middleheaven.org/ui-schema.xsd"
+>
+	<uic type="client">
+		<model>
+			
+		</model>
+		<uic name="login" type="window" >
+			<uic type="layout" familly="tabs">
+				<uic name="frameA" type="view" >
+					<model>
+						<text>Frame A</text>
+					</model>
+					<uic name="labelA" type="label" >
+						<model>
+							<text>Olá Mundo</text>
+						</model>
+					</uic>
+				</uic>
+				<uic name="frameB" type="view" >
+					<model>
+						<text>Frame B</text>
+					</model>
+					<uic name="labelB" type="label" >
+						<model>
+							<text>Olá Mundo Lado B</text>
+						</model>
+					</uic>
+				</uic>
+			</uic>
+		</uic>
+		
+	</uic>
+</ui>

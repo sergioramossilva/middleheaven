@@ -32,5 +32,9 @@ class GenericUIComponentProxyHandler extends PropertyBagProxyHandler {
 		return null;
 		
 	}
+	
+	public String toString(){
+		return original.toString();
+	}
 
 }

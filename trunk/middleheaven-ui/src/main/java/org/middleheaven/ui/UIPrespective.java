@@ -1,5 +1,7 @@
 package org.middleheaven.ui;
 
-public interface UIPrespective extends UIComponent{
+import org.middleheaven.ui.components.UIContainer;
+
+public interface UIPrespective extends UIComponent, UIContainer {
 
 }

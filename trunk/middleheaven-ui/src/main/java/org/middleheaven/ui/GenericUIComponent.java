@@ -7,8 +7,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.ui.components.UIContainer;
 import org.middleheaven.ui.components.UILayout;
+import org.middleheaven.ui.models.UILayoutModel;
+import org.middleheaven.ui.rendering.RenderKit;
 
-public class GenericUIComponent<T extends UIComponent> implements UIContainer,UILayout{
+/**
+ * Generic, {@link RenderKit} agnostic representation of a {@link UIComponent}.
+ * 
+ * @param <T> the {@link UIComponent} represented by the object.
+ */
+public class GenericUIComponent<T extends UIComponent> implements UIContainer {
 
 	static private int nextID=0;
 	
@@ -22,12 +29,18 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	private boolean visible = true;
 	private boolean enable = true;
 
-	private int x;
-	private int y;
+	private UIDimension x = UIDimension.pixels(0);
+	private UIDimension y = UIDimension.pixels(0);
 
-	private int height;
-	private int width;
+	private UIDimension height;
+	private UIDimension width;
 	
+	/**
+	 * 
+	 * @param uiClass
+	 * @param familly
+	 * @return
+	 */
 	public static <T extends UIComponent>  T getInstance(Class<T> uiClass, String familly){
 		
 		final GenericUIComponent object = new GenericUIComponent( uiClass, familly);
@@ -37,20 +50,39 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 		return uiClass.cast(uic);
 	}
 	
+	/**
+	 * 
+	 * Constructor.
+	 */
 	public GenericUIComponent(){
 		this.id = Integer.toString(nextID++);
 	}
 	
+	/**
+	 * 
+	 * Constructor.
+	 * @param renderType
+	 * @param familly
+	 */
 	protected GenericUIComponent(Class<T> renderType, String familly){
 		this();
 		this.renderType = renderType;
 		this.familly = familly;
 		
 		if (renderType.equals(UIContainer.class)){
-			layout = new GenericUIComponent(UILayout.class,"border");
+			layout = getInstance(UILayout.class,"border");
 		}
 
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isType(Class<? extends UIComponent> type) {
+		return type.isAssignableFrom(this.getComponentType());
+	}
+	
 	
 	// Special Methods for genericUIComponent 
 	
@@ -72,22 +104,30 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	}
 	
 	@Override
-	public void addComponent(UIComponent component, UILayoutConstraint layoutConstrain) {
-		if (layout!=null){
-			layout.addComponent(component,layoutConstrain);
-		} else {
-			children.add(component);
-		}
+	public void addComponent(UIComponent component, UILayoutConstraint constraint) {
+		children.add(component);
+		
+		if ( this.model instanceof UILayoutModel){
+			((UILayoutModel) model).componentAdded(new ComponentAggregationEvent(component, constraint));
+		} 
 	}
 	
 	@Override
 	public void addComponent(UIComponent component) {
 		children.add(component);
+		
+		if ( this.model instanceof UILayoutModel){
+			((UILayoutModel) model).componentAdded(new ComponentAggregationEvent(component, null));
+		} 
 	}
 
 	@Override
 	public void removeComponent(UIComponent component) {
 		children.remove(component);
+		
+		if ( this.model instanceof UILayoutModel){
+			((UILayoutModel) model).componentRemoved(new ComponentAggregationEvent(component, null));
+		} 
 	}
 
 	@Override
@@ -100,17 +140,6 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 		this.layout = component;
 	}
 
-
-	@Override
-	public void gainFocus() {
-		//no-op
-	}
-
-	@Override
-	public boolean hasFocus() {
-		return false;
-	}
-	
 	@Override
 	public List<UIComponent> getChildrenComponents() {
 		return Collections.unmodifiableList(this.children);
@@ -132,7 +161,7 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	}
 
 	@Override
-	public Class<T> getType() {
+	public Class<T> getComponentType() {
 		return renderType;
 	}
 
@@ -189,46 +218,20 @@ public class GenericUIComponent<T extends UIComponent> implements UIContainer,UI
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}
-
-	@Override
-	public int getHeight() {
-		return this.height;
-	}
-
-	@Override
-	public int getWidth() {
-		return this.width;
-	}
-
-	public int getX(){
-		return this.x;
-	}
 	
-	public int getY(){
-		return this.y;
-	}
-	
-	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-	}
-
 
 	@Override
-	public UIDimension getDimension() {
-		return new UIDimension(this.width,this.height);
+	public UISize getDisplayableSize() {
+		return UISize.valueOf(this.width,this.height);
 	}
 
 	@Override
 	public UIPosition getPosition() {
-		return new UIPosition(x,y);
+		return UIPosition.valueOf(x, y);
 	}
 
 	@Override
-	public void setSize(UIDimension size) {
+	public void setDisplayableSize(UISize size) {
 		this.width = size.getWidth();
 		this.height = size.getHeight();
 	}

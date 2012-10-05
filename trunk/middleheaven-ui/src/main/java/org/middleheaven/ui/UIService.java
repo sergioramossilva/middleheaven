@@ -1,16 +1,12 @@
 package org.middleheaven.ui;
 
-import java.util.Collection;
+import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.process.AttributeContext;
+import org.middleheaven.ui.rendering.RenderKit;
 
 
+@Service
 public interface UIService {
-
-	/**
-	 * Retrieves all environments of a given type
-	 * @param type the environment type
-	 * @return
-	 */
-	public Collection<UIEnvironment> getUIEnvironment(UIEnvironmentType type);
 
 	
 	/**
@@ -21,17 +17,20 @@ public interface UIService {
 	public UIEnvironment getUIEnvironment(String envName);
 	
 	
+	public UIEnvironment getUIEnvironment(UIEnvironmentType type);
 	
-	public UIEnvironment getDefaultUIEnvironment(UIEnvironmentType type);
+	
+	public Rendering<UIClient> getUIClientRendering(UIEnvironmentType type);
 
-	
+	public Rendering<UIClient> getUIClientRendering(UIEnvironmentType type, AttributeContext context);
 	/**
 	 * Registers an user interface environment
 	 * @param env the user interface environment to register
-	 * @param isTypeDeault true is this environment is the default for its type. false otherwise. 
+	 * 
 	 * @throws  UIException exception is thrown if a default type is already set for the type
 	 */
-	public void registerEnvironment(UIEnvironment env, boolean isTypeDeault) throws UIException;
+	public void registerEnvironment(UIEnvironment env, RenderKit renderKit, AttributeContext context) throws UIException;
+	
 	public void unRegisterEnvironment(UIEnvironment env);
 	
 }

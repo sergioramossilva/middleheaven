@@ -5,9 +5,15 @@ import org.middleheaven.ui.UIComponent;
 
 public class UIActionEvent extends UIEvent {
 
-	public UIActionEvent(UIComponent source) {
+	private String name;
+
+	public UIActionEvent(String name, UIComponent source) {
 		super(source);
+		this.name = name;
 	}
 
+	public String getName(){
+		return name;
+	}
 	
 }

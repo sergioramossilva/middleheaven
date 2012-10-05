@@ -1,31 +1,56 @@
+/**
+ * 
+ */
 package org.middleheaven.ui;
 
 import java.io.Serializable;
 
-
+/**
+ * 
+ */
 public class UIDimension implements Serializable {
-    
-	private int height;
-	private int width;
 
-	public static UIDimension of(int width, int height){
-		return new UIDimension(width,height);
+	
+	private static final long serialVersionUID = 1961727658321457634L;
+	
+	
+	public float value;
+	public UIDimensionUnit unit;
+	
+	/**
+	 * 
+	 * @param value
+	 * @param unit
+	 * @return
+	 */
+	public static UIDimension valueOf(float value, UIDimensionUnit unit){
+		return new UIDimension(value, unit);
 	}
 	
-	public UIDimension() {
-		this(0,0);
+	public static UIDimension pixels(int value){
+		return new UIDimension(value, UIDimensionUnit.PIXELS);
 	}
 	
-	public UIDimension(int width, int height) {
-		this.height = height;
-		this.width = width;
+	private UIDimension(float value, UIDimensionUnit unit) {
+		super();
+		this.value = value;
+		this.unit = unit;
 	}
 
-	public int getHeight(){
-		return this.height;
+	/**
+	 * Obtains {@link float}.
+	 * @return the value
+	 */
+	public float getValue() {
+		return value;
+	}
+	/**
+	 * Obtains {@link UIDimensionUnit}.
+	 * @return the unit
+	 */
+	public UIDimensionUnit getUnit() {
+		return unit;
 	}
 	
-    public int getWidth(){
-    	return this.width;
-    }
+	
 }

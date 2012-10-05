@@ -1,23 +1,28 @@
 package org.middleheaven.ui.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceSpecification;
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.process.AttributeContext;
+import org.middleheaven.ui.Rendering;
+import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIEnvironment;
 import org.middleheaven.ui.UIEnvironmentType;
 import org.middleheaven.ui.UIException;
 import org.middleheaven.ui.UIService;
+import org.middleheaven.ui.rendering.RenderKit;
+import org.middleheaven.ui.rendering.RenderingContext;
 
+/**
+ * 
+ */
 public abstract class AbstractUIServiceActivator extends ServiceActivator {
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -38,12 +43,8 @@ public abstract class AbstractUIServiceActivator extends ServiceActivator {
 		
 		SimpleUIService service = new SimpleUIService();
 		
-		registerEnvironment(service);
-		
 		serviceContext.register(UIService.class, service);
 	}
-	
-	protected abstract void registerEnvironment(UIService uiService);
 	
 	
 	@Override
@@ -51,55 +52,121 @@ public abstract class AbstractUIServiceActivator extends ServiceActivator {
 		serviceContext.unRegister(UIService.class);
 	}
 
-	@Service
 	private static class SimpleUIService implements UIService{
 
-		Map<String, UIEnvironment> envs = new HashMap<String, UIEnvironment>();
-		Map<UIEnvironmentType , List<UIEnvironment>> environmentTypes = new HashMap<UIEnvironmentType , List<UIEnvironment>>();
-		Map<UIEnvironmentType , UIEnvironment> typeDefaults = new HashMap<UIEnvironmentType , UIEnvironment>();
-		
+		Map<String, UIEnvironmentType> envs = new HashMap<String, UIEnvironmentType>();
+		Map<UIEnvironmentType , UIEnvironmentRegisty> environmentTypes = new EnumMap<UIEnvironmentType , UIEnvironmentRegisty >(UIEnvironmentType.class);
+
 		@Override
 		public UIEnvironment getUIEnvironment(String envID) {
-			return envs.get(envID);
-		}
-
-
-		@Override
-		public UIEnvironment getDefaultUIEnvironment(UIEnvironmentType type) {
-			return typeDefaults.get(type);
+			return getUIEnvironment(envs.get(envID));
 		}
 
 		@Override
-		public Collection<UIEnvironment> getUIEnvironment(UIEnvironmentType type) {
-			return environmentTypes.get(type);
-		}
-
-		@Override
-		public void registerEnvironment(UIEnvironment env, boolean isTypeDeault) throws UIException {
+		public UIEnvironment getUIEnvironment(UIEnvironmentType type) {
+			UIEnvironmentRegisty registry = environmentTypes.get(type);
 			
-			List<UIEnvironment> list = environmentTypes.get(env.getType());
-			if (list==null){
-				list = new ArrayList<UIEnvironment>(2);
-				environmentTypes.put(env.getType(),list);
+			if (registry == null){
+				return null;
 			}
-			list.add(env);
 			
-			if(isTypeDeault){
-				if (this.typeDefaults.get(env.getType())!=null){
-					throw new UIException("Default is already set");
-				}
-				this.typeDefaults.put(env.getType(), env);
-			}
+			return registry.environment;
+		}
+
+		@Override
+		public void registerEnvironment(UIEnvironment env, RenderKit renderKit, AttributeContext context) throws UIException {
+			
+			UIEnvironmentRegisty registry = new UIEnvironmentRegisty();
+			
+			registry.attributeContext = context;
+			registry.environment = env;
+			registry.renderkit = renderKit;
+	
+			environmentTypes.put(env.getType(), registry);
+
 		}
 
 
 		@Override
 		public void unRegisterEnvironment(UIEnvironment env) {
-			this.typeDefaults.remove(env.getType());
+			this.envs.remove(env.getName());
 			this.environmentTypes.remove(env.getType());
 		}
 
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Rendering<UIClient> getUIClientRendering(UIEnvironmentType type) {
+			
+			UIEnvironmentRegisty registry = environmentTypes.get(type);
+			
+			if (registry == null){
+				return null;
+			}
+			
+			if (registry.renderedClient == null) {
+				final RenderKit renderKit = registry.renderkit;
+
+				RenderingContext renderedContext = new RenderingContext(registry.attributeContext, renderKit);
+				
+				registry.renderedClient = renderKit.renderComponent(renderedContext, null, registry.environment.getClient());
+				
+			}
 		
+			return registry;
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Rendering<UIClient> getUIClientRendering(UIEnvironmentType type, AttributeContext context) {
+			UIEnvironmentRegisty registry = environmentTypes.get(type);
+			
+			if (registry == null){
+				return null;
+			}
+			
+			if (registry.renderedClient == null) {
+				final RenderKit renderKit = registry.renderkit;
+
+				RenderingContext renderedContext = new RenderingContext(context, renderKit);
+				
+				registry.renderedClient = renderKit.renderComponent(renderedContext, null, registry.environment.getClient());
+				
+			}
+		
+			return registry;
+		}
+
+		
+		static class  UIEnvironmentRegisty implements Rendering<UIClient>{
+			
+			 UIEnvironment environment;
+			 RenderKit renderkit;
+			 AttributeContext attributeContext;
+			 UIClient renderedClient;
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public UIClient getComponent() {
+				return renderedClient;
+			}
+			/**
+			 * {@inheritDoc}
+			 */
+			@Override
+			public RenderKit getRenderKit() {
+				return renderkit;
+			}
+			
+		}
+
+
+
 		
 	}
 }
