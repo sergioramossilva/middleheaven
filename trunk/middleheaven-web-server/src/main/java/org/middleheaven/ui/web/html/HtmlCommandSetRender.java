@@ -1,32 +1,34 @@
 package org.middleheaven.ui.web.html;
 
 import java.io.IOException;
-
-import javax.servlet.jsp.JspWriter;
+import java.io.Writer;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.rendering.RenderingContext;
-import org.middleheaven.ui.web.AbstractHtmlRender;
 
+/**
+ * HTML representation of a simple command set.
+ */
 public class HtmlCommandSetRender extends AbstractHtmlRender {
 
+	private static final long serialVersionUID = -8973921831217802238L;
 
 	@Override
-	public void write(JspWriter writer, RenderingContext context,
+	public void write(HtmlDocument document, RenderingContext context,
 			UIComponent component) throws IOException {
 
-		writer.append("<div class=\"commandSet\" ");
-		writer.append(" id=\"" + component.getGID() + "\"");
-		writer.append(">");
+		Writer writer = document.getBodyWriter();
+		
+		writer.append("<div ");
+		writer.append(" id=\"" + component.getGID() + "\"")
+		.append(" class=\"mh-ui-comand-set\"" )
+		.append(" uiType=\"").append("command-set").append("\"")
+		.append(">");
 		
 		for (UIComponent c : component.getChildrenComponents()){
-			
-			AbstractHtmlRender render = (AbstractHtmlRender)context.getRenderKit().getRender(c.getType(), c.getFamily());
-			
-			render.write(writer, context, c);
-			
+			((HtmlUIComponent) c).writeTo(document, context);
 		}
-		//writer.append(context.getAttribute(ContextScope.RENDERING, "body", String.class));
+		
 		writer.append("</div>");
 	}
 

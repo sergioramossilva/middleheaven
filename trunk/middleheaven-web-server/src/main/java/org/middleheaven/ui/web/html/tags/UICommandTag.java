@@ -3,7 +3,7 @@ package org.middleheaven.ui.web.html.tags;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.middleheaven.global.text.GlobalLabel;
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.components.UICommand;
@@ -55,7 +55,7 @@ public class UICommandTag extends AbstractUIComponentBodyTagSupport{
 		super.prepareRender(attributeContext);
 		
 		model.setEnabled(enabled);
-		model.setText(caption);
+		model.setText(TextLocalizable.valueOf(caption));
 		
 	}
 	
@@ -66,9 +66,9 @@ public class UICommandTag extends AbstractUIComponentBodyTagSupport{
 			this.model.setEnabled(this.enabled);
 			
 			if (this.caption != null && !caption.trim().isEmpty() ){
-				this.model.setText(this.localize(GlobalLabel.of(caption)));
+				this.model.setText(TextLocalizable.valueOf(caption));
 			} else {
-				this.model.setText(this.content);
+				this.model.setText(TextLocalizable.valueOf(this.content));
 			}
 	
 			UICommandSetTag commandSet = this.findAncestorTag(UICommandSetTag.class);

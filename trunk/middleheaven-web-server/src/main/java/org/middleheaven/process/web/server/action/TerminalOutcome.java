@@ -5,7 +5,11 @@ import org.middleheaven.process.web.server.Outcome;
 public class TerminalOutcome extends Outcome {
 
 	public TerminalOutcome() {
-		super(BasicOutcomeStatus.TERMINATE, "", "text/html");
+		this("text/html");
+	}
+	
+	public TerminalOutcome(String contentType) {
+		super(BasicOutcomeStatus.TERMINATE, "", contentType);
 	}
 
 }

@@ -11,11 +11,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.middleheaven.process.ContextScope;
 
-class RequestHeadersContextScopeStrategy extends AbstractEnumerationBasedContextScopeStrategy {
+/**
+ * 
+ */
+class ServletRequestHeadersScopedAttributesResolutionStrategy extends AbstractEnumerationBasedScopedAttributesResolutionStrategy {
 
 	private ServletRequest httpRequest;
 	
-	public RequestHeadersContextScopeStrategy (ServletRequest httpRequest){
+	public ServletRequestHeadersScopedAttributesResolutionStrategy (ServletRequest httpRequest){
 		super(ContextScope.REQUEST_HEADERS);
 		this.httpRequest= httpRequest;
 	}
@@ -24,14 +27,30 @@ class RequestHeadersContextScopeStrategy extends AbstractEnumerationBasedContext
 	 * {@inheritDoc}
 	 */
 	@Override
+	public boolean isReaddable() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWritable() {
+		return false; // is read-only
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected Enumeration<String> getEnumeration() {
 		if (httpRequest instanceof HttpServletRequest){
 			return((HttpServletRequest) httpRequest).getHeaderNames();
 		} 
-		// TODO log different request type
+		// TODO log different request type that HttpServletRequest
 		return Collections.<String>enumeration(Collections.<String>emptySet());
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -40,16 +59,7 @@ class RequestHeadersContextScopeStrategy extends AbstractEnumerationBasedContext
 		if (httpRequest instanceof HttpServletRequest){
 			return((HttpServletRequest) httpRequest).getHeader(name);
 		} 
-		// TODO log different request type
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T> T getAttribute(String name, Class<T> type) {
-		// TODO Auto-generated method stub
+		// TODO log different request type that HttpServletRequest
 		return null;
 	}
 
@@ -58,8 +68,7 @@ class RequestHeadersContextScopeStrategy extends AbstractEnumerationBasedContext
 	 */
 	@Override
 	public void setAttribute(String name, Object value) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Not possible to remove a Header");
 	}
 
 	/**
@@ -67,8 +76,9 @@ class RequestHeadersContextScopeStrategy extends AbstractEnumerationBasedContext
 	 */
 	@Override
 	public void removeAttribute(String name) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("Not possible to remove a Header");
 	}
+
+	
 	
 }

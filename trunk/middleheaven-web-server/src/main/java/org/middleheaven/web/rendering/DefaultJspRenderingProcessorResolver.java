@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.process.web.HttpProcessException;
 import org.middleheaven.process.web.HttpProcessIOException;
+import org.middleheaven.process.web.ViewNotFoundException;
 import org.middleheaven.process.web.server.Outcome;
 import org.middleheaven.process.web.server.action.HttpProcessServletException;
 import org.middleheaven.process.web.server.action.RequestResponseWebContext;
@@ -69,13 +70,17 @@ public class DefaultJspRenderingProcessorResolver extends AbstractJspProcessorRe
 			HttpServletRequest request = context.getServletRequest();
 	
 		
-
+			String realPath = "";
 			try{
-				request.getRequestDispatcher(realPath(outcome.getUrl())).include(request, response);
+				realPath = realPath(outcome.getUrl());
+				request.getRequestDispatcher(realPath).include(request, response);
 				
 			} catch (IOException e){
 				throw new HttpProcessIOException(e);
 			} catch (ServletException e) {
+				if (e.getMessage().contains("File") && e.getMessage().contains("not found")){
+					throw new ViewNotFoundException(realPath);
+				}
 				throw new HttpProcessServletException(e);
 			}
 		}

@@ -15,7 +15,7 @@ public class WebContainerSwitcher {
 	 * @param rootFolder 
 	 * @return
 	 */
-	public WebContainer getWebContainer(ServletContext servletContext){
+	public WebContainerBootstrapEnvironment getWebContainer(ServletContext servletContext){
 		
 	
 		String serverInfo = servletContext.getServerInfo();
@@ -25,10 +25,10 @@ public class WebContainerSwitcher {
 			
 			final String className = "org.middleheaven.process.web.server.AppEngineWebContainer";
 			if (ClassIntrospector.isInClasspath(className)){
-				return ClassIntrospector.of(WebContainer.class).load(className).newInstance(servletContext);
+				return ClassIntrospector.of(WebContainerBootstrapEnvironment.class).load(className).newInstance(servletContext);
 			} else {
 				// TODO warning that the corret container was not found
-				return new StandardSevletContainer(servletContext);
+				return new StandardSevletBootstrapEnvironment(servletContext);
 			}
 			
 			
@@ -43,13 +43,13 @@ public class WebContainerSwitcher {
 				String tomcatHome = System.getProperty("catalina.home");
 				if (tomcatHome==null){
 					// cannot
-					return new StandardSevletContainer(servletContext);
+					return new StandardSevletBootstrapEnvironment(servletContext);
 				} else {
-					return new CatalinaContainer(servletContext);
+					return new CatalinaContainerBootstrapEnvironment(servletContext);
 				}
 			} else {
 				// inside JBoss
-				return  new StandardJBossContainer(servletContext);
+				return  new StandardJBossBootstrapEnvironment(servletContext);
 			}
 		}
 

@@ -8,27 +8,44 @@ import java.util.Iterator;
 
 import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.ContextScopeStrategy;
 import org.middleheaven.process.ObjectAttribute;
+import org.middleheaven.process.ScopedAttributesResolutionStrategy;
 import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.TransformedIterator;
 
 /**
  * 
  */
-abstract class AbstractEnumerationBasedContextScopeStrategy implements ContextScopeStrategy{
+abstract class AbstractEnumerationBasedScopedAttributesResolutionStrategy implements ScopedAttributesResolutionStrategy{
 
 	
 	private ContextScope scope;
 
-	public AbstractEnumerationBasedContextScopeStrategy (ContextScope scope){
+	public AbstractEnumerationBasedScopedAttributesResolutionStrategy (ContextScope scope){
 		this.scope = scope;
 	}
 	
 	protected abstract Enumeration<String> getEnumeration();
 	
 	protected abstract Object getValue(String name);
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isReaddable() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWritable() {
+		return true;
+	}
 	
 	/**
 	 * 
@@ -78,6 +95,14 @@ abstract class AbstractEnumerationBasedContextScopeStrategy implements ContextSc
 		return scope;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public final <T> T getAttribute(String name, Class<T> type) {
+		return TypeCoercing.coerce(this.getValue(name), type);
+	}
+
 	
 
 }

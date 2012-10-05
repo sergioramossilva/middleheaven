@@ -8,7 +8,7 @@ import java.io.File;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.bootstrap.ExecutionContext;
+import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.machine.MachineFiles;
@@ -18,20 +18,20 @@ import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
 /**
  * 
  */
-public abstract class AbstractJBossContainer extends StandardSevletContainer {
+public abstract class AbstractJBossASBootstrapEnvironment extends StandardSevletBootstrapEnvironment {
 
-    public AbstractJBossContainer(ServletContext context){
+    public AbstractJBossASBootstrapEnvironment(ServletContext context){
        super(context);
     }
 
     @Override
-    public String getContainerName() {
+    public String getName() {
         return "jboss";
     }
 
     
     @Override
-    public void configurate(ExecutionContext context) {
+    public void configurate(BootstrapContext context) {
  
         // Set JNDI default parameters
         System.setProperty("java.naming.factory.initial",  "org.jnp.interfaces.NamingContextFactory");

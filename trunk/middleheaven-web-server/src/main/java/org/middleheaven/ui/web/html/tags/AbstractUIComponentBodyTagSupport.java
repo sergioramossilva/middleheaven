@@ -8,10 +8,12 @@ import org.middleheaven.process.ContextScope;
 import org.middleheaven.ui.GenericUIComponent;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
+import org.middleheaven.ui.models.UIInputModel;
 import org.middleheaven.ui.rendering.RenderKit;
 import org.middleheaven.ui.rendering.RenderingContext;
 import org.middleheaven.ui.rendering.UIRender;
-import org.middleheaven.ui.web.HtmlUIComponent;
+import org.middleheaven.ui.web.html.HtmlDocument;
+import org.middleheaven.ui.web.html.HtmlUIComponent;
 import org.middleheaven.ui.web.tags.AbstractBodyTagSupport;
 import org.middleheaven.ui.web.tags.TagContext;
 
@@ -74,13 +76,9 @@ public abstract class AbstractUIComponentBodyTagSupport extends AbstractBodyTagS
 		
 		final TagContext tagContext = new TagContext(pageContext);
 		
-		
 		prepareRender(tagContext);
 		
-		
-		UIClient client = tagContext.getAttribute(ContextScope.REQUEST,UIClient.class.getName(),UIClient.class);
-		
-		final RenderKit renderKit = client.getUIModel().getRenderKit();
+		RenderKit renderKit = tagContext.getAttribute(ContextScope.REQUEST, RenderKit.class.getName(),RenderKit.class);
 		
 		UIRender render = renderKit.getRender(this.getComponentType(), familly);
 
@@ -96,12 +94,19 @@ public abstract class AbstractUIComponentBodyTagSupport extends AbstractBodyTagS
 			
 		}
 		HtmlUIComponent html = (HtmlUIComponent)render.render(context, parent , getUIComponent());
-		html.writeTo(pageContext.getOut(),context);
+		
+		HtmlDocument doc = HtmlDocument.newInstance(tagContext.getContextPath(), tagContext.getCulture());
+		
+		html.writeTo(doc,context);
 	
+		doc.writeToResponse(pageContext.getOut());
 	}
 	
 	protected void prepareRender(TagContext attributeContext) {
-		this.getModel().setEnabled(enabled);
+		if (this.getModel() instanceof UIInputModel){
+			((UIInputModel)this.getModel()).setEnabled(enabled);
+		}
+		
 	}
 
 	public int doEndTag() throws JspException{

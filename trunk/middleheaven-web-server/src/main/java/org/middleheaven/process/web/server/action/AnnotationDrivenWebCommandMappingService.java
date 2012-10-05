@@ -12,7 +12,7 @@ import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.process.web.server.action.annotaions.Interceptor;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.process.web.server.action.annotaions.Interceptable;
 import org.middleheaven.process.web.server.action.annotaions.Presenter;
 import org.middleheaven.util.StringUtils;
@@ -39,13 +39,6 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 	}
 
 
-	public void scan(ClassSet classSet){
-
-		for (Class<?> type : classSet){
-			add(type);
-		}
-	}
-	
 	public PresenterCommandMappingBuilder map(final Class<?> presenter){
 
 		wiringService.addConfiguration(new BindConfiguration(){
@@ -55,9 +48,9 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 				Class c = presenter;
 				binder.bind(presenter).inSharedScope().to(c);
 			}
-			
+
 		});
-		
+
 		return super.map(presenter);
 	}
 
@@ -73,7 +66,7 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 
 		if (introspector.isAnnotadedWith(Presenter.class)){
 
-		
+
 			String rootPath = readPath(introspector);
 
 
@@ -103,34 +96,34 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 
 				if (all.length == 0){
 					PresenterCommandMappingBuilder builder = this.map(type);
-					
+
 					final URLMappingBuilder urlMappingBuilder = builder.to(resolvePath(rootPath, null));
-				
+
 					urlMappingBuilder.withAction(m.getName()).onSuccess().forwardTo(m.getName());
-					
+
 					setupInterceptors(urlMappingBuilder, introspector);
-					
+
 					this.addWebMapping(builder.getMapping());
 				} else {
 
 					for (Path p : all){
 
 						PresenterCommandMappingBuilder builder = this.map(type);
-						
+
 						final URLMappingBuilder urlMappingBuilder = builder.to(resolvePath(rootPath, p.value()));
-						
+
 						String target;
 						if (p.value().contains("*") || p.value().contains("{")){
 							target = m.getName();
 						} else {
 							target = p.value();
 						}
-						
+
 						urlMappingBuilder.withAction(m.getName()).onSuccess().forwardTo(target);
-						
+
 						setupInterceptors(urlMappingBuilder, introspector);
-						
-						
+
+
 						this.addWebMapping(builder.getMapping());
 					}
 				}
@@ -141,7 +134,7 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 
 		}
 	}
-	
+
 	public String resolvePath(String rootPath, String path ){
 		if (path == null){
 			return rootPath;
@@ -160,23 +153,23 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 	 */
 	private void setupInterceptors(URLMappingBuilder urlMappingBuilder,
 			ClassIntrospector<?> introspector) {
-		
+
 		Interceptable interceptable = introspector.getAnnotation(Interceptable.class);
 
 		if (interceptable != null){
 			for (Class<? extends ActionInterceptor> type : interceptable.value()){
-				
+
 				final ActionInterceptor instance = this.wiringService.getInstance(type);
 				if (instance != null){
 					urlMappingBuilder.through(instance);
 				} else {
-					org.middleheaven.logging.Log.onBookFor(this.getClass()).warn("Instance not found for interceptor {0}", type.getName());
+					Logger.onBookFor(this.getClass()).warn("Instance not found for interceptor {0}", type.getName());
 				}
 			}
 		}
 
-	
-		
+
+
 	}
 
 
@@ -194,5 +187,14 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 			return "";
 		}
 
+	}
+
+	/**
+	 * @param presentersSet
+	 */
+	public void addPresenters(ClassSet presentersSet) {
+		for (Class<?> type : presentersSet){
+			add(type);
+		}
 	}
 }

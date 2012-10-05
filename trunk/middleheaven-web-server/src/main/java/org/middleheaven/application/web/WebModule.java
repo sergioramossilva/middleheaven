@@ -1,7 +1,8 @@
 package org.middleheaven.application.web;
 
+import org.middleheaven.application.AbstractListenableModuleActivator;
 import org.middleheaven.application.ApplicationContext;
-import org.middleheaven.application.Module;
+import org.middleheaven.application.ModuleActivator;
 import org.middleheaven.process.web.server.HttpServerService;
 
 /**
@@ -9,7 +10,7 @@ import org.middleheaven.process.web.server.HttpServerService;
  * 
  * A WebModule has access to a {@link HttpServerService}.
  */
-public abstract class WebModule implements Module {
+public abstract class WebModule extends AbstractListenableModuleActivator {
 
 	
 	private HttpServerService serverService;
@@ -30,11 +31,19 @@ public abstract class WebModule implements Module {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final void start(ApplicationContext context) {
+	public final void doStartListenableModule(ApplicationContext context) {
 
 		serverService = context.getServiceContext().getService(HttpServerService.class);
 
 		configurateModule(context);
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public void doStopListenableModule(ApplicationContext context){
+		//no-op
 	}
 	
 	/**

@@ -5,7 +5,7 @@ import java.util.Date;
 
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.global.text.LocalizationService;
+import org.middleheaven.global.LocalizationService;
 import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.process.Attribute;
 import org.middleheaven.process.AttributeContext;
@@ -29,7 +29,7 @@ public class AttributeContextBeanLoader {
 			// set up timestamp formatters and converter
 			LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 
-			TimepointFormatter formatter = i18nService.getTimestampFormatter(context.getCulture());
+			TimepointFormatter formatter = i18nService.getCultureModel(context.getCulture()).getTimestampFormatter();
 
 			formatter.setPattern(TimepointFormatter.Format.DATE_ONLY);
 
@@ -92,7 +92,7 @@ public class AttributeContextBeanLoader {
 					object =  new ContextAssembler(
 									ServiceRegistry.getService(WiringService.class), 
 									attributes,
-									ContextScope.PARAMETERS,
+									ContextScope.REQUEST_PARAMETERS,
 									name
 							).assemble(type);
 					

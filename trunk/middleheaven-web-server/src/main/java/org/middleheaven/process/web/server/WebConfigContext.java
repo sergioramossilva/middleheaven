@@ -1,14 +1,11 @@
 package org.middleheaven.process.web.server;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import javax.servlet.ServletContext;
 
 import org.middleheaven.global.Culture;
 import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.ContextScopeStrategy;
+import org.middleheaven.process.ScopedAttributesResolutionStrategy;
 import org.middleheaven.util.coersion.TypeCoercing;
 
 public class WebConfigContext implements AttributeContext {
@@ -85,12 +82,12 @@ public class WebConfigContext implements AttributeContext {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ContextScopeStrategy getScopeAttributeContext(ContextScope scope) {
+	public ScopedAttributesResolutionStrategy getScopeAttributeContext(ContextScope scope) {
 		switch (scope){
 		case CONFIGURATION:
-			return new InitConfigurationContextScopeStrategy(ctx);
+			return new ServletInitConfigurationScopedAttributesResolutionStrategy(ctx);
 		case APPLICATION:
-			return new ApplicationContextScopeStrategy(ctx);
+			return new ServletApplicationScopedAttributesResolutionStrategy(ctx);
 		default:
 			throw new IllegalArgumentException("Unavailable scope " + scope);
 		}

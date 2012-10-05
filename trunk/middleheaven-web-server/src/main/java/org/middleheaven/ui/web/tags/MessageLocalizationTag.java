@@ -1,5 +1,6 @@
 package org.middleheaven.ui.web.tags;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -7,9 +8,14 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 
-import org.middleheaven.global.text.GlobalLabel;
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.process.ContextScope;
 
+/**
+ * A message print tag.
+ * The message is localized before printing.
+ * 
+ */
 public class MessageLocalizationTag extends AbstractTagSupport {
 
 	private List<Object> params = new LinkedList<Object>();
@@ -46,15 +52,14 @@ public class MessageLocalizationTag extends AbstractTagSupport {
 	}
 
 	public int doEndTag() throws JspException {
-		Object[] paramsObj = new Object[params.size()];
-
+		Serializable[] paramsObj = new Serializable[params.size()];
 
 		paramsObj = params.toArray(paramsObj);			
 
 		if(scope==null) {
-			write(localize(new GlobalLabel( key,paramsObj), null));
+			write(localize(TextLocalizable.valueOf(key,paramsObj), null));
 		} else {
-			write(localize(new GlobalLabel( key,paramsObj),ContextScope.valueOf(scope)));
+			write(localize(TextLocalizable.valueOf(key,paramsObj),ContextScope.valueOf(scope)));
 		}
 		
 		this.params.clear();

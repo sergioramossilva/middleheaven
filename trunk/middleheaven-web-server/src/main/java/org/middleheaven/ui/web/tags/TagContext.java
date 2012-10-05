@@ -3,7 +3,6 @@ package org.middleheaven.ui.web.tags;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -12,16 +11,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 
-import org.middleheaven.aas.Subject;
-import org.middleheaven.global.Culture;
-import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.web.HttpChannel;
-import org.middleheaven.process.web.HttpEntry;
-import org.middleheaven.process.web.HttpMethod;
-import org.middleheaven.process.web.HttpUrl;
-import org.middleheaven.process.web.HttpUserAgent;
-import org.middleheaven.process.web.server.HttpServerResponse;
 import org.middleheaven.process.web.server.ServletWebContext;
 import org.middleheaven.process.web.server.global.HttpCultureResolver;
 
@@ -63,12 +53,12 @@ public class TagContext extends ServletWebContext {
 	}
 	
 	@Override
-	protected ServletRequest getServletRequest() {
+	public ServletRequest getServletRequest() {
 		return pageContex.getRequest();
 	}
 
 	@Override
-	protected ServletResponse getServletResponse() {
+	public ServletResponse getServletResponse() {
 		return pageContex.getResponse();
 	}
 	

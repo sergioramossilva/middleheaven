@@ -5,7 +5,7 @@ import javax.servlet.jsp.JspException;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIReadState;
-import org.middleheaven.ui.components.UIFieldInput;
+import org.middleheaven.ui.components.UIField;
 import org.middleheaven.ui.models.UIFieldInputModel;
 import org.middleheaven.ui.web.HtmlFieldInputModel;
 import org.middleheaven.ui.web.tags.TagContext;
@@ -46,14 +46,14 @@ public class UIFieldInputTag extends AbstractUIComponentBodyTagSupport{
 
 	@Override
 	public Class<? extends UIComponent> getComponentType() {
-		return UIFieldInput.class;
+		return UIField.class;
 	}
 
 	public UIComponent getUIComponent() {
 		
 		this.setFamilly("field:" + type);
 		
-		UIFieldInput uic = (UIFieldInput)super.getUIComponent();
+		UIField uic = (UIField)super.getUIComponent();
 		
 		uic.setReadState(UIReadState.computeFrom(this.getVisible(), this.getEnabled(), readOnly));
 		

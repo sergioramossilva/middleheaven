@@ -17,10 +17,10 @@ import org.middleheaven.core.reflection.MethodFilters;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.ContextScopeStrategy;
+import org.middleheaven.process.ScopedAttributesResolutionStrategy;
 import org.middleheaven.process.web.HttpMethod;
 import org.middleheaven.process.web.HttpRelativeUrl;
 import org.middleheaven.process.web.HttpStatusCode;
@@ -31,7 +31,7 @@ import org.middleheaven.util.Hash;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Walker;
-import org.middleheaven.validation.ValidationException;
+import org.middleheaven.util.validation.ValidationException;
 import org.middleheaven.web.annotations.Delete;
 import org.middleheaven.web.annotations.Get;
 import org.middleheaven.web.annotations.In;
@@ -128,8 +128,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 		});
 
-		// singleton per mapper
-		controllerObject = ServiceRegistry.getService(WiringService.class).getInstance(presenterClass);
+
 	}
 
 	public void addPathMatcher(String regex){
@@ -181,7 +180,11 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 	@Override
 	public Outcome execute(HttpServerContext context) {
-
+		
+		if (controllerObject == null){
+			controllerObject = ServiceRegistry.getService(WiringService.class).getInstance(controllerClass);
+		}
+		
 		ListInterceptorChain chain = new ListInterceptorChain(this.interceptors){
 
 			public Outcome doFinal(HttpServerContext context){
@@ -214,7 +217,7 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 			if (actionMethod==null){
 				// try the name match if there are any parameters
-				final ContextScopeStrategy parameters = context.getAttributes().getScopeAttributeContext(ContextScope.PARAMETERS);
+				final ScopedAttributesResolutionStrategy parameters = context.getAttributes().getScopeAttributeContext(ContextScope.REQUEST_PARAMETERS);
 				if (!parameters.isEmpty()){
 					for ( Map.Entry<String,Method> entry : actions.entrySet()){
 						String act = parameters.getAttribute(entry.getKey(), String.class);
@@ -248,12 +251,14 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 
 			try{
 				Object result = Introspector.of(actionMethod).invoke(actionMethod.getReturnType(), controllerObject, args);
-
+				
 				if (result instanceof Outcome){
-					if (result instanceof URLOutcome ){
+					if ( ((Outcome) result).isTerminal()) {
+						return (Outcome)result;
+					} else if (result instanceof URLOutcome ){
 						return (Outcome)result;
 					} else {
-						Log.onBookFor(this.getClass()).warn("Illegal outcome class. Use URLOutcome.");
+						Logger.onBookFor(this.getClass()).warn("Illegal outcome class. Use URLOutcome.");
 						outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE, context);
 					}
 				}else if (result instanceof String) {
@@ -274,14 +279,14 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 			attributes.setAttribute(ContextScope.REQUEST, "validationResult", e.getResult());
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.INVALID,context );
 		} catch (ActionHandlerNotFoundException e){
-			Log.onBookFor(this.getClass()).fatal(e,"Action not found");
+			Logger.onBookFor(this.getClass()).fatal(e,"Action not found");
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR, context);
 		}catch (Exception e){
-			Log.onBookFor(this.getClass()).error(e,"Exception found handling request");
+			Logger.onBookFor(this.getClass()).error(e,"Exception found handling request");
 			attributes.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.FAILURE, context);
 		} catch (Throwable e){
-			Log.onBookFor(this.getClass()).fatal(e,"Exception found handling request");
+			Logger.onBookFor(this.getClass()).fatal(e,"Exception found handling request");
 			attributes.setAttribute(ContextScope.REQUEST, "exception", e);
 			outcome =  resolveOutcome(action,BasicOutcomeStatus.ERROR, context);
 			if (outcome==null){
