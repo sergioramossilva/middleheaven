@@ -74,11 +74,11 @@ public abstract class Numeral<T extends Numeral<T>> implements Field<T> , Quanti
 	*/
 
 	public final boolean equals(Object other){
-		return other instanceof Numeral && equals((Numeral<?>)other);
+		return other instanceof Numeral && equalsOther((Numeral<?>)other);
 	}
 	
 
-	protected boolean equals(Numeral<?> other){
+	protected boolean equalsOther(Numeral<?> other){
 		if (this.getClass().isInstance(other)){
 			@SuppressWarnings("unchecked") T n = (T) this.getClass().cast(other);
 			return this.equalsSame(n);

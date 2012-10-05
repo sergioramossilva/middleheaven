@@ -2,9 +2,14 @@ package org.middleheaven.util.identity;
 
 import java.io.Serializable;
 
-
+/**
+ * {@link Identity} implemented with a {@link String}
+ */
 public final class StringIdentity extends Identity implements Serializable {
 
+
+	private static final long serialVersionUID = -7209948090375105816L;
+	
 	private final String value;
 	
 	public static StringIdentity valueOf(String value){
@@ -27,7 +32,7 @@ public final class StringIdentity extends Identity implements Serializable {
 
 	@Override
 	public String toString() {
-		return value.toString();
+		return value;
 	}
 
 

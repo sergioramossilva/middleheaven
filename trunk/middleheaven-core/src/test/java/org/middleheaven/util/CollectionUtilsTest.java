@@ -1,5 +1,6 @@
 package org.middleheaven.util;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
+import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Range;
 
@@ -105,20 +107,5 @@ public class CollectionUtilsTest {
 	
 	}
 	
-	@Test
-	public void range(){
-		
-		Range<Integer> range = Range.over(1, 6);
-		
-		assertEquals(6, range.size());
-		
-		Set<Integer> selected = new HashSet<Integer>();
-		for(int i=0;selected.size() != range.size() && i < 100000;i++){
-			selected.add(range.random());
-		}
-		
-		assertEquals(6,selected.size());
-		
-	}
-	
+
 }

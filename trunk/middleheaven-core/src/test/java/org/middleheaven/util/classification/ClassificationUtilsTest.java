@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.EnhancedList;
 import org.middleheaven.util.collections.Walker;
 
 public class ClassificationUtilsTest {
@@ -30,7 +31,7 @@ public class ClassificationUtilsTest {
 		
 		assertEquals(4,c.size());
 		
-		Integer r = c.find(new Classifier<Boolean,Integer>(){
+		Integer r = c.find(new Predicate<Integer>(){
 
 			@Override
 			public Boolean classify(Integer obj) {
@@ -41,7 +42,7 @@ public class ClassificationUtilsTest {
 		
 		assertEquals(Integer.valueOf(4),r);
 		
-		Collection<Integer> ra = c.findAll(new Classifier<Boolean,Integer>(){
+		Collection<Integer> ra = c.findAll(new Predicate<Integer>(){
 
 			@Override
 			public Boolean classify(Integer obj) {
@@ -53,7 +54,7 @@ public class ClassificationUtilsTest {
 		assertEquals(2,ra.size());
 		
 		final List<Integer> rest = new ArrayList<Integer>();
-		c.each(new Walker<Integer>(){
+		c.forEach(new Walker<Integer>(){
 			public void doWith(Integer o){
 				rest.add(o);
 			}
@@ -61,8 +62,33 @@ public class ClassificationUtilsTest {
 		
 		assertEquals(4,rest.size());
 		
-		assertTrue(c.sort().equals(Arrays.asList(1,2,3,4)));
+		assertTrue(CollectionUtils.equalContents(Arrays.asList(1,2,3,4), c.sort()));
+	}
 	
+	@Test
+	public void testWalterFilter(){
+		EnhancedList<Integer> all = CollectionUtils.enhance(Arrays.asList(3,4,1,2,-2, 5,6));
+		List<Integer> proof = Arrays.asList(16,4,4,36);
+		
+		
+		List<Integer> result = all.filter(new Predicate<Integer>(){
+
+			@Override
+			public Boolean classify(Integer i) {
+				return i.intValue() % 2 == 0; // only the even ones
+			}
+			
+		}).map(new Classifier<Integer, Integer>(){
+
+			@Override
+			public Integer classify(Integer i) {
+				return i.intValue() * i.intValue(); // square
+			}
+			
+		}).into(new ArrayList<Integer>());
+		
+		assertTrue(CollectionUtils.equalContents(proof, result));
+		
 	}
 	
 }

@@ -9,19 +9,34 @@ package org.middleheaven.core.dependency;
 public class DependencyGraphNode {
 
 	
-	private String name;
+	private Object object;
 	private DependencyInicilizer ini;
 
-	public DependencyGraphNode (String name, DependencyInicilizer ini){
-		this.name = name;
+	public DependencyGraphNode (Object object, DependencyInicilizer ini){
+		this.object = object;
 		this.ini = ini;
 	}
 	
 	public String toString(){
-		return name;
+		return object.toString();
 	}
 	
 	public void inicialize(){
 		ini.inicialize(this);
+	}
+	
+	public boolean equals(Object other) {
+		return (other instanceof DependencyGraphNode) && ((DependencyGraphNode) other).object.equals(this.object);
+	}
+	
+	public int hashCode(){
+		return object.hashCode();
+	}
+
+	/**
+	 * 
+	 */
+	public Object getObject() {
+		return object;
 	}
 }

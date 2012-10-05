@@ -4,8 +4,7 @@ public class SomeObject implements SomeInterface {
 
 	@Override
 	public void someMethod() {
-		// TODO implement SomeObject.someMethod
-		
+		//no-op
 	}
 
 }

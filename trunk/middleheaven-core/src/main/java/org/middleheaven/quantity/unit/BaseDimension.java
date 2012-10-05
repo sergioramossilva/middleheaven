@@ -57,14 +57,22 @@ class BaseDimension<E extends Measurable> extends Dimension<E> implements Compar
 		return CompositeDimention.over(this, other);
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public boolean equals (Object other){
-		return other instanceof BaseDimension && equals((BaseDimension<?>)other);
+		return other instanceof BaseDimension && equalsOther((BaseDimension<?>)other);
 	}
 	
-	public boolean equals (BaseDimension<?> other){
+	private boolean equalsOther (BaseDimension<?> other){
 		return other.exponent == this.exponent && this.axis == other.axis;
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public int hashCode(){
 		return this.exponent ^ (int)this.axis;
 	}

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.middleheaven.global.text.GlobalLabel;
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.global.text.LocalizationDomainBundle;
 
 /**
@@ -20,7 +20,13 @@ public class  CultureModelLocalizationService implements LocalizationService{
 	LocalizationDomainBundle masterBundle;
 
 	private Collection<CultureModelFactory> factories = new LinkedList<CultureModelFactory>();
+	
 	private Set<Culture> supportedCultures = new HashSet<Culture>();
+	
+
+	public CultureModelLocalizationService (){
+		
+	}
 	
 	public CultureModel getCultureModel(Culture culture) {
 
@@ -29,8 +35,8 @@ public class  CultureModelLocalizationService implements LocalizationService{
 				return factory.resolveModelFor(culture);
 			}
 		}
-		// TODO create NullCultureModel so null is not necessary
-		return null;
+
+		return new StandardCultureModel(culture);
 	}
 
 	public void registerCultureModelFactory(CultureModelFactory cultureModelFactory) {
@@ -40,13 +46,13 @@ public class  CultureModelLocalizationService implements LocalizationService{
 	}
 
 
-	public String getMessage(GlobalLabel label, boolean asMnemonic) {
+	public String getMessage(TextLocalizable label, boolean asMnemonic) {
 		return getMessage(label, this.getExecutionEnvironmentCulture()); 
 	}
 
 	@Override
-	public String getMessage(GlobalLabel localResource, Culture culture) {
-		return  masterBundle.localizeLabel(localResource, culture);
+	public String getMessage(TextLocalizable localResource, Culture culture) {
+		return  localResource.isLocalized() ? localResource.toString() :  masterBundle.localizeLabel(localResource, culture);
 	}
 
 	@Override

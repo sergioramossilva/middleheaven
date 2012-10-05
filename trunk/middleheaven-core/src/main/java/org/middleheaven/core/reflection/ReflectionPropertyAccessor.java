@@ -229,7 +229,7 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 	
 	public void  setValue(Object target, Object value ){
 		if (this.readOnly){
-			throw new ReadOnlyPropertyException();
+			throw new ReadOnlyPropertyException(this.name);
 		}
 		try {
 			
@@ -270,6 +270,20 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 
 	}
 
-	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isReadable() {
+		return this.assessor != null || this.field != null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWritable() {
+		return this.modifier != null || this.field != null;
+	}
 }
 

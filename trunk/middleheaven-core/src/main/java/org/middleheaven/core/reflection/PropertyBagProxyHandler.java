@@ -1,11 +1,11 @@
 package org.middleheaven.core.reflection;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class PropertyBagProxyHandler  implements ProxyHandler {
 	
-	Map<String , Object> properties = new TreeMap<String,Object>();
+	Map<String , Object> properties = new HashMap<String,Object>();
 	
 	@Override
 	public Object invoke(Object self, Object[] args, MethodDelegator delegator)throws Throwable {

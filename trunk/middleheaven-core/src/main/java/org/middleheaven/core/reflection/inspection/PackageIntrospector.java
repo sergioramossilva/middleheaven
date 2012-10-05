@@ -164,10 +164,15 @@ public class PackageIntrospector extends Introspector {
             if (jarEntry == null) {
                 break;
             }
-            if (jarEntry.getName().startsWith(packageName)
-                    && jarEntry.getName().endsWith(".class")) {
+            
+           
+            final String name = jarEntry.getName();
+            
+   
+			if (name.startsWith(packageName)
+                    && name.endsWith(".class") && !isFromSubPackage(name, packageName)) {
 
-                String className = jarEntry.getName().replaceAll("/", "\\.");
+                String className = name.replaceAll("/", "\\.");
                 className = className.substring(0, className.length() - ".class".length());
 
                 try {
@@ -181,6 +186,16 @@ public class PackageIntrospector extends Introspector {
 
 
     }
+
+	/**
+	 * @param name
+	 * @param packageName
+	 * @return
+	 */
+	private static boolean isFromSubPackage(String name, String packageName) {
+		return Character.isLowerCase(name.replaceAll(packageName, "").charAt(1));
+	}
+
 
 	/**
 	 * @return

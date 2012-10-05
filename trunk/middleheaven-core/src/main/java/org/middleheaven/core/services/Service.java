@@ -5,8 +5,9 @@ package org.middleheaven.core.services;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
-import org.middleheaven.util.collections.ParamsMap;
+import org.middleheaven.util.collections.CollectionUtils;
 
 /**
  * 
@@ -14,17 +15,19 @@ import org.middleheaven.util.collections.ParamsMap;
 public final class Service {
 
 
-	private final ParamsMap params ;
+	private final Map<String, Object> params ;
 	private final Class<?> contractInterface;
 	private final ServiceActivator activator;
 
 	private boolean activated = false;
-	private Collection<ServiceDependency> dependencies = new ArrayList<ServiceDependency>(3);
+	private Collection<ServiceSpecification> dependencies = new ArrayList<ServiceSpecification>(3);
 
-	protected Service(Class<?> contractInterface, ServiceActivator activator, ParamsMap params){
+	protected Service(Class<?> contractInterface, ServiceActivator activator, Map<String, Object> params){
 		this.contractInterface = contractInterface;
 		this.params = params;
 		this.activator = activator;
+		
+		activator.collectRequiredServicesSpecifications(dependencies);
 	}
 
 	public String getName(){
@@ -35,15 +38,15 @@ public final class Service {
 		return contractInterface;
 	}
 
-	public ParamsMap getParams(){
+	public Map<String, Object> getParams(){
 		return params;
 	}
 
-	public Collection<ServiceDependency> getDependencies(){
+	public Collection<ServiceSpecification> getDependencies(){
 		return dependencies;
 	}
 	
-	public void addDependency(ServiceDependency dependency){
+	public void addDependency(ServiceSpecification dependency){
 		this.dependencies.add(dependency);
 	}
 	
@@ -86,6 +89,13 @@ public final class Service {
 
 
 	private boolean equalsService(Service other) {
-		return this.contractInterface.getName().equals(other.contractInterface) && this.params.containsSame(other.params);
+		return this.contractInterface.getName().equals(other.contractInterface) && CollectionUtils.equalContents(this.params, other.params);
+	}
+
+	/**
+	 * @return
+	 */
+	public ServiceSpecification getServiceSpecification() {
+		return new ServiceSpecification(this.contractInterface, this.params);
 	}
 }

@@ -31,7 +31,15 @@ class AbstractTimePoint implements TimePoint, Serializable {
 		if (other==null){
 			throw new ClassCastException("Null is not an instance of " + this.getClass());
 		}
-		return (int)(this.milliseconds - other.getMilliseconds());
+		
+		if (this.milliseconds > other.getMilliseconds()){
+			return 1;
+		} else if (this.milliseconds < other.getMilliseconds()) {
+			return -1;
+		} else {
+			return 0;
+		}
+
 	}
 
 }

@@ -79,6 +79,10 @@ public class EnhancedMapAdapter<K,V> extends AbstractEnumerableAdapter<Map.Entry
 		return original.entrySet().iterator();
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean containsSame(Map<K, V> other) {
 		return CollectionUtils.equalContents(this, other);

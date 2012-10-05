@@ -2,6 +2,9 @@ package org.middleheaven.core.reflection;
 
 import java.lang.reflect.Modifier;
 
+/**
+ * Enumeration for member access
+ */
 public enum MemberAccess {
 
 	PUBLIC,
@@ -9,7 +12,11 @@ public enum MemberAccess {
 	PRIVATE,
 	PACKAGE;
 	
-	
+	/**
+	 * 
+	 * @param modifier the integer flag from {@link Modifier}.
+	 * @return
+	 */
 	public boolean is(int modifier){
 		switch (this){
 		case PRIVATE:

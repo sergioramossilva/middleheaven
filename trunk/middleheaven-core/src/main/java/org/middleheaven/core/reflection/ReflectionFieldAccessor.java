@@ -87,4 +87,20 @@ public  class ReflectionFieldAccessor implements FieldAcessor{
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		return Introspector.of(field).getAnnotation(annotationClass);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isReadable() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWritable() {
+		return true;
+	}
 }

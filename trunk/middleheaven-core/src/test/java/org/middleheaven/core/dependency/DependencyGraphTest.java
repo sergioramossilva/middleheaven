@@ -65,11 +65,12 @@ public class DependencyGraphTest {
 		assertEquals(D,result.removeFirst());
 		assertEquals(S3,result.removeFirst());
 		assertEquals(E,result.removeFirst());
-		assertEquals(S1,result.removeFirst());
+	
 		assertEquals(S4,result.removeFirst());
-		assertEquals(B,result.removeFirst());
-		assertEquals(C,result.removeFirst());
+		assertEquals(S1,result.removeFirst());
 		
+		assertEquals(C,result.removeFirst());
+		assertEquals(B,result.removeFirst());
 
 	
 	

@@ -158,10 +158,10 @@ public final class Version implements Comparable<Version>, Serializable{
 	}
 	
 	public boolean equals(Object other){
-		return other instanceof Version && equals((Version)other);
+		return other instanceof Version && equalsOther((Version)other);
 	}
 	
-	public boolean equals(Version other){
+	private boolean equalsOther(Version other){
 		return this.major == other.major && 
 		this.minor == other.minor && 
 		this.revision == other.revision &&

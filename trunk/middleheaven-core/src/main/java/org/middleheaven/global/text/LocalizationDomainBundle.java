@@ -15,7 +15,7 @@ public abstract class LocalizationDomainBundle {
 
     private LocalizationDomainBundle child= null;
     
-    public  String localizeLabel(GlobalLabel label, Culture culture) throws MissingResourceException{
+    public  String localizeLabel(TextLocalizable label, Culture culture) throws MissingResourceException{
         
         String message =null;
         if (child!=null){
@@ -34,5 +34,5 @@ public abstract class LocalizationDomainBundle {
         this.child = child;
     }
     
-    protected abstract  String findLabel(GlobalLabel label, Culture culture) throws MissingResourceException;
+    protected abstract  String findLabel(TextLocalizable label, Culture culture) throws MissingResourceException;
 }

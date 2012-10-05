@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.util.identity.Identity;
@@ -30,6 +31,8 @@ public class TypeCoercing {
 		addCoersor(CharSequence.class, Number.class , new CharSequenceNumberConverter());
 		addCoersor(CharSequence.class, Boolean.class , new CharSequenceBooleanCoersor());
 		addCoersor(String.class, Identity.class , new StringIdentityCoersor());
+		addCoersor(String.class, TextLocalizable.class , new StringTextLocalizableCoersor());
+		
 		// numbers
 		addCoersor(Integer.class, Identity.class ,  NumberIdentityCoersor.newInstance(Integer.class));
 		addCoersor(Long.class, Identity.class ,  NumberIdentityCoersor.newInstance(Long.class));
@@ -51,6 +54,7 @@ public class TypeCoercing {
 				)
 		);
 		addCoersor(CalendarDateTime.class ,java.sql.Time.class,  CalendarDateTypeCoersor.getInstance(CalendarDateTime.class,java.sql.Time.class));
+		addCoersor(CalendarDateTime.class ,CalendarDate.class,  new CalendarDateTimeTypeCoersor());
 		
 		addCoersor(String.class ,Enum.class,  new EnumNameTypeCoersor());
 		

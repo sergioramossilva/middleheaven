@@ -2,7 +2,9 @@ package org.middleheaven.util.criteria;
 
 import org.middleheaven.util.QualifiedName;
 
-
+/**
+ * 
+ */
 public class FieldValueCriterion implements FieldCriterion {
 	
 	private static final long serialVersionUID = 7204559851317644625L;
@@ -12,7 +14,13 @@ public class FieldValueCriterion implements FieldCriterion {
 	private FieldValueHolder valueHolder;
 	
 
-	
+	/**
+	 * 
+	 * Constructor.
+	 * @param fieldName
+	 * @param operator
+	 * @param valueHolder
+	 */
 	public FieldValueCriterion(QualifiedName fieldName,
 			CriterionOperator operator, FieldValueHolder valueHolder) {
 
@@ -48,10 +56,10 @@ public class FieldValueCriterion implements FieldCriterion {
 	
 	public boolean equals(Object other) {
 		return other instanceof FieldValueCriterion
-				&& equals((FieldValueCriterion) other);
+				&& equalsOther((FieldValueCriterion) other);
 	}
 
-	public boolean equals(FieldValueCriterion other) {
+	private boolean equalsOther(FieldValueCriterion other) {
 		return this.fieldName.equals(other.fieldName) && 
 				this.operator.equals(other.operator) && 
 				this.valueHolder.equalsValue(other.valueHolder)	;

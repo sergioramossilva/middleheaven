@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.middleheaven.global.CountryIsoCode;
 import org.middleheaven.global.Culture;
+import org.middleheaven.global.IsoCode;
 import org.middleheaven.global.Language;
 import org.middleheaven.global.address.AddressModel;
 import org.middleheaven.global.address.DefaultAddressModel;
@@ -18,11 +20,11 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 	private String name;
 	private List<Language> languages = Collections.emptyList();
 
-	protected Country(String isoCode){
-		super(null,isoCode,isoCode);
+	protected Country(IsoCode isoCode){
+		super(null,isoCode,isoCode.toString());
 	}
 	
-	protected Country(String isoCode, String name){
+	protected Country(CountryIsoCode isoCode, String name){
 		super(null,isoCode,name);
 	}
 	
@@ -46,7 +48,7 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 	}
 	
 	public Currency getCurrentCurrency (){
-		return new ISOCurrency(java.util.Currency.getInstance(new Locale(getLanguage().toString(),this.ISOCode())));
+		return new ISOCurrency(java.util.Currency.getInstance(new Locale(getLanguage().toString(),this.ISOCode().toString())));
 	}
 
 	public Language getLanguage(){
@@ -68,7 +70,7 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 	}
 	
 	public Culture getCulture(){
-		return Culture.valueOf(getLanguage().toString(),this.ISOCode());
+		return Culture.valueOf(getLanguage().toString(),this.ISOCode().toString());
 	}
 
 	public final AddressModel getAddressModel(){
@@ -91,7 +93,7 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 
 	@Override
 	public final String getName() {
-		return this.ISOCode();
+		return  this.name;
 	}
 
 	@Override
@@ -105,10 +107,10 @@ public abstract class Country extends AbstractAtlasLocale implements Serializabl
 	}
 
 	public boolean equals(Object other){
-		return other instanceof Country && equals((Country)other);
+		return other instanceof Country && equalsOther((Country)other);
 	}
 
-	public boolean equals(Country other){
+	public boolean equalsOther(Country other){
 		return this.ISOCode().equals(other.ISOCode()); 
 	}
 

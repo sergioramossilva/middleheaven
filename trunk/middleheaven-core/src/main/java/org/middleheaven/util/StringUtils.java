@@ -288,26 +288,132 @@ public class StringUtils {
 	}
 	
 	/**
-	 * Compiles a simplified pattern string into a Pattern.
-	 * A simplified pattern only uses '*' for matching "all" and "one" 
+	 * Compiles a glob pattern string into a regex {@link Pattern}.
+	 * A glob pattern only uses '*' for matching "all" and "one" 
 	 * respectively
 	 * @param simplePattern
 	 * @return
 	 */
-	public static Pattern compile(String simplePattern){
+	public static Pattern compile(String glob){
 
-		if (simplePattern.startsWith("*") && simplePattern.endsWith("*")){
-			return Pattern.compile(simplePattern.replaceAll("\\*", ""));
-		} else if (simplePattern.startsWith("*")){
-			// end with text
-			return Pattern.compile(simplePattern.replaceAll("\\*", "") + "$");
-		} else if (simplePattern.endsWith("*")){
-			// starts with
-			return Pattern.compile("^" + simplePattern.replaceAll("\\*", ""));
-		} else {
-			// is exactly
-			return Pattern.compile("^" + simplePattern + "$");
-		}
+	    return Pattern.compile(
+	            "^\\Q" 
+	            + glob.replace("*", "\\E.*\\Q")
+	                  .replace("?", "\\E.\\Q") 
+	            + "\\E$");
+
+	    
+//		String pattern = glob.trim();
+//	    int strLen = pattern.length();
+//	    StringBuilder sb = new StringBuilder(strLen);
+//	    // Remove beginning and ending * globs because they're useless
+//	    if (pattern.startsWith("*"))
+//	    {
+//	        pattern = pattern.substring(1);
+//	        strLen--;
+//	    }
+//	    if (pattern.endsWith("*"))
+//	    {
+//	        pattern = pattern.substring(0, strLen-1);
+//	        strLen--;
+//	    }
+//	    boolean escaping = false;
+//	    int inCurlies = 0;
+//	    for (char currentChar : pattern.toCharArray())
+//	    {
+//	        switch (currentChar)
+//	        {
+//	        case '*':
+//	            if (escaping)
+//	                sb.append("\\*");
+//	            else
+//	                sb.append(".*");
+//	            escaping = false;
+//	            break;
+//	        case '?':
+//	            if (escaping)
+//	                sb.append("\\?");
+//	            else
+//	                sb.append('.');
+//	            escaping = false;
+//	            break;
+//	        case '.':
+//	        case '(':
+//	        case ')':
+//	        case '+':
+//	        case '|':
+//	        case '^':
+//	        case '$':
+//	        case '@':
+//	        case '%':
+//	            sb.append('\\');
+//	            sb.append(currentChar);
+//	            escaping = false;
+//	            break;
+//	        case '\\':
+//	            if (escaping)
+//	            {
+//	                sb.append("\\\\");
+//	                escaping = false;
+//	            }
+//	            else
+//	                escaping = true;
+//	            break;
+//	        case '{':
+//	            if (escaping)
+//	            {
+//	                sb.append("\\{");
+//	            }
+//	            else
+//	            {
+//	                sb.append('(');
+//	                inCurlies++;
+//	            }
+//	            escaping = false;
+//	            break;
+//	        case '}':
+//	            if (inCurlies > 0 && !escaping)
+//	            {
+//	                sb.append(')');
+//	                inCurlies--;
+//	            }
+//	            else if (escaping)
+//	                sb.append("\\}");
+//	            else
+//	                sb.append("}");
+//	            escaping = false;
+//	            break;
+//	        case ',':
+//	            if (inCurlies > 0 && !escaping)
+//	            {
+//	                sb.append('|');
+//	            }
+//	            else if (escaping)
+//	                sb.append("\\,");
+//	            else
+//	                sb.append(",");
+//	            break;
+//	        default:
+//	            escaping = false;
+//	            sb.append(currentChar);
+//	        }
+//	    }
+//	    return Pattern.compile(sb.toString());
+
+
+//		
+//		if (simplePattern.startsWith("*") && simplePattern.endsWith("*")){
+//			return Pattern.compile(simplePattern.replaceAll("\\*", ""));
+//		} else if (simplePattern.startsWith("*")){
+//			// end with text
+//			return Pattern.compile(simplePattern.replaceAll("\\*", "") + "$");
+//		} else if (simplePattern.endsWith("*")){
+//			// starts with
+//			return Pattern.compile("^" + simplePattern.replaceAll("\\*", ""));
+//		} else {
+//			// is exactly
+//			return Pattern.compile("^" + simplePattern + "$");
+//		}
 	
 	}
 	

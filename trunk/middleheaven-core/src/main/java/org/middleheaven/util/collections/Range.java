@@ -1,19 +1,22 @@
 package org.middleheaven.util.collections;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import org.middleheaven.quantity.math.structure.Ring;
+import org.middleheaven.util.CharacterIncrementor;
 import org.middleheaven.util.Hash;
-import org.middleheaven.util.Incrementable;
-import org.middleheaven.util.IncrementableIncrementor;
 import org.middleheaven.util.Incrementor;
+import org.middleheaven.util.NaturalIncrementable;
 import org.middleheaven.util.NumberIncrementor;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.NegationClassifier;
+import org.middleheaven.util.classification.NegatedPredicate;
+import org.middleheaven.util.classification.Predicate;
 
 
 /**
@@ -23,17 +26,27 @@ import org.middleheaven.util.classification.NegationClassifier;
  * 
  * @param <T> the type of the value in the range.
  */
-public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnumerable<T> {
+public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
 
+	private final Comparator<? super T> comparator;
+	private final Incrementor<? super T> incrementor;
+	private final T start;
+	private final T end;
+	private boolean isReversed = false;
+	private boolean excludeStart = false;
+	private boolean excludeEnd = false;
 
-	private Incrementor<? super T> incrementor;
-
+	
 	/**
 	 * An empty {@link Range}.
 	 * @return An empty {@link Range}
 	 */
 	public static <V> Range<V> emptyRange(){
-		return new Range<V>(new ComparableComparator<V>(), EmptyIncrementor.emptyIncrementor());
+		Range<V> empty = new Range<V>(new ComparableComparator<V>(), EmptyIncrementor.emptyIncrementor());
+		empty.excludeEnd = true;
+		empty.excludeStart = true;
+		
+		return empty;
 	}
 
 	/**
@@ -77,6 +90,25 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	}
 	
 	/**
+	 * A {@link Range} from <code>start</code> to <code>end</code>
+	 * 
+	 * @param start the lower limit of the range
+	 * @param end the upper limit of the range
+	 * @return A {@link Range} from <code>start</code> to <code>end</code>
+	 */
+	public static Range<Character> over(Character start, Character end){
+		if (start == null || end == null){
+			throw new IllegalArgumentException("Argument cannot be null");
+		}
+		return new Range<Character>(start,end, new ComparableComparator<Character>(), new CharacterIncrementor(1));
+	}
+	
+	public static <V extends NaturalIncrementable<V> & Comparable<? super V>> Range<V> over(V start, V end){
+		return new Range<V>(start,end,new ComparableComparator<V>(), new NaturalIncrementableIncrementor<V>());
+	}
+
+	
+	/**
 	 * Creates a Range from the values of two objects and a <code>Comparator</code> for those objects.
 	 * @param <V>
 	 * @param start start of the range
@@ -84,11 +116,11 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	 * @param comparator <code>Comparator</code> encapsulating the rules of order for the passed object class
 	 * @return a <code>Range</code> from <code>start</code> to <code>end</code>
 	 */
-	public static <V extends Incrementable<V>> Range<V> over(V start, V end , V increment){
+	public static <V extends Ring<V>> Range<V> over(V start, V end , V increment){
 		if (start == null || end == null || increment==null){
 			throw new IllegalArgumentException("Argument cannot be null");
 		}
-		Incrementor<V> incrementor = new IncrementableIncrementor<V>(increment);
+		Incrementor<V> incrementor = new RingIncrementor<V>(increment);
 	
 		return over(start,end,new ComparableComparator<V>(),incrementor);
 	
@@ -102,7 +134,7 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	 * @param incrementor the incrementor to use.
 	 * @return A {@link Range} from <code>start</code> to <code>end</code>
 	 */
-	public static <V> Range<V> overIncrementor( V start, V end, Incrementor<? super V> incrementor){
+	public static <V> Range<V> over( V start, V end, Incrementor<? super V> incrementor){
 		if (start == null || end == null || incrementor==null){
 			throw new IllegalArgumentException("Argument cannot be null");
 		}
@@ -122,16 +154,23 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 		if (comparator == null){
 			throw new IllegalArgumentException("A comparator is required.");
 		}
-		if (comparator.compare(start,end)>0){
-			throw new IllegalArgumentException("Range`s start must preceed its end");
-		}
 
 		return new Range<V>(start,end,comparator,incrementor);
 	} 
-
+	
 
 	Range(T start, T end,Comparator<? super T> comparator,Incrementor<? super T> incrementor) {
-		super(start,end,comparator);
+		
+		this.start = start;
+		this.end = end;
+		this.comparator = comparator;
+		
+		if (start!= null && end != null && comparator.compare(start,end)>0){
+			// the ordering ir reversed, so reverse the incrementor
+			incrementor = incrementor.reverse();
+			isReversed = true;
+		}
+
 		this.incrementor = incrementor;
 	}
 
@@ -141,16 +180,31 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	 * @param comparator
 	 */
 	Range(Comparator<? super T> comparator,Incrementor<? super T> incrementor) {
-		super(comparator);
-		this.incrementor = incrementor;
+		this(null,null,comparator, incrementor);
 	}
 
+	public Range<T> excludeStart(){
+		Range<T> range = new Range<T>(this.start, this.end, this.comparator, this.incrementor);
+		
+		range.excludeStart = true;
+		
+		return range;
+	}
+	
+	public Range<T> excludeEnd(){
+		Range<T> range = new Range<T>(this.start, this.end, this.comparator, this.incrementor);
+		
+		range.excludeEnd = true;
+		
+		return range;
+	}
+	
 	/**
 	 * Determines this interval intersection with another
 	 * @param other the interval to intersect
 	 * @return an interval representing the intersections of the intervals
 	 */
-	public Range<T> intersection (Interval<T> other){
+	public Range<T> intersection (Range<T> other){
 
 		// is one is empty the intersection is empty
 		if (this.isEmpty() || other.isEmpty()) {
@@ -170,12 +224,63 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 		}
 
 	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public boolean isEmpty(){
+		if (start == end || comparator.compare(start, end) == 0){
+			if (this.excludeEnd || this.excludeStart) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public boolean contains(T value, boolean includeStart , boolean includeEnd){
+		if (this.isReversed) {
+			return !this.isEmpty() 
+					&& (start==null ? true : (includeStart?comparator.compare(value, start) <=0: comparator.compare(value, start) <0 )) 
+					&& (end == null ? true : (includeEnd?comparator.compare(value, end) >=0:comparator.compare(value, end) >0));
+		} else {
+			return !this.isEmpty() 
+					&& (start==null ? true : (includeStart?comparator.compare(value, start) >=0: comparator.compare(value, start) >0 )) 
+					&& (end == null ? true : (includeEnd?comparator.compare(value, end) <=0:comparator.compare(value, end) <0));
+		}
+
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public boolean contains(T value){
+		if (comparator.compare(start, end) ==0 ){
+			if (this.excludeEnd || this.excludeStart){
+				return false;
+			} else {
+				return comparator.compare(value, end) ==0; 
+			}
+			
+		} else {
+			return contains(value, !this.excludeStart, !this.excludeEnd);
+		}
+		
+	}
+	
 	/**
 	 * The union of this range with an another. 
 	 * The result is a range from the lowest start to the greatest end
 	 * Note that union is a commutative operation,
-	 * meaning that R.union(S).equals(S.union(R)) == true , R and S being instances of Range.
+	 * meaning that R.union(T).equals(T.union(R)) == true , R and T being instances of Range.
 	 * @param other
 	 * @return a range from the lowest start to the greatest end. Example : [2,3] merged with [7,10]  will return [2,10] 
 	 */
@@ -202,6 +307,11 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 			return false;
 		}
 	}
+	
+	private boolean equalsInterval(Interval<T> other){
+		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
+		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
+	}
 
     public int hashCode(){
     	return Hash.hash(start).hash(end).hashCode();
@@ -214,21 +324,18 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
 	}
 	
-	private boolean equalsInterval(Interval<T> other){
-		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
-		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
-	}
+
 
 	@Override
 	public Iterator<T> iterator() {
-		return new RangeIterator<T>(start,end,comparator,incrementor);
+		return new RangeIterator(comparator,incrementor);
 	}
 
 	/**
 	 * Collects all the values in the {@link Range} into an {@link EnhancedList}.
 	 * @return a list with the values in the {@link Range}
 	 */
-	public EnhancedList<T> toList(){
+	private EnhancedList<T> toList(){
 		List<T> list = new LinkedList<T>();
 		for (T i : this){
 			list.add(i);
@@ -247,38 +354,41 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 			return size;
 		}
 		size=0;
-		for (Iterator<T> it = this.iterator();it.hasNext();){
+		for (Iterator<T> it = this.iterator();it.hasNext();size++){
 			it.next();
-			size++;
 		}
 		return size;
 	}
 
-	static class RangeIterator<S> implements Iterator<S> {
+    class RangeIterator implements Iterator<T> {
 
-		S current;
-		Comparator<? super S> comparator;
-		Incrementor<? super S> incrementor;
-		S end;
+		T current;
+		Comparator<? super T> comparator;
+		Incrementor<? super T> incrementor;
 
-
-		public RangeIterator(S current, S end, Comparator<? super S> comparator , Incrementor<? super S> incrementor){
-			this.current =current;
-			this.end = end;
+		public RangeIterator(Comparator<? super T> comparator , Incrementor<? super T> incrementor){
 			this.comparator = comparator;
 			this.incrementor = incrementor;
+			
+			if (excludeStart) {
+				this.current = (T) incrementor.increment(Range.this.start);
+			} else {
+				this.current = Range.this.start;
+			}
+			
 		}
 
 		@Override
 		public boolean hasNext() {
-			return (current != end) && comparator.compare(current, end)<=0;
+			return contains(current);
+			//return (isReversed ?  comparator.compare(current, Range.this.end) >= 0 : comparator.compare(current, Range.this.end) <= 0);
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public S next() {
-			S toReturn = current;
-			current = (S)incrementor.increment(current);
+		public T next() {
+			T toReturn = current;
+			current = (T) incrementor.increment(current);
 			return toReturn;
 		}
 
@@ -297,16 +407,11 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 		return this.toList().random(random);
 	}
 
-	@Override
-	public void each(Walker<T> walker) {
-		for (T t : this){
-			walker.doWith(t);
-		}
-	}
+
 
 	@Override
-	public boolean any(Classifier<Boolean, T> classifier) {
-		return this.toList().any(classifier);
+	public boolean any(Predicate<T> predicate) {
+		return this.toList().any(predicate);
 	}
 
 	@Override
@@ -320,18 +425,18 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 	}
 
 	@Override
-	public boolean every(Classifier<Boolean, T> classifier) {
-		return this.toList().every(classifier);
+	public boolean every(Predicate<T> predicate) {
+		return this.toList().every(predicate);
 	}
 
 	@Override
-	public T find(Classifier<Boolean, T> classifier) {
-		return this.toList().find(classifier);
+	public T find(Predicate<T> predicate) {
+		return this.toList().find(predicate);
 	}
 
 	@Override
-	public EnhancedCollection<T> findAll(Classifier<Boolean, T> classifier) {
-		return this.toList().findAll(classifier);
+	public EnhancedCollection<T> findAll(Predicate<T> predicate) {
+		return this.toList().findAll(predicate);
 	}
 
 	@Override
@@ -347,9 +452,119 @@ public class Range<T> extends Interval<T> implements Enumerable<T> , RandomEnume
 
 	@Override
 	public EnhancedCollection<T> reject(Classifier<Boolean, T> classifier){
-		return findAll(new NegationClassifier<T>(classifier));
+		return findAll(new NegatedPredicate<T>(classifier));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Walkable<T> filter(Predicate<T> predicate) {
+		return new IterableWalkable<T>(this).filter(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> Walkable<C> map(Classifier<C, T> classifier) {
+		return new IterableWalkable<T>(this).map(classifier);
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void forEach(Walker<T> walker) {
+		for (T t : this){
+			walker.doWith(t);
+		}
 	}
 	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <L extends Collection<T>> L into(L collection) {
+		for (T t : this){
+			collection.add(t);
+		}
+		return collection;
+	}
+	
+	/**
+	 * @return Returns the end.
+	 */
+	public T end() {
+		return end;
+	}
+
+	/**
+	 * @return Returns the start.
+	 */
+	public T start() {
+		return start;
+	}
+
+
+	/**
+	 * Determines if this interval intersects another
+	 * @param other the candidate to intersection
+	 * @return <code>true</code> if <code>this</code> intersects <code>other</code>
+	 */
+	public boolean intersects (Range<T> other){
+
+		return !this.isEmpty() && !other.isEmpty() &&
+		(this.contains(other.start, true, true) || 
+				this.contains(other.end, true, true) || 
+				other.contains(this.start, true, true) || 
+				other.contains(this.end, true, true));
+
+
+	}
+
+	/**
+	 * Determines the maximum of two values using the 
+	 * comparator
+	 * @param a
+	 * @param b
+	 * @return the maximum between a and b
+	 */
+	protected T  max(T a , T b){
+		if (comparator.compare(a,b)>=0){
+			return a;
+		}
+		return b;
+	}
+
+	/**
+	 * Determines the minimum of two values using the 
+	 * comparator
+	 * @param a
+	 * @param b
+	 * @return the minimum between a and b
+	 */
+	protected T  min(T a , T b){
+		if (comparator.compare(a,b)<=0){
+			return a;
+		}
+		return b;
+	}
+
+	public String toString(){
+		if (this.isEmpty()){
+			return "[]";
+		}
+		return "[" + start.toString() + " ; " +  end.toString() + "]";
+	}
+
+
+
+
+
 
 
 

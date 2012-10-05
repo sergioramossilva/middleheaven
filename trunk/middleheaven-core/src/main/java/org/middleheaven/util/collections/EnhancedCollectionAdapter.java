@@ -12,6 +12,7 @@ import java.util.Set;
 import org.middleheaven.util.classification.Classification;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.classification.MapClassification;
+import org.middleheaven.util.classification.Predicate;
 
 public class EnhancedCollectionAdapter<T> extends AbstractEnumerableAdapter<T> implements EnhancedCollection<T> , EnhancedSet<T> {
 
@@ -213,4 +214,22 @@ public class EnhancedCollectionAdapter<T> extends AbstractEnumerableAdapter<T> i
 	public T getFirst() {
 		return original.isEmpty() ? null : original.iterator().next();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Walkable<T> filter(Predicate<T> predicate) {
+		return new IterableWalkable<T>(this).filter(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> Walkable<C> map(Classifier<C, T> classifier) {
+		return new IterableWalkable<T>(this).map(classifier);
+	}
+
+
 }

@@ -32,10 +32,10 @@ public final class ApplicationVersion implements Serializable{
 	}
 	
 	public boolean equals(Object other) {
-		return other instanceof ApplicationVersion && equals((ApplicationVersion) other);
+		return other instanceof ApplicationVersion && equalsOther((ApplicationVersion) other);
 	}
 
-	public boolean equals(ApplicationVersion other) {
+	public boolean equalsOther(ApplicationVersion other) {
 		return this.name.equals(other.name) && this.version.equals(other.version);
 	}
 

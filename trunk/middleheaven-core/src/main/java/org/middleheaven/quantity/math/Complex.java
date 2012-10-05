@@ -24,6 +24,14 @@ public abstract class Complex extends Numeral<Complex> implements Field<Complex>
 		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class ,real.toString() + "+i" + imaginary.toString());
 	}
 	
+	public static Complex real(java.lang.Number real) {
+		return valueOf(real, 0d);
+	}
+	
+	public static Complex imaginary(java.lang.Number imaginary) {
+		return valueOf(0d, imaginary);
+	}
+	
 	public static Complex valueOf(String value) {
 		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class ,value);
 	}

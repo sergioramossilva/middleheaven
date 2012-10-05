@@ -4,15 +4,18 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.middleheaven.global.CountryIsoCode;
+import org.middleheaven.global.IsoCode;
+
 public class AtlasLocaleInfo {
 
 	
 	private String name;
-	private String isoCode;
+	private CountryIsoCode isoCode;
 	private AtlasLocaleInfo parent;
 	List<AtlasLocaleInfo> atlasLocations = new LinkedList<AtlasLocaleInfo>();
 	
-	public AtlasLocaleInfo( String isoCode,AtlasLocaleInfo parent) {
+	public AtlasLocaleInfo( CountryIsoCode isoCode,AtlasLocaleInfo parent) {
 		if (isoCode==null){
 			throw new IllegalArgumentException("ISO code is required");
 		}
@@ -33,9 +36,10 @@ public class AtlasLocaleInfo {
 		return name;
 	}
 	
-	public String getIsoCode() {
+	public IsoCode getIsoCode() {
 		return isoCode;
 	}
+	
 	public AtlasLocaleInfo getParent() {
 		return parent;
 	}
@@ -45,15 +49,25 @@ public class AtlasLocaleInfo {
 		return this;
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean equals(Object other) {
 		return other instanceof AtlasLocaleInfo
-				&& equals((AtlasLocaleInfo) other);
+				&& equalsOther((AtlasLocaleInfo) other);
 	}
 
-	public boolean equals(AtlasLocaleInfo other) {
+	private boolean equalsOther(AtlasLocaleInfo other) {
 		return this.isoCode.equals(other.isoCode);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int hashCode() {
 		return isoCode.hashCode();
 	}

@@ -132,10 +132,10 @@ public class ArrayManagedFilePath implements ManagedFilePath , Watchable {
 	}
 
 	public boolean equals(Object other){
-		return (other instanceof ArrayManagedFilePath) && equals( (ArrayManagedFilePath) other); 
+		return (other instanceof ArrayManagedFilePath) && equalsOther( (ArrayManagedFilePath) other); 
 	}
 
-	public boolean equals(ArrayManagedFilePath other){
+	public boolean equalsOther(ArrayManagedFilePath other){
 		return this.repository.equals(other.repository) && 
 		this.root.equals(other.root) &&
 		Arrays.equals(names, other.names);

@@ -84,7 +84,7 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 
 		if(root.getType().isFolder()){
 
-			root.each(new Walker<ManagedFile>(){
+			root.forEach(new Walker<ManagedFile>(){
 
 				@Override
 				public void doWith(ManagedFile file) {

@@ -9,7 +9,8 @@ import java.util.ListIterator;
 import java.util.Random;
 
 import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.NegationClassifier;
+import org.middleheaven.util.classification.NegatedPredicate;
+import org.middleheaven.util.classification.Predicate;
 
 public class EncancedListAdapter<T> extends EnhancedCollectionAdapter<T> implements EnhancedList<T> {
 
@@ -19,15 +20,15 @@ public class EncancedListAdapter<T> extends EnhancedCollectionAdapter<T> impleme
 	
 	@Override
 	public EnhancedList<T>  reject(Classifier<Boolean, T> classifier){
-		return findAll(new NegationClassifier<T>(classifier));
+		return findAll(new NegatedPredicate<T>(classifier));
 	}
 	
 	@Override
-	public EnhancedList<T>  findAll(Classifier<Boolean, T> classifier) {
+	public EnhancedList<T>  findAll(Predicate<T> predicate) {
 		EnhancedList<T> result = CollectionUtils.enhance(new LinkedList<T>());
 		for (Iterator<T> it = iterator();it.hasNext();){
 			T o = it.next();
-			Boolean b = classifier.classify(o);
+			Boolean b = predicate.classify(o);
 			if (b!=null && b.booleanValue()){
 				result.add(o);
 			}

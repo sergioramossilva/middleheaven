@@ -57,4 +57,12 @@ public final class ClassSet implements Iterable<Class<?>>{
 	public int size(){
 		return types.size();
 	}
+
+	/**
+	 * @param type
+	 * @return
+	 */
+	public boolean contains(Class<?> type) {
+		return types.contains(type);
+	}
 }

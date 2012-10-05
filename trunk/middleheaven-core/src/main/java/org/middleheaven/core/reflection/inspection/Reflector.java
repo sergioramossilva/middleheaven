@@ -25,7 +25,7 @@ import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.ReflectionStrategy;
 import org.middleheaven.core.reflection.WrapperProxy;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.Enumerable;
 
 class Reflector {
@@ -519,7 +519,7 @@ class Reflector {
 		return getMethods(type,null);
 	}
 
-	public  List<Method> getMethods(Class<?> type, BooleanClassifier<Method> filter) {
+	public  List<Method> getMethods(Class<?> type, Predicate<Method> filter) {
 
 
 		List<Method> result = new ArrayList<Method>(getClassMethods(type).values());

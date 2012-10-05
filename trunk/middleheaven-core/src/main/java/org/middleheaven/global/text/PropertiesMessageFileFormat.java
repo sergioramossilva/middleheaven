@@ -32,11 +32,11 @@ public class PropertiesMessageFileFormat extends LocalizedMessagesFormatHandler{
     }
     
     @Override
-    public String findLabel(GlobalLabel label) throws MissingResourceException {
+    public String findLabel(TextLocalizable label) throws MissingResourceException {
         
-        String message = bunble.getString(label.getLabel());
+        String message = bunble.getString(label.getMessageKey());
         Object [] messageParams = label.getMessageParams();
-        if (messageParams.length >0){
+        if (messageParams.length >0 || message.indexOf("{") >=0){
             final MessageFormat mf = new MessageFormat(message);
             return mf.format(messageParams);
         } else {

@@ -1,31 +1,63 @@
 package org.middleheaven.core.bootstrap;
 
-import org.middleheaven.core.services.ServiceActivator;
-import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.Service;
 import org.middleheaven.core.wiring.ProfilesBag;
 import org.middleheaven.core.wiring.PropertyManagers;
+import org.middleheaven.logging.LoggingService;
 
 /**
  * Context of information used during bootstrap.
  */
 public interface BootstrapContext {
 
-	public BootstrapContext addActivator(Class<? extends ServiceActivator> type);
+	/**
+	 * Registers a new service to be bootstraped.
+	 * @param service the service to be bootstraped
+	 * @return {@code this} object.
+	 */
+	public BootstrapContext registerService(Service service);
 	
-	public BootstrapContext removeActivator(Class<? extends ServiceActivator> type);
+	/**
+	 * Unregisters a  service from the bootstrap process.
+	 * @param service the service to be bootstraped
+	 * @return {@code this} object.
+	 */
+	public BootstrapContext removeService(Service service);
 	
-	public boolean contains(Class<? extends ServiceActivator> type);
+	/**
+	 * Verifies if a given service is already registered.
+	 * @param service the service to check registration.
+	 * @return <code>true</code> if the service is alredy registered, <code>false</code> otherwise.
+	 */
+	public boolean isRegistered(Service service);
 	
+	/**
+	 * The name of the environment.
+	 * @return The name of the environment.
+	 */
 	public String getName();
 
+	/**
+	 * Active profiles {@link ProfilesBag}.
+	 * @return  Active profiles {@link ProfilesBag}.
+	 */
 	public ProfilesBag getActiveProfiles();
 	
-	public ServiceContext getServiceContext();
-	
+
 	/**
 	 * A {@link PropertyManagers} that provide acess to system and environment properties.
 	 * @return {@link PropertyManagers} that provide acess to system and environment properties.
 	 */
 	public PropertyManagers getPropertyManagers();
+
+	/**
+	 * @return
+	 */
+	public LoggingService getLoggingService();
+
+	/**
+	 * @return
+	 */
+	public FileContextService getFileContextService();
 	
 }

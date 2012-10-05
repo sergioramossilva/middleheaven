@@ -71,10 +71,10 @@ public class WiringSpecification implements Mergable<WiringSpecification> {
 	}
 	
 	public boolean equals(Object other){
-		return other instanceof WiringSpecification && equals((WiringSpecification)other);
+		return other instanceof WiringSpecification && equalsOther((WiringSpecification)other);
 	}
 	
-	private boolean equals(WiringSpecification other){
+	private boolean equalsOther(WiringSpecification other){
 		return this.contract.getName().equals(other.contract.getName()) && 
 		CollectionUtils.equalContents(this.params, other.params);
 	}

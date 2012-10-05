@@ -64,18 +64,18 @@ public abstract class Address {
 		} else if (type.equals(AddressPartType.POSTAL_CODE)){
 			return postalCode.toString();
 		} else if (type.equals(AddressPartType.COUNTRY_CODE)){
-			return country.ISOCode();
+			return country.ISOCode().toString();
 		} else {
 			return parts.get(type);
 		}
 	}
 	
     public boolean equals(Object other){
-		return other instanceof Address && equals((Address)other);
+		return other instanceof Address && equalsOther((Address)other);
 	}
 	
-	public boolean equals(Address other){
-		return this.country.equals(other.country) && this.postalCode.equals(other.postalCode)
+	public boolean equalsOther(Address other){
+		return this.country.equalsOther(other.country) && this.postalCode.equals(other.postalCode)
 		 && this.parts.equals(other.parts);
 	}
 	

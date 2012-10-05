@@ -6,6 +6,8 @@ package org.middleheaven.core.wiring;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import org.middleheaven.util.coersion.TypeCoercing;
+
 /**
  * 
  */
@@ -67,15 +69,20 @@ public class PropertyManagers {
 		managers.remove(manager);
 	}
 	
-	public Object getProperty(String key){
+	public <T> T getProperty(String key, Class<T> type){
+		return getProperty(key, type, null);
+	
+	}
+
+	public <T> T getProperty(String key, Class<T> type, T defaultValue){
 		
 		for (PropertyManager manager : managers){
 			if (manager.containsProperty(key)){
-				return manager.getProperty(key);
+				// TODO use propertiesEditor instead of cooerce
+				return TypeCoercing.coerce(manager.getProperty(key), type);
 			} 
 		}
 		
-		return null;
+		return defaultValue;
 	}
-
 }

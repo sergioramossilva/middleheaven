@@ -162,7 +162,7 @@ public class FileIOWatchService implements WatchService {
 
 				this.folder = folder;
 
-				folder.each(new Walker<ManagedFile>(){
+				folder.forEach(new Walker<ManagedFile>(){
 
 					@Override
 					public void doWith(ManagedFile file) {
@@ -188,7 +188,7 @@ public class FileIOWatchService implements WatchService {
 					final Set<ManagedFile> allFiles = new HashSet<ManagedFile>();
 					final Set<ManagedFile> newFiles = new HashSet<ManagedFile>();
 
-					folder.each(new Walker<ManagedFile>(){
+					folder.forEach(new Walker<ManagedFile>(){
 
 						@Override
 						public void doWith(ManagedFile object) {
@@ -253,7 +253,7 @@ public class FileIOWatchService implements WatchService {
 
 					// iterate all files 
 
-					folder.each(new Walker<ManagedFile>(){
+					folder.forEach(new Walker<ManagedFile>(){
 
 						@Override
 						public void doWith(ManagedFile file) {

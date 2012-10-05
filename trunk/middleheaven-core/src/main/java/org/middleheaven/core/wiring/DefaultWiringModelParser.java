@@ -243,7 +243,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 		// injection points
 
 		introspector.inspect().fields().beingStatic(false).searchHierarchy().annotatedWith(annotations).retriveAll()
-		.each(new Walker<Field>(){
+		.forEach(new Walker<Field>(){
 
 			@Override
 			public void doWith(Field f) {
@@ -253,7 +253,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 		} );
 
 		introspector.inspect().methods().beingStatic(false).searchHierarchy().annotatedWith(annotations).retriveAll()
-		.each(new Walker<Method>(){
+		.forEach(new Walker<Method>(){
 
 			@Override
 			public void doWith(Method method) {

@@ -1,6 +1,7 @@
 package org.middleheaven.util.collections;
 
 import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.classification.Predicate;
 
 /**
  * Represents a unmodifiable collection-like interface that's still iterable and permits to query for the collection's size.
@@ -40,31 +41,31 @@ public interface Enumerable<T> extends Iterable<T>, Walkable<T>{
 	
 	/**
 	 * returns true if all items match the classifier
-	 * @param classifier the classifier with the matching rule.
+	 * @param predicate the classifier with the matching rule.
 	 * @return <code>true</code> if all items match the classifier, <code>false</code> otherwise.
 	 */
-	public boolean every(Classifier<Boolean,T> classifier);
+	public boolean every(Predicate<T> predicate);
 	
 	/**
 	 * returns true if any item matchs the classifier
-	 * @param classifier the classifier with the matching rule.
+	 * @param predicate the classifier with the matching rule.
 	 * @return <code>true</code> if any item matchs the classifier, <code>false</code> otherwise.
 	 */
-	public boolean any(Classifier<Boolean,T> classifier);
+	public boolean any(Predicate<T> predicate);
 	
 	/**
 	 * finds first item matching the classifier
-	 * @param classifier the classifier with the matching rule.
+	 * @param predicate the classifier with the matching rule.
 	 * @return first item matching the classifier
 	 */
-	public T find(Classifier<Boolean,T> classifier);
+	public T find(Predicate<T> predicate);
 	
 	/**
 	 * finds all items matching the classifier
-	 * @param classifier the classifier with the matching rule.
+	 * @param predicate the classifier with the matching rule.
 	 * @return finds all items matching the classifier
 	 */
-	public EnhancedCollection<T> findAll(Classifier<Boolean,T> classifier);
+	public EnhancedCollection<T> findAll(Predicate<T> predicate);
 	
 	/**
 	 * Collect the return value of calling a classifier on each item in a collection into a new collection.

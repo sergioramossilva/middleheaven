@@ -65,7 +65,7 @@ public class ManagedIOTest extends MiddleHeavenTestCase {
 	    
 	    final AtomicInteger count = new  AtomicInteger();
 	    
-	    junitJar.each(new Walker<ManagedFile>(){
+	    junitJar.forEach(new Walker<ManagedFile>(){
 
 			@Override
 			public void doWith(ManagedFile object) {

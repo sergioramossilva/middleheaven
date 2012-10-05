@@ -13,8 +13,18 @@ public interface EnhancedCollection<T> extends Collection<T> , Enumerable<T> {
 	
 	public EnhancedCollection<T> asSynchronized();
 	
+	/**
+	 * Select an item from the collection at random.
+	 * @param random a {@link Random} instance
+	 * @return an item from the collection at random.
+	 * 
+	 */
 	public T random(Random random);
 
+	/**
+	 * Select an item from the collection at random.
+	 * @return an item from the collection at random.
+	 */
 	public T random();
 	
 	public EnhancedList<T>  sort();

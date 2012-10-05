@@ -3,7 +3,9 @@
  */
 package org.middleheaven.global;
 
+import java.text.DateFormat;
 import java.text.Format;
+import java.text.NumberFormat;
 
 import org.middleheaven.global.text.QuantityFormatter;
 import org.middleheaven.global.text.TimepointFormatter;
@@ -25,7 +27,7 @@ public class StandardCultureModel implements CultureModel {
 	 */
 	@Override
 	public Format getDateFormat() {
-		throw new UnsupportedOperationException("Not implememented yet");
+		return DateFormat.getDateInstance(DateFormat.SHORT, culture.toLocale());
 	}
 
 	/**
@@ -33,7 +35,7 @@ public class StandardCultureModel implements CultureModel {
 	 */
 	@Override
 	public Format getNumberFormat() {
-		throw new UnsupportedOperationException("Not implememented yet");
+		return NumberFormat.getInstance(culture.toLocale());
 	}
 
 	/**

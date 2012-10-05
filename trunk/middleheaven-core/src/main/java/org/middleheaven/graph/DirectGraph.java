@@ -312,14 +312,17 @@ public class DirectGraph<E,V> implements Graph<E,V>{
 		}
 		return false;
 	}
+	
+	protected DirectGraph<E, V> duplicateMe(){
+		return new DirectGraph<E,V>(this);
+	}
 
 	public List<Graph<E,V>> split(){
 
 
 		List<Graph<E,V>> result = new ArrayList<Graph<E,V>>();
 
-		DirectGraph<E, V> copy  = new DirectGraph<E,V>(this);
-
+		DirectGraph<E, V> copy  = duplicateMe();
 
 		Collection<Vertex<V, E>> all = copy.getVertices();
 

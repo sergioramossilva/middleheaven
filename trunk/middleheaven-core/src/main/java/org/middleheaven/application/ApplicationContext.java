@@ -1,7 +1,5 @@
 package org.middleheaven.application;
 
-import java.util.Collection;
-
 import org.middleheaven.core.services.ServiceContext;
 
 
@@ -11,13 +9,8 @@ import org.middleheaven.core.services.ServiceContext;
  */
 public interface ApplicationContext {
 
-	public ApplicationVersion getApplication();
-	
-	public Collection<ModuleActivator> getModules();
-	
-	public boolean isModulePresent(String name);
-	
-	public boolean isCompatibleModulePresent(ModuleVersion version);
+
+	public ApplicationRegistry getRegistry();
 	
 	public ServiceContext getServiceContext();
 }

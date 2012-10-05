@@ -35,13 +35,12 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 	}
 	
 	public boolean equals (Object other){
-		return other instanceof BaseDimention && equals((BaseDimention<?>)other);
+		return other instanceof BaseDimention && equalsOther((BaseDimention<?>)other);
 	}
 	
-	public boolean equals (BaseDimention<?> other){
+	private boolean equalsOther (BaseDimention<?> other){
 		return other.exponent == this.exponent && this.axis == other.axis;
 	}
-	
 	public int hashCode(){
 		return this.exponent ^ (int)this.axis;
 	}

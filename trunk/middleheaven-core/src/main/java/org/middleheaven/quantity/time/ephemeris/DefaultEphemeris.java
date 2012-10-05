@@ -34,10 +34,10 @@ public class DefaultEphemeris implements Ephemeris {
 	
 	public boolean equals(Object other) {
 		return other instanceof Ephemeris
-				&& equals((Ephemeris) other);
+				&& equalsOther((Ephemeris) other);
 	}
 
-	public boolean equals(Ephemeris other) {
+	public boolean equalsOther(Ephemeris other) {
 		return this.name.equals(other.getName()) && this.date.equals(other.getDate());
 	}
 

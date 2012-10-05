@@ -256,14 +256,14 @@ public final class RegistryServiceContext implements ServiceContext{
 		}
 
 		public boolean equals(Object other){
-			return other instanceof ServiceKey && equals((ServiceKey)other);
+			return other instanceof ServiceKey && equalsOther((ServiceKey)other);
 		}
 
 		public int hashCode(){
 			return this.contractName.hashCode();
 		}
 
-		public boolean equals(ServiceKey other){
+		private boolean equalsOther(ServiceKey other){
 			return this.contractName.equals(other.contractName) && CollectionUtils.equalContents(properties, other.properties);
 		}
 

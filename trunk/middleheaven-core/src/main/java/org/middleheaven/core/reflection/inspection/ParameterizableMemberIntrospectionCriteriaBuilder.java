@@ -2,7 +2,7 @@ package org.middleheaven.core.reflection.inspection;
 
 import java.util.Comparator;
 
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 
 
 public abstract class ParameterizableMemberIntrospectionCriteriaBuilder<T, M> extends
@@ -26,7 +26,7 @@ public abstract class ParameterizableMemberIntrospectionCriteriaBuilder<T, M> ex
 	}
 	
 	protected void addParamterTypeFilter(final Class<?>[] parameterTypes){
-		logicClassifier.add(new BooleanClassifier<M>(){
+		logicClassifier.add(new Predicate<M>(){
 
 			@Override
 			public Boolean classify(M obj) {

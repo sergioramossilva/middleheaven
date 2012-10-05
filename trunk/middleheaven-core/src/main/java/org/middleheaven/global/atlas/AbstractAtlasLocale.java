@@ -3,29 +3,31 @@ package org.middleheaven.global.atlas;
 import java.io.Serializable;
 import java.util.Collection;
 
+import org.middleheaven.global.IsoCode;
+
 public abstract class AbstractAtlasLocale implements AtlasLocale , Serializable{
 
 
 	private static final long serialVersionUID = -7228141508511762236L;
 	
-	private String isoCode;
+	private IsoCode isoCode;
 	private AtlasLocale parent;
 	protected String name;
 
     
-	protected AbstractAtlasLocale(AtlasLocale parent,  String isoCode , String name){
+	protected AbstractAtlasLocale(AtlasLocale parent,  IsoCode isoCode , String name){
 		this.isoCode = isoCode;
 		this.parent = parent;
 		this.name = name;
 	}
     
 	
-	public String ISOCode(){
+	public IsoCode ISOCode(){
 		return isoCode;
 	}
 	
 	public String subDevision(){
-		return isoCode;
+		return isoCode.toString();
 	}
 
 	@Override
@@ -44,10 +46,10 @@ public abstract class AbstractAtlasLocale implements AtlasLocale , Serializable{
 	}
 	
 	public boolean equals(Object other){
-		return other instanceof AtlasLocale && equals((AtlasLocale)other);
+		return other instanceof AtlasLocale && equalsOther((AtlasLocale)other);
 	}
 	
-	public boolean equals(AtlasLocale other){
+	private boolean equalsOther(AtlasLocale other){
 		return this.isoCode.equals(other.getName()) && this.parent.equals(other.getParent()); 
 	}
 	

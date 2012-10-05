@@ -3,14 +3,14 @@ package org.middleheaven.core.reflection;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 
 
 /**
  * Utility class for use with ReflectionUtils to filter methods in a class
  *
  */
-public class MethodFilters implements BooleanClassifier<Method> {
+public class MethodFilters implements Predicate<Method> {
 
 	/**
 	 * 

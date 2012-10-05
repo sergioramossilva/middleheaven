@@ -88,7 +88,7 @@ public class Consistencies {
 	}
 	
 	public static <T extends Comparable<T>,E extends Exception > void consistIsBetween(T min, T max, T object,  String message,Class<E> exceptionType) throws E{
-		InBetweenValueConsistency.newInstance(Range.between(min, max),message,exceptionType).consist(object);
+		InBetweenValueConsistency.newInstance(Interval.between(min, max),message,exceptionType).consist(object);
 	}
 	
 	private static abstract class Consistency<E extends Exception>{

@@ -26,11 +26,13 @@ public class LongInteger extends BigInt {
     	this.value = value;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public BigInt next() {
 		return new LongInteger(value+1);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public BigInt previous() {
 		return new LongInteger(value-1);
@@ -129,13 +131,13 @@ public class LongInteger extends BigInt {
 	}
 
 
-	protected boolean equals(LongInteger other){
+	protected boolean equalsOther(LongInteger other){
 		return  this.value == other.value;
 	}
 
 	@Override
 	protected boolean equalsSame(BigInt other) {
-		return equals( (LongInteger) other);
+		return equalsOther( (LongInteger) other);
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package org.middleheaven.graph;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.graph.Graph.Edge;
 import org.middleheaven.graph.Graph.Vertex;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 
 /**
  * 
@@ -15,7 +15,7 @@ public final class GraphFilteringUtils {
 	private GraphFilteringUtils (){}
 	
 	/**
-	 * Fills a new graph by coping another graph and BooleanClassifier to eliminate Edges and Vertices.
+	 * Fills a new graph by coping another graph and Predicate to eliminate Edges and Vertices.
 	 * @param <E>
 	 * @param <V>
 	 * @param sourceGraph
@@ -23,7 +23,7 @@ public final class GraphFilteringUtils {
 	 * @param edgeClassifier
 	 * @return
 	 */
-	public static <E, V, G extends Graph<E,V> > G  filter(G sourceGraph, BooleanClassifier<V> verticesClassifier , BooleanClassifier<E> edgeClassifier ) {
+	public static <E, V, G extends Graph<E,V> > G  filter(G sourceGraph, Predicate<V> verticesClassifier , Predicate<E> edgeClassifier ) {
 		
 		G targetGraph = Introspector.of(sourceGraph).introspectClass().newInstance();
 		
@@ -40,8 +40,8 @@ public final class GraphFilteringUtils {
 		return targetGraph;
 	}
 	
-	public static <E, V, G extends Graph<E,V> > G  filter(G sourceGraph, BooleanClassifier<V> verticesClassifier ) {
-		return filter(sourceGraph, verticesClassifier, new BooleanClassifier<E>(){
+	public static <E, V, G extends Graph<E,V> > G  filter(G sourceGraph, Predicate<V> verticesClassifier ) {
+		return filter(sourceGraph, verticesClassifier, new Predicate<E>(){
 
 			@Override
 			public Boolean classify(E obj) {

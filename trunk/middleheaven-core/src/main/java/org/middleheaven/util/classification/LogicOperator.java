@@ -13,26 +13,43 @@ public abstract class LogicOperator {
     static final LogicOperator OR = new OrOperator();
     static final LogicOperator XOR = new XorOperator();
     static final LogicOperator NXOR = new NXorOperator();
-    
+
+    /**
+     * 
+     * @return the OR operator
+     */
     public static LogicOperator or(){
     	return OR;
     }
     
+    /**
+     * 
+     * @return the AND operator
+     */
     public static LogicOperator and(){
     	return AND;
     }
     
+    /**
+     * @return the XOR operator
+     */
     public static LogicOperator xor(){
     	return XOR;
     }
     
 
+    
     private String name;
     
+   
     private LogicOperator(String name){
     	this.name = name;   	 
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public String toString() {
 		return name;
 	}
@@ -42,6 +59,20 @@ public abstract class LogicOperator {
     public abstract boolean operate(boolean a, boolean b);
 	
     
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode(){
+    	return this.name.hashCode();
+    }
+    
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
     public boolean equals(Object other){
         return other instanceof LogicOperator && other.toString().equals(this.name);
     }

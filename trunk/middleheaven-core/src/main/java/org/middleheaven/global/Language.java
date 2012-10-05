@@ -17,10 +17,10 @@ public class Language implements Comparable<Language>{
 	}
 	
 	public boolean equals(Object other) {
-		return other instanceof Language && equals((Language) other);
+		return other instanceof Language && equalsOther((Language) other);
 	}
 
-	public boolean equals(Language other) {
+	private boolean equalsOther(Language other) {
 		return this.code.equals(other.code);
 	}
 

@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.middleheaven.global.atlas.Atlas;
-import org.middleheaven.global.atlas.Country;
 import org.middleheaven.quantity.time.Chonologies;
 import org.middleheaven.quantity.time.Chronology;
 import org.middleheaven.util.validation.Consistencies;
@@ -83,8 +81,8 @@ public final class Culture implements Serializable{
 		this.language = languageCode;
 	}
 	
-	public Country getCountry(){
-		return country==null ? null : Atlas.getCountry(country);
+	public CountryIsoCode getCountry(){
+		return new CountryIsoCode(country);
 	}
 	
 	public Language getLanguage(){

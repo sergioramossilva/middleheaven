@@ -2,6 +2,7 @@ package org.middleheaven.sequences;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -21,17 +22,17 @@ public class SequenceTestSuit {
 		Integer[] col = {new Integer(1), new Integer(2)};
 		
 		Sequence<Integer> a = IterableBasedSequence.sequenceFor(col);
-		testSequence(a, Range.over(1,2).toList());
+		testSequence(a, Range.over(1,2).into(new ArrayList<Integer>()));
 		
-		Sequence<Integer> b = IterableBasedSequence.sequenceFor(Range.over(1,10).toList());
+		Sequence<Integer> b = IterableBasedSequence.sequenceFor(Range.over(1,10).into(new ArrayList<Integer>()));
 		
-		testSequence(b, Range.over(1,10).toList());
+		testSequence(b, Range.over(1,10).into(new ArrayList<Integer>()));
 		
 		final CharacterIncrementor incrementor = new CharacterIncrementor(1);
 		
-		Sequence<Character> is2 = IterableBasedSequence.sequenceFor(Range.overIncrementor( 'a','z', incrementor));
+		Sequence<Character> is2 = IterableBasedSequence.sequenceFor(Range.over( 'a','z'));
 		
-		testSequence(is2, Range.overIncrementor('a','z', incrementor).toList());
+		testSequence(is2, Range.over('a','z', incrementor).into(new ArrayList<Character>()));
 		
 	}
 	

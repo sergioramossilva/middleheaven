@@ -3,7 +3,8 @@
  */
 package org.middleheaven.core.services;
 
-import org.middleheaven.util.collections.ParamsMap;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * 
@@ -19,7 +20,7 @@ public class ServiceBuilder {
 
 	private Class<?> contractInterface;
 	private ServiceActivator activator;
-	private ParamsMap params;
+	private Map<String, Object> params = Collections.emptyMap();
 	
 	/**
 	 * Constructor.
@@ -34,7 +35,7 @@ public class ServiceBuilder {
 		return this;
 	}
 	
-	public ServiceBuilder withParams(ParamsMap params){
+	public ServiceBuilder withParams(Map<String, Object> params){
 		this.params = params;
 		return this;
 	}

@@ -12,4 +12,10 @@ public interface Incrementor<T> {
 	 * @return object incremented by an amount.
 	 */
 	public T increment(T object);
+	
+	/**
+	 * Returns an incrementor thar returns values in the inverse order of this objetc's {@link #increment(Object)}.
+	 * @return
+	 */
+	Incrementor<T> reverse();
 }

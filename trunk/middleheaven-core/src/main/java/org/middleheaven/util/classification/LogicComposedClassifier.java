@@ -12,9 +12,9 @@ import java.util.List;
  * Logic filter. Determines the acceptance of an object  by logically concatenate the results of filter terms
  * @author  Sergio M. M. Taborda
  */
-public class LogicComposedClassifier<T> implements BooleanClassifier<T>{
+public class LogicComposedClassifier<T> implements Predicate<T>{
 
-    protected final List<BooleanClassifier<T>> filters = new ArrayList<BooleanClassifier<T>>();
+    protected final List<Predicate<T>> filters = new ArrayList<Predicate<T>>();
 	protected LogicOperator logicOperator = LogicOperator.AND;
 
     public LogicComposedClassifier(LogicComposedClassifier<T> other){
@@ -26,7 +26,7 @@ public class LogicComposedClassifier<T> implements BooleanClassifier<T>{
         setOperator(operator);
     }
 
-    public LogicComposedClassifier( BooleanClassifier<T> a ,LogicOperator operator, BooleanClassifier<T> b){
+    public LogicComposedClassifier( Predicate<T> a ,LogicOperator operator, Predicate<T> b){
         setOperator(operator);
         filters.add(a);
         filters.add(b);
@@ -36,12 +36,12 @@ public class LogicComposedClassifier<T> implements BooleanClassifier<T>{
         return filters.size();
     }
 
-    public LogicComposedClassifier<T> add(BooleanClassifier<T> filter){
+    public LogicComposedClassifier<T> add(Predicate<T> filter){
         filters.add(filter);
         return this;
     }
 
-    public List<BooleanClassifier<T>> getFilters(){
+    public List<Predicate<T>> getFilters(){
         return Collections.unmodifiableList(filters);
     }
     

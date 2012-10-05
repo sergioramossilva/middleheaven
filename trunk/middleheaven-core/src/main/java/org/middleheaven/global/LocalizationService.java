@@ -7,14 +7,14 @@ package org.middleheaven.global;
 import java.util.Collection;
 
 import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.global.text.GlobalLabel;
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.global.text.LocalizationDomainBundle;
 import org.middleheaven.global.text.QuantityFormatter;
 import org.middleheaven.global.text.TimepointFormatter;
 
 
 /**
- * Localization Service
+ * Localization Service.
  * 
  */
 @Service
@@ -56,7 +56,7 @@ public interface LocalizationService  {
      *
      * @return the localizaed message for the label in the given {@link Culture}.
      */
-    public String getMessage(GlobalLabel label , Culture culture);
+    public String getMessage(TextLocalizable label , Culture culture);
     
 
     /**
