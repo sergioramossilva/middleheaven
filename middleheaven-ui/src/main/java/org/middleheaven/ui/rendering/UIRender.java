@@ -7,9 +7,16 @@ import java.util.Set;
 
 import org.middleheaven.ui.UIComponent;
 
+/**
+ * Defines the renderization of {@link UIComponent}s.
+ * The rendering processing is the transformation of generic {@link UIComponent}s in {@link RenderKit} specific {@link UIComponent}.
+ * The visualization is then handled by the {@link RenderKit} specific {@link UIComponent}.
+ */
 public abstract class UIRender implements Serializable{
 
 
+	private static final long serialVersionUID = -6018457073198859268L;
+	
 	EnumMap<DecorationPhase, Set<UIDecorator>> decorators = new EnumMap<DecorationPhase, Set<UIDecorator>>(DecorationPhase.class);
 
 	/**
@@ -20,6 +27,11 @@ public abstract class UIRender implements Serializable{
 		return false;
 	}
 	
+	/**
+	 * Adds a {@link UIDecorator} to be used at a specific {@link DecorationPhase}.
+	 * @param decorator the decorator to use.
+	 * @param phase the phase to use the decorator
+	 */
 	public void addDecorator(UIDecorator decorator, DecorationPhase phase){
 
 		Set<UIDecorator> phaseList = decorators.get(phase);
@@ -30,6 +42,14 @@ public abstract class UIRender implements Serializable{
 		phaseList.add(decorator);
 	}
 
+	/**
+	 * Render de component, i.e. obtains a {@link RenderKit} specific {@link UIComponent}.
+	 * 
+	 * @param context the rendering context.
+	 * @param parent the component parent. This component is a rendered component.
+	 * @param component the component to render. This is a generic component.
+	 * @return the rendered component.
+	 */
 	public final UIComponent render(RenderingContext context , UIComponent parent,UIComponent component){
 		UIComponent c = decorate(context,component,DecorationPhase.PRE_RENDER);
 		UIComponent b = build (context,parent, c);
@@ -56,6 +76,14 @@ public abstract class UIRender implements Serializable{
 
 	}
 
+	/**
+	 * Atually build a {@link RenderKit} specific component from the given component.
+	 * @param context the current rendering context.
+	 * @param parent the component's parent. This is a already rendered component.
+	 * @param component the component to render.
+	 * 
+	 * @return the rendered component.  
+	 */
 	protected abstract UIComponent build(RenderingContext context , UIComponent parent, UIComponent component);
 
 

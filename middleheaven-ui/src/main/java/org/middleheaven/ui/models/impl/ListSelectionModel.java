@@ -1,8 +1,9 @@
-package org.middleheaven.ui.models;
+package org.middleheaven.ui.models.impl;
 
 import java.util.List;
 
 import org.middleheaven.global.text.Formatter;
+import org.middleheaven.ui.models.AbstractSelectionModel;
 
 public class ListSelectionModel extends AbstractSelectionModel {
 

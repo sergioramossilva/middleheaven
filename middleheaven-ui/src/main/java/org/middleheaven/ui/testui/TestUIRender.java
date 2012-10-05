@@ -1,5 +1,6 @@
 package org.middleheaven.ui.testui;
 
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.rendering.RenderingContext;
 import org.middleheaven.ui.rendering.UIRender;
@@ -11,13 +12,15 @@ public class TestUIRender extends UIRender {
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent, UIComponent component) {
 		
-		TestUIComponent t=  new TestUIComponent(component.getType(), component.getFamily());
+		Class<UIComponent> type = component.getComponentType();
+		
+		TestUIComponent t=  new TestUIComponent(component.getComponentType(), component.getFamily());
 		
 		t.setUIModel(component.getUIModel());
 		t.setGID(component.getGID());
 		t.setUIParent(parent);
 
-		return t;
+		return Introspector.of(type).newProxyInstance(new TestUIProxyHandler(t), type);
 	}
 
 }

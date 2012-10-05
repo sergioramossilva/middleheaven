@@ -1,14 +1,80 @@
 package org.middleheaven.ui.rendering;
 
 import org.middleheaven.ui.Displayable;
+import org.middleheaven.ui.UIDimension;
+import org.middleheaven.ui.UIDimensionUnit;
+import org.middleheaven.ui.UISize;
 
+/**
+ * Provides conversion from the diferente {@link UIDimensionUnit}s to pixels.
+ */
 public abstract class UIUnitConverter {
 
     protected static String testString = "X";
 
     protected UIUnitConverter(){}
 
-
+    public UISize toPixels(UISize size , Displayable container){
+    	return toPixels(size, container, UISize.pixels(0, 0));
+    }
+    public UISize toPixels(UISize size , Displayable container ,UISize availableSpace ){
+    	return UISize.valueOf(
+    			toPixelsHorizontal(size.getWidth(), container, availableSpace.getWidth()),
+    			toPixelsVertical(size.getHeight(), container, availableSpace.getHeight())
+    	);
+    }
+    
+    private UIDimension toPixelsVertical(UIDimension dim , Displayable container ,UIDimension availableSpace ){
+    	
+         int pixels;
+         
+         switch (dim.unit){
+       
+         case PERCENTAGE :
+        	 pixels =(int) (availableSpace.getValue() *  dim.value / 100);
+        	 break;
+         case DIALOG:
+        	 pixels = (int)Math.round(getDialogBaseUnits(container)[1] * dim.value);
+        	 break;
+         case RATIO_AVAILABLE:
+        	 pixels = (int)(availableSpace.value * dim.value);
+        	 break;
+         case PIXELS :
+         default:
+        	 pixels = (int) dim.getValue(); 
+        	 break;
+        	 
+         }
+         
+         return UIDimension.pixels(pixels);
+         
+    }
+    
+    private UIDimension toPixelsHorizontal(UIDimension dim , Displayable container ,UIDimension availableSpace ){
+    	 
+    	int pixels;
+    	
+		switch (dim.unit){
+         case PERCENTAGE :
+        	 pixels =(int) (availableSpace.getValue() *  dim.value / 100);
+        	 break;
+         case DIALOG:
+        	 // different from vertical
+        	 pixels = (int)Math.round(getDialogBaseUnits(container)[0] * dim.value);
+        	 break;
+         case RATIO_AVAILABLE:
+        	 pixels = (int)(availableSpace.value * dim.value);
+        	 break;
+         case PIXELS :
+         default:
+        	 pixels = (int) dim.getValue(); 
+        	 break;
+         }
+		
+		return UIDimension.pixels(pixels);
+    }
+    
+    
     public final int convertVertical(String unitValue, Displayable container ,int availableSpace){
         unitValue = unitValue.toLowerCase();
         int res=0;
@@ -47,6 +113,11 @@ public abstract class UIUnitConverter {
         return res;
     }
 
-    protected abstract double[] getDialogBaseUnits(Displayable layoutable);
+    /**
+     * Return the vertical and horizontal size of the reference font for dialog units
+     * @param displayable
+     * @return an array for the horizontal and vertical size in positions 0 and 1 respectivly
+     */
+    protected abstract double[] getDialogBaseUnits(Displayable displayable);
 
 }

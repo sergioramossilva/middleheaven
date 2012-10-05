@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema 
+xmlns="http://www.w3.org/2001/XMLSchema" 
+targetNamespace="http://www.middleheaven.org/ui-schema" 
+xmlns:tns="http://www.middleheaven.org/ui-schema" 
+elementFormDefault="qualified"
+>
+
+    <complexType name="ui">
+    	<sequence>
+    	<element name="uic"></element>
+    	</sequence>
+    </complexType>
+
+    <complexType name="uic">
+    	<attribute name="type" type="string" use="required"></attribute>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="familly" type="string"></attribute>
+    </complexType>
+</schema>

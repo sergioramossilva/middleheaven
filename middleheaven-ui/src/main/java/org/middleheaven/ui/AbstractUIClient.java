@@ -27,6 +27,13 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 		return uiModel;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isType(Class<? extends UIComponent> type) {
+		return type.isAssignableFrom(this.getComponentType());
+	}
 	
 	public UIComponent findContainedComponent(String componentID){
 		return components.get(componentID);
@@ -41,11 +48,6 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	@Override
 	public void removeComponent(UIComponent component) {
 		components.remove(component.getGID());
-	}
-
-	@Override
-	public void gainFocus() {
-		//no-op
 	}
 
 	@Override
@@ -69,7 +71,7 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	}
 
 	@Override
-	public <T extends UIComponent> Class<T> getType() {
+	public <T extends UIComponent> Class<T> getComponentType() {
 		return (Class<T>) UIClient.class;
 	}
 
@@ -77,11 +79,6 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	@Override
 	public final UIComponent getUIParent() {
 		return null;
-	}
-
-	@Override
-	public boolean hasFocus() {
-		return true;
 	}
 
 	@Override
@@ -127,39 +124,18 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 		// no-op
 	}
 
-	@Override
-	public int getHeight() {
-		return getDimension().getHeight();
-	}
-
-	@Override
-	public int getWidth() {
-		return getDimension().getWidth();
-	}
 	
 	@Override
-	public void setSize(UIDimension size) {
+	public void setDisplayableSize(UISize size) {
 		throw new UnsupportedOperationException("Can not change " + this.getClass().getSimpleName() + " size");
 	}
 	
-	@Override
-	public int getX() {
-		return 0;
-	}
 
-	@Override
-	public int getY() {
-		return 0;
-	}
 
 	@Override
 	public UIPosition getPosition() {
-		return new UIPosition(0,0);
+		return UIPosition.pixels(0,0);
 	}
 
-	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		throw new UnsupportedOperationException("Can't change " + this.getClass().getSimpleName() + " bounds");
-	}
 
 }

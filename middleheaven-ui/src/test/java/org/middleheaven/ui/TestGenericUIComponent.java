@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.middleheaven.ui.components.UISelectOne;
-import org.middleheaven.ui.models.ListSelectionModel;
 import org.middleheaven.ui.models.UISelectionModel;
+import org.middleheaven.ui.models.impl.ListSelectionModel;
 
 public class TestGenericUIComponent {
 

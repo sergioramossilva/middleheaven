@@ -9,7 +9,7 @@ import org.middleheaven.ui.models.UIClientModel;
  * to input commands and receive informations.
  * 
  */
-public interface UIClient extends UIComponent{
+public interface UIClient extends UIComponent, NamingContainer{
 
 
 	public UIClientModel getUIModel();
