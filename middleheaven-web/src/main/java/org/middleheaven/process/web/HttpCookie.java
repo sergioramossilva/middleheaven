@@ -96,10 +96,10 @@ public class HttpCookie {
 	}
 
 	public boolean equals(Object other) {
-		return other instanceof HttpCookie && equals((HttpCookie)other);
+		return other instanceof HttpCookie && equalsOther((HttpCookie)other);
 	}
 
-	private boolean equals(HttpCookie other){
+	private boolean equalsOther(HttpCookie other){
 		return equalsIgnoreCase(getName(), other.getName()) &&
 		equalsIgnoreCase(getDomain(), other.getDomain()) &&
 		equals(getPath(), other.getPath());
