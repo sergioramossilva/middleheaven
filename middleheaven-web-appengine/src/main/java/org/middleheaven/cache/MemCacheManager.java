@@ -3,7 +3,6 @@
  */
 package org.middleheaven.cache;
 
-import org.middleheaven.cache.CacheManager;
 
 /**
  * 
