@@ -23,6 +23,11 @@ public interface EditableEntityFieldModel extends EntityFieldModel{
 
 	public void setIdentity(boolean isIdentity);
 
+	/**
+	 * @param annotadedWith
+	 */
+	public void setTransient(boolean annotadedWith);
+
 	
 	
 

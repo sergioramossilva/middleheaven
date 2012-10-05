@@ -8,13 +8,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.domain.store.EntityInstance;
+import org.middleheaven.domain.store.EntityManagerProxyHandler;
+import org.middleheaven.domain.store.MetaBeanEntityInstance;
 import org.middleheaven.model.annotations.mapping.DatasetInheritance;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.DataStoreSchemaName;
 import org.middleheaven.persistance.HashDataRow;
 import org.middleheaven.persistance.SimpleDataColumn;
-import org.middleheaven.persistance.db.metamodel.DBColumnModel;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.storage.types.EntityInstanceTypeMapper;
 
@@ -42,7 +44,7 @@ class EditableEntityModelDataSetMapping implements EntityModelDataSetMapping {
 	 */
 	@Override
 	public EntityInstanceTypeMapper getInstanceTypeMapper(String name) {
-		throw new UnsupportedOperationException("Not implememented yet");
+		return type;
 	}
 
 	
@@ -115,7 +117,16 @@ class EditableEntityModelDataSetMapping implements EntityModelDataSetMapping {
 	public Object read(DataRow currentRow) {
 
 
-		return this.type.read(currentRow, null, new DataColumnModel[0]);
+		Object instance = this.type.read(currentRow, null, new DataColumnModel[0]);
+		
+		ClassIntrospector<?> instrospector = ClassIntrospector.loadFrom(type.getMappedClassName());
+		
+		instance = instrospector.newProxyInstance(
+					new EntityManagerProxyHandler((MetaBeanEntityInstance) instance), 
+					EntityInstance.class
+				);
+		
+		return instance;
 	}
 
 
@@ -129,10 +140,10 @@ class EditableEntityModelDataSetMapping implements EntityModelDataSetMapping {
 		HashDataRow row = new HashDataRow();
 		
 		for (DataColumnModel m : this.type.getColumns()){
-			row.addColumn(new SimpleDataColumn(m)); // TODO set 
+			row.addColumn(new SimpleDataColumn(m)); 
 		}
 		
-		this.type.write(instance, row, new DataColumnModel[0]);
+		this.type.write(null, instance, row, new DataColumnModel[0]);
 		
 		return Collections.<DataRow>singleton(row);
 	}

@@ -16,7 +16,7 @@ public class OIDIdentity extends Identity {
 	}
 	
 	@Override
-	public boolean equals(Identity other) {
+	public boolean equalsIdentity(Identity other) {
 		return other instanceof OIDIdentity && ((OIDIdentity)other).oid.equals(this.oid);
 	}
 

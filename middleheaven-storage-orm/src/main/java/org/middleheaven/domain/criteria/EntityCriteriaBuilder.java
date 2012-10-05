@@ -3,7 +3,6 @@ package org.middleheaven.domain.criteria;
 
 public class EntityCriteriaBuilder<T> extends AbstractEntityCriteriaBuilder<T, EntityCriteriaBuilder<T>> {
 
-	
 	public static <U> EntityCriteriaBuilder<U> search(Class<U> type){
 		return new EntityCriteriaBuilder<U>(type);
 	}

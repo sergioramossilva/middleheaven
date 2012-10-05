@@ -7,6 +7,12 @@ import org.middleheaven.util.QualifiedName;
 public interface FieldModel {
 
 	/**
+	 * This is a transient field. Transiente fields are not mapped to persistenace.
+	 * @return <code>true</code> if this is a transient field;
+	 */
+	public boolean isTransient();
+	
+	/**
 	 * This is the identifier field;
 	 * @return <code>true</code> if this is the identifier field;
 	 */

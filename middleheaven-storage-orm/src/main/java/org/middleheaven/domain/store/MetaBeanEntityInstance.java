@@ -38,6 +38,10 @@ public final class MetaBeanEntityInstance implements EntityInstance {
 		};
 	}
 	
+	public MetaBean getBean(){
+		return bean;
+	}
+	
 	@Override
 	public StorableState getStorableState() {
 		return state;
@@ -50,12 +54,12 @@ public final class MetaBeanEntityInstance implements EntityInstance {
 	
 	@Override
 	public Identity getIdentity() {
-		return (Identity)this.bean.get(model.identityFieldModel().getName().getName());
+		return (Identity)this.bean.get(model.identityFieldModel().getName().getDesignation());
 	}
 	
 	@Override
 	public void setIdentity(Identity id) {
-		this.bean.set(model.identityFieldModel().getName().getName(), id);
+		this.bean.set(model.identityFieldModel().getName().getDesignation(), id);
 	}
 	
 	/**
@@ -65,7 +69,7 @@ public final class MetaBeanEntityInstance implements EntityInstance {
 	public void copyFrom(EntityInstance other){
 		
 		for (EntityInstanceField field : other.getFields()){
-			this.bean.set(field.getModel().getName().getName(), field.getValue());
+			this.bean.set(field.getModel().getName().getDesignation(), field.getValue());
 		}
 		
 	}
@@ -127,7 +131,7 @@ public final class MetaBeanEntityInstance implements EntityInstance {
 
 					@Override
 					public EntityInstanceField classify(EntityFieldModel fieldModel) {
-						return getField(fieldModel.getName().getName());
+						return getField(fieldModel.getName().getDesignation());
 					}
 					
 				}

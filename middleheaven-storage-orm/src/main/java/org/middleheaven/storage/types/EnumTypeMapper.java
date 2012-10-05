@@ -37,6 +37,9 @@ public class EnumTypeMapper implements TypeMapper {
 		
 		Object value = row.getColumn(columns[0].getName()).getValue();
 		
+		if (value == null){
+			return null;
+		}
 		return StorableEnumUtils.valueForId(enumType, value);
 
 	}
@@ -45,9 +48,14 @@ public class EnumTypeMapper implements TypeMapper {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(Object object, DataRow row, DataColumnModel... columns) {
-			
-		row.getColumn(columns[0].getName()).setValue( ((StorableEnum) object).getStorableValue());
+	public void write(Object parent, Object object, DataRow row, DataColumnModel... columns) {
+		
+		if (object == null){
+			row.getColumn(columns[0].getName()).setValue( null);
+		} else {
+			row.getColumn(columns[0].getName()).setValue( ((StorableEnum) object).getStorableValue());
+		}
+		
 
 	}
 

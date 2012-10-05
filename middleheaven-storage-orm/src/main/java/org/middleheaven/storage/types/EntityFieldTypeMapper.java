@@ -63,8 +63,8 @@ public class EntityFieldTypeMapper implements TypeMapper {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(Object object, DataRow row, DataColumnModel... columns) {
-		 this.fieldType.write(object, row, this.columns);
+	public void write(Object parent, Object object, DataRow row, DataColumnModel... columns) {
+		 this.fieldType.write(parent, object, row, columns);
 	}
 
 }

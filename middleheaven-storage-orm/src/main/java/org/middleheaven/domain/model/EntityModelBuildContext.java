@@ -5,7 +5,7 @@ package org.middleheaven.domain.model;
  * Model builder for entities.
  * 
  */
-public interface EntityModelBuilder extends ModelSetItemBuilder<EditableDomainEntityModel> {
+public interface EntityModelBuildContext extends ModelSetItemBuilder<EditableDomainEntityModel> {
 
 	/**
 	 * 
@@ -13,5 +13,6 @@ public interface EntityModelBuilder extends ModelSetItemBuilder<EditableDomainEn
 	 */
 	public EditableDomainEntityModel getEditableModelOf(Class<?> type);
 	
+
 
 }

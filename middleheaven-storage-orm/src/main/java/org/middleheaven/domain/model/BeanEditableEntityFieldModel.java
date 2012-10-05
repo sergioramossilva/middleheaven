@@ -16,6 +16,7 @@ public class BeanEditableEntityFieldModel implements EditableEntityFieldModel {
 	private Class<?> aggregationClass;
 	private DataTypeModel dataTypeModel;
 	private String uniqueGroup;
+	private boolean isTransient;
 
 	public BeanEditableEntityFieldModel(String entityName, String name) {
 		this.name = QualifiedName.qualify(entityName, name);
@@ -150,6 +151,22 @@ public class BeanEditableEntityFieldModel implements EditableEntityFieldModel {
 	@Override
 	public String getUniqueGroup() {
 		return uniqueGroup;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isTransient() {
+		return isTransient;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setTransient(boolean isTransient) {
+		this.isTransient = isTransient;
 	}
 	
 	

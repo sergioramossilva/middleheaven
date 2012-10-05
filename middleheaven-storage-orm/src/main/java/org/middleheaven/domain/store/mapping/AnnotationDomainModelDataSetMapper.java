@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.core.reflection.PropertyNotFoundException;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.domain.model.DataType;
 import org.middleheaven.domain.model.DomainModel;
 import org.middleheaven.domain.model.EntityFieldModel;
 import org.middleheaven.domain.model.EntityModel;
@@ -25,7 +25,6 @@ import org.middleheaven.model.annotations.mapping.Dataset;
 import org.middleheaven.model.annotations.mapping.DatasetInheritance;
 import org.middleheaven.model.annotations.mapping.Type;
 import org.middleheaven.persistance.DataStoreSchemaName;
-import org.middleheaven.persistance.db.mapping.DataBaseMapper;
 import org.middleheaven.persistance.model.ColumnType;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.persistance.model.DataColumnModelBean;
@@ -54,7 +53,7 @@ import org.middleheaven.util.identity.LongIdentity;
 public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMapper {
 
 	private final Map<String, TypeMapper> types = new HashMap<String, TypeMapper>();
-	
+
 	private final Map<String, EntityModelDataSetMapping> mappings = new HashMap<String, EntityModelDataSetMapping>();
 	private final DataStoreSchemaName dataStoreSchemaName;
 	private final DomainModel domainModel;
@@ -67,13 +66,17 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	 * @return
 	 */
 	public static AnnotationDomainModelDataSetMapper newInstance(DataStoreSchemaName dataStoreSchemaName, DomainModel domainModel ){
-		return new AnnotationDomainModelDataSetMapper(domainModel,dataStoreSchemaName);
+		AnnotationDomainModelDataSetMapper mapper = new AnnotationDomainModelDataSetMapper(domainModel,dataStoreSchemaName);
+
+		mapper.initialize();
+
+		return mapper;
 	}
 
 	private AnnotationDomainModelDataSetMapper(DomainModel domainModel, DataStoreSchemaName dataStoreSchemaName){
 		this.dataStoreSchemaName = dataStoreSchemaName;
 		this.domainModel = domainModel;
-		
+
 		this.registerTypeMapper(new NumberTypeMapper(Integer.class));
 		this.registerTypeMapper(new NumberTypeMapper(Long.class));
 		this.registerTypeMapper(new NumberTypeMapper(BigDecimal.class));
@@ -89,8 +92,8 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 		this.registerTypeMapper(new RealTypeMapper());
 		this.registerTypeMapper(new IdentityTypeMapper(IntegerIdentity.class));
 		this.registerTypeMapper(new IdentityTypeMapper(LongIdentity.class));
-		
-		this.initialize();
+
+
 	}
 
 	/**
@@ -99,7 +102,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	@Override
 	public EntityModelDataSetMapping getMappingFor(EntityModel entityModel) {
 
-		return mappings.get(entityModel.getEntityClass().getName());
+		return mappings.get(entityModel.getEntityName().toLowerCase());
 
 	}
 
@@ -107,16 +110,16 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	 * {@inheritDoc}
 	 */
 	private void initialize() {
-		
+
 		// because of dependencies, a queue must be used
 		Map<String, EntityModel> queue = new HashMap<String, EntityModel>();
-		
+
 		for (EntityModel model : domainModel.models()){
 
-			queue.put(model.getEntityClass().getName(), model);
+			queue.put(model.getEntityClass().getSimpleName(), model);
 
 		}
-		
+
 		while(!queue.isEmpty()){
 
 			processType(queue , queue.keySet().iterator().next());
@@ -127,15 +130,15 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	 * @param model
 	 */
 	private TypeMapper processType(Map<String, EntityModel> queue ,String typeName) {
-		
-		
+
+
 		EntityModel model = queue.remove(typeName);
-		
-		
+
+
 		EditableEntityModelDataSetMapping mapping = new EditableEntityModelDataSetMapping();
 
-		mappings.put(model.getEntityClass().getName(), mapping);
-		
+		mappings.put(model.getEntityName().toLowerCase(), mapping);
+
 		mapping.setDataStoreSchemaName(this.dataStoreSchemaName);
 
 		readDataSetName(mapping , model);
@@ -147,7 +150,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 		}
 
 		mapping.setTypeMapping((EntityInstanceTypeMapper) type);
-		
+
 		return type;
 	}
 
@@ -161,28 +164,32 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 		EntityInstanceTypeMapper type = new EntityInstanceTypeMapper(model);
 
 		mapping.addInstanceMapper(model.getEntityName(), type);
-		
-		EditableDataSet dsModel = new EditableDataSet(); // TODO
-		
+
+		EditableDataSet dsModel = new EditableDataSet(); 
+
 		dsModel.setName(mapping.getDataSetName());
-		
+
 		for (EntityFieldModel field : model.fields()){
 
-			PropertyAccessor pa = model.getEntityClass().getPropertyAcessor(field.getName().getName());
+			if (!field.isTransient()){
+				try {
+					PropertyAccessor pa = model.getEntityClass().getPropertyAcessor(field.getName().getDesignation());
+
+					TypeMapper fieldType = readFieldTypeMapper(pa, field, queue);
+
+					DataColumnModel[] columns = readColumns(dsModel, pa, field , mapping);
 
 
-			TypeMapper fieldType = readFieldTypeMapper(pa, field, queue);
 
-			DataColumnModel[] columns = readColumns(dsModel, pa, field , mapping);
-			
-			
-			
-			EntityFieldTypeMapper fieldTypeMapper = new EntityFieldTypeMapper(field, fieldType, columns);
+					EntityFieldTypeMapper fieldTypeMapper = new EntityFieldTypeMapper(field, fieldType, columns);
 
-			
-			
-			type.addFielTypeMapper(fieldTypeMapper);
 
+
+					type.addFielTypeMapper(fieldTypeMapper);
+				} catch (PropertyNotFoundException e){
+					throw new DataSetColumnNotMatchPropertyMappingException(e.getPropertyName(), e.getTypeName());
+				}
+			}
 
 
 		}
@@ -210,17 +217,17 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 			Column column = pa.getAnnotation(Column.class);
 
 			if (column == null){
-				
+
 				if (pa.isAnnotadedWith(Transient.class)) {
 					all = new Column[0];
 				} else {
-					
+
 					// auto mappping
-					
+
 					return columnBeanFromField(dsModel, field); 
 
 				}
-				
+
 			} else {
 				all = new Column[]{column};
 			}
@@ -230,30 +237,36 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 		}
 
 		DataColumnModel[] columnModels = new DataColumnModel[all.length];
-		
+
 		for (int i = 0 ; i < all.length; i++){
-			
+
 			DataColumnModelBean cm = new DataColumnModelBean();
-					
+
 			Column c = all[i];
-			
+
 			cm.setName(QualifiedName.qualify(dsModel.getName(), c.name()));
 			cm.setDataSetModel(dsModel);
 			cm.setNullable(!pa.isAnnotadedWith(NotNull.class));
 			cm.setPrecision(c.precision());
 			cm.setSize(c.length());
-			cm.setType(c.type());
+
+			cm.setType(this.mapColumnTypeFromEntityField(field));
+
 			cm.setVersion(!pa.isAnnotadedWith(Version.class));
-			
-		
+
+			if (pa.isAnnotadedWith(Id.class)){
+				cm.setPrimaryKeyGroup("key");
+			}
+
 			dsModel.addColumn(cm);
 			columnModels[i] = cm;
-		
+
 
 		}
-		
+
 		return columnModels;
 	}
+
 
 
 
@@ -264,26 +277,31 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	 */
 	private DataColumnModel[] columnBeanFromField(EditableDataSet dsModel, EntityFieldModel field) {
 		DataColumnModel[] bean = new DataColumnModel[1];
-		
+
 		DataColumnModelBean column = new DataColumnModelBean();
-		
-		column.setName(QualifiedName.qualify(dsModel.getName(), field.getName().getName()));
+
+		column.setName(QualifiedName.qualify(dsModel.getName(), field.getName().getDesignation()));
 		column.setNullable(field.isNullable());
-		column.setType(mapColumnTypeFromDataType(field.getDataType()));
+		column.setType(mapColumnTypeFromEntityField(field));
 		column.setVersion(field.isVersion());
 		column.setDataSetModel(dsModel);
 		
+		if (field.isIdentity()){
+			column.setPrimaryKeyGroup("key");
+		}
+
 		dsModel.addColumn(column);
 		bean[0] = column;
 		return bean;
 	}
 
+
 	/**
 	 * @param dataType
 	 * @return
 	 */
-	private ColumnType mapColumnTypeFromDataType(DataType dataType) {
-		switch (dataType){
+	private ColumnType mapColumnTypeFromEntityField(EntityFieldModel field) {
+		switch (field.getDataType()){
 		case DATE:
 			return ColumnType.DATE;
 		case DATETIME:
@@ -299,18 +317,19 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 			return ColumnType.LOGIC;
 		case TEXT:
 			return ColumnType.TEXT;
+		case MEMO:
+			return ColumnType.CLOB;
 		case TIME:
 			return ColumnType.TIME;
-		case MANY_TO_MANY:
-			
 		case MANY_TO_ONE:
-		case MEMO:
-		case ONE_TO_MANY:
 		case ONE_TO_ONE:
+			// TODO composed reference key
+			return ColumnType.INTEGER;
+		case ONE_TO_MANY:
+		case MANY_TO_MANY:
 		case UNKONW:
-			
-			default:
-				return null;
+		default:
+			throw new IllegalArgumentException("Cannot map datatype " + field.getDataType() + "to a column type" );
 		}
 	}
 
@@ -328,16 +347,16 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 
 			if (domainModel.containsModelFor(pa.getValueType().getName())){
 				// it is an entity. return it typemapper
-				
-				 EntityModelDataSetMapping map = this.mappings.get(pa.getValueType().getName());
-				 
-				 if (map == null){
-					 // recursive call
-					return processType(queue, pa.getValueType().getName());
-				 } 
-				 
-				 return map.getTypeMapper();
-				
+
+				EntityModelDataSetMapping map = this.mappings.get(pa.getValueType().getSimpleName().toLowerCase());
+
+				if (map == null){
+					// recursive call
+					return processType(queue, pa.getValueType().getSimpleName());
+				} 
+
+				return map.getTypeMapper();
+
 			} else {
 				if (pa.getValueType().isEnum()) {
 					if (StorableEnum.class.isAssignableFrom(pa.getValueType())){
@@ -347,9 +366,9 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 					}
 
 				} else {
-					
+
 					String typeName;
-					
+
 					final ClassIntrospector<?> introspector = Introspector.of(pa.getValueType());
 					if (introspector.isPrimitive()){
 						typeName = introspector.getPrimitiveWrapper().getName();
@@ -361,11 +380,11 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 					TypeMapper m = types.get(typeName);
 
 					if (m == null){
-						
+
 						if (field.isIdentity()) {
-							
+
 							Id id = pa.getAnnotation(Id.class);
-							
+
 							return new IdentityTypeMapper(id.type());
 						}
 						throw new IllegalStateException("No TypeMapping found for class " + pa.getValueType().getName()); 
@@ -375,7 +394,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 				}
 
 			}
-			
+
 
 		} else {
 			return Introspector.of(tm.type()).newInstance();
@@ -401,7 +420,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 			mapping.setInherintance(ds.inherintance());
 		}
 
-		
+
 
 	}
 
@@ -436,7 +455,11 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	 */
 	@Override
 	public EntityFieldTypeMapper getEntityFieldTypeMapper(QualifiedName fieldName) {
-		return this.mappings.get(fieldName.getQualifier()).getInstanceTypeMapper(fieldName.getQualifier()).getEntityFieldTypeMapper(fieldName);
+		final EntityModelDataSetMapping entityModelDataSetMapping = this.mappings.get(fieldName.getQualifier().toLowerCase());
+		if (entityModelDataSetMapping == null){
+			throw new IllegalStateException("No mapping for entity " + fieldName.getQualifier());
+		}
+		return entityModelDataSetMapping.getInstanceTypeMapper(fieldName.getQualifier()).getEntityFieldTypeMapper(fieldName);
 	}
 
 

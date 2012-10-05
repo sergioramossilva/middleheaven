@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.domain.model.DomainModel;
@@ -68,10 +69,10 @@ public abstract class AbstractRepository<E> implements Repository<E> {
 	
 	public Query<E> findEquals(final E instance) {
 		
-		return new ListQuery<E>(){
+		return new ListQuery<E>(new Callable<List<E>>(){
 
 			@Override
-			protected List<E> list() {
+			public List<E> call() throws Exception {
 				List<E> all = new ArrayList<E>(findAll().fetchAll());
 				for (Iterator<E> it = all.iterator(); it.hasNext();){
 					if (!it.next().equals(instance)){
@@ -79,9 +80,7 @@ public abstract class AbstractRepository<E> implements Repository<E> {
 					}
 				}
 				return all;
-			}
-			
-		};
+			}});
 		
 	}
 

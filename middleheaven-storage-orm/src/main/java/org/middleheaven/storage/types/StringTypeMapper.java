@@ -33,7 +33,7 @@ public class StringTypeMapper implements TypeMapper  {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(Object object, DataRow row, DataColumnModel... columns) {
+	public void write(Object parent, Object object, DataRow row, DataColumnModel... columns) {
 		
 		row.getColumn(columns[0].getName()).setValue((String) object);
 	}

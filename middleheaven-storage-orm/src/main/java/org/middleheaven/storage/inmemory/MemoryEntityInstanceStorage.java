@@ -7,12 +7,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.middleheaven.domain.criteria.EntityCriteria;
-import org.middleheaven.domain.query.FixedListQuery;
+import org.middleheaven.domain.query.ListQuery;
 import org.middleheaven.domain.query.Query;
 import org.middleheaven.domain.store.DomainStoreManager;
 import org.middleheaven.domain.store.EntityInstance;
 import org.middleheaven.domain.store.EntityInstanceStorage;
-import org.middleheaven.domain.store.ReadStrategy;
+import org.middleheaven.util.criteria.ReadStrategy;
 
 /**
  * 
@@ -57,7 +57,7 @@ public class MemoryEntityInstanceStorage implements EntityInstanceStorage {
 	@Override
 	public <T> Query<T> createQuery(EntityCriteria<T> criteria,
 			ReadStrategy strategy) {
-		return FixedListQuery.from(Collections.<T>emptyList());
+		return new ListQuery<T>(Collections.<T>emptyList());
 	}
 
 	/**

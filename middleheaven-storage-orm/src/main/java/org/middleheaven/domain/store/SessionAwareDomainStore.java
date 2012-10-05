@@ -8,6 +8,7 @@ import org.middleheaven.domain.model.DomainModel;
 import org.middleheaven.domain.query.Query;
 import org.middleheaven.events.EventListenersSet;
 import org.middleheaven.transactions.XAResourceAdapter;
+import org.middleheaven.util.criteria.ReadStrategy;
 import org.middleheaven.util.identity.Identity;
 
 class SessionAwareDomainStore extends XAResourceAdapter implements DomainStore  {

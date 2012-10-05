@@ -13,7 +13,7 @@ import org.middleheaven.persistance.DataQuery;
 import org.middleheaven.persistance.DataRowStream;
 
 /**
- * 
+ * @param <T> the type of the  resulting entity.
  */
 public class DataQueryAdapter<T> implements Query<T> {
 
@@ -21,6 +21,12 @@ public class DataQueryAdapter<T> implements Query<T> {
 	private DataQuery query;
 	private EntityModelDataSetMapping mapping;
 
+	/**
+	 * 
+	 * Constructor.
+	 * @param mapping a {@link EntityModelDataSetMapping} to use for this adapter
+	 * @param query a {@link DataQuery} to be adapted to a {@link Query} object.
+	 */
 	public DataQueryAdapter(EntityModelDataSetMapping mapping, DataQuery query) {
 		this.query = query;
 		this.mapping = mapping;
@@ -36,7 +42,9 @@ public class DataQueryAdapter<T> implements Query<T> {
 		DataRowStream stream = q.getRowStream();
 		try {
 			if (stream.next()){
-				return (T) mapping.read(stream.currentRow());
+				@SuppressWarnings("unchecked")
+				final T t =  (T) mapping.read(stream.currentRow());
+				return t;
 			} else {
 				return null;
 			}
@@ -55,6 +63,7 @@ public class DataQueryAdapter<T> implements Query<T> {
 			List<T> result = new LinkedList<T>();
 		
 			while (stream.next()) {
+				@SuppressWarnings("unchecked")
 				final T t = (T) mapping.read(stream.currentRow());
 				result.add(t);
 			}
@@ -114,7 +123,7 @@ public class DataQueryAdapter<T> implements Query<T> {
 			if (!hasNext){
 				stream.close();
 			} 
-			return hasNext();
+			return hasNext;
 		}
 
 		/**

@@ -1,10 +1,10 @@
 package org.middleheaven.domain.repository;
 
 import org.middleheaven.domain.query.Query;
-import org.middleheaven.validation.DefaultValidationResult;
-import org.middleheaven.validation.MessageInvalidationReason;
-import org.middleheaven.validation.ValidationResult;
-import org.middleheaven.validation.Validator;
+import org.middleheaven.util.validation.DefaultValidationResult;
+import org.middleheaven.util.validation.MessageInvalidationReason;
+import org.middleheaven.util.validation.ValidationResult;
+import org.middleheaven.util.validation.Validator;
 
 
 public class NotDuplicatedValidator<T> implements Validator<T>{

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Test;
 import org.middleheaven.domain.query.ListQuery;
@@ -18,14 +17,7 @@ public class TestQuery {
 	@Test
 	public void testQuery(){
 		
-		Query<String> q = new ListQuery<String>(){
-
-			@Override
-			protected List<String> list() {
-				return Arrays.asList("A","B","C","D","E");
-			}
-			
-		};
+		Query<String> q = new ListQuery<String>(Arrays.asList("A","B","C","D","E"));
 		
 		assertFalse(q.isEmpty());
 		assertEquals(5L, q.count());

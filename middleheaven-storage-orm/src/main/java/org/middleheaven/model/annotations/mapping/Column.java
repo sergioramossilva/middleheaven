@@ -9,8 +9,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.middleheaven.persistance.model.ColumnType;
-
 /**
  * Market annotation that signifies the fields is
  * not to be preserved 
@@ -22,8 +20,6 @@ import org.middleheaven.persistance.model.ColumnType;
 	})
 @Documented
 public @interface Column {
-	
-	ColumnType type();
 	
 	String name();
 	

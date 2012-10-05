@@ -4,12 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.metaclass.MetaClass;
-import org.middleheaven.logging.Log;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Enumerable;
-import org.middleheaven.util.identity.IntegerIdentity;
-import  org.middleheaven.domain.model.EditableDomainEntityModel;
 
 /**
  * Editable implementation of EntityModel
@@ -42,18 +39,18 @@ public final class HashEditableEntityModel implements EditableDomainEntityModel 
 				}
 			}
 			
-			if (this.identityFieldModel == null){
-				Log.onBookFor(this.getClass()).warn("{0} has no identity field defined.",this.type.getName());
-				BeanEditableEntityFieldModel eidentityFieldModel = new BeanEditableEntityFieldModel(this.getEntityName(), "identity");
-				eidentityFieldModel.setIsIdentity(true);
-				eidentityFieldModel.setDataType(DataType.INTEGER);
-				eidentityFieldModel.setUnique(true);
-				eidentityFieldModel.setValueType(IntegerIdentity.class);
-				
-				addField(eidentityFieldModel);
-				
-				identityFieldModel = eidentityFieldModel;
-			}
+//			if (this.identityFieldModel == null){
+//				Log.onBookFor(this.getClass()).warn("{0} has no identity field defined.",this.type.getName());
+//				BeanEditableEntityFieldModel eidentityFieldModel = new BeanEditableEntityFieldModel(this.getEntityName(), "identity");
+//				eidentityFieldModel.setIsIdentity(true);
+//				eidentityFieldModel.setDataType(DataType.INTEGER);
+//				eidentityFieldModel.setUnique(true);
+//				eidentityFieldModel.setValueType(IntegerIdentity.class);
+//				
+//				addField(eidentityFieldModel);
+//				
+//				identityFieldModel = eidentityFieldModel;
+//			}
 		}
 		return identityFieldModel;
 	}
@@ -66,7 +63,7 @@ public final class HashEditableEntityModel implements EditableDomainEntityModel 
 		if (fieldModel.isIdentity()) {
 			this.identityFieldModel = fieldModel;
 		}
-		this.fields.put(fieldModel.getName().getName(), fieldModel);
+		this.fields.put(fieldModel.getName().getDesignation(), fieldModel);
 	}
 
 	/**
@@ -74,13 +71,13 @@ public final class HashEditableEntityModel implements EditableDomainEntityModel 
 	 */
 	@Override
 	public boolean containsField(QualifiedName fieldQualifiedName) {
-		return this.fields.containsKey(fieldQualifiedName.getName());
+		return this.fields.containsKey(fieldQualifiedName.getDesignation());
 	}
 
 	
 	@Override
 	public EditableEntityFieldModel fieldModel(QualifiedName logicName) {
-		EditableEntityFieldModel model = this.fields.get(logicName.getName());
+		EditableEntityFieldModel model = this.fields.get(logicName.getDesignation());
 		if (model == null){
 			throw new ModelingException("Field " + logicName + " does not exist in model");
 		}

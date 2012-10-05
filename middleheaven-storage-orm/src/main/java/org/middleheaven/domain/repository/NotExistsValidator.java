@@ -2,12 +2,12 @@ package org.middleheaven.domain.repository;
 
 
 import org.middleheaven.domain.query.Query;
-import org.middleheaven.validation.DefaultValidationResult;
-import org.middleheaven.validation.MessageInvalidationReason;
-import org.middleheaven.validation.ValidationResult;
+import org.middleheaven.util.validation.DefaultValidationResult;
+import org.middleheaven.util.validation.MessageInvalidationReason;
+import org.middleheaven.util.validation.ValidationResult;
 
 
-public class NotExistsValidator<T> implements org.middleheaven.validation.Validator<T> {
+public class NotExistsValidator<T> implements org.middleheaven.util.validation.Validator<T> {
 
 	private Repository<T> repository;	
 
