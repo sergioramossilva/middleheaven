@@ -9,6 +9,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ModificationTracableManagedFile;
 import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.text.indexing.DocumentModel;
 import org.middleheaven.text.indexing.TextIndex;
@@ -32,14 +33,14 @@ public class LuceneTextIndexingService implements TextIndexingService{
 		this.debug = debug;
 	}
 
-	public void configurateIndex(Object indexIdentifier, ManagedFile managedFile, Analyzer analizer) {
+	public void configurateIndex(Object indexIdentifier, ModificationTracableManagedFile managedFile, Analyzer analizer) {
 		try {
 			
-			managedFile = MachineFiles.ensureMachineFile(managedFile);
-			
-			File directory = new File(managedFile.getURI());
-			
-			this.configurateIndex(indexIdentifier, new NIOFSDirectory(directory), analizer);
+//			managedFile = MachineFiles.ensureMachineFile(managedFile);
+//			
+//			File directory = new File(managedFile.getURI());
+//			
+			this.configurateIndex(indexIdentifier, ManagedFileDirectory.open(managedFile), analizer);
 
 		} catch (IOException e) {
 			throw TextIndexingException.handle(e);

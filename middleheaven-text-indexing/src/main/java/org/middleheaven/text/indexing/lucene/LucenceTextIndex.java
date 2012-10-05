@@ -21,7 +21,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.text.indexing.DocumentField;
 import org.middleheaven.text.indexing.DocumentFieldModel;
 import org.middleheaven.text.indexing.DocumentModel;
@@ -181,7 +181,7 @@ public class LucenceTextIndex implements TextIndex {
 
 		} catch (FileNotFoundException e){
 			// could not find index files
-			Log.onBookFor(this.getClass()).warn(e, "Index file not found");
+			Logger.onBookFor(this.getClass()).warn(e, "Index file not found");
 			return new ListSearchHits<IndexableDocument>(0);
 		} catch (Exception e) {
 			throw handle(e);

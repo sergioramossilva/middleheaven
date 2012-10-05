@@ -9,6 +9,7 @@ import org.apache.lucene.util.Version;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.middleheaven.io.repository.ModificationTracableManagedFile;
 import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.text.indexing.DocumentModel;
 import org.middleheaven.text.indexing.IndexableDocument;
@@ -48,7 +49,7 @@ public class TestTextIndex {
 
 		LuceneTextIndexingService service = new LuceneTextIndexingService();
 
-		service.configurateIndex( "index", MachineFiles.resolveFile(file) , new  StopAnalyzer(Version.LUCENE_30));
+		service.configurateIndex( "index", (ModificationTracableManagedFile)MachineFiles.getDefaultFolder().retrive("indexes") , new  StopAnalyzer(Version.LUCENE_30));
 		service.configureDocument("index", docModel);
 
 		TextIndex ti = service.getIndex("index");
