@@ -41,5 +41,9 @@ public class SimpleDataColumn implements DataColumn {
 	public void setValue(Object value) {
 		this.value = value;
 	}
+	
+	public String toString(){
+		return  value + "<" + model.getType() + ">";
+	}
 
 }

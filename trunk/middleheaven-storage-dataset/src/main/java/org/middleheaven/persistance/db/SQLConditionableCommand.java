@@ -35,7 +35,7 @@ public abstract class SQLConditionableCommand implements ConditionableDataBaseCo
 	protected final PreparedStatement prepareStatement(DataBaseMapper mapper, Connection connection, QueryParameters parameters) throws SQLException{
 		PreparedStatement ps = connection.prepareStatement(sql,ResultSet.TYPE_FORWARD_ONLY , ResultSet.CONCUR_READ_ONLY);
 
-		PreparedStatementStorable pss = new PreparedStatementStorable(mapper,ps);
+		PreparedStatementStorable pss = new PreparedStatementStorable(mapper, this.dialect,ps);
 
 		int param = 1;
 		for (ValueHolder c : values){

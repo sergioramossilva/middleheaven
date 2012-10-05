@@ -3,9 +3,10 @@ package org.middleheaven.persistance.db.metamodel;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.middleheaven.persistance.model.ColumnModelGroup;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Enumerable;
@@ -13,7 +14,7 @@ import org.middleheaven.util.collections.Enumerable;
 public class EditableDBTableModel implements DataBaseObjectModel, DBTableModel {
 
 	private String name;
-	private Map<String, EditableColumnModel> columns = new HashMap<String, EditableColumnModel>();
+	private Map<String, EditableColumnModel> columns = new LinkedHashMap<String, EditableColumnModel>();
 	private Map<String, ColumnModelGroup> uniqueGroups = new HashMap<String, ColumnModelGroup> ();
 	private ColumnModelGroup keyGroup = new ColumnModelGroup();
 	
@@ -54,7 +55,10 @@ public class EditableDBTableModel implements DataBaseObjectModel, DBTableModel {
 		if (columnModel.getSimpleName() == null){
 			throw new IllegalArgumentException("Column name cannot be null");
 		}
-		columns.put ( columnModel.getSimpleName() , new EditableColumnModel(columnModel));
+		
+		final EditableColumnModel editableColumnModel = new EditableColumnModel(columnModel);
+	
+		columns.put ( columnModel.getSimpleName() , editableColumnModel);
 		
 		if( columnModel.getTableModel()== null){
 			columnModel.setTableModel(this);
@@ -134,12 +138,20 @@ public class EditableDBTableModel implements DataBaseObjectModel, DBTableModel {
 		// Create a table model with the columns that eBeanColumnModeler this model that not exist on the other 
 		EditableDBTableModel res = new EditableDBTableModel(this.name);
 		
+		outter: 
 		for (DBColumnModel c : this.columns.values()){
-			if (!other.columns.containsKey(c.getSimpleName())){
-				DBColumnModel nc = c.duplicate();
-				nc.setTableModel(this);
-				res.addColumn(nc);
+			// find a match in this columns set 
+			for (Entry<String, EditableColumnModel> entry : other.columns.entrySet()){
+				// musta do a case insensitive search
+				if (entry.getKey().equalsIgnoreCase(c.getSimpleName())){ 
+					continue outter;
+				}
 			}
+			// no match found
+			DBColumnModel nc = c.duplicate();
+			nc.setTableModel(this);
+			res.addColumn(nc);
+			
 		}
 		
 		return res;

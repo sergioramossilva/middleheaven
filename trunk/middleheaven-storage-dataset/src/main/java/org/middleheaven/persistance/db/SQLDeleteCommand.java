@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.db.mapping.DataBaseMapper;
 
 /**

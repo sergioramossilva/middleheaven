@@ -81,8 +81,9 @@ public class XmlDataBaseMapper extends AbstractDataBaseMapper {
 		
 		
 	}
+	
+	
 	private  Map<String , UserType> userTypes = new HashMap<String , UserType>();
-
 	private static Map<String , ColumnType> typesMapping = new HashMap<String , ColumnType>();
 
 	static {
@@ -102,6 +103,9 @@ public class XmlDataBaseMapper extends AbstractDataBaseMapper {
 		typesMapping.put("time", ColumnType.TIME);
 		
 	}
+	
+	
+	private XmlDataBaseMapper(){}
 	
 	protected ColumnType mapType(String type){
 		ColumnType ct =  typesMapping.get(type.toLowerCase());
@@ -162,7 +166,7 @@ public class XmlDataBaseMapper extends AbstractDataBaseMapper {
 			    				PropertyAccessor pa = inspectorDataSet.inspect().properties().named(atributos.getLocalName(i)).retrive();
 			    				
 			    				if (pa != null){
-				    				pa.setValue(atual, atributos.getValue(i).toLowerCase());
+				    				pa.setValue(atual, atributos.getValue(i) /*.toLowerCase()*/);
 				    			}
 			    			}
 			    			
@@ -176,7 +180,7 @@ public class XmlDataBaseMapper extends AbstractDataBaseMapper {
 			    			PropertyAccessor pa = inspectorColumn.inspect().properties().named(atributos.getLocalName(i)).retrive();
 			    			
 			    			if (pa != null){
-			    				pa.setValue(cm, atributos.getValue(i).toLowerCase());
+			    				pa.setValue(cm, atributos.getValue(i) /*.toLowerCase()*/);
 			    			}
 			    			
 		    			}

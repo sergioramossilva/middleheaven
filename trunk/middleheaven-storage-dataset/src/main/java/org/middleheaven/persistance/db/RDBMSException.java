@@ -1,9 +1,11 @@
 package org.middleheaven.persistance.db;
 
 /**
- * Layer Exception for RDBMS data set provider
+ * Layer Exception for RDBMS data set provider.
  */
 public class RDBMSException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 

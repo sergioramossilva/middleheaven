@@ -12,6 +12,27 @@ public class EditableDataSet implements DataSetModel {
 
 	private String dataSetName;
 	private HashDataColumnsModel columns = new HashDataColumnsModel();
+	private HashDataColumnsModel keys = new HashDataColumnsModel();
+	
+	public String toString () {
+		return dataSetName;
+	}
+	
+	public int hashCode(){
+		return dataSetName.hashCode();
+	}
+	
+	public boolean equals(Object other){
+		return (other instanceof DataSetModel) && equalsOther((DataSetModel) other);
+	}
+	
+	/**
+	 * @param other
+	 * @return
+	 */
+	private boolean equalsOther(DataSetModel other) {
+		return this.getName().equals(other.getName());
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -34,7 +55,7 @@ public class EditableDataSet implements DataSetModel {
 	 */
 	@Override
 	public DataColumnsModel getPrimaryKeyColumns() {
-		throw new UnsupportedOperationException("Not implememented yet");
+		return keys;
 	}
 
 	/**
@@ -66,6 +87,10 @@ public class EditableDataSet implements DataSetModel {
 	 */
 	public void addColumn(DataColumnModel column) {
 		columns.addColumn(column);
+		
+		if (column.isInPrimaryKeyGroup()){
+			this.keys.addColumn(column);
+		}
 	}
 
 	/**

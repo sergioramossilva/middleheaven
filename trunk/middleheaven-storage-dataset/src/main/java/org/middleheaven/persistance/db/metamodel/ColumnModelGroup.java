@@ -1,10 +1,9 @@
-package org.middleheaven.persistance.model;
+package org.middleheaven.persistance.db.metamodel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.middleheaven.persistance.db.metamodel.DBColumnModel;
 
 public class ColumnModelGroup implements Iterable<DBColumnModel> {
 

@@ -3,7 +3,6 @@
  */
 package org.middleheaven.persistance.db;
 
-import org.middleheaven.persistance.SearchPlan;
 
 /**
  * 

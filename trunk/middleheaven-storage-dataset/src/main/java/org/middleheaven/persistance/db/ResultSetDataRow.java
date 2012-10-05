@@ -5,6 +5,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import org.middleheaven.logging.Logger;
 import org.middleheaven.persistance.DataAccessException;
 import org.middleheaven.persistance.DataColumn;
 import org.middleheaven.persistance.DataRow;
@@ -17,7 +18,7 @@ import org.middleheaven.util.collections.TransformedIterator;
 /**
  * 
  */
-class ResultSetDataRow implements DataRow{
+final class ResultSetDataRow implements DataRow{
 	
 
 	public static ResultSetDataRow newInstance (ResultSet resultSet, RDBMSDialect dialect) throws SQLException{
@@ -51,15 +52,17 @@ class ResultSetDataRow implements DataRow{
 
 			@Override
 			public DataColumnModel getModel() {
-				return model.getDataColumnModel(name.getName());
+				return model.getDataColumnModel(name);
 			}
 
 			@Override
 			public Object getValue() {
 				try {
-					return resultSet.getObject(name.getName());
+					// TODO retrive the alias from the applyable ResultColumnDefinition
+					return resultSet.getObject(name.getQualifier() + "_" + name.getDesignation());
 				} catch (SQLException e) {
-					throw new DataAccessException(e);
+					Logger.onBookFor(this.getClass()).debug(e, "Unexpected SQL exception");
+					return null;
 				}
 			}
 

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.persistance.db.metamodel.DBColumnModel;
+import org.middleheaven.persistance.db.metamodel.DBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
 import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
-import org.middleheaven.persistance.db.metamodel.DBTableModel;
 import org.middleheaven.persistance.model.ColumnType;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.StringUtils;
@@ -15,7 +15,8 @@ import org.middleheaven.util.StringUtils;
 public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 
 	private final Map<String, DBTableModel> tableMappings = new  HashMap<String, DBTableModel >();
-	private final Map<QualifiedName, DBColumnModel> columnMappings = new  HashMap<QualifiedName, DBColumnModel>();
+	private final Map<QualifiedName, DBColumnModel> logicToPhysicalColumnMappings = new  HashMap<QualifiedName, DBColumnModel>();
+	private final Map<QualifiedName, QualifiedName> physicalToLogicColumnMappings = new  HashMap<QualifiedName, QualifiedName>();
 
 
 	protected abstract ColumnType mapType(String type);
@@ -37,11 +38,13 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 
 			EditableColumnModel cm = new EditableColumnModel(
 					new ColumnModelAdapter( cmap, tbm)
-					);
+			);
 
 
-			columnMappings.put( QualifiedName.qualify(dataSet.name, cmap.name), cm);
-
+			final QualifiedName logicName = QualifiedName.qualify(dataSet.name, cmap.name);
+			logicToPhysicalColumnMappings.put( logicName, cm);
+			physicalToLogicColumnMappings.put(cm.getName(),  logicName);
+			
 			tbm.addColumn(cm);
 
 		}
@@ -64,7 +67,7 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 		 DBTableModel tb = tableMappings.get(modelName);
 
 		 if (tb == null){
-			 throw new IllegalModelStateException("Data set " + modelName + " is not mapped");
+			 throw new IllegalModelStateException("Data set '" + modelName + "' is not mapped");
 		 }
 
 		 return tb;
@@ -75,12 +78,17 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 
 
 	 @Override
-	 public DBColumnModel getColumnModel(QualifiedName qn) {
-
-		 return columnMappings.get(qn);
+	 public DBColumnModel getTableColumnModel(QualifiedName qn) {
+		 //QualifiedName lw = QualifiedName.qualify(qn.getQualifier().toLowerCase(), qn.getName().toLowerCase());
+		 return logicToPhysicalColumnMappings.get(qn);
 
 	 }
-
+	 
+	 @Override
+	 public QualifiedName getLogicQualifiedName(QualifiedName qn){
+		 return this.physicalToLogicColumnMappings.get(qn);
+	 }
+		
 
 
 	 protected class DataSetMapper {
@@ -97,13 +105,13 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 			 return columns.get(name);
 		 }
 		 public void setName(String name) {
-			 this.name = name.toLowerCase();
+			 this.name = name; //.toLowerCase();
 		 }
 		 public String getHardName() {
 			 return hardName;
 		 }
 		 public void setHardName(String hardName) {
-			 this.hardName = hardName.toLowerCase();
+			 this.hardName = hardName; //.toLowerCase();
 		 }
 
 		 public void addColumn(ColumnMapper cm) {

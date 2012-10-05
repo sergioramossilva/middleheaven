@@ -6,6 +6,7 @@ package org.middleheaven.persistance;
 import org.middleheaven.persistance.criteria.LogicConstraint;
 import org.middleheaven.persistance.criteria.building.RelationOperator;
 import org.middleheaven.persistance.model.DataSetModel;
+import org.middleheaven.util.Hash;
 
 /**
  * 
@@ -29,6 +30,9 @@ public class RelatedDataSet {
 		this.relationOperator = relationOperator;
 	}
 
+	public String toString(){
+		return sourceDataSetModel.getName() + " " + relationOperator.name() + " " + targetDataSetModel.getName();
+	}
 	public RelationOperator getRelationOperator() {
 		return relationOperator;
 	}
@@ -72,6 +76,29 @@ public class RelatedDataSet {
 		this.sourceDataSetModel = sourceTableModel;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public int hashCode(){
+		return Hash.hash(sourceDataSetModel).hash(targetDataSetModel).hashCode();
+	}
 	
-	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public boolean equals(Object other){
+		return (other instanceof RelatedDataSet) && equalsOther((RelatedDataSet)other);
+	}
+
+	/**
+	 * @param other
+	 * @return
+	 */
+	private boolean equalsOther(RelatedDataSet other) {
+		return (this.sourceDataSetModel == null ? other.getSourceDataSetModel() == null  : this.sourceDataSetModel.getName().equals(other.getSourceDataSetModel().getName()))
+				&& (this.targetDataSetModel == null ? other.getTargetDataSetModel() == null : this.targetDataSetModel.getName().equals(other.getTargetDataSetModel().getName()))
+				&& this.relationOperator.equals(other.getRelationOperator());
+	}
 }

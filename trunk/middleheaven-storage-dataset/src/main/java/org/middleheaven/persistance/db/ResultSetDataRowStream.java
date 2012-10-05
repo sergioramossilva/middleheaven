@@ -18,7 +18,7 @@ public class ResultSetDataRowStream implements DataRowStream {
 
 	
 
-	public static ResultSetDataRowStream newInstance (ResultSet rs, DataBaseMapper mapper, RDBMSDialect dialect) throws SQLException{
+	public static ResultSetDataRowStream newInstance (ResultSet rs, DataBaseMapper mapper, SearchPlan plan, RDBMSDialect dialect) throws SQLException{
 		return new ResultSetDataRowStream(rs, mapper , ResultSetDataRow.newInstance(rs, dialect));
 	}
 	

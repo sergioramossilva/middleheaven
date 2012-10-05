@@ -15,9 +15,8 @@ import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.PropertyNotFoundException;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.persistance.PersistanceException;
-import org.middleheaven.persistance.SearchPlan;
 import org.middleheaven.persistance.criteria.building.ColumnValueLocator;
-import org.middleheaven.persistance.db.AbstractDataSetCriteriaInterpreter;
+import org.middleheaven.persistance.db.AbstractRDBMSDataSetCriteriaInterpreter;
 import org.middleheaven.persistance.db.Clause;
 import org.middleheaven.persistance.db.DataSetCriteriaInterpreter;
 import org.middleheaven.persistance.db.EditionDataBaseCommand;
@@ -26,13 +25,14 @@ import org.middleheaven.persistance.db.RDBMSException;
 import org.middleheaven.persistance.db.RetriveDataBaseCommand;
 import org.middleheaven.persistance.db.SQLEditCommand;
 import org.middleheaven.persistance.db.SQLRetriveCommand;
+import org.middleheaven.persistance.db.SearchPlan;
 import org.middleheaven.persistance.db.ValueHolder;
 import org.middleheaven.persistance.db.mapping.DataBaseMapper;
 import org.middleheaven.persistance.db.metamodel.DBColumnModel;
-import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.DataBaseModel;
 import org.middleheaven.persistance.db.metamodel.DataBaseObjectAlreadyExistsException;
 import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
+import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableDataBaseModel;
 import org.middleheaven.persistance.db.metamodel.SequenceModel;
 import org.middleheaven.persistance.model.ColumnType;
@@ -54,7 +54,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 	public void writeEditionHardname(Clause buffer , QualifiedName hardname){
 
 			buffer.append(startDelimiter());
-			buffer.append(hardname.getName().toLowerCase());
+			buffer.append(hardname.getDesignation().toLowerCase());
 			buffer.append(endDelimiter());
 		
 	}
@@ -171,7 +171,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 		writeEnclosureHardname(sql, tm.getName());
 		sql.append("(\n ");
 		for (DBColumnModel cm : tm){
-			writeEnclosureHardname(sql,cm.getName().getName());
+			writeEnclosureHardname(sql,cm.getName().getDesignation());
 			sql.append(" ");
 			appendNativeTypeFor(sql , cm);
 			if(!cm.isNullable()){
@@ -188,7 +188,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 		return new SQLEditCommand(this,sql.toString());
 	}
 
-	private  class OracleCriteriaInterpreter extends AbstractDataSetCriteriaInterpreter{
+	private  class OracleCriteriaInterpreter extends AbstractRDBMSDataSetCriteriaInterpreter{
 
 		public OracleCriteriaInterpreter(RDBMSDialect dataBaseDialect, DataBaseMapper dataBaseMapper) {
 			super(dataBaseDialect, dataBaseMapper);

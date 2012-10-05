@@ -27,4 +27,8 @@ public interface DataStoreProvider {
 	 * @return <code>true</code> if this provider can provide the required data store, <code>false</code> otherwise.
 	 */
 	public boolean isProviderDataStore (DataStoreName name);
+	
+
+	
+	
 }

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.persistance.PersistanceException;
 import org.middleheaven.persistance.db.dialects.HSQLDialect;
 import org.middleheaven.persistance.db.dialects.MSDriverSQLServerDialect;
@@ -59,7 +59,7 @@ public final class RDBMSDialectFactory {
 		String driverName = dbm.getDriverName();
 		String driverVersion = dbm.getDriverVersion();
 
-		Log.onBookFor(RDBMSDialectFactory.class).info(
+		Logger.onBookFor(RDBMSDialectFactory.class).info(
 				"Inicializing dialect for: {0} {1} usign driver {2} {3}" ,  
 				product, 
 				version,

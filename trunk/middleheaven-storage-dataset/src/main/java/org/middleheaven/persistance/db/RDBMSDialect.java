@@ -10,20 +10,19 @@ import java.util.Iterator;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.PersistanceException;
-import org.middleheaven.persistance.SearchPlan;
 import org.middleheaven.persistance.criteria.DataSetCriteria;
 import org.middleheaven.persistance.db.mapping.DataBaseMapper;
 import org.middleheaven.persistance.db.mapping.IllegalModelStateException;
 import org.middleheaven.persistance.db.metamodel.DBColumnModel;
-import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
+import org.middleheaven.persistance.db.metamodel.DBTableModel;
 import org.middleheaven.persistance.db.metamodel.DataBaseModel;
 import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
+import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableDataBaseModel;
 import org.middleheaven.persistance.db.metamodel.SequenceModel;
-import org.middleheaven.persistance.db.metamodel.DBTableModel;
 import org.middleheaven.persistance.model.ColumnType;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.util.QualifiedName;
@@ -97,7 +96,7 @@ public abstract class RDBMSDialect {
 		buffer.append(endDelimiter);
 		buffer.append(fieldSeparator);
 		buffer.append(startDelimiter);
-		buffer.append(hardname.getName().toLowerCase());
+		buffer.append(hardname.getDesignation().toLowerCase());
 		buffer.append(endDelimiter);
 	}
 
@@ -237,7 +236,7 @@ public abstract class RDBMSDialect {
 		sql.append("\n");
 		for (DBColumnModel cm : tm) {
 			sql.append("ADD ");
-			writeEnclosureHardname(sql,cm.getName().getName());
+			writeEnclosureHardname(sql,cm.getName().getDesignation());
 			sql.append(" ");
 			appendNativeTypeFor(sql , cm);
 			sql.append(",\n");
@@ -258,7 +257,7 @@ public abstract class RDBMSDialect {
 
 
 	public DataSetCriteriaInterpreter newCriteriaInterpreter(DataBaseMapper mapper) {
-		return new AbstractDataSetCriteriaInterpreter(this, mapper);
+		return new AbstractRDBMSDataSetCriteriaInterpreter(this, mapper);
 	}
 
 	public abstract Sequence<Long> getSequence(DataSource ds, String identifiableName);
@@ -343,11 +342,12 @@ public abstract class RDBMSDialect {
 		return hardName.substring(4);
 	}
 
-	protected ColumnType typeFromNative(int sqlType) {
+	public ColumnType typeFromNative(int sqlType) {
 		switch (sqlType){
 		case Types.INTEGER:
-		case Types.TINYINT:	
 			return ColumnType.INTEGER;
+		case Types.TINYINT:	
+			return ColumnType.SMALL_INTEGER;
 		case Types.BIT:
 		case Types.BOOLEAN:
 			return ColumnType.LOGIC;
@@ -362,10 +362,43 @@ public abstract class RDBMSDialect {
 			return ColumnType.TEXT;
 		case Types.CLOB:
 			return ColumnType.MEMO;
+		case Types.BLOB:
+			return ColumnType.BLOB;
 		case Types.DECIMAL:
 			return ColumnType.DECIMAL;
 		}
 		return ColumnType.TEXT;
+	}
+	
+	public int typeToNative(ColumnType dataType) {
+		
+
+			switch (dataType){
+			case INTEGER:
+				return Types.INTEGER;
+			case DATETIME:
+				return Types.TIMESTAMP;
+			case TIME:
+				return Types.TIME;
+			case DATE:
+				return Types.DATE;
+			case LOGIC:
+				return Types.BOOLEAN;
+			case TEXT:
+				return Types.VARCHAR;
+			case BLOB:
+				return Types.BLOB;
+			case DECIMAL:
+				return Types.DECIMAL;
+			case MEMO:
+			case CLOB:
+				return Types.CLOB;
+			case SMALL_INTEGER:
+				return Types.TINYINT;
+			default:
+				throw new IllegalArgumentException("Cannot convert column type " + dataType.name() + " to SQL type" );
+			}
+
 	}
 
 	public  EditionDataBaseCommand createCreateTableCommand(EditableDBTableModel tm){
@@ -376,7 +409,7 @@ public abstract class RDBMSDialect {
 
 		sql.append("(\n ");
 		for (DBColumnModel cm : tm){
-			writeEnclosureHardname(sql,cm.getName().getName());
+			writeEnclosureHardname(sql,cm.getName().getDesignation());
 			sql.append(" ");
 			appendNativeTypeFor(sql , cm);
 			if(!cm.isNullable()){
@@ -399,7 +432,7 @@ public abstract class RDBMSDialect {
 
 
 	protected  void appendInlineCreateTableColumnPrimaryKeyConstraint(Clause sql, DBColumnModel column){
-		sql.append(" CONSTRAINT PK_").append(column.getTableModel().getName().toUpperCase()).append("_").append(column.getName().getName().toUpperCase());
+		sql.append(" CONSTRAINT PK_").append(column.getTableModel().getName().toUpperCase()).append("_").append(column.getName().getDesignation().toUpperCase());
 	}
 
 	protected abstract void appendNativeTypeFor(Clause sql, DBColumnModel columnModel);
@@ -433,9 +466,9 @@ public abstract class RDBMSDialect {
 
 			DBColumnModel cm = it.next();
 
-			def.append(cm.getTableModel().getName()).append("_").append(cm.getName().getName());
+			def.append(cm.getTableModel().getName()).append("_").append(cm.getName().getDesignation());
 
-			name.append(StringUtils.subString(cm.getName().getName(), maxCharsForName));
+			name.append(StringUtils.subString(cm.getName().getDesignation(), maxCharsForName));
 
 			if (it.hasNext()){
 				def.append(", ");
@@ -486,7 +519,7 @@ public abstract class RDBMSDialect {
 			con = datasource.getConnection();
 
 			RetriveDataBaseCommand command = this.createExistsDatabaseCommand(name);
-			Log.onBook("SQL").trace(command.toString());
+			Logger.onBook("SQL").trace(command.toString());
 
 			command.execute( null, con, null);
 			rs = command.getResult();

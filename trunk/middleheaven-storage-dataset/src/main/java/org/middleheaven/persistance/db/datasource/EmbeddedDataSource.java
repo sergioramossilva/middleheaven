@@ -10,7 +10,7 @@ import javax.transaction.xa.Xid;
 
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.persistance.PersistanceException;
 import org.middleheaven.transactions.TransactionService;
 import org.middleheaven.transactions.XAResourceAdapter;
@@ -72,7 +72,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 
 	
 		if(!inMemory){
-			Log.onBookFor(this.getClass()).info("Starting : {0}", url);
+			Logger.onBookFor(this.getClass()).info("Starting : {0}", url);
 			
 			String[] params = new String[4];
 			params[0] = "-database.0";
@@ -82,7 +82,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 
 			Introspector.of(Object.class).load("org.hsqldb.Server").invokeMain(params);
 		} else {
-			Log.onBookFor(this.getClass()).info("Starting in memory database");
+			Logger.onBookFor(this.getClass()).info("Starting in memory database");
 		}
 
 
@@ -90,7 +90,7 @@ public class EmbeddedDataSource extends AbstractDataSource {
 
 	public void stop(){
 
-		Log.onBookFor(this.getClass()).info("Stopping : {0}" , url);
+		Logger.onBookFor(this.getClass()).info("Stopping : {0}" , url);
 
 		Connection con=null;
 		try{

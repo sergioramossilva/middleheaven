@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.persistance.RelatedDataSet;
-import org.middleheaven.persistance.SearchPlan;
 import org.middleheaven.persistance.criteria.DataSetConstraint;
 import org.middleheaven.persistance.criteria.LogicConstraint;
 import org.middleheaven.persistance.criteria.ResultColumnDefinition;
@@ -29,9 +27,9 @@ import org.middleheaven.util.criteria.CriterionOperator;
 import org.middleheaven.util.criteria.JunctionCriterion;
 
 /**
- * 
+ * Base implementation for SQL based {@link DataSetCriteriaInterpreter}.
  */
-public class AbstractDataSetCriteriaInterpreter implements DataSetCriteriaInterpreter {
+public class AbstractRDBMSDataSetCriteriaInterpreter implements DataSetCriteriaInterpreter {
 
 
 	private RDBMSDialect dataBaseDialect;
@@ -44,7 +42,7 @@ public class AbstractDataSetCriteriaInterpreter implements DataSetCriteriaInterp
 	 * @param criteria the criteria to interpret.
 	 * @param reader 
 	 */
-	public AbstractDataSetCriteriaInterpreter(RDBMSDialect dataBaseDialect, DataBaseMapper dataBaseMapper) {
+	public AbstractRDBMSDataSetCriteriaInterpreter(RDBMSDialect dataBaseDialect, DataBaseMapper dataBaseMapper) {
 		this.dataBaseDialect = dataBaseDialect;
 		this.dataBaseMapper = dataBaseMapper;
 	}
@@ -185,7 +183,7 @@ public class AbstractDataSetCriteriaInterpreter implements DataSetCriteriaInterp
 				for (Iterator<ResultColumnDefinition> it = plan.getResultColumns().iterator() ; it.hasNext(); ){
 					ResultColumnDefinition definition = it.next();
 
-					DBColumnModel hcm = dataBaseMapper.getColumnModel(definition.getName());
+					DBColumnModel hcm = dataBaseMapper.getTableColumnModel(definition.getName());
 
 
 					switch (definition.getFunction()){
@@ -360,10 +358,10 @@ public class AbstractDataSetCriteriaInterpreter implements DataSetCriteriaInterp
 
 		if (orderConstraint.isAlias()){
 			
-			this.writeAlias(clause, orderConstraint.getColumnName().getName());
+			this.writeAlias(clause, orderConstraint.getColumnName().getDesignation());
 
 		} else {
-			DBColumnModel cm = this.dataBaseMapper.getColumnModel(orderConstraint.getColumnName());
+			DBColumnModel cm = this.dataBaseMapper.getTableColumnModel(orderConstraint.getColumnName());
 			
 			dialect().writeQueryHardname(clause, cm.getName());
 
@@ -387,7 +385,7 @@ public class AbstractDataSetCriteriaInterpreter implements DataSetCriteriaInterp
 			for (Iterator<ColumnGroupConstraint> it = aggregationGroups.iterator(); it.hasNext();){
 				QualifiedName name = it.next().getColumnName();
 
-				dialect().writeQueryHardname(queryBuffer,  this.dataBaseMapper.getColumnModel(name).getName());
+				dialect().writeQueryHardname(queryBuffer,  this.dataBaseMapper.getTableColumnModel(name).getName());
 
 				if (it.hasNext()){
 					queryBuffer.append(", ");
@@ -489,7 +487,7 @@ public class AbstractDataSetCriteriaInterpreter implements DataSetCriteriaInterp
 			ColumnNameValueLocator n = (ColumnNameValueLocator) left;
 
 			// TODO use as model for ValueHolder
-			DBColumnModel columnModel = this.dataBaseMapper.getColumnModel(n.getName());
+			DBColumnModel columnModel = this.dataBaseMapper.getTableColumnModel(n.getName());
 
 			if (CriterionOperator.CONTAINS.equals(op) || 
 					CriterionOperator.STARTS_WITH.equals(op) || 
@@ -713,7 +711,7 @@ public class AbstractDataSetCriteriaInterpreter implements DataSetCriteriaInterp
 	 */
 	private void writeQualifiedName(Clause criteriaBuffer, QualifiedName name) {
 
-		dialect().writeQueryHardname(criteriaBuffer, dataBaseMapper.getColumnModel(name).getName());
+		dialect().writeQueryHardname(criteriaBuffer, dataBaseMapper.getTableColumnModel(name).getName());
 	}
 
 
