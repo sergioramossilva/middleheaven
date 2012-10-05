@@ -20,10 +20,6 @@ import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.NameObjectEntry;
 import org.middleheaven.namedirectory.NameTypeEntry;
 import org.middleheaven.namedirectory.NamingDirectoryException;
-import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.Enumerable;
-import org.middleheaven.util.collections.TransformedIterator;
 
 
 public class JNDINameDirectoryService implements NameDirectoryService{

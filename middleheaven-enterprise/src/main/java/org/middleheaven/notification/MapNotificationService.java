@@ -67,10 +67,10 @@ class MapNotificationService implements NotificationService,NotificationBroadcas
 		}
 
 		public boolean equals(Object obj){
-			return obj instanceof FilteredNotificationListener && equals((FilteredNotificationListener)obj);
+			return obj instanceof FilteredNotificationListener && equalsOther((FilteredNotificationListener)obj);
 		}
 		
-		public boolean equals(FilteredNotificationListener other){
+		private boolean equalsOther(FilteredNotificationListener other){
 			return this.listerner.equals(other.listerner);
 		}
 		public int hashCode(){

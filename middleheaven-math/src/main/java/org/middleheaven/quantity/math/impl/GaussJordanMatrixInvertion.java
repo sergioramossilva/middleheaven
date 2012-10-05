@@ -7,7 +7,18 @@ import org.middleheaven.quantity.math.structure.MatrixInvertionAlgorithm;
 
 public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 
+	 static <T extends Field<T>> DenseMatrix<T> augmentWithEntity(Matrix<T> m){
 
+		DenseMatrix<T> e = new DenseMatrix<T>(m.rowsCount(), m.columnsCount()*2, m.get(0, 0).zero());
+		for (int r = 0; r < m.rowsCount(); r++) {
+			for (int c = 0; c< m.columnsCount(); c++) {
+				e.set(r,c,m.get(r, c));
+			}
+			e.set(r, m.columnsCount()+ r,m.get(0, 0).one() );
+		}
+		return e;
+	}
+	 
 	public <F extends Field<F>> Matrix<F> invert( Matrix<F> matrix){
 
 		if (!matrix.isSquare()){
@@ -16,7 +27,7 @@ public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 		final F ZERO = matrix.get(0, 0).zero();
 		final F ONE = matrix.get(0, 0).one();
 	
-		Matrix<F> A = DenseMatrix.augmentWithEntity(matrix);
+		DenseMatrix<F> A = augmentWithEntity(matrix);
 
 
 		int i = 0;
@@ -62,7 +73,7 @@ public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 	// swap()
 	// swap row i with row k
 	// pre: A[i][q]==A[k][q]==0 for 1<=q<j
-	private  static  <F extends Field<F>>  void swap(Matrix<F> A, int i, int k, int j){
+	private  static  <F extends Field<F>>  void swap(DenseMatrix<F> A, int i, int k, int j){
 		final int m = A.columnsCount();
 		for(int q=j - 1; q<m; q++){
 			F temp = A.get(i,q);
@@ -75,7 +86,7 @@ public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 	// divide row i by A[i][j]
 	// pre: A[i][j]!=0, A[i][q]==0 for 1<=q<j
 	// post: A[i][j]==1;
-	private static <F extends Field<F>>  void divide(Matrix<F> A, int i, int j,F ONE){
+	private static <F extends Field<F>>  void divide(DenseMatrix<F> A, int i, int j,F ONE){
 		final int m = A.columnsCount() - 1;
 		for(int q=j+1; q<=m; q++){
 			A.set(i, q , A.get(i,q).over( A.get(i,j)));
@@ -87,7 +98,7 @@ public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 	// subtract an appropriate multiple of row i from every other row
 	// pre: A[i][j]==1, A[i][q]==0 for 1<=q<j
 	// post: A[p][j]==0 for p!=i
-	private static <F extends Field<F>>  void eliminate(Matrix<F> A, int i, int j, F ZERO){
+	private static <F extends Field<F>>  void eliminate(DenseMatrix<F> A, int i, int j, F ZERO){
 		final int n = A.rowsCount() - 1;
 		final int m = A.columnsCount() - 1;
 		for(int p=0; p<=n; p++){

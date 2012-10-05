@@ -1,7 +1,6 @@
 package org.middleheaven.quantity.math.impl;
 
 import org.middleheaven.quantity.math.DenseMatrix;
-import org.middleheaven.quantity.math.DenseVector;
 import org.middleheaven.quantity.math.Matrix;
 import org.middleheaven.quantity.math.structure.Field;
 
@@ -16,134 +15,83 @@ If m < n, then L is m-by-m and U is m-by-n.
 The LU decomposition with pivoting always exists, even if the matrix is
 singular, so the constructor will never fail.  The primary use of the
 LU decomposition is in the solution of square systems of simultaneous
-linear equations.  This will fail if isNonsingular() returns false.
+linear equations.  This will fail if {@link #isNonsingular()} returns <code>false</code>.
  */
 public class LUDecomposition<F extends Field<F>> {
 
 
+	private Matrix<F> L;
+	private Matrix<F> U;
+	private boolean isNonSingular;
 	private Matrix<F> LU;
 
-	/** Row and column dimensions, and pivot sign.
-	   @serial column dimension.
-	   @serial row dimension.
-	   @serial pivot sign.
-	 */
-	
-	private F pivsign; 
-
-	/** Internal storage of pivot vector.
-	   @serial pivot vector.
-	 */
-	private int[] piv;
-
-	final F ZERO;
-	final F ONE;
 
 	/* ------------------------
 	   Constructor
 	 * ------------------------ */
 
-	/** LU Decomposition
-	   @param  A   Rectangular matrix
-	   @return     Structure to access L, U and piv.
-	 */
 
-	private F abs(F value){
-		if (value instanceof Comparable){
-			if (((Comparable<F>)value).compareTo(ZERO)>=0){
-				return value;
-			}
-			return value.negate();
-		}
-		throw new IllegalArgumentException ("Field is not ordable");
-	}
+	public static <R extends Field<R>> LUDecomposition<R> decompose(Matrix<R> LU){
 
-	private int compare(F a, F b){
-		if (a instanceof Comparable){
-			return ((Comparable<F>)a).compareTo(b);
-		}
-		throw new IllegalArgumentException ("Field is not ordable");
-	}
-	
-	public LUDecomposition (Matrix<F> M) {
+		R ZERO = LU.get(0, 0).zero();
+		R ONE = LU.get(0, 0).one();
 
-		// Use a "left-looking", dot-product, Crout/Doolittle algorithm.
-
-		ZERO = M.get(0, 0).zero();
-		ONE = M.get(0, 0).one();
-		
 		if (!(ONE instanceof Comparable)){
 			throw new IllegalArgumentException ("Field is not ordable");
 		}
 
-		LU = M.duplicate();
-		piv = new int[LU.rowsCount()];
-		
-		for (int i = 0; i < LU.rowsCount(); i++) {
-			piv[i] = i;
+		LUDecomposition<R> d = new LUDecomposition<R>();
+
+		DenseMatrix<R> L = new DenseMatrix<R>(LU.columnsCount(),LU.columnsCount(),ZERO);
+		DenseMatrix<R> U = new DenseMatrix<R>(LU.columnsCount(),LU.columnsCount(),ZERO);
+
+		int rows = LU.columnsCount();
+
+		for (int r=0;r<rows;r++){
+
+			L.set(r,r, ONE);
+
+			for(int j=r;j < rows;j++) {
+				R sum = ZERO;
+
+				for(int s=0;s <= r-1;s++) {
+					sum = sum.plus(L.get(r,s).times(U.get(s,j)));
+				}
+				U.set(r,j, LU.get(r,j).minus(sum));
+			}
+
+			for(int i = r + 1; i < rows;i++) {
+				R sum = ZERO;
+
+				for(int s= 0 ;s <= r- 1;s++) {
+					sum = sum.plus (L.get(i,s).times(U.get(s,r)));
+				}
+
+				L.set(i,r,LU.get(i,r).minus(sum).over(U.get(r,r)));
+			}
 		}
 		
-		pivsign = ONE;
+		boolean isNonSingular = true; 
 		
-		DenseVector<F> LUcolj;
-		DenseVector<F> LUrowi;
-		
-
-		// Outer loop.
-
 		for (int j = 0; j < LU.columnsCount(); j++) {
-
-			// Make a copy of the j-th column to localize references.
-
-			LUcolj = new DenseVector<F>(LU.getColumn(j));
-
-
-			// Apply previous transformations.
-
-			for (int i = 0; i < LU.rowsCount(); i++) {
-				LUrowi = new DenseVector<F>(LU.getRow(i));
-
-				// Most of the time is spent in the following dot product.
-
-				int kmax = Math.min(i,j);
-				F s = ZERO;
-				for (int k = 0; k < kmax; k++) {
-					s = s.plus(LUrowi.get(k).times(LUcolj.get(k)));
-				}
-				F  v = LUcolj.get(i).minus(s);
-				LUcolj.set(i, v);
-				LUrowi.set(j , v);
-				
-			}
-
-			// Find pivot and exchange if necessary.
-
-			int p = j;
-			for (int i = j+1; i < LU.rowsCount(); i++) {
-				if (compare(abs(LUcolj.get(i)), abs(LUcolj.get(p)))>0) {
-					p = i;
-				}
-			}
-			if (p != j) {
-				for (int k = 0; k < LU.columnsCount(); k++) {
-					F temp = LU.get(p,k); 
-					LU.set(p,k,  LU.get(j,k)); 
-					LU.set(j,k, temp );
-				}
-				int k = piv[p]; 
-				piv[p] = piv[j]; 
-				piv[j] = k;
-				pivsign = pivsign.negate();
-			}
-
-			// Compute multipliers.
-
-			if (j < LU.rowsCount() && !LU.get(j,j).equals(ZERO)) {
-				for (int i = j+1; i < LU.rowsCount(); i++) {
-					LU.set(i,j , LU.get(i,j).over(LU.get(j,j)));
-				}
+			if (LU.get(j, j).equals(ZERO)){
+				isNonSingular = false;
+				break;
 			}
 		}
+	
+		d.LU = LU;
+		d.L = L;
+		d.U = U;
+		d.isNonSingular = isNonSingular;
+		
+		return d;
+
+	}
+
+
+	private LUDecomposition () {
+
 	}
 
 
@@ -156,12 +104,7 @@ public class LUDecomposition<F extends Field<F>> {
 	 */
 
 	public boolean isNonsingular () {
-		for (int j = 0; j < LU.columnsCount(); j++) {
-			if (LU.get(j, j).equals(ZERO)){
-				return false;
-			}
-		}
-		return true;
+		return isNonSingular;
 	}
 
 	/** Return lower triangular factor
@@ -169,18 +112,6 @@ public class LUDecomposition<F extends Field<F>> {
 	 */
 
 	public Matrix<F> getL () {
-		Matrix<F> L = new DenseMatrix<F>(LU.rowsCount(),LU.columnsCount(),ZERO);
-		for (int i = 0; i < LU.rowsCount(); i++) {
-			for (int j = 0; j < LU.columnsCount(); j++) {
-				if (i > j) {
-					L.set(i,j , LU.get(i,j));
-				} else if (i == j) {
-					L.set(i,j ,ONE);
-				} else {
-					L.set(i,j ,ZERO);
-				}
-			}
-		}
 		return L;
 	}
 
@@ -189,102 +120,62 @@ public class LUDecomposition<F extends Field<F>> {
 	 */
 
 	public Matrix<F> getU () {
-		Matrix<F> U = new DenseMatrix<F>(LU.columnsCount(),LU.columnsCount(),ZERO);
-		for (int i = 0; i < LU.columnsCount(); i++) {
-			for (int j = 0; j < LU.columnsCount(); j++) {
-				if (i <= j) {
-					U.set(i,j ,  LU.get(i,j));
-				} else {
-					U.set(i,j ,  ZERO);
-				}
-			}
-		}
 		return U;
 	}
 
-	/** Return pivot permutation vector
-	   @return     piv
-	 */
+	//	/** Return pivot permutation vector
+	//	   @return     piv
+	//	 */
+	//
+	//	public int[] getPivot () {
+	//		int[] p = new int[piv.length];
+	//		for (int i = 0; i <piv.length; i++) {
+	//			p[i] = piv[i];
+	//		}
+	//		return p;
+	//	}
 
-	public int[] getPivot () {
-		int[] p = new int[LU.rowsCount()];
-		for (int i = 0; i < LU.rowsCount(); i++) {
-			p[i] = piv[i];
-		}
-		return p;
-	}
-
-	/** Return pivot permutation vector as a one-dimensional double array
-	   @return     (double) piv
-	 */
-
-	public double[] getDoublePivot () {
-		double[] vals = new double[LU.rowsCount()];
-		for (int i = 0; i < LU.rowsCount(); i++) {
-			vals[i] = (double) piv[i];
-		}
-		return vals;
-	}
-
-	/** Determinant
-	   @return     det(A)
-	   @exception  IllegalArgumentException  Matrix must be square
-	 */
-
-	public F det () {
-		if (!LU.isSquare()) {
-			throw new IllegalArgumentException("Matrix must be square.");
-		}
-		
-		F d = pivsign;
-		for (int j = 0; j < LU.columnsCount(); j++) {
-			d = d.times(LU.get(j,j));
-		}
-		
-		return d;
-		
-	}
 
 	/** Solve A*X = B
-	   @param  B   A Matrix with as many rows as A and any number of columns.
+	   @param  B   a Matrix with as many rows as A and any number of columns.
 	   @return     X so that L*U*X = B(piv,:)
 	   @exception  IllegalArgumentException Matrix row dimensions must agree.
 	   @exception  RuntimeException  Matrix is singular.
 	 */
 
-	public Matrix<F> solve (Matrix<F> B) {
-		if (B.rowsCount() != this.LU.rowsCount()) {
-			throw new IllegalArgumentException("Matrix row dimensions must agree.");
-		}
-		if (!this.isNonsingular()) {
-			throw new RuntimeException("Matrix is singular.");
-		}
-
-		// Copy right hand side with pivoting
-		int nx = B.columnsCount();
-		Matrix<F> X = new DenseMatrix(B , piv,0,nx-1 );
-
-		// Solve L*Y = B(piv,:)
-		for (int k = 0; k < LU.columnsCount(); k++) {
-			for (int i = k+1; i < LU.columnsCount(); i++) {
-				for (int j = 0; j < nx; j++) {
-					X.set(i,j, X.get(i, j).minus(X.get(k,j).times(LU.get(i,k))));
-				}
-			}
-		}
-		// Solve U*X = Y;
-		for (int k = LU.columnsCount()-1; k >= 0; k--) {
-			for (int j = 0; j < nx; j++) {
-				X.set(k,j, X.get(k, j).over(LU.get(k,k)));
-			}
-			for (int i = 0; i < k; i++) {
-				for (int j = 0; j < nx; j++) {
-					X.set(i,j, X.get(i, j).minus(X.get(k,j).times(LU.get(i,k))));
-				}
-			}
-		}
-		return X;
-	}
+//	public Matrix<F> solve (Matrix<F> B) {
+//		if (B.rowsCount() != this.LU.rowsCount()) {
+//			throw new IllegalArgumentException("Matrix row dimensions must agree.");
+//		}
+//		if (!this.isNonsingular()) {
+//			throw new RuntimeException("Matrix is singular.");
+//		}
+//
+//		// Copy right hand side with pivoting
+//		int nx = B.columnsCount();
+//		DenseMatrix<F> X = new DenseMatrix<F>(B , piv,0,nx-1 );
+//
+//		// Solve L*Y = B(piv,:)
+//		for (int k = 0; k < LU.columnsCount(); k++) {
+//			for (int i = k+1; i < LU.columnsCount(); i++) {
+//				for (int j = 0; j < nx; j++) {
+//					X.set(i,j, X.get(i, j).minus(X.get(k,j).times(LU.get(i,k))));
+//				}
+//			}
+//		}
+//		// Solve U*X = Y;
+//		for (int k = LU.columnsCount()-1; k >= 0; k--) {
+//			for (int j = 0; j < nx; j++) {
+//				X.set(k,j, X.get(k, j).over(LU.get(k,k)));
+//			}
+//			for (int i = 0; i < k; i++) {
+//				for (int j = 0; j < nx; j++) {
+//					X.set(i,j, X.get(i, j).minus(X.get(k,j).times(LU.get(i,k))));
+//				}
+//			}
+//		}
+//		return X;
+//	}
 }
 
 
