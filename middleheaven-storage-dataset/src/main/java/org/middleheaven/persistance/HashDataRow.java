@@ -1,6 +1,5 @@
 package org.middleheaven.persistance;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,4 +38,8 @@ public class HashDataRow implements DataRow {
 		return columns.get(name);
 	}
 
+	
+	public String toString(){
+		return columns.toString();
+	}
 }

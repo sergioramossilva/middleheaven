@@ -6,9 +6,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import org.middleheaven.persistance.PersistanceException;
-import org.middleheaven.persistance.SearchPlan;
 import org.middleheaven.persistance.criteria.building.ColumnValueLocator;
-import org.middleheaven.persistance.db.AbstractDataSetCriteriaInterpreter;
+import org.middleheaven.persistance.db.AbstractRDBMSDataSetCriteriaInterpreter;
 import org.middleheaven.persistance.db.Clause;
 import org.middleheaven.persistance.db.DataSetCriteriaInterpreter;
 import org.middleheaven.persistance.db.EditionDataBaseCommand;
@@ -17,6 +16,7 @@ import org.middleheaven.persistance.db.RDBMSException;
 import org.middleheaven.persistance.db.RetriveDataBaseCommand;
 import org.middleheaven.persistance.db.SQLEditCommand;
 import org.middleheaven.persistance.db.SQLRetriveCommand;
+import org.middleheaven.persistance.db.SearchPlan;
 import org.middleheaven.persistance.db.ValueHolder;
 import org.middleheaven.persistance.db.mapping.DataBaseMapper;
 import org.middleheaven.persistance.db.metamodel.DBColumnModel;
@@ -43,7 +43,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 	
 	@Override
 	protected void appendInlineCreateTableColumnPrimaryKeyConstraint(Clause sql, DBColumnModel column){
-		sql.append(" CONSTRAINT PK_").append(column.getName().getQualifier()).append("_").append(column.getName().getName()).append(" PRIMARY KEY ");
+		sql.append(" CONSTRAINT PK_").append(column.getName().getQualifier()).append("_").append(column.getName().getDesignation()).append(" PRIMARY KEY ");
 	}
 
 	protected String hardSequenceName(String logicName){
@@ -94,7 +94,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 
 		buffer.append(hardname.getQualifier().toLowerCase());
 		buffer.append(fieldSeparator());
-		buffer.append(hardname.getName().toLowerCase());
+		buffer.append(hardname.getDesignation().toLowerCase());
 	}
 
 	protected void writeEditionHardname(Clause buffer , String tableName, String columnName){
@@ -127,7 +127,7 @@ public class PostgressDialect extends SequenceSupportedDBDialect{
 		buffer.append(endDelimiter());
 	}
 
-	private class PostgressCriteriaInterpreter extends AbstractDataSetCriteriaInterpreter{
+	private class PostgressCriteriaInterpreter extends AbstractRDBMSDataSetCriteriaInterpreter{
 
 		public PostgressCriteriaInterpreter(RDBMSDialect dataBaseDialect, DataBaseMapper dataBaseMapper) {
 			super(dataBaseDialect, dataBaseMapper);

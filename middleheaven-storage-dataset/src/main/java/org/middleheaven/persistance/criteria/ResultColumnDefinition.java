@@ -18,9 +18,7 @@ public class ResultColumnDefinition {
 		MAXIMUN, 
 		MINIMUM	
 	}
-	
-	
-	
+
 	private final QualifiedName name;
 	private String alias;
 	private ResultFunction function = ResultFunction.VALUE;
@@ -31,9 +29,13 @@ public class ResultColumnDefinition {
 	 */
 	public ResultColumnDefinition(QualifiedName name) {
 		this.name = name;
-		this.alias = name.getQualifier() + "_" + name.getName();
+		this.alias = name.getQualifier() + "_" + name.getDesignation();
 	}
 
+	public String toString(){
+		return name.toString() + "#" + alias + "[" + function + "]";
+	}
+	
 	/**
 	 * @param alias
 	 */

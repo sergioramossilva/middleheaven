@@ -1,8 +1,6 @@
 package org.middleheaven.persistance;
 
 import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.util.identity.IdentitySequence;
-import org.middleheaven.util.identity.IntegerIdentity;
 
 /**
  * Provides access to {@link DataStore}s and {@link DataStoreSchema}s.

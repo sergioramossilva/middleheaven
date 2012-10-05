@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.middleheaven.persistance.db.metamodel.DBColumnModel;
 import org.middleheaven.persistance.db.metamodel.DBTableModel;
-import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.persistance.model.DataSetModel;
 import org.middleheaven.util.QualifiedName;
 
@@ -21,12 +20,19 @@ public interface DataBaseMapper {
 	public DBTableModel getTableForDataSet(String modelName);
 
 	/**
-	 * Maps a {@link DataColumnModel} to a {@link DBColumnModel}.
+	 * Return the {@link DBColumnModel} corresponding with the given data set column name.
 	 * @param qn the logic {@link QualifiedName} of the column.
 	 * @return the mapped {@link DBColumnModel}.
 	 */
-	DBColumnModel getColumnModel(QualifiedName qn);
+	DBColumnModel getTableColumnModel(QualifiedName qn);
 	
+	
+	/**
+	 * Return the logic {@link QualifiedName} corresponding with the given table column name.
+	 * @param qn the physical {@link QualifiedName} of the column.
+	 * @return the mapped {@link DBColumnModel}.
+	 */
+	QualifiedName getLogicQualifiedName(QualifiedName qn);
 	
 	public Collection<DBTableModel> getTableModels();
 

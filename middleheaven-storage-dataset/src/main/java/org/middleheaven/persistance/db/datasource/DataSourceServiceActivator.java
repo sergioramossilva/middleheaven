@@ -8,18 +8,17 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.core.bootstrap.BootstrapService;
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.bootstrap.FileContextService;
 import org.middleheaven.core.services.AtivationException;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.NameObjectEntry;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 
 /**
  * If a {@link NameDirectoryService} import all {@link DataSource} present at <code>java:/comp/env/jdbc/</code>.
@@ -49,7 +48,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
 		specs.add(new ServiceSpecification(NameDirectoryService.class, true));
-		specs.add(new ServiceSpecification(BootstrapContainer.class));
+
 
 	}
 	
@@ -84,11 +83,9 @@ public class DataSourceServiceActivator extends ServiceActivator {
 
 		} else {
 			// look for the datasource mapping file
-			BootstrapContainer container =  serviceContext.getService(BootstrapService.class).getEnvironmentBootstrap().getContainer();
+			ManagedFile folder =  serviceContext.getService(FileContextService.class).getFileContext().getAppConfigRepository();
 
-			ManagedFile folder = container.getFileSystem().getAppConfigRepository();
-
-			Collection<? extends ManagedFile> configurations = folder.children().findAll(new BooleanClassifier<ManagedFile>(){
+			Collection<? extends ManagedFile> configurations = folder.children().findAll(new Predicate<ManagedFile>(){
 
 				@Override
 				public Boolean classify(ManagedFile file) {
@@ -115,22 +112,22 @@ public class DataSourceServiceActivator extends ServiceActivator {
 
 							if ("jndi".equals(protocol)){
 								if (nameDirectoryService == null){
-									Log.onBookFor(this.getClass()).warn("DataSource configuration uses a Name and Directory location, but a Name Directory Service was not found");
+									Logger.onBookFor(this.getClass()).warn("DataSource configuration uses a Name and Directory location, but a Name Directory Service was not found");
 									continue;
 								}
 								provider = NameDirectoryLookupDSProvider.provider(nameDirectoryService , connectionParams);
 							} else {
-								Log.onBookFor(this.getClass()).error("Error loading datasource file. Provider type not recognized");
+								Logger.onBookFor(this.getClass()).error("Error loading datasource file. Provider type not recognized");
 							}
 						}
 						sources.put(connectionParams.getProperty("datasource.name"), provider );
 
 
 					} catch (ManagedIOException e) {
-						Log.onBookFor(this.getClass()).error(e,"Error loading datasource file");
+						Logger.onBookFor(this.getClass()).error(e,"Error loading datasource file");
 						throw new AtivationException(e);
 					} catch (IOException e) {
-						Log.onBookFor(this.getClass()).error(e,"Error loading datasource file");
+						Logger.onBookFor(this.getClass()).error(e,"Error loading datasource file");
 						throw new AtivationException(e);
 					} 
 				}
@@ -142,7 +139,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 
 		this.dataSourceService =  new HashDataSourceService();
 
-		serviceContext.register(DataSourceService.class, dataSourceService);
+		serviceContext.register(DataSourceService.class, this.dataSourceService);
 
 	}
 

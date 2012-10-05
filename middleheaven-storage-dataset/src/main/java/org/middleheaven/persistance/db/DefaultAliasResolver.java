@@ -16,7 +16,7 @@ class DefaultAliasResolver implements AliasResolver {
 
 		Character c = aliases.get(name);
 		if ( c==null){
-			c = new Character('a');
+			c =  Character.valueOf('a');
 			aliases.put(name,c);
 		} else if (increment){
 			c = Character.valueOf((char)(c.charValue()+1));
@@ -34,7 +34,7 @@ class DefaultAliasResolver implements AliasResolver {
 			return name;
 		}
 
-		QualifiedName aliasName = QualifiedName.qualify(aliasPrefix, name.getName());
+		QualifiedName aliasName = QualifiedName.qualify(aliasPrefix, name.getDesignation());
 		aliasName.setAlias(true);
 
 		return aliasName;

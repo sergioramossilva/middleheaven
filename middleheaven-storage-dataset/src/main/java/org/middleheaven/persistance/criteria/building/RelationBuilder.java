@@ -3,7 +3,6 @@
  */
 package org.middleheaven.persistance.criteria.building;
 
-import org.middleheaven.persistance.model.TypeDefinition;
 
 /**
  * 

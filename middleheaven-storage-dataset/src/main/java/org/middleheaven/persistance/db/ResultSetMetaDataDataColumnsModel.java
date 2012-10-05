@@ -149,7 +149,7 @@ public class ResultSetMetaDataDataColumnsModel implements DataColumnsModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DataColumnModel getDataColumnModel(String columnName) {
+	public DataColumnModel getDataColumnModel(QualifiedName columnName) {
 		
 		
 		// TODO Auto-generated method stub

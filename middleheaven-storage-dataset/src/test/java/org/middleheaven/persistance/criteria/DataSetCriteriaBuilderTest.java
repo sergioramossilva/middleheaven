@@ -7,22 +7,16 @@ import java.net.MalformedURLException;
 import java.util.Date;
 
 import org.junit.Test;
-import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.persistance.DataQuery;
-import org.middleheaven.persistance.DataService;
-import org.middleheaven.persistance.DataPersistanceServiceActivator;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.DataRowStream;
-import org.middleheaven.persistance.DataStore;
-import org.middleheaven.persistance.DataSchemaModel;
-import org.middleheaven.persistance.DataStoreName;
+import org.middleheaven.persistance.DataService;
 import org.middleheaven.persistance.DataStoreNotFoundException;
-import org.middleheaven.persistance.DataStoreProvider;
 import org.middleheaven.persistance.DataStoreSchema;
 import org.middleheaven.persistance.DataStoreSchemaName;
 import org.middleheaven.persistance.DataStoreSchemaNotFoundException;
@@ -38,7 +32,6 @@ import org.middleheaven.persistance.model.DataSetDefinitions;
 import org.middleheaven.persistance.model.TypeDefinition;
 import org.middleheaven.quantity.money.Money;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
-import org.middleheaven.transactions.AutoCommitTransactionServiceActivator;
 import org.middleheaven.util.QualifiedName;
 
 public class DataSetCriteriaBuilderTest extends MiddleHeavenTestCase {

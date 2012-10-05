@@ -1,4 +1,4 @@
-package org.middleheaven.persistance;
+package org.middleheaven.persistance.db;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -7,7 +7,6 @@ import org.middleheaven.persistance.criteria.LogicConstraint;
 import org.middleheaven.persistance.criteria.ResultColumnDefinition;
 import org.middleheaven.persistance.criteria.building.ColumnGroupConstraint;
 import org.middleheaven.persistance.criteria.building.OrderConstraint;
-import org.middleheaven.persistance.db.TableRelation;
 
 /**
  * A search plan for the execution of a query in a DataSetProvider.
@@ -60,7 +59,8 @@ public final class SearchPlan {
 	public void setFowardOnly(boolean fowardOnly) {
 		this.fowardOnly = fowardOnly;
 	}
-	
+
+
 	public boolean isReadOnly() {
 		return readOnly;
 	}

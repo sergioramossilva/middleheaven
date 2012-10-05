@@ -10,13 +10,17 @@ import java.util.Map;
 import org.middleheaven.util.QualifiedName;
 
 /**
- * 
+ * Simple implementation of {@link DataColumnsModel} based on the qualified column's name hash.
  */
 public class HashDataColumnsModel implements DataColumnsModel {
 
 	
 	private final Map<QualifiedName , DataColumnModel> models = new HashMap<QualifiedName , DataColumnModel>();
 	
+	/**
+	 * 
+	 * Constructor.
+	 */
 	public HashDataColumnsModel(){}
 
 	/**
@@ -31,7 +35,7 @@ public class HashDataColumnsModel implements DataColumnsModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public DataColumnModel getDataColumnModel(String columnName) {
+	public DataColumnModel getDataColumnModel(QualifiedName columnName) {
 		return models.get(columnName);
 	}
 
@@ -60,7 +64,8 @@ public class HashDataColumnsModel implements DataColumnsModel {
 	}
 
 	/**
-	 * @param column
+	 * Add a {@link DataColumnModel} to this model.
+	 * @param column the {@link DataColumnModel} to add.
 	 */
 	public void addColumn(DataColumnModel column) {
 		this.models.put(column.getName(), column);

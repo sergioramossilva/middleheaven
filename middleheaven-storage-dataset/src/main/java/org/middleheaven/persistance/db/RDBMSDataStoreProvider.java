@@ -6,13 +6,14 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.persistance.DataColumn;
 import org.middleheaven.persistance.DataQuery;
 import org.middleheaven.persistance.DataRow;
@@ -27,8 +28,9 @@ import org.middleheaven.persistance.DataStoreSchema;
 import org.middleheaven.persistance.DataStoreSchemaName;
 import org.middleheaven.persistance.HashDataRow;
 import org.middleheaven.persistance.ModelNotEditableException;
+import org.middleheaven.persistance.NamedQueryExecutor;
+import org.middleheaven.persistance.ParameterizedDataQuery;
 import org.middleheaven.persistance.RelatedDataSet;
-import org.middleheaven.persistance.SearchPlan;
 import org.middleheaven.persistance.SequenceNotFoundException;
 import org.middleheaven.persistance.criteria.DataSetConstraint;
 import org.middleheaven.persistance.criteria.DataSetCriteria;
@@ -39,14 +41,13 @@ import org.middleheaven.persistance.criteria.building.ExplicitValueLocator;
 import org.middleheaven.persistance.db.mapping.DataBaseMapper;
 import org.middleheaven.persistance.db.mapping.IllegalModelStateException;
 import org.middleheaven.persistance.db.metamodel.DBColumnModel;
-import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
+import org.middleheaven.persistance.db.metamodel.DBTableModel;
 import org.middleheaven.persistance.db.metamodel.DataBaseModel;
 import org.middleheaven.persistance.db.metamodel.DataBaseObjectModel;
 import org.middleheaven.persistance.db.metamodel.DataBaseObjectType;
+import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableDataBaseModel;
 import org.middleheaven.persistance.db.metamodel.SequenceModel;
-import org.middleheaven.persistance.db.metamodel.TableAlreadyExistsException;
-import org.middleheaven.persistance.db.metamodel.DBTableModel;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.util.QualifiedName;
@@ -66,6 +67,8 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 	private final DataSource datasource;
 	private final RDBMSDialect dialect;
 	private final DataBaseMapper mapper;
+	
+	private final Map<DataStoreSchemaName , Map < String , NamedQueryExecutor>> executors = new HashMap<DataStoreSchemaName , Map < String , NamedQueryExecutor>>();
 
 	/**
 	 * 
@@ -94,7 +97,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 		plan.setConstraints(criteria.getDataSetRestrictions());
 		plan.setOrdering(criteria.getOrderConstraints());
 		plan.setGrouping(criteria.getGroupConstraint());
-
+		
 		for (RelatedDataSet rd : criteria.getRelatedDataSets()){
 
 			TableRelation relation = new TableRelation(new LogicConstraint(rd.getRelationConstraint().getOperator()) , rd.getRelationOperator());
@@ -112,15 +115,19 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 
 						if (q != null){
 
-							relation.setSourceTableModel(mapper.getColumnModel(q).getTableModel());
+							relation.setSourceTableModel(mapper.getTableColumnModel(q).getTableModel());
 						}
 
 						q = ( (ColumnValueConstraint) c).getRightValueLocator().getName();
 
 						if (q != null){
 
-							relation.setTargetTableModel(mapper.getColumnModel(q).getTableModel());
+							relation.setTargetTableModel(mapper.getTableColumnModel(q).getTableModel());
 						}
+						
+						
+						relation.getRelationConstraint().addConstraint(rd.getRelationConstraint());
+						
 					} else {
 						throw new IllegalStateException("Should not happen");
 					}
@@ -130,7 +137,6 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 				plan.add(relation);
 			}
 
-			
 		}
 
 
@@ -150,7 +156,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 			con = this.datasource.getConnection();
 
 			RetriveDataBaseCommand command = dialect.createSelectCommand(plan, mapper);
-			Log.onBook("SQL").trace(command.toString());
+			Logger.onBook("SQL").trace(command.toString());
 
 			command.execute( mapper, con, null);
 			rs = command.getResult();
@@ -181,7 +187,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 		if (plan.isFowardOnly() && plan.isReadOnly()) {
 			// fastlane
 			try {
-				return  ResultSetDataRowStream.newInstance(rs, mapper, dialect);
+				return  ResultSetDataRowStream.newInstance(rs, mapper, plan, dialect);
 			} catch (SQLException e) {
 				throw dialect.handleSQLException(e);
 			} 
@@ -238,7 +244,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 			command.execute(mapper, con, null);
 
 		} catch (SQLException e) {
-			Log.onBookFor(this.getClass()).trace("SQL : {0}", command.getSQL());
+			Logger.onBookFor(this.getClass()).trace("SQL : {0}", command.getSQL());
 			throw dialect.handleSQLException(e);
 		} finally {
 			close(con);
@@ -301,7 +307,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 		 * {@inheritDoc}
 		 */
 		@Override
-		public DataStoreSchema getDataStoreSchema(final DataStoreSchemaName name) {
+		public DataStoreSchema getDataStoreSchema(final DataStoreSchemaName schemaName) {
 
 
 			return new DataStoreSchema(){
@@ -327,7 +333,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 				 */
 				@Override
 				public void updateModel() throws ModelNotEditableException {
-					updatePhysicalModel(name);
+					updatePhysicalModel(schemaName);
 
 				}
 
@@ -335,9 +341,50 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 				public Sequence<Long> getSequence(
 						String sequenceName) throws SequenceNotFoundException {
 
+					DBTableModel tbModel = mapper.getTableForDataSet(sequenceName);
+					
+					if (tbModel  != null){
+						sequenceName = tbModel.getName();
+					}
+					
 					return dialect.getSequence(datasource, sequenceName);
 
 
+				}
+
+				@Override
+				public void registerNamedCriteria(String name,
+						NamedQueryExecutor queryExecutor) {
+					
+					Map<String, NamedQueryExecutor> map = executors.get(schemaName);
+					
+					if (map == null){
+						map = new HashMap<String, NamedQueryExecutor>();
+						map.put(name, queryExecutor);
+						
+						executors.put(schemaName, map);
+					}
+					
+				}
+
+				@Override
+				public ParameterizedDataQuery namedQuery(String name) {
+					
+					Map<String, NamedQueryExecutor> map = executors.get(schemaName);
+					
+					if (map == null){
+						throw new IllegalArgumentException("Not query named " + name + " exists");
+					}
+
+					NamedQueryExecutor queryExecutor = map.get(name);
+					
+					if (queryExecutor == null){
+						throw new IllegalArgumentException("Not query named " + name + " exists");
+					}
+
+					return queryExecutor.execute(RDBMSDataStoreProvider.this);
+					
+					
 				}
 
 			};
@@ -411,7 +458,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 
 						final List<DataBaseCommand> indexComands = new ArrayList<DataBaseCommand>(map.size());
 
-						map.each( new Walker<Map.Entry<String,EnhancedCollection<DBColumnModel>>>(){
+						map.forEach( new Walker<Map.Entry<String,EnhancedCollection<DBColumnModel>>>(){
 
 							@Override
 							public void doWith(
@@ -436,7 +483,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 					}
 
 				} catch (TableAlreadyExistsException e) {
-					Log.onBookFor(this.getClass()).info(
+					Logger.onBookFor(this.getClass()).info(
 							"Table {0} already exists.", dbObject.getName());
 				}
 			}
@@ -617,7 +664,6 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 		}
 
 	}
-
 
 
 

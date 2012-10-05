@@ -4,7 +4,6 @@
 package org.middleheaven.persistance.criteria.building;
 
 import org.middleheaven.persistance.RelatedDataSet;
-import org.middleheaven.persistance.criteria.DataSetConstraint;
 import org.middleheaven.persistance.criteria.LogicConstraint;
 import org.middleheaven.persistance.model.TypeDefinition;
 import org.middleheaven.util.classification.LogicOperator;

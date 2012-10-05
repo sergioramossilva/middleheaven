@@ -10,8 +10,6 @@ import org.middleheaven.util.QualifiedName;
  */
 public class DataColumnModelBean implements DataColumnModel {
 
-	
-	
 	private DataSetModel dataSetModel;
 	private QualifiedName name;
 	private int size;
@@ -22,6 +20,9 @@ public class DataColumnModelBean implements DataColumnModel {
 	private String primaryKeyGroup;
 	private ColumnType type;
 	private boolean version;
+	
+	public DataColumnModelBean(){}
+	
 
 	/**
 	 * {@inheritDoc}
@@ -92,7 +93,7 @@ public class DataColumnModelBean implements DataColumnModel {
 	 */
 	@Override
 	public boolean isInPrimaryKeyGroup() {
-		throw new UnsupportedOperationException("Not implememented yet");
+		return this.primaryKeyGroup != null;
 	}
 
 	/**

@@ -3,6 +3,7 @@ package org.middleheaven.persistance.db.datasource;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.sql.DataSource;
 
@@ -11,9 +12,25 @@ import org.middleheaven.core.bootstrap.BootstrapEvent;
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.ServiceRegistry;
 
+/**
+ * {@link DataSourceProvider} thaht embedes a HSQL implementation.
+ */
 public class EmbeddedDSProvider implements DataSourceProvider{
 
 
+	/**
+	 * 
+	 * @param properties the connection properties
+	 * 
+	 * <ul>
+	 * <li>datasource.url - the connection url</li>
+	 * <li>datasource.username - the connection username</li>
+	 * <li>datasource.password - the connection password</li>
+	 * <li>datasource.catalog - the connection catalog (the database name)</li>
+	 * <ul>
+	 * 
+	 * @return the {@link EmbeddedDSProvider} object.
+	 */
 	public static EmbeddedDSProvider provider(Properties properties){
 
 		try {
@@ -23,7 +40,7 @@ public class EmbeddedDSProvider implements DataSourceProvider{
 			String catalog = properties.getProperty("datasource.catalog");
 			return provider(catalog,new URL(url), username, password);
 		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		} 
 
 	}
@@ -31,8 +48,8 @@ public class EmbeddedDSProvider implements DataSourceProvider{
 	/**
 	 * Creates a in memory only volatile provider. The data stored where is deleted at 
 	 * the of the application
-	 * @param catalog
-	 * @return
+	 * @param catalog the database name
+	 * @return the {@link EmbeddedDSProvider} object.
 	 */
 	public static EmbeddedDSProvider provider(String catalog){
 		return new EmbeddedDSProvider(new EmbeddedDataSource(catalog, "sa", ""));
@@ -41,10 +58,10 @@ public class EmbeddedDSProvider implements DataSourceProvider{
 	/**
 	 * Creates a in memory only volatile provider. The data stored where is deleted at 
 	 * the of the application
-	 * @param catalog
-	 * @param username
-	 * @param password
-	 * @return
+	 * @param catalog the database name
+	 * @param username the username
+	 * @param password the password
+	 * @return the {@link EmbeddedDSProvider} object.
 	 */
 	public static EmbeddedDSProvider provider(String catalog,String username,String password){
 		return new EmbeddedDSProvider(new EmbeddedDataSource(catalog, username, password));
@@ -53,21 +70,31 @@ public class EmbeddedDSProvider implements DataSourceProvider{
 	/**
 	 * Creates a persisted data provider. The data stored where is storead in a file at the location of the URL.
 	 * The URL must be writable from the application (normally a local disk URL).
-	 * @param catalog
-	 * @param url
-	 * @return
-	 */
+	 * @param catalog the database name
+	 * @param url the connection url.
+	 * @return the {@link EmbeddedDSProvider} object.
+	 */ 
 	public static EmbeddedDSProvider provider(String catalog,URL url){
 		return new EmbeddedDSProvider(new EmbeddedDataSource(url,catalog, "sa", ""));
 	}
 	
+	/**
+     * Creates a persisted data provider. The data stored where is storead in a file at the location of the URL.
+	 * The URL must be writable from the application (normally a local disk URL).
+	 * @param catalog the database name
+	 * @param url the connection url.
+	 * @param username the username
+	 * @param password the password
+	 * @return the {@link EmbeddedDSProvider} object.
+	 */
 	public static EmbeddedDSProvider provider(String catalog,URL url, String username,String password){
 		return new EmbeddedDSProvider(new EmbeddedDataSource(url,catalog, username, password));
 	}
 
 
 	EmbeddedDataSource ds;
-	private boolean started;
+	private AtomicBoolean started = new AtomicBoolean();
+	
 	private EmbeddedDSProvider(EmbeddedDataSource ds) {
 		this.ds = ds;
 		ds.setAutoCommit(true);
@@ -84,25 +111,31 @@ public class EmbeddedDSProvider implements DataSourceProvider{
 		});
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public DataSource getDataSource() {
-		if (!started){
+		if (!started.get()){
 			this.start();
 		}
 		return ds;
 	}
 
-	public synchronized void start(){
-		if (!started){
-			started = true;
-		}
+	/**
+	 * Start the provider.
+	 */
+	public void start(){
+		started.set(true);
 		ds.start();
 	}
 
-	public synchronized void stop(){
-		if (started){
-			started = false;
-		}
+	/**
+	 * Stop the provider
+	 */
+	public void stop(){
+		started.set(false);
 		ds.stop();
 	}
 }

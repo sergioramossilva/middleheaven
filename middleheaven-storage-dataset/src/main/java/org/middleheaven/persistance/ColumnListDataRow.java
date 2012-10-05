@@ -1,7 +1,7 @@
 package org.middleheaven.persistance;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.middleheaven.util.QualifiedName;
@@ -12,7 +12,7 @@ import org.middleheaven.util.QualifiedName;
 public class ColumnListDataRow implements DataRow {
 
 	
-	private Map<QualifiedName, DataColumn> columns = new HashMap<QualifiedName, DataColumn>();
+	private Map<QualifiedName, DataColumn> columns = new LinkedHashMap<QualifiedName, DataColumn>();
 	
 	/**
 	 * 

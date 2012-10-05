@@ -1,6 +1,8 @@
 package org.middleheaven.persistance.criteria;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 import org.middleheaven.persistance.RelatedDataSet;
@@ -22,7 +24,7 @@ public class DataSetCriteria {
 	private Collection<ResultColumnDefinition> resultColumns = new LinkedList<ResultColumnDefinition>();
 	private Collection<OrderConstraint> orderConstraints = new LinkedList<OrderConstraint>();
 	private Collection<ColumnGroupConstraint> groupConstraints = new LinkedList<ColumnGroupConstraint>();
-	private Collection<RelatedDataSet> relatedDataSets = new LinkedList<RelatedDataSet>();
+	private Collection<RelatedDataSet> relatedDataSets = new LinkedHashSet<RelatedDataSet>();
 	
 	
 	

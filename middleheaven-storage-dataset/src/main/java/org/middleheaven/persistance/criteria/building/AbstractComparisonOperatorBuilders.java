@@ -3,7 +3,6 @@
  */
 package org.middleheaven.persistance.criteria.building;
 
-import org.middleheaven.persistance.criteria.DataSetConstraint;
 import org.middleheaven.persistance.criteria.LogicConstraint;
 import org.middleheaven.util.criteria.CriterionOperator;
 

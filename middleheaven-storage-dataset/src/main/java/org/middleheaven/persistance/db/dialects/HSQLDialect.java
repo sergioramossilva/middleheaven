@@ -10,8 +10,7 @@ import java.util.LinkedList;
 import javax.sql.DataSource;
 
 import org.middleheaven.persistance.PersistanceException;
-import org.middleheaven.persistance.SearchPlan;
-import org.middleheaven.persistance.db.AbstractDataSetCriteriaInterpreter;
+import org.middleheaven.persistance.db.AbstractRDBMSDataSetCriteriaInterpreter;
 import org.middleheaven.persistance.db.Clause;
 import org.middleheaven.persistance.db.DataSetCriteriaInterpreter;
 import org.middleheaven.persistance.db.EditionDataBaseCommand;
@@ -20,16 +19,17 @@ import org.middleheaven.persistance.db.RDBMSException;
 import org.middleheaven.persistance.db.RetriveDataBaseCommand;
 import org.middleheaven.persistance.db.SQLEditCommand;
 import org.middleheaven.persistance.db.SQLRetriveCommand;
+import org.middleheaven.persistance.db.SearchPlan;
+import org.middleheaven.persistance.db.TableAlreadyExistsException;
 import org.middleheaven.persistance.db.ValueHolder;
 import org.middleheaven.persistance.db.datasource.EmbeddedDataSource;
 import org.middleheaven.persistance.db.mapping.DataBaseMapper;
 import org.middleheaven.persistance.db.metamodel.DBColumnModel;
-import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.DataBaseModel;
 import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
+import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableDataBaseModel;
 import org.middleheaven.persistance.db.metamodel.SequenceModel;
-import org.middleheaven.persistance.db.metamodel.TableAlreadyExistsException;
 import org.middleheaven.persistance.model.ColumnType;
 import org.middleheaven.util.QualifiedName;
 
@@ -63,6 +63,10 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	}
 	// end stored procedures
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public DataSetCriteriaInterpreter newCriteriaInterpreter(DataBaseMapper dataBaseMapper) {
 		return new HSQLCriteriaInterpreter(this, dataBaseMapper);
@@ -114,17 +118,17 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	@Override
 	public void writeQueryHardname(Clause buffer , QualifiedName hardname){
 		if (hardname.isAlias()){
-			buffer.append(hardname.getName().toLowerCase());
+			buffer.append(hardname.getDesignation().toLowerCase());
 		} else {
 			buffer.append(hardname.getQualifier().toLowerCase())
 			.append(fieldSeparator())
-			.append(hardname.getName().toLowerCase());
+			.append(hardname.getDesignation().toLowerCase());
 			
 		}
 	}
 
 
-	private static class HSQLCriteriaInterpreter extends AbstractDataSetCriteriaInterpreter{
+	private static class HSQLCriteriaInterpreter extends AbstractRDBMSDataSetCriteriaInterpreter{
 
 		public HSQLCriteriaInterpreter(RDBMSDialect dataBaseDialect, DataBaseMapper dataBaseMapper) {
 			super(dataBaseDialect, dataBaseMapper);
@@ -190,7 +194,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		sql.append(tm.getName());
 		sql.append("(\n ");
 		for (DBColumnModel cm : tm){
-			sql.append(cm.getName().getName());
+			sql.append(cm.getName().getDesignation());
 			sql.append(" ");
 			appendNativeTypeFor(sql , cm);
 			if(!cm.isNullable()){
@@ -252,8 +256,12 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 	
 			EditableDataBaseModel dbm = new EditableDataBaseModel();
 			
-			PreparedStatement psTables = con.prepareStatement("SELECT table_name FROM INFORMATION_SCHEMA.SYSTEM_TABLES WHERE TABLE_SCHEM = 'PUBLIC' AND TABLE_TYPE = 'TABLE'");
-			PreparedStatement psColumns = con.prepareStatement("SELECT column_name,data_type, column_size, nullable, decimal_digits FROM INFORMATION_SCHEMA.SYSTEM_COLUMNS WHERE TABLE_SCHEM = 'PUBLIC' AND TABLE_NAME = ? ");
+			PreparedStatement psTables = con.prepareStatement(
+				"SELECT table_name FROM INFORMATION_SCHEMA.SYSTEM_TABLES WHERE TABLE_SCHEM = 'PUBLIC' AND TABLE_TYPE = 'TABLE'"
+			);
+			PreparedStatement psColumns = con.prepareStatement(
+				"SELECT column_name,data_type, column_size, nullable, decimal_digits FROM INFORMATION_SCHEMA.SYSTEM_COLUMNS WHERE TABLE_SCHEM = 'PUBLIC' AND TABLE_NAME = ? "
+			);
 			
 
 			ResultSet tables = psTables.executeQuery();
@@ -281,21 +289,33 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 						col.setNullable(columns.getInt(4) == 1 );
 						tm.addColumn(col);
 					}
+					
+					columns.close();
+					
 
 					dbm.addDataBaseObjectModel(tm);
 				
 			}
 
 			tables.close();
+			psTables.close();
+			psColumns.close();
 
-			PreparedStatement psSequences = con.prepareStatement("SELECT  sequence_name , start_with , increment  FROM INFORMATION_SCHEMA.SYSTEM_SEQUENCES WHERE SEQUENCE_SCHEMA = 'PUBLIC'");
+			PreparedStatement psSequences = con.prepareStatement(
+				"SELECT  sequence_name , start_with , increment  FROM INFORMATION_SCHEMA.SYSTEM_SEQUENCES WHERE SEQUENCE_SCHEMA = 'PUBLIC'"
+			);
 			
 			ResultSet sequences = psSequences.executeQuery();
 			while (sequences.next()) {
-				SequenceModel sm = new SequenceModel(logicSequenceName(sequences.getString(1)) , sequences.getInt(2), sequences.getInt(3));
+				SequenceModel sm = new SequenceModel(logicSequenceName(
+						sequences.getString(1)) , 
+						sequences.getInt(2), 
+						sequences.getInt(3)
+				);
 				dbm.addDataBaseObjectModel(sm);
 			}
 			
+			sequences.close();
 			psSequences.close();
 			
 			return dbm;
@@ -324,6 +344,10 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public boolean existsDatabase(String name, DataSource datasource) {
 		// method is overrided for special implementation
 		if (datasource instanceof EmbeddedDataSource) {

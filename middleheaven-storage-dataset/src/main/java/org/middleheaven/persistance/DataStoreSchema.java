@@ -22,6 +22,15 @@ public interface DataStoreSchema {
 
 	
 	/**
+	 * Register a named query using a {@link NamedQueryExecutor} and a mnemonic name.
+	 * @param name the menmonic name for the query
+	 * @param queryExecutor the named query executor.
+	 */
+	public void registerNamedCriteria(String name, NamedQueryExecutor queryExecutor);
+	
+	public ParameterizedDataQuery namedQuery(String name);
+	
+	/**
 	 * Obtains the required {@link DataSet}.
 	 * 
 	 * @param name

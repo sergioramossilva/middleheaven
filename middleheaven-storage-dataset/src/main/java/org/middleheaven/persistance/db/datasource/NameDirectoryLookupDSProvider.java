@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.NamingDirectoryException;
 import org.middleheaven.persistance.PersistanceException;
-import org.middleheaven.persistance.db.datasource.DataSourceProvider;
 
 /**
  * Provides DataSource objects from a location in a NameDirectoryService

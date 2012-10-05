@@ -21,7 +21,7 @@ public class EditableColumnModel implements DBColumnModel {
 
 	
 	private String uniqueGroup;
-	
+
 	public EditableColumnModel(String name, ColumnType type) {
 		super();
 		this.name = name;
@@ -170,7 +170,7 @@ public class EditableColumnModel implements DBColumnModel {
 		// TODO Auto-generated method stub
 		
 	}
-	
+
 	
 
 

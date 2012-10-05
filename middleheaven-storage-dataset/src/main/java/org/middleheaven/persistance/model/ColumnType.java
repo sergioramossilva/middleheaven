@@ -29,31 +29,28 @@ public enum ColumnType {
 	LOGIC;
 	
 	/**
-	 * 
-	 * @return <code>true</code> if this a temporal value, <code>false</code> otherwise;
+	 * {@inheritDoc}
 	 */
 	public boolean isTemporal(){
 		return this == DATE || this == TIME || this == DATETIME;
 	}
 
 	/**
-	 * 
-	 * @return <code>true</code> if this a textual value, <code>false</code> otherwise;
+	 * {@inheritDoc}
 	 */
 	public boolean isTextual() {
 		return this == TEXT || this == MEMO;
 	}
 
 	/**
-	 * 
-	 * @return <code>true</code> if this a decimal value, <code>false</code> otherwise;
+	 * {@inheritDoc}
 	 */
 	public boolean isDecimal() {
 		return this == DECIMAL;
 	}
 
 	/**
-	 * @return
+	 * {@inheritDoc}
 	 */
 	public boolean isInteger() {
 		return this == INTEGER || this == SMALL_INTEGER;
