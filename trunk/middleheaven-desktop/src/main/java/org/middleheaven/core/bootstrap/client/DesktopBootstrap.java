@@ -4,13 +4,13 @@
  */
 package org.middleheaven.core.bootstrap.client;
 
-import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
 import org.middleheaven.core.bootstrap.AbstractBootstrap;
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.BootstrapEnvironment;
 import org.middleheaven.core.bootstrap.BootstrapEnvironmentResolver;
+import org.middleheaven.core.services.ServiceBuilder;
 import org.middleheaven.logging.LogServiceDelegatorLogger;
-import org.middleheaven.logging.LoggingService;
+import org.middleheaven.ui.UIService;
 import org.middleheaven.ui.desktop.service.DesktopUIServiceActivator;
 
 /**
@@ -32,9 +32,11 @@ public class DesktopBootstrap extends AbstractBootstrap {
 	@Override
 	public void posConfig(BootstrapContext context){
 
-		context.addActivator(DynamicLoadApplicationServiceActivator.class)
-		.addActivator(DesktopUIServiceActivator.class)
-		;
+		context.registerService(ServiceBuilder
+				.forContract(UIService.class)
+				.activatedBy(new DesktopUIServiceActivator())
+				.newInstance()
+		);
 
 	}
 
@@ -61,9 +63,7 @@ public class DesktopBootstrap extends AbstractBootstrap {
 			public BootstrapEnvironment resolveEnvironment(
 					BootstrapContext context) {
 				
-				LoggingService loggingService = context.getServiceContext().getService(LoggingService.class);
-				
-				return new DesktopUIBootstrapEnvironment(new LogServiceDelegatorLogger(this.getClass().getName(), loggingService));
+				return new DesktopUIBootstrapEnvironment(new LogServiceDelegatorLogger(this.getClass().getName(), context.getLoggingService()));
 			}
 			
 		};
