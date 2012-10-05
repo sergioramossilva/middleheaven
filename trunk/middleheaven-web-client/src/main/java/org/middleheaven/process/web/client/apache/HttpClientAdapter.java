@@ -22,10 +22,10 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.ContextScopeStrategy;
+import org.middleheaven.process.ScopedAttributesResolutionStrategy;
 import org.middleheaven.process.web.BrowserInfo;
 import org.middleheaven.process.web.HttpEntry;
 import org.middleheaven.process.web.HttpProcessException;
@@ -88,7 +88,7 @@ class HttpClientAdapter implements HttpClient {
 		StringBuilder builder = new StringBuilder(request.getRequestUrl().toString());
 
 
-		ContextScopeStrategy attributes = request.getAttributes().getScopeAttributeContext(ContextScope.PARAMETERS);
+		ScopedAttributesResolutionStrategy attributes = request.getAttributes().getScopeAttributeContext(ContextScope.REQUEST_PARAMETERS);
 		
 		List<NameValuePair> qparams = new ArrayList<NameValuePair>(attributes.size());
 		
@@ -114,7 +114,7 @@ class HttpClientAdapter implements HttpClient {
 	
 	
 	private void addHeaders(HttpClientRequest request, HttpRequestBase baseRequest) {
-		ContextScopeStrategy attributes = request.getAttributes().getScopeAttributeContext(ContextScope.REQUEST_HEADERS);
+		ScopedAttributesResolutionStrategy attributes = request.getAttributes().getScopeAttributeContext(ContextScope.REQUEST_HEADERS);
 		
 		
 		for (Attribute attribute : attributes) {
@@ -133,7 +133,7 @@ class HttpClientAdapter implements HttpClient {
 		if ( entry != null){
 			post.setEntity(new HttpEntryEntityAdapter(entry));
 		} else {
-			Log.onBookFor(this.getClass()).warn("No entity to post to {0}" , request.getRequestUrl().toString() );
+			Logger.onBookFor(this.getClass()).warn("No entity to post to {0}" , request.getRequestUrl().toString() );
 		}
 		
 

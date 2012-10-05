@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.message.BasicHeader;
-import org.middleheaven.io.IOUtils;
+import org.middleheaven.io.IOTransport;
 import org.middleheaven.process.web.HttpEntry;
 
 /**
@@ -78,7 +78,7 @@ public class HttpEntryEntityAdapter implements HttpEntity {
 	 */
 	@Override
 	public void writeTo(OutputStream outstream) throws IOException {
-		IOUtils.copy(entry.getContent().getInputStream(), outstream);
+		IOTransport.copy(entry.getContent().getInputStream()).to(outstream);
 	}
 
 	/**
