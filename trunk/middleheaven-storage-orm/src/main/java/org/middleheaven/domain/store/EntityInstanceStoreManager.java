@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.reflection.metaclass.MetaBean;
 import org.middleheaven.core.reflection.metaclass.ReflectionBean;
 import org.middleheaven.domain.criteria.EntityCriteria;
@@ -16,6 +17,7 @@ import org.middleheaven.domain.query.QueryExecuter;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.criteria.ReadStrategy;
 import org.middleheaven.util.identity.Identity;
 
 
@@ -66,13 +68,17 @@ final class EntityInstanceStoreManager implements DomainStoreManager {
 	 * @return
 	 */
 	public EntityInstance merge(Object obj){
-		EntityInstance p;
-		if (obj instanceof EntityInstance){
-			p = (EntityInstance) obj;
+	
+		
+		if ( obj == null){
+			return null;
+		} else if (obj instanceof EntityInstance){
+			return (EntityInstance) obj;
 		} else {
 
 			// not managed yet
-
+			MetaBeanEntityInstance p;
+			
 			if (obj instanceof MetaBean){
 				EntityModel model = domainModel.getModelFor(((MetaBean) obj).getMetaClass().getName());
 				p = new MetaBeanEntityInstance(model, (MetaBean) obj);
@@ -80,9 +86,10 @@ final class EntityInstanceStoreManager implements DomainStoreManager {
 				EntityModel model = domainModel.getModelFor(obj.getClass().getName());
 				p = new MetaBeanEntityInstance(model, new ReflectionBean(obj));
 			}
-
+			return (EntityInstance) Introspector.of(obj.getClass()).newProxyInstance(new EntityManagerProxyHandler(p), EntityInstance.class);
 		}
-		return p;
+		
+		
 	}
 	
 	
@@ -108,15 +115,16 @@ final class EntityInstanceStoreManager implements DomainStoreManager {
 				return null;
 			}
 			return new DeleteAction(p);
-		case FILLED:
 		case EDITED:
+			// update
+			return new UpdateAction(p);
+		case FILLED:
 		case NOT_PERSISTED:
 			if (p.getIdentity() == null) {
 				identityManager.assignIdentity(p);
 				return new InsertAction(p);
 			} else {
-				// update
-				return new UpdateAction(p);
+				throw new IllegalStateException("Key is not set ");
 			}
 		case RETRIVED:
 			// no-op
@@ -187,8 +195,6 @@ final class EntityInstanceStoreManager implements DomainStoreManager {
 		EntityInstance p = this.merge(obj);
 		final Set<EntityInstance> all = new HashSet<EntityInstance>();
 		
-		
-	
 		flatten(p,all);
 
 
@@ -199,7 +205,7 @@ final class EntityInstanceStoreManager implements DomainStoreManager {
 				return assignAction(s);
 			}
 
-		}).each(new Walker<StoreAction>(){
+		}).forEach(new Walker<StoreAction>(){
 
 			@Override
 			public void doWith(StoreAction action) {
@@ -208,7 +214,7 @@ final class EntityInstanceStoreManager implements DomainStoreManager {
 
 		});
 
-		return (T) p;
+		return (T)p;
 	}
 
 	/**

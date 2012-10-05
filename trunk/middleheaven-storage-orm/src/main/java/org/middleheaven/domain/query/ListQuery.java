@@ -5,25 +5,43 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 
-public abstract class ListQuery<T> implements Query<T> , Serializable{
-
-	private static final long serialVersionUID = 5921463303407006568L;
+public class ListQuery<T> implements Query<T> , Serializable{
 	
-	public ListQuery() {
+	private static final long serialVersionUID = 5921463303407006568L;
+	private Callable<List<T>> callable;
+	
+	public ListQuery(Callable<List<T>> callable) {
 		super();
+		this.callable= callable;
+	}
+	
+	public ListQuery(final List<T> other) {
+		super();
+		this.callable= new Callable<List<T>>() {
+
+			@Override
+			public List<T> call() throws Exception {
+				return other;
+			}
+		};
 	}
 
 	private List<T> secureList(){
-		List<T> list = this.list();
-		if (list == null){
-			return Collections.emptyList();
+		List<T> list;
+		try {
+			list = this.callable.call();
+			if (list == null){
+				return Collections.emptyList();
+			}
+			return list;
+		} catch (Exception e) {
+			throw new RuntimeException();
 		}
-		return list;
+		
 	}
-	
-	protected abstract List<T> list();
 	
 	@Override
 	public long count() {
@@ -56,17 +74,14 @@ public abstract class ListQuery<T> implements Query<T> , Serializable{
 			throw new IllegalArgumentException("Range must start at position 1 or further");
 		}
 		
-		return new ListQuery<T>(){
-
-			private static final long serialVersionUID = 132895192815795232L;
-
+		return new ListQuery<T>(new Callable<List<T>>() {
 			@Override
-			protected List<T> list() {
+			public List<T> call() {
 				final List<T> list = ListQuery.this.secureList();
 				return list.subList(startAt-1, Math.min(list.size(),startAt+maxCount-1));
 			}
 			
-		};
+		});
 	}
 
 	/**

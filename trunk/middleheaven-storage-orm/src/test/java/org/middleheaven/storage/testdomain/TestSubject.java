@@ -13,7 +13,6 @@ import org.middleheaven.model.annotations.OneToMany;
 import org.middleheaven.model.annotations.Transient;
 import org.middleheaven.model.annotations.mapping.Column;
 import org.middleheaven.model.annotations.mapping.Dataset;
-import org.middleheaven.persistance.model.ColumnType;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 
@@ -28,11 +27,11 @@ public class TestSubject {
 	@Transient
 	private String transientField;
 	
-	@Column(name="active", type = ColumnType.LOGIC)
+	@Column(name="active")
 	private boolean active;
 	private String name;
 	
-	@Column(name="birth", type = ColumnType.DATE)
+	@Column(name="birth")
 	private Date birthdate;
 
 	private int number;

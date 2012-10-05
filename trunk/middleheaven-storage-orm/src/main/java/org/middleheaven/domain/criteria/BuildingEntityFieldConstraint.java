@@ -35,7 +35,7 @@ implements EntityFieldConstraint<T, B> {
 			return this.isNull();
 		} else {
 			return navigateTo(Introspector.of(candidate).getRealType())
-			.isEqual(candidate)
+			.is(candidate)
 			.back();
 		}
 	}

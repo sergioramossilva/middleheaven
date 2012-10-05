@@ -89,13 +89,10 @@ public class EntityStoreRepository<E> extends AbstractRepository<E>  {
 
 	@Override
 	public Query<E> findEquals(E instance) {
-		return getEntityStore().createQuery(EntityCriteriaBuilder.search(entityType).isEqual(instance).all());
+		return getEntityStore().createQuery(EntityCriteriaBuilder.search(entityType).is(instance).all());
 	}
 
-	@Override
-	public Query<E> findIdentical(E instance) {
-		return getEntityStore().createQuery(EntityCriteriaBuilder.search(entityType).isIdentical(instance).all());
-	}
+
 
 	@Override
 	public Query<E> findByIdentity(Identity id) {

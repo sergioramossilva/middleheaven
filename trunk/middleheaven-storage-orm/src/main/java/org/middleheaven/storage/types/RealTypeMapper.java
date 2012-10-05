@@ -34,7 +34,7 @@ public class RealTypeMapper implements TypeMapper{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(Object object, DataRow row, DataColumnModel... columns) {
+	public void write(Object parent, Object object, DataRow row, DataColumnModel... columns) {
 		
 		Real number  = (Real) object;
 		

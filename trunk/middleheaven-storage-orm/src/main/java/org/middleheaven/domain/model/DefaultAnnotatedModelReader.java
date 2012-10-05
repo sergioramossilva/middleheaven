@@ -11,8 +11,9 @@ import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.reflection.metaclass.MetaClass;
 import org.middleheaven.core.reflection.metaclass.ReflectionMetaClass;
-import org.middleheaven.logging.Log;
+import org.middleheaven.logging.Logger;
 import org.middleheaven.model.annotations.EmailAddress;
+import org.middleheaven.model.annotations.Entity;
 import org.middleheaven.model.annotations.Id;
 import org.middleheaven.model.annotations.Length;
 import org.middleheaven.model.annotations.ManyToMany;
@@ -22,6 +23,7 @@ import org.middleheaven.model.annotations.NotNull;
 import org.middleheaven.model.annotations.OneToMany;
 import org.middleheaven.model.annotations.OneToOne;
 import org.middleheaven.model.annotations.Temporal;
+import org.middleheaven.model.annotations.Transient;
 import org.middleheaven.model.annotations.Unique;
 import org.middleheaven.model.annotations.Url;
 import org.middleheaven.model.annotations.Version;
@@ -37,6 +39,9 @@ import org.middleheaven.util.identity.Identity;
  */
 public class DefaultAnnotatedModelReader implements DomainModelReader {
 
+	
+	Logger logger = Logger.onBookFor(this.getClass());
+	
 	/**
 	 * 
 	 * Constructor.
@@ -55,13 +60,13 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 	
 	@Override
-	public void read(Class<?> type, EntityModelBuilder builder) {
+	public void read(Class<?> type, EntityModelBuildContext context) {
 		
 		if (!isEntityType(type)){
 			return;
 		}
 		
-		EditableDomainEntityModel em = builder.getEditableModelOf(type);
+		EditableDomainEntityModel em = context.getEditableModelOf(type);
 
 		Collection<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
 
@@ -71,7 +76,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 			for (PropertyAccessor pa : propertyAccessors){
 
-				processField(pa,em, builder);
+				processField(pa,em, context);
 
 			}
 
@@ -84,7 +89,10 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 
 	private boolean isEntityType(Class<?> type) {
-		return !type.isEnum();
+		if (!type.isAnnotationPresent(Entity.class) && !type.isEnum()){
+			logger.debug("Class {0} was ignored as an entity because is not annotated with @Entity", type.getName());
+		}
+		return !type.isEnum() && type.isAnnotationPresent(Entity.class);
 	}
 
 	private MetaClass resolveValidIdentityType(Class<?> type){
@@ -95,7 +103,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 		return new ReflectionMetaClass(type);
 	}
 
-	private void processField (PropertyAccessor pa ,EditableDomainEntityModel em, EntityModelBuilder builder){
+	private void processField (PropertyAccessor pa ,EditableDomainEntityModel em, EntityModelBuildContext builder){
 
 	
 		final QualifiedName fieldQualifiedName = QualifiedName.qualify(em.getEntityName(), pa.getName());
@@ -111,7 +119,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 			em.addField(fm);
 		}
 		
-		//fm.setTransient(pa.isAnnotadedWith(Transient.class));
+		fm.setTransient(pa.isAnnotadedWith(Transient.class) || !pa.isWritable());
 		fm.setVersion( pa.isAnnotadedWith(Version.class));
 		fm.setUnique( pa.isAnnotadedWith(Unique.class));
 		fm.setNullable(!pa.isAnnotadedWith(NotNull.class));
@@ -151,7 +159,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 			 EditableDomainEntityModel targetModel = builder.getEditableModelOf(valueType);
 
 			if (fieldName.isEmpty()){
-				fieldName = targetModel.identityFieldModel().getName().getName();
+				fieldName = targetModel.identityFieldModel().getName().getDesignation();
 			} else {
 				// TODO validate field exists
 			}
@@ -231,7 +239,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 				if (pa.isAnnotadedWith(Temporal.class)){
 					fm.setDataType(pa.getAnnotation(Temporal.class).value());
 				} else {
-					Log.onBookFor(this.getClass()).warn(
+					logger.warn(
 							" {0} is to a too generic timestamp type. Consider annotate property {1} with @Temporal or use an instance of {2}", 
 							valueType.getName(),
 							fm.getName(), 
@@ -247,7 +255,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 				fm.setDataType( DataType.ONE_TO_MANY);
 			} else {
 
-				Log.onBookFor(this.getClass()).warn("Implicitly composing many-to-one relation for property " + pa.toString());
+				logger.warn("Implicitly composing many-to-one relation for property " + pa.toString());
 
 				mapAsManyToOne(fm, "",valueType,builder);
 			}
@@ -256,7 +264,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 	}
 
 
-	private void mapAsManyToOne(EditableEntityFieldModel fm,String fieldName,Class<?> valueType , final EntityModelBuilder builder ){
+	private void mapAsManyToOne(EditableEntityFieldModel fm,String fieldName,Class<?> valueType , final EntityModelBuildContext builder ){
 
 		
 		if (valueType.isEnum()){
@@ -277,22 +285,22 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 			model.setTargetType(new ReflectionMetaClass(valueType));
 			
-			EditableDomainEntityModel targetModel = builder.getEditableModelOf(valueType);
-
-			if (fieldName==null || fieldName.isEmpty()){
-				fieldName = targetModel.identityFieldModel().getName().getName();
-			}else {
-				// TODO validate field exists
-			}
-			model.setTargetFieldName(fieldName);
-			model.setTargetFieldType(targetModel.getIdentityType());
+//			EditableDomainEntityModel targetModel = builder.getEditableModelOf(valueType);
+//
+//			if (fieldName==null || fieldName.isEmpty()){
+//				fieldName = targetModel.identityFieldModel().getName().getName();
+//			}else {
+//				// TODO validate field exists
+//			}
+//			model.setTargetFieldName(fieldName);
+//			model.setTargetFieldType(targetModel.getIdentityType());
 
 			fm.setDataTypeModel(model);
 		}
 	}
 
 	
-	private Class<?> mapAsIdentityField (EditableEntityFieldModel fm,Class<?> idType ,Class<?> valueType, EntityModelBuilder builder ){
+	private Class<?> mapAsIdentityField (EditableEntityFieldModel fm,Class<?> idType ,Class<?> valueType, EntityModelBuildContext builder ){
 		Class<?> identityType = valueType;
 		if(identityType.isInterface() || Modifier.isAbstract(identityType.getModifiers())){
 			identityType = idType;

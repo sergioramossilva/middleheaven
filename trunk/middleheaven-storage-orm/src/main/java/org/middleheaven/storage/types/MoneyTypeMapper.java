@@ -40,13 +40,13 @@ public class MoneyTypeMapper implements TypeMapper {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(Object object, DataRow row, DataColumnModel ... columns) {
+	public void write(Object parent, Object object, DataRow row, DataColumnModel ... columns) {
 	
 		Money money = (Money) object;
 		
-		RealTypeMapper.instance().write(money.amount(), row, columns[0]);
+		RealTypeMapper.instance().write(null, money.amount(), row, columns[0]);
 		
-		CurrencyTypeMapper.instance().write(money.unit(), row, columns[1]);
+		CurrencyTypeMapper.instance().write(null, money.unit(), row, columns[1]);
 	
 		
 	}

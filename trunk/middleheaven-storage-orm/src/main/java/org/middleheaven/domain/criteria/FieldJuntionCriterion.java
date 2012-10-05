@@ -15,7 +15,7 @@ public class FieldJuntionCriterion implements JunctionCriterion {
 	private QualifiedName fieldName;
 	private Class<?> targetType;
 	private Class<?> sourceType;
-	private EntityCriteria<?> subCriteria;
+	private Criteria<?> subCriteria;
 	private String alias;
 	private boolean reversed;
 
@@ -42,11 +42,11 @@ public class FieldJuntionCriterion implements JunctionCriterion {
 	 */
 	@Override
 	public void setSubCriteria(Criteria<?> criteria) {
-		this.subCriteria = subCriteria;
+		this.subCriteria = criteria;
 	}
 	
 	@Override
-	public EntityCriteria<?> getSubCriteria(){
+	public Criteria<?> getSubCriteria(){
 		return this.subCriteria;
 	}
 

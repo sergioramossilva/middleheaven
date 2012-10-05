@@ -3,8 +3,6 @@
  */
 package org.middleheaven.storage.types;
 
-import org.middleheaven.core.reflection.ReflectionException;
-import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.persistance.DataColumn;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.model.DataColumnModel;
@@ -50,7 +48,7 @@ public class IdentityTypeMapper implements TypeMapper {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(Object object, DataRow row, DataColumnModel... columns) {
+	public void write(Object parent, Object object, DataRow row, DataColumnModel... columns) {
 		
 		String stringValue = object.toString();
 		

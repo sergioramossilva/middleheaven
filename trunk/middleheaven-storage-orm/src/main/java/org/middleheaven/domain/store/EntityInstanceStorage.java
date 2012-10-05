@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.middleheaven.domain.criteria.EntityCriteria;
 import org.middleheaven.domain.query.Query;
+import org.middleheaven.util.criteria.ReadStrategy;
 
 /**
  * Abstraction for a object mapping mechanism. 

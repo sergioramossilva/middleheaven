@@ -7,7 +7,6 @@ import java.util.Date;
 
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.model.DataColumnModel;
-import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimeUtils;
 
@@ -38,7 +37,7 @@ public class CalendarDateTimeTypeMapper implements TypeMapper {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(Object object, DataRow row, DataColumnModel... columns) {
+	public void write(Object parent, Object object, DataRow row, DataColumnModel... columns) {
 
 		row.getColumn(columns[0].getName()).setValue(TimeUtils.toDate((CalendarDateTime)object));
 

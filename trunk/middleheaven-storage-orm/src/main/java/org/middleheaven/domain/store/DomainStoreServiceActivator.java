@@ -2,13 +2,10 @@ package org.middleheaven.domain.store;
 
 import java.util.Collection;
 
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
-import org.middleheaven.core.wiring.BindConfiguration;
-import org.middleheaven.core.wiring.Binder;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.annotations.Shared;
 
 public class DomainStoreServiceActivator extends ServiceActivator {
 

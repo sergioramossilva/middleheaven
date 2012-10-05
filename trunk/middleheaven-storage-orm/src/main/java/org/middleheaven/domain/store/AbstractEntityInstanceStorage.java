@@ -1,13 +1,13 @@
 package org.middleheaven.domain.store;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
+import org.middleheaven.core.reflection.metaclass.MetaClass;
 import org.middleheaven.domain.model.EntityModel;
 import org.middleheaven.sequence.Sequence;
-import org.middleheaven.util.identity.Identity;
-import org.middleheaven.util.identity.IntegerIdentity;
-import org.middleheaven.util.identity.LongIdentity;
 
 
 /**
@@ -18,35 +18,15 @@ public abstract class AbstractEntityInstanceStorage implements EntityInstanceSto
 	
 	private DomainStoreManager storeManager;
 	
-	private final Map<String , IdentityEditor> editors = new HashMap<String, IdentityEditor>();
-	
+	private final Collection<SequenceEditor> editors = new HashSet<SequenceEditor>();
+	private final Map<String, SequenceEditor> editorsMapping = new HashMap<String, SequenceEditor>();
 
-	interface IdentityEditor {
-		
-		
-		public Identity newInstance (Long seed);
-	}
-	
-	
 	public AbstractEntityInstanceStorage(){
 		
-		editors.put(IntegerIdentity.class.getName(), new IdentityEditor(){
-
-			@Override
-			public Identity newInstance(Long seed) {
-				return IntegerIdentity.valueOf(seed.intValue());
-			}
-			
-		} );
 		
-		editors.put(IntegerIdentity.class.getName(), new IdentityEditor(){
+		editors.add(new IdentitySequenceEditor());
 
-			@Override
-			public Identity newInstance(Long seed) {
-				return LongIdentity.valueOf(seed);
-			}
-			
-		} );
+		
 	}
 	
 	@Override
@@ -76,12 +56,32 @@ public abstract class AbstractEntityInstanceStorage implements EntityInstanceSto
 						throw new IllegalArgumentException("Instance indentity is expected to be assigned before storage");
 					}
 				} else {
-					IdentityEditor editor = editors.get(model.getIdentityType().getName());
+					
+					MetaClass type = model.getIdentityType();
+					
+					SequenceEditor editor = editorsMapping.get(type.getName());
+					
+					
+					if (editor == null){
+						
+						
+						for (SequenceEditor idEditor : editors){
+							if (idEditor.canEdit(type)){
+								editor = idEditor;
+								editorsMapping.put(type.getName(), editor);
+							}
+						}
+					}
+					
+					if (editor == null){
+						throw new IllegalStateException("No IdentityEditor found for type " + model.getIdentityType().getName());
+					}
+					
 					Sequence<Long> seedSequence = getSeedSequence(instance);
 					
-					Identity id = editor.newInstance(seedSequence.next().value());
+					Long seed = seedSequence.next().value();
 					
-					instance.setIdentity(id);
+					instance.setIdentity(editor.newInstance(seed, type));
 					
 				}
 				

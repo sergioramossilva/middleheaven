@@ -1,22 +1,9 @@
 package org.middleheaven.domain.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.middleheaven.core.dependency.DependencyResolver;
-import org.middleheaven.core.dependency.InicializationNotPossibleException;
-import org.middleheaven.core.dependency.InicializationNotResolvedException;
-import org.middleheaven.core.dependency.Starter;
 import org.middleheaven.core.reflection.ClassSet;
-import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.reflection.metaclass.ReflectionMetaClass;
-import org.middleheaven.logging.Log;
 import org.middleheaven.model.AbstractModelBuilder;
-import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.persistance.db.mapping.IllegalModelStateException;
 
 /**
  * 
@@ -29,96 +16,141 @@ public final class DomainModelBuilder extends AbstractModelBuilder<EntityModel, 
 	}
 
 	public DomainModel build(ClassSet classes){
-
+		
 		final SimpleModelBuilder builder = new SimpleModelBuilder();
 
-		new DependencyResolver(Log.onBookFor(this.getClass())).resolve(classes.getClasses(), new Starter<Class<?>>(){
-
-			@Override
-			public void inicialize(Class<?> type)
-			throws InicializationNotResolvedException,
-			InicializationNotPossibleException {
-
-				reader().read(type, builder);
+		for (Class c : classes){
+			if (isDomainAbstraction(c)){
+				reader().read(c, builder);
 			}
+		}
+		
+		
+		DomainModel model =  builder.getModel();
+		
+		
+		for (EntityModel em : model.models()){
+			
+			for (EntityFieldModel fm : em.fields()){
+				if (!fm.isTransient() && fm.getDataType().isReference()){
+					DefaultReferenceDataTypeModel typeModel = (DefaultReferenceDataTypeModel) fm.getDataTypeModel();
+					
+					EditableDomainEntityModel targetModel =  (EditableDomainEntityModel) model.getModelFor(typeModel.getTargetType().getName());
 
-			@Override
-			public void inicializeWithProxy(Class<?> dependableProperties)
-			throws InicializationNotResolvedException,
-			InicializationNotPossibleException {
-
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public List<Class<?>> sort(final Collection<Class<?>> dependencies) {
-
-				List<ClassDependency> deps = new ArrayList<ClassDependency>(dependencies.size());
-
-				for (Class<?> c: dependencies){
-					deps.add(new ClassDependency (c, dependencies));
-				}
-
-				Collections.sort(deps, new Comparator<ClassDependency>(){
-
-					@Override
-					public int compare(ClassDependency a,	ClassDependency b) {
-						return a.getDepenciesCount() - b.getDepenciesCount();
+					if (targetModel == null){
+						throw new IllegalModelStateException(fm.getValueType().getName() + " is not an entity");
 					}
+					String fieldName = targetModel.identityFieldModel().getName().getDesignation();
+					
+					typeModel.setTargetFieldName(fieldName);
+					typeModel.setTargetFieldType(targetModel.getIdentityType());
 
-				});
-				List<Class<?>> result = new ArrayList<Class<?>>(dependencies.size());
-				for (ClassDependency cd : deps){
-					result.add(cd.getType());
 				}
-
-				return result;
 			}
+			
+		}
+		
+		return model;
+		
 
-			class ClassDependency {
-
-				private Class<?> type;
-				private Collection<Class<?>> depends;
-
-				public ClassDependency(Class<?> type, final Collection<Class<?>> dependencies){
-					this.type = type;
-
-					this.depends = Introspector.of(type).inspect().properties().retriveAll().collect(new Classifier<Class<?>,PropertyAccessor>(){
-
-						@Override
-						public Class<?> classify(PropertyAccessor obj) {
-							if( dependencies.contains(obj.getValueType())){
-								return obj.getValueType();
-							}
-							return null;
-						}
-
-					});
-
-
-				}
-
-				public int getDepenciesCount() {
-					return depends.size();
-				}
-
-				public Class getType(){
-					return type;
-				}
-
-			}
-
-			@Override
-			public boolean isRequired(Class<?> dependency) {
-				return true;
-			}
-
-		});
-
-		return builder.getModel();
+//	
+//		new DependencyResolver(Log.onBookFor(this.getClass())).resolve(classes.getClasses(), new Starter<Class<?>>(){
+//
+//			@Override
+//			public void inicialize(Class<?> type)
+//			throws InicializationNotResolvedException,
+//			InicializationNotPossibleException {
+//
+//				builder.buildModelFor(type, reader());
+//				
+//				
+//			}
+//
+//			@Override
+//			public void inicializeWithProxy(Class<?> dependableProperties)
+//			throws InicializationNotResolvedException,
+//			InicializationNotPossibleException {
+//
+//				throw new UnsupportedOperationException();
+//			}
+//
+//			@Override
+//			public List<Class<?>> sort(final Collection<Class<?>> dependencies) {
+//
+//				List<ClassDependency> deps = new ArrayList<ClassDependency>(dependencies.size());
+//
+//				for (Class<?> c: dependencies){
+//					deps.add(new ClassDependency (c, dependencies));
+//				}
+//
+//				Collections.sort(deps, new Comparator<ClassDependency>(){
+//
+//					@Override
+//					public int compare(ClassDependency a,	ClassDependency b) {
+//						return a.getDepenciesCount() - b.getDepenciesCount();
+//					}
+//
+//				});
+//				List<Class<?>> result = new ArrayList<Class<?>>(dependencies.size());
+//				for (ClassDependency cd : deps){
+//					result.add(cd.getType());
+//				}
+//
+//				return result;
+//			}
+//
+//			class ClassDependency {
+//
+//				private Class<?> type;
+//				private Collection<Class<?>> depends;
+//
+//				public ClassDependency(Class<?> type, final Collection<Class<?>> dependencies){
+//					this.type = type;
+//
+//					this.depends = Introspector.of(type).inspect().properties().retriveAll().collect(new Classifier<Class<?>,PropertyAccessor>(){
+//
+//						@Override
+//						public Class<?> classify(PropertyAccessor obj) {
+//							if( dependencies.contains(obj.getValueType())){
+//								return obj.getValueType();
+//							}
+//							return null;
+//						}
+//
+//					});
+//
+//
+//				}
+//
+//				public int getDepenciesCount() {
+//					return depends.size();
+//				}
+//
+//				public Class getType(){
+//					return type;
+//				}
+//
+//			}
+//
+//			@Override
+//			public boolean isRequired(Class<?> dependency) {
+//				return true;
+//			}
+//
+//		});
+//
+//		return builder.getModel();
 	}
 
-	private static class SimpleModelBuilder implements EntityModelBuilder {
+	/**
+	 * @param c
+	 * @return
+	 */
+	private boolean isDomainAbstraction(Class<?> c) {
+		return !c.isInterface();
+	}
+
+	private static class SimpleModelBuilder implements EntityModelBuildContext {
 
 		EditableDomainModel model = new EditableDomainModel();
 		
@@ -131,6 +163,7 @@ public final class DomainModelBuilder extends AbstractModelBuilder<EntityModel, 
 			}
 			return (EditableDomainEntityModel) em;
 		}
+
 
 		public DomainModel getModel() {
 			return model;

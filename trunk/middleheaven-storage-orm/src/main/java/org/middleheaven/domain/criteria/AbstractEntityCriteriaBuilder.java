@@ -6,7 +6,7 @@ import org.middleheaven.util.criteria.BuildingOrdering;
 import org.middleheaven.util.criteria.Criterion;
 import org.middleheaven.util.criteria.OrderingConstrain;
 import org.middleheaven.util.criteria.OrderingCriterion;
-import org.middleheaven.validation.Consistencies;
+import org.middleheaven.util.validation.Consistencies;
 
 
 public abstract class AbstractEntityCriteriaBuilder<T , B extends AbstractEntityCriteriaBuilder<T,B>> extends AbstractCriteriaBuilder<T,B> {
@@ -50,25 +50,21 @@ public abstract class AbstractEntityCriteriaBuilder<T , B extends AbstractEntity
 		return me();
 	}
 
-	public B isEqual(Object instance){
+	/**
+	 * The current navigation target entity is the same as the one given
+	 * @param instance the given instance of an entity
+	 * @return
+	 */
+	public B is(Object instance){
 		
 		Consistencies.consistNotNull(instance);
 		
-		this.criteria.add(new EqualsOtherInstanceCriterion(instance));
+		this.criteria.add(new EqualsOtherInstanceCriterion(this.criteria.getTargetClass(), instance));
 		
 		return me();
 		
 	}
 
-
-	public B isIdentical(Object instance){
-	
-		Consistencies.consistNotNull(instance);
-		
-		this.criteria.add(new IsIdenticalToOtherInstanceCriterion(instance));
-		
-		return me();
-	}
 
 	/**
 	 * @see org.middleheaven.storage.criteria.CriteriaBuilderStrategy#and(java.lang.String)

@@ -3,7 +3,6 @@ package org.middleheaven.domain.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.middleheaven.domain.model.DataType;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.util.identity.IntegerIdentity;

@@ -17,8 +17,8 @@ import org.middleheaven.model.annotations.OneToOne;
 import org.middleheaven.model.annotations.Unique;
 import org.middleheaven.model.annotations.Version;
 import org.middleheaven.model.annotations.mapping.Dataset;
-import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
+import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 
 
 /**

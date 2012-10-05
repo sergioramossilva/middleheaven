@@ -4,10 +4,11 @@ import org.middleheaven.core.reflection.metaclass.MetaClass;
 
 public interface ReferenceDataTypeModel extends DataTypeModel{
 
-	public abstract String getTargetFieldName();
+	public String getTargetFieldName();
 
-	public abstract MetaClass getTargetType();
+	public MetaClass getTargetType();
 
-	public abstract MetaClass getAggregationType();
-	public abstract MetaClass getTargetFieldType();
+	public MetaClass getAggregationType();
+	public MetaClass getTargetFieldType();
+	
 }

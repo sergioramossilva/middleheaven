@@ -24,12 +24,12 @@ public interface TypeMapper {
 	
 	/**
 	 * Map an object to some columns of the row
-	 * 
+	 * @param parent the object that agrregates this object, if any
 	 * @param object the object to map
 	 * @param row the row to fill with data from the object
 	 * @param columns the columns to fill in the row
 	 */
-	public void write(Object object , DataRow row,  DataColumnModel ... columns );
+	public void write(Object parent , Object object,  DataRow row, DataColumnModel ... columns );
 	
 	
 }

@@ -37,7 +37,7 @@ public class CurrencyTypeMapper implements TypeMapper {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void write(Object object, DataRow row, DataColumnModel ... columns) {
+	public void write(Object parent, Object object, DataRow row, DataColumnModel ... columns) {
 		Currency c  = (Currency) object;
 		
 		row.getColumn(columns[0].getName()).setValue(c.toString());

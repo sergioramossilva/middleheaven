@@ -2,6 +2,7 @@ package org.middleheaven.domain.store;
 
 import org.middleheaven.domain.criteria.EntityCriteria;
 import org.middleheaven.domain.query.Query;
+import org.middleheaven.util.criteria.ReadStrategy;
 import org.middleheaven.util.identity.Identity;
 
 abstract class AbstractEntityStorageDecorator implements DomainStore {
