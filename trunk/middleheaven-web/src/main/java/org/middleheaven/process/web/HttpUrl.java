@@ -3,6 +3,7 @@ package org.middleheaven.process.web;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.UrlStringUtils;
 
 /**
@@ -59,6 +60,21 @@ public class HttpUrl {
 		return UrlStringUtils.path(url.toString(), context);
 	}
 	
+	/**
+	 * The complete file name sufixed with the its path remove the context.
+	 * @return
+	 */
+	public String getContexlesPathAndFileName(){
+		return getContexlesPathAndFileName(false);
+	}
+	
+	/**
+	 * The complete file name sufixed with the its path remove the context.
+	 * @return
+	 */
+	public String getContexlesPathAndFileName(boolean removeExtension){
+		return StringUtils.ensureStartsWith(getContexlessPath() + getFilename(removeExtension), "/");
+	}
 	
 
 	public String getAuthority(){

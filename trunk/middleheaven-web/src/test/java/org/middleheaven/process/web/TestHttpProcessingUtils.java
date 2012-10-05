@@ -1,5 +1,6 @@
 package org.middleheaven.process.web;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
@@ -24,5 +25,20 @@ public class TestHttpProcessingUtils {
 		assertEquals(2,cultures.indexOf(Culture.valueOf("en", "GB")));
 		assertEquals(3,cultures.indexOf(Culture.valueOf("en")));
 		
+	}
+	
+	
+	@Test
+	public void testGlobPattern(){
+		
+		GlobUrlPattern a = new GlobUrlPattern("*.html");
+		GlobUrlPattern b = new GlobUrlPattern("/distribution/*.html");
+		
+		final String url = "/distribution/login.html";
+
+		assertTrue(a.match(url) > 0);
+		assertTrue(b.match(url) > 0);
+	
+		assertTrue(a.match(url) < b.match(url));
 	}
 }
