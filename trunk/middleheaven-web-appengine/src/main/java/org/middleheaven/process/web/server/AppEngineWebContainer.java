@@ -5,15 +5,15 @@ package org.middleheaven.process.web.server;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.application.ApplicationModulesResolver;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
-import org.middleheaven.web.container.WebContainer;
+import org.middleheaven.web.container.WebContainerBootstrapEnvironment;
 import org.middleheaven.web.container.WebContainerInfo;
 
 /**
  * 
  */
-public class AppEngineWebContainer extends WebContainer {
+public class AppEngineWebContainer extends WebContainerBootstrapEnvironment {
 
 	/**
 	 * Constructor.
@@ -29,7 +29,7 @@ public class AppEngineWebContainer extends WebContainer {
 			// it's App Engine
 			
 			/* ServletContext.getServerInfo() will return "Google App Engine Development/x.x.x"
-			* if will run locally, and "Google App Engine/x.x.x" if run on production envoirnment */
+			* if will run locally, and "Google App Engine/x.x.x" if run on production envorinment */
 			
 			if (serverInfo.contains("Development")) {
 				// TODO  set profile to dev
@@ -44,7 +44,7 @@ public class AppEngineWebContainer extends WebContainer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getContainerName() {
+	public String getName() {
 		return "AppEngine";
 	}
 
@@ -65,5 +65,14 @@ public class AppEngineWebContainer extends WebContainer {
 		// determine aapengine file system
 		throw new UnsupportedOperationException("Not implememented yet");
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ApplicationModulesResolver getApplicationModulesResolver() {
+		throw new UnsupportedOperationException("Not implememented yet");
+	}
+
 
 }
