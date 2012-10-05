@@ -13,6 +13,18 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 		return new CalendarDateTime(TimeContext.getTimeContext(), 0);
 	}
 	
+	public static CalendarDateTime valueOf(Date date){
+		return new CalendarDateTime(TimeContext.getTimeContext(), date.getTime());
+	}
+	
+	public static CalendarDateTime valueOf(CalendarDate date){
+		return new CalendarDateTime(TimeContext.getTimeContext(), date.milliseconds);
+	}
+	
+	public static CalendarDateTime valueOf(CalendarDate date , CalendarTime time){
+		return new CalendarDateTime(TimeContext.getTimeContext(), date.milliseconds + time.milliseconds);
+	}
+	
 	/**
 	 * 
 	 */
@@ -133,6 +145,19 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 		return diff==0? this : this.plus(Duration.of().days(diff));
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(TimePoint other) {
+		return super.compareTo(other);
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int compareTo(DateHolder other) {
 		int comp = this.year().ordinal() - other.year().ordinal();
@@ -140,7 +165,6 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 			comp = this.month().ordinal() - other.month().ordinal();
 			if (comp ==0){
 				comp = this.dayOfMonth().getDay() - other.dayOfMonth().getDay();
-				
 			}
 		}
 		return comp;
@@ -148,10 +172,10 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
 
 	public boolean equals(Object other) {
 		return other instanceof TimePoint
-				&& equals((TimePoint) other);
+				&& equalsOther((TimePoint) other);
 	}
 
-	public boolean equals(TimePoint other) {
+	private boolean equalsOther(TimePoint other) {
 		return other.getMilliseconds() == this.milliseconds;
 	}
 

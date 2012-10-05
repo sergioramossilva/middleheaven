@@ -1,15 +1,20 @@
 package org.middleheaven.io.repository;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 
-import org.middleheaven.io.IOUtils;
+import org.middleheaven.io.IOTransport;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
+import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.AbstractEnumerableAdapter;
 import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.collections.IterableWalkable;
+import org.middleheaven.util.collections.Walkable;
 import org.middleheaven.util.collections.Walker;
 
 /**
@@ -17,7 +22,7 @@ import org.middleheaven.util.collections.Walker;
  */
 public abstract class AbstractManagedFile implements ManagedFile {
 
-	
+
 	private ManagedFileRepository repository;
 
 
@@ -28,22 +33,38 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	public ManagedFileRepository getRepository(){
 		return repository;
 	}
-	
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteTree() {
+
+		if (this.getType().isFile()) {
+			this.delete();
+		} else {
+			for (ManagedFile file : this.childrenIterable()){
+				file.deleteTree();
+			}
+		}
 	
+	}
+
+
 	@Override
 	public ManagedFile getParent() {
 		return this.getRepository().retrive(this.getPath().getParent());
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * {@inheritDoc}
 	 */
-    public ManagedFile retrive(String path) throws ManagedIOException {
-    	switch (this.getType()){
-    	case FOLDER:
+	public ManagedFile retrive(String path) throws ManagedIOException {
+		switch (this.getType()){
+		case FOLDER:
 		case FILEFOLDER:
 			return doRetriveFromFolder(path);
 		case VIRTUAL:
@@ -53,40 +74,57 @@ public abstract class AbstractManagedFile implements ManagedFile {
 			//no-op
 			return null;
 		}
-    }
-    
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public ManagedFile retrive(ManagedFilePath path) throws ManagedIOException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Not implemented yet");
 	}
-    
-    
+
+
 	/**
 	 * @param path
 	 * @return
 	 */
 	protected abstract ManagedFile doRetriveFromFolder(String path);
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void copyTo(ManagedFile other) throws ManagedIOException {
 		try {
 			if (other.getType()==ManagedFileType.FILE){
-				IOUtils.copy(this.getContent().getInputStream(), other.getContent().getOutputStream());
+				IOTransport.copy(this.getContent().getInputStream()).to(other.getContent().getOutputStream());
 			} else {
 				ManagedFile newFile = other.retrive(this.getPath());
 				newFile.createFile();
-				IOUtils.copy(this.getContent().getInputStream(), newFile.getContent().getOutputStream());
+				IOTransport.copy(this.getContent().getInputStream()).to(newFile.getContent().getOutputStream());
 			}
 
 		} catch (IOException ioe) {
 			throw ManagedIOException.manage(ioe);
 		}
 	}
-	
+
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void copyTo(ContentSource other) throws ManagedIOException{
+		try {
+			IOTransport.copy(this.getContent().getInputStream()).to(other.getContent().getOutputStream());
+		} catch (IOException ioe) {
+			throw ManagedIOException.manage(ioe);
+		}
+	}
+
 
 	@Override
 	public boolean canRenameTo(String newName) {
@@ -96,23 +134,23 @@ public abstract class AbstractManagedFile implements ManagedFile {
 		}
 		return !p.retrive(p.getPath().resolve(newName)).exists();
 	}
-	
+
 	@Override
 	public void renameTo(String newName) {
 		if (canRenameTo(newName)) {
 			doRenameAndChangePath(this.getPath().resolveSibling(newName));
 		}
 	}
-	
+
 	/**
 	 * @param resolveSibling
 	 */
 	protected abstract void doRenameAndChangePath(ManagedFilePath path);
 
-	
-	
+
+
 	@Override
-	public final ManagedFile createFile() {
+	public ManagedFile createFile() {
 		switch (this.getType()){
 		case FILE:
 		case FILEFOLDER:
@@ -137,9 +175,9 @@ public abstract class AbstractManagedFile implements ManagedFile {
 			return false;
 		}
 	}
-	
+
 	protected abstract boolean doContains(ManagedFile other);
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -148,12 +186,12 @@ public abstract class AbstractManagedFile implements ManagedFile {
 		if (this.isWatchable()){
 			return watchService.watch(this, events);
 		}
-	
+
 		throw new UnsupportedOperationException("This file is not watchable"); 
 	}
-	
+
 	@Override
-	public final ManagedFile createFolder() {
+	public ManagedFile createFolder() {
 		switch (this.getType()){
 		case FOLDER:
 		case FILEFOLDER:
@@ -164,7 +202,7 @@ public abstract class AbstractManagedFile implements ManagedFile {
 			throw new UnsupportedOperationException("Cannot create folder of type " + this.getType());
 		}
 	}
-	
+
 
 
 
@@ -178,39 +216,70 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	public Enumerable<ManagedFile> children(){
 		return new ManagedFileEnumerable();
 	}
-	
+
 	@Override
-	public void eachParent(Walker<ManagedFile> walker) {
+	public void forEachParent(Walker<ManagedFile> walker) {
 		if(this.getParent()!=null){
 			walker.doWith(this.getParent());
-			this.getParent().eachParent(walker);
+			this.getParent().forEachParent(walker);
 		}
 	}
 
 	@Override
-	public void eachRecursive(Walker<ManagedFile> walker) {
+	public void forEachRecursive(Walker<ManagedFile> walker) {
 		for (ManagedFile file  : this.childrenIterable()){
 			walker.doWith(file);
-			file.eachRecursive(walker);
+			file.forEachRecursive(walker);
 		}
 	}
 
 
 	@Override
-	public void each(Walker<ManagedFile> walker) {
+	public void forEach(Walker<ManagedFile> walker) {
 		for (ManagedFile file  : this.childrenIterable()){
 			walker.doWith(file);
 		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Walkable<ManagedFile> filter(Predicate<ManagedFile> predicate) {
+		return new IterableWalkable<ManagedFile>(this.childrenIterable()).filter(predicate);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> Walkable<C> map(Classifier<C, ManagedFile> classifier) {
+		return new IterableWalkable<ManagedFile>(this.childrenIterable()).map(classifier);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <L extends Collection<ManagedFile>> L into(L collection) {
+		for (ManagedFile file  : this.childrenIterable()){
+			collection.add(file);
+		}
+
+		return collection;
+	}
+
+
 	/**
 	 * @return
 	 */
 	protected abstract Iterable<ManagedFile> childrenIterable();
-	
+
 	protected abstract int childrenCount();
 
-	
+
 	private class ManagedFileEnumerable extends AbstractEnumerableAdapter<ManagedFile> {
 
 		/**
@@ -236,7 +305,7 @@ public abstract class AbstractManagedFile implements ManagedFile {
 		public Iterator<ManagedFile> iterator() {
 			return childrenIterable().iterator();
 		}
-		
-		
+
+
 	}
 }

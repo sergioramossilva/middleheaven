@@ -21,6 +21,7 @@ public class RealPairComplex extends Complex {
 	}
 
 	public RealPairComplex(String value) {
+		// TODO melhor parse
 		if (value.indexOf("+i")>0){
 			this.real = Real.valueOf(value.substring(0,value.indexOf("+i")));
 			this.imaginary = Real.valueOf(value.substring(value.indexOf("+i")+2));
@@ -153,15 +154,13 @@ public class RealPairComplex extends Complex {
 		return this.times(new RealPairComplex(Real.valueOf(n), Real.ZERO()));
 	}
 
-
-
-	protected boolean equals(RealPairComplex other){
+	protected boolean equalsOther(RealPairComplex other){
 		return  this.real.equals(other.real) && this.imaginary.equals(other.imaginary);
 	}
 
 	@Override
 	protected boolean equalsSame(Complex other) {
-		return equals( (RealPairComplex) other);
+		return equalsOther( (RealPairComplex) other);
 	}
 
 	@Override

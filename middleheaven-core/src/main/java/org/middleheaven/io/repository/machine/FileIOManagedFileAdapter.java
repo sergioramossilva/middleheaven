@@ -15,6 +15,7 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileType;
+import org.middleheaven.io.repository.ModificationTracableManagedFile;
 import org.middleheaven.io.repository.empty.EmptyFileContent;
 import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.classification.Classifier;
@@ -24,7 +25,7 @@ import org.middleheaven.util.collections.TransformedCollection;
 /**
  * 
  */
-class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable{
+class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable, ModificationTracableManagedFile {
 
 	private File systemFile;
 	private final MachineIOSystemManagedFileRepository repository;
@@ -53,6 +54,10 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 		return path;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public long lastModified(){
 		return systemFile.lastModified();
 	}
@@ -256,8 +261,8 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ManagedFile retrive(ManagedFilePath path) throws ManagedIOException {
-		return repository.retrive(this.getPath().resolve(path));
+	public ModificationTracableManagedFile retrive(ManagedFilePath path) throws ManagedIOException {
+		return (ModificationTracableManagedFile)repository.retrive(this.getPath().resolve(path));
 	}
 
 	/**
@@ -273,7 +278,31 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setLastModified(long time) {
+		this.systemFile.setLastModified(time);
+	}
 
+	@Override
+	public final ModificationTracableManagedFile createFile() {
+		return (ModificationTracableManagedFile) super.createFile();
+	}
+	
+	@Override
+	public final ModificationTracableManagedFile createFolder() {
+		return (ModificationTracableManagedFile) super.createFolder();
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public ModificationTracableManagedFile retrive(String path) throws ManagedIOException {
+		return (ModificationTracableManagedFile) super.retrive(path);
+	}
 
 
 }

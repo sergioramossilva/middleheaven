@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.middleheaven.core.reflection.MemberAccess;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
@@ -40,7 +40,7 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 	}
 
 	public MethodIntrospectionCriteriaBuilder<T> notInheritFromObject() {
-		add(new BooleanClassifier<Method>(){
+		add(new Predicate<Method>(){
 
 			@Override
 			public Boolean classify(Method obj) {
@@ -64,7 +64,7 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 		return this;
 	}
 
-	public MethodIntrospectionCriteriaBuilder<T> match(BooleanClassifier<Method> filter) {
+	public MethodIntrospectionCriteriaBuilder<T> match(Predicate<Method> filter) {
 		add(filter);
 		return this;
 	}

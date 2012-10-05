@@ -12,15 +12,15 @@ public abstract class Unit<E extends Measurable> {
 	public abstract Dimension<E> dimension();
 	public abstract String symbol();
 
-	public boolean equals(Object other){
-		return other instanceof Unit && this.equals((Unit<?>)other);
+	public final boolean equals(Object other){
+		return other instanceof Unit && this.equalsOther((Unit<?>)other);
 	}
 	
-	public int hashCode(){
+	public final int hashCode(){
 		return symbol().hashCode();
 	}
 	
-	protected abstract boolean equals(Unit<?> other);
+	protected abstract boolean equalsOther(Unit<?> other);
 
 	public boolean isCompatible(Unit<?> other) {
 		return this.dimension().equals(other.dimension());
@@ -31,7 +31,7 @@ public abstract class Unit<E extends Measurable> {
 	}
 
 	public Unit<E> plus(Unit<E> other) throws IncompatibleUnitsException {
-		if (this.equals(other)){
+		if (this.equalsOther(other)){
 			return this;
 		}
 		throw new IncompatibleUnitsException(this,other);

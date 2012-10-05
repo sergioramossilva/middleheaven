@@ -26,7 +26,7 @@ public class GlobalFormatter implements Formatter<String> {
 	}
 	
 	public String format(String object) {
-		return ServiceRegistry.getService(LocalizationService.class).getMessage( GlobalLabel.of(object) , culture);
+		return ServiceRegistry.getService(LocalizationService.class).getMessage( TextLocalizable.valueOf(object) , culture);
 
 	}
 

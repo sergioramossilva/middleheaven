@@ -16,7 +16,7 @@ import org.middleheaven.util.collections.TreeWalkable;
 /**
  * A common abstract for all types of files : disk files, url addresses, uploaded files, email attachments, etc ...
  */
-public interface ManagedFile extends TreeWalkable<ManagedFile> , Watchable{
+public interface ManagedFile extends TreeWalkable<ManagedFile> , Watchable , ContentSource{
 
 	
 	public ManagedFileRepository getRepository();
@@ -108,38 +108,6 @@ public interface ManagedFile extends TreeWalkable<ManagedFile> , Watchable{
      */
     public abstract ManagedFile retrive(ManagedFilePath path) throws ManagedIOException;
     
-    /**
-     * indicates if getInputStream() can be invoked
-     * @return <code>true</code> if its possible to read from this file.
-     */
-    public boolean isReadable();
-    
-    /**
-     * indicates if getOutputStream() can be invoked
-     * @return <code>true</code> if its possible to write to this file.
-     */
-    public boolean isWriteable();
-    
-    /**
-     * 
-     * @return a handler for the file content
-     */
-    public ManagedFileContent getContent();
-    
-
-    /**
-     * Copies the content of this file to another file
-     * @param other the target file.
-     * @throws ManagedIOException if something goes wrong.
-     */
-    public void copyTo(ManagedFile other) throws ManagedIOException;
-
-    /**
-     * Delete this file.
-     * @return <code>true</code> if the file was deleted.
-     */
-	public boolean delete();
-
 	/**
 	 * If {@ this} is of type {@link ManagedFileType#VIRTUAL} create and return a {@ ManagedFile} file on the URL pointed by {@code this}.
 	 * The new file substitutes {@code this} on its parent.
@@ -160,10 +128,44 @@ public interface ManagedFile extends TreeWalkable<ManagedFile> , Watchable{
 	 */
 	public ManagedFile createFolder() throws UnsupportedOperationException;
 
+	
+    /**
+     * indicates if getInputStream() can be invoked
+     * @return <code>true</code> if its possible to read from this file.
+     */
+    public boolean isReadable();
+    
+    /**
+     * indicates if getOutputStream() can be invoked
+     * @return <code>true</code> if its possible to write to this file.
+     */
+    public boolean isWriteable();
+    
+
+
+    /**
+     * Copies the content of this file to another file
+     * @param other the target file.
+     * @throws ManagedIOException if something goes wrong.
+     */
+    public void copyTo(ManagedFile other) throws ManagedIOException;
+
+    /**
+     * Delete this file.
+     * @return <code>true</code> if the file was deleted.
+     */
+	public boolean delete();
+
+
 	/**
 	 * @return
 	 */
 	public Enumerable<ManagedFile> children();
+
+	/**
+	 * Deletes all children files and folders, and all children in those folders.
+	 */
+	public void deleteTree();
 
 
     

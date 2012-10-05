@@ -40,19 +40,31 @@ public final class CriterionOperator implements Serializable{
 		return new CriterionOperator(this.name,!this.negated);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public boolean equals(Object other) {
 		return other instanceof CriterionOperator
-				&& equals((CriterionOperator) other);
+				&& equalsOther((CriterionOperator) other);
 	}
 
-	public boolean equals(CriterionOperator other) {
+	private boolean equalsOther(CriterionOperator other) {
 		return this.name.equals(other.name);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public int hashCode() {
 		return name.hashCode();
 	}	
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public String toString(){
 		return name;
 	}

@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.middleheaven.crypto.Base64CipherAlgorithm;
-import org.middleheaven.io.IOUtils;
+import org.middleheaven.io.IOTransport;
 
 public class ClassDefinition {
 
@@ -20,7 +20,7 @@ public class ClassDefinition {
 	
 	public void write (OutputStream out , String className, InputStream classDefStream) throws IOException{
 		ByteArrayOutputStream a = new ByteArrayOutputStream();
-		IOUtils.copy(classDefStream, a);
+		IOTransport.copy(classDefStream).to(a);
 		a.close();
 		
 		DataOutputStream da = new DataOutputStream(out);

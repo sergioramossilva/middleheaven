@@ -1,5 +1,7 @@
 package org.middleheaven.global.atlas;
 
+import org.middleheaven.global.CountryIsoCode;
+
 public class CountryDivisionInfo extends AtlasLocaleInfo{
 
 	private CountryDivisionType type;
@@ -12,7 +14,7 @@ public class CountryDivisionInfo extends AtlasLocaleInfo{
 		this.type = type;
 	}
 
-	public CountryDivisionInfo(String isoCode, AtlasLocaleInfo parent) {
+	public CountryDivisionInfo(CountryIsoCode isoCode, AtlasLocaleInfo parent) {
 		super(isoCode, parent);
 	}
 

@@ -12,6 +12,6 @@ public abstract class LocalizedMessagesFormatHandler {
 
     public abstract LocalizedMessagesFormatHandler newFormatHandler(InputStream stream);
     
-    public abstract String findLabel(GlobalLabel label) throws MissingResourceException;
+    public abstract String findLabel(TextLocalizable label) throws MissingResourceException;
         
 }

@@ -11,7 +11,7 @@ import org.middleheaven.core.wiring.service.Service;
  */
 @Service
 public interface LoggingService {
-
+	
 	/**
 	 * Publish a new log event to be broadcast among registered {@link LoggingEventListener}s.
 	 * @param event

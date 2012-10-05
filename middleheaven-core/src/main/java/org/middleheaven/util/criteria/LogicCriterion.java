@@ -189,10 +189,10 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 
 
 	public boolean equals(Object other){
-		return other instanceof LogicCriterion && equals(((LogicCriterion)other));
+		return other instanceof LogicCriterion && equalsOther(((LogicCriterion)other));
 	}
 
-	public boolean equals(LogicCriterion other){
+	private boolean equalsOther(LogicCriterion other){
 		return this.operator.equals(other.operator) && 
 		CollectionUtils.equalContents( this.criteria , other.criteria);
 

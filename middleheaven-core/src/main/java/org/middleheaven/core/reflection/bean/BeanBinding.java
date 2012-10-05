@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.EnhancedCollection;
 
 public class BeanBinding implements PropertyChangeListener{
@@ -21,7 +21,7 @@ public class BeanBinding implements PropertyChangeListener{
 	
 	public BeanBinding(Object source, Object target){
 		
-		EnhancedCollection<Method> list = Introspector.of(source.getClass()).inspect().methods().match( new BooleanClassifier<Method>(){
+		EnhancedCollection<Method> list = Introspector.of(source.getClass()).inspect().methods().match( new Predicate<Method>(){
 
 			@Override
 			public Boolean classify(Method obj) {

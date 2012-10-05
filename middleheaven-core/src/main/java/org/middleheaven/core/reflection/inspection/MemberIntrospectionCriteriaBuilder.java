@@ -5,9 +5,9 @@ import java.lang.reflect.Modifier;
 import java.util.Comparator;
 
 import org.middleheaven.core.reflection.MemberAccess;
-import org.middleheaven.util.classification.BooleanClassifier;
 import org.middleheaven.util.classification.LogicComposedClassifier;
 import org.middleheaven.util.classification.LogicOperator;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.EnhancedCollection;
 import org.middleheaven.util.collections.Walker;
 
@@ -22,7 +22,7 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 		this.builder = builder;
 	}
 	
-	protected void add(BooleanClassifier<M> filter) {
+	protected void add(Predicate<M> filter) {
 		logicClassifier.add(filter);
 	}
 	
@@ -32,11 +32,11 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 
 
 	public void each(Walker<M> walker){
-		retriveAll().each(walker);
+		retriveAll().forEach(walker);
 	}
 	
 	protected void addNameFilter(final String name){
-		logicClassifier.add(new BooleanClassifier<M>(){
+		logicClassifier.add(new Predicate<M>(){
 
 			@Override
 			public Boolean classify(M obj) {
@@ -49,7 +49,7 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 	protected abstract String getName(M obj);
 	
 	protected void addWithAccessFilter(final MemberAccess ... acesses){
-		logicClassifier.add(new BooleanClassifier<M>(){
+		logicClassifier.add(new Predicate<M>(){
 
 			@Override
 			public Boolean classify(M obj) {
@@ -64,7 +64,7 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 	}
 	
 	protected void addWithStaticFilter(final boolean allowStatic){
-		logicClassifier.add(new BooleanClassifier<M>(){
+		logicClassifier.add(new Predicate<M>(){
 
 			@Override
 			public Boolean classify(M obj) {
@@ -81,7 +81,7 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 	protected abstract boolean isAnnotationPresent(M obj , Class<? extends Annotation> annotationType);
 	
 	protected void addAnnotatedWithFilter(final Class<? extends Annotation> ... annotations){
-		logicClassifier.add(new BooleanClassifier<M>(){
+		logicClassifier.add(new Predicate<M>(){
 			
 			@Override
 			public Boolean classify(M c) {

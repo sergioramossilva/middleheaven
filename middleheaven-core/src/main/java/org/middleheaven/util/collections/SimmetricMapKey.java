@@ -15,20 +15,35 @@ public final class SimmetricMapKey extends ComposedMapKey{
 	private  Object a; 
 	private  Object b;
 	
+	/**
+	 * 
+	 * Constructor.
+	 * @param a
+	 * @param b
+	 */
 	public SimmetricMapKey(Object a, Object b) {
 		this.a = a;
 		this.b = b;
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public int hashCode(){
 		return a.hashCode() ^ b.hashCode();
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public boolean equals(Object other) {
-		return other instanceof SimmetricMapKey && equals((SimmetricMapKey) other);
+		return other instanceof SimmetricMapKey && equalsOther((SimmetricMapKey) other);
 	}
 
-	public boolean equals(SimmetricMapKey other) {
+
+	private boolean equalsOther(SimmetricMapKey other) {
 		 return (a.equals(other.a) &&  b.equals(other.b)) || (a.equals(other.b) &&  b.equals(other.a));
 	}
 }

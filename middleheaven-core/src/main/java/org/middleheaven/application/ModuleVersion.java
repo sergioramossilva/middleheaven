@@ -15,21 +15,10 @@ public class ModuleVersion implements Serializable {
 	
 	private String name;
 	private Version version;
-	private ApplicationVersion applicationVersion;
-	
-	public ModuleVersion(String applicationName, Version appicationVersion, String moduleName, Version moduleVersion) {
-		this(new ApplicationVersion(applicationName, appicationVersion), moduleName, moduleVersion);
-	}
-	
-	public ModuleVersion(ApplicationVersion parentApplication, String name, Version version) {
-		super();
-		this.applicationVersion = parentApplication;
-		this.name = name;
-		this.version = version;
-	}
 
-	public ApplicationVersion getApplicationVersion(){
-		return applicationVersion;
+	public ModuleVersion(String moduleName, Version moduleVersion) {
+		this.name = moduleName;
+		this.version = moduleVersion;
 	}
 	
 	public String getName() {
@@ -41,10 +30,10 @@ public class ModuleVersion implements Serializable {
 	}
 	
 	public boolean equals(Object other) {
-		return other instanceof ModuleVersion && equals((ModuleVersion) other);
+		return other instanceof ModuleVersion && equalsOther((ModuleVersion) other);
 	}
 
-	public boolean equals(ModuleVersion other) {
+	public boolean equalsOther(ModuleVersion other) {
 		return this.name.equals(other.name) && this.version.equals(other.version);
 	}
 
@@ -53,6 +42,6 @@ public class ModuleVersion implements Serializable {
 	}
 	
 	public String toString(){
-		return this.applicationVersion.toString() + "#" + name + "=" + version;
+		return name + "=" + version;
 	}
 }

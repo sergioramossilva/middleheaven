@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.classification.Predicate;
+
 
 public class LinkedTreeNode<E> implements TreeNode<E>{
 
@@ -61,25 +64,57 @@ public class LinkedTreeNode<E> implements TreeNode<E>{
 	}
 
 	@Override
-	public void eachParent(Walker<TreeNode<E>> walker) {
+	public void forEachParent(Walker<TreeNode<E>> walker) {
 		if (parent != null){
 			walker.doWith(this.parent);
-			parent.eachParent(walker);
+			parent.forEachParent(walker);
 		}
 	}
 
 	@Override
-	public void eachRecursive(Walker<TreeNode<E>> walker) {
+	public void forEachRecursive(Walker<TreeNode<E>> walker) {
 		for (TreeNode<E> t : this){
 			walker.doWith(t);
-			t.eachRecursive(walker);
+			t.forEachRecursive(walker);
 		}
 	}
 
 	@Override
-	public void each(Walker<TreeNode<E>> walker) {
+	public void forEach(Walker<TreeNode<E>> walker) {
 		for (TreeNode<E> t : this){
 			walker.doWith(t);
 		}
 	}
+	
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <L extends Collection<TreeNode<E>>> L into(L collection) {
+		for (TreeNode<E> t : this){
+			collection.add(t);
+		}
+		
+		return collection;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Walkable<TreeNode<E>> filter(Predicate<TreeNode<E>> predicate) {
+		return new IterableWalkable<TreeNode<E>>(this).filter(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> Walkable<C> map(Classifier<C, TreeNode<E>> classifier) {
+		return new IterableWalkable<TreeNode<E>>(this).map(classifier);
+	}
+
+
 }

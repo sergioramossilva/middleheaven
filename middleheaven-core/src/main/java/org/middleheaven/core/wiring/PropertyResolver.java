@@ -25,7 +25,7 @@ public class PropertyResolver implements Resolver {
 		Object name = query.getParam("name");
 
 		if (name instanceof String){
-			Object obj = propertyManagers.getProperty((String) name);
+			Object obj = propertyManagers.getProperty((String) name, Object.class);
 			
 			if (query.getContract().isAssignableFrom(obj.getClass())){
 				return query.getContract().cast(obj);

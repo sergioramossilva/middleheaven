@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.middleheaven.global.CountryIsoCode;
 import org.middleheaven.global.Language;
 import org.middleheaven.quantity.time.DateHolder;
 
@@ -14,7 +15,7 @@ public class  CountryInfo extends AtlasLocaleInfo {
 	List<Language> languages = new LinkedList<Language>(); // 0 is official
 	
 
-	public CountryInfo(String isoCountryCode , DateHolder lastUpdateDate){
+	public CountryInfo(CountryIsoCode isoCountryCode , DateHolder lastUpdateDate){
 		super(isoCountryCode, null);
 		this.lastUpdateDate = lastUpdateDate;
 	}

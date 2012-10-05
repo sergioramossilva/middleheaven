@@ -2,6 +2,7 @@ package org.middleheaven.quantity.math;
 
 import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.util.Incrementable;
+import org.middleheaven.util.NaturalIncrementable;
 import org.middleheaven.util.collections.Range;
 
 
@@ -9,7 +10,7 @@ import org.middleheaven.util.collections.Range;
  * Represents an element of |R  (the real numbers set) 
  * 
  */
-public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<? super Real>> ,Incrementable <Real>{
+public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<? super Real>> ,Incrementable <Real>, NaturalIncrementable<Real>{
 
 	public static Real fraction (int num , int den){
 		return valueOf(num).over(valueOf(den));
@@ -37,6 +38,7 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 		return MathStructuresFactory.getFactory().numberFor( Real.class, value);
 	}
 
+	
 	public static Real valueOf (Numeral<?> other) {
 		if (Real.class.isInstance(other)){
 			return Real.class.cast(other);
@@ -44,8 +46,28 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 		return MathStructuresFactory.getFactory().numberFor(Real.class, other.toString());
 	}
 
+	/**
+	 * Obtains a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>
+	 * @param numerator
+	 * @param denominator
+	 * @return a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>
+	 */
+	public static Real valueOf (Numeral<?> numerator , Numeral<?> denominator) {
+		return MathStructuresFactory.getFactory().numberFor(Real.class, valueOf(numerator), valueOf(denominator));
+	}
+	
 	public static Real valueOf (java.lang.Number other) {
 		return MathStructuresFactory.getFactory().numberFor(Real.class,other.toString());
+	}
+	
+	/**
+	 * Obtains a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>
+	 * @param numerator
+	 * @param denominator
+	 * @return a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>
+	 */
+	public static Real valueOf (java.lang.Number numerator , java.lang.Number denominator) {
+		return MathStructuresFactory.getFactory().numberFor(Real.class, valueOf(numerator), valueOf(denominator));
 	}
 
 	public static Real valueOf (double other) {

@@ -10,41 +10,71 @@ public class QualifiedName implements Serializable{
 	private static final long serialVersionUID = 5242278443994899317L;
 	
 	private String qualifier;
-	private String name;
+	private String designation;
 	private boolean alias;
 	
 
-	public static QualifiedName qualify(String qualifier, String name){
-		return new QualifiedName(qualifier,name);
+	/**
+	 * Create a {@link QualifiedName} from a qualifier and a designation {@link String}.
+	 * @param qualifier the qualifier.
+	 * @param designation the designation.
+	 * @return a qualified name consisting of the given qualifier and designation
+	 */
+	public static QualifiedName qualify(String qualifier, String designation){
+		return new QualifiedName(qualifier,designation);
 	}
 	
-	public static QualifiedName qualify( String name){
-		return new QualifiedName(null,name);
+	/**
+	 * Create a {@link QualifiedName} from a designation {@link String} with no qualifier
+	 * @param designation the designation.
+	 * @return a qualified name consisting of the given qualifier and designation
+	 */
+	public static QualifiedName qualify( String designation){
+		return new QualifiedName(null,designation);
 	}
 	
-	private QualifiedName(String qualifier, String name) {
+	private QualifiedName(String qualifier, String designation) {
 		super();
 		this.qualifier = qualifier;
-		this.name = name;
+		this.designation = designation;
 	}
 	
+	/**
+	 * The qualified name's qualifier.
+	 * @return
+	 */
 	public String getQualifier() {
 		return qualifier;
 	}
-	public String getName() {
-		return name;
+	
+	/**
+	 * the qualified name's designation
+	 * @return
+	 */
+	public String getDesignation() {
+		return designation;
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 * 
+	 * {@link QualifiedName}s equality is not case sensitive.
+	 */
 	public boolean equals(Object other) {
-		return (other instanceof QualifiedName) && equals((QualifiedName) other);
+		return (other instanceof QualifiedName) && equalsOther((QualifiedName) other);
 	}
 
-	public boolean equals(QualifiedName other) {
-		return this.name.equals(other.name) && this.qualifier.equals(other.qualifier);
+	private boolean equalsOther(QualifiedName other) {
+		return this.designation.equalsIgnoreCase(other.designation) && this.qualifier.equalsIgnoreCase(other.qualifier);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public int hashCode() {
-		return Hash.hash(name).hash(qualifier).hashCode();
+		return Hash.hash(designation.toLowerCase()).hash(qualifier.toLowerCase()).hashCode();
 	}
 
 	public void setAlias(boolean alias) {
@@ -56,6 +86,6 @@ public class QualifiedName implements Serializable{
 	}
 	
 	public String toString(){
-		return this.qualifier + "." + this.name;
+		return this.qualifier + "." + this.designation;
 	}
 }

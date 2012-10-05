@@ -22,7 +22,7 @@ import org.middleheaven.core.wiring.service.ServiceScope;
 import org.middleheaven.events.EventListenersSet;
 import org.middleheaven.graph.DirectGraph;
 import org.middleheaven.logging.Logger;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.ClassMap;
 
 @Service
@@ -370,7 +370,9 @@ public class StandardWiringService implements WiringService {
 		public void autobind(ClassSet set) {
 			
 			for (Class c : set){
-				this.bind(c).inSharedScope().to(c);
+				if (c.getEnclosingClass() == null){ // no inner classes
+					this.bind(c).inSharedScope().to(c);
+				}
 			}
 		}
 
@@ -526,7 +528,7 @@ public class StandardWiringService implements WiringService {
 
 	}
 
-	BooleanClassifier<Class> componentFilter = new BooleanClassifier<Class>(){
+	Predicate<Class> componentFilter = new Predicate<Class>(){
 
 		@Override
 		public Boolean classify(Class obj) {
@@ -752,6 +754,15 @@ public class StandardWiringService implements WiringService {
 					}
 					
 					return query.getContract().cast(service);
+				} else if (!Modifier.isAbstract(query.getContract().getModifiers())) {
+					
+					
+						binder.bind(query.getContract())
+						.inSharedScope()
+						.to(query.getContract());
+						
+						return this.getInstance(query);
+					
 				} else {
 					throw new BindingException("Can not satisfy binding: " + query);
 				}
@@ -764,7 +775,7 @@ public class StandardWiringService implements WiringService {
 
 				// binding was found
 				// resolve target
-				if (stack.contains(key)) {
+				if (!stack.isEmpty() && stack.contains(key)) {
 					// cyclic reference
 
 					if (query.getContract().equals(String.class)){

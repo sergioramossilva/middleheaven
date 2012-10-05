@@ -4,12 +4,16 @@
 package org.middleheaven.io.repository;
 
 import java.net.URI;
+import java.util.Collection;
 
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
+import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.collections.Walkable;
 import org.middleheaven.util.collections.Walker;
 
 /**
@@ -26,22 +30,22 @@ class ManagedFileDecorator implements ManagedFile {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void each(Walker<ManagedFile> walker) {
-		original.each(walker);
+	public void forEach(Walker<ManagedFile> walker) {
+		original.forEach(walker);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void eachRecursive(Walker<ManagedFile> walker) {
-		original.eachRecursive(walker);
+	public void forEachRecursive(Walker<ManagedFile> walker) {
+		original.forEachRecursive(walker);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void eachParent(Walker<ManagedFile> walker) {
-		original.eachParent(walker);
+	public void forEachParent(Walker<ManagedFile> walker) {
+		original.forEachParent(walker);
 	}
 
 	/**
@@ -196,6 +200,46 @@ class ManagedFileDecorator implements ManagedFile {
 	 */
 	public Enumerable<ManagedFile> children() {
 		return original.children();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void copyTo(ContentSource other) throws ManagedIOException {
+		original.copyTo(other);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Walkable<ManagedFile> filter(Predicate<ManagedFile> predicate) {
+		return original.filter(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> Walkable<C> map(Classifier<C, ManagedFile> classifier) {
+		return original.map(classifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <L extends Collection<ManagedFile>> L into(L collection) {
+		return original.into(collection);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteTree() {
+		original.deleteTree();
 	}
 	
 	

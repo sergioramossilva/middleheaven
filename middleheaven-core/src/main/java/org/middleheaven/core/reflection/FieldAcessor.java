@@ -18,4 +18,7 @@ public interface FieldAcessor {
 
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
 
+	public boolean isReadable();
+	
+	public boolean isWritable();
 }

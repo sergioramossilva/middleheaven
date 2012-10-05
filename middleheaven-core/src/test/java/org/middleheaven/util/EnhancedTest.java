@@ -14,7 +14,7 @@ public class EnhancedTest {
 	@Test
 	public void testDice(){
 		
-		Integer i = Range.over(1, 6).random();
+		Integer i = Range.over(Integer.valueOf(1), Integer.valueOf(6)).random();
 		
 		assertNotNull(i);
 	}
@@ -23,13 +23,13 @@ public class EnhancedTest {
 	public void testAcumulator(){
 		
 		NumberAcumulator<Real> acumulator = NumberAcumulator.instance();
-		Range.over(Real.ONE(), Real.valueOf(6),Real.ONE()).each( acumulator);
+		Range.over(Real.ONE(), Real.valueOf(6),Real.ONE()).forEach( acumulator);
 
 	
 		assertEquals(Real.valueOf(21), acumulator.getResult());
 		
 		acumulator.reset();
-		Real.ONE().upTo(6).each( acumulator);
+		Real.ONE().upTo(6).forEach( acumulator);
 		
 		assertEquals(Real.valueOf(21), acumulator.getResult());
 	}

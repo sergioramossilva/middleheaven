@@ -5,7 +5,7 @@ import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
 import org.middleheaven.core.reflection.MemberAccess;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
@@ -40,7 +40,7 @@ public class ConstructorIntrospectionCriteriaBuilder<T> extends ParameterizableM
 		return this;
 	}
 	
-	public ConstructorIntrospectionCriteriaBuilder<T> match(BooleanClassifier<Constructor<T>> filter) {
+	public ConstructorIntrospectionCriteriaBuilder<T> match(Predicate<Constructor<T>> filter) {
 		add(filter);
 		return this;
 	}

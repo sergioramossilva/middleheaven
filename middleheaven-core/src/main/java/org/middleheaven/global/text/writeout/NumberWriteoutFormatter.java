@@ -24,7 +24,7 @@ public abstract class NumberWriteoutFormatter {
 			if (culture.getCountry()==null){
 				country = lang.toUpperCase();
 			} else {
-				country = culture.getCountry().ISOCode();
+				country = culture.getCountry().toString();
 			}
 
 			String name = NumberWriteoutFormatter.class.getPackage().getName() + "."+ country + lang + NumberWriteoutFormatter.class.getSimpleName();
@@ -41,7 +41,7 @@ public abstract class NumberWriteoutFormatter {
 	protected final String format(String number){
 
 		if (number.indexOf(".")>=0){
-			String[] parts = number.toString().split("\\.");
+			String[] parts = number.split("\\.");
 			StringBuilder builder1 = new StringBuilder();
 			builder1 = doPart(builder1,parts[0], false);
 			StringBuilder builder2 = new StringBuilder();

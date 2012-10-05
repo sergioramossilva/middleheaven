@@ -7,6 +7,9 @@ package org.middleheaven.core.exception;
  */
 public class UnimplementedMethodException extends UnsupportedOperationException {
 
+
+	private static final long serialVersionUID = 1L;
+
 	public UnimplementedMethodException(String msg) {
 		super(msg);
 	}

@@ -27,10 +27,10 @@ class Key {
 	}
 	
 	public boolean equals(Object other){
-		return other instanceof Key && equals((Key)other);
+		return other instanceof Key && equalsOther((Key)other);
 	}
 	
-	public boolean equals(Key other){
+	private boolean equalsOther(Key other){
 		return (other.targetClass == this.targetClass ||  other.targetClass.getName().equals(this.targetClass.getName())) &&
 		 	CollectionUtils.equalContents(this.params, other.params);
 

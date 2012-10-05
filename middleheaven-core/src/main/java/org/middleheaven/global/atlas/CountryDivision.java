@@ -2,6 +2,8 @@ package org.middleheaven.global.atlas;
 
 import java.io.Serializable;
 
+import org.middleheaven.global.IsoCode;
+
 public abstract class CountryDivision extends AbstractAtlasLocale implements  Serializable{
 
 
@@ -9,8 +11,8 @@ public abstract class CountryDivision extends AbstractAtlasLocale implements  Se
 	
 	private CountryDivisionType type;
 
-	protected CountryDivision(Country country, String isoCode,CountryDivisionType type){
-		super(country, isoCode,isoCode);
+	protected CountryDivision(Country country, IsoCode isoCode,CountryDivisionType type){
+		super(country, isoCode,isoCode.toString());
 		this.type = type;
 	}
     
@@ -44,14 +46,22 @@ public abstract class CountryDivision extends AbstractAtlasLocale implements  Se
 		return this.getParent().getQualifiedDesignation() + "." + super.ISOCode();
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public boolean equals(Object other){
-		return other instanceof CountryDivision && equals((CountryDivision)other);
+		return other instanceof CountryDivision && equalsOther((CountryDivision)other);
 	}
 	
-	public boolean equals(CountryDivision other){
+	private boolean equalsOther(CountryDivision other){
 		return this.ISOCode().equals(other.ISOCode()) && this.getParent().equals(other.getParent()); 
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public int hashCode(){
 		return this.ISOCode().hashCode() ^ this.getParent().hashCode();
 	}

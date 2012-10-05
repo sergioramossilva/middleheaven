@@ -32,23 +32,19 @@ public abstract class Currency extends Unit<org.middleheaven.quantity.measurable
 	public Dimension<org.middleheaven.quantity.measurables.Currency> dimension() {
 		return Dimension.CURRENCY;
 	}
-	
-	public boolean equals (Object other){
-		return other instanceof Currency && equals((Currency)other);
-	}
-	
+
 	@Override
-	public boolean equals(Unit<?> other) {
-		return other.dimension().equals(Dimension.CURRENCY) && equals((Currency)other);
+	public boolean equalsOther(Unit<?> other) {
+		return other.dimension().equals(Dimension.CURRENCY) && equalsOther((Currency)other);
 	}
 	
-	public boolean equals(Currency other) {
+	private boolean equalsOther(Currency other) {
 		return other.symbol().equals(this.symbol());
 	}
 	
 	@Override
 	public boolean isCompatible(Unit<?> other) {
-		return this.equals(other);
+		return this.equalsOther(other);
 	}
 	
 

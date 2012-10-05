@@ -6,15 +6,15 @@ package org.middleheaven.util;
  */
 public class CharacterIncrementor implements Incrementor<Character> {
 
-	int passe;
+	int step;
 	
 	/**
 	 * 
 	 * Constructor.
-	 * @param passe
+	 * @param step
 	 */
-	public CharacterIncrementor(int passe){
-		this.passe = passe;
+	public CharacterIncrementor(int step){
+		this.step = step;
 	}
 	
 	/**
@@ -23,7 +23,15 @@ public class CharacterIncrementor implements Incrementor<Character> {
 	 */
 	@Override
 	public Character increment(Character c) {
-		return Character.valueOf((char)(c.charValue()+passe));
+		return Character.valueOf((char)(c.charValue()+step));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<Character> reverse() {
+		return new CharacterIncrementor(-this.step);
 	}
 
 	

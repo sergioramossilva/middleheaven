@@ -53,10 +53,10 @@ public class MessageInvalidationReason implements InvalidationReason{
 	@Override
 	public boolean equals(Object other) {
 		return other instanceof MessageInvalidationReason
-				&& equals((MessageInvalidationReason) other);
+				&& equalsOther((MessageInvalidationReason) other);
 	}
 
-	public boolean equals(MessageInvalidationReason other) {
+	private boolean equalsOther(MessageInvalidationReason other) {
 		return this.severity.equals(other.severity) && this.message.equals(other.message);
 	}
 

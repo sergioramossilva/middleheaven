@@ -3,6 +3,7 @@ package org.middleheaven.quantity.math;
 import org.middleheaven.quantity.math.structure.Field;
 import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.util.Incrementable;
+import org.middleheaven.util.NaturalIncrementable;
 import org.middleheaven.util.collections.Range;
 
 
@@ -11,7 +12,7 @@ import org.middleheaven.util.collections.Range;
  * 
  *
  */
-public abstract class BigInt extends Numeral<BigInt> implements Field<BigInt> ,  Comparable<Numeral<? super BigInt>>, DiscreetOrderable<BigInt> , Incrementable <BigInt>{
+public abstract class BigInt extends Numeral<BigInt> implements Field<BigInt> ,  Comparable<Numeral<? super BigInt>>, DiscreetOrderable<BigInt> ,NaturalIncrementable<BigInt> , Incrementable <BigInt>{
 
 
 	private static final long serialVersionUID = 8636156681654308959L;

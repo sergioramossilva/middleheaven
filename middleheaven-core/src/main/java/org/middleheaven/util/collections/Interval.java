@@ -132,7 +132,7 @@ public class Interval<T> {
 			return new Interval<T>(this.comparator);
 		}
 
-		if (other.equals(this)){ // are the same. 
+		if (other.equalsOther(this)){ // are the same. 
 			return other;
 		}
 
@@ -183,12 +183,9 @@ public class Interval<T> {
 	 * @return
 	 */
 	public boolean contains(T value, boolean includeStart , boolean includeEnd){
-		return !this.isEmpty() && 
-		
-		(start==null ? true : (includeStart?comparator.compare(value, start) >=0: comparator.compare(value, start) >0 )) && 
-		
-		(end == null ? true : (includeEnd?comparator.compare(value, end) <=0:comparator.compare(value, end) <0));
-	
+		return !this.isEmpty() 
+		&& (start==null ? true : (includeStart?comparator.compare(value, start) >=0: comparator.compare(value, start) >0 )) 
+		&& (end == null ? true : (includeEnd?comparator.compare(value, end) <=0:comparator.compare(value, end) <0));
 	}
 
 
@@ -233,7 +230,7 @@ public class Interval<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object other){
-		return other instanceof Interval && this.equals((Interval)other);
+		return other instanceof Interval && this.equalsOther((Interval)other);
 	}
 	
     public int hashCode(){
@@ -243,7 +240,7 @@ public class Interval<T> {
 	/**
 	 * Intervals are equal if their starts are equal and their ends are equals
 	 */
-	public boolean equals(Interval<T> other){
+	private boolean equalsOther(Interval<T> other){
 		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
 		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
 	}

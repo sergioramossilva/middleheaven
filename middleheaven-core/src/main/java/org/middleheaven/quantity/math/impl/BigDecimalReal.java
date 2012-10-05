@@ -8,6 +8,7 @@ import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.Incrementable;
+import org.middleheaven.util.NaturalIncrementable;
 
 public class BigDecimalReal extends Real{
 
@@ -212,6 +213,9 @@ public class BigDecimalReal extends Real{
 
 	}
 
+
+
+	
 	@Override
 	protected boolean equalsSame(Real other) {
 		return compareToSame((BigDecimalReal)other)==0;
@@ -292,6 +296,22 @@ public class BigDecimalReal extends Real{
 	@Override
 	public Real tan() {
 		return sin().over(cos());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Real next() {
+		return this.plus(valueOf(Integer.valueOf(1)));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Real previous() {
+		return this.minus(valueOf(Integer.valueOf(1)));
 	}
 
 

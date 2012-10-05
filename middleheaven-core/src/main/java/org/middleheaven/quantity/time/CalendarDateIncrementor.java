@@ -14,4 +14,12 @@ public class CalendarDateIncrementor implements Incrementor<CalendarDate> {
 		return date.plus(elapsedTime);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<CalendarDate> reverse() {
+		return new CalendarDateIncrementor(this.elapsedTime.negate());
+	}
+
 }

@@ -192,7 +192,7 @@ public class PropertiesBag extends AbstractEnumerableAdapter<PropertiesBag.Entry
 
 				@Override
 				public Entry classify(java.util.Map.Entry<String, String> next) {
-					return new StringEntry (next.getKey().toString(), next.getValue().toString());
+					return new StringEntry (next.getKey(), next.getValue());
 				}
 				
 			});

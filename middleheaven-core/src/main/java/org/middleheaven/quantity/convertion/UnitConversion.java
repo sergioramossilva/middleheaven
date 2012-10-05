@@ -96,10 +96,10 @@ public class UnitConversion {
 		}
 		
 		public boolean equals(Object other) {
-			return other instanceof MapKey && equals((MapKey) other);
+			return other instanceof MapKey && equalsOther((MapKey) other);
 		}
 
-		public boolean equals(MapKey other) {
+		public boolean equalsOther(MapKey other) {
 			 return  (A.equals(other.A) &&  B.equals(other.B)) || (A.equals(other.B) &&  B.equals(other.A));
 		}
 	}

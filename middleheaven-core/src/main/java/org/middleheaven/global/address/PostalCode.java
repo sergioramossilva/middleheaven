@@ -27,10 +27,10 @@ public class PostalCode implements Serializable {
 	}
 	
 	public boolean equals(Object other){
-		return other instanceof PostalCode && equals((PostalCode)other);
+		return other instanceof PostalCode && equalsOther((PostalCode)other);
 	}
 	
-	public boolean equals(PostalCode other){
+	private boolean equalsOther(PostalCode other){
 		return this.code.equals(other.code);
 	}
 	

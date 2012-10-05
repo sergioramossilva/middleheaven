@@ -53,14 +53,24 @@ public class DayOfMonth {
         this.month = month;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
     public boolean equals(Object other){
-        return other instanceof DayOfMonth && equals((DayOfMonth)other);
+        return other instanceof DayOfMonth && equalsOther((DayOfMonth)other);
     }
     
-    public boolean equals(DayOfMonth other){
+    private boolean equalsOther(DayOfMonth other){
         return this.month == other.month && this.day == other.day;
     }
     
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode(){
         // concatenates the month and day into a single number so hash is unic
         // for each pair. this intended to boots performance of Set and Map 

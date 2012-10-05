@@ -46,7 +46,7 @@ public abstract class AbstractBuildingConstraint<T,B extends AbstractCriteriaBui
 	protected B constrainField(CriterionOperator op, Object value){
 
 		builder.addCriterion(
-				new UniqueFieldCriterion(
+				new FieldValueCriterion(
 						qname,
 						applyOperationNegation(op),
 						new SingleObjectValueHolder(value)

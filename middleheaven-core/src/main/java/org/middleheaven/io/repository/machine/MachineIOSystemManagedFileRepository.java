@@ -100,10 +100,10 @@ class MachineIOSystemManagedFileRepository extends AbstractManagedRepository imp
 	 * {@inheritDoc}
 	 */
 	public boolean equals(Object other){
-		return (other instanceof MachineIOSystemManagedFileRepository) && equals((MachineIOSystemManagedFileRepository)other);
+		return (other instanceof MachineIOSystemManagedFileRepository) && equalsOther((MachineIOSystemManagedFileRepository)other);
 	}
 	
-	private boolean equals(MachineIOSystemManagedFileRepository other){
+	private boolean equalsOther(MachineIOSystemManagedFileRepository other){
 		return this.root == null ? other.root == null  : this.root.equals(other.root);
 	}
 	

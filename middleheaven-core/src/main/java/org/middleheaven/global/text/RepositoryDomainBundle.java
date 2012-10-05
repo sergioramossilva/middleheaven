@@ -72,7 +72,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle {
 	}
 
 	@Override
-	protected String findLabel(GlobalLabel label, Culture culture) throws MissingResourceException {
+	protected String findLabel(TextLocalizable label, Culture culture) throws MissingResourceException {
 
 		String key = label.getDomain()  + "_" +  culture.getLanguage()+ "_" + culture.getCountry();
 		LocalizedMessagesFormatHandler format; 
@@ -88,7 +88,7 @@ public class RepositoryDomainBundle extends LocalizationDomainBundle {
 			while (!repository.retrive(filename.toString()).exists()){
 				int pos = filename.lastIndexOf("_");
 				if (pos<0){
-					final Object[] args = {label.getDomain(),label.getLabel()};
+					final Object[] args = {label.getDomain(),label.getMessageKey()};
 					return notFoundFormat.format(args);
 				}
 				filename.delete(pos, filename.length());

@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.global.IsoCode;
+import org.middleheaven.global.StringIsoCode;
 
 
 public class Atlas implements AtlasLocale{
@@ -27,8 +29,8 @@ public class Atlas implements AtlasLocale{
 	}
 
 	@Override
-	public String ISOCode() {
-		return "atlas";
+	public IsoCode ISOCode() {
+		return new StringIsoCode("atlas");
 	}
 	
 	public String getName(){

@@ -76,4 +76,20 @@ public class FieldIntrospector extends Introspector implements FieldAcessor {
 		return CollectionUtils.enhance(result);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isReadable() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWritable() {
+		return true;
+	}
+
 }

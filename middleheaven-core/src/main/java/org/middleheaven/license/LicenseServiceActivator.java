@@ -64,7 +64,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 		
 		final Collection<ManagedFile> licences = new HashSet<ManagedFile>();
 		
-		f.each(new Walker<ManagedFile>(){
+		f.forEach(new Walker<ManagedFile>(){
 
 			@Override
 			public void doWith(ManagedFile file) {
@@ -77,7 +77,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 
 		
 		f = frs.getAppConfigRepository();
-		f.each(new Walker<ManagedFile>(){
+		f.forEach(new Walker<ManagedFile>(){
 
 			@Override
 			public void doWith(ManagedFile file) {
@@ -91,7 +91,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 		// search certificates
 		final Collection<ManagedFile> certifcates = new HashSet<ManagedFile>();
 		
-		f.each(new Walker<ManagedFile>(){
+		f.forEach(new Walker<ManagedFile>(){
 
 			@Override
 			public void doWith(ManagedFile file) {

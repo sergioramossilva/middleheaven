@@ -2,13 +2,15 @@ package org.middleheaven.global.atlas;
 
 import java.util.Collection;
 
+import org.middleheaven.global.IsoCode;
+
 public interface AtlasLocale {
 
 	public boolean isCountry();
 	public boolean isTown();
 	public boolean isDivision();
 	
-	public String ISOCode();
+	public IsoCode ISOCode();
 	public String getName();
 	public String getQualifiedDesignation();
 	public AtlasLocale getParent();

@@ -2,6 +2,7 @@ package org.middleheaven.global.atlas.modules;
 
 import java.util.Locale;
 
+import org.middleheaven.global.CountryIsoCode;
 import org.middleheaven.global.atlas.AtlasContext;
 import org.middleheaven.global.atlas.AtlasModule;
 import org.middleheaven.global.atlas.CountryInfo;
@@ -19,10 +20,11 @@ public class DefaultAtlasModule extends AtlasModule {
 		DateHolder time = CalendarDate.date(1900 + Integer.parseInt(split[0]) ,Integer.parseInt(split[1]) ,1);
 		
 		for (String code : isoCodes ){
-			CountryInfo info = new CountryInfo(code , time);
+			final CountryIsoCode isoCode = new CountryIsoCode(code);
+			CountryInfo info = new CountryInfo(isoCode , time);
 			info.setName(code);
 			
-			info.addLanguage(this.findLocaleForCountry(code));
+			info.addLanguage(this.findLocaleForCountry(isoCode));
 			context.addCountryInfo(info);
 		}
 		

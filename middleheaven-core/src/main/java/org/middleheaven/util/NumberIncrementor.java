@@ -9,15 +9,21 @@ import java.math.BigInteger;
  */
 public class NumberIncrementor implements Incrementor<java.lang.Number> {
 
-	java.lang.Number passe;
-	public NumberIncrementor(java.lang.Number passe){
-		this.passe = passe;
+	java.lang.Number step;
+	
+	/**
+	 * 
+	 * Constructor.
+	 * @param step the setp to increment by
+	 */
+	public NumberIncrementor(java.lang.Number step){
+		this.step = step;
 	}
 	
 	@Override
 	public java.lang.Number increment(java.lang.Number object) {
 		try {
-			Method m = this.getClass().getMethod("increment", object.getClass());
+			Method m = this.getClass().getDeclaredMethod("increment", object.getClass());
 			return (java.lang.Number)m.invoke(this, object);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Cannot increment " + object.getClass(),e);
@@ -30,7 +36,7 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @return the next byte in ascending order
 	 */
 	protected java.lang.Number increment(Byte b){
-		return Byte.valueOf((byte)(b.byteValue()+passe.byteValue()));
+		return Byte.valueOf((byte)(b.byteValue()+step.byteValue()));
 	}
 	
 	/**
@@ -39,7 +45,7 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @return the next integer in ascending order
 	 */
 	protected java.lang.Number increment(java.lang.Integer b){
-		return  java.lang.Integer.valueOf(b.intValue()+passe.intValue());
+		return  java.lang.Integer.valueOf(b.intValue()+step.intValue());
 	}
 	
 	/**
@@ -48,7 +54,7 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @return the next short in ascending order
 	 */
 	protected java.lang.Number increment(Short b){
-		return Short.valueOf((short)(b.shortValue()+passe.shortValue()));
+		return Short.valueOf((short)(b.shortValue()+step.shortValue()));
 	}
 	
 	/**
@@ -57,7 +63,7 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @return the next long in ascending order
 	 */
 	protected java.lang.Number increment(Long b){
-		return Long.valueOf(b.longValue()+passe.longValue());
+		return Long.valueOf(b.longValue()+step.longValue());
 	}
 	
 	/**
@@ -66,7 +72,7 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @return the next double in ascending order
 	 */
 	protected java.lang.Number increment(Double b){
-		return  Double.valueOf(b.doubleValue()+passe.doubleValue());
+		return  Double.valueOf(b.doubleValue()+step.doubleValue());
 	}
 	
 	/**
@@ -75,7 +81,7 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @return the next float in ascending order
 	 */
 	protected java.lang.Number increment(Float b){
-		return  Float.valueOf(b.floatValue()+passe.floatValue());
+		return  Float.valueOf(b.floatValue()+step.floatValue());
 	}
 	
 	/**
@@ -84,7 +90,7 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @return the next {@link BigDecimal} in ascending order
 	 */
 	protected java.lang.Number increment(BigDecimal b){
-		return  ((BigDecimal)b).add(new BigDecimal(passe.toString()));
+		return  ((BigDecimal)b).add(new BigDecimal(step.toString()));
 	}
 	
 	/**
@@ -93,6 +99,14 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @return the next {@link BigInteger} in ascending order
 	 */
 	protected java.lang.Number increment(BigInteger b){
-		return  ((BigInteger)b).add(new BigInteger(passe.toString()));
+		return  ((BigInteger)b).add(new BigInteger(step.toString()));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<Number> reverse() {
+		return new NumberIncrementor((new BigDecimal(step.toString())).negate());
 	}
 }

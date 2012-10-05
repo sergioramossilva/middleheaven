@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
+import org.middleheaven.global.IsoCode;
 import org.middleheaven.global.Language;
 
 public class ChronologicalCountryBuilder implements AtlasContext{
 
 	List<CountryInfo> infoCountries = new LinkedList<CountryInfo>();
-	Map<String,Country> countries = new HashMap<String,Country>();
+	Map<IsoCode,Country> countries = new HashMap<IsoCode,Country>();
 	
 	@Override
 	public void addCountryInfo(CountryInfo country) {
@@ -83,10 +83,10 @@ public class ChronologicalCountryBuilder implements AtlasContext{
 		}
 	}
 	
-	private class ChronologicalCountry extends Country{
-		Map<String,AtlasLocale> children = new HashMap<String,AtlasLocale>();
+	private static class ChronologicalCountry extends Country{
+		Map<IsoCode,AtlasLocale> children = new HashMap<IsoCode,AtlasLocale>();
 		
-		protected ChronologicalCountry(String isoCode) {
+		protected ChronologicalCountry(IsoCode isoCode) {
 			super(isoCode);
 		}
 
@@ -107,11 +107,11 @@ public class ChronologicalCountryBuilder implements AtlasContext{
 
 	}
 	
-	private class ChronologicalDivision extends CountryDivision{
+	private static class ChronologicalDivision extends CountryDivision{
 
-		final Map<String,AtlasLocale> children = new TreeMap<String,AtlasLocale>();
+		final Map<IsoCode,AtlasLocale> children = new HashMap<IsoCode,AtlasLocale>();
 		
-		protected ChronologicalDivision(Country country, String isoCode, CountryDivisionType type) {
+		protected ChronologicalDivision(Country country, IsoCode isoCode, CountryDivisionType type) {
 			super(country, isoCode,type);
 		}
 
@@ -132,11 +132,11 @@ public class ChronologicalCountryBuilder implements AtlasContext{
 	}
 
 	
-	private class ChronologicalAtlasLocale extends AbstractAtlasLocale{
+	private static class ChronologicalAtlasLocale extends AbstractAtlasLocale{
 
-		final Map<String,AtlasLocale> children = new TreeMap<String,AtlasLocale>();
+		final Map<IsoCode,AtlasLocale> children = new HashMap<IsoCode,AtlasLocale>();
 		
-		protected ChronologicalAtlasLocale(AtlasLocale parent, String isoCode, String name) {
+		protected ChronologicalAtlasLocale(AtlasLocale parent, IsoCode isoCode, String name) {
 			super(parent, isoCode,name);
 		}
 

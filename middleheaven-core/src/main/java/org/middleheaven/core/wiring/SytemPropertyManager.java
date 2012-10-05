@@ -34,7 +34,7 @@ public class SytemPropertyManager implements PropertyManager {
 	 */
 	@Override
 	public boolean containsProperty(String key) {
-		return System.getProperties().contains(key);
+		return System.getProperties().containsKey(key);
 	}
 
 }

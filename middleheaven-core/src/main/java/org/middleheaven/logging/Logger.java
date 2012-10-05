@@ -28,7 +28,7 @@ public abstract class Logger {
 	}
 	
 	public static Logger onBookFor(Class<?> type){
-		return onBook(type.getName().toString());
+		return onBook(type.getName());
 	}
 	
 	private String name;

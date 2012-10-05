@@ -16,4 +16,12 @@ public class EmptyIncrementor<T> implements Incrementor<T>{
 		return object;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<T> reverse() {
+		return this;
+	}
+
 }
