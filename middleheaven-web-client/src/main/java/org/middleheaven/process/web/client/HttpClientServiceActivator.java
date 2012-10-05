@@ -5,9 +5,9 @@ package org.middleheaven.process.web.client;
 
 import java.util.Collection;
 
-import org.middleheaven.core.bootstrap.activation.ServiceActivator;
-import org.middleheaven.core.bootstrap.activation.ServiceSpecification;
+import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.process.web.client.apache.ApacheHttpClientService;
 
 /**
