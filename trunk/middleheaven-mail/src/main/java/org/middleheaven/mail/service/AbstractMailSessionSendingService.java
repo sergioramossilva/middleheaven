@@ -105,7 +105,7 @@ public abstract class AbstractMailSessionSendingService implements MailSendingSe
 		final ManagedFileRepository attachments = email.getAttachments();
 		ManagedFile root  = attachments.retrive(attachments.getRoots().iterator().next());
 
-		root.each(new Walker<ManagedFile>(){
+		root.forEach(new Walker<ManagedFile>(){
 
 			@Override
 			public void doWith(ManagedFile attachment) {

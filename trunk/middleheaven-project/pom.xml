@@ -23,7 +23,7 @@
 		<module>../middleheaven-cache</module>
 		<module>../middleheaven-core</module>
 		<module>../middleheaven-chart</module>
-	
+		<module>../middleheaven-math</module>
 		<module>../middleheaven-desktop</module>
 		<module>../middleheaven-reports</module>
 		<module>../middleheaven-io</module>
@@ -31,14 +31,12 @@
 		<module>../middleheaven-namedirectory</module>
 		<module>../middleheaven-enterprise</module>
 		<module>../middleheaven-security</module>
-		<!-- 
-		<module>../middleheaven-storage</module>
-		 -->
 	    <module>../middleheaven-storage-orm</module>
 	    <module>../middleheaven-storage-dataset</module>
 		<module>../middleheaven-text-indexing</module>
 		<module>../middleheaven-transactions</module>
 		<module>../middleheaven-ui</module>
+		<module>../middleheaven-ui-vaadin</module>
 		<module>../middleheaven-web</module>
 		<module>../middleheaven-web-server</module>
 		<module>../middleheaven-web-client</module>
@@ -50,10 +48,8 @@
 		<developer>
 			<id>staborda</id>
 			<name>Sergio Taborda</name>
-			<email>sergiotaborda@user.sourceforge.net
-			</email>
-			<url>http://sergiotaborda.javabuilding.com
-			</url>
+			<email>sergiotaborda@user.sourceforge.net</email>
+			<url>http://sergiotaborda.javabuilding.com</url>
 			<organization></organization>
 			<roles>
 				<role>Creator</role>
@@ -80,8 +76,7 @@
 		<developerConnection>
 			scm:cvs:ext:username@cvs.sourceforge.net:/cvsroot/middleheaven:middleheaven
 		</developerConnection>
-		<url>http://middleheaven.cvs.sourceforge.net/middleheaven/
-		</url>
+		<url>http://middleheaven.cvs.sourceforge.net/middleheaven/</url>
 	</scm>
 	<build>
 		<plugins>
@@ -94,29 +89,6 @@
 		            <target>1.6</target>
 		   		</configuration>
 		    </plugin> 
-			<!--
-		    <plugin>
-		        <groupId>org.codehaus.mojo</groupId>
-		        <artifactId>xml-maven-plugin</artifactId>
-		        <version>1.0-beta-2</version>
-		        <executions>
-		          <execution>
-		            <goals>
-		              <goal>transform</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-		        <configuration>
-		          <transformationSets>
-		            <transformationSet>
-		              <dir>${basedir}/src/site/odoc</dir>
-		              <outputDir>${basedir}/src/site/xdoc</outputDir>
-		              <stylesheet>${basedir}/src/resources/odoc.xslt</stylesheet>
-		            </transformationSet>
-		          </transformationSets>
-		        </configuration>
-		      </plugin>
-			  -->
 		</plugins>
 	</build>
 	<repositories>
@@ -173,20 +145,11 @@
 				<artifactId>maven-javadoc-plugin</artifactId> 
 				<version>2.5</version> 
 				<configuration>
-					<stylesheetfile>${basedir}\src\resources\jdocstyle.css</stylesheetfile>
+					<outputDirectory>${basedir}</outputDirectory>
+					<reportOutputDirectory>${basedir}</reportOutputDirectory>
+					<stylesheetfile>${basedir}/javadocstyle.css</stylesheetfile>
 					<excludePackageNames>org.middleheaven.test*</excludePackageNames>
 					<javadocVersion>1.6</javadocVersion>
-					
-					<groups>
-			            <group>
-			              <title>Core Packages</title>
-			              <packages>org.middleheaven.core*</packages>
-			            </group>
-			            <group>
-			              <title>Managed IO Toolbox</title>
-			              <packages>org.middleheaven.io*</packages>
-			            </group>
-			        </groups>
 					
 				</configuration> 
 				

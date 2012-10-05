@@ -17,7 +17,7 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileType;
-import org.middleheaven.util.classification.BooleanClassifier;
+import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.EnhancedCollection;
 
@@ -84,7 +84,7 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile {
 
 
 
-	public Collection<? extends  ManagedFile> listFiles(BooleanClassifier<ManagedFile> filter) throws ManagedIOException{
+	public Collection<? extends  ManagedFile> listFiles(Predicate<ManagedFile> filter) throws ManagedIOException{
 		if (this.getType() == ManagedFileType.FILE || !this.exists()){
 			return Collections.emptySet();
 		}

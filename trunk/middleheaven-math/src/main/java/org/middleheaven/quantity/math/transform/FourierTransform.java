@@ -3,6 +3,8 @@ package org.middleheaven.quantity.math.transform;
 import java.util.Arrays;
 
 import org.middleheaven.quantity.math.Complex;
+import org.middleheaven.quantity.math.DenseVectorSpaceProvider;
+import org.middleheaven.quantity.math.DenseVector;
 import org.middleheaven.quantity.math.Vector;
 
 /**
@@ -11,27 +13,29 @@ import org.middleheaven.quantity.math.Vector;
 public class FourierTransform implements Transformation<Vector<Complex>>{
 	
 	
-    public Vector<Complex> fowardTransform(Vector<Complex> data) {
-    	Complex[] x = new Complex[data.size()];
-    	Complex[]  fx = fowardTransform(data.toArray(x));
-    	
-    	return Vector.vector(fx);
-	}
-    
-	@Override
-	public Vector<Complex> reverseTransform(Vector<Complex> data) {
-		Complex[] x = new Complex[data.size()];
-		Complex[]  fx = reverseTransform(data.toArray(x));
-    	
-    	return Vector.vector(fx);
-	}
+//    public Vector<Complex> fowardTransform(Vector<Complex> data) {
+//    	Complex[] x = new Complex[data.size()];
+//    	Complex[]  fx = fowardTransform(data.toArray(x));
+//    	
+//    	return Vector.vector(fx);
+//	}
+//    
+//	@Override
+//	public Vector<Complex> reverseTransform(Vector<Complex> data) {
+//		Complex[] x = new Complex[data.size()];
+//		Complex[]  fx = reverseTransform(data.toArray(x));
+//    	
+//    	return Vector.vector(fx);
+//	}
     
 	// compute the FFT of x[], assuming its length is multiple of 2
-    public Complex[] fowardTransform(Complex[] x) {
-        int N = x.length;
+    public Vector<Complex> fowardTransform(Vector<Complex> x) {
+        int N = x.size();
 
         // base case
-        if (N == 1) return new Complex[] { x[0] };
+        if (N == 1){
+        	return new DenseVector<Complex>(1,x.get(0)); 
+        }
 
         // radix-2 Cooley-Tukey FFT
         if (N % 2 != 0) { 
@@ -40,49 +44,54 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
         }
 
         // fft of even terms
-        Complex[] even = new Complex[N/2];
-        Complex[] odd = new Complex[N/2];
+        
+        DenseVector<Complex> even = new DenseVector<Complex>(N/2);
+        DenseVector<Complex> odd = new DenseVector<Complex>(N/2);
+        
         for (int k = 0; k < N/2; k++) {
-            even[k] = x[2*k];
-            odd[k] = x[2*k + 1];
+            even.set(k , x.get(2*k));
+            odd.set(k , x.get(2*k + 1));
         }
         
-        Complex[] q = fowardTransform(even);
-        Complex[] r = fowardTransform(odd);
+        Vector<Complex> q = fowardTransform(even);
+        Vector<Complex> r = fowardTransform(odd);
 
         // combine
-        Complex[] y = new Complex[N];
+        DenseVector<Complex> y = new DenseVector<Complex>(N);
         for (int k = 0; k < N/2; k++) {
             double kth = -2 * k * Math.PI / N;
+            
             Complex wk = Complex.valueOf(Math.cos(kth), Math.sin(kth));
-            y[k]       = q[k].plus(wk.times(r[k]));
-            y[k + N/2] = q[k].minus(wk.times(r[k]));
+            
+            y.set(k  , q.get(k).plus(wk.times(r.get(k))));
+            y.set(k + N/2 , q.get(k).minus(wk.times(r.get(k))));
         }
         return y;
     }
 
 
     // compute the inverse FFT of x[], assuming its length is a multiple of 2
-    public Complex[] reverseTransform(Complex[] x) {
-        int N = x.length;
-        Complex[] y = new Complex[N];
+    public Vector<Complex> reverseTransform(Vector<Complex> x) {
+        final int N = x.size();
+        
+        DenseVector<Complex> y = new DenseVector<Complex>(N);
 
         // take conjugate
         for (int i = 0; i < N; i++) {
-            y[i] = x[i].conjugate();
+            y.set(i , x.get(i).conjugate());
         }
 
         // compute forward FFT
-        y = fowardTransform(y);
+        y = new DenseVector<Complex>(fowardTransform(y));
 
         // take conjugate again
         for (int i = 0; i < N; i++) {
-            y[i] = y[i].conjugate();
+            y.set(i , y.get(i).conjugate());
         }
 
         // divide by N
         for (int i = 0; i < N; i++) {
-            y[i] = y[i].times(1.0 / N);
+        	y.set(i , y.get(i).times(1.0 / N));
         }
 
         return y;
@@ -90,12 +99,12 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
     }
 
     // compute the circular convolution of x and y
-    public Complex[] cconvolve(Complex[] x, Complex[] y) {
+    public Vector<Complex> cconvolve(Vector<Complex>  x, Vector<Complex>  y) {
 
         // pad x and y with 0s so that they have same length
         // and are multiples of 2
-        if (x.length != y.length) { 
-        	int max = Math.max(x.length, y.length);
+        if (x.size() != y.size()) { 
+        	int max = Math.max(x.size(), y.size());
         	if ( max % 2 !=0){
         		max += max %2; 
         	}
@@ -103,41 +112,53 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
         	y = pad(y, Complex.ZERO(), max);
         }
 
-        int N = x.length;
-
         // compute FFT of each sequence
-        Complex[] a = fowardTransform(x);
-        Complex[] b = fowardTransform(y);
+        Vector<Complex> a = fowardTransform(x);
+        Vector<Complex> b = fowardTransform(y);
 
         // point-wise multiply
-        Complex[] c = new Complex[N];
-        for (int i = 0; i < N; i++) {
-            c[i] = a[i].times(b[i]);
-        }
-
+        
+        Vector<Complex> c = a.multiply(b);
+        
         // compute inverse FFT
         return reverseTransform(c);
     }
 
 
-    private Complex[] pad(Complex[] original, Complex pad, int max) {
-		Complex[] res = Arrays.copyOf(original, max);
-		Arrays.fill(res, original.length, max, pad);
-		return res;
+    private Vector<Complex> pad(Vector<Complex> original, Complex pad, int max) {
+    	
+    	Complex[] all = new Complex[original.size()];
+    	
+    	all = original.toArray(all);
+    	
+		Complex[] res = Arrays.copyOf(all, max);
+		Arrays.fill(res, all.length, max, pad);
+		
+		return new DenseVectorSpaceProvider().vector(res);
 	}
 
 
 	// compute the linear convolution of x and y
-    public Complex[] convolve(Complex[] x, Complex[] y) {
+    public Vector<Complex> convolve(Vector<Complex>x, Vector<Complex> y) {
         final Complex ZERO = Complex.ZERO();
 
-        Complex[] a = new Complex[2*x.length];
-        for (int i = 0;        i <   x.length; i++) a[i] = x[i];
-        for (int i = x.length; i < 2*x.length; i++) a[i] = ZERO;
+        DenseVector<Complex> a = new DenseVector<Complex>(2*x.size());
+        
+        for (int i = 0;        i <   x.size(); i++){
+        	a.set(i , x.get(i));
+        }
+        for (int i = x.size(); i < 2*x.size(); i++){
+        	a.set(i, ZERO);
+        }
 
-        Complex[] b = new Complex[2*y.length];
-        for (int i = 0;        i <   y.length; i++) b[i] = y[i];
-        for (int i = y.length; i < 2*y.length; i++) b[i] = ZERO;
+        DenseVector<Complex> b = new DenseVector<Complex>(2*y.size());
+        
+        for (int i = 0;        i <   y.size(); i++) {
+        	b.set(i , y.get(i));
+        }
+        for (int i = y.size(); i < 2*y.size(); i++){
+        	b.set(i  , ZERO);
+        }
 
         return cconvolve(a, b);
     }

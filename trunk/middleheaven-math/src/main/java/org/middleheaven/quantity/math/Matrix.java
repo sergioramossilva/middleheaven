@@ -1,174 +1,174 @@
+/**
+ * 
+ */
 package org.middleheaven.quantity.math;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 import org.middleheaven.quantity.math.structure.Field;
 import org.middleheaven.quantity.math.structure.Ring;
 import org.middleheaven.quantity.math.structure.VectorSpace;
 
+/**
+ * 
+ */
+public interface Matrix<F extends Field<F>> extends VectorSpace<Matrix<F>,F>, Ring<Matrix<F>>, Conjugatable<Matrix<F>>{
 
-public abstract class Matrix<F extends Field<F>> implements VectorSpace<Matrix<F>,F>, Ring<Matrix<F>>, Conjugatable<Matrix<F>>{
+	
+	/**
+	 * 
+	 * @return <code>true</code> if this matrix is square, i.e. the number of rows equals the number of columns.
+	 */
+	public boolean isSquare();
+	
+	/**
+	 * 
+	 * @return <code>true</code> if matrix.get(i,j).equals(matrix.get(j,i) for all i and j.
+	 */
+	public boolean isSimmetric();
+	
+	
+	/**
+	 * Obtain the value at position (r,c)
+	 * @param r the row index. 0 is the first.
+	 * @param c the column index. 0 is the first.
+	 * @return
+	 */
+	public abstract F get(int r, int c);
+	
+	/**
+	 * sets the value at position (r,c)
+	 * @param r
+	 * @param c
+	 * @param value
+	 * @return
+	 */
+	//public abstract Matrix<F> set(int r, int c, F value);
+	
+	/**
+	 * 
+	 * @return the number of rows
+	 */
+	public abstract int rowsCount();
+	
+	/**
+	 * 
+	 * @return the number of columns
+	 */
+	public abstract int columnsCount();
+	
+	/**
+	 * 
+	 * @param r
+	 * @param c
+	 * @return
+	 */
+	public abstract F cofactor(int r, int c);
+	
+	/**
+	 * 
+	 * @return <code>true</code> if this matrix has an inverse.
+	 */
+	public abstract boolean hasInverse();
 
-
-
-	public static Matrix<Real> random(int rows, int columns){
-		return random(rows,columns,2);
-	}
+	/**
+	 * 
+	 * @return the inverse matrix.
+	 * @throws ArithmeticException if no inverse exists.
+	 */
+	public Matrix<F> inverse();
 	
-	public static Matrix<Real> random(int rows, int columns , long seed){
-		return random(rows,columns,new Random(seed));
-	}
-	
-	public static Matrix<Real> random(int rows, int columns , Random r){
-		List<Vector<Real>> matrixRows = new ArrayList<Vector<Real>>(rows);
-		List<Real> elements = new ArrayList<Real>(columns);
-		int counts =0;
-		int length = rows*columns;
-
-		for (int i =0; i < length; i++, counts++){
-			if ( counts / columns == 1){
-				counts=0;
-				matrixRows.add(DenseMatrix.vectorize(elements));
-				elements = new ArrayList<Real>(columns);
-			} 
-			elements.add(Real.valueOf(r.nextDouble()));
-		}
-		matrixRows.add(DenseMatrix.vectorize(elements));
-		return DenseMatrix.matrixFrom(matrixRows);
-	}
-	
-	public static Matrix<Real> identity(int size) {
-		return DenseMatrix.diagonal(size,Real.ONE());
-	}
-	
-	public static <F extends Field<F>> Matrix<F> diagonal(int size, F value) {
-		return DenseMatrix.diagonal(size,value);
-	}
-	
-	public static <T extends Field<T>> Matrix<T> matrix(Vector<T>... rows){
-
-		List<Vector<T>> matrixRows = new ArrayList<Vector<T>>();
-		for (Vector<T> v : rows){
-			matrixRows.add(DenseMatrix.vectorize(v));
-		}
-		return DenseMatrix.matrixFrom(matrixRows);
-	}
-
-	public static <T extends Field<T>> Matrix<T> matrix(int rows, int columns, T ... values){
-		if (values.length != rows * columns){
-			throw new IllegalArgumentException("Invalid dimensions");
-		}
-
-		List<Vector<T>> matrixRows = new ArrayList<Vector<T>>(rows);
-		List<T> elements = new ArrayList<T>(columns);
-		int counts =0;
-		for (int i =0; i < values.length; i++, counts++){
-			if ( counts / columns == 1){
-				counts=0;
-				matrixRows.add(DenseMatrix.vectorize(elements));
-				elements = new ArrayList<T>(columns);
-			} 
-			elements.add(values[i]);
-		}
-		matrixRows.add(DenseMatrix.vectorize(elements));
-		return DenseMatrix.matrixFrom(matrixRows);
-	}
-	
-	public boolean isSquare(){
-		return this.rowsCount() == this.columnsCount();
-	}
-	
-	public boolean isSimmetric(){
-		if (this.rowsCount()==1){
-			return true;
-		} else if (!this.isSquare()){
-			return false;
-		} 
-		
-		return this.equals(this.transpose());
-	}
-	
-	
-	@Override
-	public final Matrix<F> minus(Matrix<F> other) {
-		return this.plus(other.negate());
-	}
-
-	public abstract Matrix<F> set(int r, int c, F value);
-	
+	/**
+	 * 
+	 * @return this matrix adjoint matrix
+	 */
 	public abstract Matrix<F> adjoint();
 
+	/**
+	 * 
+	 * @return this matrix determinant
+	 */
 	public abstract F determinant();
 
+	/**
+	 * Retrives a row as a vector.
+	 * @param row the index of the row to retrive.
+	 * @return a Vector<F> representing the values in the <code>row</code> row.
+	 */
 	public abstract Vector<F> getRow(int row);
 
+	/**
+	 * Retrives a column as a vector.
+	 * @param column the index of the column to retrive.
+	 * @return a Vector<F> representing the values in the <code>column</code> column.
+	 */
 	public abstract Vector<F> getColumn(int column);
 
 	public abstract Vector<F> getDiagonal();
 
-	public abstract Vector<F> times (Vector<F> vector);
+	/**
+	 * Calculates y[i] = A[i,j] * x[j];
+	 * 
+	 * @param vector
+	 * @return
+	 */
+	public abstract Vector<F> rightTimes (Vector<F> vector);
 
-	public abstract Matrix<F> transpose();
 	
-	public final F trace(){
-		F result = this.get(0, 0);
-		for (int i=1; i<this.rowsCount();i++){
-			result = result.plus(this.get(i,i));
-		}
-		return result;
-	}
+	/**
+	 * Calculates y[i] =  x[j] * A[j,i];
+	 * 
+	 * @param vector
+	 * @return
+	 */
+	public abstract Vector<F> leftTimes (Vector<F> vector);
 
-	public abstract F get(int r, int c);
-	public abstract int rowsCount();
-	public abstract int columnsCount();
-	public abstract F cofactor(int r, int c);
+	
+	/**
+	 * 
+	 * @return this matrix transpose.
+	 */
+	public Matrix<F> transpose();
+	
+	/**
+	 * 
+	 * @return this matrix trace
+	 */
+	public F trace();
 
-	public abstract boolean hasInverse();
-	public abstract Matrix<F> inverse();
-	
-	public abstract Matrix<F> duplicate();
-	
-	@SuppressWarnings("unchecked")
-	public boolean equals(Object other){
-		return other instanceof Matrix && equals((Matrix<F>)other); 
-	}
-	
-	public boolean equals(Matrix<?> other){
-		if (this.rowsCount()!= other.rowsCount() || this.columnsCount() != this.columnsCount()){
-			return false;
-		}
-		
-		for (int r =0; r < this.rowsCount(); r++){
-			for (int c =0; c < this.columnsCount(); c++){
-				if (!this.get(r, c).equals(other.get(r, c))){
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-	
-	public String toString(){
-		StringBuilder text = new StringBuilder("\n");
-		for (int r =0; r < this.rowsCount(); r++){
-			for (int c =0; c < this.columnsCount(); c++){
-				text.append(this.get(r, c).toString()).append(",");
-			}
-			text.delete(text.length()-1,text.length());
-			text.append("\n");
-		}
-		return text.toString();
-	}
 
-	@Override
-	public Matrix<F> one() {
-		return diagonal(this.columnsCount(), this.get(0, 0).one());
-	}
+	/**
+	 * Duplicates this matrix
+	 * @return
+	 */
+	//public Matrix<F> duplicate();
 	
-	@Override
-	public Matrix<F> zero() {
-		return diagonal(this.columnsCount(), this.get(0, 0).zero());
-	}
+
+	/**
+	 * 
+	 * The identity matrix.
+	 * 
+	 * {@inheritDoc}
+	 */
+	public Matrix<F> one();
+	
+	/**
+	 * A matrix with zeros in the diagonal
+	 * 
+	 * {@inheritDoc}
+	 */
+	public Matrix<F> zero();
+	
+	/**
+	 * Return a matrix where the r row and the c column have bean removed
+	 * @param row index of the row to remove
+	 * @param column index of the column to remove.
+	 * @return
+	 */
+	public Matrix<F> remove(final int row, final int column);
+	
+	/**
+	 * Creates a new matrix where the values are com
+	 * @param classifier
+	 * @return
+	 */
+	public <N extends Field<N>> Matrix<N> apply(UnivariateFunction<F, N> function);
 }
