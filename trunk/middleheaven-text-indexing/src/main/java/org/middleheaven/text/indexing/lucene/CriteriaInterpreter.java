@@ -62,33 +62,33 @@ public class CriteriaInterpreter {
 				PhraseQuery q = new PhraseQuery();
 			
 				for (String word : words){
-					q.add(new Term(fc.getFieldName().getName(), word));
+					q.add(new Term(fc.getFieldName().getDesignation(), word));
 				}
 				
 				masterQuery.add(q, op.isNegated() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.SHOULD);
 			} else {
-				Query q = new TermQuery(new Term(fc.getFieldName().getName(), words[0] ));
+				Query q = new TermQuery(new Term(fc.getFieldName().getDesignation(), words[0] ));
 				masterQuery.add(q, op.isNegated() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.SHOULD);
 			}
 
 		} else if (CriterionOperator.EQUAL.equals(op)){
 			
-			Query q = new TermQuery(new Term(fc.getFieldName().getName(), fc.valueHolder().getValue().toString()));
+			Query q = new TermQuery(new Term(fc.getFieldName().getDesignation(), fc.valueHolder().getValue().toString()));
 			masterQuery.add(q, op.isNegated() ? BooleanClause.Occur.MUST_NOT :  BooleanClause.Occur.MUST);
 			
 		} else if (CriterionOperator.ENDS_WITH.equals(op)){
 			
-			Query q = new WildcardQuery(new Term(fc.getFieldName().getName(), "*" + fc.valueHolder().getValue().toString()));
+			Query q = new WildcardQuery(new Term(fc.getFieldName().getDesignation(), "*" + fc.valueHolder().getValue().toString()));
 			masterQuery.add(q, op.isNegated() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.SHOULD);
 			
 		} else if (CriterionOperator.STARTS_WITH.equals(op)){
 			
-			Query q = new PrefixQuery(new Term(fc.getFieldName().getName(),  fc.valueHolder().getValue().toString()));
+			Query q = new PrefixQuery(new Term(fc.getFieldName().getDesignation(),  fc.valueHolder().getValue().toString()));
 			masterQuery.add(q, op.isNegated() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.SHOULD);
 			
 		} else if (CriterionOperator.NEAR.equals(op)){
 			
-			Query q = new FuzzyQuery(new Term(fc.getFieldName().getName(),  fc.valueHolder().getValue().toString()));
+			Query q = new FuzzyQuery(new Term(fc.getFieldName().getDesignation(),  fc.valueHolder().getValue().toString()));
 			masterQuery.add(q, op.isNegated() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.SHOULD);
 			
 		} 
