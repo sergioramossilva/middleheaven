@@ -4,6 +4,9 @@ import java.net.InetAddress;
 
 public class IPAddressCallback implements Callback {
 
+
+	private static final long serialVersionUID = 4050559024059022255L;
+	
 	private InetAddress address;
 
 	@Override

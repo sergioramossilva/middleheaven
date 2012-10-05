@@ -1,6 +1,6 @@
 package org.middleheaven.aas;
 
-import org.middleheaven.validation.Consistencies;
+import org.middleheaven.util.validation.Consistencies;
 
 public final class NameCredential implements Credential{
 
