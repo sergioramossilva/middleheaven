@@ -27,7 +27,7 @@ public class TesteAccount {
 			total = total.plus(d);
 		}
 		
-		List<ProductMovement<Mass>> movements = stocks.get(0).getMovements(today.upTo(today.nextDate().nextDate()));
+		List<ProductMovement<Mass>> movements = stocks.get(0).getMovements(today.until(today.next().next()));
 		for (ProductMovement<Mass> m : movements){
 			m.getAcount().getOwner().equals(p);
 		}
