@@ -3,6 +3,7 @@ package org.middleheaven.aas;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.middleheaven.logging.Logger;
 import org.middleheaven.quantity.time.Period;
 
 /**
@@ -91,6 +92,7 @@ public final class AccessRequestBroker {
 				return LoginStep.SUCCESS;
 			}
 		}catch (RuntimeException e){
+			Logger.onBookFor(this.getClass()).error(e, "Unhandled exception");
 			callbackHandler.onException(new AccessException(e));
 			return LoginStep.FAIL;
 		}

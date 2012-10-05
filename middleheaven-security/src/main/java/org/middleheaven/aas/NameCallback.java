@@ -3,6 +3,9 @@ package org.middleheaven.aas;
 
 public class NameCallback implements Callback {
 
+
+	private static final long serialVersionUID = 2663236826202352021L;
+	
 	private String prompt;
 	private String defaultName;
 	private String name;

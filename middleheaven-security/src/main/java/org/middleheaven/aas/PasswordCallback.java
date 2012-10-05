@@ -1,17 +1,29 @@
 package org.middleheaven.aas;
 
-
+/**
+ * The password {@link Callback}.
+ */
 public class PasswordCallback implements Callback {
 
+
+	private static final long serialVersionUID = 1769695239559899080L;
 	
 	private String prompt;
 	private char[] password; 
 	             
+	/**
+	 * 
+	 * Constructor.
+	 * @param prompt the password prompt. This string will somewhat utilized to interrogate the subject for a password.
+	 */
 	public PasswordCallback(String prompt){
 		this.prompt = prompt;
 	}
 
-	
+	/**
+	 * 
+	 * @return the password as a char array.
+	 */
 	public char[] getPassword() {
 		return password;
 	}
