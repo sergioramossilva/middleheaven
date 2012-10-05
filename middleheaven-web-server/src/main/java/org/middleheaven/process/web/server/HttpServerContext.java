@@ -44,7 +44,6 @@ public interface HttpServerContext  {
 	 * @return the current communication channel.
 	 */
 	public HttpChannel getHttpChannel();
-	
 
 	/**
 	 * 
@@ -72,13 +71,11 @@ public interface HttpServerContext  {
 	 */
 	public Subject getAuthenticatedSubject();
 	
-	
 	/**
 	 * 
 	 * @return The server response.
 	 */
 	public HttpServerResponse getResponse();
-	
 	
 	/**
 	 * Information on the user agent that made the request.

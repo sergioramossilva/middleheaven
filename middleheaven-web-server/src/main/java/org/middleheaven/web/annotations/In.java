@@ -17,5 +17,5 @@ import org.middleheaven.process.ContextScope;
 public @interface In {
 
 	String value();
-	ContextScope scope () default ContextScope.PARAMETERS;
+	ContextScope scope () default ContextScope.REQUEST_PARAMETERS;
 }

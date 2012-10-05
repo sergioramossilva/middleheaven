@@ -6,18 +6,23 @@ import java.util.Iterator;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.middleheaven.global.text.GlobalLabel;
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.pagination.Paginator;
 import org.middleheaven.process.ContextScope;
 
 public class TBodyTag  extends AbstractBodyTagSupport {
 
-	private Iterator iterator;
-	private Paginator paginator;
+	private static final long serialVersionUID = -1704506701460018890L;
+	
+	private Iterator<?> iterator;
+	private Paginator<?> paginator;
 
 	private String varPage = "page";
 	private String varName = "item"; 
 
+	
+	public TBodyTag (){}
+	
 	public void setVar(String varName){
 		this.varName = varName;
 	}
@@ -26,11 +31,11 @@ public class TBodyTag  extends AbstractBodyTagSupport {
 		this.varPage = varPage;
 	}
 
-	public void setPaginator(Paginator paginator){
+	public void setPaginator(Paginator<?> paginator){
 		this.paginator = paginator;
 	}
 
-	public void setItems(Iterable iterable){
+	public void setItems(Iterable<?> iterable){
 		this.iterator = iterable==null? null : iterable.iterator();
 	}
 
@@ -50,7 +55,7 @@ public class TBodyTag  extends AbstractBodyTagSupport {
 		// print no items message
 		if(isIteratorNotNull() || isPaginator()){
 			writeLine("<tr><td colspan='10' align='center'>");
-			writeLine(this.localize(new GlobalLabel("listing.noitemsfound")));
+			writeLine(this.localize(TextLocalizable.valueOf("ui:listing.no.items.found")));
 			writeLine("</td></tr>");
 		}
 

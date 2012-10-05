@@ -1,26 +1,34 @@
 package org.middleheaven.ui.web.html;
 
 import java.io.IOException;
+import java.io.Writer;
 
-import javax.servlet.jsp.JspWriter;
 
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.models.UISelectionModel;
 import org.middleheaven.ui.rendering.RenderingContext;
-import org.middleheaven.ui.web.AbstractHtmlRender;
 
-public class HtmlDropDownRender extends AbstractHtmlRender {
+/**
+ * Html implementation of a Dropdown.
+ */
+public class HtmlDropDownRender extends AbstractHtmlInputRender {
 
+	private static final long serialVersionUID = 1579436461994433298L;
 
 	@Override
-	public void write(JspWriter writer, RenderingContext context,UIComponent component) throws IOException {
+	public void write(HtmlDocument document, RenderingContext context,UIComponent component) throws IOException {
 		
 		UISelectionModel model = (UISelectionModel) component.getUIModel();
 		
-		writer.append("<select ");
-		writer.append(" id=\"" + component.getGID() + "\"");
-		writer.append(" name=\"" + model.getName() + "\"");
-		writer.append(">");
+		Writer writer = document.getBodyWriter();
+		
+		
+		writer.append("<select ")
+		.append(" id=\"" + component.getGID() + "\"")
+		.append(" name=\"" + model.getName() + "\"")
+		.append(" class=\"mh-ui-select-one\"" )
+		.append(" uiType=\"").append("select-one").append("\"")
+		.append(">");
 		
 		for (int i=0; i < model.getSize();i++){
 			

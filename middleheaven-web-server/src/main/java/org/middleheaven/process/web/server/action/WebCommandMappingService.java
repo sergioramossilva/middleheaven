@@ -7,7 +7,4 @@ public interface WebCommandMappingService {
 
 	public WebCommandMapping resolve(HttpRelativeUrl url);
 	
-	
-
-
 }

@@ -6,17 +6,15 @@ package org.middleheaven.process.web.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.global.Culture;
+import org.middleheaven.io.IOTransport;
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.io.repository.MediaManagedFile;
+import org.middleheaven.io.repository.ContentSource;
 import org.middleheaven.io.repository.MediaManagedFileContent;
-import org.middleheaven.io.repository.StreamBasedMediaManagedFileContent;
-import org.middleheaven.process.AttributeContext;
-import org.middleheaven.process.web.HttpCookieReader;
 import org.middleheaven.process.web.HttpCookieWriter;
 import org.middleheaven.process.web.HttpEntry;
 import org.middleheaven.process.web.HttpProcessIOException;
@@ -28,6 +26,7 @@ import org.middleheaven.process.web.HttpStatusCode;
 class ServletBasedHttpServerResponse implements HttpServerResponse {
 
 	private HttpServletResponse response;
+	private HttpEntry entry;
 
 	/**
 	 * Constructor.
@@ -37,16 +36,6 @@ class ServletBasedHttpServerResponse implements HttpServerResponse {
 		this.response = servletResponse;
 	}
 
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setEntry(HttpEntry entry) {
-		// TODO Auto-generated method stub
-		
-		
-	}
 
 
 	/**
@@ -110,16 +99,6 @@ class ServletBasedHttpServerResponse implements HttpServerResponse {
 	public void setStatus(HttpStatusCode sc) {
 		response.setStatus(sc.intValue());
 	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public HttpCookieWriter getHttpCookieWriter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	
 	public void renameTo(String newName) {
@@ -128,6 +107,7 @@ class ServletBasedHttpServerResponse implements HttpServerResponse {
 	
 	public class ResponseHttpEntry implements HttpEntry {
 
+		boolean streamIsOpen = false;
 		/**
 		 * {@inheritDoc}
 		 */
@@ -166,7 +146,7 @@ class ServletBasedHttpServerResponse implements HttpServerResponse {
 		@Override
 		public MediaManagedFileContent getContent() {
 			return new MediaManagedFileContent(){
-				boolean streamIsOpen = false;
+			
 				
 				@Override
 				public InputStream getInputStream() {
@@ -214,7 +194,69 @@ class ServletBasedHttpServerResponse implements HttpServerResponse {
 				}
 			};
 		}
-		
-	};
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Writer getContentWriter() {
+			try {
+				 Writer out = response.getWriter();
+				 streamIsOpen = true;
+				 return out;
+			} catch (IOException e) {
+				throw ManagedIOException.manage(e);
+			} 
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void copyTo(ContentSource other) throws ManagedIOException {
+			try {
+				IOTransport.copy(this.getContent().getInputStream()).to(other.getContent().getOutputStream());
+			} catch (IOException ioe) {
+				throw ManagedIOException.manage(ioe);
+			}
+		}
+		
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HttpEntry getEntry() {
+		if (entry == null){
+			
+			entry = new ResponseHttpEntry();
+		}
+		
+		return entry;
+	}
+
+
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setEntry(HttpEntry entry) {
+		if (this.entry != null){
+			throw new IllegalStateException("HttpEntry alread in use");
+		}
+		
+		this.entry = entry;
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HttpCookieWriter getHttpCookieWriter() {
+		throw new UnsupportedOperationException("Not implememented yet");
+	}
 }

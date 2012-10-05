@@ -8,16 +8,15 @@ import java.util.Enumeration;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.util.coersion.TypeCoercing;
 
 /**
  * 
  */
-class ApplicationContextScopeStrategy extends AbstractEnumerationBasedContextScopeStrategy {
+class ServletApplicationScopedAttributesResolutionStrategy extends AbstractEnumerationBasedScopedAttributesResolutionStrategy {
 
 	private ServletContext context;
 	
-	public ApplicationContextScopeStrategy (ServletContext context){
+	public ServletApplicationScopedAttributesResolutionStrategy (ServletContext context){
 		super(ContextScope.APPLICATION);
 		this.context= context;
 	}
@@ -43,14 +42,6 @@ class ApplicationContextScopeStrategy extends AbstractEnumerationBasedContextSco
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <T> T getAttribute(String name, Class<T> type) {
-		return TypeCoercing.coerce(context.getAttribute(name), type);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void setAttribute(String name, Object value) {
 		context.setAttribute(name, value);
 	}
@@ -62,5 +53,7 @@ class ApplicationContextScopeStrategy extends AbstractEnumerationBasedContextSco
 	public void removeAttribute(String name) {
 		context.removeAttribute(name);
 	}
+
+
 	
 }

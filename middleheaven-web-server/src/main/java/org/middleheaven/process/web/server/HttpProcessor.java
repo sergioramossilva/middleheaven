@@ -1,7 +1,7 @@
 package org.middleheaven.process.web.server;
 
 import org.middleheaven.process.web.HttpProcessException;
-import org.middleheaven.process.web.UrlMapping;
+import org.middleheaven.process.web.UrlPattern;
 
 /**
  * Process an HTTP (HiperText Transport Protocol) request.
@@ -9,10 +9,13 @@ import org.middleheaven.process.web.UrlMapping;
  * One or more {@link HttpProcessor} are registered with the {@link HttpServerService} to process
  * requests directed at specific URL address in the server. 
  * 
- * @see  HttpServerService#registerHttpProcessor(String, HttpProcessor, UrlMapping)
+ * @see  HttpServerService#registerHttpProcessor(String, HttpProcessor, UrlPattern)
  */
 public interface HttpProcessor  {
 
+	
+	public void init(HttpProcessorConfig config);
+	
 	/**
 	 * Process the request 
 	 * @param context the invocation context.

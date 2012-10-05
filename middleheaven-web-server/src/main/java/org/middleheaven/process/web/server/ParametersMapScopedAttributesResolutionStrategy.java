@@ -8,20 +8,36 @@ import java.util.Map;
 
 import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.ContextScopeStrategy;
 import org.middleheaven.process.ObjectAttribute;
+import org.middleheaven.process.ScopedAttributesResolutionStrategy;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.TransformedIterator;
 
-class ParametersContextScopeStrategy implements ContextScopeStrategy {
+class ParametersMapScopedAttributesResolutionStrategy implements ScopedAttributesResolutionStrategy {
 
 	private Map<String, String[]> parameters;
 	
-	public ParametersContextScopeStrategy (Map<String, String[]> parameters){
+	public ParametersMapScopedAttributesResolutionStrategy (Map<String, String[]> parameters){
 		this.parameters= parameters;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isReaddable() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWritable() {
+		return true;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -59,7 +75,7 @@ class ParametersContextScopeStrategy implements ContextScopeStrategy {
 	 */
 	@Override
 	public ContextScope getScope() {
-		return ContextScope.PARAMETERS;
+		return ContextScope.REQUEST_PARAMETERS;
 	}
 
 	/**

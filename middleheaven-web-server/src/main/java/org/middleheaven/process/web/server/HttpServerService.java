@@ -1,7 +1,7 @@
 package org.middleheaven.process.web.server;
 
 import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.process.web.UrlMapping;
+import org.middleheaven.process.web.UrlPattern;
 import org.middleheaven.process.web.server.filters.HttpFilter;
 import org.middleheaven.process.web.server.global.HttpCultureResolver;
 import org.middleheaven.web.rendering.RenderingProcessor;
@@ -20,10 +20,10 @@ public interface HttpServerService {
 	public void setHttpCultureResolver(HttpCultureResolver httpCultureResolveService);
 	public HttpCultureResolver getHttpCultureResolver();
 	
-	public void registerHttpProcessor(String processorID, HttpProcessor procesor, UrlMapping mapping);
+	public void registerHttpProcessor(String processorID, HttpProcessor procesor, UrlPattern mapping);
 	public void unRegisterHttpProcessor(String processorID);
-	
-	public void addRenderingProcessorResolver(String resolverID, RenderingProcessorResolver resolver, UrlMapping mapping);
+	public boolean isRegistered(String processorID);
+	public void addRenderingProcessorResolver(String resolverID, RenderingProcessorResolver resolver, UrlPattern mapping);
 	public void removeRenderingProcessorResolver(String resolverID);
 	public void removeAllRenderingProcessors();
 	

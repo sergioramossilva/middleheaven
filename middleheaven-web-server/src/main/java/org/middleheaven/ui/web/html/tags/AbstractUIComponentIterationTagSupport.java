@@ -6,13 +6,13 @@ import javax.servlet.jsp.JspException;
 
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.ui.GenericUIComponent;
-import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UISelectOne;
 import org.middleheaven.ui.rendering.RenderKit;
 import org.middleheaven.ui.rendering.RenderingContext;
 import org.middleheaven.ui.rendering.UIRender;
-import org.middleheaven.ui.web.HtmlUIComponent;
+import org.middleheaven.ui.web.html.HtmlDocument;
+import org.middleheaven.ui.web.html.HtmlUIComponent;
 import org.middleheaven.ui.web.tags.AbstractIterationTagSupport;
 import org.middleheaven.ui.web.tags.TagContext;
 
@@ -53,9 +53,7 @@ public abstract class AbstractUIComponentIterationTagSupport extends AbstractIte
 		
 		prepareRender(tagContext);
 		
-		UIClient client = tagContext.getAttribute(ContextScope.REQUEST,UIClient.class.getName(),UIClient.class);
-		
-		final RenderKit renderKit = client.getUIModel().getRenderKit();
+		RenderKit renderKit = tagContext.getAttribute(ContextScope.REQUEST, RenderKit.class.getName(),RenderKit.class);
 		
 		UIRender render = renderKit.getRender(UISelectOne.class, familly);
 
@@ -73,7 +71,12 @@ public abstract class AbstractUIComponentIterationTagSupport extends AbstractIte
 		
 		if(parent == null){
 			HtmlUIComponent html = (HtmlUIComponent)render.render(context, parent , getUIComponent());
-			html.writeTo(pageContext.getOut(),context);
+
+			HtmlDocument doc = HtmlDocument.newInstance(tagContext.getContextPath(), tagContext.getCulture());
+			
+			html.writeTo(doc,context);
+		
+			doc.writeToResponse(pageContext.getOut());
 		}
 	
 	}

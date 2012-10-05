@@ -5,25 +5,37 @@ package org.middleheaven.process.web.server;
 
 import java.util.Iterator;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.process.ContextScopeStrategy;
+import org.middleheaven.process.ScopedAttributesResolutionStrategy;
 import org.middleheaven.process.web.HttpCookie;
 import org.middleheaven.process.web.server.action.ServletCookieBagTranslator;
 
-class RequestCookiesContextScopeStrategy implements ContextScopeStrategy {
+class CookiesScopedAttributesResolutionStrategy implements ScopedAttributesResolutionStrategy {
 
-	private ServletRequest httpRequest;
-	private ServletCookieBagTranslator t;
+	private ServletCookieBagTranslator translator;
+
+	public CookiesScopedAttributesResolutionStrategy (HttpServletRequest httpRequest, HttpServletResponse httpResponse){
+		this.translator = new ServletCookieBagTranslator(((HttpServletRequest) httpRequest) , ((HttpServletResponse) httpResponse));
+	}
 	
-	public RequestCookiesContextScopeStrategy (ServletRequest httpRequest){
-		this.httpRequest= httpRequest;
-		
-		t = new ServletCookieBagTranslator(((HttpServletRequest) httpRequest));
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isReaddable() {
+		return true;
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isWritable() {
+		return false; // this is read-only
 	}
 
 	/**
@@ -40,7 +52,7 @@ class RequestCookiesContextScopeStrategy implements ContextScopeStrategy {
 	 */
 	@Override
 	public int size() {
-		return t.getSize();
+		return translator.getSize();
 	}
 
 	/**
@@ -48,7 +60,7 @@ class RequestCookiesContextScopeStrategy implements ContextScopeStrategy {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return t.getSize() == 0;
+		return translator.getSize() == 0;
 	}
 
 	/**
@@ -66,9 +78,9 @@ class RequestCookiesContextScopeStrategy implements ContextScopeStrategy {
 	public <T> T getAttribute(String name, Class<T> type) {
 		
 		if (type.isArray() && type.getComponentType().isAssignableFrom(HttpCookie.class)){
-			return type.cast(t.readAll().toArray());
+			return type.cast(translator.readAll().toArray());
 		} else if (type.isAssignableFrom(HttpCookie.class)){
-			return type.cast(t.readAll().getCookie(name));
+			return type.cast(translator.readAll().getCookie(name));
 		} else {
 			throw new IllegalArgumentException("Illegal type for scope " + this.getScope());
 		}
@@ -79,7 +91,11 @@ class RequestCookiesContextScopeStrategy implements ContextScopeStrategy {
 	 */
 	@Override
 	public void setAttribute(String name, Object value) {
-		throw new UnsupportedOperationException("Request cookies are read only. Write cookies in the response");
+		if (value instanceof HttpCookie) {
+			translator.write( ((HttpCookie) value));
+		}
+		
+	
 	}
 
 	/**

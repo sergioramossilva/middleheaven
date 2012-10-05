@@ -6,8 +6,8 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.global.Culture;
-import org.middleheaven.global.text.GlobalLabel;
-import org.middleheaven.global.text.LocalizationService;
+import org.middleheaven.global.LocalizationService;
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.quantity.math.Real;
@@ -21,13 +21,13 @@ public class AbstractTagSupport extends TagSupport {
 		
 		final LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 
-		return i18nService.getTimestampFormatter(culture).format(date,format);
+		return i18nService.getCultureModel(culture).getTimestampFormatter().format(date,format);
 	}
 	
-	public String localize(GlobalLabel message,ContextScope scope){
+	public String localize(TextLocalizable message,ContextScope scope){
 		
 		LocalizationService service = ServiceRegistry.getService(LocalizationService.class);
-		return service.getMessage(new TagContext(pageContext).getCulture(), message, false);
+		return service.getMessage(message, new TagContext(pageContext).getCulture());
 		
 	}
 	
@@ -36,7 +36,7 @@ public class AbstractTagSupport extends TagSupport {
 		
 		final LocalizationService i18nService = ServiceRegistry.getService(LocalizationService.class);
 
-		return i18nService.getQuantityFormatter(culture).format(Real.valueOf(number));
+		return i18nService.getCultureModel(culture).getQuantityFormatter().format(Real.valueOf(number));
 
 	}
 	

@@ -16,6 +16,8 @@ import org.middleheaven.process.web.HttpStatusCode;
 public interface HttpServerResponse extends HttpResponse {
 
 	public void setEntry(HttpEntry entry);
+	
+	public HttpEntry getEntry();
 
 	public void setCulture(Culture culture);
 
@@ -32,6 +34,7 @@ public interface HttpServerResponse extends HttpResponse {
 	public void setStatus(HttpStatusCode sc);
 
 	public HttpCookieWriter getHttpCookieWriter();
+
 	
 
 }

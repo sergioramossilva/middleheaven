@@ -4,18 +4,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.middleheaven.aas.old.AccessDeniedException;import org.middleheaven.logging.Log;
+import org.middleheaven.aas.old.AccessDeniedException;
 import org.middleheaven.logging.Logger;
 import org.middleheaven.process.web.HttpProcessException;
 import org.middleheaven.process.web.HttpProcessIOException;
 import org.middleheaven.process.web.HttpStatusCode;
-import org.middleheaven.process.web.UrlMapping;
+import org.middleheaven.process.web.UrlPattern;
 import org.middleheaven.process.web.server.action.HttpProcessServletException;
 import org.middleheaven.process.web.server.action.RequestResponseWebContext;
 import org.middleheaven.process.web.server.filters.HttpFilter;
@@ -30,30 +31,35 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 	private final List<HttpFilter> filters = new CopyOnWriteArrayList<HttpFilter>();
 	private final Map<String, HttpMapping> processorsMappings = new HashMap<String, HttpMapping>();
 	private final Map<String, HttpRenderingMapping> renderingMappings = new HashMap<String, HttpRenderingMapping>();
-	
+
 	private boolean available = false;
 	private boolean stopped = false;
-	
+
+	private Map<String,HttpRenderingMapping> urlTrasientRenderingMatch = new WeakHashMap<String, AbstractHttpServerService.HttpRenderingMapping>();
+
 	private HttpCultureResolver httpCultureResolveService = new RequestAgentHttpCultureResolver();
 	private Logger logger;
-	
-	private class HttpMapping{
+
+	private static class HttpMapping{
 
 		public HttpProcessor processor;
-		public UrlMapping mapping;
+		public UrlPattern mapping;
 
-		public HttpMapping(HttpProcessor processor, UrlMapping mapping) {
+		public HttpMapping(HttpProcessor processor, UrlPattern mapping) {
 			this.processor = processor;
 			this.mapping = mapping;
 		}
 
 	}
-	
-	
+
+	/**
+	 * 
+	 * Constructor.
+	 */
 	public AbstractHttpServerService (){
-		this.logger = Log.onBookFor(this.getClass());
+		this.logger = Logger.onBookFor(this.getClass());
 	}
-	
+
 	@Override
 	public HttpCultureResolver getHttpCultureResolver() {
 		return httpCultureResolveService;
@@ -62,21 +68,21 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 	@Override
 	public void setHttpCultureResolver(HttpCultureResolver httpCultureResolveService) {
 		this.httpCultureResolveService = httpCultureResolveService;
-		
+
 	}
-	
-	private class HttpRenderingMapping{
+
+	private static class HttpRenderingMapping{
 
 		public RenderingProcessorResolver processor;
-		public UrlMapping mapping;
+		public UrlPattern mapping;
 
-		public HttpRenderingMapping(RenderingProcessorResolver resolver, UrlMapping mapping) {
+		public HttpRenderingMapping(RenderingProcessorResolver resolver, UrlPattern mapping) {
 			this.processor = resolver;
 			this.mapping = mapping;
 		}
 
 	}
-	
+
 	@Override
 	public void addFilter(HttpFilter filter) {
 		filters.add(filter);
@@ -86,78 +92,161 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 	public void removeFilter(HttpFilter filter) {
 		filters.remove(filter);
 	}
-	
+
 	@Override
 	public void removeRenderingProcessorResolver(String resolverID) {
 		renderingMappings.remove(resolverID);
 	}
-	
+
 	@Override
-	public void addRenderingProcessorResolver(String resolverID, RenderingProcessorResolver resolver, UrlMapping mapping) {
+	public void addRenderingProcessorResolver(String resolverID, RenderingProcessorResolver resolver, UrlPattern mapping) {
 		renderingMappings.put(resolverID, new HttpRenderingMapping(resolver,mapping));
 	}
-	
+
 	@Override
 	public void removeAllRenderingProcessors() {
 		renderingMappings.clear();
 	} 
-	
+
+
 	@Override
 	public RenderingProcessor resolverRenderingProcessor(String incomingUrl, String viewName , String contentType) {
-		for (HttpRenderingMapping mapping : renderingMappings.values()){
-			if (mapping.mapping.match(incomingUrl) && mapping.processor.canProcess(viewName, contentType)){
-				return mapping.processor.resolve(viewName, contentType);
+
+		HttpRenderingMapping mapping = urlTrasientRenderingMatch.get(incomingUrl);
+
+		if (mapping == null){
+			double max = 0;
+			for (HttpRenderingMapping m : renderingMappings.values()){
+
+				double match = m.processor.canProcess(viewName, contentType) ? m.mapping.match(incomingUrl) : 0;
+
+				if (Double.compare(match, max) >0){
+					mapping = m;
+				}
+
+			}
+
+			if (mapping != null){
+				urlTrasientRenderingMatch.put(incomingUrl, mapping);
 			}
 		}
-		return null;
+
+		return mapping.processor.resolve(viewName, contentType);
 	}
 
+	@Override
+	public HttpProcessor resolveControlProcessor(String url) {
+
+		double max = 0;
+		HttpMapping mapping = null;
+
+		for (HttpMapping m : processorsMappings.values()){
+
+			double match =  m.mapping.match(url);
+
+			if (Double.compare(match, max) >0){
+				mapping = m;
+				max = match;
+			}
+
+		}
+
+		return mapping != null ? mapping.processor : null;
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isAvailable() {
 		return available;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setAvailable(boolean available) {
 		this.available = available;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void stop() {
 		this.available = false;
 		this.stopped = true;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public synchronized void start() {
 		this.available = true;
 	}
-	
+
+	/**
+	 * Determines if hte server is stopped.
+	 * @return <code>true</code> if the server is stopped, <code>false</code> otherwise.
+	 */
 	protected boolean isStopped(){
 		return this.stopped;
 	}
 
-	@Override
-	public HttpProcessor resolveControlProcessor(String url) {
-		for (HttpMapping mapping : processorsMappings.values()){
-			if (mapping.mapping.match(url)){
-				return mapping.processor;
-			}
-		}
-		return null;
-	}
 
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void registerHttpProcessor(String processorID, HttpProcessor processor,UrlMapping mapping) {
+	public void registerHttpProcessor(final String processorID, final HttpProcessor processor, final UrlPattern mapping) {
+
 		processorsMappings.put(processorID, new HttpMapping(processor,mapping));
 
+		processor.init(new HttpProcessorConfig() {
+
+			@Override
+			public UrlPattern getUrlPattern() {
+				return mapping;
+			}
+
+			@Override
+			public HttpServerService getRegisteredService() {
+				return AbstractHttpServerService.this;
+			}
+
+			@Override
+			public String getProcessorId() {
+				return processorID;
+			}
+		});
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void unRegisterHttpProcessor(String processorID) {
 		processorsMappings.remove(processorID);
 	}
-	
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isRegistered(String processorID) {
+		return processorsMappings.containsKey(processorID);
+	}
+
 	/**
 	 * Entry point for the FrontEndServlet to call.
 	 * @param request
@@ -180,10 +269,14 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 		}
 
 		// determine processor
-		HttpProcessor processor = resolveControlProcessor(request.getRequestURI());
+		RequestResponseWebContext context = new  RequestResponseWebContext(request,response,this.getHttpCultureResolver());
+
+		request.setAttribute("mhRequestResponseWebContext", context);
+
+		HttpProcessor processor = resolveControlProcessor(context.getRequestUrl().getContexlesPathAndFileName());
 
 		if (processor == null){
-			logger.warn("ControlProcessor has not found for {0}", request.getRequestURI());
+			logger.warn("{0} has not found for {1}", HttpProcessor.class.getSimpleName() , request.getRequestURI());
 			response.sendError(HttpStatusCode.NOT_IMPLEMENTED.intValue()); 
 			return;
 		}
@@ -191,7 +284,6 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 		try{
 
 
-			RequestResponseWebContext context = new  RequestResponseWebContext(request,response,this.getHttpCultureResolver());
 
 			// execute processing
 			Outcome outcome = this.doService(context, processor);
@@ -242,25 +334,33 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 			throw new ServletException(e);
 		} 
 	}
-	
+
+	/**
+	 * Realizes the service.
+	 * 
+	 * @param context the current context.
+	 * @param processor the selected processor
+	 * @return the  service {@link Outcome}.
+	 * @throws HttpProcessException if something goes wrong
+	 */
 	protected Outcome doService(HttpServerContext context ,HttpProcessor processor) throws HttpProcessException{
-		
+
 		final FilterChain filterChain = new FilterChain(filters,processor);
 		filterChain.doChain(context);
-		
+
 		return filterChain.getOutcome();
 	}
 
 
 	private  class FilterChain extends AbstractInterruptableChain<HttpFilter> implements HttpFilterChain {
-		
+
 		HttpProcessor processor;
 
 		public FilterChain(List<HttpFilter> filters, HttpProcessor processor ){
 			super (filters, null);
 			this.processor = processor; 
 		}
-		
+
 
 		@Override
 		protected void call(HttpFilter element, HttpServerContext context, AbstractInterruptableChain chain) {
@@ -271,10 +371,18 @@ public abstract class AbstractHttpServerService implements HttpServerService {
 		protected Outcome doFinal(HttpServerContext context) {
 			return doOnChainEnd( context, processor ,  this.getOutcome());
 		}
-		
+
 
 	}
-	
+
+	/**
+	 * Execute at the end of the chain.
+	 * @param context the curent context.
+	 * @param processor the current processor
+	 * @param outcome the previous {@link Outcome}
+	 * @return
+	 * @throws HttpProcessException
+	 */
 	protected Outcome doOnChainEnd(HttpServerContext context,HttpProcessor processor , Outcome outcome) throws HttpProcessException{
 
 		if (outcome == null){

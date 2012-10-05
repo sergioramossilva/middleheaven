@@ -15,8 +15,6 @@ import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
-import org.middleheaven.io.repository.watch.Watchable;
-import org.middleheaven.util.collections.Walker;
 
 /**
  * 

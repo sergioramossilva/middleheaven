@@ -9,29 +9,61 @@ import javax.servlet.ServletContextListener;
 
 import org.middleheaven.aas.AccessControlService;
 import org.middleheaven.aas.StandardAccessControlService;
-import org.middleheaven.application.DynamicLoadApplicationServiceActivator;
-import org.middleheaven.application.MetaInfApplicationServiceActivator;
-import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.core.bootstrap.ExecutionContext;
-import org.middleheaven.core.bootstrap.ExecutionEnvironmentBootstrap;
+import org.middleheaven.application.ApplicationService;
+import org.middleheaven.application.StandardApplicationServiceActivator;
+import org.middleheaven.core.bootstrap.AbstractBootstrap;
+import org.middleheaven.core.bootstrap.BootstrapContext;
+import org.middleheaven.core.bootstrap.BootstrapEnvironment;
+import org.middleheaven.core.bootstrap.BootstrapEnvironmentResolver;
+import org.middleheaven.core.bootstrap.FileContextService;
+import org.middleheaven.core.services.ServiceBuilder;
 import org.middleheaven.core.wiring.PropertiesPropertyManager;
-import org.middleheaven.logging.LoggingService;
-import org.middleheaven.logging.ServletContextLogListener;
+import org.middleheaven.ui.UIService;
 import org.middleheaven.ui.web.service.WebUIServiceActivator;
-import org.middleheaven.web.container.WebContainer;
+import org.middleheaven.web.container.WebContainerBootstrapEnvironment;
 import org.middleheaven.web.container.WebContainerInfo;
 import org.middleheaven.web.container.WebContainerSwitcher;
 
 /**
  * 
  */
-public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap implements ServletContextListener{
+public class WebContainerBootstrap extends AbstractBootstrap implements ServletContextListener{
 
 	private ServletContext servletContext;
 	private ServletHttpServerService httpService;
 	
+	
+	private class WebContainerBootstrapEnvironmentResolver implements BootstrapEnvironmentResolver {
+
+		
+		public WebContainerBootstrapEnvironmentResolver(){
+		
+		}
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public BootstrapEnvironment resolveEnvironment(BootstrapContext context) {
+			WebContainerBootstrapEnvironment container = new WebContainerSwitcher().getWebContainer(getServletContext());
+			
+			getServletContext().setAttribute(WebContainerInfo.ATTRIBUTE_NAME, container.getWebContainerInfo());
+			
+			return container;
+		}
+		
+	}
+	
+	public WebContainerBootstrap (){
+	}
+	
+
+	protected ServletContext getServletContext(){
+		return servletContext;
+	}
+		
+	
 	@Override
-	protected final void doBeforeStart(){
+	protected final void doBeforeStart(BootstrapContext context){
 		httpService = new ServletHttpServerService();	
 		final AccessControlService accessControlService = new StandardAccessControlService();
 
@@ -40,11 +72,14 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 		this.getRegistryServiceContext().register(AccessControlService.class, accessControlService, null);
 		this.getRegistryServiceContext().register(HttpServerService.class, httpService, null);
 		
+		
+		FileContextService fileContextService = context.getFileContextService();
+		
 		PropertiesPropertyManager mhEnvironment = PropertiesPropertyManager.loadFrom(
-				this.resolveContainer().getFileSystem().getEnvironmentConfigRepository().retrive("mh_environment.properties")
+				fileContextService.getFileContext().getEnvironmentConfigRepository().retrive("mh_environment.config")
 		);
 		
-		this.getWiringService().getPropertyManagers().addBefore("system.properties", mhEnvironment);
+		context.getPropertyManagers().addBefore("system.properties", mhEnvironment);
 	}
 	
 	/**
@@ -61,9 +96,6 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 	
 		try{
 
-
-			
-			
 //			start(
 //					new WritableLogBook("",LoggingLevel.ALL)
 //					.addWriter(new ServletContextLogBookWriter(servletContext))
@@ -88,14 +120,16 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 
 	
 	@Override
-	protected void preConfig(ExecutionContext context) {
+	protected void preConfig(BootstrapContext context) {
 		// web application have a special initialization
 		
-		context.addActivator(MetaInfApplicationServiceActivator.class)
-			.addActivator(DynamicLoadApplicationServiceActivator.class)
-			.addActivator(WebUIServiceActivator.class);
-
+		context.registerService(ServiceBuilder
+				.forContract(UIService.class)
+				.activatedBy(new WebUIServiceActivator())
+				.newInstance()
+		);
 		
+
 	}
 	
 
@@ -104,14 +138,7 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 		servletContext = null;
 	}
 
-	@Override
-	public BootstrapContainer resolveContainer() {
-		WebContainer container = new WebContainerSwitcher().getWebContainer(servletContext);
-		
-		this.servletContext.setAttribute(WebContainerInfo.ATTRIBUTE_NAME, container.getWebContainerInfo());
-		
-		return container;
-	}
+
 
 	/**
 	 * {@inheritDoc}
@@ -119,6 +146,15 @@ public class WebContainerBootstrap extends ExecutionEnvironmentBootstrap impleme
 	@Override
 	protected String getExecutionConfiguration() {
 		return servletContext.getInitParameter("configuration");
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected BootstrapEnvironmentResolver bootstrapEnvironmentResolver() {
+		return new WebContainerBootstrapEnvironmentResolver();
 	}
 
 

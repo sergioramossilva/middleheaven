@@ -15,7 +15,6 @@ import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.MediaManagedFile;
 import org.middleheaven.io.repository.MediaManagedFileContent;
-import org.middleheaven.io.repository.watch.Watchable;
 
 /**
  * 
@@ -34,10 +33,10 @@ class UploadManagedFile extends AbstractMediaManagedFile implements MediaManaged
 	}
 
 	public boolean equals(Object other){
-		return other instanceof UploadManagedFile && equals((UploadManagedFile)other);
+		return other instanceof UploadManagedFile && equalsOther((UploadManagedFile)other);
 	}
 	
-	public boolean equals(UploadManagedFile other){
+	private boolean equalsOther(UploadManagedFile other){
 		return other.fileItem.equals(this.fileItem);
 	}
 	
@@ -177,6 +176,14 @@ class UploadManagedFile extends AbstractMediaManagedFile implements MediaManaged
 	@Override
 	protected int childrenCount() {
 		return 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteTree() {
+		//no-op. there is no tree.
 	}
 
 

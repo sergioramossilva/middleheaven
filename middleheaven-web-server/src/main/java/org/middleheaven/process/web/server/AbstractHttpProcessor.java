@@ -7,6 +7,14 @@ import org.middleheaven.process.web.HttpProcessException;
 public abstract class AbstractHttpProcessor implements HttpProcessor {
 
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void init(HttpProcessorConfig config) {
+		//no-op
+	}
+	
 	@Override
 	public Outcome process(HttpServerContext context) throws HttpProcessException {
 		

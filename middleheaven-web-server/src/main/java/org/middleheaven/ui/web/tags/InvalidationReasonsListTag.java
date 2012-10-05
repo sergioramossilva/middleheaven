@@ -6,9 +6,9 @@ import java.util.Iterator;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.middleheaven.validation.InvalidationReason;
-import org.middleheaven.validation.InvalidationSeverity;
-import org.middleheaven.validation.ValidationResult;
+import org.middleheaven.util.validation.InvalidationReason;
+import org.middleheaven.util.validation.InvalidationSeverity;
+import org.middleheaven.util.validation.ValidationResult;
 
 
 public class InvalidationReasonsListTag extends AbstractBodyTagSupport {

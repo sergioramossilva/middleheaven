@@ -8,13 +8,12 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpSession;
 
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.util.coersion.TypeCoercing;
 
-class SessionContextScopeStrategy extends AbstractEnumerationBasedContextScopeStrategy {
+class ServletSessionContextScopeStrategy extends AbstractEnumerationBasedScopedAttributesResolutionStrategy {
 
 	private HttpSession httpSession;
 	
-	public SessionContextScopeStrategy (HttpSession httpSession){
+	public ServletSessionContextScopeStrategy (HttpSession httpSession){
 		super(ContextScope.SESSION);
 		this.httpSession= httpSession;
 	}
@@ -33,14 +32,6 @@ class SessionContextScopeStrategy extends AbstractEnumerationBasedContextScopeSt
 	@Override
 	protected Object getValue(String name) {
 		return httpSession.getAttribute(name);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T> T getAttribute(String name, Class<T> type) {
-		return TypeCoercing.coerce(httpSession.getAttribute(name), type);
 	}
 
 	/**

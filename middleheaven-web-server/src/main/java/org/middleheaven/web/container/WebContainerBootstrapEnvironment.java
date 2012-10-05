@@ -7,28 +7,28 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.core.bootstrap.BootstrapContainer;
-import org.middleheaven.core.bootstrap.ExecutionContext;
-import org.middleheaven.core.bootstrap.ContainerFileSystem;
+import org.middleheaven.core.bootstrap.BootstrapContext;
+import org.middleheaven.core.bootstrap.BootstrapEnvironment;
 import org.middleheaven.core.bootstrap.EditableContainerFileRepositoryManager;
+import org.middleheaven.core.bootstrap.FileContext;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
 
 /**
- * Base abstraction for a {@link BootstrapContainer} that can process web requests based on a {@link ServletContext}.
+ * Base abstraction for a {@link BootstrapEnvironment} that can process web requests based on a {@link ServletContext}.
  */
-public abstract class WebContainer implements BootstrapContainer  {
+public abstract class WebContainerBootstrapEnvironment implements BootstrapEnvironment  {
 
 	private ServletContext context;
 	private EditableContainerFileRepositoryManager containerFileSystem;
 
-	public WebContainer(ServletContext context) {
+	public WebContainerBootstrapEnvironment(ServletContext context) {
 		this.context = context;
 	}
 	
-	public void configurate(ExecutionContext context) {
+	public void configurate(BootstrapContext context) {
 		//no-op
 	}
 	
@@ -38,7 +38,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 
 
 	@Override
-	public final ContainerFileSystem getFileSystem() {
+	public final FileContext getFileContext() {
 		if (this.containerFileSystem==null){
 			containerFileSystem = new EditableContainerFileRepositoryManager();
 			
@@ -94,6 +94,11 @@ public abstract class WebContainer implements BootstrapContainer  {
 		return repo.retrive(path);
 	}
 	
+	/**
+	 * 
+	 * @param context
+	 * @param fileSystem
+	 */
 	protected void setupDefaultFilesRepositories(ServletContext context, EditableContainerFileRepositoryManager fileSystem ){
 		ManagedFile root =getContainerRoot(context);
 
@@ -115,7 +120,7 @@ public abstract class WebContainer implements BootstrapContainer  {
 		
 		fileSystem.setAppClasspathRepository(root.retrive("WEB-INF/classes"));
 		
-
+		fileSystem.setAppLibraryRepository(root.retrive("WEB-INF/lib"));
 	}
 	
 	

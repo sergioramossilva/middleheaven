@@ -39,10 +39,10 @@ public class CheckableListItem implements Comparable<CheckableListItem>{
 	
 	public boolean equals(Object other) {
 		return other instanceof CheckableListItem
-				&& equals((CheckableListItem) other);
+				&& equalsOther((CheckableListItem) other);
 	}
 	
-	public boolean equals(CheckableListItem other) {
+	private boolean equalsOther(CheckableListItem other) {
 		return other == null ? false : this.id.equals(other.id);
 	}
 	

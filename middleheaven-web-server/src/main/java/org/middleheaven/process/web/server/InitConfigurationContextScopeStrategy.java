@@ -8,13 +8,12 @@ import java.util.Enumeration;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.util.coersion.TypeCoercing;
 
-class InitConfigurationContextScopeStrategy extends AbstractEnumerationBasedContextScopeStrategy {
+class ServletInitConfigurationScopedAttributesResolutionStrategy extends AbstractEnumerationBasedScopedAttributesResolutionStrategy {
 
 	private ServletContext context;
 	
-	public InitConfigurationContextScopeStrategy (ServletContext context){
+	public ServletInitConfigurationScopedAttributesResolutionStrategy (ServletContext context){
 		super(ContextScope.CONFIGURATION);
 		this.context= context;
 	}
@@ -33,14 +32,6 @@ class InitConfigurationContextScopeStrategy extends AbstractEnumerationBasedCont
 	@Override
 	protected Object getValue(String name) {
 		return context.getInitParameter(name);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <T> T getAttribute(String name, Class<T> type) {
-		return TypeCoercing.coerce(context.getInitParameter(name), type);
 	}
 
 	/**

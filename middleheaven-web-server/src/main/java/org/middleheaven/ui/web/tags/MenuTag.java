@@ -14,8 +14,8 @@ import javax.servlet.jsp.tagext.BodyContent;
 
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.global.Culture;
-import org.middleheaven.global.text.GlobalLabel;
-import org.middleheaven.global.text.LocalizationService;
+import org.middleheaven.global.LocalizationService;
+import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.ui.components.MenuItem;
 
 public class MenuTag extends AbstractBodyTagSupport {
@@ -86,7 +86,7 @@ public class MenuTag extends AbstractBodyTagSupport {
 		current = new StackItem(item);
 		if(!item.isTitleLocalized()){
 			Culture culture = new TagContext(pageContext).getCulture();
-			localizationService.getMessage(culture, new GlobalLabel(item.getTitle()), false);
+			localizationService.getMessage(TextLocalizable.valueOf(item.getTitle()), culture);
 		} else {
 			item.setLabel(item.getTitle());
 		}
