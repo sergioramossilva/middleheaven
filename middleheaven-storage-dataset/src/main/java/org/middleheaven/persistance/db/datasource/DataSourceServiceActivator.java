@@ -9,7 +9,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.middleheaven.core.bootstrap.FileContextService;
-import org.middleheaven.core.services.AtivationException;
+import org.middleheaven.core.bootstrap.activation.AtivationException;
 import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceSpecification;
@@ -121,7 +121,6 @@ public class DataSourceServiceActivator extends ServiceActivator {
 							}
 						}
 						sources.put(connectionParams.getProperty("datasource.name"), provider );
-
 
 					} catch (ManagedIOException e) {
 						Logger.onBookFor(this.getClass()).error(e,"Error loading datasource file");
