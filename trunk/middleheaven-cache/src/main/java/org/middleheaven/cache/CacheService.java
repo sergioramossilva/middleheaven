@@ -1,6 +1,6 @@
 package org.middleheaven.cache;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 
 @Service
 public interface CacheService {
