@@ -6,7 +6,7 @@ package org.middleheaven.io.repository;
 import java.net.URI;
 import java.util.Map;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 
 /**
  * 

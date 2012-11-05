@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.logging.config.LoggingConfiguration;
+import org.middleheaven.logging.LoggingConfiguration;
 import org.middleheaven.util.StringUtils;
 
 public class FileWriter extends StreamLogBookWriter {

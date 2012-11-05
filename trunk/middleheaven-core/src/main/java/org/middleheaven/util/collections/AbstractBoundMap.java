@@ -4,6 +4,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * And abastract implementation of a {@link BoundMap}.
+ * @param <K> the key type
+ * @param <V> the value type.
+ */
 public abstract class AbstractBoundMap<K,V> implements BoundMap<K,V> {
 
 	

@@ -3,7 +3,7 @@
  */
 package org.middleheaven.application;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 
 /**
  * Provides a register point for {@link ApplicationScanner}'s and 

@@ -1,6 +1,6 @@
 package org.middleheaven.core.wiring;
 
-import org.middleheaven.core.wiring.annotations.Component;
+import org.middleheaven.core.annotations.Component;
 
 @Component
 public interface BindConfiguration {

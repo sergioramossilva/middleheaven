@@ -31,7 +31,7 @@ public class TextFile extends ManagedFileDecorator {
 		super(original);
 	}
 
-	public CharSequence getText(){
+	public StringBuilder getText(){
 		BufferedReader reader = null;
 		try{
 

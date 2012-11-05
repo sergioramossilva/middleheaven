@@ -3,8 +3,6 @@ package org.middleheaven.core.reflection;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-import org.middleheaven.core.reflection.inspection.Introspector;
-
 
 public  class ReflectionFieldAccessor implements FieldAcessor{
 
@@ -85,7 +83,7 @@ public  class ReflectionFieldAccessor implements FieldAcessor{
 	}
 
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		return Introspector.of(field).getAnnotation(annotationClass);
+		return field.getAnnotation(annotationClass);
 	}
 
 	/**

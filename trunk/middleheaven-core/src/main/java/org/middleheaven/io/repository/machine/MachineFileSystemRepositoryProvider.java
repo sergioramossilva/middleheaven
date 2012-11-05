@@ -4,10 +4,10 @@ package org.middleheaven.io.repository.machine;
 import java.net.URI;
 import java.util.Map;
 
+import org.middleheaven.io.UnsupportedSchemeException;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
 import org.middleheaven.io.repository.RepositoryCreationException;
-import org.middleheaven.io.repository.UnsupportedSchemeException;
 
 
 /**

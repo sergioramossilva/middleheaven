@@ -9,7 +9,7 @@ import org.middleheaven.util.NaturalIncrementable;
 /**
  * 
  */
-public class NaturalIncrementableIncrementor<T extends NaturalIncrementable<T>> implements Incrementor<T> {
+public class NaturalIncrementableIncrementor<T extends NaturalIncrementable<T>> implements Incrementor<T, Integer> {
 
 	
 	private boolean isReversed;
@@ -33,8 +33,18 @@ public class NaturalIncrementableIncrementor<T extends NaturalIncrementable<T>> 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Incrementor<T> reverse() {
-		return new NaturalIncrementableIncrementor<T>(this.isReversed);
+	public Incrementor<T, Integer> reverse() {
+		return new NaturalIncrementableIncrementor<T>(!this.isReversed);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<T, Integer> withStep(Integer step) {
+		throw new UnsupportedOperationException("withStep is not supported");
+	}
+
+	
 
 }

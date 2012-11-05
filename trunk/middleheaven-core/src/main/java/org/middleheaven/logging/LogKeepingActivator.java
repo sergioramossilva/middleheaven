@@ -9,10 +9,6 @@ import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.io.repository.ManagedFile;
-import org.middleheaven.logging.config.BasicConfigurator;
-import org.middleheaven.logging.config.LoggingConfiguration;
-import org.middleheaven.logging.config.LoggingConfigurator;
-import org.middleheaven.logging.config.XMLLoggingConfigurator;
 
 /**
  * Ativates log keeping. This activator will create a {@link ConfigurableLogListener}

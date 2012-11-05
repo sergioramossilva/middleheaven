@@ -16,6 +16,12 @@ class MapFileRepositoryService extends AbstractFileRepositoryService {
 	private Map<String, ManagedFileRepositoryProvider> providers = new HashMap<String, ManagedFileRepositoryProvider>();
 	
 	/**
+	 * 
+	 * Constructor.
+	 */
+	public MapFileRepositoryService(){}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

@@ -7,6 +7,10 @@ import java.util.Random;
 import org.middleheaven.util.classification.Classification;
 import org.middleheaven.util.classification.Classifier;
 
+/**
+ * An {@link Enumerable} enhanced  {@link Collection}.
+ * @param <T> the type of the item in the collection.
+ */
 public interface EnhancedCollection<T> extends Collection<T> , Enumerable<T> {
 
 	public EnhancedCollection<T> asUnmodifiable();
@@ -43,7 +47,19 @@ public interface EnhancedCollection<T> extends Collection<T> , Enumerable<T> {
 	public boolean containsSame(Collection<T> other);
 
 	public EnhancedList<T> asList();
+	
+	/**
+	 * Converts this collection to a {@link EnhancedSet}.
+	 * @return
+	 */
 	public EnhancedSet<T> asSet();
 
+	/**
+	 * Get the first element in the collection or <code>null</code> if the collection is empty. The first element is defined
+	 * by colelction's iterator's order.
+	 * @return the first element in the collection or <code>null</code> if the collection is empty.
+	 */
 	public T getFirst();
+	
+
 }

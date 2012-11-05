@@ -6,6 +6,7 @@ import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Numeral;
 import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.RealField;
 import org.middleheaven.util.Incrementable;
 
 public class LongInteger extends BigInt {
@@ -98,18 +99,7 @@ public class LongInteger extends BigInt {
 	public boolean isEven() {
 		return this.value % 2 == 0 ;
 	}
-
-
-	@Override
-	public BigInt one() {
-	    return ONE;
-	}
-
-	@Override
-	public BigInt zero() {
-		return ZERO;
-	}
-
+	
 	@Override
 	public BigInt minus(java.lang.Number n) {
 		return this.minus(new LongInteger(n.longValue()));
@@ -152,7 +142,7 @@ public class LongInteger extends BigInt {
 
 	@Override
 	public Complex toComplex() {
-		return Complex.valueOf(toReal(), Real.ZERO());
+		return Complex.rectangular(toReal(), RealField.getInstance().zero());
 	}
 
 	@Override

@@ -1,12 +1,15 @@
 package org.middleheaven.util;
 
+import org.middleheaven.quantity.time.CalendarDateIncrementor;
+
 /**
  * Incrementor for {@link Character}.
  * 
  */
-public class CharacterIncrementor implements Incrementor<Character> {
+public class CharacterIncrementor implements Incrementor<Character, Integer> {
 
 	int step;
+	private boolean reversed;
 	
 	/**
 	 * 
@@ -14,7 +17,12 @@ public class CharacterIncrementor implements Incrementor<Character> {
 	 * @param step
 	 */
 	public CharacterIncrementor(int step){
+		this(step, false);
+	}
+	
+	 CharacterIncrementor(int step, boolean reversed){
 		this.step = step;
+		this.reversed = reversed;
 	}
 	
 	/**
@@ -30,8 +38,20 @@ public class CharacterIncrementor implements Incrementor<Character> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Incrementor<Character> reverse() {
-		return new CharacterIncrementor(-this.step);
+	public Incrementor<Character, Integer> reverse() {
+		return new CharacterIncrementor(-this.step, !this.reversed);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<Character, Integer> withStep(Integer step) {
+		CharacterIncrementor inc = new CharacterIncrementor(step);
+		if (this.reversed){
+			return inc.reverse();
+		}
+		return inc;
 	}
 
 	

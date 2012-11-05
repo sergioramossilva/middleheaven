@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.middleheaven.logging.config.LoggingConfiguration;
 
 /**
  * Stores all {@code LoggingEvent}s written to it in a {@code List}.

@@ -7,8 +7,8 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 
 import org.junit.Test;
+import org.middleheaven.core.annotations.Wire;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.util.collections.EnhancedCollection;
 
 

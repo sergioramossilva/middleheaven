@@ -3,10 +3,11 @@
  */
 package org.middleheaven.logging;
 
+import org.middleheaven.core.annotations.Service;
 import org.middleheaven.events.EventListenersSet;
 
 /**
- * 
+ * {@link Service} that allows for logging broadcast.
  */
 public class BroadcastLoggingService implements LoggingService {
 

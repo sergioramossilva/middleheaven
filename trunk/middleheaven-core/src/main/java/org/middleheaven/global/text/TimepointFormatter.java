@@ -11,7 +11,7 @@ import org.middleheaven.quantity.time.TimePoint;
 import org.middleheaven.quantity.time.TimeUtils;
 
 
-public class TimepointFormatter implements Formatter<TimePoint> {
+public class TimepointFormatter implements ParsableFormatter<TimePoint> {
 
 	public enum Format {
 

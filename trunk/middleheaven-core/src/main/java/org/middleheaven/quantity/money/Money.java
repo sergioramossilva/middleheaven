@@ -6,6 +6,8 @@ import java.util.Arrays;
 
 import org.middleheaven.quantity.Quantity;
 import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.RealField;
+import org.middleheaven.quantity.math.structure.GroupAdditive;
 import org.middleheaven.quantity.measure.Amount;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.Unit;
@@ -281,12 +283,47 @@ public class Money implements Amount<Money, org.middleheaven.quantity.measurable
 		return (int)(this.amount - other.amount);
 	}
 
-	@Override
-	public Money zero() {
-		return new Money (0,this.currency);
-	}
-	
 	public Currency currency(){
 		return currency;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public GroupAdditive<Money> getAlgebricStructure() {
+		return new GroupAdditive<Money>(){
+
+			@Override
+			public boolean isGroupAdditive() {
+				return true;
+			}
+
+			@Override
+			public boolean isRing() {
+				return false;
+			}
+
+			@Override
+			public boolean isField() {
+				return false;
+			}
+
+			@Override
+			public Money zero() {
+				return new Money(RealField.getInstance().zero(), currency);
+			}
+			
+		};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isZero() {
+		return this.amount == 0L;
+	}
+
+	
 }

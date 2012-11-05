@@ -5,7 +5,7 @@ package org.middleheaven.core.wiring;
 
 import java.lang.annotation.Annotation;
 
-import org.middleheaven.core.wiring.annotations.ScopeSpecification;
+import org.middleheaven.core.annotations.ScopeSpecification;
 
 /**
  * 

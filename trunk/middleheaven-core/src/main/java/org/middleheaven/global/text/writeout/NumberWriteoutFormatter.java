@@ -2,10 +2,13 @@ package org.middleheaven.global.text.writeout;
 
 import java.util.Locale;
 
+import org.middleheaven.core.reflection.NoSuchClassReflectionException;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.global.Culture;
+import org.middleheaven.global.text.Formatter;
 
-public abstract class NumberWriteoutFormatter {
+public abstract class NumberWriteoutFormatter implements Formatter<Number>{
 
 	public static Locale[] getAvailableLocales(){
 		return new Locale[]{
@@ -17,6 +20,11 @@ public abstract class NumberWriteoutFormatter {
 		};
 	}
 
+	/**
+	 * Obtains the correct instance of a {@link NumberWriteoutFormatter} for the given {@link Culture}.
+	 * @param culture the required {@link Culture}.
+	 * @return  the correct instance of a {@link NumberWriteoutFormatter} for the given {@link Culture}.
+	 */
 	public static NumberWriteoutFormatter getInstance(Culture culture){
 		try{
 			String lang = culture.getLanguage().toString();
@@ -28,13 +36,17 @@ public abstract class NumberWriteoutFormatter {
 			}
 
 			String name = NumberWriteoutFormatter.class.getPackage().getName() + "."+ country + lang + NumberWriteoutFormatter.class.getSimpleName();
-			return Introspector.of(NumberWriteoutFormatter.class).newInstance(name);
-		} catch (Exception e){
-			throw new FormatNotFoundException("Cannot find format class for culture " + culture);
-		}
+			return ClassIntrospector.of(NumberWriteoutFormatter.class).load(name).newInstance();
+		} catch (NoSuchClassReflectionException e) {
+			throw new FormatNotFoundException("NumberWriteoutFormatter for culture " + culture + " was not found");
+		} 
 	}
 
-	public String inWords(Number number){
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String format(Number number){
 		return format(number.toString());
 	}
 

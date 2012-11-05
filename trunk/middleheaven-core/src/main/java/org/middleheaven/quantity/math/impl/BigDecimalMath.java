@@ -24,7 +24,7 @@ class BigDecimalMath {
 	}
 	
 	/**
-	 * Greatest Common Divisor
+	 * Greatest Common Divisor.
 	 * 
 	 * @see http://en.wikipedia.org/wiki/Greatest_common_divisor
 	 * @see http://sci.tech-archive.net/Archive/sci.math/2006-04/msg01661.html
@@ -58,7 +58,7 @@ class BigDecimalMath {
 	}
 	
 	/**
-	 * Least coomon Multiplier
+	 * Least coomon Multiplier.
 	 * 
 	 * lcm = |a.b| / gcd(a,b);
 	 * 
@@ -469,8 +469,8 @@ class BigDecimalMath {
         	//If |x| > 1, compute arctan(x) = pi/2 - arctan(1/x).
         	return  BigDecimal.valueOf(Math.PI/2).subtract(arctan(BigDecimal.ONE.divide(x, scale,BigDecimal.ROUND_HALF_EVEN), scale));
         }else if (x.abs().compareTo(BigDecimal.ONE) == 0) {
-        	return  BigDecimal.valueOf(Math.PI/4);
-        }else if (x.abs().compareTo(BigDecimal.ZERO) == 0) {
+        	return  BigDecimal.valueOf(Math.PI).add(new BigDecimal(4));
+        }else if (x.compareTo(BigDecimal.ZERO) == 0) {
         	return  BigDecimal.ZERO;
         }
 
@@ -491,7 +491,7 @@ class BigDecimalMath {
      * @param scale the desired scale of the result
      * @return the result value
      */
-    private static BigDecimal arctanTaylor(BigDecimal x, int scale) {
+    protected static BigDecimal arctanTaylor(BigDecimal x, int scale) {
 
         int     sp1     = scale + 1;
         int     i       = 3;

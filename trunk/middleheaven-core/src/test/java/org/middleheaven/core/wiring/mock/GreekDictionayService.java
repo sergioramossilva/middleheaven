@@ -3,8 +3,8 @@
  */
 package org.middleheaven.core.wiring.mock;
 
-import org.middleheaven.core.wiring.annotations.Component;
-import org.middleheaven.core.wiring.annotations.Profile;
+import org.middleheaven.core.annotations.Component;
+import org.middleheaven.core.annotations.Profile;
 
 /**
  * 

@@ -12,7 +12,9 @@ import org.middleheaven.util.Hash;
 import org.middleheaven.util.classification.LogicOperator;
 import org.middleheaven.util.collections.CollectionUtils;
 
-
+/**
+ * A {@link BooleanCriterion} the enables logic relaction with other criteria.
+ */
 public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 
 
@@ -21,30 +23,59 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 	private final LogicOperator operator;
 	protected final LinkedList<Criterion> criteria;
 
-
-	public LogicOperator getOperator() {
-		return operator;
+	/**
+	 * 
+	 * Created a {@link LogicCriterion} using the AND operator.
+	 * 
+	 */
+	public LogicCriterion(){
+		this(LogicOperator.and());
 	}
 
+	/**
+	 * 
+	 * Copy Constructor.
+	 * @param other the {@link LogicCriterion} to copy.
+	 */
 	public LogicCriterion(LogicCriterion other){
 		this.operator = other.operator;
 		this.criteria = new LinkedList<Criterion>(other.criteria);
 	}
 
+	/**
+	 * 
+	 * Created a {@link LogicCriterion} using the given operator.
+	 * @param operator the oeprator to use
+	 */
 	public LogicCriterion(LogicOperator operator){
 		this.operator = operator;
 		this.criteria = new LinkedList<Criterion>();
 	}
 
-	public LogicCriterion(){
-		this(LogicOperator.and());
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isJunction() {
+		return false;
 	}
+	
+	/**
+	 * 
+	 * @return the {@link LogicOperator} in use.
+	 */
+	public LogicOperator getOperator() {
+		return operator;
+	}
+
+	
 
 
 
 	private void addCriterion(Criterion c){
 
-		if (c instanceof JunctionCriterion){
+		if (c.isJunction()){
 			// put JuntionRestriction on top of the list
 			// but respect order of insertion of Criterion
 
@@ -52,15 +83,15 @@ public class LogicCriterion implements BooleanCriterion , Iterable<Criterion>{
 			// Find the first item that is not a JuntionRestriction
 			// and insert before it
 			for (ListIterator<Criterion> it = criteria.listIterator();it.hasNext();){
-				Object o = it.next();
-				if (!(o instanceof JunctionCriterion)){
+				Criterion o = it.next();
+				if (!o.isJunction()){
 					it.previous();
 					it.add(c);
 					return;
 				}
 			}
 
-			// if no item is differente form JuntionRestriction
+			// if no item is different form JuntionRestriction
 			// (or the list is empty)
 			criteria.addLast(c);
 

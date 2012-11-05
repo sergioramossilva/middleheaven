@@ -1,8 +1,8 @@
 package org.middleheaven.core.wiring.mock;
 
-import org.middleheaven.core.wiring.annotations.Component;
-import org.middleheaven.core.wiring.annotations.Named;
-import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.annotations.Component;
+import org.middleheaven.core.annotations.Named;
+import org.middleheaven.core.annotations.Wire;
 
 @Component
 public class HelloMessage extends Message {

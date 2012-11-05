@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Properties;
 
+import org.middleheaven.core.annotations.Service;
 import org.middleheaven.core.bootstrap.BootstrapEnvironment;
 import org.middleheaven.core.bootstrap.FileContext;
 import org.middleheaven.core.bootstrap.FileContextService;
 import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceSpecification;
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.sequence.SequenceState;

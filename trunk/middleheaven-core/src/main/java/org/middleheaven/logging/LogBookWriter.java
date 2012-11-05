@@ -4,7 +4,6 @@ package org.middleheaven.logging;
 import java.text.MessageFormat;
 import java.util.Map;
 
-import org.middleheaven.logging.config.LoggingConfiguration;
 
 /**
  * Writes the LoggingEvent on to a book media. 

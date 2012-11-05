@@ -1,38 +1,73 @@
 package org.middleheaven.quantity.math;
 
 import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 import org.middleheaven.quantity.math.structure.MathStructuresFactory;
-import org.middleheaven.quantity.measure.AngularMeasure;
 
-
-public abstract class Complex extends Numeral<Complex> implements Field<Complex> ,Conjugatable<Complex> {
+/**
+ * Complex field element.
+ */
+public abstract class Complex extends Numeral<Complex> implements FieldElement<Complex> ,Conjugatable<Complex> {
 
 	private static final long serialVersionUID = 5580549238295872790L;
 	
-	public static Complex polar(Real magnitude, AngularMeasure phase) {
+	/**
+	 * Creates a complex number form it's polar representation.
+	 * @param magnitude the magnitude of the complex.
+	 * @param phase the phase of the complex.
+	 * @return the complex number.
+	 */
+	public static Complex polar(Real magnitude, Real phase) {
 		
 		Real real = magnitude.times(phase.cos());
 		Real imaginary = magnitude.times(phase.sin());
 		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class , real ,  imaginary);
 	}
 	
-	public static Complex valueOf(Real real, Real imaginary) {
+	/**
+	 * Creates a complex number form it's retangular representation.
+	 * @param real the real parte of the number
+	 * @param imaginary the imaginary part of the number
+	 * @return the complex number.
+	 */
+	public static Complex rectangular(Real real, Real imaginary) {
 		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class , real ,  imaginary);
 	}
 	
-	public static Complex valueOf(java.lang.Number real, java.lang.Number imaginary) {
+	/**
+	 * Creates a complex number form it's retangular representation.
+	 * @param real the real parte of the number
+	 * @param imaginary the imaginary part of the number
+	 * @return the complex number.
+	 */
+	public static Complex rectangular(java.lang.Number real, java.lang.Number imaginary) {
 		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class ,real.toString() + "+i" + imaginary.toString());
 	}
 	
+	/**
+	 * Creates a pure real complex.
+	 * @param real the real part of the number.
+	 * @return the complex number.
+	 */
 	public static Complex real(java.lang.Number real) {
-		return valueOf(real, 0d);
+		return rectangular(real, 0d);
 	}
 	
+	/**
+	 * Creates a pure imaginary complex.
+	 * @param imaginary the imaginary part of the number.
+	 * @return the complex number.
+	 */
 	public static Complex imaginary(java.lang.Number imaginary) {
-		return valueOf(0d, imaginary);
+		return rectangular(0d, imaginary);
 	}
 	
-	public static Complex valueOf(String value) {
+	/**
+	 * Creates a complex number form it's string retangular representation.
+	 * @param value a retangular representation of the complex in the form a+ib 
+	 * @return the complex number.
+	 */
+	public static Complex rectangular(String value) {
 		return (Complex)MathStructuresFactory.getFactory().numberFor(Complex.class ,value);
 	}
 	
@@ -86,6 +121,12 @@ public abstract class Complex extends Numeral<Complex> implements Field<Complex>
 	public abstract Complex i();
 	
 
-
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Field<Complex> getAlgebricStructure() {
+		return ComplexField.getInstance();
+	}
 
 }

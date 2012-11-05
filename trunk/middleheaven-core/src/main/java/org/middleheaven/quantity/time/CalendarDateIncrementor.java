@@ -2,11 +2,26 @@ package org.middleheaven.quantity.time;
 
 import org.middleheaven.util.Incrementor;
 
-public class CalendarDateIncrementor implements Incrementor<CalendarDate> {
+/**
+ * 
+ */
+public class CalendarDateIncrementor implements Incrementor<CalendarDate, ElapsedTime> {
 
-    ElapsedTime elapsedTime;
+	private ElapsedTime elapsedTime;
+    private boolean reversed;
+    
+    /**
+     * 
+     * Constructor.
+     * @param elapsedTime the step for the increment
+     */
 	public CalendarDateIncrementor(ElapsedTime elapsedTime){
-    	 this.elapsedTime = elapsedTime;
+    	 this(elapsedTime, false);
+	}
+	
+	 CalendarDateIncrementor(ElapsedTime elapsedTime, boolean reversed){
+	   	 this.elapsedTime = elapsedTime;
+	   	 this.reversed = reversed;
 	}
 
 	@Override
@@ -18,8 +33,22 @@ public class CalendarDateIncrementor implements Incrementor<CalendarDate> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Incrementor<CalendarDate> reverse() {
-		return new CalendarDateIncrementor(this.elapsedTime.negate());
+	public Incrementor<CalendarDate, ElapsedTime> reverse() {
+		return new CalendarDateIncrementor(this.elapsedTime.negate(), !this.reversed);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<CalendarDate, ElapsedTime> withStep(ElapsedTime step) {
+		CalendarDateIncrementor inc = new CalendarDateIncrementor(step);
+		if (this.reversed){
+			return inc.reverse();
+		}
+		return inc;
+	}
+	
+	 
 
 }

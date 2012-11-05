@@ -37,7 +37,6 @@ public class ManagedFilePathTest  extends MiddleHeavenTestCase {
 //		assertEquals(pathRelativeSibling, path.resolveSibling("directoryC/someFile.txt"));
 //		assertEquals(path, pathRelative.getParent());
 //	}
-	
 	@Test
 	public void testLinux(){
 		String root = "/home/javabuil/appservers/apache-tomcat-6x/webapps/javabuilding";

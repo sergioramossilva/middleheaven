@@ -3,14 +3,17 @@ package org.middleheaven.util.collections;
 import java.util.Map;
 
 /**
- * Map that allow only one unique value per key, permitting a reverse mapping of values to keys
+ *A {@link Map} that allows only one unique value per key, permitting a reverse mapping of values to keys.
  * 
  *
- * @param <K>
- * @param <V>
+ * @param <K> the key type
+ * @param <V> the value type.
  */
 public interface BoundMap<K,V> extends Map<K,V> {
 
-	
-	public Map<V,K> reversed();
+	/**
+	 * The reversed Map where this map keys are he values , and this map values are the keys.
+	 * @return the reversed Map.
+	 */
+	public BoundMap<V,K> reversed();
 }

@@ -8,7 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.junit.Test;
-import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.annotations.Wire;
 import org.middleheaven.io.repository.FileRepositoryService;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepository;

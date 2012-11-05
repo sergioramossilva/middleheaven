@@ -17,7 +17,6 @@ public class ServiceBuilder {
 		return new ServiceBuilder(contractInterface);
 	}
 
-
 	private Class<?> contractInterface;
 	private ServiceActivator activator;
 	private Map<String, Object> params = Collections.emptyMap();

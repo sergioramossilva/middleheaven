@@ -7,9 +7,10 @@ import java.math.BigInteger;
 /**
  * {@link Incrementor} implementation for any {@link java.lang.Number}.
  */
-public class NumberIncrementor implements Incrementor<java.lang.Number> {
+public class NumberIncrementor<N extends Number & Comparable> implements Incrementor<N,N> {
 
 	java.lang.Number step;
+	private boolean reversed;
 	
 	/**
 	 * 
@@ -17,14 +18,19 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * @param step the setp to increment by
 	 */
 	public NumberIncrementor(java.lang.Number step){
+		this(step, false);
+	}
+	
+	NumberIncrementor(java.lang.Number step, boolean reversed){
 		this.step = step;
+		this.reversed = reversed;
 	}
 	
 	@Override
-	public java.lang.Number increment(java.lang.Number object) {
+	public N increment(java.lang.Number object) {
 		try {
 			Method m = this.getClass().getDeclaredMethod("increment", object.getClass());
-			return (java.lang.Number)m.invoke(this, object);
+			return (N)m.invoke(this, object);
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Cannot increment " + object.getClass(),e);
 		} 
@@ -106,7 +112,20 @@ public class NumberIncrementor implements Incrementor<java.lang.Number> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Incrementor<Number> reverse() {
-		return new NumberIncrementor((new BigDecimal(step.toString())).negate());
+	public Incrementor<N, N> reverse() {
+		return new NumberIncrementor((new BigDecimal(step.toString())).negate(), !this.reversed);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<N, N> withStep(Number step) {
+		NumberIncrementor inc = new NumberIncrementor(step);
+		if (this.reversed){
+			return inc.reverse();
+		}
+		return inc;
 	}
 }

@@ -12,13 +12,14 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.middleheaven.core.annotations.Component;
+import org.middleheaven.core.annotations.Service;
+import org.middleheaven.core.annotations.Shared;
 import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.annotations.Component;
-import org.middleheaven.core.wiring.annotations.Shared;
-import org.middleheaven.core.wiring.service.Service;
-import org.middleheaven.core.wiring.service.ServiceScope;
+import org.middleheaven.core.services.RegistryServiceContext;
+import org.middleheaven.core.services.ServiceScope;
 import org.middleheaven.events.EventListenersSet;
 import org.middleheaven.graph.DirectGraph;
 import org.middleheaven.logging.Logger;
@@ -44,7 +45,7 @@ public class StandardWiringService implements WiringService {
 
 	private final PropertyResolver propertyResolver;
 
-	public StandardWiringService(PropertyManagers propertyManagers) {
+	public StandardWiringService(PropertyManagers propertyManagers, RegistryServiceContext serviceRegistryContext) {
 		parsers.add(new DefaultWiringModelParser());
 
 		propertyResolver = new PropertyResolver(propertyManagers);
@@ -56,7 +57,7 @@ public class StandardWiringService implements WiringService {
 		this.addItemBundle(new ClassSetWiringBundle(contextClasses));
 
 
-		registerScope("service", new ServiceScope());
+		registerScope("service", new ServiceScope(serviceRegistryContext));
 		registerScope("shared", sharedScope);
 		registerScope("default", newInstanceScope);
 
@@ -262,42 +263,42 @@ public class StandardWiringService implements WiringService {
 			//			}
 
 		}
-
-		private Object getOrCreate(WiringQuery query, Key key,String scopeName, Resolver resolver ) {
-			// resolve scope
-
-			Scope scopePool = getScopePool(scopeName);
-
-			if (resolver == null){
-
-				if (!query.getContract().isInterface()) {
-					resolver = FactoryResolver.instanceFor(this.getBeanModel(query.getContract()));
-				} else {
-					resolver = NullResolver.instance();
-				}
-
-			}
-
-			if (resolver != null) {
-				// attach interceptors
-
-				ResolutionContext context = new StandardResolutionContext(scopeName);
-
-				final InterceptorResolver interceptorResolver = new InterceptorResolver(interceptors, resolver);
-				Object obj = scopePool.getInScope(context, query, interceptorResolver);
-
-				stack.remove(key);
-
-				// check if there is any proxy to complete
-				CyclicProxy proxy = cyclicProxies.get(key);
-				if (proxy != null) {
-					proxy.setRealObject(obj);
-				}
-				return obj;
-			} else {
-				return null;
-			}
-		}
+//
+//		private Object getOrCreate(WiringQuery query, Key key,String scopeName, Resolver resolver ) {
+//			// resolve scope
+//
+//			Scope scopePool = getScopePool(scopeName);
+//
+//			if (resolver == null){
+//
+//				if (!query.getContract().isInterface()) {
+//					resolver = FactoryResolver.instanceFor(this.getBeanModel(query.getContract()));
+//				} else {
+//					resolver = NullResolver.instance();
+//				}
+//
+//			}
+//
+//			if (resolver != null) {
+//				// attach interceptors
+//
+//				ResolutionContext context = new StandardResolutionContext(scopeName);
+//
+//				final InterceptorResolver interceptorResolver = new InterceptorResolver(interceptors, resolver);
+//				Object obj = scopePool.getInScope(context, query, interceptorResolver);
+//
+//				stack.remove(key);
+//
+//				// check if there is any proxy to complete
+//				CyclicProxy proxy = cyclicProxies.get(key);
+//				if (proxy != null) {
+//					proxy.setRealObject(obj);
+//				}
+//				return obj;
+//			} else {
+//				return null;
+//			}
+//		}
 
 		public void wireMembers(Object obj) {
 			BeanDependencyModel model = this.getBeanModel(obj.getClass());
@@ -784,14 +785,21 @@ public class StandardWiringService implements WiringService {
 						throw new BindingException("A cycle was detected up on a final type " + query.getContract() + ". Cycle can not be resolved.");
 					}
 
-					// return proxy
-					CyclicProxy proxy = cyclicProxies.get(key);
-					if (proxy == null) {
-						proxy = new CyclicProxy();
-						cyclicProxies.put(key, proxy);
-					}
-					return Introspector.of(query.getContract()).newProxyInstance(proxy);
+					
+					if (query.getContract().isInterface()){
+						// return proxy
+						CyclicProxy proxy = cyclicProxies.get(key);
+						if (proxy == null) {
+							proxy = new CyclicProxy();
+							cyclicProxies.put(key, proxy);
+						}
+						return Introspector.of(query.getContract()).newProxyInstance(proxy);
 
+					} else {
+						// TODO register as self-binding 
+						return Introspector.of(query.getContract()).newInstance();
+					}
+					
 				} else {
 					stack.offer(key);
 					try {

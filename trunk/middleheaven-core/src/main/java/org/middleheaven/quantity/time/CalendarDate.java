@@ -7,7 +7,6 @@ import java.util.Date;
 
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.NaturalIncrementable;
-import org.middleheaven.util.collections.ComparableComparator;
 import org.middleheaven.util.collections.Interval;
 import org.middleheaven.util.collections.Range;
 
@@ -72,16 +71,16 @@ public class CalendarDate extends CalendarDateTime  implements Incrementable<Ela
 		return Interval.between(this, date);
 	}
 
-	public Range<CalendarDate> upTo(CalendarDate date) {
+	public Range<CalendarDate, ElapsedTime> upTo(CalendarDate date) {
 		return to(date,Duration.of().days(1));
 	}
 
-	public Range<CalendarDate> downTo(CalendarDate date) {
+	public Range<CalendarDate, ElapsedTime> downTo(CalendarDate date) {
 		return to(date,Duration.of().days(-1));
 	}
 
-	public Range<CalendarDate> to(CalendarDate date, ElapsedTime elapsedTime) {
-		return Range.over(this, date, new ComparableComparator<CalendarDate>(), new CalendarDateIncrementor(elapsedTime));
+	public Range<CalendarDate, ElapsedTime> to(CalendarDate date, ElapsedTime elapsedTime) {
+		return Range.<CalendarDate, ElapsedTime>from(this).by(elapsedTime).upTo(date);
 	}
 	
 	public String toString(){

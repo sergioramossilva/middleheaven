@@ -33,6 +33,8 @@ public class TypeCoercing {
 		addCoersor(String.class, Identity.class , new StringIdentityCoersor());
 		addCoersor(String.class, TextLocalizable.class , new StringTextLocalizableCoersor());
 		
+		addCoersor(Number.class, Number.class ,  new NumberCoersor());
+		
 		// numbers
 		addCoersor(Integer.class, Identity.class ,  NumberIdentityCoersor.newInstance(Integer.class));
 		addCoersor(Long.class, Identity.class ,  NumberIdentityCoersor.newInstance(Long.class));

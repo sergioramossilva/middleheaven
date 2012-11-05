@@ -67,7 +67,7 @@ public class ReadStrategy {
 	private boolean equalsOther(ReadStrategy other){
 		return this.isFowardOnly == other.isFowardOnly &&
 				this.isReadOnly == other.isReadOnly &&
-				this.maxFetchDeep == maxFetchDeep;
+				this.maxFetchDeep == other.maxFetchDeep;
 	}
 
 	@Override

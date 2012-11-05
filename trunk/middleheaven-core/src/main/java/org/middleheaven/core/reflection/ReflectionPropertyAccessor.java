@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.util.coersion.TypeCoercing;
 
 public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor implements PropertyAccessor {
@@ -260,11 +259,11 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		A a=null;
 		if (field!=null){
-			a = Introspector.of(field).getAnnotation(annotationClass);
+			a = field.getAnnotation(annotationClass);
 		} 
 		
 		if (a==null && assessor != null){
-			a = Introspector.of(assessor).getAnnotation(annotationClass);
+			a = assessor.getAnnotation(annotationClass);
 		}
 		return a;
 

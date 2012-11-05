@@ -33,12 +33,13 @@ public class Language implements Comparable<Language>{
 	}
 	
 	/**
-	 * Assert if the language represented by this is the same 
-	 * as the represented by the ISO 639 language code
+	 * Assert if the language represented by this is 
+	 * represented by the ISO 639 language code.
+	 * 
 	 * @param isoCode 
 	 * @return
 	 */
-	public boolean equals (String isoCode){
+	public boolean hasCode (String isoCode){
 		return code.equalsIgnoreCase(isoCode);
 	}
 

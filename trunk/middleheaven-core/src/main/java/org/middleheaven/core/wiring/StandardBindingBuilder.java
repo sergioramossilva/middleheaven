@@ -2,11 +2,16 @@ package org.middleheaven.core.wiring;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
+import org.middleheaven.core.annotations.Default;
+import org.middleheaven.core.annotations.ScopeSpecification;
+import org.middleheaven.core.annotations.Shared;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.annotations.Default;
-import org.middleheaven.core.wiring.annotations.ScopeSpecification;
-import org.middleheaven.core.wiring.annotations.Shared;
 
+/**
+ * Standard implementation of {@link BindingBuilder}.
+ * 
+ * @param <T> the type being binded.
+ */
 public class StandardBindingBuilder<T> implements BindingBuilder<T> {
 
 	public static class StandardQualificationBuilder<T> implements QualificationBuilder<T>{
@@ -26,7 +31,7 @@ public class StandardBindingBuilder<T> implements BindingBuilder<T> {
 			standardBindingBuilder.binding.setResolver(new InstanceResolver(object));
 			standardBindingBuilder.binding.setProvider(new ObjectProvider(object));
 			
-			if (standardBindingBuilder.binding.getScope() == null || standardBindingBuilder.binding.getScope().equals(Default.class)){
+			if (standardBindingBuilder.binding.getScope() == null || standardBindingBuilder.binding.getScope().equals(Default.class.getSimpleName().toLowerCase())){
 				standardBindingBuilder.binding.setScope("shared");
 			}
 			

@@ -7,6 +7,9 @@ import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
 
+/**
+ * A continuous {@link ElapsedTime}.
+ */
 public class Period extends ElapsedTime implements Comparable<Period>{
 
 	
@@ -26,10 +29,20 @@ public class Period extends ElapsedTime implements Comparable<Period>{
 		return minutes(hours * 60);
 	}
 	
+	/**
+	 * 
+	 * @param days
+	 * @return
+	 */
 	public static Period days (int days){
-		return hours(days * 24);
+		return hours(days * 24L);
 	}
 	
+	/**
+	 * 
+	 * @param weeks
+	 * @return
+	 */
 	public static Period weeks (int weeks){
 		return days(weeks * 7);
 	}

@@ -13,11 +13,11 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
+import org.middleheaven.core.annotations.Wire;
 import org.middleheaven.core.bootstrap.activation.AbstractActivatorScanner;
 import org.middleheaven.core.bootstrap.activation.ActivatorScanner;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.watch.FileChangeStrategy;
@@ -79,8 +79,6 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 
 	@Override
 	public void scan() {
-
-		this.wiringService = wiringService;
 
 		if(root.getType().isFolder()){
 
