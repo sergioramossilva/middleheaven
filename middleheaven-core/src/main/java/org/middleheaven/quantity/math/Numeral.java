@@ -6,8 +6,9 @@ import java.math.BigDecimal;
 
 import org.middleheaven.quantity.Quantity;
 import org.middleheaven.quantity.math.structure.Field;
-import org.middleheaven.quantity.math.structure.GroupAdditive;
-import org.middleheaven.quantity.math.structure.Ring;
+import org.middleheaven.quantity.math.structure.FieldElement;
+import org.middleheaven.quantity.math.structure.GroupAdditiveElement;
+import org.middleheaven.quantity.math.structure.RingElement;
 import org.middleheaven.quantity.measurables.Dimensionless;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
@@ -19,7 +20,7 @@ import org.middleheaven.quantity.unit.Unit;
  * 
  *
  */
-public abstract class Numeral<T extends Numeral<T>> implements Field<T> , Quantity<Dimensionless> , Serializable, GroupAdditive<T>, Ring<T>  {
+public abstract class Numeral<T extends Numeral<T>> implements FieldElement<T> , Quantity<Dimensionless> , Serializable, GroupAdditiveElement<T>, RingElement<T>  {
 
 
 	private static final long serialVersionUID = -3007304512447112381L;
@@ -94,7 +95,5 @@ public abstract class Numeral<T extends Numeral<T>> implements Field<T> , Quanti
 	public abstract String toString();
 
    
-
-	
 
 }

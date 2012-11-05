@@ -1,5 +1,6 @@
 package org.middleheaven.quantity.math;
 
+import org.middleheaven.quantity.math.structure.Field;
 import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.NaturalIncrementable;
@@ -12,10 +13,23 @@ import org.middleheaven.util.collections.Range;
  */
 public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<? super Real>> ,Incrementable <Real>, NaturalIncrementable<Real>{
 
+	private static final long serialVersionUID = 5613604361361447882L;
+
+	/**
+	 * Returns a real defined by a fraction of to integers.
+	 * @param num
+	 * @param den
+	 * @return
+	 */
 	public static Real fraction (int num , int den){
 		return valueOf(num).over(valueOf(den));
 	}
 	
+	/**
+	 * Returns an array of {@link Real}s based on an array of {@link Number}.
+	 * @param array
+	 * @return
+	 */
 	public static Real[] valueOf(java.lang.Number ... array){
 		MathStructuresFactory factory = MathStructuresFactory.getFactory();
 		Real[] res = new Real[array.length];
@@ -24,21 +38,21 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 		}
 		return res;
 	}
-	
 
-	public static Real ONE(){
-		return MathStructuresFactory.getFactory().numberFor( Real.class , "1");
-	}
-
-	public static Real ZERO(){
-		return MathStructuresFactory.getFactory().numberFor( Real.class, "0");
-	}
-	
+	/**
+	 * Returns a Real based on a non-formated string.
+	 * @param value the value.
+	 * @return the corresponding {@link Real}.
+	 */
 	public static Real valueOf (String value) {
 		return MathStructuresFactory.getFactory().numberFor( Real.class, value);
 	}
 
-	
+	/**
+	 * Returns a Real based on a {@link Numeral}.
+	 * @param value the value.
+	 * @return the corresponding {@link Real}.
+	 */
 	public static Real valueOf (Numeral<?> other) {
 		if (Real.class.isInstance(other)){
 			return Real.class.cast(other);
@@ -47,7 +61,8 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 	}
 
 	/**
-	 * Obtains a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>
+	 * Obtains a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>.
+	 * 
 	 * @param numerator
 	 * @param denominator
 	 * @return a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>
@@ -56,12 +71,18 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 		return MathStructuresFactory.getFactory().numberFor(Real.class, valueOf(numerator), valueOf(denominator));
 	}
 	
+	/**
+	 * Returns a Real based on a {@link Number}.
+	 * @param value the value.
+	 * @return the corresponding {@link Real}.
+	 */
 	public static Real valueOf (java.lang.Number other) {
 		return MathStructuresFactory.getFactory().numberFor(Real.class,other.toString());
 	}
 	
 	/**
-	 * Obtains a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>
+	 * Obtains a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>.
+	 * 
 	 * @param numerator
 	 * @param denominator
 	 * @return a {@link Real} than best represents the ratio between the <code>numerator</code> and <code>denominator</code>
@@ -69,11 +90,7 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 	public static Real valueOf (java.lang.Number numerator , java.lang.Number denominator) {
 		return MathStructuresFactory.getFactory().numberFor(Real.class, valueOf(numerator), valueOf(denominator));
 	}
-
-	public static Real valueOf (double other) {
-		return MathStructuresFactory.getFactory().numberFor( Real.class, Double.toString(other));
-	}
-
+	
 	@Override
 	public Numeral<Real> promote(Numeral<?> other) {
 		return MathStructuresFactory.getFactory().promote(other, Real.class); 
@@ -83,16 +100,16 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 		return 1;
 	}
 	
-	public Range<Real> upTo(double other){
-		return Range.over(this, Real.valueOf(other), one());
+	public Range<Real, Real> upTo(double other){
+		return  upTo(Real.valueOf(other));
 	}
 	
-	public Range<Real> upTo(Real other){
-		return Range.over(this, other, one());
+	public Range<Real, Real> upTo(Real other){
+		return upTo(other, this.getAlgebricStructure().one());
 	}
 	
-	public Range<Real> upTo(Real other, Real increment){
-		return Range.over(this, other, increment);
+	public Range<Real, Real> upTo(Real other, Real increment){
+		return Range.<Real, Real>from(this).by(increment).upTo(other);
 	}
 
 	/**
@@ -107,21 +124,44 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 	 */
 	public abstract Real arctan();
 	
-	
+	/**
+	 * 
+	 * @return the sine of this;
+	 */
 	public abstract Real sin();
 
+	/**
+	 * 
+	 * @return the cosine of this;
+	 */
 	public abstract Real cos();
 	
+	/**
+	 * 
+	 * @return the tanget of this;
+	 */
 	public abstract Real tan();
 
+	/**
+	 * 
+	 * @return the number E raised to the power of this. Equivalent to Math.exp(this) if this was a double.
+	 */
 	public abstract Real exp();
 	
+	/**
+	 * 
+	 * @return the logarithm of this.
+	 */
 	public abstract Real ln();
 
-	
+	/**
+	 * Returns the exponent power od this.
+	 * @param exponent
+	 * @return this value raised to the powr of the exponent.
+	 */
 	public Real raise(int exponent) {
 		if (exponent==0){
-			return Real.ONE();
+			return this.getAlgebricStructure().one();
 		} else if (exponent>0){
 			 Real a = this;
 			 Real s = this;
@@ -138,6 +178,14 @@ public abstract class Real extends Numeral<Real> implements  Comparable<Numeral<
 			 return s;
 		}
 	}
-	
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Field<Real> getAlgebricStructure() {
+		return RealField.getInstance();
+	}
+	
 }

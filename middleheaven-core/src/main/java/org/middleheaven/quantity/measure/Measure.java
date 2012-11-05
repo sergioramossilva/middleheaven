@@ -1,7 +1,7 @@
 package org.middleheaven.quantity.measure;
 
 import org.middleheaven.quantity.Quantity;
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.Unit;
 
@@ -11,7 +11,7 @@ import org.middleheaven.quantity.unit.Unit;
  * @param <E> the associated <code>Measurable</code>
  * @param <F> the associated underlying <code>Field</code> , normally <code>Real</code>
  */
-public abstract class Measure<E extends Measurable , F extends Field<F>> implements Quantity<E>  {
+public abstract class Measure<E extends Measurable , F extends FieldElement<F>> implements Quantity<E>  {
 
 
 	protected F uncertainty;

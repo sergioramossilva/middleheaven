@@ -9,8 +9,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.middleheaven.core.wiring.annotations.Profile;
-import org.middleheaven.core.wiring.annotations.Qualifier;
+import org.middleheaven.core.annotations.Profile;
+import org.middleheaven.core.annotations.Qualifier;
 
 /**
  * 

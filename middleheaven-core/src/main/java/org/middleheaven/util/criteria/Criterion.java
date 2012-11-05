@@ -7,5 +7,7 @@ public interface Criterion extends Serializable{
 	public boolean isEmpty();
 
 	public Criterion simplify();
+	
+	public boolean isJunction();
 
 }

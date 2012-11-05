@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.RealField;
 import org.middleheaven.quantity.measure.DecimalMeasure;
 import org.middleheaven.quantity.measure.Measurable;
 
@@ -39,11 +40,19 @@ public class MultipleUnit<E extends Measurable> extends Unit<E> {
 		this.base = base;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Dimension<E> dimension() {
 		return base.dimension();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Unit<E> getBaseUnit(){
 		return base;
 	}
@@ -53,10 +62,14 @@ public class MultipleUnit<E extends Measurable> extends Unit<E> {
 		if (other instanceof MultipleUnit){
 			return ((MultipleUnit)other).scale.equals(this.scale) && ((MultipleUnit)other).base.equalsOther(this.base); 
 		} else {
-			return this.scale.equals(Real.ONE()) && ((MultipleUnit)other).base.equalsOther(this.base);
+			return this.scale.equals(RealField.getInstance().one()) && ((MultipleUnit)other).base.equalsOther(this.base);
 		}
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public DecimalMeasure<E> reduceToUnit(){
 		return DecimalMeasure.exact(this.scale, base);
 	} 
@@ -80,6 +93,10 @@ public class MultipleUnit<E extends Measurable> extends Unit<E> {
 		return symbol();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Real getScale() {
 		return scale;
 	}

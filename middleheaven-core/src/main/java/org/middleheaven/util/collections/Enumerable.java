@@ -4,7 +4,7 @@ import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.classification.Predicate;
 
 /**
- * Represents a unmodifiable collection-like interface that's still iterable and permits to query for the collection's size.
+ * Represents an unmodifiable collection-like interface that's still iterable and permits to query for the collection's size.
  * In addition provides several methods for manipulating the data in the collection. 
  *
  * @param <T>

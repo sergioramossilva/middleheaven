@@ -2,11 +2,19 @@ package org.middleheaven.util.collections;
 
 import org.middleheaven.util.Incrementor;
 
-public class EmptyIncrementor<T> implements Incrementor<T>{
+/**
+ * 
+ * @param <T> the type of the value
+ * @param <I> the type o f the increment on the value
+ */
+public class EmptyIncrementor<T, I> implements Incrementor<T, I>{
 
+	@SuppressWarnings("rawtypes")
+	private static final Incrementor ME = new EmptyIncrementor();
 	
-	public static <T> Incrementor<T> emptyIncrementor(){
-		return new EmptyIncrementor<T>();
+	@SuppressWarnings("unchecked")
+	public static <L, J> Incrementor<L, J> emptyIncrementor(){
+		return ME;
 	}
 	
 	private EmptyIncrementor(){}
@@ -20,7 +28,15 @@ public class EmptyIncrementor<T> implements Incrementor<T>{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Incrementor<T> reverse() {
+	public Incrementor<T, I> reverse() {
+		return this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Incrementor<T, I> withStep(I step) {
 		return this;
 	}
 

@@ -5,32 +5,51 @@ import java.math.BigDecimal;
 import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.RealField;
 
-public class RealPairComplex extends Complex {
+/**
+ * Complex implementation using two {@link Real}s.
+ */
+class RealPairComplex extends Complex {
 
-    private static final Complex ONE = new RealPairComplex(Real.ONE(),Real.ZERO());
-    private static final Complex ZERO = new RealPairComplex(Real.ZERO(),Real.ZERO());
-    private static final Complex I = new RealPairComplex(Real.ZERO(),Real.ONE());
+
+	private static final long serialVersionUID = 7330930288749616784L;
+	
+	 private static final Complex I = new RealPairComplex(RealField.getInstance().zero(),RealField.getInstance().one());
 
 	private Real real;
 	private Real imaginary;
 
-	public RealPairComplex(Real real, Real imaginary) {
+	/**
+	 * 
+	 * Constructor.
+	 * @param real
+	 * @param imaginary
+	 */
+	 RealPairComplex(Real real, Real imaginary) {
 		this.real = real;
 		this.imaginary = imaginary;
 	}
 
-	public RealPairComplex(String value) {
-		// TODO melhor parse
-		if (value.indexOf("+i")>0){
-			this.real = Real.valueOf(value.substring(0,value.indexOf("+i")));
-			this.imaginary = Real.valueOf(value.substring(value.indexOf("+i")+2));
-		} else {
+	 /**
+	  * 
+	  * Constructor.
+	  * @param value
+	  */
+	RealPairComplex(String value) {
+
+		final int pos = value.indexOf("+i");
+		if ( pos < 0){
 			this.real = Real.valueOf(value);
-			this.imaginary = Real.ZERO();
+			this.imaginary = RealField.getInstance().zero();
+		} else {
+			this.real = Real.valueOf(value.substring(0,pos));
+			this.imaginary = Real.valueOf(value.substring(pos+2));
+			
 		}
 	}
 
+	
 	@Override
 	public BigDecimal asNumber() {
 		return this.magnitude().asNumber();
@@ -52,16 +71,6 @@ public class RealPairComplex extends Complex {
 	}
 
 	@Override
-	public Complex one() {
-		return ONE;
-	}
-
-	@Override
-	public Complex zero() {
-		return ZERO;
-	}
-
-	@Override
 	public Complex i() {
 		return I;
 	}
@@ -74,6 +83,7 @@ public class RealPairComplex extends Complex {
 	private Real magnitudeSquare(){
 		return this.real.times(this.real).plus(this.imaginary.times(this.imaginary));
 	}
+	
 	@Override
 	public Complex times(Complex other) {
 		// (a+ib) * (c+di) = (ac-db) + (bc+ad)i
@@ -136,22 +146,22 @@ public class RealPairComplex extends Complex {
 
 	@Override
 	public Complex minus(Number n) {
-		return this.minus(new RealPairComplex(Real.valueOf(n), Real.ZERO()));
+		return this.minus(new RealPairComplex(Real.valueOf(n), RealField.getInstance().zero()));
 	}
 
 	@Override
 	public Complex over(Number n) {
-		return this.over(new RealPairComplex(Real.valueOf(n), Real.ZERO()));
+		return this.over(new RealPairComplex(Real.valueOf(n), RealField.getInstance().zero()));
 	}
 
 	@Override
 	public Complex plus(Number n) {
-		return this.plus(new RealPairComplex(Real.valueOf(n), Real.ZERO()));
+		return this.plus(new RealPairComplex(Real.valueOf(n), RealField.getInstance().zero()));
 	}
 
 	@Override
 	public Complex times(Number n) {
-		return this.times(new RealPairComplex(Real.valueOf(n), Real.ZERO()));
+		return this.times(new RealPairComplex(Real.valueOf(n), RealField.getInstance().zero()));
 	}
 
 	protected boolean equalsOther(RealPairComplex other){

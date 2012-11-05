@@ -8,16 +8,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.middleheaven.io.repository.ManagedFile;
+import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.watch.FileChangeStrategy;
 import org.middleheaven.io.repository.watch.FileWatchChannelProcessor;
 import org.middleheaven.io.repository.watch.StandardWatchEvent;
 import org.middleheaven.io.repository.watch.WatchEvent;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
+import org.middleheaven.tool.test.MiddleHeavenTestCase;
 
 /**
  * 
  */
-public class WatchDogTest {
+public class WatchDogTest extends MiddleHeavenTestCase{
 
 	@Test
 	public void testFileWatchDog () throws InterruptedException, IOException{
@@ -27,7 +30,9 @@ public class WatchDogTest {
 		
 		FileIOStrategy strategy = new FileIOStrategy();
 		
-		FileIOManagedFileAdapter file = (FileIOManagedFileAdapter) strategy.openFileRepository(f.toURI());
+		final ManagedFileRepository openFileRepository = strategy.openFileRepository(f.toURI());
+		
+		ManagedFile file = openFileRepository.retrive(openFileRepository.getRoots().iterator().next());
 		
 		FileIOWatchService dogService = (FileIOWatchService) strategy.getWatchService();
 		

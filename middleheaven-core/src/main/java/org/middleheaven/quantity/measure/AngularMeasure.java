@@ -3,6 +3,7 @@ package org.middleheaven.quantity.measure;
 import java.math.BigDecimal;
 
 import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.RealField;
 import org.middleheaven.quantity.measurables.Angle;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.SI;
@@ -42,7 +43,7 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 	public static AngularMeasure radians(double amount){
 		return new AngularMeasure(
 				Real.valueOf(amount),
-				Real.ZERO(),
+				RealField.getInstance().zero(),
 				SI.RADIANS
 		);
 	}
@@ -54,7 +55,7 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 	public static AngularMeasure degrees(double amount){
 		return new AngularMeasure(
 				Real.valueOf(amount),
-				Real.ZERO(),
+				RealField.getInstance().zero(),
 				SI.DEGREE
 		);
 	}
@@ -71,7 +72,7 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 		double amount = degree + minutes / 60d + seconds/3600d;
 		return new AngularMeasure(
 				Real.valueOf(amount),
-				Real.ZERO(),
+				RealField.getInstance().zero(),
 				SI.DEGREE
 		);
 	}
@@ -81,7 +82,7 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 	 * @return <code>AngularMeasure</code> with value equal to amount in radians
 	 */
 	public static AngularMeasure radians(Real amount){
-		return new AngularMeasure(amount, amount.zero(),SI.RADIANS);
+		return new AngularMeasure(amount, amount.getAlgebricStructure().zero(),SI.RADIANS);
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 		// convert to radians
 		return new AngularMeasure(
 				Real.valueOf(amount.asNumber().doubleValue()),
-				amount.zero(),
+				RealField.getInstance().zero(),
 				SI.DEGREE
 		);
 	}
@@ -115,11 +116,11 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 	}
 
 	public AngularMeasure   one() {
-		return new AngularMeasure (this.amount.one(), this.amount.zero(), this.unit);
+		return new AngularMeasure (RealField.getInstance().one(), RealField.getInstance().zero(), this.unit);
 	}
 
 	public AngularMeasure   zero() {
-		return new AngularMeasure (this.amount.zero(), this.amount.zero(), this.unit);
+		return new AngularMeasure (RealField.getInstance().zero(), RealField.getInstance().zero(), this.unit);
 	}
 
 	public AngularMeasure  plus(AngularMeasure  other) throws IncompatibleUnitsException {
@@ -168,9 +169,9 @@ public class AngularMeasure extends DecimalMeasure<Angle>   {
 		Interval<Real> range ;
 
 		if (this.unit.equals(SI.RADIANS)){
-			range = Interval.between(Real.ZERO(), Real.valueOf(Math.PI*2));
+			range = Interval.between(RealField.getInstance().zero(), Real.valueOf(Math.PI*2));
 		} else { 
-			range = Interval.between(Real.ZERO(), Real.valueOf(360));
+			range = Interval.between(RealField.getInstance().zero(), Real.valueOf(360));
 		}
 
 		BigDecimal top = range.end().asNumber();

@@ -1,6 +1,5 @@
 package org.middleheaven.logging;
 
-import org.middleheaven.logging.writters.ConsoleLogWriter;
 
 public class ConsoleLogBook extends WritableLogBook {
 

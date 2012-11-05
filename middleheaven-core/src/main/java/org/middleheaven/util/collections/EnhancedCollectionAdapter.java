@@ -14,6 +14,10 @@ import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.classification.MapClassification;
 import org.middleheaven.util.classification.Predicate;
 
+/**
+ * Allows for a {@link EnhancedCollection} to be create upon a  standard {@link Collection}.
+ * @param <T>
+ */
 public class EnhancedCollectionAdapter<T> extends AbstractEnumerableAdapter<T> implements EnhancedCollection<T> , EnhancedSet<T> {
 
 	private Collection<T> original;

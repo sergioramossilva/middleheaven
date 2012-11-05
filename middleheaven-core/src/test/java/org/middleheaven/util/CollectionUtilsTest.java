@@ -1,22 +1,17 @@
 package org.middleheaven.util;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Test;
-import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.Range;
 
 
 public class CollectionUtilsTest {
-
 
 	@Test
 	public void addElementsToArray(){

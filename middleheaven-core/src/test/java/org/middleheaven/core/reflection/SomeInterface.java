@@ -1,6 +1,6 @@
 package org.middleheaven.core.reflection;
 
-import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.annotations.Wire;
 
 public interface SomeInterface {
 	

@@ -1,6 +1,7 @@
 package org.middleheaven.quantity.math;
 
 import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 import org.middleheaven.quantity.math.structure.MathStructuresFactory;
 import org.middleheaven.util.Incrementable;
 import org.middleheaven.util.NaturalIncrementable;
@@ -8,11 +9,11 @@ import org.middleheaven.util.collections.Range;
 
 
 /**
- * Represents an integer number that ranges from Long.MIN_VALUE to Long.MAX_VALUE
+ * Represents an integer number that ranges from Long.MIN_VALUE to Long.MAX_VALUE.
  * 
  *
  */
-public abstract class BigInt extends Numeral<BigInt> implements Field<BigInt> ,  Comparable<Numeral<? super BigInt>>, DiscreetOrderable<BigInt> ,NaturalIncrementable<BigInt> , Incrementable <BigInt>{
+public abstract class BigInt extends Numeral<BigInt> implements FieldElement<BigInt> ,  Comparable<Numeral<? super BigInt>>, DiscreetOrderable<BigInt> ,NaturalIncrementable<BigInt> , Incrementable <BigInt>{
 
 
 	private static final long serialVersionUID = 8636156681654308959L;
@@ -55,11 +56,16 @@ public abstract class BigInt extends Numeral<BigInt> implements Field<BigInt> , 
 		return valueOf(other);
 	}
 	
-	public Range<BigInt> upTo(BigInt other){
-		return Range.over(this, other, other.over(other));
+	public Range<BigInt, BigInt> upTo(BigInt other){
+		return Range.<BigInt, BigInt>from(this).upTo(other);
 	}
 	
-	public Range<BigInt> upTo(BigInt other, BigInt increment){
-		return Range.over(this, other, increment);
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Field<BigInt> getAlgebricStructure() {
+		return BigIntField.getInstance();
 	}
 }

@@ -11,7 +11,7 @@ import org.middleheaven.global.text.TimepointFormatter;
 import org.middleheaven.global.text.writeout.NumberWriteoutFormatter;
 
 /**
- * Represents an application specific Culture selection factory.
+ * Represents an application specific Culture set of formats.
  * Localizable resources can belong in different locales. In particular they can be 
  * submited to a unique locale. That choice is application specific
  *  

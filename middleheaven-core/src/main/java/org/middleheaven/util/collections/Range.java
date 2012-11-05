@@ -7,12 +7,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import org.middleheaven.quantity.math.structure.Ring;
-import org.middleheaven.util.CharacterIncrementor;
+import org.middleheaven.quantity.math.structure.GroupAdditiveElement;
+import org.middleheaven.quantity.time.CalendarDate;
+import org.middleheaven.quantity.time.CalendarTime;
+import org.middleheaven.quantity.time.TimePoint;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.Incrementor;
-import org.middleheaven.util.NaturalIncrementable;
-import org.middleheaven.util.NumberIncrementor;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.classification.NegatedPredicate;
@@ -25,141 +25,59 @@ import org.middleheaven.util.classification.Predicate;
  * An {@link Incrementor} is used to define how the iteration visits the values in the interval.
  * 
  * @param <T> the type of the value in the range.
+ * @param <I> type of the incremente. Normally is the same as T, but not allways( i.e. dates have increment as integers)
  */
-public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
+public class Range<T, I> implements Enumerable<T> , RandomEnumerable<T> {
 
 	private final Comparator<? super T> comparator;
-	private final Incrementor<? super T> incrementor;
+	private final Incrementor<? super T, ? super I> incrementor;
 	private final T start;
 	private final T end;
 	private boolean isReversed = false;
-	private boolean excludeStart = false;
-	private boolean excludeEnd = false;
+	protected boolean excludeStart = false;
+	protected boolean excludeEnd = false;
 
 	
 	/**
 	 * An empty {@link Range}.
+	 * @param <V> type of the element in the range.
 	 * @return An empty {@link Range}
 	 */
-	public static <V> Range<V> emptyRange(){
-		Range<V> empty = new Range<V>(new ComparableComparator<V>(), EmptyIncrementor.emptyIncrementor());
+	public static <V extends Comparable<V>, I> Range<V, I> emptyRange(){
+		final Incrementor<V, I> emptyIncrementor = EmptyIncrementor.<V,I>emptyIncrementor();
+		Range<V, I> empty = new Range<V,I>(ComparableComparator.<V>getInstance(), emptyIncrementor);
 		empty.excludeEnd = true;
 		empty.excludeStart = true;
 		
 		return empty;
 	}
-
+	
 	/**
-	 * An empty {@link Range} using a specified comparator.
-	 * @param comparator the comparator to use
-	 * @return An empty {@link Range}
-	 */
-	public static <V> Range<V> emptyRange(Comparator<? super V> comparator){
-		return new Range<V>(comparator,EmptyIncrementor.emptyIncrementor());
-	}
-
-	/**
-	 * Comparability method to enable simple use with <code>Integer</code> and other <code>Number</code>
-	 * @param <N>
-	 * @param start start of the range
-	 * @param end end of the range
-	 * @param increment the iteration increment from start to end
-	 * @return
-	 */
-	public static <N extends java.lang.Number> Range<N> over(N start, N end , N increment){
-		if (start == null || end == null || increment ==null){
-			throw new IllegalArgumentException("Argument cannot be null");
-		}
-		return new Range<N>(start,end,new ComparableComparator<N>(),new NumberIncrementor(increment));
-	}
-
-
-
-	/**
-	 * A {@link Range} from <code>start</code> to <code>end</code>
+	 * Starts the construction of a range from the start value, that cannot be null.
 	 * 
-	 * @param start the lower limit of the range
-	 * @param end the upper limit of the range
-	 * @return A {@link Range} from <code>start</code> to <code>end</code>
+	 * @param start the star t value.
+	 * @return a {@link RangeBuilder}.
 	 */
-	public static <N extends java.lang.Number> Range<N> over(N start, N end){
-		if (start == null || end == null){
-			throw new IllegalArgumentException("Argument cannot be null");
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <V extends Comparable<? super V>, I> RangeBuilder<V, I> from(V start){
+		
+		if (start == null){
+			throw new IllegalArgumentException("Range start cannot be null");
 		}
-		return new Range<N>(start,end,new ComparableComparator<N>(),new NumberIncrementor(Long.valueOf(1)));
-	}
-	
-	/**
-	 * A {@link Range} from <code>start</code> to <code>end</code>
-	 * 
-	 * @param start the lower limit of the range
-	 * @param end the upper limit of the range
-	 * @return A {@link Range} from <code>start</code> to <code>end</code>
-	 */
-	public static Range<Character> over(Character start, Character end){
-		if (start == null || end == null){
-			throw new IllegalArgumentException("Argument cannot be null");
+		if (start instanceof Number){
+			return new NumberRangeBuilder((Number) start);
+		} else if (Character.class.isInstance(start)){
+			return (RangeBuilder<V, I>) new CharacterRangeBuilder(Character.class.cast(start));
+		} else if (start instanceof GroupAdditiveElement){
+			return (RangeBuilder<V, I>) new GroupAdditiveRangeBuilder((GroupAdditiveElement) start);
+		} else if (CalendarDate.class.isInstance(start)){
+			return (RangeBuilder<V, I>) new CalendarDateRangeBuilder(CalendarDate.class.cast(start));
 		}
-		return new Range<Character>(start,end, new ComparableComparator<Character>(), new CharacterIncrementor(1));
+		throw new IllegalArgumentException("Can not build a range for type " + start.getClass()); // TODO generic builder
 	}
-	
-	public static <V extends NaturalIncrementable<V> & Comparable<? super V>> Range<V> over(V start, V end){
-		return new Range<V>(start,end,new ComparableComparator<V>(), new NaturalIncrementableIncrementor<V>());
-	}
-
-	
-	/**
-	 * Creates a Range from the values of two objects and a <code>Comparator</code> for those objects.
-	 * @param <V>
-	 * @param start start of the range
-	 * @param end end of the range
-	 * @param comparator <code>Comparator</code> encapsulating the rules of order for the passed object class
-	 * @return a <code>Range</code> from <code>start</code> to <code>end</code>
-	 */
-	public static <V extends Ring<V>> Range<V> over(V start, V end , V increment){
-		if (start == null || end == null || increment==null){
-			throw new IllegalArgumentException("Argument cannot be null");
-		}
-		Incrementor<V> incrementor = new RingIncrementor<V>(increment);
-	
-		return over(start,end,new ComparableComparator<V>(),incrementor);
-	
-	}
-	
-	/**
-	 * A {@link Range} from <code>start</code> to <code>end</code>
-	 * 
-	 * @param start the lower limit of the range
-	 * @param end the upper limit of the range
-	 * @param incrementor the incrementor to use.
-	 * @return A {@link Range} from <code>start</code> to <code>end</code>
-	 */
-	public static <V> Range<V> over( V start, V end, Incrementor<? super V> incrementor){
-		if (start == null || end == null || incrementor==null){
-			throw new IllegalArgumentException("Argument cannot be null");
-		}
-		return new Range<V>(start,end,new ComparableComparator<V>(),incrementor);
-	}
-	
-	/**
-	 * Creates a Range from the values of two objects and a <code>Comparator</code> for those objects.
-	 * @param <V>
-	 * @param start start of the range
-	 * @param end end of the range
-	 * @param comparator <code>Comparator</code> encapsulating the rules of order for the passed object class.
-	 * @param incrementor the incrementor for <V> type.
-	 * @return a <code>Range</code> from <code>start</code> to <code>end</code>
-	 */
-	public static <V> Range<V> over(V start, V end, Comparator<V> comparator, Incrementor<V> incrementor  ){
-		if (comparator == null){
-			throw new IllegalArgumentException("A comparator is required.");
-		}
-
-		return new Range<V>(start,end,comparator,incrementor);
-	} 
 	
 
-	Range(T start, T end,Comparator<? super T> comparator,Incrementor<? super T> incrementor) {
+	Range(T start, T end,Comparator<? super T> comparator,Incrementor<? super T,? super I> incrementor) {
 		
 		this.start = start;
 		this.end = end;
@@ -179,20 +97,29 @@ public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
 	 * @param end
 	 * @param comparator
 	 */
-	Range(Comparator<? super T> comparator,Incrementor<? super T> incrementor) {
+	Range(Comparator<? super T> comparator,Incrementor<? super T, ? super I> incrementor) {
 		this(null,null,comparator, incrementor);
 	}
 
-	public Range<T> excludeStart(){
-		Range<T> range = new Range<T>(this.start, this.end, this.comparator, this.incrementor);
+	public Range<T, I> incrementBy(I step){
+		Range<T, I> range = new Range<T, I>(this.start, this.end, this.comparator, this.incrementor);
+		
+		range.excludeEnd = this.excludeEnd;
+		range.excludeStart = this.excludeStart;
+		
+		return range;
+	}
+	
+	public Range<T, I> excludeStart(){
+		Range<T, I> range = new Range<T, I>(this.start, this.end, this.comparator, this.incrementor);
 		
 		range.excludeStart = true;
 		
 		return range;
 	}
 	
-	public Range<T> excludeEnd(){
-		Range<T> range = new Range<T>(this.start, this.end, this.comparator, this.incrementor);
+	public Range<T, I> excludeEnd(){
+		Range<T, I> range = new Range<T, I>(this.start, this.end, this.comparator, this.incrementor);
 		
 		range.excludeEnd = true;
 		
@@ -204,11 +131,11 @@ public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
 	 * @param other the interval to intersect
 	 * @return an interval representing the intersections of the intervals
 	 */
-	public Range<T> intersection (Range<T> other){
+	public Range<T, I> intersection (Range<T, I> other){
 
 		// is one is empty the intersection is empty
 		if (this.isEmpty() || other.isEmpty()) {
-			return new Range<T>(this.comparator,this.incrementor);
+			return new Range<T, I>(this.comparator,this.incrementor);
 		}
 
 		if (other.equals(this)){ // are the same. 
@@ -217,10 +144,10 @@ public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
 
 		if (this.intersects(other)) {
 			// intersects
-			return new Range<T>( max(this.start, other.start), min(this.end, other.end) , comparator, incrementor);
+			return new Range<T, I>( max(this.start, other.start), min(this.end, other.end) , comparator, incrementor);
 		} else {
 			// does not intersect
-			return new Range<T>(this.comparator,incrementor);
+			return new Range<T, I>(this.comparator,incrementor);
 		}
 
 	}
@@ -284,8 +211,8 @@ public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
 	 * @param other
 	 * @return a range from the lowest start to the greatest end. Example : [2,3] merged with [7,10]  will return [2,10] 
 	 */
-	public Range<T> union (Interval<T> other){
-		return new Range<T> ( 
+	public Range<T, I> union (Interval<T> other){
+		return new Range<T, I> ( 
 				min(this.start, other.start) , // start at the minor start
 				max(this.end , other.end), // end at the major end
 				this.comparator, // the same comparator
@@ -319,7 +246,7 @@ public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
 	/**
 	 * Ranges are equal if their starts are equal and their ends are equals
 	 */
-	private boolean equalsRange(Range<T> other){
+	private boolean equalsRange(Range<T, I> other){
 		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
 		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
 	}
@@ -363,10 +290,11 @@ public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
     class RangeIterator implements Iterator<T> {
 
 		T current;
-		Comparator<? super T> comparator;
-		Incrementor<? super T> incrementor;
+		final Comparator<? super T> comparator;
+		final Incrementor<? super T, ? super I> incrementor;
 
-		public RangeIterator(Comparator<? super T> comparator , Incrementor<? super T> incrementor){
+		@SuppressWarnings("unchecked")
+		public RangeIterator(Comparator<? super T> comparator , Incrementor<? super T, ? super I> incrementor){
 			this.comparator = comparator;
 			this.incrementor = incrementor;
 			
@@ -399,10 +327,19 @@ public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
 
 	}
 
+    /**
+     * Produce a random list of elements based on the list that corresponds to this range.
+     * @return  a random list of elements based on the list that corresponds to this range.
+     */
 	public T random() {
 		return this.toList().random();
 	}
 
+	/**
+	 * Produce a random list of elements based on the list that corresponds to this range.
+	 * @param random the {@link Random} where to obtain the random sequence.
+	 * @return  a random list of elements based on the list that corresponds to this range.
+	 */
 	public T random(Random random) {
 		return this.toList().random(random);
 	}
@@ -515,7 +452,7 @@ public class Range<T> implements Enumerable<T> , RandomEnumerable<T> {
 	 * @param other the candidate to intersection
 	 * @return <code>true</code> if <code>this</code> intersects <code>other</code>
 	 */
-	public boolean intersects (Range<T> other){
+	public boolean intersects (Range<T, I> other){
 
 		return !this.isEmpty() && !other.isEmpty() &&
 		(this.contains(other.start, true, true) || 

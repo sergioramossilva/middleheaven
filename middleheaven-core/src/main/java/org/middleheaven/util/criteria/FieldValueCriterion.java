@@ -28,6 +28,14 @@ public class FieldValueCriterion implements FieldCriterion {
 		this.operator = operator;
 		this.valueHolder = valueHolder;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isJunction() {
+		return false;
+	}
 
 	@Override
 	public QualifiedName getFieldName() {

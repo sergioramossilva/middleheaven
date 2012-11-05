@@ -3,6 +3,8 @@ package org.middleheaven.quantity.measure;
 import org.middleheaven.quantity.convertion.Convertable;
 import org.middleheaven.quantity.convertion.UnitConversion;
 import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.RealField;
+import org.middleheaven.quantity.math.structure.GroupAdditive;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
@@ -14,25 +16,58 @@ import org.middleheaven.quantity.unit.Unit;
  * @param <E>
  * @see {@link org.middleheaven.quantity.measure.AngularMeasure}
  */
-public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implements Comparable<DecimalMeasure<E>>, Convertable<E,DecimalMeasure<E>> ,  Amount<DecimalMeasure<E>,E>, Scalable<E,DecimalMeasure<E>> {
+public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> 
+	implements Comparable<DecimalMeasure<E>>, 
+		Convertable<E,DecimalMeasure<E>> ,  
+		Amount<DecimalMeasure<E>,E>, Scalable<E,DecimalMeasure<E>> {
 
 
+	/**
+	 * 
+	 * @param unit
+	 * @return
+	 */
 	public static <T extends Measurable> DecimalMeasure<T> zero(Unit<T> unit) {
-		return exact(Real.ZERO(), unit);
+		return exact(RealField.getInstance().zero(), unit);
 	}
 	
+	/**
+	 * 
+	 * @param unit
+	 * @return
+	 */
 	public static <T extends Measurable> DecimalMeasure<T> one(Unit<T> unit) {
-		return exact(Real.ONE(), unit);
+		return exact(RealField.getInstance().zero(), unit);
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * @param uncertainty
+	 * @param unit
+	 * @return
+	 */
 	public static <T extends Measurable> DecimalMeasure<T> measure(java.lang.Number value,java.lang.Number uncertainty, Unit<T> unit){
 		return measure( Real.valueOf(value),Real.valueOf(uncertainty), unit);
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * @param unit
+	 * @return
+	 */
 	public static <T extends Measurable> DecimalMeasure<T> exact(java.lang.Number value, Unit<T> unit){
-		return measure( Real.valueOf(value),Real.ZERO(), unit);
+		return measure( Real.valueOf(value),RealField.getInstance().zero(), unit);
 	}
 	
+	/**
+	 * 
+	 * @param value
+	 * @param uncertainty
+	 * @param unit
+	 * @return
+	 */
 	public static <T extends Measurable> DecimalMeasure<T> measure(Real value, Real uncertainty,Unit<T> unit){
 		return new DecimalMeasure<T>(value,uncertainty,unit);
 	}
@@ -59,11 +94,11 @@ public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implem
 	}
 
 	public DecimalMeasure<E>  one() {
-		return exact(amount.one(),this.unit);
+		return exact(RealField.getInstance().one(),this.unit);
 	}
 
 	public DecimalMeasure<E>  zero() {
-		return exact(amount.zero(),this.unit);
+		return exact(RealField.getInstance().zero(),this.unit);
 	}
 	
 	public <T extends Measurable> DecimalMeasure<T> times(DecimalMeasure<?> other) {
@@ -118,12 +153,54 @@ public class DecimalMeasure<E extends Measurable> extends Measure<E,Real> implem
 		return new DecimalMeasure<E>(this.amount.times(other), this.uncertainty.times(other), unit);
 	}
 
+	/**
+	 * 
+	 * @param unit
+	 * @return
+	 */
 	public <T extends Measurable> DecimalMeasure<T> sqrt(Unit<T> unit) {
 		Real r = Real.valueOf(Math.sqrt(this.amount.asNumber().doubleValue()));
 		Real u = Real.valueOf(Math.sqrt(this.uncertainty.asNumber().doubleValue()));
 		return new DecimalMeasure<T>(r, u, unit);  
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public GroupAdditive<DecimalMeasure<E>> getAlgebricStructure() {
+		return new  GroupAdditive<DecimalMeasure<E>>(){
+
+			@Override
+			public boolean isGroupAdditive() {
+				return true;
+			}
+
+			@Override
+			public boolean isRing() {
+				return false;
+			}
+
+			@Override
+			public boolean isField() {
+				return false;
+			}
+
+			@Override
+			public DecimalMeasure<E> zero() {
+				return DecimalMeasure.zero(unit);
+			}
+			
+		};
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isZero() {
+		return this.equals(this.getAlgebricStructure().zero());
+	}
 
 
 }

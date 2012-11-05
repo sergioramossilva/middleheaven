@@ -1,7 +1,7 @@
 package org.middleheaven.util.classification;
 
 /**
- * Classifies an object of type <T> in a category <C>
+ * Classifies an object of type <T> in a category <C>.
  * 
  * @param <C> category type
  * @param <T> object type

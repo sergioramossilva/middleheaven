@@ -18,7 +18,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.application.ApplicationScanningService;
 import org.middleheaven.application.StandardApplicationScannerServiceActivator;
-import org.middleheaven.application.StandardApplicationScanningService;
 import org.middleheaven.application.StandardApplicationServiceActivator;
 import org.middleheaven.core.bootstrap.activation.ActivatorDependencyResolver;
 import org.middleheaven.core.bootstrap.activation.AnnotationBasedDependencyResolver;
@@ -69,10 +68,9 @@ import org.middleheaven.util.StringUtils;
  */
 public abstract class AbstractBootstrap {
 
-	private final RegistryServiceContext serviceRegistryContext = new RegistryServiceContext();
+	private final RegistryServiceContext serviceRegistryContext;
 	private final PropertyManagers propertyManagers = new PropertyManagers();
 
-	private final List<ServiceActivatorModel> activators = new ArrayList<ServiceActivatorModel>();
 	private final Set<ActivatorDependencyResolver> resolvers = new CopyOnWriteArraySet<ActivatorDependencyResolver>();
 
 	private BootstrapEnvironmentResolver bootstrapEnvironmentResolver;
@@ -87,13 +85,15 @@ public abstract class AbstractBootstrap {
 
 	public AbstractBootstrap() {
 
+		serviceRegistryContext = RegistryServiceContext.getInstance();
+		
 		// prepare properties.
 		this.propertyManagers.addFirst(new SytemEnvPropertyManager());
 		this.propertyManagers.addFirst(new SytemPropertyManager());
 
 		this.resolvers.add(new AnnotationBasedDependencyResolver());
 
-		this.wiringService = new StandardWiringService(this.propertyManagers);
+		this.wiringService = new StandardWiringService(this.propertyManagers, this.serviceRegistryContext);
 
 	}
 

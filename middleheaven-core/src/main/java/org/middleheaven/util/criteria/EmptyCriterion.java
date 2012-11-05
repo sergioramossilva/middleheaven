@@ -19,6 +19,14 @@ public final class EmptyCriterion implements Criterion{
 	public Criterion simplify() {
 		return this;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isJunction() {
+		return false;
+	}
 
 
 }

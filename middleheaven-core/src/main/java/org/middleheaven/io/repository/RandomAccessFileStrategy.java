@@ -9,7 +9,7 @@ import java.nio.channels.FileChannel;
 
 
 /**
- * 
+ * Implementation of {@link ManagedRandomAccessFileStrategy} has a {@link RandomAccessFile} decorator.
  */
 public class RandomAccessFileStrategy implements
 		ManagedRandomAccessFileStrategy {
@@ -17,6 +17,11 @@ public class RandomAccessFileStrategy implements
 	
 	RandomAccessFile file;
 	
+	/**
+	 * 
+	 * Constructor.
+	 * @param file the underlying {@link RandomAccessFile}
+	 */
 	public RandomAccessFileStrategy (RandomAccessFile file){
 		this.file = file;
 	}
@@ -41,6 +46,18 @@ public class RandomAccessFileStrategy implements
 	 */
 	public long getFilePointer() throws IOException {
 		return file.getFilePointer();
+	}
+
+	
+	public boolean equals(Object other){
+		return (other instanceof RandomAccessFileStrategy) && equalsOther(( RandomAccessFileStrategy) other);
+	}
+	/**
+	 * @param other
+	 * @return
+	 */
+	private boolean equalsOther(RandomAccessFileStrategy other) {
+		return file.equals(other.file);
 	}
 
 	/**

@@ -6,7 +6,7 @@ package org.middleheaven.global;
 
 import java.util.Collection;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.global.text.LocalizationDomainBundle;
 import org.middleheaven.global.text.QuantityFormatter;

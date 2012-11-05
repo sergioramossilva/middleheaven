@@ -3,11 +3,11 @@ package org.middleheaven.core.wiring;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.middleheaven.core.wiring.annotations.Wire;
+import org.middleheaven.core.annotations.Service;
+import org.middleheaven.core.annotations.Wire;
 import org.middleheaven.core.wiring.mock.DictionaryService;
 import org.middleheaven.core.wiring.mock.GermanDictionayService;
 import org.middleheaven.core.wiring.mock.GreekDictionayService;
-import org.middleheaven.core.wiring.service.Service;
 import org.middleheaven.logging.Logger;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
 

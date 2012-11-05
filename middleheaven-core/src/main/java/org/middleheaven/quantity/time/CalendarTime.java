@@ -1,6 +1,12 @@
 package org.middleheaven.quantity.time;
 
+/**
+ * Represents a unanchored time.
+ */
 public class CalendarTime extends AbstractTimePoint implements  TimeHolder {
+
+
+	private static final long serialVersionUID = 6912748590262711429L;
 
 	protected CalendarTime(TimeContext context, long timeFromEpoc) {
 		super(context, timeFromEpoc);

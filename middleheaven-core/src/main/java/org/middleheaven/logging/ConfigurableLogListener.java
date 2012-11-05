@@ -6,12 +6,9 @@ package org.middleheaven.logging;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.logging.config.LoggingConfiguration;
-import org.middleheaven.logging.config.LoggingConfigurator;
-import org.middleheaven.logging.writters.ConsoleLogWriter;
 
 /**
- * 
+ * Responds to {@link LoggingEvent}s in a configurable maner.
  */
 public class ConfigurableLogListener implements LoggingEventListener {
 
@@ -19,6 +16,12 @@ public class ConfigurableLogListener implements LoggingEventListener {
     final Map<String, LogBook> books = new HashMap<String, LogBook>();
     LoggingConfiguration configuration ;
     
+    /**
+     * 
+     * Constructor. 
+     * @param configuration configuration to use.
+     * @param configurator configurator to config
+     */
 	public ConfigurableLogListener(LoggingConfiguration configuration , LoggingConfigurator configurator) {
 		configurator.config(this,configuration);
 		
@@ -28,15 +31,26 @@ public class ConfigurableLogListener implements LoggingEventListener {
 	}
 
 
-
+	/**
+	 * 
+	 * @return the current {@link LoggingConfiguration}.
+	 */
 	public LoggingConfiguration getConfiguration() {
 		return configuration;
 	}
 	
+	/**
+	 * add a new book to this listener.
+	 * @param book 
+	 */
     public void addBook(LogBook book){
         books.put(book.name, book);
     }
 
+    /**
+     * remove a book from this listener.
+     * @param book
+     */
     public void removeBook(LogBook book) {
         synchronized (books){
             books.remove(book.name);
@@ -51,6 +65,7 @@ public class ConfigurableLogListener implements LoggingEventListener {
 		this.getLogBook(event.getBookName()).log(event);
 	}
 	
+	// determine the logbook given aorg.middleheaven.logging.ConsoleLogBook name. 
     private final LogBook getLogBook(String name) {
         LogBook book;
         synchronized (books){

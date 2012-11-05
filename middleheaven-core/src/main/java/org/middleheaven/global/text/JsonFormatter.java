@@ -1,7 +1,7 @@
 package org.middleheaven.global.text;
 
 
-public class JsonFormatter<T> implements Formatter<T>{
+public class JsonFormatter<T> implements ParsableFormatter<T>{
 
 	
 	public static JsonFormatter<Object> formatOnly(){

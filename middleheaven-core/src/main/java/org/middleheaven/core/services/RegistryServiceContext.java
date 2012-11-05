@@ -13,10 +13,12 @@ import java.util.SortedMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.core.wiring.service.ServiceProxy;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.collections.CollectionUtils;
 
+/**
+ * Simple implementation for {@link ServiceContext}.
+ */
 public final class RegistryServiceContext implements ServiceContext{
 
 	final Set<ServiceListener> serviceListeners = new CopyOnWriteArraySet<ServiceListener>();
@@ -24,13 +26,23 @@ public final class RegistryServiceContext implements ServiceContext{
 	
 	final Map<ServiceKey, Object> proxies = new HashMap<ServiceKey, Object>();
 
-
-	public RegistryServiceContext(){
-
-
-		// this is intended to set the default context in a static variable
-		// TODO devise a more elegant way.
-		ServiceRegistry.context = this;
+	private static final RegistryServiceContext ME = new RegistryServiceContext();
+	
+	/**
+	 * Returns an instance of the {@link RegistryServiceContext}. This instance
+	 * is particular to each class loader.
+	 * 
+	 * @return the instance of the {@link RegistryServiceContext}.
+	 */
+	 
+	public static RegistryServiceContext getInstance(){
+		if (ServiceRegistry.context == null){
+			ServiceRegistry.context = ME;
+		}
+		return ME;
+	}
+	
+	private RegistryServiceContext(){
 
 		/* should bing all to shared ?
 		this.addServiceListener(new ServiceListener(){
@@ -295,14 +307,14 @@ public final class RegistryServiceContext implements ServiceContext{
 
 
 		public boolean equals(Object other){
-			return other instanceof ServiceBinding && equals((ServiceBinding)other);
+			return other instanceof ServiceBinding && equalsOther((ServiceBinding)other);
 		}
 
 		public int hashCode(){
 			return Hash.hash(properties).hash(serviceClass.getName()).hashCode();
 		}
 
-		public boolean equals(ServiceBinding other){
+		private boolean equalsOther(ServiceBinding other){
 			return this.serviceClass.getName().equals(other.serviceClass.getName()) && CollectionUtils.equalContents(properties, other.properties);
 		}
 

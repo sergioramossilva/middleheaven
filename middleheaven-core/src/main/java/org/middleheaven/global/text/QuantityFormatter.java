@@ -60,10 +60,6 @@ public class QuantityFormatter implements Formatter<Quantity<?>>{
 		return format.format(object.amount().asNumber());
 	}
 
-	@Override
-	public Quantity<?> parse(String stringValue) {
-		// TODO implement Formatter<Quantity>.parse
-		return null;
-	}
+
 
 }

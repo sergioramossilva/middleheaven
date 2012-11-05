@@ -5,6 +5,9 @@ import java.io.IOException;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.watch.WatchService;
 
+/**
+ * Default implementation for some methods of {@link ManagedFileRepository}.
+ */
 public abstract class AbstractManagedRepository implements ManagedFileRepository {
 
 	@Override

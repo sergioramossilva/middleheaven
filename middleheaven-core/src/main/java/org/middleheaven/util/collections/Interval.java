@@ -19,11 +19,11 @@ public class Interval<T> {
 	protected Comparator<? super T> comparator;
 
 
-	public final static <V> Interval<V> emptyInterval(){
-		return new Interval<V>(new ComparableComparator<V>());
+	public final static <V extends Comparable<? super V>> Interval<V> emptyInterval(){
+		return new Interval<V>(ComparableComparator.<V>getInstance());
 	}
 
-	public final static <V> Interval<V> emptyInterval(Comparator<? super V> comparator){
+	public final static <V extends Comparable<? super V>> Interval<V> emptyInterval(Comparator<? super V> comparator){
 		return new Interval<V>(comparator);
 	}
 	
@@ -37,7 +37,7 @@ public class Interval<T> {
 	 * @return a <code>Interval</code> from <code>start</code> to <code>end</code>
 	 */
 	public final static <V extends Comparable<? super V>> Interval<V> between(V start, V end){
-		return between(start,end,new ComparableComparator<V>());
+		return between(start,end,ComparableComparator.<V>getInstance());
 	} 
 
 	/**
@@ -228,7 +228,7 @@ public class Interval<T> {
 	/**
 	 * Intervals are equal if the their starts are equal and their ends are equals
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public boolean equals(Object other){
 		return other instanceof Interval && this.equalsOther((Interval)other);
 	}

@@ -8,8 +8,10 @@ import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.Incrementable;
-import org.middleheaven.util.NaturalIncrementable;
 
+/**
+ * 
+ */
 public class BigDecimalReal extends Real{
 
 	private static final long serialVersionUID = 1L;
@@ -39,7 +41,7 @@ public class BigDecimalReal extends Real{
 	public BigDecimal asNumber() {
 		return numerator.signum()==0 
 		? BigDecimal.ZERO 
-				: denominator.intValue()==1 
+				: denominator.compareTo(BigDecimal.ONE) == 0
 				? numerator 
 						: numerator.divide(denominator, SCALE, RoundingMode.HALF_EVEN);
 	}
@@ -172,17 +174,6 @@ public class BigDecimalReal extends Real{
 		return (T)this.plus(increment);
 	}
 
-
-	@Override
-	public Real one() {
-		return new BigDecimalReal(BigDecimal.ONE);
-	}
-
-	@Override
-	public Real zero() {
-		return new BigDecimalReal(BigDecimal.ZERO);
-	}
-
 	@Override
 	public Real minus(Number n) {
 		return this.minus(Real.valueOf(n));
@@ -240,7 +231,7 @@ public class BigDecimalReal extends Real{
 
 	@Override
 	public Complex toComplex() {
-		return Complex.valueOf(this, Real.ZERO());
+		return Complex.rectangular(this, this.getAlgebricStructure().zero());
 	}
 
 	@Override
@@ -249,7 +240,7 @@ public class BigDecimalReal extends Real{
 	}
 
 
-	final int SCALE = 15;
+	final int SCALE = 22;
 	
 	@Override
 	public Real arctan() {
@@ -313,6 +304,8 @@ public class BigDecimalReal extends Real{
 	public Real previous() {
 		return this.minus(valueOf(Integer.valueOf(1)));
 	}
+
+
 
 
 

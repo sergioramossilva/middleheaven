@@ -1,7 +1,7 @@
 
 package org.middleheaven.logging;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 
 
 /**

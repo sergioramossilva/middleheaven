@@ -1,5 +1,8 @@
 package org.middleheaven.io.repository;
 
+/**
+ * Represents the path of a managed file.
+ */
 public interface ManagedFilePath {
 
 	
@@ -70,6 +73,9 @@ public interface ManagedFilePath {
 	 */
 	public String getLastName();
 
+	/**
+	 * @return the path's first name. 
+	 */
 	public String getFirstName();
 	
 	/**
