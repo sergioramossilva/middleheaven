@@ -3,7 +3,7 @@ package org.middleheaven.ui.web;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.middleheaven.global.text.Formatter;
+import org.middleheaven.global.text.ParsableFormatter;
 import org.middleheaven.ui.models.AbstractSelectionModel;
 
 public class HtmlSelectionModel extends AbstractSelectionModel {
@@ -15,9 +15,9 @@ public class HtmlSelectionModel extends AbstractSelectionModel {
 	}
 
 	@Override
-	public <T> Formatter<T> getFormater() {
+	public <T> ParsableFormatter<T> getFormater() {
 		// TODO implement AbstractSelectionModel.getFormater
-		return new Formatter<T>(){
+		return new ParsableFormatter<T>(){
 
 			@Override
 			public String format(T object) {
