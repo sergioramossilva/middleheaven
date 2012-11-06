@@ -1,14 +1,14 @@
 /**
  * 
  */
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 
 /**
  * 
  */
-abstract class LazyProxyVector<F extends Field<F>> extends AbstractVector<F> {
+abstract class LazyProxyVector<F extends FieldElement<F>> extends AbstractVector<F> {
 
 	private final int size;
 	private final Object[] cache;
@@ -17,8 +17,8 @@ abstract class LazyProxyVector<F extends Field<F>> extends AbstractVector<F> {
 	 * Constructor.
 	 * @param provider
 	 */
-	public LazyProxyVector(VectorSpaceProvider provider, int size) {
-		super(provider);
+	public LazyProxyVector(VectorSpace vectorSpace, int size) {
+		super(vectorSpace);
 		this.size = size;
 		this.cache = new Object[size];
 		

@@ -1,22 +1,71 @@
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
+import org.middleheaven.quantity.math.Conjugatable;
+import org.middleheaven.quantity.math.UnivariateFunction;
 import org.middleheaven.quantity.math.structure.DefaultMatrixInvertion;
 import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
+import org.middleheaven.quantity.math.structure.Ring;
 
 
-public abstract class AbstractMatrix<F extends Field<F>> implements Matrix<F>{
+public abstract class AbstractMatrix<F extends FieldElement<F>> implements Matrix<F>{
 
 
 	
-	private VectorSpaceProvider provider;
+	private VectorSpace<Vector<F>, F> provider;
 
-	public AbstractMatrix(VectorSpaceProvider provider) {
+	public AbstractMatrix(VectorSpace<Vector<F>, F> provider) {
 		this.provider = provider;
 	}
 	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Ring<Matrix<F>> getAlgebricStructure() {
+		return new Ring<Matrix<F>> (){
+
+			@Override
+			public Matrix<F> zero() {
+				throw new UnsupportedOperationException("Not implememented yet");
+			}
+
+			@Override
+			public boolean isGroupAdditive() {
+				return true;
+			}
+
+			@Override
+			public boolean isRing() {
+				return false;
+			}
+
+			@Override
+			public boolean isField() {
+				return false;
+			}
+
+			@Override
+			public Matrix<F> one() {
+				return provider.identity(Math.min(rowsCount(), columnsCount()));
+			}
+			
+		};
+	}
+
 	
-	protected final VectorSpaceProvider getMatrixProvider(){
+	
+	protected final VectorSpace<Vector<F>, F> getMatrixProvider(){
 		return provider;
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public Field<F> getField(){
+		return provider.getField();
 	}
 	
 	public boolean isSquare(){
@@ -79,7 +128,7 @@ public abstract class AbstractMatrix<F extends Field<F>> implements Matrix<F>{
 	 */
 	@Override
 	public boolean hasInverse() {
-		F zero = this.get(0, 0).zero();
+		F zero = this.getMatrixProvider().getField().zero();
 		return this.isSquare() && !this.determinant().equals(zero);
 	}
 	
@@ -135,8 +184,7 @@ public abstract class AbstractMatrix<F extends Field<F>> implements Matrix<F>{
 			
 		});
 	}
-	
-	@Override
+
 	public Matrix<F> times(final F a) {
 		
 		return new LazyDelegationMatrix<F>(this, this.getMatrixProvider(), new CellResolver<F>(){
@@ -246,7 +294,7 @@ public abstract class AbstractMatrix<F extends Field<F>> implements Matrix<F>{
 	}
 
 	
-	private static <F extends Field<F>> F determinant(Matrix<F> mat) {
+	private F determinant(Matrix<F> mat) {
 
 		if (!mat.isSquare()){
 			throw new ArithmeticException("Matriz is not square");
@@ -260,7 +308,7 @@ public abstract class AbstractMatrix<F extends Field<F>> implements Matrix<F>{
 			return mat.get(0,0).times(mat.get(1,1)).minus(mat.get(0,1).times(mat.get(1,0))); 
 		}
 
-		F zero = mat.get(0,0).zero(); // ZERO
+		F zero = this.provider.getField().zero();
 		
 		F result = zero;
 		Vector<F> masterRow =  mat.getRow(0);
@@ -391,12 +439,11 @@ public abstract class AbstractMatrix<F extends Field<F>> implements Matrix<F>{
 	}
 
 	/**
-	 * 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final Matrix<F> one() {
-		return provider.diagonal(this.columnsCount(), this.get(0, 0).one());
+	public boolean isZero() {
+		return this.equals(this.getAlgebricStructure().zero());
 	}
 	
 	/**
@@ -404,16 +451,7 @@ public abstract class AbstractMatrix<F extends Field<F>> implements Matrix<F>{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public final Matrix<F> zero() {
-		return provider.diagonal(this.columnsCount(), this.get(0, 0).zero());
-	}
-	
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <N extends Field<N>> Matrix<N> apply(final UnivariateFunction<F, N> function) {
+	public <N extends FieldElement<N>> Matrix<N> apply(final UnivariateFunction<F, N> function) {
 		return new LazyProxyMatrix<N>(this.provider, this.rowsCount(), this.columnsCount()) {
 
 			@Override

@@ -1,13 +1,13 @@
 package org.middleheaven.quantity.math.structure;
 
-import org.middleheaven.quantity.math.Matrix;
+import org.middleheaven.quantity.math.vectorspace.Matrix;
 
 public class DefaultMatrixInvertion implements MatrixInvertionAlgorithm{
 
 	@Override
-	public <F extends Field<F>> Matrix<F> invert(Matrix<F> matrix) {
+	public <F extends FieldElement<F>> Matrix<F> invert(Matrix<F> matrix) {
 		
-		F zero = matrix.get(0, 0).zero();
+		F zero = matrix.getField().zero();
 		
 		F det = matrix.determinant();
 		

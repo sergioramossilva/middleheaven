@@ -1,25 +1,25 @@
 /**
  * 
  */
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 
 /**
  * 
  */
-class LazyDelegationVector<F extends Field<F>> extends AbstractVector<F> {
+class LazyDelegationVector<F extends FieldElement<F>> extends AbstractVector<F> {
 
 	
 	private Object[] cache;
 	private Vector<F> original;
 	private ValueResolver<F> resolver;
 	
-	protected LazyDelegationVector(Vector<F> original, VectorSpaceProvider provider, ValueResolver<F> resolver){
-		super(provider);
+	protected LazyDelegationVector(Vector<F> original, ValueResolver<F> resolver){
+		super(original.getVectorSpace());
 		this.original = original;
 		this.resolver = resolver;
 		this.cache = new Object[original.size()];

@@ -4,13 +4,18 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.middleheaven.quantity.math.transform.FourierTransform;
+import org.middleheaven.quantity.math.vectorspace.DenseVectorSpaceProvider;
+import org.middleheaven.quantity.math.vectorspace.Vector;
+import org.middleheaven.quantity.math.vectorspace.VectorSpace;
+import org.middleheaven.quantity.math.vectorspace.VectorSpaceProvider;
 import org.middleheaven.util.collections.Walker;
 
 
 public class FFTTest {
 
-	VectorSpaceProvider provider = new DenseVectorSpaceProvider();
-
+	VectorSpaceProvider provider = DenseVectorSpaceProvider.getInstance();
+	VectorSpace<Vector<Complex>, Complex> space = provider.getVectorSpaceOver(ComplexField.getInstance(), 4);
+	
 	/*********************************************************************
 	 *  Test client and sample execution
 	 *
@@ -61,8 +66,8 @@ public class FFTTest {
 	@Test
 	public void testFFT(){
 
-
-		Vector<Complex> x = provider.vector(
+		
+		Vector<Complex> x = space.vector(
 				Complex.real( -0.03480425839330703),
 				Complex.real(	0.07910192950176387),
 				Complex.real( 0.7233322451735928),
@@ -113,7 +118,7 @@ public class FFTTest {
 	@Test
 	public void testFFTVector(){
 
-		Vector<Complex> x = provider.vector(
+		Vector<Complex> x = space.vector(
 				Complex.real( -0.03480425839330703),
 				Complex.real(	0.07910192950176387),
 				Complex.real( 0.7233322451735928),
@@ -159,7 +164,7 @@ public class FFTTest {
 	@Test
 	public void testFFTChange(){
 
-		Vector<Complex> x = provider.vector(
+		Vector<Complex> x = space.vector(
 				Complex.real( -0.03480425839330703),
 				Complex.real(	0.07910192950176387),
 				Complex.real( 0.7233322451735928),
