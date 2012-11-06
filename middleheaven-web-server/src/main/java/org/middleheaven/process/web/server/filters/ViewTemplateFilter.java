@@ -131,17 +131,6 @@ public class ViewTemplateFilter extends AbstractFilter {
 		}
 	}
 
-
-
-	private String  extractRequestPath(HttpServletRequest  request) {
-		String  servletPath = request.getServletPath();
-		String  pathInfo = request.getPathInfo();
-		String  query = request.getQueryString();
-		return (servletPath == null ? "" : servletPath)
-		+ (pathInfo == null ? "" : pathInfo)
-		+ (query == null ? "" : ("?" + query));
-	}
-
 	protected Page parsePage(HttpServletRequest  request, HttpServletResponse  response, FilterChain chain) throws IOException , ServletException {
 		try {
 			PageResponseWrapper pageResponse = new PageResponseWrapper(response);
