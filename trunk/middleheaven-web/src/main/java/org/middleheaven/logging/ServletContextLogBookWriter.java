@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.logging.config.LoggingConfiguration;
 
 public class ServletContextLogBookWriter extends LogBookWriter {
 
