@@ -26,4 +26,11 @@ public class IdentityCriterion implements Criterion {
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isJunction() {
+		return false;
+	}
 }

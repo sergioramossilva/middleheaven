@@ -67,7 +67,9 @@ public abstract class AbstractEntityCriteriaBuilder<T , B extends AbstractEntity
 
 
 	/**
-	 * @see org.middleheaven.storage.criteria.CriteriaBuilderStrategy#and(java.lang.String)
+	 * Starts a constraint on a field.
+	 * @param name name of the field.
+	 * @return
 	 */
 	public EntityFieldConstraint<T,B> and(String name) {
 		return new BuildingEntityFieldConstraint<T,B>(me(),qualify(name));

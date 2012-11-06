@@ -25,4 +25,11 @@ public class IsIdenticalToOtherInstanceCriterion implements Criterion {
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isJunction() {
+		return false;
+	}
 }

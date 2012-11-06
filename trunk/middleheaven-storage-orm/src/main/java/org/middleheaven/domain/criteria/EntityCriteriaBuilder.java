@@ -1,6 +1,9 @@
 package org.middleheaven.domain.criteria;
 
-
+/**
+ * Specialized builder for creating {@link EntityCriteria} objects.
+ * @param <T> the type of the entity beeing queried
+ */
 public class EntityCriteriaBuilder<T> extends AbstractEntityCriteriaBuilder<T, EntityCriteriaBuilder<T>> {
 
 	public static <U> EntityCriteriaBuilder<U> search(Class<U> type){

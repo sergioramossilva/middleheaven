@@ -42,5 +42,13 @@ public class EqualsOtherInstanceCriterion implements Criterion {
 	public Criterion simplify() {
 		return this;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isJunction() {
+		return false;
+	}
 
 }

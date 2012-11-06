@@ -106,7 +106,7 @@ public interface EntityFieldConstraint<T, B extends AbstractEntityCriteriaBuilde
 	public EntityFieldConstraint<T, B> not();
 	
 	/**
-	 * The attribute value is an entity equals to {@code candidate}
+	 * The attribute value is an entity equals to {@code candidate}.
 	 * @param <O>
 	 * @param candidate candidate to be tested
 	 * @return
@@ -114,7 +114,7 @@ public interface EntityFieldConstraint<T, B extends AbstractEntityCriteriaBuilde
 	public <O> B is(O candidate);
 	
 	/**
-	 * Transfers criteria building to the <code>referencedEntityType</code>
+	 * Transfers criteria building to the <code>referencedEntityType</code>.
 	 * 
 	 * @param <N> the referencedEntityType
 	 * @param referencedEntityType
@@ -123,7 +123,7 @@ public interface EntityFieldConstraint<T, B extends AbstractEntityCriteriaBuilde
 	public <N> JunctionCriteriaBuilder<N, T, ?> navigateTo(Class<N> referencedEntityType);
 	
 	/**
-	 * Transfers criteria building to the <code>referencedEntityType</code>
+	 * Transfers criteria building to the <code>referencedEntityType</code>.
 	 * 
 	 * @param <N> the referencedEntityType
 	 * @param referencedEntityType
