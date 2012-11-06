@@ -7,7 +7,10 @@ import org.middleheaven.quantity.math.structure.Field;
 import org.middleheaven.quantity.math.structure.FieldElement;
 import org.middleheaven.quantity.math.structure.Ring;
 
-
+/**
+ * Simple base implementation for a {@link Matrix}.
+ * @param <F> the {@link FieldElement} type of the elements of the matrix.
+ */
 public abstract class AbstractMatrix<F extends FieldElement<F>> implements Matrix<F>{
 
 
@@ -402,6 +405,10 @@ public abstract class AbstractMatrix<F extends FieldElement<F>> implements Matri
 	}
 
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@SuppressWarnings("unchecked")
 	public boolean equals(Object other){
 		return other instanceof Matrix && equalsOther((Matrix<F>)other); 
@@ -420,6 +427,14 @@ public abstract class AbstractMatrix<F extends FieldElement<F>> implements Matri
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public int hashCode(){
+		return this.columnsCount() + 13 * this.rowsCount();
 	}
 	
 	/**
