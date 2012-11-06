@@ -1,6 +1,6 @@
 package org.middleheaven.ui.models;
 
-import org.middleheaven.global.text.Formatter;
+import org.middleheaven.global.text.ParsableFormatter;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.components.UIOutput;
 
@@ -21,5 +21,5 @@ public interface UIOutputModel extends UIModel{
 	 * 
 	 * @return the formatter to used for the value's display
 	 */
-	public <T> Formatter<T> getFormater();
+	public <T> ParsableFormatter<T> getFormater();
 }

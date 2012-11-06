@@ -3,6 +3,7 @@ package org.middleheaven.ui;
 import java.io.File;
 import java.util.Collection;
 
+import org.middleheaven.core.annotations.Shared;
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.PropertyBagProxyHandler;
@@ -13,7 +14,6 @@ import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
 import org.middleheaven.core.wiring.BindingNotFoundException;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.xml.XMLException;

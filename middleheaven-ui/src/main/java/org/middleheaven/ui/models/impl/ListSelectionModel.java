@@ -2,7 +2,7 @@ package org.middleheaven.ui.models.impl;
 
 import java.util.List;
 
-import org.middleheaven.global.text.Formatter;
+import org.middleheaven.global.text.ParsableFormatter;
 import org.middleheaven.ui.models.AbstractSelectionModel;
 
 public class ListSelectionModel extends AbstractSelectionModel {
@@ -20,7 +20,7 @@ public class ListSelectionModel extends AbstractSelectionModel {
 	}
 	
 	@Override
-	public <T> Formatter<T> getFormater() {
+	public <T> ParsableFormatter<T> getFormater() {
 		// TODO implement UIOutputModel.getFormater
 		return null;
 	}

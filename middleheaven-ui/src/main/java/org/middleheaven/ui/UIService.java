@@ -1,6 +1,6 @@
 package org.middleheaven.ui;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 import org.middleheaven.process.AttributeContext;
 import org.middleheaven.ui.rendering.RenderKit;
 

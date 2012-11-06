@@ -7,12 +7,16 @@ import org.middleheaven.ui.rendering.SceneNavigator;
 import org.middleheaven.ui.rendering.UIRender;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
+/**
+ * Produces UICompoenents in a test environment.
+ */
 public class TestRenderKit extends AbstractRenderKit {
 
 
 	private static final long serialVersionUID = 925791236014175947L;
 	
 	final TestUIRender render = new TestUIRender();
+	
 	final UIUnitConverter converter = new UIUnitConverter(){
 
 		@Override

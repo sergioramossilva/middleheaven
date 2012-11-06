@@ -1,5 +1,7 @@
 package org.middleheaven.ui.rendering;
 
+import java.io.Serializable;
+
 import org.middleheaven.ui.Displayable;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIDimensionUnit;
@@ -8,15 +10,36 @@ import org.middleheaven.ui.UISize;
 /**
  * Provides conversion from the diferente {@link UIDimensionUnit}s to pixels.
  */
-public abstract class UIUnitConverter {
+public abstract class UIUnitConverter implements Serializable{
 
-    protected static String testString = "X";
+  
+	private static final long serialVersionUID = -7617520430966207065L;
+	
+	protected static final String TEST_STRING = "X";
 
+	/**
+	 * 
+	 * Constructor.
+	 */
     protected UIUnitConverter(){}
 
+    /**
+     * 
+     * @param size
+     * @param container
+     * @return
+     */
     public UISize toPixels(UISize size , Displayable container){
     	return toPixels(size, container, UISize.pixels(0, 0));
     }
+    
+    /**
+     * 
+     * @param size
+     * @param container
+     * @param availableSpace
+     * @return
+     */
     public UISize toPixels(UISize size , Displayable container ,UISize availableSpace ){
     	return UISize.valueOf(
     			toPixelsHorizontal(size.getWidth(), container, availableSpace.getWidth()),

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.middleheaven.global.text.Formatter;
+import org.middleheaven.global.text.ParsableFormatter;
 import org.middleheaven.ui.AbstractUIModel;
 import org.middleheaven.util.collections.Interval;
 
@@ -158,6 +159,6 @@ public abstract class AbstractSelectionModel extends AbstractUIModel implements 
 	}
 
 	@Override
-	public abstract <T> Formatter<T> getFormater();
+	public abstract <T> ParsableFormatter<T> getFormater();
 	
 }
