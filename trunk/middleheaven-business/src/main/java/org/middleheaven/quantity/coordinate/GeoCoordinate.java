@@ -1,6 +1,6 @@
 package org.middleheaven.quantity.coordinate;
 
-import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.RealField;
 import org.middleheaven.quantity.measurables.Distance;
 import org.middleheaven.quantity.measure.AngularMeasure;
 import org.middleheaven.quantity.measure.DecimalMeasure;
@@ -10,7 +10,7 @@ import org.middleheaven.quantity.unit.SI;
 public class GeoCoordinate extends Coordinate{
 
 	public GeoCoordinate(AngularMeasure latitude, AngularMeasure longitude ){
-		this(new GeographicReferenceSystem() ,  latitude, longitude,DecimalMeasure.exact(Real.ZERO(), SI.METER));
+		this(new GeographicReferenceSystem() ,  latitude, longitude,DecimalMeasure.exact(RealField.getInstance().zero(), SI.METER));
 	}
 	
 	public GeoCoordinate(CoordinateReferenceSystem<GeoCoordinate> refSystem, 
