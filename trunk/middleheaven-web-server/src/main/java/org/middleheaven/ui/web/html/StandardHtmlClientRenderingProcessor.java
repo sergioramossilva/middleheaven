@@ -40,7 +40,6 @@ public class StandardHtmlClientRenderingProcessor extends UIClientRenderingProce
 	 * 
 	 * Constructor.
 	 * @param uiService the client to render
-	 * @param env 
 	 * @param env the render kit used
 	 */
 	public StandardHtmlClientRenderingProcessor (UIService uiService, UIEnvironment env){
@@ -139,12 +138,5 @@ public class StandardHtmlClientRenderingProcessor extends UIClientRenderingProce
 		return context.getRequestUrl().getFilename(true);	
 	}
 
-	/**
-	 * @param context
-	 * @return
-	 */
-	private String parseWindowId(HttpServerContext context) {
-		return context.getRequestUrl().getFilename(true);
-	}
 
 }
