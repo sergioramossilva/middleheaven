@@ -7,6 +7,7 @@ import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Numeral;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.math.RealField;
+import org.middleheaven.util.Hash;
 import org.middleheaven.util.Incrementable;
 
 public class LongInteger extends BigInt {
@@ -148,6 +149,14 @@ public class LongInteger extends BigInt {
 	@Override
 	public Real toReal() {
 		return Real.valueOf(Long.valueOf(this.value));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		return Hash.hash(this.value).hashCode();
 	}
 
 

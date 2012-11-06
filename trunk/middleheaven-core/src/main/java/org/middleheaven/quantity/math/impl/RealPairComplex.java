@@ -6,6 +6,7 @@ import org.middleheaven.quantity.math.BigInt;
 import org.middleheaven.quantity.math.Complex;
 import org.middleheaven.quantity.math.Real;
 import org.middleheaven.quantity.math.RealField;
+import org.middleheaven.util.Hash;
 
 /**
  * Complex implementation using two {@link Real}s.
@@ -173,14 +174,30 @@ class RealPairComplex extends Complex {
 		return equalsOther( (RealPairComplex) other);
 	}
 
+	/**
+	 * 
+	 * @return the real parte has a {@link BigInt}.
+	 */
 	@Override
 	public BigInt toBigInt() {
 		return toReal().toBigInt();
 	}
 
+	/**
+	 * 
+	 * @return this value
+	 */
 	@Override
 	public Complex toComplex() {
 		return this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		return Hash.hash(this.real).hash(this.imaginary).hashCode();
 	}
 
 

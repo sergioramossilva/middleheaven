@@ -154,13 +154,11 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 				
 			}
 			
-			if (map.isEmpty()) {
-				
-			} else if (map.size() == 1){
+			if (map.size() == 1){
 				final MethodsData data = map.entrySet().iterator().next().getValue();
 				this.modifier = data.modifier;
 				this.assessor = data.assessor;
-			} else {
+			} else if(map.size() > 1) {
 				// take the more priority with two methods
 				MethodsData data = null;
 				for (Iterator<Entry<TypeData,MethodsData>> it = map.entrySet().iterator(); it.hasNext();){
