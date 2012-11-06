@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,11 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.middleheaven.core.services.ServiceRegistry;
-import org.middleheaven.io.network.NetUtils;
+import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.logging.LogBookWriter;
 import org.middleheaven.logging.LogWritingIOExcepiton;
+import org.middleheaven.logging.LoggingConfiguration;
 import org.middleheaven.logging.LoggingEvent;
-import org.middleheaven.logging.config.LoggingConfiguration;
 import org.middleheaven.logging.writters.FormatableLogWriter;
 import org.middleheaven.logging.writters.LogFormat;
 import org.middleheaven.mail.MailMessage;
@@ -24,7 +26,7 @@ import org.middleheaven.mail.MailSendingService;
 import org.middleheaven.util.StringUtils;
 
 /**
- * TODO implements Trigger functionality
+ * TODO implement Trigger functionality
  * @author  Sergio M. M. Taborda
  */
 public class LogEmailWriter extends LogBookWriter implements FormatableLogWriter {
@@ -111,7 +113,7 @@ public class LogEmailWriter extends LogBookWriter implements FormatableLogWriter
             email.addToAdress(mails);
 
             email.setSubject("Log Events" + dateFormat.format(new Date()));
-            email.setFrom("midleheave.logging@" + NetUtils.getPrimaryAddress().toString());
+            email.setFrom("midleheave.logging@" + getPrimaryAddress().toString());
 
             ByteArrayOutputStream message  = new ByteArrayOutputStream();
 
@@ -128,6 +130,14 @@ public class LogEmailWriter extends LogBookWriter implements FormatableLogWriter
         }
 
     }
+    
+    public static InetAddress getPrimaryAddress(){
+		try {
+			return InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			throw ManagedIOException.manage(e);
+		}
+	}
 
 
 }

@@ -1,6 +1,6 @@
 package org.middleheaven.mail;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 
 @Service
 public class MailSendingServiceDecorator implements MailSendingService {
