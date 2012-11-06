@@ -9,7 +9,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.UrlStringUtils;
 
@@ -150,14 +149,9 @@ public class FormTag extends AbstractBodyTagSupport {
 		 */
 	}
 
-	private String getL10NMessage(String label){
-		return this.localize(TextLocalizable.valueOf(label));
-	}
-
 	public void doInitBody() throws JspException {
 
 	}
-
 
 	public int doAfterBody() throws JspException {
 		BodyContent bc = getBodyContent();
