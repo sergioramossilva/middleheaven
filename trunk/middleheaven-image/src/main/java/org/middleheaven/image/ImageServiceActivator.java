@@ -11,6 +11,7 @@ import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceContext;
 import org.middleheaven.core.services.ServiceSpecification;
 
+
 public class ImageServiceActivator extends ServiceActivator {
 
 	ImageService service;
