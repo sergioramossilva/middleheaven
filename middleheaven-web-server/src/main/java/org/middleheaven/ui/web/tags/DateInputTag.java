@@ -17,7 +17,6 @@ public class DateInputTag extends TextInputTag{
 		this.setSubtype("date");
 	}
 
-
 	protected void writeInputOption() throws JspTagException {
 		
 		// sinals the form that that his is an upload capacle form
