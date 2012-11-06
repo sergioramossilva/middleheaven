@@ -12,6 +12,7 @@ import org.middleheaven.global.text.ISO8601Format;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.quantity.time.TimeUtils;
+import org.middleheaven.util.StringUtils;
 
 public class SitemapIndexWriter {
 
@@ -104,7 +105,7 @@ public class SitemapIndexWriter {
 
 		writer.println("<url>");
 		writer.print("<loc>");
-		writer.print( domain + "/" + entry.getLocation());
+		writer.print( domain + StringUtils.ensureStartsWith( entry.getLocation(), "/"));
 		writer.println("</loc>");
 
 		if(entry.getPrioriy() != null){
