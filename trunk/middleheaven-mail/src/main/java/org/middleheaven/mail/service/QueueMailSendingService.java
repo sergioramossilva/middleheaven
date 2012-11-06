@@ -12,6 +12,9 @@ import org.middleheaven.mail.MailSendingService;
 import org.middleheaven.mail.MailSendingServiceDecorator;
 import org.middleheaven.mail.MailTransmissionResult;
 
+/**
+ * Creates an asynchronous decorator dor a {@link MailSendingService};
+ */
 public class QueueMailSendingService extends MailSendingServiceDecorator {
 
 	BlockingQueue<QueuedMessage> queue = new PriorityBlockingQueue<QueuedMessage>(100,new Comparator<QueuedMessage>(){
@@ -25,13 +28,24 @@ public class QueueMailSendingService extends MailSendingServiceDecorator {
 
 	private MailSenderThread mailSenderThread;
 
+	/**
+	 * 
+	 * Constructor.
+	 * @param original
+	 */
 	public QueueMailSendingService(MailSendingService original) {
 		super(original);
 
-		MailSenderThread mailSenderThread = new MailSenderThread();
-		mailSenderThread.start();
+		this.mailSenderThread = new MailSenderThread();
+	
 	}
 
+	/**
+	 * 
+	 * Constructor.
+	 * @param original
+	 * @param queue
+	 */
 	public QueueMailSendingService(MailSendingService original, BlockingQueue<QueuedMessage> queue) {
 		this(original);
 		setQueue(queue);
@@ -50,6 +64,11 @@ public class QueueMailSendingService extends MailSendingServiceDecorator {
 
 	@Override
 	public void send(MailMessage message, MailAsynchrounsCallback callback)throws MailException {
+		
+		if (!this.mailSenderThread.isAlive()){
+			mailSenderThread.start();
+		}
+		
 		queue.offer(new QueuedMessage(message,callback));
 	}
 

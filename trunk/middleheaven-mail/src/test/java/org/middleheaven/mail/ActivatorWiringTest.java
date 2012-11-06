@@ -6,9 +6,9 @@ package org.middleheaven.mail;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.middleheaven.core.annotations.Shared;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
-import org.middleheaven.core.wiring.annotations.Shared;
 import org.middleheaven.mail.service.JavaMailActivator;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
