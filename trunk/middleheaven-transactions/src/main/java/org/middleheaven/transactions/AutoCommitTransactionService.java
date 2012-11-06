@@ -7,13 +7,20 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
+import org.middleheaven.util.Hash;
 
+/**
+ * A {@link TransactionService} that auto commit evey change.
+ */
 public class AutoCommitTransactionService implements TransactionService {
 
 	Set<XAResource> xar = new HashSet<XAResource>();
 	ThreadLocal<Transaction> local = new ThreadLocal<Transaction>();
 
-	
+	/**
+	 * 
+	 * Constructor.
+	 */
 	public AutoCommitTransactionService(){
 	
 	}
@@ -55,8 +62,22 @@ public class AutoCommitTransactionService implements TransactionService {
 			return null;
 		}
 
+		/**
+		 * 
+		 * {@inheritDoc}
+		 */
+		@Override
 		public boolean equals(Object other){
 			return other instanceof LongXid && i == ((LongXid)other).i;
+		}
+		
+		/**
+		 * 
+		 * {@inheritDoc}
+		 */
+		@Override
+		public int hashCode(){
+			return Hash.hash(i).hashCode();
 		}
 
 	}

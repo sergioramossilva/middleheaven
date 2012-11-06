@@ -2,7 +2,7 @@ package org.middleheaven.transactions;
 
 import javax.transaction.xa.XAResource;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 
 @Service
 public interface TransactionService {

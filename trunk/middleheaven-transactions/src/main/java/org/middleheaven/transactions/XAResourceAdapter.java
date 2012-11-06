@@ -23,7 +23,7 @@ public abstract class XAResourceAdapter implements XAResource {
 
     public synchronized void end(Xid xid, int flag) throws XAException {
         // Disassociate from transaction
-        xid = null;
+        this.xid = null;
     }
 
     public synchronized int prepare(Xid xid) throws XAException {
