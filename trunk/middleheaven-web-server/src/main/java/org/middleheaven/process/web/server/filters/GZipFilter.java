@@ -9,25 +9,33 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * A simple filter that compresses the contente writen out in GZip format.
+ */
+public class GZipFilter extends AbstractFilter {
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException {
 
-public class GZipFilter  extends AbstractFilter {
-
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-		if (request instanceof HttpServletRequest) {
+		if (request instanceof HttpServletRequest
+				&& response instanceof HttpServletResponse) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
 			String acceptEncoding = httpRequest.getHeader("accept-encoding");
 			if (acceptEncoding != null && acceptEncoding.contains("gzip")) {
 
-				GZipResponseWrapper wrappedResponse = new GZipResponseWrapper(httpResponse);
+				GZipResponseWrapper wrappedResponse = new GZipResponseWrapper(
+						httpResponse);
 
 				chain.doFilter(request, wrappedResponse);
 				wrappedResponse.finishResponse();
 
 				return;
-			} 
+			}
 		}
 		chain.doFilter(request, response);
 
