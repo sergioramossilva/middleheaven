@@ -1,6 +1,6 @@
 package org.middleheaven.domain.store;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 import org.middleheaven.domain.model.DomainModel;
 
 /**

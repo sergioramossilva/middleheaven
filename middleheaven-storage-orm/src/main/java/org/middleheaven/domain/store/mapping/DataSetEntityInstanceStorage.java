@@ -49,7 +49,6 @@ import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.classification.LogicOperator;
 import org.middleheaven.util.criteria.Criterion;
 import org.middleheaven.util.criteria.CriterionOperator;
-import org.middleheaven.util.criteria.FieldCriterion;
 import org.middleheaven.util.criteria.FieldValueCriterion;
 import org.middleheaven.util.criteria.JunctionCriterion;
 import org.middleheaven.util.criteria.LogicCriterion;
@@ -234,7 +233,9 @@ public class DataSetEntityInstanceStorage extends AbstractEntityInstanceStorage 
 						rd.setSourceDataSetModel(source);
 						rd.setTargetDataSetModel(target);
 
-						QualifiedName name = mapper.getEntityFieldTypeMapper(junction.getFieldName()).getColumns()[0].getName(); // 0 == key ?
+						QualifiedName name = mapper.getEntityFieldTypeMapper(
+								junction.getFieldName()
+						).getColumns()[0].getName(); // 0 == key ?
 
 						ColumnValueConstraint cc = new ColumnValueConstraint(
 								new ColumnNameValueLocator(name),
@@ -391,7 +392,11 @@ public class DataSetEntityInstanceStorage extends AbstractEntityInstanceStorage 
 						idValue = bean.get(idModel.getName().getDesignation());
 					} 
 
-					FieldValueCriterion f = new FieldValueCriterion(idModel.getName(), CriterionOperator.EQUAL, new SingleObjectValueHolder(idValue));
+					FieldValueCriterion f = new FieldValueCriterion(
+							idModel.getName(), 
+							CriterionOperator.EQUAL, 
+							new SingleObjectValueHolder(idValue)
+					);
 
 					interpretFieldValueCriterion(constraint, f);	
 				} else {

@@ -12,6 +12,8 @@ import org.middleheaven.util.criteria.JunctionCriterion;
  */
 public class FieldJuntionCriterion implements JunctionCriterion {
 
+	private static final long serialVersionUID = -348614713682815750L;
+	
 	private QualifiedName fieldName;
 	private Class<?> targetType;
 	private Class<?> sourceType;
@@ -26,7 +28,7 @@ public class FieldJuntionCriterion implements JunctionCriterion {
 	 * @param sourceType the source junction type
 	 * @param reversed if the junction is reversed.
 	 */
-	public FieldJuntionCriterion(QualifiedName fieldName, Class<?> targetType, Class<?>  sourceType, boolean reversed){
+	 public FieldJuntionCriterion(QualifiedName fieldName, Class<?> targetType, Class<?>  sourceType, boolean reversed){
 		if (targetType == null){
 			throw new IllegalArgumentException("Target type is required");
 		}
@@ -36,6 +38,13 @@ public class FieldJuntionCriterion implements JunctionCriterion {
 		this.reversed = reversed;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isJunction() {
+		return true;
+	}
 	
 	/**
 	 * {@inheritDoc}
