@@ -1,9 +1,14 @@
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.Conjugatable;
+import org.middleheaven.quantity.math.UnivariateFunction;
+import org.middleheaven.quantity.math.structure.FieldElement;
+import org.middleheaven.quantity.math.structure.GroupAdditive;
+import org.middleheaven.util.Hash;
+import org.middleheaven.util.Hash.HashBuilder;
 import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.IndexBasedIterator;
@@ -11,23 +16,24 @@ import org.middleheaven.util.collections.IterableWalkable;
 import org.middleheaven.util.collections.Walkable;
 import org.middleheaven.util.collections.Walker;
 
-public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , Conjugatable<Vector<F>> , Iterable<F>{
+public abstract class AbstractVector<F extends FieldElement<F>> implements Vector<F> , Conjugatable<Vector<F>> , Iterable<F>{
 	
 	
-	private VectorSpaceProvider provider;
+	private final VectorSpace<Vector<F>, F > vectorSpace;
 
-	protected AbstractVector (VectorSpaceProvider provider){
-		this.provider = provider;
+	protected AbstractVector (VectorSpace<Vector<F>, F > vectorSpace){
+		this.vectorSpace = vectorSpace;
+		
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	public Vector<F> cross(Vector<F> other){
+	protected Vector<F> cross(Vector<F> other){
 		if (this.size()!=3 || this.size()!=3){
 			throw new ArithmeticException("Cross product it not defined in this space");
 		}
 		
-		return provider.vector(
+		return vectorSpace.vector(
 				this.get(2).times(this.get(3)).minus(this.get(3).times(this.get(2))),
 				this.get(3).times(this.get(1)).minus(this.get(1).times(this.get(3))),
 				this.get(1).times(this.get(2)).minus(this.get(2).times(this.get(1)))
@@ -36,12 +42,45 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 		
 	}
 	
+
+	@Override
+	public GroupAdditive<Vector<F>> getAlgebricStructure() {
+		return new GroupAdditive<Vector<F>>(){
+
+			@Override
+			public boolean isGroupAdditive() {
+				return true;
+			}
+
+			@Override
+			public boolean isRing() {
+				return false;
+			}
+
+			@Override
+			public boolean isField() {
+				return false;
+			}
+
+			@Override
+			public Vector<F> zero() {
+				return vectorSpace.replicate(vectorSpace.getField().zero());
+			}
+			
+		};
+	}
+	
+	
+	public VectorSpace<Vector<F>, F> getVectorSpace(){
+		return vectorSpace;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public Vector<F> multiply(final Vector<F> other) {
-		return new LazyDelegationVector<F>(this, this.provider, new ValueResolver<F>(){
+		return new LazyDelegationVector<F>(this, new ValueResolver<F>(){
 
 			@Override
 			public F resolve(int i, Vector<F> original) {
@@ -84,7 +123,7 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 	@Override
 	public Vector<F> times(final F a) {
 
-		return new LazyDelegationVector<F>(this, this.provider, new ValueResolver<F>(){
+		return new LazyDelegationVector<F>(this, new ValueResolver<F>(){
 
 			@Override
 			public F resolve(int i, Vector<F> original) {
@@ -101,7 +140,7 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 			throw new ArithmeticException("Dimentions must be equals");
 		}
 		
-		return new LazyDelegationVector<F>(this, this.provider, new ValueResolver<F>(){
+		return new LazyDelegationVector<F>(this,  new ValueResolver<F>(){
 
 			@Override
 			public F resolve(int i, Vector<F> original) {
@@ -114,7 +153,7 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 	@Override
 	public Vector<F> negate() {
 		
-		return new LazyDelegationVector<F>(this, this.provider, new ValueResolver<F>(){
+		return new LazyDelegationVector<F>(this,  new ValueResolver<F>(){
 
 			@Override
 			public F resolve(int i, Vector<F> original) {
@@ -131,7 +170,7 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 			throw new ArithmeticException("Dimentions must be equals");
 		}
 		
-		return new LazyDelegationVector<F>(this, this.provider, new ValueResolver<F>(){
+		return new LazyDelegationVector<F>(this, new ValueResolver<F>(){
 
 			@Override
 			public F resolve(int i, Vector<F> original) {
@@ -145,7 +184,7 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 
 	public final Vector<F> conjugate() {
 		
-		return new LazyDelegationVector<F>(this, this.provider, new ValueResolver<F>(){
+		return new LazyDelegationVector<F>(this, new ValueResolver<F>(){
 
 			@SuppressWarnings("unchecked")
 			@Override
@@ -161,15 +200,7 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 		});
 
 	}
-	
-	@Override
-	public final Vector<F> zero() {
-		F zero = this.get(0).zero();
-		
-		return this.provider.vector(this.size(), zero);
-	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public boolean equals (Object other){
 		return other instanceof Vector && equalsOther((Vector<F>)other);
@@ -182,6 +213,14 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public int hashCode(){
+		return this.size();
 	}
 	
 	public String toString(){
@@ -263,15 +302,23 @@ public abstract class AbstractVector<F extends Field<F>> implements Vector<F> , 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <N extends Field<N>> Vector<N> apply(final UnivariateFunction <F, N> function) {
+	public boolean isZero() {
+		return this.equals(this.getAlgebricStructure().zero());
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <N extends FieldElement<N>> Vector<N> apply(final UnivariateFunction <F, N> function) {
 		
-		return new LazyProxyVector<N>(this.provider, this.size()) {
+		return new LazyProxyVector<N>(this.vectorSpace, this.size()) {
 
 			@Override
 			public N lazyGet(int index) {
 				return function.apply(AbstractVector.this.get(index));
 			}
-			
+
 		};
 	}
 

@@ -1,31 +1,34 @@
-package org.middleheaven.quantity.math.impl;
+package org.middleheaven.quantity.math.vectorspace;
 
-import org.middleheaven.quantity.math.DenseMatrix;
-import org.middleheaven.quantity.math.Matrix;
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 import org.middleheaven.quantity.math.structure.MatrixInvertionAlgorithm;
 
 public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 
-	 static <T extends Field<T>> DenseMatrix<T> augmentWithEntity(Matrix<T> m){
-
-		DenseMatrix<T> e = new DenseMatrix<T>(m.rowsCount(), m.columnsCount()*2, m.get(0, 0).zero());
+	 static <T extends FieldElement<T>> DenseMatrix<T> augmentWithEntity(Matrix<T> m){
+		
+		 final T ZERO = m.getField().zero();
+		final T ONE = m.getField().one();
+		
+		DenseMatrix<T> e = new DenseMatrix<T>(m.rowsCount(), m.columnsCount()*2, ZERO);
+		
 		for (int r = 0; r < m.rowsCount(); r++) {
 			for (int c = 0; c< m.columnsCount(); c++) {
 				e.set(r,c,m.get(r, c));
 			}
-			e.set(r, m.columnsCount()+ r,m.get(0, 0).one() );
+		
+			e.set(r, m.columnsCount()+ r,ONE );
 		}
 		return e;
 	}
 	 
-	public <F extends Field<F>> Matrix<F> invert( Matrix<F> matrix){
+	public <F extends FieldElement<F>> Matrix<F> invert( Matrix<F> matrix){
 
 		if (!matrix.isSquare()){
 			throw new ArithmeticException("Matrix not invertable");
 		}
-		final F ZERO = matrix.get(0, 0).zero();
-		final F ONE = matrix.get(0, 0).one();
+		final F ZERO = matrix.getField().zero();
+		final F ONE = matrix.getField().one();
 	
 		DenseMatrix<F> A = augmentWithEntity(matrix);
 
@@ -73,7 +76,7 @@ public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 	// swap()
 	// swap row i with row k
 	// pre: A[i][q]==A[k][q]==0 for 1<=q<j
-	private  static  <F extends Field<F>>  void swap(DenseMatrix<F> A, int i, int k, int j){
+	private  static  <F extends FieldElement<F>>  void swap(DenseMatrix<F> A, int i, int k, int j){
 		final int m = A.columnsCount();
 		for(int q=j - 1; q<m; q++){
 			F temp = A.get(i,q);
@@ -86,7 +89,7 @@ public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 	// divide row i by A[i][j]
 	// pre: A[i][j]!=0, A[i][q]==0 for 1<=q<j
 	// post: A[i][j]==1;
-	private static <F extends Field<F>>  void divide(DenseMatrix<F> A, int i, int j,F ONE){
+	private static <F extends FieldElement<F>>  void divide(DenseMatrix<F> A, int i, int j,F ONE){
 		final int m = A.columnsCount() - 1;
 		for(int q=j+1; q<=m; q++){
 			A.set(i, q , A.get(i,q).over( A.get(i,j)));
@@ -98,7 +101,7 @@ public class GaussJordanMatrixInvertion implements MatrixInvertionAlgorithm{
 	// subtract an appropriate multiple of row i from every other row
 	// pre: A[i][j]==1, A[i][q]==0 for 1<=q<j
 	// post: A[p][j]==0 for p!=i
-	private static <F extends Field<F>>  void eliminate(DenseMatrix<F> A, int i, int j, F ZERO){
+	private static <F extends FieldElement<F>>  void eliminate(DenseMatrix<F> A, int i, int j, F ZERO){
 		final int n = A.rowsCount() - 1;
 		final int m = A.columnsCount() - 1;
 		for(int p=0; p<=n; p++){

@@ -4,11 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.middleheaven.quantity.math.impl.LUDecomposition;
+import org.middleheaven.quantity.math.vectorspace.DenseVectorSpaceProvider;
+import org.middleheaven.quantity.math.vectorspace.LUDecomposition;
+import org.middleheaven.quantity.math.vectorspace.Matrix;
+import org.middleheaven.quantity.math.vectorspace.Vector;
+import org.middleheaven.quantity.math.vectorspace.VectorSpace;
+import org.middleheaven.quantity.math.vectorspace.VectorSpaceProvider;
 
 public class StructuresTest {
 
-	VectorSpaceProvider provider = new DenseVectorSpaceProvider();
+	VectorSpaceProvider provider = DenseVectorSpaceProvider.getInstance();
 	 
 	@Test
 	public void testNumbers(){
@@ -29,7 +34,9 @@ public class StructuresTest {
 	
 	@Test
 	public void matrixRemove(){
-		Matrix<Real> M = provider.matrix(3,3, Real.valueOf(
+		VectorSpace<Vector<Real>, Real> space = provider.getVectorSpaceOver(RealField.getInstance(), 3);
+		
+		Matrix<Real> M = space.matrix(3,3, Real.valueOf(
 				1 ,1 , 2, 
 				1 , 2 , 1 , 
 				2 ,1 ,1
@@ -51,21 +58,23 @@ public class StructuresTest {
 	@Test
 	public void matrix(){
 
-		Vector<Real> v1 = provider.vector(1,1,2);
-		Vector<Real> v2 = provider.vector(1,2,1);
-		Vector<Real> v3 = provider.vector(2,1,1);
+		VectorSpace<Vector<Real>, Real> space = provider.getVectorSpaceOver(RealField.getInstance(), 3);
+		
+//		Vector<Real> v1 = space.vector(1,1,2);
+//		Vector<Real> v2 = space.vector(1,2,1);
+//		Vector<Real> v3 = space.vector(2,1,1);
 
-		Matrix<Real> M = provider.matrix(3,3, Real.valueOf(
+		Matrix<Real> M = space.matrix(3,3, Real.valueOf(
 				1 ,1 , 2, 
 				1 , 2 , 1 , 
 				2 ,1 ,1
 		));
 
-		Vector<Real> v4 = provider.vector(2,2,4);
-		Vector<Real> v5 = provider.vector(2,4,2);
-		Vector<Real> v6 = provider.vector(4,2,2);
+		Vector<Real> v4 = space.vector(2,2,4);
+//		Vector<Real> v5 = space.vector(2,4,2);
+//		Vector<Real> v6 = space.vector(4,2,2);
 
-		Matrix<Real> N = provider.matrix(3,3, Real.valueOf(2 , 2 , 4, 2 ,4 ,2,4, 2, 2));
+		Matrix<Real> N = space.matrix(3,3, Real.valueOf(2 , 2 , 4, 2 ,4 ,2,4, 2, 2));
 
 		// determinant
 		Real det = M.determinant();
@@ -84,28 +93,28 @@ public class StructuresTest {
 		assertEquals(N , M.plus(M));
 
 		// vector x matrix
-		Vector<Real> v7 = provider.vector(12,10,10);
+		Vector<Real> v7 = space.vector(12,10,10);
 		assertEquals(v7, M.rightTimes(v4));
 
 		// Matrix equality
-		Matrix<Real> P = provider.matrix(3,3, Real.valueOf(1 , 1 , 2, 1 ,2 ,1, 2, 1, 1));
+		Matrix<Real> P = space.matrix(3,3, Real.valueOf(1 , 1 , 2, 1 ,2 ,1, 2, 1, 1));
 		assertEquals(M, P);
 
 		// Matrix multiplication
-		Matrix<Real> Q = provider.matrix(3,3, Real.valueOf(12 , 10 , 10, 10 ,12 ,10, 10, 10, 12));
+		Matrix<Real> Q = space.matrix(3,3, Real.valueOf(12 , 10 , 10, 10 ,12 ,10, 10, 10, 12));
 		assertEquals(Q, M.times(N));
 
 		// Adjoint
-		Matrix<Real> A = provider.matrix(3,3, Real.valueOf(1 , 1 , -3, 1 ,-3 ,1, -3, 1, 1));
+		Matrix<Real> A = space.matrix(3,3, Real.valueOf(1 , 1 , -3, 1 ,-3 ,1, -3, 1, 1));
 		assertEquals(A, M.adjoint());
 
 		// Identity Multiplication
-		Matrix<Real> I = provider.identity(3);
+		Matrix<Real> I = space.identity(3);
 		assertEquals(I, I.times(I));
 
 		assertEquals(I.getRow(1), I.getColumn(1));
 
-		Matrix<Real> X = provider.matrix(3,3, 
+		Matrix<Real> X = space.matrix(3,3, 
 				Real.valueOf(
 						1 ,  3 , 3, 
 						1 , 4 ,3, 
@@ -116,7 +125,7 @@ public class StructuresTest {
 		assertEquals(X, X.times(I));
 		assertEquals(X, I.times(X));
 
-		Matrix<Real> XInv = provider.matrix(3,3, Real.valueOf(
+		Matrix<Real> XInv = space.matrix(3,3, Real.valueOf(
 				7 ,  -3 , -3, 
 				-1 , 1 ,0, 
 				-1, 0, 1
@@ -137,8 +146,9 @@ public class StructuresTest {
 
 	@Test(expected=ArithmeticException.class)
 	public void matrixInversNotExists(){
-
-		Matrix<Real> X = provider.matrix(3,3, Real.valueOf(
+		VectorSpace<Vector<Real>, Real> space = provider.getVectorSpaceOver(RealField.getInstance(), 3);
+		
+		Matrix<Real> X = space.matrix(3,3, Real.valueOf(
 						1 ,  3 , 3, 
 						1 , 3 ,3,  // two equal rows => zero determinant
 						1, 3, 4
@@ -150,15 +160,17 @@ public class StructuresTest {
 
 	@Test 
 	public void randomMatrix (){
-		Matrix<Real> R = provider.random(3,3,2);
+		VectorSpace<Vector<Real>, Real> space = provider.getVectorSpaceOver(RealField.getInstance(), 3);
+		
+		Matrix<Real> R = space.random(3,3,2);
 
 		// same seed produces the same matrix
-		assertEquals(R, provider.random(3,3,2));
+		assertEquals(R, space.random(3,3,2));
 
 		// the matrix is invertible
 		assertTrue(R.hasInverse());
 		
-		Matrix<Real> I = provider.identity(3);
+		Matrix<Real> I = space.identity(3);
 		
 		assertEquals(I, R.times(R.inverse()));
 		
@@ -168,20 +180,21 @@ public class StructuresTest {
 
 	@Test 
 	public void matrixLU(){
+		VectorSpace<Vector<Real>, Real> space = provider.getVectorSpaceOver(RealField.getInstance(), 3);
 		
 		//http://en.wikipedia.org/wiki/LU_decomposition
-		Matrix<Real> A = provider.matrix(2,2, Real.valueOf(
+		Matrix<Real> A = space.matrix(2,2, Real.valueOf(
 				4, 3,
 				6, 3
 		));
 
-		Matrix<Real> U = provider.matrix(2,2, Real.valueOf(
+		Matrix<Real> U = space.matrix(2,2, Real.valueOf(
 				4 , 3 ,
 				0, -1.5
 		));
 
 
-		Matrix<Real> L = provider.matrix(2,2, Real.valueOf(
+		Matrix<Real> L = space.matrix(2,2, Real.valueOf(
 				1, 0 ,
 				1.5 , 1
 		));
@@ -196,19 +209,19 @@ public class StructuresTest {
 		assertEquals(A , lud.getL().times(lud.getU()));
 
 		
-		 A = provider.matrix(3,3, Real.valueOf(
+		 A = space.matrix(3,3, Real.valueOf(
 				6 , -2 , 0, 
 				9 ,-1 ,1, 
 				3, 7, 5
 		));
 
-		U = provider.matrix(3,3, new Real []{
+		U = space.matrix(3,3, new Real []{
 				Real.valueOf(6) , Real.valueOf( -2 ), Real.valueOf(0),
 				Real.valueOf(0) , Real.valueOf(2 ), Real.valueOf(1 ),
 				Real.valueOf(0) , Real.valueOf(0 ), Real.valueOf(1)	
 		});
 
-		L = provider.matrix(3,3, new Real []{
+		L = space.matrix(3,3, new Real []{
 				Real.valueOf(1) , Real.valueOf(0 ), Real.valueOf(0),
 				Real.valueOf(3,2 ) , Real.valueOf(1 ), Real.valueOf(0),
 				Real.valueOf(1, 2) , Real.valueOf(4 ), Real.valueOf(1)	
@@ -229,7 +242,7 @@ public class StructuresTest {
 	
 		
 		
-		Matrix<Real> N = provider.matrix(3,3, Real.valueOf(
+		Matrix<Real> N = space.matrix(3,3, Real.valueOf(
 				1 , 1 , 2, 
 				1 ,2 ,1,
 				2, 1, 1

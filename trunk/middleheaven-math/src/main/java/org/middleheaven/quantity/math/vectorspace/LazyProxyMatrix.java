@@ -1,21 +1,21 @@
 /**
  * 
  */
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 
 /**
  * 
  */
-public abstract class LazyProxyMatrix<F extends Field<F>> extends AbstractMatrix<F> {
+public abstract class LazyProxyMatrix<F extends FieldElement<F>> extends AbstractMatrix<F> {
 
 
 	private int rows;
 	private int columns;
 	private Object[] cache;
 
-	public LazyProxyMatrix (VectorSpaceProvider provider, int rows, int columns){
+	public LazyProxyMatrix (VectorSpace provider, int rows, int columns){
 		super(provider);
 		this.rows = rows;
 		this.columns = columns;

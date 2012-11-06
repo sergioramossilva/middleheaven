@@ -1,8 +1,6 @@
-package org.middleheaven.quantity.math.impl;
+package org.middleheaven.quantity.math.vectorspace;
 
-import org.middleheaven.quantity.math.DenseMatrix;
-import org.middleheaven.quantity.math.Matrix;
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 
 
 /** LU Decomposition.
@@ -17,7 +15,7 @@ singular, so the constructor will never fail.  The primary use of the
 LU decomposition is in the solution of square systems of simultaneous
 linear equations.  This will fail if {@link #isNonsingular()} returns <code>false</code>.
  */
-public class LUDecomposition<F extends Field<F>> {
+public class LUDecomposition<F extends FieldElement<F>> {
 
 
 	private Matrix<F> L;
@@ -31,10 +29,10 @@ public class LUDecomposition<F extends Field<F>> {
 	 * ------------------------ */
 
 
-	public static <R extends Field<R>> LUDecomposition<R> decompose(Matrix<R> LU){
+	public static <R extends FieldElement<R>> LUDecomposition<R> decompose(Matrix<R> LU){
 
-		R ZERO = LU.get(0, 0).zero();
-		R ONE = LU.get(0, 0).one();
+		R ZERO = LU.getField().zero();
+		R ONE = LU.getField().one();
 
 		if (!(ONE instanceof Comparable)){
 			throw new IllegalArgumentException ("Field is not ordable");

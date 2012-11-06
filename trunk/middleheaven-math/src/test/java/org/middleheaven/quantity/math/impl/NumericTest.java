@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.middleheaven.quantity.math.Real;
+import org.middleheaven.quantity.math.RealField;
 
 
 public class NumericTest {
@@ -61,6 +62,7 @@ public class NumericTest {
 		
 		// cgd (a.k, b.k) = k .gcd(a,b)
 		assertEquals(c.multiply(k) , BigDecimalMath.gcd(a.multiply(k), b.multiply(k)));
+	
 		
 	}
 	
@@ -94,19 +96,43 @@ public class NumericTest {
 	@Test
 	public void testArcTan(){
 		
-		assertEquals(Real.ZERO(),Real.ZERO().arctan());
+		Real ZERO = RealField.getInstance().zero();
+		Real ONE = RealField.getInstance().one();
 		
+		assertEquals(ZERO,ZERO.arctan());
+
 		// arcTan(1/sqrt(3)) = pi/6
 		
-		assertEquals(Real.valueOf(Math.PI).over(6),Real.ONE().over(Real.valueOf(3).sqrt()).arctan());
+		final Real k = Real.valueOf(3);
+		
+		final Real expected = Real.valueOf(Math.PI).over(6);
+		
+		final Real value = k.sqrt().inverse().arctan();
+		
+		assertInRange(expected,value, 0.001);
 		
 		// arcTan(1) = pi/4
 		
-		Real pi4 = Real.valueOf(Math.PI).over(4);
+		Real pi4 = Real.valueOf(Math.PI);
 
-		assertEquals(pi4,Real.ONE().arctan());
+		
+		assertInRange(pi4,ONE.arctan().times(4), 1E-20);
+	
 	}
 	
+	/**
+	 * @param expected
+	 * @param value
+	 */
+	private void assertInRange(Real expected, Real value, double range) {
+		
+		final Real err = Real.valueOf("1").minus(value.over(expected));
+		if (err.compareTo(Real.valueOf(range)) > 0 ){
+			throw new AssertionError("Expected value ("+ expected+ ") not in range of observed value (" + value +") error was = " + err + ")");
+		}
+		
+	}
+
 	@Test
 	public void testSinSQRT(){
 		// sin(pi/4) = sqrt(2)/2
@@ -117,7 +143,7 @@ public class NumericTest {
 		Real a = two.sqrt().over(2);
 		Real b = pi4.sin();
 
-		assertEquals(a,b);
+		assertInRange(a,b, 1E-15);
 	}
 
 	@Test
@@ -129,15 +155,23 @@ public class NumericTest {
 		
 		Real a = two.sqrt().over(2);
 		Real b = pi4.cos();
-
-		assertEquals(a,b);
+		
+		assertInRange(a,b, 1E-20);
 	}
 	
+	
+	@Test
+	public void testCosSenSQRT(){
+		
+		Real pi4 = Real.valueOf(Math.PI).over(4);
+	
+		assertInRange( Real.valueOf(1), pi4.cos().raise(2).plus( pi4.sin().raise(2)), 1E-19);
+	}
 	@Test
 	public void testExp(){
 		
 		
-		assertEquals(Real.valueOf(Math.E), Real.ONE().exp());
+		assertInRange(Real.valueOf(Math.E), RealField.getInstance().one().exp(), 1E-20);
 	}
 	
 	private void assertNumberEquals(BigDecimal a, BigDecimal b) {

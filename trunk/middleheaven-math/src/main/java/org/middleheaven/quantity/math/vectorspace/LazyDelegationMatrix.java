@@ -1,20 +1,21 @@
 /**
  * 
  */
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
-import org.middleheaven.quantity.math.structure.Field;
+import java.util.List;
+
+import org.middleheaven.quantity.math.structure.FieldElement;
 
 /**
  * 
  */
-class LazyDelegationMatrix<F extends Field<F>> extends LazyProxyMatrix<F> {
+class LazyDelegationMatrix<F extends FieldElement<F>> extends LazyProxyMatrix<F> {
 
-	
 
 	private CellResolver<F> cellResolver;
 	private Matrix<F> original;
-	public LazyDelegationMatrix(Matrix<F> original, VectorSpaceProvider provider) {
+	public LazyDelegationMatrix(Matrix<F> original, VectorSpace provider) {
 		this(original, provider, new CellResolver<F>(){
 			
 			public F resolve (int r, int c, Matrix<F> original){
@@ -27,7 +28,7 @@ class LazyDelegationMatrix<F extends Field<F>> extends LazyProxyMatrix<F> {
 	 * Constructor.
 	 * @param provider
 	 */
-	public LazyDelegationMatrix(Matrix<F> original, VectorSpaceProvider provider, CellResolver<F> cellResolver) {
+	public LazyDelegationMatrix(Matrix<F> original, VectorSpace provider, CellResolver<F> cellResolver) {
 		super(provider, original.rowsCount(), original.columnsCount());
 		this.cellResolver =  cellResolver;
 		this.original = original;
@@ -45,10 +46,6 @@ class LazyDelegationMatrix<F extends Field<F>> extends LazyProxyMatrix<F> {
 
 	}
 
-	
-
-
-	
 
 	
 	

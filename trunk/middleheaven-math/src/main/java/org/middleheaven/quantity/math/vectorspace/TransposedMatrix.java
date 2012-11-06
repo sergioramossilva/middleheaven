@@ -1,18 +1,19 @@
 /**
  * 
  */
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
+import org.middleheaven.quantity.math.structure.Ring;
 
 /**
  * 
  */
-public class TransposedMatrix<F extends Field<F>> extends AbstractMatrix<F> {
+public class TransposedMatrix<F extends FieldElement<F>> extends AbstractMatrix<F> {
 
 	private Matrix<F> original;
 
-	public TransposedMatrix(Matrix<F> original, VectorSpaceProvider provider) {
+	public TransposedMatrix(Matrix<F> original, VectorSpace provider) {
 		super(provider);
 		this.original = original;
 	}
@@ -83,6 +84,5 @@ public class TransposedMatrix<F extends Field<F>> extends AbstractMatrix<F> {
 		return this.original.rowsCount();
 	}
 
-	
 
 }

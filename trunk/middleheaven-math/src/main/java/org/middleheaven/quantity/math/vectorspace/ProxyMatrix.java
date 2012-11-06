@@ -1,20 +1,20 @@
 /**
  * 
  */
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.structure.FieldElement;
 
 /**
  * 
  */
-public abstract class ProxyMatrix<F extends Field<F>> extends AbstractMatrix<F> {
+public abstract class ProxyMatrix<F extends FieldElement<F>> extends AbstractMatrix<F> {
 
 
 	private int rows;
 	private int columns;
 
-	public ProxyMatrix (VectorSpaceProvider provider, int rows, int columns){
+	public ProxyMatrix (VectorSpace provider, int rows, int columns){
 		super(provider);
 		this.rows = rows;
 		this.columns = columns;

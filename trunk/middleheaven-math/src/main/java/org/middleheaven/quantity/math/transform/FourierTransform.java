@@ -3,9 +3,11 @@ package org.middleheaven.quantity.math.transform;
 import java.util.Arrays;
 
 import org.middleheaven.quantity.math.Complex;
-import org.middleheaven.quantity.math.DenseVectorSpaceProvider;
-import org.middleheaven.quantity.math.DenseVector;
-import org.middleheaven.quantity.math.Vector;
+import org.middleheaven.quantity.math.ComplexField;
+import org.middleheaven.quantity.math.vectorspace.DenseVector;
+import org.middleheaven.quantity.math.vectorspace.DenseVectorSpace;
+import org.middleheaven.quantity.math.vectorspace.DenseVectorSpaceProvider;
+import org.middleheaven.quantity.math.vectorspace.Vector;
 
 /**
  *  @See http://www.cs.princeton.edu/introcs/97data/FFT.java.html
@@ -30,11 +32,19 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
     
 	// compute the FFT of x[], assuming its length is multiple of 2
     public Vector<Complex> fowardTransform(Vector<Complex> x) {
+    	
+    	return denseFowardTransform(x);
+    }
+
+
+	private DenseVector<Complex> denseFowardTransform(Vector<Complex> x) {
+		DenseVectorSpace<Complex> space = DenseVectorSpaceProvider.getInstance().getVectorSpaceOver(ComplexField.getInstance(), x.size());
+    
         int N = x.size();
 
         // base case
         if (N == 1){
-        	return new DenseVector<Complex>(1,x.get(0)); 
+        	return (DenseVector<Complex>) space.replicate(x.get(0)); 
         }
 
         // radix-2 Cooley-Tukey FFT
@@ -44,9 +54,11 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
         }
 
         // fft of even terms
+    	DenseVectorSpace<Complex> halfSpace = DenseVectorSpaceProvider.getInstance().getVectorSpaceOver(ComplexField.getInstance(), N/2);
+    	
         
-        DenseVector<Complex> even = new DenseVector<Complex>(N/2);
-        DenseVector<Complex> odd = new DenseVector<Complex>(N/2);
+        DenseVector<Complex> even = new DenseVector<Complex>(halfSpace);
+        DenseVector<Complex> odd = new DenseVector<Complex>(halfSpace);
         
         for (int k = 0; k < N/2; k++) {
             even.set(k , x.get(2*k));
@@ -57,24 +69,25 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
         Vector<Complex> r = fowardTransform(odd);
 
         // combine
-        DenseVector<Complex> y = new DenseVector<Complex>(N);
+        DenseVector<Complex> y = new DenseVector<Complex>(space);
         for (int k = 0; k < N/2; k++) {
             double kth = -2 * k * Math.PI / N;
             
-            Complex wk = Complex.valueOf(Math.cos(kth), Math.sin(kth));
+            Complex wk = Complex.rectangular(Math.cos(kth), Math.sin(kth));
             
             y.set(k  , q.get(k).plus(wk.times(r.get(k))));
             y.set(k + N/2 , q.get(k).minus(wk.times(r.get(k))));
         }
         return y;
-    }
+	}
 
 
     // compute the inverse FFT of x[], assuming its length is a multiple of 2
     public Vector<Complex> reverseTransform(Vector<Complex> x) {
         final int N = x.size();
+    	DenseVectorSpace<Complex> space = DenseVectorSpaceProvider.getInstance().getVectorSpaceOver(ComplexField.getInstance(), x.size());
         
-        DenseVector<Complex> y = new DenseVector<Complex>(N);
+        DenseVector<Complex> y = new DenseVector<Complex>(space);
 
         // take conjugate
         for (int i = 0; i < N; i++) {
@@ -82,7 +95,7 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
         }
 
         // compute forward FFT
-        y = new DenseVector<Complex>(fowardTransform(y));
+        y = new DenseVector<Complex>(denseFowardTransform(y));
 
         // take conjugate again
         for (int i = 0; i < N; i++) {
@@ -134,7 +147,7 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
 		Complex[] res = Arrays.copyOf(all, max);
 		Arrays.fill(res, all.length, max, pad);
 		
-		return new DenseVectorSpaceProvider().vector(res);
+		return DenseVectorSpaceProvider.getInstance().getVectorSpaceOver(ComplexField.getInstance(), original.size()).vector(res);
 	}
 
 
@@ -142,7 +155,9 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
     public Vector<Complex> convolve(Vector<Complex>x, Vector<Complex> y) {
         final Complex ZERO = Complex.ZERO();
 
-        DenseVector<Complex> a = new DenseVector<Complex>(2*x.size());
+    	DenseVectorSpace<Complex> spaceX = DenseVectorSpaceProvider.getInstance().getVectorSpaceOver(ComplexField.getInstance(), 2*x.size());
+        
+        DenseVector<Complex> a = new DenseVector<Complex>(spaceX);
         
         for (int i = 0;        i <   x.size(); i++){
         	a.set(i , x.get(i));
@@ -151,7 +166,9 @@ public class FourierTransform implements Transformation<Vector<Complex>>{
         	a.set(i, ZERO);
         }
 
-        DenseVector<Complex> b = new DenseVector<Complex>(2*y.size());
+    	DenseVectorSpace<Complex> spaceY = DenseVectorSpaceProvider.getInstance().getVectorSpaceOver(ComplexField.getInstance(), 2*y.size());
+        
+        DenseVector<Complex> b = new DenseVector<Complex>(spaceY);
         
         for (int i = 0;        i <   y.size(); i++) {
         	b.set(i , y.get(i));

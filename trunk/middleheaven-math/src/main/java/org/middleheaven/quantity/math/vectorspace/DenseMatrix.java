@@ -1,8 +1,9 @@
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
-import org.middleheaven.quantity.math.structure.Field;
+import org.middleheaven.quantity.math.UnivariateFunction;
+import org.middleheaven.quantity.math.structure.FieldElement;
 
-public class DenseMatrix<F extends Field<F>> extends AbstractMatrix<F> {
+public class DenseMatrix<F extends FieldElement<F>> extends AbstractMatrix<F> {
 
 
 	protected Object[] all;
@@ -10,13 +11,15 @@ public class DenseMatrix<F extends Field<F>> extends AbstractMatrix<F> {
 	private int columnsCount;
 	private int rowsCount;
 
-	DenseMatrix(int rowsCount, int columnsCount){
-		this( rowsCount, columnsCount, null);
-	}
-
-	
-	public DenseMatrix(int rowsCount, int columnsCount, F value){
-		super(new DenseVectorSpaceProvider());
+	/**
+	 * The columnsCount is compatible with the size of the vector space
+	 * Constructor.
+	 * @param rowsCount
+	 * @param columnsCount
+	 * @param value
+	 */
+	DenseMatrix(int rowsCount, int columnsCount, F value){
+		super(DenseVectorSpaceProvider.getInstance().getVectorSpaceOver(value.getAlgebricStructure(), columnsCount));
 		this.rowsCount = rowsCount;
 		this.columnsCount = columnsCount;
 		all = new Object[rowsCount * columnsCount];
@@ -27,7 +30,7 @@ public class DenseMatrix<F extends Field<F>> extends AbstractMatrix<F> {
 	}
 
 	public DenseMatrix(Matrix<F> other){
-		super(new DenseVectorSpaceProvider());
+		super(DenseVectorSpaceProvider.getInstance().getVectorSpaceOver(other.getField(), other.columnsCount()));
 		this.rowsCount = other.rowsCount();
 		this.columnsCount = other.columnsCount();
 		all = new Object[rowsCount * columnsCount];
@@ -42,7 +45,7 @@ public class DenseMatrix<F extends Field<F>> extends AbstractMatrix<F> {
 
 
 	public DenseMatrix(Matrix<F> other, int ri, int c0, int rowCount, int columnCount) {
-		this(rowCount,columnCount,null);
+		this(rowCount,columnCount, other.getField().zero());
 		try {
 			for (int i = 0; i < rowCount; i++) {
 				for (int j = 0; j < columnCount; j++) {
@@ -55,7 +58,7 @@ public class DenseMatrix<F extends Field<F>> extends AbstractMatrix<F> {
 	}
 	
 	public DenseMatrix(Matrix<F> other, int[] r, int j0, int j1) {
-		this(r.length,j1-j0+1, null);
+		this(r.length,j1-j0+1, other.getField().zero());
 		try {
 			for (int i = 0; i < r.length; i++) {
 				for (int j = j0; j <= j1; j++) {
@@ -106,7 +109,7 @@ public class DenseMatrix<F extends Field<F>> extends AbstractMatrix<F> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <N extends Field<N>> Matrix<N> apply(
+	public <N extends FieldElement<N>> Matrix<N> apply(
 			UnivariateFunction<F, N> function) {
 		throw new UnsupportedOperationException("Not implememented yet");
 	}

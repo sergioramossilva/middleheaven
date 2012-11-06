@@ -1,18 +1,25 @@
 /**
  * 
  */
-package org.middleheaven.quantity.math;
+package org.middleheaven.quantity.math.vectorspace;
 
+import org.middleheaven.quantity.math.Conjugatable;
+import org.middleheaven.quantity.math.UnivariateFunction;
 import org.middleheaven.quantity.math.structure.Field;
-import org.middleheaven.quantity.math.structure.Ring;
-import org.middleheaven.quantity.math.structure.VectorSpace;
+import org.middleheaven.quantity.math.structure.FieldElement;
+import org.middleheaven.quantity.math.structure.RingElement;
 
 /**
  * 
  */
-public interface Matrix<F extends Field<F>> extends VectorSpace<Matrix<F>,F>, Ring<Matrix<F>>, Conjugatable<Matrix<F>>{
+public interface Matrix<F extends FieldElement<F>> extends RingElement<Matrix<F>>, Conjugatable<Matrix<F>>{
 
-	
+
+	/**
+	 * @return the underlying field being used for the elements of the matrix.
+	 */
+	public Field<F> getField();
+
 	/**
 	 * 
 	 * @return <code>true</code> if this matrix is square, i.e. the number of rows equals the number of columns.
@@ -25,6 +32,7 @@ public interface Matrix<F extends Field<F>> extends VectorSpace<Matrix<F>,F>, Ri
 	 */
 	public boolean isSimmetric();
 	
+	public Matrix<F> times(F scalar);
 	
 	/**
 	 * Obtain the value at position (r,c)
@@ -143,21 +151,6 @@ public interface Matrix<F extends Field<F>> extends VectorSpace<Matrix<F>,F>, Ri
 	
 
 	/**
-	 * 
-	 * The identity matrix.
-	 * 
-	 * {@inheritDoc}
-	 */
-	public Matrix<F> one();
-	
-	/**
-	 * A matrix with zeros in the diagonal
-	 * 
-	 * {@inheritDoc}
-	 */
-	public Matrix<F> zero();
-	
-	/**
 	 * Return a matrix where the r row and the c column have bean removed
 	 * @param row index of the row to remove
 	 * @param column index of the column to remove.
@@ -170,5 +163,8 @@ public interface Matrix<F extends Field<F>> extends VectorSpace<Matrix<F>,F>, Ri
 	 * @param classifier
 	 * @return
 	 */
-	public <N extends Field<N>> Matrix<N> apply(UnivariateFunction<F, N> function);
+	public <N extends FieldElement<N>> Matrix<N> apply(UnivariateFunction<F, N> function);
+
+
+
 }
