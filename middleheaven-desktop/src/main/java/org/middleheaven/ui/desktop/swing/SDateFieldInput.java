@@ -9,7 +9,7 @@ import javax.swing.JFormattedTextField.AbstractFormatterFactory;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.MaskFormatter;
 
-import org.middleheaven.global.text.Formatter;
+import org.middleheaven.global.text.ParsableFormatter;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.components.UIDateField;
@@ -18,7 +18,7 @@ import org.middleheaven.ui.models.UIFieldInputModel;
 public class SDateFieldInput extends SDocumentInput implements UIDateField {
 
 	private static final long serialVersionUID = -8779476270509974866L;
-	Formatter ff;
+	ParsableFormatter ff;
 	
 	public SDateFieldInput(){
 		super(new JFormattedTextField());

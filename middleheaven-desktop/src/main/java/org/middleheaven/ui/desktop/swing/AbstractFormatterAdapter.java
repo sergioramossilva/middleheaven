@@ -4,13 +4,13 @@ import java.text.ParseException;
 
 import javax.swing.JFormattedTextField.AbstractFormatter;
 
-import org.middleheaven.global.text.Formatter;
+import org.middleheaven.global.text.ParsableFormatter;
 
 public class AbstractFormatterAdapter extends AbstractFormatter {
 
-	Formatter formatter;
+	ParsableFormatter formatter;
 	
-	public AbstractFormatterAdapter(Formatter formatter) {
+	public AbstractFormatterAdapter(ParsableFormatter formatter) {
 		super();
 		this.formatter = formatter;
 	}
