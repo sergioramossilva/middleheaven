@@ -179,7 +179,7 @@ public class LicenseServiceActivator extends ServiceActivator {
 				providers.addProvider(p);
 
 
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				Logger.onBookFor(this.getClass()).error(e,"Licence {0} could not be loaded", f.getURI());
 			} 
 
