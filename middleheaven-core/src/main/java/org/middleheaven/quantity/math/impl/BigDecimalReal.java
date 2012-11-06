@@ -206,12 +206,20 @@ public class BigDecimalReal extends Real{
 
 
 
-	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected boolean equalsSame(Real other) {
 		return compareToSame((BigDecimalReal)other)==0;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int hashCode(){
 		return Hash.hash(numerator).hash(denominator).hashCode();
 	}
@@ -304,9 +312,6 @@ public class BigDecimalReal extends Real{
 	public Real previous() {
 		return this.minus(valueOf(Integer.valueOf(1)));
 	}
-
-
-
 
 
 }

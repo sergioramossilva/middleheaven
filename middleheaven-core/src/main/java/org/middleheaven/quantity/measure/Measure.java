@@ -18,7 +18,13 @@ public abstract class Measure<E extends Measurable , F extends FieldElement<F>> 
 	protected F amount;
 	protected Unit<E> unit;
 
-
+	/**
+	 * 
+	 * Constructor.
+	 * @param amount the amount of the unit measured
+	 * @param uncertainty the error associated with the measeure
+	 * @param unit the unit used in the measure
+	 */
 	protected Measure(F amount, F uncertainty, Unit<E> unit){
 		
 		if (amount == null ){
@@ -35,23 +41,44 @@ public abstract class Measure<E extends Measurable , F extends FieldElement<F>> 
 		this.uncertainty = uncertainty;
 	}
 	
+	/**
+	 * 
+	 * @return the amount of uncertainty.
+	 */
 	public final F uncertainty() {
 		return uncertainty;
 	}
 	
+	/**
+	 * 
+	 * @return true is this value is exact (no uncertainty)
+	 */
 	public final boolean isExact(){
 		return uncertainty.plus(uncertainty).equals(uncertainty); //.isZero();
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public final Unit<E>  unit() {
 		return unit;
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
 	public final String toString(){
 		return '(' + this.amount.toString() + ' ' + '\u00B1' + ' ' + this.uncertainty.toString()  + ") " + this.unit.toString();
 	}
 	
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Measure)){
@@ -61,6 +88,19 @@ public abstract class Measure<E extends Measurable , F extends FieldElement<F>> 
 		return this.amount.equals(m.amount) && this.uncertainty.equals(m.uncertainty) && this.unit.equals(m.unit);
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode(){
+		return this.amount.hashCode();
+	}
+	
+	/**
+	 * 
+	 * @param other
+	 */
 	protected void assertCompatible(Measure<?,?> other) {
 		if (!this.unit().isCompatible(other.unit())){
 			throw new IncompatibleUnitsException(this.unit(),other.unit());

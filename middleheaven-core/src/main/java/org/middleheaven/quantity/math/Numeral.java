@@ -73,7 +73,9 @@ public abstract class Numeral<T extends Numeral<T>> implements FieldElement<T> ,
 		return this.asNumber().compareTo(other.asNumber())==0;
 	}
 	*/
-
+	
+	public abstract int hashCode();
+	
 	public final boolean equals(Object other){
 		return other instanceof Numeral && equalsOther((Numeral<?>)other);
 	}
