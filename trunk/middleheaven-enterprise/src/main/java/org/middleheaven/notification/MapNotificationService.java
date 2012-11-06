@@ -6,7 +6,7 @@ package org.middleheaven.notification;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 import org.middleheaven.events.EventListenersSet;
 
 @Service
