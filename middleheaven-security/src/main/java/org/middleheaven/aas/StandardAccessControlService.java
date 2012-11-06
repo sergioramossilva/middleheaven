@@ -1,6 +1,6 @@
 package org.middleheaven.aas;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 
 @Service
 public final class StandardAccessControlService implements AccessControlService {
