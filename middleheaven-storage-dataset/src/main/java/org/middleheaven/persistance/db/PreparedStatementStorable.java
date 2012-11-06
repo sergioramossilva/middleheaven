@@ -22,7 +22,7 @@ public class PreparedStatementStorable {
 	private final PreparedStatement ps;
 	private final DataBaseMapper mapper;
 	private final RDBMSDialect dialect;
-
+	
 	public PreparedStatementStorable( DataBaseMapper mapper, RDBMSDialect dialect, PreparedStatement ps) {
 		this.ps = ps; 
 		this.mapper = mapper;
