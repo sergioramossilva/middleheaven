@@ -11,6 +11,9 @@ import org.middleheaven.ui.rendering.UIUnitConverter;
  */
 class SwingUnitConverter extends UIUnitConverter {
 
+
+	private static final long serialVersionUID = -9115401592219558180L;
+	
 	private static SwingUnitConverter me = new SwingUnitConverter();
 	
 	public static SwingUnitConverter getInstance(){
@@ -31,7 +34,7 @@ class SwingUnitConverter extends UIUnitConverter {
         
         FontMetrics metrics = c.getFontMetrics(c.getFont());
 
-        double averageCharWidth = metrics.stringWidth(testString)/  testString.length();
+        double averageCharWidth = metrics.stringWidth(TEST_STRING) * 1d /  TEST_STRING.length();
         int    ascent = metrics.getAscent();
         double height = ascent > 14 ? ascent : ascent + (15 - ascent) / 3;
         

@@ -7,12 +7,12 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 
-import org.middleheaven.core.reflection.bean.BeanBinding;
 import org.middleheaven.ui.UIActionHandlerLocator;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UISize;
 import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
+import org.middleheaven.ui.binding.BeanBinding;
 import org.middleheaven.ui.components.UICommand;
 import org.middleheaven.ui.components.UILabel;
 import org.middleheaven.ui.desktop.DesktopContext;
