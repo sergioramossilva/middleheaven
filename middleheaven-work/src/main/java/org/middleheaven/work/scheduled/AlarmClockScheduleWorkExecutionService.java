@@ -1,6 +1,6 @@
 package org.middleheaven.work.scheduled;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 import org.middleheaven.logging.Logger;
 import org.middleheaven.quantity.time.TimeContext;
 import org.middleheaven.quantity.time.TimePoint;
