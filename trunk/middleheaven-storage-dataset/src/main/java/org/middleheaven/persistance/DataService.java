@@ -1,6 +1,6 @@
 package org.middleheaven.persistance;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 
 /**
  * Provides access to {@link DataStore}s and {@link DataStoreSchema}s.

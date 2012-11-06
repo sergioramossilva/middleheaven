@@ -7,8 +7,8 @@ import java.net.MalformedURLException;
 import java.util.Date;
 
 import org.junit.Test;
+import org.middleheaven.core.annotations.Wire;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.core.wiring.annotations.Wire;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.machine.MachineFiles;
