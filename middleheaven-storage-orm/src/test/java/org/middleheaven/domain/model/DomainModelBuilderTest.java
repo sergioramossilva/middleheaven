@@ -3,6 +3,8 @@
  */
 package org.middleheaven.domain.model;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.storage.testdomain.TestSubject;
@@ -18,6 +20,8 @@ public class DomainModelBuilderTest {
 		
 		ClassSet classes = new ClassSet().add(TestSubject.class.getPackage());
 		
-		new DomainModelBuilder().build(classes);
+		DomainModel model = new DomainModelBuilder().build(classes);
+		
+		assertNotNull(model);
 	}
 }
