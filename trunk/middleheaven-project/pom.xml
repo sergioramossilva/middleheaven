@@ -42,6 +42,11 @@
 		<module>../middleheaven-web-client</module>
 		<module>../middleheaven-web-appengine</module>
 		<module>../middleheaven-work</module>
+		<module>../middleheaven-image</module>
+		<module>../middleheaven-crypto</module>
+		<module>../middleheaven-licence</module>
+		<module>../middleheaven-storage-odb</module>
+		<module>../middleheaven-storage-hibernate</module>
 	</modules>
 
 	<developers>
