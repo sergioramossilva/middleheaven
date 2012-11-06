@@ -264,11 +264,11 @@ public final class UIColor implements Serializable {
 		
 		if (Double.compare(C, 0) == 0){
 			return 0;
-		} else if ( M == r){
+		} else if ( Double.compare(M, r) == 0){
 			h =  60 * (((g-b)/ C) % 6);
-		} else if ( M == g){
+		} else if (Double.compare(M, g) == 0){
 			h = 60 * ((b-r) / C + 2);   
-		}else if ( M == b){
+		}else if ( Double.compare(M, b) == 0){
 			h = 60 * ((r-g) / C + 4);   
 		} else {
 			return 0;

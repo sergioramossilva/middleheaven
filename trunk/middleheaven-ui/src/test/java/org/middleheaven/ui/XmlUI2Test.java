@@ -10,7 +10,6 @@ public class XmlUI2Test extends MiddleHeavenTestCase {
 
 	final UIEnvironmentType uiType = UIEnvironmentType.TEST;
 	
-
 	
 	@Test
 	public void testXMLBuilder(){

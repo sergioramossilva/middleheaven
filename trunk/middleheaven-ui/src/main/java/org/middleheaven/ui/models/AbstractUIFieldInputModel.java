@@ -1,6 +1,6 @@
 package org.middleheaven.ui.models;
 
-import org.middleheaven.global.text.Formatter;
+import org.middleheaven.global.text.ParsableFormatter;
 import org.middleheaven.ui.AbstractUIModel;
 
 public abstract class AbstractUIFieldInputModel extends AbstractUIModel implements UIFieldInputModel , UINumericInputModel {
@@ -38,7 +38,7 @@ public abstract class AbstractUIFieldInputModel extends AbstractUIModel implemen
 	}
 
 	@Override
-	public <T> Formatter<T> getFormater() {
+	public <T> ParsableFormatter<T> getFormater() {
 		// TODO implement AbstractUIFieldInputModel.getFormater
 		return null;
 	}
