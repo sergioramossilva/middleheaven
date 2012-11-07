@@ -9,8 +9,6 @@ import javax.servlet.ServletContextListener;
 
 import org.middleheaven.aas.AccessControlService;
 import org.middleheaven.aas.StandardAccessControlService;
-import org.middleheaven.application.ApplicationService;
-import org.middleheaven.application.StandardApplicationServiceActivator;
 import org.middleheaven.core.bootstrap.AbstractBootstrap;
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.BootstrapEnvironment;
@@ -112,7 +110,7 @@ public class WebContainerBootstrap extends AbstractBootstrap implements ServletC
 			httpService.start();
 			
 			servletContext.log("[MiddleHeaven] Bootstap completed");
-		}catch (Throwable t){
+		}catch (Exception t){
 			servletContext.log("[MiddleHeaven] Unexpected error", t);
 		}
 	}

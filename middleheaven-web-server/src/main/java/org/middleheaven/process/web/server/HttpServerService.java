@@ -1,6 +1,6 @@
 package org.middleheaven.process.web.server;
 
-import org.middleheaven.core.wiring.service.Service;
+import org.middleheaven.core.annotations.Service;
 import org.middleheaven.process.web.UrlPattern;
 import org.middleheaven.process.web.server.filters.HttpFilter;
 import org.middleheaven.process.web.server.global.HttpCultureResolver;

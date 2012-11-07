@@ -4,21 +4,23 @@
 package org.middleheaven.process.web.server.action;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 
+ * Mateches server paths to a given pattern.
  */
 public class PathMatcher {
 
 
-
+	/**
+	 * Creates a new instance of {@link PathMatcher} based on the given pattern.
+	 * @param pattern the pattern to match.
+	 * @return the created {@link PathMatcher}.
+	 */
 	public static PathMatcher newInstance(String pattern){
 
 		if(pattern.contains("?")){
@@ -37,7 +39,7 @@ public class PathMatcher {
 			posStart = builder.indexOf("{");
 			int posEnd;
 
-			List<String> names = new ArrayList<String>();
+			ArrayList<String> names = new ArrayList<String>();
 			while (posStart > 0){
 
 				posEnd = builder.indexOf("}", posStart+1);
@@ -52,16 +54,16 @@ public class PathMatcher {
 				posStart = builder.indexOf("{", posStart +1);
 			}
 
-			return new PathMatcher(names.toArray(new String[names.size()]), Pattern.compile(builder.toString()));
+			return new PathMatcher(names, Pattern.compile(builder.toString()));
 		} else {
-			return new PathMatcher(new String[0],Pattern.compile(pattern.replace("*", "(.*)") + "$"));
+			return new PathMatcher(new ArrayList<String>(0),Pattern.compile(pattern.replace("*", "(.*)") + "$"));
 		}
 
 	}
 
 
 	private Pattern pattern;
-	private String[] names;
+	private ArrayList<String> names;
 
 
 	/**
@@ -69,22 +71,23 @@ public class PathMatcher {
 	 * @param names 
 	 * @param compile
 	 */
-	private PathMatcher(String[] names, Pattern pattern) {
+	private PathMatcher(ArrayList<String> names, Pattern pattern) {
 		this.pattern = pattern;
 		this.names = names;
 	}
 
 
 	public Map<String, String> parse(String url){
-		if (names.length > 0){
-			return getPathVariables(this.pattern, names, url);
-		} else {
+		if (names.isEmpty()){
 			return Collections.emptyMap();
 		}
+		
+		return getPathVariables(this.pattern, names, url);
+	
 	}
 
 	private static final Map<String, String> getPathVariables(Pattern p,
-			String[] names, String path) {
+			ArrayList<String> names, String path) {
 
 		Map<String, String> tokenMap = new HashMap<String, String>();
 
@@ -94,8 +97,8 @@ public class PathMatcher {
 			// Get all groups for this match
 			for (int i = 0; i <= matcher.groupCount(); i++) {
 				String groupStr = matcher.group(i);
-				if (i != 0 && !names[i - 1].equals("??")) {
-					tokenMap.put(names[i - 1], groupStr);
+				if (i != 0 && !names.get(i - 1).equals("??")) {
+					tokenMap.put(names.get(i - 1), groupStr);
 				}
 			}
 		}
@@ -109,7 +112,7 @@ public class PathMatcher {
 	 */
 	public double match(String url) {
 		if(this.pattern.matcher(url).find()){
-			if(names.length==0){
+			if(names.isEmpty()){
 				return 1d;
 			} else {
 				return 0.5d;
@@ -118,7 +121,12 @@ public class PathMatcher {
 		return 0d;
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String toString(){
-		return this.pattern.toString() + "=>" + Arrays.toString(this.names);
+		return this.pattern.toString() + "=>" + this.names.toString();
 	}
 }

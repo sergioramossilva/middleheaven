@@ -34,11 +34,7 @@ public class FrontEndControlFilter extends AbstractFilter{
 			} catch (ClassCastException e){
 				// this servlet can only work with this specific implementation of HTTPServerService
 				throw new ServletException("HTTPServerService not compatible with generic Servlet Container");
-			} catch (ServletException e){
-				throw e; 
-			} catch (IOException e) {
-				throw e;
-			} catch (Throwable t){
+			} catch (RuntimeException t){
 				this.getFilterConfig().getServletContext().log("Unexpected Exception", t);
 				t.printStackTrace();
 			}
