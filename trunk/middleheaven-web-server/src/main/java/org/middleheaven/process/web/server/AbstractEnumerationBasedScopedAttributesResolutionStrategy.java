@@ -20,7 +20,6 @@ import org.middleheaven.util.collections.TransformedIterator;
  */
 abstract class AbstractEnumerationBasedScopedAttributesResolutionStrategy implements ScopedAttributesResolutionStrategy{
 
-	
 	private ContextScope scope;
 
 	public AbstractEnumerationBasedScopedAttributesResolutionStrategy (ContextScope scope){
