@@ -19,6 +19,7 @@ import org.middleheaven.sequence.StateEditableSequence;
 import org.middleheaven.sequence.StatePersistentSequence;
 import org.middleheaven.transactions.TransactionService;
 import org.middleheaven.transactions.XAResourceAdapter;
+import org.middleheaven.util.Hash;
 
 
 /**
@@ -65,7 +66,9 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
         return sv;
     }
 
-    private class TransactableSequenceValue<I extends Comparable<? super I>> extends XAResourceAdapter implements SequenceToken<I>,Comparable<TransactableSequenceValue<I>>, XAResource {
+    private class TransactableSequenceValue<I extends Comparable<? super I>> 
+    	extends XAResourceAdapter 
+    	implements SequenceToken<I>,Comparable<TransactableSequenceValue<I>>, XAResource {
 
         private I actualValue;
         
@@ -77,6 +80,23 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
             return this.actualValue.compareTo(other.actualValue);
         }
         
+        
+        public boolean equals(Object other){
+			return (other instanceof TransactableSequenceValue) && equalsOther((TransactableSequenceValue) other);
+		}
+
+		/**
+		 * @param other
+		 * @return
+		 */
+		private boolean equalsOther(TransactableSequenceValue<I> other) {
+			return this.actualValue.compareTo(other.actualValue) == 0;
+		}
+		
+		public int hashCode(){
+			return Hash.hash(actualValue).hashCode();
+		}
+		
         public String toString(){
             return actualValue.toString();
         }
