@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.middleheaven.global.Culture;
+import org.middleheaven.util.Hash;
 import org.middleheaven.util.OperatingSystemInfo;
 import org.middleheaven.util.VersionReader;
 
@@ -121,6 +122,22 @@ public final class HttpProcessingUtils {
 		
 		public int compareTo(PrioritizedCulture other){
 			return Double.compare(priority, other.priority);
+		}
+		
+		public boolean equals(Object other){
+			return (other instanceof PrioritizedCulture) && equalsOther((PrioritizedCulture) other);
+		}
+
+		/**
+		 * @param other
+		 * @return
+		 */
+		private boolean equalsOther(PrioritizedCulture other) {
+			return Double.compare(this.priority, other.priority) == 0;
+		}
+		
+		public int hashCode(){
+			return Hash.hash(priority).hashCode();
 		}
 	}
 	
