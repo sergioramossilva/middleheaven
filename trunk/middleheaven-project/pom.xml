@@ -47,9 +47,6 @@
 		<module>../middleheaven-licence</module>
 		<module>../middleheaven-storage-odb</module>
 		<module>../middleheaven-storage-hibernate</module>
-		<module>../middleheaven-crypto</module>
-		<module>../middleheaven-licence</module>
-		<module>../middleheaven-image</module>
 	</modules>
 
 	<developers>
