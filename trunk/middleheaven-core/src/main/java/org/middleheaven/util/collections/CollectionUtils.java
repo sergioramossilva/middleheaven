@@ -14,9 +14,17 @@ import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
 
-
+/**
+ * Several utilitary methods 
+ */
 public class CollectionUtils {
 
+	/**
+	 * Merges two arrays of {@link Mergable} objects.
+	 * @param a first array
+	 * @param b secound array
+	 * @return an array with all merges done.
+	 */
 	public static <T extends Mergable<T>> T[] merge(T[] a, T[] b){
 		if (a == null || a.length ==0){
 			return b;
@@ -48,6 +56,12 @@ public class CollectionUtils {
 		
 	}
 	
+	/**
+	 * Merges two lists of {@link Mergable} objects.
+	 * @param a first list
+	 * @param b secound list
+	 * @return a list with all merges done.
+	 */
 	public static <T extends Mergable<T>> List<T> merge(List<T> a, List< T> b){
 		if (a.isEmpty()){
 			return b;
@@ -70,18 +84,33 @@ public class CollectionUtils {
 		return result;
 	}
 	
+	/**
+	 * Converts an array of objects in an {@link EnhancedList}.
+	 * @param elements
+	 * @return
+	 */
 	public static <T> EnhancedList<T> enhance(T ... elements){
 		return new EnhancedArrayList<T>(Arrays.asList(elements));
 	}
 	
+	/**
+	 * Wrappes a {@link Map} into a {@link EnhancedMap}.
+	 * @param map
+	 * @return
+	 */
 	public static <K,V> EnhancedMap<K,V> enhance(Map<K,V> map){
-		if (map instanceof EnhancedCollection){
+		if (map instanceof EnhancedMap){
     		return (EnhancedMap<K,V>)map;
     	}
     	
     	return new EnhancedMapAdapter<K,V>(map);
 	}
 	
+	/**
+	 * Wrappes a {@link Enumerable} into a {@link EnhancedCollection}.
+	 * @param collection
+	 * @return
+	 */
 	public static <T> EnhancedCollection<T> enhance(Enumerable<T> collection){
 		if (collection instanceof EnhancedCollection){
     		return (EnhancedCollection<T>)collection;
@@ -115,7 +144,12 @@ public class CollectionUtils {
     	return new EncancedListAdapter<T>(list);
 	}
 	
-	
+	/**
+	 * Ensures the given is sortable, i.e. is a List and implements {@link RandomAccess}. If not
+	 * it will be copied to a collection that is sortable.
+	 * @param collection
+	 * @return
+	 */
 	public static <T> List<T> ensureSortable(Collection<T> collection){
 		
 		if (collection == null){
@@ -202,8 +236,14 @@ public class CollectionUtils {
 
 	}
 
+	/**
+	 * Determine if the contents of two maps are the same, i.e. the same keys are mapped to the same values in both maps.
+	 * @param a the first {@link Map}
+	 * @param b the secound {@link Map}
+	 * @return <code>true</code> if the contents are the same, <code>false</code> otherwise.
+	 */
 	public static <K,V> boolean equalContents(Map<? extends K, ? extends V> a,Map<? extends K, ? extends V> b) {
-		if (a==b){
+		if (a == b){
 			return true;
 		} else if (a.isEmpty() && b.isEmpty()){
 			return true;
@@ -246,6 +286,7 @@ public class CollectionUtils {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public static <T> T[] addToArray(T[] array1,T[] array2) {
 		
 		Class<?> componentType = array1.getClass().getComponentType();
@@ -258,6 +299,7 @@ public class CollectionUtils {
 		return (T[]) newArray;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> T[] appendToArrayEnd(T[] array,T element , T ... elements) {
 		
 		Class<?> componentType = array.getClass().getComponentType();
@@ -271,6 +313,7 @@ public class CollectionUtils {
 		return (T[]) newArray;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <T> T[] appendToArrayBegining(T[] array,T element , T ... elements) {
 		
 		Class<?> componentType = array.getClass().getComponentType();
@@ -293,6 +336,7 @@ public class CollectionUtils {
 	
 
 
+	@SuppressWarnings("unchecked")
 	public static <T> T[] newArray(Class<T> arrayType, int length) {
 		
 		Object newArray = Array.newInstance(arrayType, length);
@@ -349,6 +393,20 @@ public class CollectionUtils {
 	 */
 	public static <T> Iterator<T> secureCoerce(Iterator<? extends T> values,Class<T> class1) {
 		return (Iterator<T>) values;
+	}
+
+	/**
+	 * Ensure the result implements {@link RandomAccess}.
+	 * @param collection the original collections
+	 * @return a collection that implements {@link RandomAccess}.
+	 */
+	public static <T> List<T> ensureRandomAcess(List<T> collection) {
+		if (collection instanceof RandomAccess){
+			return collection;
+		} else {
+			return new ArrayList<T>(collection);
+		}
+		
 	}
 
 

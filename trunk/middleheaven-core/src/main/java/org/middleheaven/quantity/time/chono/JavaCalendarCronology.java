@@ -118,7 +118,7 @@ public class JavaCalendarCronology extends AbstractChronology{
 	}
 
 	@Override
-	public int yearDay(TimePoint point) {
+	public int dayOfYear(TimePoint point) {
 		Calendar c =  (Calendar)prototype.clone();
 		c.setTimeInMillis(point.getMilliseconds());
 		return c.get(Calendar.DAY_OF_YEAR);
