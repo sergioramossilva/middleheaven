@@ -9,13 +9,27 @@ import java.util.Iterator;
  */
 public class ResourcePermission implements Permission {
 
+
+	private static final long serialVersionUID = -8169569097407381165L;
+	
 	PermissionLevel permissionLevel;
     String resourceName;
 
+    /**
+     * Create a {@link ResourcePermission} for a given resource name and level.
+     * @param resourceName the resource name
+     * @param permissionLevel the permission level.
+     * @return the resulting {@link Permission}.
+     */
     public static Permission getInstance(String resourceName, PermissionLevel permissionLevel){
         return new ResourcePermission( resourceName, permissionLevel );
     }
 
+    /**
+     * Create a {@link ResourcePermission} for a given resource name with <code>PermissionLevel.READ</code> level.
+     * @param resourceName the resource name
+     * @return the resulting {@link Permission}.
+     */
     public static Permission getInstance(String resourceName){
         return new ResourcePermission( resourceName, PermissionLevel.READ );
     }
@@ -34,6 +48,10 @@ public class ResourcePermission implements Permission {
 	}
 
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
     public boolean equals(Object other){
         return other instanceof ResourcePermission &&
             ((ResourcePermission)other).permissionLevel == this.permissionLevel &&(
@@ -42,14 +60,26 @@ public class ResourcePermission implements Permission {
             );
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public int hashCode(){
         return permissionLevel.hashCode() ^ resourceName.hashCode();
     }
 
+    /**
+     * 
+     * @return the this {@link PermissionLevel} 
+     */
     public PermissionLevel getLevel(){
         return this.permissionLevel;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public boolean implies(Permission threshold) {
         if (threshold.isLenient()){
             return true;
@@ -78,14 +108,26 @@ public class ResourcePermission implements Permission {
         }
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public String toString(){
         return this.resourceName + "=>" + this.permissionLevel;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public boolean isLenient() {
         return this.permissionLevel == PermissionLevel.NONE;
     }
 
+    /**
+     * 
+     * {@inheritDoc}
+     */
     public boolean isStrict() {
         return "resource.null".equals(resourceName);
     }
