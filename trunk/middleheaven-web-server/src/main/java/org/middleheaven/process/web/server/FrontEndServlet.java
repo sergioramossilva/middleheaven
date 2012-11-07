@@ -7,23 +7,41 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * The Servlet that handles all traffic related with MiddleHeaven.
+ */
 public class FrontEndServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6229608965293497721L;
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public final void doPut(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
 		doService(request,response);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public final void doDelete(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
 		doService(request,response);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public final void doPost(HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException{
 		doService(request,response);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public final void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
 		doService(request,response);
 	}
@@ -43,13 +61,11 @@ public class FrontEndServlet extends HttpServlet {
 
 		} catch (ClassCastException e){
 			// this servlet can only work with this specific implementation of HTTPServerService
-			throw new ServletException("HTTPServerService not compatible with generic Servlet Container");
-		} catch (ServletException e){
-			throw e; 
-		} catch (IOException e) {
-			throw e;
-		} catch (Throwable t){
+			throw new ServletException("HTTPServerService not compatible with generic Servlet Container", e);
+		} catch (Exception t){
 			this.getServletContext().log("Unexpected Exception", t);
+		} catch (Error t){
+			this.getServletContext().log("Unexpected Error", t);
 		}
 		
 		
