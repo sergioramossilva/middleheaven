@@ -6,6 +6,9 @@ import org.middleheaven.quantity.unit.CompositeUnit;
 import org.middleheaven.quantity.unit.Dimension;
 import org.middleheaven.quantity.unit.Unit;
 
+/**
+ * 
+ */
 public abstract class Currency extends Unit<org.middleheaven.quantity.measurables.Currency>{
 
 	public static Currency currency(java.util.Currency currency ){
@@ -35,7 +38,7 @@ public abstract class Currency extends Unit<org.middleheaven.quantity.measurable
 
 	@Override
 	public boolean equalsOther(Unit<?> other) {
-		return other.dimension().equals(Dimension.CURRENCY) && equalsOther((Currency)other);
+		return  (other instanceof Currency) && other.dimension().equals(Dimension.CURRENCY) && equalsOther((Currency)other);
 	}
 	
 	private boolean equalsOther(Currency other) {

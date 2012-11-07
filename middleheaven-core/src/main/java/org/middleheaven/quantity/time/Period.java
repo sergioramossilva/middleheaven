@@ -106,6 +106,22 @@ public class Period extends ElapsedTime implements Comparable<Period>{
 	public int compareTo(Period other) {
 		return this.measure.compareTo(other.measure);
 	}
+	
+    public boolean equals(Object other){
+		return (other instanceof Period) && equalsOther((Period) other);
+	}
+
+	/**
+	 * @param other
+	 * @return
+	 */
+	private boolean equalsOther(Period other) {
+		return this.measure.compareTo(other.measure) == 0;
+	}
+	
+	public int hashCode(){
+		return this.measure.hashCode();
+	}
 
 	public DecimalMeasure<Time> asMeasure() {
 		return this.measure;

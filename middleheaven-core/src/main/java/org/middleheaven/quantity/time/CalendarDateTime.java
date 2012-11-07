@@ -45,7 +45,7 @@ public class CalendarDateTime extends AbstractTimePoint implements  DateHolder ,
     
 	@Override
 	public int dayOfYear() {
-		 return context.getChronology().yearDay(this);
+		 return context.getChronology().dayOfYear(this);
 	}
     
 	

@@ -59,11 +59,7 @@ public class MultipleUnit<E extends Measurable> extends Unit<E> {
 
 	@Override
 	public boolean equalsOther(Unit<?> other) {
-		if (other instanceof MultipleUnit){
-			return ((MultipleUnit)other).scale.equals(this.scale) && ((MultipleUnit)other).base.equalsOther(this.base); 
-		} else {
-			return this.scale.equals(RealField.getInstance().one()) && ((MultipleUnit)other).base.equalsOther(this.base);
-		}
+		return (other instanceof MultipleUnit) && ((MultipleUnit)other).scale.equals(this.scale) && ((MultipleUnit)other).base.equalsOther(this.base); 
 	}
 	
 	/**

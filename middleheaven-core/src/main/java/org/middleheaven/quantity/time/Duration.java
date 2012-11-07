@@ -9,6 +9,8 @@ import org.middleheaven.quantity.unit.Dimension;
 import org.middleheaven.quantity.unit.IncompatibleUnitsException;
 import org.middleheaven.quantity.unit.SI;
 import org.middleheaven.quantity.unit.Unit;
+import org.middleheaven.util.Hash;
+import org.middleheaven.util.collections.CollectionUtils;
 
 public class Duration extends ElapsedTime implements Comparable<Duration>{
 
@@ -286,8 +288,9 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 	 * Given a TimePoint t , duration x > y iff t + x > t + y and duration x < y iff t + x < t + y 
 	 *  
 	 * {@link http://www.w3.org/TR/xmlschema-2/#duration-order}
-	 * @param o
-	 * @return
+	 * @param other the Duration to compare with.
+	 * 
+	 * {@inheritDoc}
 	 */
 	@Override
 	public int compareTo(Duration other) { 
@@ -298,7 +301,21 @@ public class Duration extends ElapsedTime implements Comparable<Duration>{
 		return (int)(t2.getMilliseconds()-t1.getMilliseconds());
 	}
 
+    public boolean equals(Object other){
+		return (other instanceof Duration) && equalsOther((Duration) other);
+	}
 
+	/**
+	 * @param other
+	 * @return
+	 */
+	private boolean equalsOther(Duration other) {
+		return CollectionUtils.equalContents(this.fields, other.fields);
+	}
+	
+	public int hashCode(){
+		return Hash.hash(this.fields.size()).hashCode();
+	}
 
 	
 
