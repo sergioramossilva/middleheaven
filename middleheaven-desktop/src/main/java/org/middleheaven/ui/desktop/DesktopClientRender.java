@@ -5,18 +5,32 @@ import org.middleheaven.process.progress.BoundProgress;
 import org.middleheaven.process.progress.Progress;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.desktop.awt.Desktop;
 import org.middleheaven.ui.models.UIClientModel;
 import org.middleheaven.ui.rendering.RenderKit;
 import org.middleheaven.ui.rendering.RenderingContext;
 import org.middleheaven.ui.rendering.UIRender;
 
+/**
+ * 
+ */
 public class DesktopClientRender  extends UIRender{
 
-	public boolean isChildrenRenderer() {
+
+	private static final long serialVersionUID = -171038403911015067L;
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isChildrenRenderer(RenderingContext context, UIComponent parent,UIComponent component) {
 		return true;
 	}
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent, UIComponent component) {
 		
