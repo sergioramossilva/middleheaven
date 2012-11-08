@@ -4,10 +4,12 @@ import java.util.Locale;
 
 import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
-import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.text.Formatter;
 
+/**
+ * A {@link Formatter} that translates a number form to the correspondent writeout form.
+ */
 public abstract class NumberWriteoutFormatter implements Formatter<Number>{
 
 	public static Locale[] getAvailableLocales(){
