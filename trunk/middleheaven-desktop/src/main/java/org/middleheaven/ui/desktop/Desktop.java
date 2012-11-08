@@ -1,4 +1,4 @@
-package org.middleheaven.ui.desktop.awt;
+package org.middleheaven.ui.desktop;
 
 import java.awt.AWTException;
 import java.awt.GraphicsEnvironment;
@@ -10,8 +10,8 @@ import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.ui.AbstractUIClient;
 import org.middleheaven.ui.UIComponent;
-import org.middleheaven.ui.UISize;
 import org.middleheaven.ui.UIException;
+import org.middleheaven.ui.UISize;
 import org.middleheaven.ui.components.UIDesktop;
 
 public class Desktop extends AbstractUIClient implements UIDesktop {

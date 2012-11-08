@@ -25,7 +25,7 @@ import org.middleheaven.ui.components.UITextField;
 import org.middleheaven.ui.components.UIView;
 import org.middleheaven.ui.components.UIWindow;
 import org.middleheaven.ui.desktop.DesktopClientRender;
-import org.middleheaven.ui.desktop.awt.TrayIconRender;
+import org.middleheaven.ui.desktop.TrayIconRender;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
 import org.middleheaven.ui.rendering.SceneNavigator;
 import org.middleheaven.ui.rendering.UIUnitConverter;

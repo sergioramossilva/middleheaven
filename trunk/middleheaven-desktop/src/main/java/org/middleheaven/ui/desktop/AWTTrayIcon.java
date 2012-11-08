@@ -1,4 +1,4 @@
-package org.middleheaven.ui.desktop.awt;
+package org.middleheaven.ui.desktop;
 
 import java.awt.Image;
 import java.awt.PopupMenu;
@@ -12,7 +12,7 @@ import org.middleheaven.ui.UIModel;
 import org.middleheaven.ui.UIPosition;
 import org.middleheaven.ui.components.UIDesktopTrayIcon;
 
-public class AWTTrayIcon extends TrayIcon implements UIDesktopTrayIcon{
+class AWTTrayIcon extends TrayIcon implements UIDesktopTrayIcon{
 
 	private String id;
 	private UIComponent parent;

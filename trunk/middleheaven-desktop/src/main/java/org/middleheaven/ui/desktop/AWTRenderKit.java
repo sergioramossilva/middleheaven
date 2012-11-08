@@ -1,14 +1,13 @@
-package org.middleheaven.ui.desktop.awt;
+package org.middleheaven.ui.desktop;
 
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UIDesktopTrayIcon;
-import org.middleheaven.ui.desktop.DesktopClientRender;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
 import org.middleheaven.ui.rendering.SceneNavigator;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
-public class AWTRenderKit extends AbstractRenderKit{
+class AWTRenderKit extends AbstractRenderKit{
 
 	private static final long serialVersionUID = -6998801713950007439L;
 	
