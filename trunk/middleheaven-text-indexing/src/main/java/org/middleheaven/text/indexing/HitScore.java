@@ -1,5 +1,7 @@
 package org.middleheaven.text.indexing;
 
+import org.middleheaven.util.Hash;
+
 public class HitScore implements Comparable<HitScore> {
 
 
@@ -27,5 +29,19 @@ public class HitScore implements Comparable<HitScore> {
 		return Float.compare(this.score, other.score);
 	}
 
+	public boolean equals(Object other){
+		return (other instanceof HitScore) && equalsOther((HitScore) other);
+	}
 
+	/**
+	 * @param other
+	 * @return
+	 */
+	private boolean equalsOther(HitScore other) {
+		return Float.compare(this.score, other.score) == 0;
+	}
+	
+	public int hashCode(){
+		return Hash.hash(score).hashCode();
+	}
 }
