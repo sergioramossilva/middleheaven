@@ -32,7 +32,7 @@ public class CompositeDimention extends Dimension {
 	}
 
 
-	private TreeMap<Character , BaseDimention > dims = new TreeMap<Character , BaseDimention >();
+	private TreeMap<Character , BaseDimension > dims = new TreeMap<Character , BaseDimension >();
 
 
 	CompositeDimention(CompositeDimention other){
@@ -43,25 +43,25 @@ public class CompositeDimention extends Dimension {
 
 	
 	CompositeDimention(){
-		this.dims.put(Character.valueOf('1'), BaseDimention.class.cast(Dimension.DIMENTIONLESS));
+		this.dims.put(Character.valueOf('1'), BaseDimension.class.cast(Dimension.DIMENTIONLESS));
 	}
 	
 	
 	private void add(Dimension<?> other , int sign){
-		if (other instanceof BaseDimention){
-			BaseDimention<?> baseDim = (BaseDimention<?>)other; 
-    		BaseDimention<?> c = dims.get(baseDim.axis());
+		if (other instanceof BaseDimension){
+			BaseDimension<?> baseDim = (BaseDimension<?>)other; 
+    		BaseDimension<?> c = dims.get(baseDim.axis());
     		if (c!=null){
-    			dims.put(baseDim.axis(), BaseDimention.class.cast(BaseDimention.base(c.axis(),c.exponent()+sign*baseDim.exponent()).simplify()));
+    			dims.put(baseDim.axis(), BaseDimension.class.cast(BaseDimension.base(c.axis(),c.exponent()+sign*baseDim.exponent()).simplify()));
     		} else {
-    			dims.put(baseDim.axis(), BaseDimention.base(baseDim.axis(),sign*baseDim.exponent()));
+    			dims.put(baseDim.axis(), BaseDimension.base(baseDim.axis(),sign*baseDim.exponent()));
     		}
 
     	} else {
     		// merge compositions
     		CompositeDimention c = (CompositeDimention)other;
 
-    		for (Map.Entry<Character , BaseDimention > entry : c.dims.entrySet()){
+    		for (Map.Entry<Character , BaseDimension > entry : c.dims.entrySet()){
     			add(entry.getValue(),sign );
     		}
     	
@@ -86,8 +86,8 @@ public class CompositeDimention extends Dimension {
 	@Override
 	protected Dimension simplify() {
 		// elimina todos os dimensionless
-		for (Iterator<BaseDimention> it = dims.values().iterator(); it.hasNext();){
-			BaseDimention d = it.next();
+		for (Iterator<BaseDimension> it = dims.values().iterator(); it.hasNext();){
+			BaseDimension d = it.next();
 			if (d.exponent()==0 || d.axis() == '1'){
 				it.remove();
 			}
@@ -104,7 +104,7 @@ public class CompositeDimention extends Dimension {
 	
 	public String toString(){
 		StringBuilder builder = new StringBuilder(); 
-		for (Iterator<BaseDimention> it = dims.values().iterator(); it.hasNext();){
+		for (Iterator<BaseDimension> it = dims.values().iterator(); it.hasNext();){
 			builder.append(it.next().toString());
 		}
 		return builder.toString();
