@@ -41,7 +41,7 @@ public class UIActionHandlerLocator {
 		if (component.getUIModel() instanceof UIActionHandler) {
 			
 			
-			((UIActionHandler) component.getUIModel()).handleAction(event, attributeContext );
+			((UIActionHandler) component.getUIModel()).handleAction(event );
 		} else if (component.getUIParent() == null){
 			// reached the top. TODO use default handler
 			

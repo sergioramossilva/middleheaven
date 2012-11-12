@@ -15,7 +15,7 @@ public class UIFormSheetBuilder {
 
 	/**
 	 * Constructor.
-	 * @param name
+	 * 
 	 * @param uiFormSheetModel
 	 */
 	public UIFormSheetBuilder(UIFormSheetModel uiFormSheetModel) {
@@ -23,11 +23,11 @@ public class UIFormSheetBuilder {
 	}
 
 	/**
-	 * @param string
+	 * @param id
 	 * @param valueOf
 	 * @return
 	 */
-	public UIFormSheetBuilder addField(Class<? extends UIComponent> type, String string, TextLocalizable valueOf) {
+	public UIFormSheetBuilder addField(Class<? extends UIComponent> type, String id, TextLocalizable valueOf) {
 
 
 		return this;

@@ -2,20 +2,30 @@ package org.middleheaven.ui;
 
 import java.util.List;
 
-import org.middleheaven.ui.components.UIView;
+import org.middleheaven.ui.components.UIInput;
+import org.middleheaven.ui.rendering.RenderKit;
 
 
 /**
  * Abstract base visual component.  
  *
+ *Components have a composite raltion with each other. 
+ *Compoennts can be added to other components. 
+ *Each component is rendered by a {@link RenderKit}. the {@link RenderKit} determines the rendering by
+ *the component's type and family. 
  */
 public interface UIComponent extends  Displayable {
 	
     /**
+     * GID is a unique Graphic Identification. Each Component should have an unique id.
      * @return ID that uniquely identifies this component
      */
     public String getGID();
     
+    /**
+     * GID is a unique Graphic Identification. Each Component should have an unique id.
+     * @param id the unique Graphic Identification.
+     */
     public void setGID(String id);
 
     /**
@@ -26,10 +36,15 @@ public interface UIComponent extends  Displayable {
     public boolean isRendered();
     
     /**
-     * @param model this components UIModel 
+     * The {@link UIModel} that represents this component data.
+     * @param model this component's UIModel 
      */
     public void setUIModel(UIModel model);
     
+    /**
+     * The {@link UIModel} that represents this component data.
+     * @return model this component's UIModel 
+     */
     public UIModel getUIModel();
     
     /**
@@ -78,17 +93,43 @@ public interface UIComponent extends  Displayable {
      */
     public void removeComponent(UIComponent component);
     
+    /**
+     * The visible property.
+     * @param visible <code>true</code> if the component is visible to the user, <code>false</code> otherwise.
+     *
+     */
     public void setVisible(boolean visible);
+    
+    /**
+     * 
+     * @return <code>true</code> if the component is visible to the user, <code>false</code> otherwise.
+     */
     public boolean isVisible();
     
+    /**
+     * The enable property. Only {@link UIInput}
+     * @param enabled <code>true</code> if the component can interact with the user, <code>false</code> otherwise.
+     */
+    void setEnabled(boolean enabled);
+    
+    /**
+     * 
+     * @return <code>true</code> if the component can interact with the user, <code>false</code> otherwise.
+     */
     public boolean isEnabled();
     
     
+    /**
+     * @see Object#equals(Object)
+     */
     public boolean equals(Object other);
     
+    /**
+     * @see Object#hashCode()
+     */
     public int hashCode();
 
-	void setEnabled(boolean enabled);
+	
 
 	/**
 	 * Test if this component if of the given type.

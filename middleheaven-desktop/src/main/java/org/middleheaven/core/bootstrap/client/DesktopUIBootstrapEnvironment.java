@@ -33,8 +33,7 @@ public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEn
 			UIClient client = uiService.getUIClientRendering(UIEnvironmentType.DESKTOP).getComponent();
 
 			UIClientModel clientModel = (UIClientModel) client.getUIModel();
-			
-			
+
 			UIComponent mainWindow;
 			 if (client.getChildrenCount()>1){
 				mainWindow = clientModel.resolveMainWindow((UIDesktop)client,renderedContext);
@@ -45,7 +44,7 @@ public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEn
 				mainWindow = client.getChildrenComponents().get(0);
 			}
 
-			 clientModel.getSceneNavigator().show(mainWindow);
+			 client.getSceneNavigator().show(mainWindow);
 			
 		} catch (ServiceNotAvailableException e){
 			logger.warn("Executing without UI client");
@@ -64,7 +63,7 @@ public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEn
 			
 			UIComponent mainWindow = clientModel.resolveMainWindow((UIDesktop)client,renderedContext);
 
-			clientModel.getSceneNavigator().dispose(mainWindow);
+			client.getSceneNavigator().dispose(mainWindow);
 			
 		} catch (ServiceNotAvailableException e){
 			logger.trace("Stopping without UI client");

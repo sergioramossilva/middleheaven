@@ -3,7 +3,6 @@ package org.middleheaven.ui.models;
 import java.util.Collection;
 
 import org.middleheaven.ui.UIActionHandler;
-import org.middleheaven.ui.UITextLabeledModel;
 
 /**
  * The command model.

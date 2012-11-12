@@ -17,4 +17,6 @@ public interface UIClient extends UIComponent, NamingContainer{
 	public void exit();
 	
 	
+	public SceneNavigator getSceneNavigator();
+	
 }

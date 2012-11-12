@@ -48,7 +48,7 @@ public class MethodUIActionHandler implements UIActionHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleAction(UIActionEvent event,	AttributeContext attributeContext) {
+	public void handleAction(UIActionEvent event) {
 		
 		Class<?>[] types = method.getParameterTypes();
 		Object[] args =  new Object[types.length];
@@ -57,8 +57,6 @@ public class MethodUIActionHandler implements UIActionHandler {
 			
 			if (types[i].isAssignableFrom(UIActionEvent.class)){
 				args[i] = event;
-			} else if (types[i].isAssignableFrom(AttributeContext.class)){
-				args[i] = attributeContext;
 			} else {
 				args[i] = null; // TODO
 			}

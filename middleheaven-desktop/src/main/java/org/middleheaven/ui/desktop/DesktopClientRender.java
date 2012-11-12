@@ -34,7 +34,7 @@ public class DesktopClientRender  extends UIRender{
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent, UIComponent component) {
 		
-		Desktop dclient = new Desktop();
+		Desktop dclient = new Desktop(context.getRenderKit().getSceneNavigator());
 		
 		// parent is null has the client is a root element
 		RenderKit renderKit = context.getRenderKit();

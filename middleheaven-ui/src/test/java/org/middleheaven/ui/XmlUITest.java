@@ -136,4 +136,76 @@ public class XmlUITest extends MiddleHeavenTestCase {
 		UIComponent frameB = components.get(0);
 		assertEquals("frameB", frameB.getGID());
 	}
+	
+	
+	@Test
+	public void testPatternSearh (){
+		
+	
+		
+		XMLUIComponentBuilder xmlBuilder = new XMLUIComponentBuilder(getWiringService(), uiType);
+		UIEnvironment env = xmlBuilder.buildFrom(new File("./src/test/java/org/middleheaven/ui/ui.xml"));
+
+		UIClient client = env.getClient();
+		
+		assertNotNull("UIModel is null",client.getUIModel());
+		
+		RenderKit kit = new TestRenderKit();
+		
+		RenderingContext context = new RenderingContext(kit);
+		
+		client = kit.renderComponent(context, null, client);
+		
+		UIComponent wui = client.getChildrenComponents().get(0);
+	
+		UIComponent layoutui = wui.getChildrenComponents().get(0);
+		assertNotNull(layoutui);
+	
+		
+		// get UICLient type
+		
+		;
+		
+		List<UIComponent> components = UISearch.on(client).search("UIClient").list();
+		
+		assertFalse(components.isEmpty());
+		assertEquals(client, components.get(0));
+		
+//		components = UISearch.on(layoutui).search(":parent").list();
+//		
+//		assertFalse(components.isEmpty());
+//		assertEquals(wui, components.get(0));
+		
+//		components = UITreeCriteria.search(".").execute(layoutui)
+//		.list();
+//		
+//		assertFalse(components.isEmpty());
+//		assertEquals(layoutui, components.get(0));
+	
+//		components = UISearch.on(layoutui).search(":parent:parent").list();
+//		
+//		
+//		assertFalse(components.isEmpty());
+//		assertEquals(client, components.get(0));
+		
+		
+		components =UISearch.on(layoutui).search("#frameA").list(); 
+		
+		UIComponent frameA = components.get(0);
+		assertFalse(components.isEmpty());
+		assertEquals("frameA", frameA.getGID());
+		
+
+		UIComponent frameA2 = UISearch.searchDown(client, "frameA");
+		
+		assertEquals("frameA", frameA2.getGID());
+		assertEquals(frameA, frameA);
+		
+		components = UISearch.on(layoutui).search("#frameB").list(); 
+		
+		assertFalse(components.isEmpty());
+		
+		UIComponent frameB = components.get(0);
+		assertEquals("frameB", frameB.getGID());
+	}
 }
