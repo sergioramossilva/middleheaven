@@ -7,6 +7,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.middleheaven.core.reflection.IllegalAccessReflectionException;
+import org.middleheaven.ui.SceneNavigator;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UIColorField;
@@ -27,7 +28,6 @@ import org.middleheaven.ui.components.UIWindow;
 import org.middleheaven.ui.desktop.DesktopClientRender;
 import org.middleheaven.ui.desktop.TrayIconRender;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
-import org.middleheaven.ui.rendering.SceneNavigator;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
 public class SwingRenderKit extends AbstractRenderKit {

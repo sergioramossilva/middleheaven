@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.middleheaven.global.text.TextLocalizable;
 import org.middleheaven.ui.UIActionHandler;
+import org.middleheaven.ui.models.AbstractUICommandModel;
 import org.middleheaven.ui.models.UICommandModel;
 import org.middleheaven.ui.models.UIFormModel;
 
@@ -69,8 +70,32 @@ public abstract class AbstractSheetSetUIFormModel implements UIFormModel {
 	
 	
 	protected UIFormComandBuilder addAction(String name, TextLocalizable caption) {
-		return new UIFormComandBuilder(name, this);
+		return new UIFormComandBuilder(name, caption, this);
+	}
+
+	/**
+	 * @param name
+	 * @param caption 
+	 * @param handler
+	 */
+	protected void addHandler(String name, TextLocalizable caption, UIActionHandler handler) {
+		handlersByName.put(name, handler);
+		
+		SheetUICommandModel model = new SheetUICommandModel(){};
+		
+		model.setName(name);
+		model.setText(caption);
+		model.addUIActionHandler(handler);
+		
+		comands.add(model);
 	}
 	
 
+	private class SheetUICommandModel extends AbstractUICommandModel {
+		
+
+		public void addUIActionHandler(UIActionHandler handler){
+			super.addUIActionHandler(handler);
+		}
+	}
 }

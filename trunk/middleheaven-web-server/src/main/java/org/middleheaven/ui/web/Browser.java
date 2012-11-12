@@ -1,6 +1,7 @@
 package org.middleheaven.ui.web;
 
 import org.middleheaven.ui.AbstractUIClient;
+import org.middleheaven.ui.SceneNavigator;
 import org.middleheaven.ui.UISize;
 import org.middleheaven.ui.components.UIBrowser;
 
@@ -8,8 +9,10 @@ public class Browser extends AbstractUIClient implements UIBrowser{
 
 	
 	
-	public Browser() {
-	
+	private SceneNavigator navigator;
+
+	public Browser(SceneNavigator navigator) {
+		this.navigator = navigator;
 	}
 
 	@Override
@@ -25,5 +28,13 @@ public class Browser extends AbstractUIClient implements UIBrowser{
     public boolean isRendered(){
     	return true;
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SceneNavigator getSceneNavigator() {
+		return navigator;
+	}
 
 }

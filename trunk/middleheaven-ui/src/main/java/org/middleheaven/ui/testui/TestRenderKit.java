@@ -1,9 +1,9 @@
 package org.middleheaven.ui.testui;
 
 import org.middleheaven.ui.Displayable;
+import org.middleheaven.ui.SceneNavigator;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
-import org.middleheaven.ui.rendering.SceneNavigator;
 import org.middleheaven.ui.rendering.UIRender;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 

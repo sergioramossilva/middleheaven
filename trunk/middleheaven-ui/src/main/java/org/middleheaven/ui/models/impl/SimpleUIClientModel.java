@@ -2,35 +2,18 @@ package org.middleheaven.ui.models.impl;
 
 import org.middleheaven.process.AttributeContext;
 import org.middleheaven.ui.AbstractUIModel;
+import org.middleheaven.ui.SceneNavigator;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.models.UIClientModel;
-import org.middleheaven.ui.rendering.SceneNavigator;
 
 /**
  * 
  */
 public class SimpleUIClientModel extends AbstractUIModel implements UIClientModel{
 
-	private SceneNavigator sceneNavigator;
 	private boolean splashWindowUsed;
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public SceneNavigator getSceneNavigator() {
-		return this.sceneNavigator;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setSceneNavigator(SceneNavigator sceneNavigator) {
-		this.sceneNavigator = sceneNavigator;
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */

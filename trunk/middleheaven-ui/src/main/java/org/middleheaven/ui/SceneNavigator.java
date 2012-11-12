@@ -1,9 +1,8 @@
 /**
  * 
  */
-package org.middleheaven.ui.rendering;
+package org.middleheaven.ui;
 
-import org.middleheaven.ui.UIComponent;
 
 /**
  * 

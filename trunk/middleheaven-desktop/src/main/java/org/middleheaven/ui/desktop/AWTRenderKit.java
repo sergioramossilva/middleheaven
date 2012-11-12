@@ -1,10 +1,10 @@
 package org.middleheaven.ui.desktop;
 
+import org.middleheaven.ui.SceneNavigator;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UIDesktopTrayIcon;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
-import org.middleheaven.ui.rendering.SceneNavigator;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
 class AWTRenderKit extends AbstractRenderKit{

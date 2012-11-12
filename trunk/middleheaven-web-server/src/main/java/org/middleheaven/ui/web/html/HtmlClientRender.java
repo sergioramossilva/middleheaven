@@ -22,7 +22,7 @@ public class HtmlClientRender extends UIRender {
 	@Override
 	protected UIComponent build(RenderingContext context, UIComponent parent, UIComponent component) {
 		
-		Browser browser =  new Browser();
+		Browser browser =  new Browser(context.getRenderKit().getSceneNavigator());
 		
 		browser.setUIModel(component.getUIModel());
 		browser.setUIParent(parent);

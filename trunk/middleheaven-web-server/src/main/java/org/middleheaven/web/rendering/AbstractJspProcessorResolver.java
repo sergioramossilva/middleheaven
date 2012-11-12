@@ -28,7 +28,7 @@ public abstract class AbstractJspProcessorResolver implements RenderingProcessor
 	 */
 	protected final void injectBrowserClient(RequestResponseWebContext context) {
 		// set UIClient only for rendering
-		Browser browser = new Browser();
+		Browser browser = new Browser(renderKit.getSceneNavigator());
 		
 		
 		browser.setUIModel(new SimpleUIClientModel());
