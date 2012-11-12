@@ -122,11 +122,6 @@ public class XmlUITest extends MiddleHeavenTestCase {
 		assertFalse(components.isEmpty());
 		assertEquals("frameA", frameA.getGID());
 		
-
-		UIComponent frameA2 = UISearch.searchDown(client, "frameA");
-		
-		assertEquals("frameA", frameA2.getGID());
-		assertEquals(frameA, frameA);
 		
 		components = UITreeCriteria.search("frameB").execute(layoutui)
 		.list();
@@ -194,12 +189,6 @@ public class XmlUITest extends MiddleHeavenTestCase {
 		UIComponent frameA = components.get(0);
 		assertFalse(components.isEmpty());
 		assertEquals("frameA", frameA.getGID());
-		
-
-		UIComponent frameA2 = UISearch.searchDown(client, "frameA");
-		
-		assertEquals("frameA", frameA2.getGID());
-		assertEquals(frameA, frameA);
 		
 		components = UISearch.on(layoutui).search("#frameB").list(); 
 		
