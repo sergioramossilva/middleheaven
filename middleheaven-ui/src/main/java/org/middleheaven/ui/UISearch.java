@@ -12,17 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
-import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.ui.UISearch.UISearchExecutor;
 import org.middleheaven.util.StringUtils;
 
 /**
  * 
  */
 public class UISearch {
-
-
-
 
 	public static class UISearchExecutor {
 
@@ -203,9 +198,6 @@ public class UISearch {
 
 	}
 
-
-
-
 	public static class ListUIQuery implements UIQuery{
 
 		private List<UIComponent> list;
@@ -247,10 +239,6 @@ public class UISearch {
 		return new UISearchExecutor(searchClient(c));
 	}
 
-
-
-
-
 	public interface UISearchFilter {
 
 		public boolean accept(UIComponent c);
@@ -281,21 +269,6 @@ public class UISearch {
 
 	}
 
-	/**
-	 * Search downn from a component for a component with a given id.
-	 * @param top
-	 * @param gid
-	 * @return
-	 */
-	public static UIComponent searchDown(UIComponent top, String gid) {
-
-		LinkedList <UIComponent> components = new LinkedList <UIComponent>();
-
-		components.add(top);
-
-		return doSearch(gid, components);
-
-	}
 
 	/**
 	 * Applies a {@link UISearchFilter} to the {@code bottom} component and up to all parents until the root component,
@@ -334,7 +307,7 @@ public class UISearch {
 	 * @param filter the filter to apply
 	 * @param result the result collection
 	 */
-	public static void searchUp(UIComponent bottom,UISearchFilter filter, Collection<UIComponent> result) {
+	private static void searchUp(UIComponent bottom,UISearchFilter filter, Collection<UIComponent> result) {
 
 		UIComponent candidate = bottom;
 
