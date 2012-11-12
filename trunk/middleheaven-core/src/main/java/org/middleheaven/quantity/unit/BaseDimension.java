@@ -5,7 +5,7 @@ import java.lang.reflect.Modifier;
 
 import org.middleheaven.quantity.measure.Measurable;
 
-class BaseDimention<E extends Measurable> extends Dimension<E> implements Comparable<BaseDimention<E>>{
+class BaseDimension<E extends Measurable> extends Dimension<E> implements Comparable<BaseDimension<E>>{
 
 	private static final long serialVersionUID = -3990402812522767184L;
 
@@ -13,15 +13,15 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
  
     private int exponent = 1;
 	
-    static <E extends Measurable> BaseDimention<E> base(Character axis){
-    	return new BaseDimention<E>(axis,1);
+    static <E extends Measurable> BaseDimension<E> base(Character axis){
+    	return new BaseDimension<E>(axis,1);
     }
     
-    static <E extends Measurable> BaseDimention<E> base(Character axis, int exponent){
-    	return new BaseDimention<E>(axis,exponent);
+    static <E extends Measurable> BaseDimension<E> base(Character axis, int exponent){
+    	return new BaseDimension<E>(axis,exponent);
     }
 	
-    private BaseDimention(Character axis, int exponent){
+    private BaseDimension(Character axis, int exponent){
 		this.exponent = exponent;
 		this.axis =exponent==0? '1': axis;
 	}
@@ -35,10 +35,10 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 	}
 	
 	public boolean equals (Object other){
-		return other instanceof BaseDimention && equalsOther((BaseDimention<?>)other);
+		return other instanceof BaseDimension && equalsOther((BaseDimension<?>)other);
 	}
 	
-	private boolean equalsOther (BaseDimention<?> other){
+	private boolean equalsOther (BaseDimension<?> other){
 		return other.exponent == this.exponent && this.axis == other.axis;
 	}
 	public int hashCode(){
@@ -57,8 +57,8 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 			if (Modifier.isStatic(f.getModifiers())){
 				try {
 					Object obj = f.get(this);
-					if (obj instanceof BaseDimention && ((BaseDimention)obj).equals(this)){
-						return (BaseDimention)obj;
+					if (obj instanceof BaseDimension && ((BaseDimension)obj).equals(this)){
+						return (BaseDimension)obj;
 					}
 				} catch (IllegalArgumentException e) {
 					assert false : e.getMessage();  // cannot happen
@@ -82,11 +82,11 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Measurable> Dimension<T> over(Dimension<?> other) {
-		if (other instanceof BaseDimention){
+		if (other instanceof BaseDimension){
 			if (exponent==0){
-				return new BaseDimention(((BaseDimention)other).axis ,  -((BaseDimention)other).exponent).simplify();
-			} else if (((BaseDimention)other).axis ==  this.axis){
-				return new BaseDimention(this.axis , this.exponent - ((BaseDimention)other).exponent).simplify();
+				return new BaseDimension(((BaseDimension)other).axis ,  -((BaseDimension)other).exponent).simplify();
+			} else if (((BaseDimension)other).axis ==  this.axis){
+				return new BaseDimension(this.axis , this.exponent - ((BaseDimension)other).exponent).simplify();
 			} 
 		}
 		return CompositeDimention.over(this, other);
@@ -98,17 +98,17 @@ class BaseDimention<E extends Measurable> extends Dimension<E> implements Compar
 		if (exponent==0){
 			return (Dimension<T>) other;
 		}
-		if (other instanceof BaseDimention){
-			BaseDimention b = (BaseDimention)other;
+		if (other instanceof BaseDimension){
+			BaseDimension b = (BaseDimension)other;
 			if (b.axis ==  this.axis){
-				return new BaseDimention(this.axis , this.exponent + b.exponent).simplify();
+				return new BaseDimension(this.axis , this.exponent + b.exponent).simplify();
 			} 
 		}
 		return CompositeDimention.multiply(this, other);
 	}
 
 	@Override
-	public int compareTo(BaseDimention<E> other) {
+	public int compareTo(BaseDimension<E> other) {
 		return this.axis==other.axis ?  this.exponent - other.exponent  : this.axis - other.axis;
 	}
 }

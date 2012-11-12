@@ -27,22 +27,22 @@ import org.middleheaven.quantity.measure.Measurable;
 public abstract class Dimension<E extends Measurable> implements Serializable {
 
 	// special 
-	public static final Dimension<Dimensionless> DIMENTIONLESS = BaseDimention.base('1',0);
-	public static final Dimension<Currency> CURRENCY = BaseDimention.base('$');
+	public static final Dimension<Dimensionless> DIMENTIONLESS = BaseDimension.base('1',0);
+	public static final Dimension<Currency> CURRENCY = BaseDimension.base('$');
 	// fundamental
-	public static final Dimension<Angle> ANGLE = BaseDimention.base('\u0398');
+	public static final Dimension<Angle> ANGLE = BaseDimension.base('\u0398');
 	
-	public static final Dimension<Distance> DISTANCE = BaseDimention.base('L');
-	public static final Dimension<Time> TIME = BaseDimention.base('T');
-	public static final Dimension<Mass> MASS = BaseDimention.base('M');
-	public static final Dimension<Temperature> TEMPERATURE = BaseDimention.base('K');
-	public static final Dimension<ElectricCarge> ELECTRIC_CARGE = BaseDimention.base('C');
+	public static final Dimension<Distance> DISTANCE = BaseDimension.base('L');
+	public static final Dimension<Time> TIME = BaseDimension.base('T');
+	public static final Dimension<Mass> MASS = BaseDimension.base('M');
+	public static final Dimension<Temperature> TEMPERATURE = BaseDimension.base('K');
+	public static final Dimension<ElectricCarge> ELECTRIC_CARGE = BaseDimension.base('C');
 	
 	
 	// derived
 	public static final Dimension<ElectricCurrent> CURRENT_INTENSITY = ELECTRIC_CARGE.over(TIME);
-	public static final Dimension<Area> AREA = BaseDimention.base('L',2);
-	public static final Dimension<Volume> VOLUME = BaseDimention.base('L',3);
+	public static final Dimension<Area> AREA = BaseDimension.base('L',2);
+	public static final Dimension<Volume> VOLUME = BaseDimension.base('L',3);
 	public static final Dimension<Density> DENSITY = MASS.over(VOLUME);
 	public static final Dimension<Velocity> VELOCITY = DISTANCE.over(TIME);
 	public static final Dimension<Aceleration> ACELERATION = VELOCITY.over(TIME);
