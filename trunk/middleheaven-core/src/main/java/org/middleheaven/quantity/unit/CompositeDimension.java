@@ -7,7 +7,7 @@ import java.util.TreeMap;
 import org.middleheaven.util.Hash;
 
 @SuppressWarnings("unchecked")
-public class CompositeDimention extends Dimension {
+public class CompositeDimension extends Dimension {
 
 	/*
 	 * Due to limitation of the model dimension generic type can not be atributed 
@@ -18,14 +18,14 @@ public class CompositeDimention extends Dimension {
 
 
 	public static Dimension multiply(Dimension a, Dimension b){
-		CompositeDimention c = new  CompositeDimention();
+		CompositeDimension c = new  CompositeDimension();
 		c.add(a, 1);
 		c.add(b, 1);
 		return c.simplify();
 	}
 	
 	public static Dimension over(Dimension a, Dimension b){
-		CompositeDimention c = new  CompositeDimention();
+		CompositeDimension c = new  CompositeDimension();
 		c.add(a, 1);
 		c.add(b, -1);
 		return c.simplify();
@@ -35,14 +35,14 @@ public class CompositeDimention extends Dimension {
 	private TreeMap<Character , BaseDimension > dims = new TreeMap<Character , BaseDimension >();
 
 
-	CompositeDimention(CompositeDimention other){
+	CompositeDimension(CompositeDimension other){
 		// clone 
 		 this.dims = (TreeMap) other.dims.clone();
 
 	}
 
 	
-	CompositeDimention(){
+	CompositeDimension(){
 		this.dims.put(Character.valueOf('1'), BaseDimension.class.cast(Dimension.DIMENTIONLESS));
 	}
 	
@@ -59,7 +59,7 @@ public class CompositeDimention extends Dimension {
 
     	} else {
     		// merge compositions
-    		CompositeDimention c = (CompositeDimention)other;
+    		CompositeDimension c = (CompositeDimension)other;
 
     		for (Map.Entry<Character , BaseDimension > entry : c.dims.entrySet()){
     			add(entry.getValue(),sign );
@@ -70,7 +70,7 @@ public class CompositeDimention extends Dimension {
 	
 	@Override
     public Dimension times(Dimension other){
-		CompositeDimention result = new CompositeDimention(this);
+		CompositeDimension result = new CompositeDimension(this);
 		result.add(other, 1);
     	return result.simplify();
     }
@@ -78,7 +78,7 @@ public class CompositeDimention extends Dimension {
 
     @Override
     public Dimension over(Dimension other){
-    	CompositeDimention result = new CompositeDimention(this);
+    	CompositeDimension result = new CompositeDimension(this);
     	result.add(other, -1);
     	return result.simplify();
     }
