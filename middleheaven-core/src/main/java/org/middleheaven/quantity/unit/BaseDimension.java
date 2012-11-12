@@ -89,7 +89,7 @@ class BaseDimension<E extends Measurable> extends Dimension<E> implements Compar
 				return new BaseDimension(this.axis , this.exponent - ((BaseDimension)other).exponent).simplify();
 			} 
 		}
-		return CompositeDimention.over(this, other);
+		return CompositeDimension.over(this, other);
 	}
 
 
@@ -104,7 +104,7 @@ class BaseDimension<E extends Measurable> extends Dimension<E> implements Compar
 				return new BaseDimension(this.axis , this.exponent + b.exponent).simplify();
 			} 
 		}
-		return CompositeDimention.multiply(this, other);
+		return CompositeDimension.multiply(this, other);
 	}
 
 	@Override
