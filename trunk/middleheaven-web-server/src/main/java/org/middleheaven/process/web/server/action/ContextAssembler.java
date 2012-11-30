@@ -6,7 +6,7 @@ import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.wiring.WiringService;
 import org.middleheaven.process.AttributeContext;
 import org.middleheaven.process.ContextScope;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
 public class ContextAssembler implements BeanAssembler {
 
@@ -27,10 +27,10 @@ public class ContextAssembler implements BeanAssembler {
 		
 		final B instance = Introspector.of(type).newInstance();
 		
-		Introspector.of(type).inspect().properties().each(new Walker<PropertyAccessor>(){
+		Introspector.of(type).inspect().properties().each(new Block<PropertyAccessor>(){
 
 			@Override
-			public void doWith(PropertyAccessor acessor) {
+			public void apply(PropertyAccessor acessor) {
 				acessor.setValue(instance,context.getAttribute(
 						scope,
 						(objectName ==null ? "" : objectName + ".") + acessor.getName(), 

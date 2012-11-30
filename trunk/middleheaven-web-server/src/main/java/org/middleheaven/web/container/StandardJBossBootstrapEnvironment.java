@@ -12,6 +12,10 @@ public class StandardJBossBootstrapEnvironment extends AbstractJBossASBootstrapE
 
     public StandardJBossBootstrapEnvironment(ServletContext context) {
         super(context);
+        
+        
     }
+
+
 
 }

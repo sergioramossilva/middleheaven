@@ -34,8 +34,7 @@ public class WebContainerSwitcher {
 			
 		} else {
 
-			// if there exists a property "jboss.server.home.url"
-			// we are inside jboss; else assume we are in Tomcat only
+			// if there exists a property "jboss.server.home.url" we are inside jboss
 			String jbossHome = System.getProperty("jboss.server.home.url");
 		
 			if (jbossHome==null){

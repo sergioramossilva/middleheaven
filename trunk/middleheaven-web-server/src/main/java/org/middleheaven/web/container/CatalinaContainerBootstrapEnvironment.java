@@ -14,6 +14,7 @@ import org.middleheaven.core.bootstrap.EditableContainerFileRepositoryManager;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.services.ServiceBuilder;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.logging.LoggingLevel;
 import org.middleheaven.logging.LoggingService;
@@ -48,8 +49,6 @@ public class CatalinaContainerBootstrapEnvironment extends StandardSevletBootstr
 					.activatedBy(new JNDINamingDirectoryActivator())
 					.newInstance()
 		    );
-
-	
 		}
 
 		final ServletContext servletContext = this.getServletContext();
@@ -66,6 +65,9 @@ public class CatalinaContainerBootstrapEnvironment extends StandardSevletBootstr
 		context.getLoggingService().addLogListener(listener);
 	}
 
+
+
+	
 	@Override
 	protected void setupDefaultFilesRepositories(ServletContext context,EditableContainerFileRepositoryManager fileSystem){
 	
@@ -108,6 +110,7 @@ public class CatalinaContainerBootstrapEnvironment extends StandardSevletBootstr
 			throw ReflectionException.manage(e, introspector.getIntrospected());
 		}
 	}
+
 
 
 

@@ -10,10 +10,10 @@ import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.ObjectAttribute;
 import org.middleheaven.process.ScopedAttributesResolutionStrategy;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.TransformedIterator;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * 
@@ -75,10 +75,10 @@ abstract class AbstractEnumerationBasedScopedAttributesResolutionStrategy implem
 	public Iterator<Attribute> iterator() {
 		Iterator<String> it = CollectionUtils.enumationIterator(this.getEnumeration());
 		
-		return TransformedIterator.transform(it, new Classifier<Attribute, String>(){
+		return TransformedIterator.transform(it, new Mapper<Attribute, String>(){
 
 			@Override
-			public Attribute classify(String next) {
+			public Attribute apply(String next) {
 				return new ObjectAttribute(next, getValue(next));
 			}
 			

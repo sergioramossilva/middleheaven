@@ -30,7 +30,7 @@ import org.middleheaven.process.web.server.WebContext;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 import org.middleheaven.util.validation.ValidationException;
 import org.middleheaven.web.annotations.Delete;
 import org.middleheaven.web.annotations.Get;
@@ -102,10 +102,10 @@ public class PresenterWebCommandMapping implements WebCommandMapping {
 		// each method on the presenter that is not a getter or a setter is an action
 		// only public not property methods
 		Introspector.of(presenterClass).inspect().methods().notInheritFromObject().match(MethodFilters.publicInstanceNonProperty())
-		.each(new Walker<Method>(){
+		.each(new Block<Method>(){
 
 			@Override
-			public void doWith(Method m) {
+			public void apply(Method m) {
 				// a method can have multiple bindings 
 				if (m.isAnnotationPresent(Post.class)){
 					serviceMethods.put(HttpMethod.POST,m);

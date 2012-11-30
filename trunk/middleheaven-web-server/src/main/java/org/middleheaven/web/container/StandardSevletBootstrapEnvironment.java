@@ -2,7 +2,6 @@ package org.middleheaven.web.container;
 
 import javax.servlet.ServletContext;
 
-import org.middleheaven.application.ApplicationModulesResolver;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
 import org.middleheaven.io.repository.machine.MachineFileSystemRepositoryProvider;
 import org.middleheaven.process.web.CommonHttpServerContainers;
@@ -37,18 +36,5 @@ public class StandardSevletBootstrapEnvironment extends WebContainerBootstrapEnv
 	public ManagedFileRepositoryProvider getManagedFileRepositoryProvider() {
 		return MachineFileSystemRepositoryProvider.getProvider();
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ApplicationModulesResolver getApplicationModulesResolver() {
-		throw new UnsupportedOperationException("Not implememented yet");
-	}
-
-
-
-
-
 
 }
