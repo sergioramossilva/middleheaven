@@ -16,7 +16,7 @@ import org.middleheaven.logging.Logger;
 import org.middleheaven.process.web.server.action.annotaions.Interceptable;
 import org.middleheaven.process.web.server.action.annotaions.Presenter;
 import org.middleheaven.util.StringUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.web.annotations.Path;
 import org.middleheaven.web.annotations.Paths;
 
@@ -75,7 +75,7 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 			//			.through(menuInterceptor)
 			//			.through(breadcrumsInterceptor)
 			//			
-			EnhancedCollection<Method> methods = introspector.inspect().methods().notInheritFromObject().withAccess(MemberAccess.PUBLIC).retriveAll();
+			Enumerable<Method> methods = introspector.inspect().methods().notInheritFromObject().withAccess(MemberAccess.PUBLIC).retriveAll();
 
 			for (Method m : methods){
 

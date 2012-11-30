@@ -7,19 +7,22 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
+import org.middleheaven.core.bootstrap.AbstractBootstrapEnvironment;
 import org.middleheaven.core.bootstrap.BootstrapContext;
 import org.middleheaven.core.bootstrap.BootstrapEnvironment;
 import org.middleheaven.core.bootstrap.EditableContainerFileRepositoryManager;
 import org.middleheaven.core.bootstrap.FileContext;
+import org.middleheaven.core.services.ServiceBuilder;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
+import org.omg.IOP.TransactionService;
 
 /**
  * Base abstraction for a {@link BootstrapEnvironment} that can process web requests based on a {@link ServletContext}.
  */
-public abstract class WebContainerBootstrapEnvironment implements BootstrapEnvironment  {
+public abstract class WebContainerBootstrapEnvironment extends AbstractBootstrapEnvironment  {
 
 	private ServletContext context;
 	private EditableContainerFileRepositoryManager containerFileSystem;
@@ -35,7 +38,6 @@ public abstract class WebContainerBootstrapEnvironment implements BootstrapEnvir
 	public ServletContext getServletContext(){
 		return this.context;
 	}
-
 
 	@Override
 	public final FileContext getFileContext() {

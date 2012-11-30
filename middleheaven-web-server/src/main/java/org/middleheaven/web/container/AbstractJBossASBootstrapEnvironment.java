@@ -9,11 +9,11 @@ import java.io.File;
 import javax.servlet.ServletContext;
 
 import org.middleheaven.core.bootstrap.BootstrapContext;
-import org.middleheaven.core.services.ServiceRegistry;
+import org.middleheaven.core.services.ServiceBuilder;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.namedirectory.NameDirectoryService;
-import org.middleheaven.namedirectory.jndi.JNDINameDirectoryService;
+import org.middleheaven.namedirectory.jndi.JNDINamingDirectoryActivator;
 
 /**
  * 
@@ -37,11 +37,11 @@ public abstract class AbstractJBossASBootstrapEnvironment extends StandardSevlet
         System.setProperty("java.naming.factory.initial",  "org.jnp.interfaces.NamingContextFactory");
         System.setProperty("java.naming.provider.url", "localhost:1099");
         
-  
-        JNDINameDirectoryService service = new JNDINameDirectoryService();
-        
-        ServiceRegistry.register(NameDirectoryService.class, service);
-        
+        context.registerService(ServiceBuilder
+				.forContract(NameDirectoryService.class)
+				.activatedBy(new JNDINamingDirectoryActivator())
+				.newInstance()
+	    );
         
     }
 

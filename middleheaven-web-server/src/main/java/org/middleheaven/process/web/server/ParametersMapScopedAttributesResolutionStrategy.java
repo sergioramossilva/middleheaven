@@ -10,9 +10,9 @@ import org.middleheaven.process.Attribute;
 import org.middleheaven.process.ContextScope;
 import org.middleheaven.process.ObjectAttribute;
 import org.middleheaven.process.ScopedAttributesResolutionStrategy;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.TransformedIterator;
+import org.middleheaven.util.function.Mapper;
 
 class ParametersMapScopedAttributesResolutionStrategy implements ScopedAttributesResolutionStrategy {
 
@@ -43,10 +43,10 @@ class ParametersMapScopedAttributesResolutionStrategy implements ScopedAttribute
 	 */
 	@Override
 	public Iterator<Attribute> iterator() {
-		return TransformedIterator.transform(parameters.entrySet().iterator(), new Classifier<Attribute, Map.Entry<String, String[]>>(){
+		return TransformedIterator.transform(parameters.entrySet().iterator(), new Mapper<Attribute, Map.Entry<String, String[]>>(){
 
 			@Override
-			public Attribute classify(Map.Entry<String, String[]> next) {
+			public Attribute apply(Map.Entry<String, String[]> next) {
 				return new ObjectAttribute(next.getKey(), next.getValue());
 			}
 			
