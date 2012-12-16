@@ -66,13 +66,5 @@ public class AppEngineWebContainer extends WebContainerBootstrapEnvironment {
 		throw new UnsupportedOperationException("Not implememented yet");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ApplicationModulesResolver getApplicationModulesResolver() {
-		throw new UnsupportedOperationException("Not implememented yet");
-	}
-
 
 }
