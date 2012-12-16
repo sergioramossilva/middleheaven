@@ -17,9 +17,9 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileContent;
 import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileType;
-import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Predicate;
 
 final class VirtualFileSystemManagedFile extends AbstractManagedFile {
 
@@ -61,10 +61,10 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile {
 	 *
 	 * @return list of the ManagedFile existing in the repository 
 	 */
-	public EnhancedCollection<ManagedFile> children() throws ManagedIOException{
+	public Enumerable<ManagedFile> children() throws ManagedIOException{
 
 		if (this.getType() == ManagedFileType.FILE || !this.exists()){
-			return CollectionUtils.emptyCollection();
+			return CollectionUtils.emptyEnumerable();
 		}
 
 		try {
@@ -75,7 +75,7 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile {
 				mfiles.add(new VirtualFileSystemManagedFile(watchService,fo));
 			}
 
-			return CollectionUtils.enhance(mfiles);
+			return CollectionUtils.asEnumerable(mfiles);
 		} catch (FileSystemException e) {
 			throw new VirtualFileSystemException(e);
 		}
@@ -96,7 +96,7 @@ final class VirtualFileSystemManagedFile extends AbstractManagedFile {
 
 			for (FileObject fo : files){
 				ManagedFile mf = new VirtualFileSystemManagedFile(watchService,fo);
-				if (filter.classify(mf)){
+				if (filter.apply(mf)){
 					mfiles.add(mf);
 				}
 			}
