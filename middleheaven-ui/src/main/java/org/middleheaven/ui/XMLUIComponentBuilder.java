@@ -30,6 +30,7 @@ import org.middleheaven.ui.models.impl.DefaultUIWindowModel;
 import org.middleheaven.ui.models.impl.SimpleUIClientModel;
 import org.middleheaven.ui.models.impl.UIBorderLayoutModel;
 import org.middleheaven.util.StringUtils;
+import org.middleheaven.util.collections.Enumerable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -211,8 +212,8 @@ public class XMLUIComponentBuilder extends XMLObjectContructor<UIEnvironment> im
 
 		// inject attributes
 
-		Collection<PropertyAccessor> properties = Introspector.of(uiModelClass).inspect().properties().retriveAll();
-
+		Enumerable<PropertyAccessor> properties = Introspector.of(uiModelClass).inspect().properties().retriveAll();
+				
 		for (PropertyAccessor p : properties){
 			Node pnode = XMLUtils.getChildNode(p.getName().toString(), modelNode);
 			if (pnode!=null){

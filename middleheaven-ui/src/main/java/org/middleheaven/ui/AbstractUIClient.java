@@ -19,10 +19,10 @@ public abstract class AbstractUIClient implements UIClient , NamingContainer {
 	
 	@Override
 	public void setUIModel(UIModel model) {
-		if (model instanceof UIClientModel){
-			this.uiModel = (UIClientModel)model;
+		if (!(model instanceof UIClientModel)){
+			throw new IllegalArgumentException("Expected a " + UIClientModel.class + " received " + model.getClass());
 		}
-		throw new IllegalArgumentException("Expected a " + UIClientModel.class);
+		this.uiModel = (UIClientModel)model;
 	}
 	
 	@Override
