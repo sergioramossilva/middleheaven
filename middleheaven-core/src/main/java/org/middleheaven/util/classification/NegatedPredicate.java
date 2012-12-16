@@ -4,6 +4,9 @@
  */
 package org.middleheaven.util.classification;
 
+import org.middleheaven.util.function.Mapper;
+import org.middleheaven.util.function.Predicate;
+
 
 /**
  * Filter that returns the opposite result  of a underlying filter.
@@ -12,11 +15,11 @@ package org.middleheaven.util.classification;
 public class NegatedPredicate<T> implements Predicate<T> {
 
 
-	private Classifier<Boolean,T>  original;
+	private Mapper<Boolean,T>  original;
 
 	public NegatedPredicate(){};
 
-	public NegatedPredicate(Classifier<Boolean,T>  original){
+	public NegatedPredicate(Mapper<Boolean,T>  original){
 		this.original = original;
 	}
 
@@ -24,13 +27,13 @@ public class NegatedPredicate<T> implements Predicate<T> {
 		this.original = filter;
 	}
 
-	public Classifier<Boolean,T>  getFilter(){
+	public Mapper<Boolean,T>  getFilter(){
 		return original;
 	}
 
 	@Override
-	public Boolean classify(T obj) {
-		return !original.classify(obj);
+	public Boolean apply(T obj) {
+		return !original.apply(obj);
 	}
 		
 		

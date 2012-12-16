@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+
 public class  MapClassification<C,T> implements Classification<C,T> {
 
 	private final Map <C, Collection<T>> classification = new HashMap<C, Collection<T>>();

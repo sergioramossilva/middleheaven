@@ -1,12 +1,15 @@
 package org.middleheaven.util.collections;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.function.BinaryOperator;
+import org.middleheaven.util.function.Block;
+import org.middleheaven.util.function.Mapper;
+import org.middleheaven.util.function.Predicate;
 
 
 public class LinkedTreeNode<E> implements TreeNode<E>{
@@ -64,25 +67,25 @@ public class LinkedTreeNode<E> implements TreeNode<E>{
 	}
 
 	@Override
-	public void forEachParent(Walker<TreeNode<E>> walker) {
+	public void forEachParent(Block<TreeNode<E>> walker) {
 		if (parent != null){
-			walker.doWith(this.parent);
+			walker.apply(this.parent);
 			parent.forEachParent(walker);
 		}
 	}
 
 	@Override
-	public void forEachRecursive(Walker<TreeNode<E>> walker) {
+	public void forEachRecursive(Block<TreeNode<E>> block) {
 		for (TreeNode<E> t : this){
-			walker.doWith(t);
-			t.forEachRecursive(walker);
+			block.apply(t);
+			t.forEachRecursive(block);
 		}
 	}
 
 	@Override
-	public void forEach(Walker<TreeNode<E>> walker) {
+	public void forEach(Block<TreeNode<E>> walker) {
 		for (TreeNode<E> t : this){
-			walker.doWith(t);
+			walker.apply(t);
 		}
 	}
 	
@@ -104,16 +107,147 @@ public class LinkedTreeNode<E> implements TreeNode<E>{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Walkable<TreeNode<E>> filter(Predicate<TreeNode<E>> predicate) {
-		return new IterableWalkable<TreeNode<E>>(this).filter(predicate);
+	public Enumerable<TreeNode<E>> filter(Predicate<TreeNode<E>> predicate) {
+		return new IterableEnumerable<TreeNode<E>>(this).filter(predicate);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <C> Walkable<C> map(Classifier<C, TreeNode<E>> classifier) {
-		return new IterableWalkable<TreeNode<E>>(this).map(classifier);
+	public <C> Enumerable<C> map(Mapper<C, TreeNode<E>> classifier) {
+		return new IterableEnumerable<TreeNode<E>>(this).map(classifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <U> Enumerable<U> cast(Class<U> newType) {
+		return new IterableEnumerable<TreeNode<E>>(this).cast(newType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int size() {
+		return this.nodes.size();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public TreeNode<E> getFirst() {
+		return this.nodes.get(0);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Enumerable<TreeNode<E>> sort(Comparator<TreeNode<E>> comparable) {
+		return new IterableEnumerable<TreeNode<E>>(this).sort(comparable);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Enumerable<TreeNode<E>> sort() {
+		return new IterableEnumerable<TreeNode<E>>(this).sort();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Enumerable<TreeNode<E>> reject(Predicate<TreeNode<E>> predicate) {
+		return new IterableEnumerable<TreeNode<E>>(this).reject(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int count(TreeNode<E> object) {
+		return new IterableEnumerable<TreeNode<E>>(this).count(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int count(Predicate<TreeNode<E>> predicate) {
+		return new IterableEnumerable<TreeNode<E>>(this).count(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean every(Predicate<TreeNode<E>> predicate) {
+		return new IterableEnumerable<TreeNode<E>>(this).every(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean any(Predicate<TreeNode<E>> predicate) {
+		return new IterableEnumerable<TreeNode<E>>(this).any(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public TreeNode<E> find(Predicate<TreeNode<E>> predicate) {
+		return new IterableEnumerable<TreeNode<E>>(this).find(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> Enumerable<C> mapAll(Mapper<Enumerable<C>, TreeNode<E>> mapper) {
+		return new IterableEnumerable<TreeNode<E>>(this).mapAll(mapper);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public TreeNode<E> reduce(TreeNode<E> seed,
+			BinaryOperator<TreeNode<E>> operator) {
+		return new IterableEnumerable<TreeNode<E>>(this).reduce(seed, operator);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> C mapReduce(C seed, Mapper<Enumerable<C>, TreeNode<E>> mapper,
+			BinaryOperator<C> operator) {
+		return new IterableEnumerable<TreeNode<E>>(this).mapReduce(seed, mapper, operator);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C, P extends Pair<C, Enumerable<TreeNode<E>>>> Enumerable<P> groupBy(
+			Mapper<C, TreeNode<E>> classifier) {
+		return new IterableEnumerable<TreeNode<E>>(this).groupBy(classifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String join(String separator) {
+		return new IterableEnumerable<TreeNode<E>>(this).join(separator);
 	}
 
 

@@ -5,7 +5,7 @@ package org.middleheaven.util.collections;
 
 import java.util.Iterator;
 
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.function.Predicate;
 
 /**
  * 
@@ -56,7 +56,7 @@ public class FilteredIterator<T> implements Iterator<T> {
 		if (original.hasNext()){
 			Item<T> item = fetchNext();
 			if (item.isFound){
-				next = item.object;
+				this.next = item.object;
 				return true;
 			} 
 		} 
@@ -66,7 +66,7 @@ public class FilteredIterator<T> implements Iterator<T> {
 	private Item<T> fetchNext(){
 		while(original.hasNext()){
 			T n = original.next();
-			if (predicate.classify(n).booleanValue()){
+			if (predicate.apply(n).booleanValue()){
 				return new Item<T>(n);
 			}
 		}

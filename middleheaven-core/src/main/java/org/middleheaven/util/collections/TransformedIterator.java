@@ -2,7 +2,7 @@ package org.middleheaven.util.collections;
 
 import java.util.Iterator;
 
-import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * Adapts an Iterator of type <code>A</code> to an Iterator of type <code>T</code>.
@@ -13,12 +13,12 @@ import org.middleheaven.util.classification.Classifier;
 public final class TransformedIterator<T,A> implements Iterator<T> {
 
 	
-	public static <TRANSFORMED, ORIGINAL> TransformedIterator<TRANSFORMED, ORIGINAL> transform(Iterator<ORIGINAL> original, Classifier<TRANSFORMED,ORIGINAL> classifier ){
+	public static <TRANSFORMED, ORIGINAL> TransformedIterator<TRANSFORMED, ORIGINAL> transform(Iterator<ORIGINAL> original, Mapper<TRANSFORMED,ORIGINAL> classifier ){
 		return new TransformedIterator<TRANSFORMED, ORIGINAL>(original, classifier);
 	}
 	
 	private Iterator<A> other;
-	private Classifier<T, A> classifier;
+	private Mapper<T, A> classifier;
 	
 	
 	/**
@@ -26,7 +26,7 @@ public final class TransformedIterator<T,A> implements Iterator<T> {
 	 * Constructor.
 	 * @param other the iterator to adapt.
 	 */
-	public TransformedIterator(Iterator<A> other, Classifier<T,A> classifier){
+	public TransformedIterator(Iterator<A> other, Mapper<T,A> classifier){
 		this.other = other;
 		this.classifier = classifier;
 	}
@@ -38,7 +38,7 @@ public final class TransformedIterator<T,A> implements Iterator<T> {
 
 	@Override
 	public final T next() {
-		return this.classifier.classify(other.next());
+		return this.classifier.apply(other.next());
 	}
 
 

@@ -1,10 +1,11 @@
 package org.middleheaven.util.collections;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
-public class EnhancedMapAdapter<K,V> extends AbstractEnumerableAdapter<Map.Entry<K, V>> implements EnhancedMap<K, V> {
+class EnhancedMapAdapter<K,V> extends AbstractEnumerableAdapter<Pair<K,V>> implements Map<K,V> {
 
 	
 	private Map<K, V> original;
@@ -13,30 +14,13 @@ public class EnhancedMapAdapter<K,V> extends AbstractEnumerableAdapter<Map.Entry
 		this.original = original;
 	}
 	
-	
-	@Override
-	public void clear() {
-		this.original.clear();
-	}
-
-	@Override
-	public boolean containsKey(Object key) {
-		return original.containsKey(key);
-	}
-
-	@Override
-	public boolean containsValue(Object value) {
-		return original.containsValue(value);
-	}
-
-	@Override
-	public EnhancedSet<Map.Entry<K,V>> entrySet() {
-		return CollectionUtils.enhance(original.entrySet());
-	}
-
-	@Override
-	public V get(Object key) {
-		return original.get(key);
+	/**
+	 * 
+	 * @param other
+	 * @return <code>true</code> if the contents are the same
+	 */
+	public boolean containsSame(Map<K, V> other) {
+		return CollectionUtils.equalContents(this, other);
 	}
 
 	@Override
@@ -44,27 +28,14 @@ public class EnhancedMapAdapter<K,V> extends AbstractEnumerableAdapter<Map.Entry
 		return original.isEmpty();
 	}
 
-	@Override
-	public EnhancedSet<K> keySet() {
-		return CollectionUtils.enhance(original.keySet());
-	}
-
-	@Override
-	public EnhancedCollection<V> values() {
-		return CollectionUtils.enhance(original.values());
-	}
-	
-	@Override
 	public V put(K key, V value) {
 		return original.put(key, value);
 	}
 
-	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
 		original.putAll(m);
 	}
 
-	@Override
 	public V remove(Object key) {
 		return original.remove(key);
 	}
@@ -75,31 +46,114 @@ public class EnhancedMapAdapter<K,V> extends AbstractEnumerableAdapter<Map.Entry
 	}
 
 	@Override
-	public Iterator<java.util.Map.Entry<K, V>> iterator() {
-		return original.entrySet().iterator();
-	}
+	public Iterator<Pair<K,V>> iterator() {
+		final Iterator<Map.Entry<K,V>> originalIt = original.entrySet().iterator();
+		return new Iterator <Pair<K,V>>(){
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean containsSame(Map<K, V> other) {
-		return CollectionUtils.equalContents(this, other);
-	}
+			@Override
+			public boolean hasNext() {
+				return originalIt.hasNext();
+			}
 
-	@Override
-	public EnhancedMap<K, V> asSynchronized() {
-		return new EnhancedMapAdapter<K, V>(Collections.synchronizedMap(this.original));
-	}
+			@Override
+			public Pair<K,V> next() {
+				final Entry<K, V> next = originalIt.next();
+				
+				return new Pair<K,V>(){
 
-	@Override
-	public EnhancedMap<K, V> asUnmodified() {
-		return new EnhancedMapAdapter<K, V>(Collections.unmodifiableMap(this.original));
+					@Override
+					public K getKey() {
+						return next.getKey();
+					}
+
+					@Override
+					public V getValue() {
+						return next.getValue();
+					}
+					
+				};
+			}
+
+			@Override
+			public void remove() {
+				originalIt.remove();
+			}
+			
+		};
 	}
 
 	public String toString(){
 		return this.original.toString();
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean containsKey(Object key) {
+		return this.original.containsKey(key);
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean containsValue(Object value) {
+		return this.original.containsValue(value);
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public V get(Object key) {
+		return this.original.get(key);
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void clear() {
+		this.original.clear();
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<K> keySet() {
+		return this.original.keySet();
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<V> values() {
+		return this.original.values();
+	}
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<java.util.Map.Entry<K, V>> entrySet() {
+		return this.original.entrySet();
 	}
 
 }

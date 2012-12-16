@@ -8,10 +8,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.AbstractEnumerableAdapter;
 import org.middleheaven.util.collections.TransformedIterator;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * 
@@ -133,10 +133,10 @@ public class PropertiesBag extends AbstractEnumerableAdapter<PropertiesBag.Entry
 		 */
 		@Override
 		public Iterator<Entry> iterator() {
-			return TransformedIterator.transform(this.properties.entrySet().iterator(), new Classifier<Entry, Map.Entry<Object, Object>>(){
+			return TransformedIterator.transform(this.properties.entrySet().iterator(), new Mapper<Entry, Map.Entry<Object, Object>>(){
 
 				@Override
-				public Entry classify(java.util.Map.Entry<Object, Object> next) {
+				public Entry apply(java.util.Map.Entry<Object, Object> next) {
 					return new StringEntry (next.getKey().toString(), next.getValue().toString());
 				}
 				
@@ -188,10 +188,10 @@ public class PropertiesBag extends AbstractEnumerableAdapter<PropertiesBag.Entry
 		 */
 		@Override
 		public Iterator<Entry> iterator() {
-			return TransformedIterator.transform(this.properties.entrySet().iterator(), new Classifier<Entry, Map.Entry<String, String>>(){
+			return TransformedIterator.transform(this.properties.entrySet().iterator(), new Mapper<Entry, Map.Entry<String, String>>(){
 
 				@Override
-				public Entry classify(java.util.Map.Entry<String, String> next) {
+				public Entry apply(java.util.Map.Entry<String, String> next) {
 					return new StringEntry (next.getKey(), next.getValue());
 				}
 				
@@ -259,6 +259,8 @@ public class PropertiesBag extends AbstractEnumerableAdapter<PropertiesBag.Entry
 	public boolean isEmpty() {
 		return bag.isEmpty();
 	}
+
+
 
 	
 }

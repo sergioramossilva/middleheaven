@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.function.Maybe;
 
 /**
  * Contains several utility methods when working with {@link String}s.
@@ -481,6 +482,14 @@ public class StringUtils {
 	 */
 	public static CharSequence subString(CharSequence value, int max) {
 		return value.subSequence(0, Math.min(value.length(), max));
+	}
+
+	/**
+	 * Returns an absent {@link Maybe} if {@link this#isEmptyOrBlank(CharSequence)} returns <code>true</code>, otherwise returns a {@link Maybe} with the given string inside.
+	 * @param value a given {@link String}.
+	 */
+	public static Maybe<String> maybe(String value) {
+		return isEmptyOrBlank(value) ? Maybe.<String>absent() : Maybe.of(value);
 	}
 
 }

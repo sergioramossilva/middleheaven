@@ -4,10 +4,10 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.function.Mapper;
 
 /**
- * Allows type safe transformation from a collection of objects to another, using a {@link Classifier}.
+ * Allows type safe transformation from a collection of objects to another, using a {@link Mapper}.
  * 
  * @param <O> original object type
  * @param <T> target object type
@@ -15,7 +15,7 @@ import org.middleheaven.util.classification.Classifier;
 public final class TransformedCollection<O,T> extends AbstractCollection<T> {
 
 	private Collection<? extends O> original;
-	private Classifier<T, O> classifier;
+	private Mapper<T, O> classifier;
 	
 	/**
 	 * Creates a TransformedCollection from the original objects and a classifier.
@@ -25,11 +25,11 @@ public final class TransformedCollection<O,T> extends AbstractCollection<T> {
 	 * @param classifier the classifier that will transform the data
 	 * @return the resulting TransformedCollection.
 	 */
-	public static <ORIGINAL,TRANSFORMED> TransformedCollection<ORIGINAL,TRANSFORMED> transform(Collection<? extends ORIGINAL> original, Classifier<TRANSFORMED,ORIGINAL> classifier){
+	public static <ORIGINAL,TRANSFORMED> TransformedCollection<ORIGINAL,TRANSFORMED> transform(Collection<? extends ORIGINAL> original, Mapper<TRANSFORMED,ORIGINAL> classifier){
 		return new TransformedCollection<ORIGINAL,TRANSFORMED>(original, classifier);
 	}
 	
-	private TransformedCollection(Collection<? extends O> original, Classifier<T,O> classifier){
+	private TransformedCollection(Collection<? extends O> original, Mapper<T,O> classifier){
 		this.original = original;
 		this.classifier = classifier;
 	}
@@ -51,7 +51,7 @@ public final class TransformedCollection<O,T> extends AbstractCollection<T> {
 
 			@Override
 			public T next() {
-				return classifier.classify(originalIt.next());
+				return classifier.apply(originalIt.next());
 			}
 
 			@Override

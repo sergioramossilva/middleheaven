@@ -3,7 +3,8 @@ package org.middleheaven.util.collections;
 import java.util.Collection;
 
 
-public interface TreeNode<T> extends Iterable<TreeNode<T>> , TreeWalkable<TreeNode<T>>{
+
+public interface TreeNode<T> extends TreeEnumerable<TreeNode<T>> , Enumerable<TreeNode<T>>{
 
 	public TreeNode<T> getParent();
 	public void setParent(TreeNode<T> parent);

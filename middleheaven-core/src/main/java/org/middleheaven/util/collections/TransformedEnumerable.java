@@ -3,10 +3,10 @@ package org.middleheaven.util.collections;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.middleheaven.util.classification.Classifier;
+import org.middleheaven.util.function.Mapper;
 
 /**
- * Allows type safe transformation from a {@link Enumerable} of objects to another, using a {@link Classifier}.
+ * Allows type safe transformation from a {@link Enumerable} of objects to another, using a {@link Mapper}.
  * 
  * @param <O> original object type
  * @param <T> target object type
@@ -14,7 +14,7 @@ import org.middleheaven.util.classification.Classifier;
 public final class TransformedEnumerable<O,T> extends AbstractEnumerableAdapter<T>{
 
 	private Enumerable<? extends O> original;
-	private Classifier<T, O> classifier;
+	private Mapper<T, O> classifier;
 	
 	/**
 	 * Creates a TransformedEnumerable from the original objects and a classifier.
@@ -24,7 +24,7 @@ public final class TransformedEnumerable<O,T> extends AbstractEnumerableAdapter<
 	 * @param classifier the classifier that will transform the data
 	 * @return the resulting TransformedEnumerable.
 	 */
-	public static <R,M> TransformedEnumerable<R,M> transform(Enumerable<? extends R> original, Classifier<M,R> classifier){
+	public static <R,M> TransformedEnumerable<R,M> transform(Enumerable<? extends R> original, Mapper<M,R> classifier){
 		return new TransformedEnumerable<R,M>(original, classifier);
 	}
 	
@@ -36,12 +36,12 @@ public final class TransformedEnumerable<O,T> extends AbstractEnumerableAdapter<
 	 * @param classifier the classifier that will transform the data
 	 * @return the resulting TransformedEnumerable.
 	 */
-	public static <R,M> TransformedEnumerable<R,M> transform(Collection<? extends R> original, Classifier<M,R> classifier){
-		return new TransformedEnumerable<R,M>(CollectionUtils.enhance(original), classifier);
+	public static <R,M> TransformedEnumerable<R,M> transform(Collection<? extends R> original, Mapper<M,R> classifier){
+		return new TransformedEnumerable<R,M>(CollectionUtils.asEnumerable(original), classifier);
 	}
 	
 	
-	private TransformedEnumerable(Enumerable<? extends O> original, Classifier<T,O> classifier){
+	private TransformedEnumerable(Enumerable<? extends O> original, Mapper<T,O> classifier){
 		this.original = original;
 		this.classifier = classifier;
 	}
@@ -63,7 +63,7 @@ public final class TransformedEnumerable<O,T> extends AbstractEnumerableAdapter<
 
 			@Override
 			public T next() {
-				return classifier.classify(originalIt.next());
+				return classifier.apply(originalIt.next());
 			}
 
 			@Override

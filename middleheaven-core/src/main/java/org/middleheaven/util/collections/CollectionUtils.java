@@ -2,7 +2,6 @@ package org.middleheaven.util.collections;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -89,60 +88,29 @@ public class CollectionUtils {
 	 * @param elements
 	 * @return
 	 */
-	public static <T> EnhancedList<T> enhance(T ... elements){
-		return new EnhancedArrayList<T>(Arrays.asList(elements));
+	public static <T> Enumerable<T> asEnumerable(T ... elements){
+		return new ArrayEnumerable<T>(elements);
 	}
 	
 	/**
-	 * Wrappes a {@link Map} into a {@link EnhancedMap}.
-	 * @param map
+	 * Converts an array of objects in an {@link EnhancedList}.
+	 * @param elements
 	 * @return
 	 */
-	public static <K,V> EnhancedMap<K,V> enhance(Map<K,V> map){
-		if (map instanceof EnhancedMap){
-    		return (EnhancedMap<K,V>)map;
-    	}
-    	
-    	return new EnhancedMapAdapter<K,V>(map);
+	public static <T> Enumerable<T> asEnumerable(Iterable<T> elements){
+		return new IterableEnumerable<T>(elements);
 	}
+	
 	
 	/**
-	 * Wrappes a {@link Enumerable} into a {@link EnhancedCollection}.
-	 * @param collection
+	 * Converts an array of objects in an {@link EnhancedList}.
+	 * @param elements
 	 * @return
 	 */
-	public static <T> EnhancedCollection<T> enhance(Enumerable<T> collection){
-		if (collection instanceof EnhancedCollection){
-    		return (EnhancedCollection<T>)collection;
-    	}
-    	
-		return new EnhancedArrayList<T>(collection);
-
+	public static <K, V> Enumerable<Pair<K,V>> asEnumerable(Map<K,V> map){
+		return new MapEnumerable<K,V>(map);
 	}
 	
-	public static <T> EnhancedCollection<T> enhance(Collection<T> collection){
-		if (collection instanceof EnhancedCollection){
-    		return (EnhancedCollection<T>)collection;
-    	}
-    	
-    	return new EnhancedCollectionAdapter<T>(collection);
-	}
-	
-	public static <T> EnhancedSet<T> enhance(Set<T> collection){
-		if (collection instanceof EnhancedCollection){
-    		return (EnhancedSet<T>)collection;
-    	}
-    	
-    	return (EnhancedSet<T>) new EnhancedCollectionAdapter<T>(collection);
-	}
-	
-	public static <T> EnhancedList<T> enhance(List<T> list){
-		if (list instanceof EnhancedList){
-    		return (EnhancedList<T>)list;
-    	}
-    	
-    	return new EncancedListAdapter<T>(list);
-	}
 	
 	/**
 	 * Ensures the given is sortable, i.e. is a List and implements {@link RandomAccess}. If not
@@ -343,23 +311,6 @@ public class CollectionUtils {
 		return (T[]) newArray;
 	}
 
-	public static <T> EnhancedCollection<T> emptyCollection() {
-		return enhance(Collections.<T>emptySet());
-	}
-
-
-	public static <T> EnhancedCollection<T> emptyList() {
-		return enhance(Collections.<T>emptyList());
-	}
-	
-	public static <K,V> EnhancedMap<K,V> emptyMap() {
-		return enhance(Collections.<K,V>emptyMap());
-	}
-	
-	public static <T> EnhancedCollection<T> emptySet() {
-		return enhance(Collections.<T>emptySet());
-	}
-
 	public static <T> boolean arrayContains(T[] array, T candidate ) {
 		for (T t : array){
 			if (t == candidate || (t != null && t.equals(candidate))){
@@ -407,6 +358,13 @@ public class CollectionUtils {
 			return new ArrayList<T>(collection);
 		}
 		
+	}
+
+	/**
+	 * @return
+	 */
+	public static <T> Enumerable<T> emptyEnumerable() {
+		return EmptyEnumerable.getInstance();
 	}
 
 
