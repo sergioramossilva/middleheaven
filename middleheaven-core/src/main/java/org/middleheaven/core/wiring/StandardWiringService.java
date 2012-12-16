@@ -23,8 +23,8 @@ import org.middleheaven.core.services.ServiceScope;
 import org.middleheaven.events.EventListenersSet;
 import org.middleheaven.graph.DirectGraph;
 import org.middleheaven.logging.Logger;
-import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.ClassMap;
+import org.middleheaven.util.function.Predicate;
 
 @Service
 public class StandardWiringService implements WiringService {
@@ -532,7 +532,7 @@ public class StandardWiringService implements WiringService {
 	Predicate<Class> componentFilter = new Predicate<Class>(){
 
 		@Override
-		public Boolean classify(Class obj) {
+		public Boolean apply(Class obj) {
 			return Instrospector.of(obj).isAnnotationPresent(Component.class);
 		}
 
@@ -555,7 +555,7 @@ public class StandardWiringService implements WiringService {
 					Class<?> type = (Class<?>) item.getItem();
 
 					// if is component
-					if (componentFilter.classify(type).booleanValue()){
+					if (componentFilter.apply(type).booleanValue()){
 						BeanDependencyModel model = this.binder.getBeanModel(type);
 
 						processDependableBean(null, null, model, FactoryResolver.instanceFor(model));

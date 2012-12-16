@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 import org.middleheaven.core.reflection.MemberAccess;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
 
 public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCriteriaBuilder<T,Field>{
 
@@ -51,7 +51,7 @@ public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCri
 	}
 
 	@Override
-	protected EnhancedCollection<Field> getAllMembersInType(Class<T> type) {
+	protected Enumerable<Field> getAllMembersInType(Class<T> type) {
 		return resolver.resolve(type);
 	}
 
@@ -78,7 +78,7 @@ public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCri
 
 	private static interface Resolver {
 		
-		public EnhancedCollection<Field> resolve(Class<?> type);
+		public Enumerable<Field> resolve(Class<?> type);
 	}
 	
 	private static class StandardResolver implements Resolver{
@@ -87,8 +87,8 @@ public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCri
 		 * {@inheritDoc}
 		 */
 		@Override
-		public EnhancedCollection<Field> resolve(Class<?> type) {
-			return CollectionUtils.enhance(Reflector.getReflector().getFields(type));
+		public Enumerable<Field> resolve(Class<?> type) {
+			return CollectionUtils.asEnumerable(Reflector.getReflector().getFields(type));
 		}
 		
 	}
@@ -99,7 +99,7 @@ public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCri
 		 * {@inheritDoc}
 		 */
 		@Override
-		public EnhancedCollection<Field> resolve(Class<?> type) {
+		public Enumerable<Field> resolve(Class<?> type) {
 			
 			
 			LinkedList<Field> stack = new LinkedList<Field>();
@@ -114,7 +114,7 @@ public class FieldIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCri
 			
 			
 			
-			return CollectionUtils.enhance(stack);
+			return CollectionUtils.asEnumerable(stack);
 		}
 		
 	}

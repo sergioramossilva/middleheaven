@@ -14,11 +14,12 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.middleheaven.core.reflection.ReflectionException;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedArrayList;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.TransformedCollection;
+import org.middleheaven.util.function.Mapper;
+import org.middleheaven.util.function.Maybe;
+import org.middleheaven.util.function.Predicate;
 
 public class PackageIntrospector extends Introspector {
 
@@ -37,29 +38,35 @@ public class PackageIntrospector extends Introspector {
 		return typePackage.getName();
 	}
 
-	public EnhancedCollection<PackageIntrospector> getSubpackages(){
+	public Enumerable<PackageIntrospector> getSubpackages(){
 		final String name = this.getName();
 		
-		final Package[] packages = Package.getPackages();
-		EnhancedCollection<PackageIntrospector> all = new EnhancedArrayList<PackageIntrospector>();
-		
-		for (Package p : packages){
-			// if the lenght is the same is the same package. discar that
-			if (p.getName().startsWith(name) && p.getName().length() != name.length() ){
-				all.add(of(p));
+		return CollectionUtils.asEnumerable(Package.getPackages()).filter(new Predicate<Package>(){
+
+			@Override
+			public Boolean apply(Package p) {
+				return p.getName().startsWith(name) && p.getName().length() != name.length();
 			}
-		}
+			
+		}).map(new Mapper<PackageIntrospector, Package>(){
+
+			@Override
+			public PackageIntrospector apply(Package p) {
+				return of(p);
+			}
+			
+		});
 		
-		return all;
 	}
 
-	public EnhancedCollection<ClassIntrospector> getClassesIntrospectors(){
-		return CollectionUtils.enhance(
+
+	public Enumerable<ClassIntrospector> getClassesIntrospectors(){
+		return CollectionUtils.asEnumerable(
 				TransformedCollection.transform( getPackageClasses(typePackage) , 
-						new Classifier< ClassIntrospector,Class<?>>(){
+						new Mapper< ClassIntrospector,Class<?>>(){
 
 							@Override
-							public ClassIntrospector classify(Class<?> obj) {
+							public ClassIntrospector apply(Class<?> obj) {
 								return Introspector.of(obj);
 							}
 						}
@@ -67,13 +74,13 @@ public class PackageIntrospector extends Introspector {
 		);
 	}
 
-	public EnhancedCollection<Class<?>> getClasses(){
-		return CollectionUtils.enhance(getPackageClasses(typePackage));
+	public Enumerable<Class<?>> getClasses(){
+		return CollectionUtils.asEnumerable(getPackageClasses(typePackage));
 	}
 	
 	@Override
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		return this.typePackage.getAnnotation(annotationClass);
+	public <A extends Annotation> Maybe<A> getAnnotation(Class<A> annotationClass) {
+		return Maybe.of(this.typePackage.getAnnotation(annotationClass));
 	}
 
 	@Override

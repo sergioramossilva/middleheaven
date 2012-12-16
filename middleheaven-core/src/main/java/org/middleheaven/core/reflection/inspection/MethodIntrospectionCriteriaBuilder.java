@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.middleheaven.core.reflection.MemberAccess;
-import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Predicate;
 
 public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMemberIntrospectionCriteriaBuilder<T,Method>{
 
@@ -43,7 +43,7 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 		add(new Predicate<Method>(){
 
 			@Override
-			public Boolean classify(Method obj) {
+			public Boolean apply(Method obj) {
 				return !obj.getDeclaringClass().equals(Object.class);
 			}
 
@@ -152,13 +152,13 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 
 
 	@Override
-	protected EnhancedCollection<Method> getAllMembersInType(Class<T> type) {
+	protected Enumerable<Method> getAllMembersInType(Class<T> type) {
 		return resolver.resolve(type);
 	}
 	
 	private static interface Resolver {
 		
-		public EnhancedCollection<Method> resolve(Class<?> type);
+		public Enumerable<Method> resolve(Class<?> type);
 	}
 	
 	private static class StandardResolver implements Resolver{
@@ -167,8 +167,8 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 		 * {@inheritDoc}
 		 */
 		@Override
-		public EnhancedCollection<Method> resolve(Class<?> type) {
-			return CollectionUtils.enhance(Reflector.getReflector().getMethods(type));
+		public Enumerable<Method> resolve(Class<?> type) {
+			return CollectionUtils.asEnumerable(Reflector.getReflector().getMethods(type));
 		}
 		
 	}
@@ -179,7 +179,7 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 		 * {@inheritDoc}
 		 */
 		@Override
-		public EnhancedCollection<Method> resolve(Class<?> type) {
+		public Enumerable<Method> resolve(Class<?> type) {
 			
 			
 			LinkedList<Method> stack = new LinkedList<Method>();
@@ -194,7 +194,7 @@ public class MethodIntrospectionCriteriaBuilder<T> extends ParameterizableMember
 			
 			
 			
-			return CollectionUtils.enhance(stack);
+			return CollectionUtils.asEnumerable(stack);
 		}
 		
 	}

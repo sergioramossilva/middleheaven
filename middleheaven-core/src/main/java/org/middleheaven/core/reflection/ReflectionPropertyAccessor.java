@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.middleheaven.util.coersion.TypeCoercing;
+import org.middleheaven.util.function.Maybe;
 
 public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor implements PropertyAccessor {
 
@@ -254,16 +255,16 @@ public final class ReflectionPropertyAccessor extends ReflectionFieldAccessor im
 		(modifier!=null && modifier.isAnnotationPresent(annotationClass));
 	}
 
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+	public <A extends Annotation> Maybe<A> getAnnotation(Class<A> annotationClass) {
 		A a=null;
-		if (field!=null){
+		if (field != null){
 			a = field.getAnnotation(annotationClass);
 		} 
 		
 		if (a==null && assessor != null){
 			a = assessor.getAnnotation(annotationClass);
 		}
-		return a;
+		return Maybe.of(a);
 
 	}
 

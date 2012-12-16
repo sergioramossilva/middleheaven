@@ -22,7 +22,7 @@ public abstract class AbstractReflectionStrategy implements ReflectionStrategy{
 	@Override
 	public Enumerable<PropertyAccessor> getPropertyAccessors(Class<?> type) throws ReflectionException {
 		if (type==null){
-			return CollectionUtils.emptySet();
+			return CollectionUtils.emptyEnumerable();
 		}
 		
 		type = getRealType(type);

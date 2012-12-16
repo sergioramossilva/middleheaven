@@ -1,6 +1,9 @@
 package org.middleheaven.core.bootstrap;
 
 import org.middleheaven.core.services.Service;
+import org.middleheaven.core.services.ServiceNotAvailableException;
+import org.middleheaven.core.services.ServiceProvider;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.core.wiring.ProfilesBag;
 import org.middleheaven.core.wiring.PropertyManagers;
 import org.middleheaven.logging.LoggingService;
@@ -10,6 +13,10 @@ import org.middleheaven.logging.LoggingService;
  */
 public interface BootstrapContext {
 
+	
+	public BootstrapContext requireService(ServiceSpecification spec) throws ServiceNotAvailableException;
+	public BootstrapContext requireService(ServiceSpecification spec, ServiceProvider provider);
+	
 	/**
 	 * Registers a new service to be bootstraped.
 	 * @param service the service to be bootstraped
@@ -18,7 +25,7 @@ public interface BootstrapContext {
 	public BootstrapContext registerService(Service service);
 	
 	/**
-	 * Unregisters a  service from the bootstrap process.
+	 * Unregisters a service from the bootstrap process.
 	 * @param service the service to be bootstraped
 	 * @return {@code this} object.
 	 */

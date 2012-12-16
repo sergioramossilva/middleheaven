@@ -3,7 +3,7 @@ package org.middleheaven.core.reflection;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.function.Predicate;
 
 
 /**
@@ -21,7 +21,7 @@ public class MethodFilters implements Predicate<Method> {
 		return new MethodFilters(){
 
 			@Override
-			public Boolean classify(Method method) {
+			public Boolean apply(Method method) {
 				final String name = method.getName();
 				final int modifiers = method.getModifiers();
 				return Boolean.valueOf(Modifier.isPublic(modifiers) && !(name.startsWith("get") || name.startsWith("set") || name.startsWith("is")));
@@ -33,7 +33,7 @@ public class MethodFilters implements Predicate<Method> {
 		return new MethodFilters(){
 
 			@Override
-			public Boolean classify(Method method) {
+			public Boolean apply(Method method) {
 				final String name = method.getName();
 				final int modifiers = method.getModifiers();
 				return Boolean.valueOf(Modifier.isPublic(modifiers) && !name.equals("getClass") && (name.startsWith("get") || name.startsWith("set") || name.startsWith("is")));
@@ -52,7 +52,7 @@ public class MethodFilters implements Predicate<Method> {
 
 
 	@Override
-	public Boolean classify(Method method) {
+	public Boolean apply(Method method) {
 		return Boolean.TRUE;
 	}
 

@@ -5,9 +5,9 @@ import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
 import org.middleheaven.core.reflection.MemberAccess;
-import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Predicate;
 
 public class ConstructorIntrospectionCriteriaBuilder<T> extends ParameterizableMemberIntrospectionCriteriaBuilder<T,Constructor<T>>{
 
@@ -46,10 +46,10 @@ public class ConstructorIntrospectionCriteriaBuilder<T> extends ParameterizableM
 	}
 	
 	@Override
-	protected EnhancedCollection<Constructor<T>> getAllMembersInType(Class<T> type) {
+	protected Enumerable<Constructor<T>> getAllMembersInType(Class<T> type) {
 		// the constructors are directly taken from type T
 		@SuppressWarnings("unchecked") Constructor<T>[] constructors = (Constructor<T>[]) type.getConstructors();
-		return CollectionUtils.enhance(constructors);
+		return CollectionUtils.asEnumerable(constructors);
 	}
 
 	@Override

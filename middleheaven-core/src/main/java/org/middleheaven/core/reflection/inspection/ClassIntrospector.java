@@ -23,6 +23,7 @@ import org.middleheaven.core.reflection.NoSuchClassReflectionException;
 import org.middleheaven.core.reflection.NoSuchMethodReflectionException;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.util.StringUtils;
+import org.middleheaven.util.function.Maybe;
 
 
 /**
@@ -105,6 +106,11 @@ public class ClassIntrospector<T> extends Introspector{
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass) {
+		return type.isAnnotationPresent(annotationClass);
 	}
 
 	private boolean isMetaAnnotationPresent(Annotation annotation,Class<? extends Annotation> annotationClass) {
@@ -237,8 +243,8 @@ public class ClassIntrospector<T> extends Introspector{
 	}
 
 	@Override
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		return type.getAnnotation(annotationClass);
+	public <A extends Annotation> Maybe<A> getAnnotation(Class<A> annotationClass) {
+		return Maybe.of(type.getAnnotation(annotationClass));
 	}
 
 	/**
@@ -248,10 +254,7 @@ public class ClassIntrospector<T> extends Introspector{
 		return type.getAnnotations();
 	}
 
-	@Override
-	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass) {
-		return type.isAnnotationPresent(annotationClass);
-	}
+	
 
 	public void invokeMain(String ... params) {
 		try {
@@ -350,6 +353,25 @@ public class ClassIntrospector<T> extends Introspector{
 	 */
 	public boolean isSubtypeOf(Class<?> otherType) {
 		return otherType.isAssignableFrom(type);
+	}
+
+	/**
+	 * The first super class that descends from {@link Object};
+	 * @return an absent {@link Maybe} if this is directly descendent form Object, of a not absent {@link Maybe} if a super class can be found
+	 */
+	public Maybe<Class> getRootParent() {
+		
+		if (type.getSuperclass().getName().equals(Object.class.getName())){
+			return Maybe.absent();
+		} 
+		
+		Class top = type.getSuperclass();
+		
+		while (!top.getSuperclass().getName().equals(Object.class.getName())){
+			 top = type.getSuperclass();
+		}
+		
+		return Maybe.of(top);
 	}
 
 

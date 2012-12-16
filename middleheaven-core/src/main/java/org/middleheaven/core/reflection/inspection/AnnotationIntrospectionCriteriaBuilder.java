@@ -3,7 +3,7 @@ package org.middleheaven.core.reflection.inspection;
 import java.lang.annotation.Annotation;
 
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedSet;
+import org.middleheaven.util.collections.Enumerable;
 
 public class AnnotationIntrospectionCriteriaBuilder<T> {
 
@@ -13,8 +13,8 @@ public class AnnotationIntrospectionCriteriaBuilder<T> {
 		this.introspectionCriteriaBuilder = introspectionCriteriaBuilder;
 	}
 	
-	public EnhancedSet<Annotation> retrive(){
-		return CollectionUtils.enhance(Reflector.getReflector().getAnnotations(introspectionCriteriaBuilder.type));
+	public Enumerable<Annotation> retrive(){
+		return CollectionUtils.asEnumerable(Reflector.getReflector().getAnnotations(introspectionCriteriaBuilder.type));
 	}
 
 }

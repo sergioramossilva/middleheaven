@@ -3,7 +3,7 @@ package org.middleheaven.core.reflection.inspection;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.function.Predicate;
 
 
 public class IntrospectionCriteriaBuilder<T> {
@@ -26,7 +26,7 @@ public class IntrospectionCriteriaBuilder<T> {
 	public MethodIntrospectionCriteriaBuilder<T> staticMethods() {
 		return new MethodIntrospectionCriteriaBuilder<T>(this)
 		.match(new Predicate<Method>(){
-			public Boolean classify (Method m){
+			public Boolean apply (Method m){
 				return Boolean.valueOf(Modifier.isStatic( m.getModifiers()));
 			}
 		});

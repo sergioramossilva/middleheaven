@@ -4,8 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 
 import org.middleheaven.core.reflection.PropertyAccessor;
-import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
 
 public class PropertyIntrospectionCriteriaBuilder<T> extends MemberIntrospectionCriteriaBuilder<T,PropertyAccessor>{
 
@@ -20,8 +19,8 @@ public class PropertyIntrospectionCriteriaBuilder<T> extends MemberIntrospection
 
 
 	@Override
-	protected EnhancedCollection<PropertyAccessor> getAllMembersInType(Class<T> type) {
-		return CollectionUtils.enhance(Reflector.getReflector().getPropertyAccessors(type));
+	protected Enumerable<PropertyAccessor> getAllMembersInType(Class<T> type) {
+		return Reflector.getReflector().getPropertyAccessors(type);
 	}
 
 	@Override
