@@ -23,6 +23,7 @@ public interface ServiceContext {
 	 */
 	public  <T,I extends T> void register(Class<T> contractInterface, I implementation , Map<String, ? extends Object> properties );
 	
+	
 	/**
 	 * Register a service in the context.
 	 * Its a simples contract-implementation registration, with no implementations properties.

@@ -26,7 +26,7 @@ import org.middleheaven.io.repository.watch.StandardWatchEvent;
 import org.middleheaven.io.repository.watch.WatchEvent;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.logging.Logger;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
 /**
  * An {@link ActivatorScanner} the scans jar files for the <i>unit-activator</i> property in the manifest and loads the activator found.
@@ -82,10 +82,10 @@ public class FileActivatorScanner extends AbstractActivatorScanner {
 
 		if(root.getType().isFolder()){
 
-			root.forEach(new Walker<ManagedFile>(){
+			root.forEach(new Block<ManagedFile>(){
 
 				@Override
-				public void doWith(ManagedFile file) {
+				public void apply(ManagedFile file) {
 					if (file.isReadable() && file.getType().isFile()){
 						for (Pattern pattern : filePatterns){
 							if ( pattern.matcher(file.getPath().getFileNameWithoutExtension()).find()){

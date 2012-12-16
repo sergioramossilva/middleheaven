@@ -96,6 +96,6 @@ public final class Service {
 	 * @return
 	 */
 	public ServiceSpecification getServiceSpecification() {
-		return new ServiceSpecification(this.contractInterface, this.params);
+		return ServiceSpecification.forService(this.contractInterface, this.params);
 	}
 }

@@ -9,12 +9,12 @@ import java.util.Map;
 /**
  * 
  */
-public class ServiceBuilder {
+public class ServiceBuilder<T> {
 
 	
 
-	public static ServiceBuilder forContract(Class<?> contractInterface){
-		return new ServiceBuilder(contractInterface);
+	public static <S> ServiceBuilder<S> forContract(Class<S> contractInterface){
+		return new ServiceBuilder<S>(contractInterface);
 	}
 
 	private Class<?> contractInterface;
@@ -25,20 +25,26 @@ public class ServiceBuilder {
 	 * Constructor.
 	 * @param contractInterface
 	 */
-	public ServiceBuilder(Class<?> contractInterface) {
+	private ServiceBuilder(Class<?> contractInterface) {
 		this.contractInterface = contractInterface;
 	}
 
-	public ServiceBuilder activatedBy(ServiceActivator activator){
+	public ServiceBuilder<T> activatedBy(ServiceActivator activator){
 		this.activator = activator;
 		return this;
 	}
 	
-	public ServiceBuilder withParams(Map<String, Object> params){
+	public ServiceBuilder<T> withParams(Map<String, Object> params){
 		this.params = params;
 		return this;
 	}
 	
+//	public Service implementedBy(T implementation){
+//		
+//		activator = new ImplementationActivator(implementation, ServiceSpecification.forService(contractInterface, params));
+//		return new Service(contractInterface, activator, params);
+//	}
+//	
 	public Service newInstance(){
 		return new Service(contractInterface, activator, params);
 	}
