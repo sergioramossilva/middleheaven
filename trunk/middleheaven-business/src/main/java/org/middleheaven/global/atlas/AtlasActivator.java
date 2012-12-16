@@ -25,7 +25,7 @@ public class AtlasActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(AtlasService.class));
+		specs.add(ServiceSpecification.forService(AtlasService.class));
 	}
 	
 	/**

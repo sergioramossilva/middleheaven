@@ -105,7 +105,9 @@ public class ClockTest {
 	
 	//@Test
 	public void testTickListenrs() {
-		AlarmClock clock = new AlarmClock(new MachineClock());
+		final MachineClock machineClock = MachineClock.getInstance();
+		
+		AlarmClock clock = new AlarmClock(machineClock);
 		CalendarDateTime time = CalendarDateTime.now();
 		
 		TestClockTickListener listener = new TestClockTickListener();
@@ -121,7 +123,7 @@ public class ClockTest {
 		assertEquals(4, listener.count());
 		
 		
-	    clock = new AlarmClock(SpeedyClock.aSecondIsAnHour(new MachineClock()));
+	    clock = new AlarmClock(SpeedyClock.aSecondIsAnHour(machineClock));
 	    time = CalendarDateTime.now();
 		
 	    listener = new TestClockTickListener();
