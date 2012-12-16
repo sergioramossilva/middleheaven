@@ -26,7 +26,7 @@ public class LogKeepingActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(LoggingService.class));
+		specs.add(ServiceSpecification.forService(LoggingService.class));
 	}
 	
 	/**
