@@ -21,7 +21,7 @@ public class NotificationServiceActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(NotificationService.class));
+		specs.add(ServiceSpecification.forService(NotificationService.class));
 	}
 	
 	/**

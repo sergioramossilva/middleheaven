@@ -19,8 +19,8 @@ import org.middleheaven.core.wiring.FieldAfterWiringPoint;
 import org.middleheaven.core.wiring.MethodAfterWiringPoint;
 import org.middleheaven.core.wiring.WiringConnector;
 import org.middleheaven.core.wiring.WiringSpecification;
-import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Block;
 
 /**
  * {@link WiringConnector} that adds Java EE 5 annotations reading.
@@ -53,7 +53,7 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 			// constructor
 			ClassIntrospector<T> introspector = Introspector.of(type);
 
-			EnhancedCollection<Constructor<T>> constructors = introspector.inspect()
+			Enumerable<Constructor<T>> constructors = introspector.inspect()
 			.constructors().retriveAll();
 
 			if (constructors.size()==1){
@@ -93,10 +93,10 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 
 			// search all fields annotated with Resource
 			introspector.inspect().fields().annotatedWith(Resource.class)
-			.each(new Walker<Field>(){
+			.each(new Block<Field>(){
 
 				@Override
-				public void doWith(Field f) {
+				public void apply(Field f) {
 					WiringSpecification spec = readParamsSpecification(f);
 
 					model.addAfterWiringPoint(new FieldAfterWiringPoint(f, spec));
@@ -107,10 +107,10 @@ public class JavaEE5InjectonConnector implements WiringConnector {
 
 			// search all methods annotated with Resource
 			introspector.inspect().methods().annotatedWith(Resource.class)
-			.each( new Walker<Method>(){
+			.each( new Block<Method>(){
 
 				@Override
-				public void doWith(Method method) {
+				public void apply(Method method) {
 					WiringSpecification[] spec = readParamsSpecification(method);
 
 					model.addAfterWiringPoint(new MethodAfterWiringPoint(method,null,spec));
