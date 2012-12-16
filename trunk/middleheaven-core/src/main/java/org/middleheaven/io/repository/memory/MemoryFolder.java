@@ -13,7 +13,7 @@ import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
 
 class MemoryFolder extends AbstractContainerManagedFile  {
 
@@ -99,8 +99,8 @@ class MemoryFolder extends AbstractContainerManagedFile  {
 	}
 
 	@Override
-	public EnhancedCollection<ManagedFile> children() throws ManagedIOException {
-		return CollectionUtils.enhance(files.values()).asUnmodifiable();
+	public Enumerable<ManagedFile> children() throws ManagedIOException {
+		return CollectionUtils.asEnumerable(files.values());
 	}
 
 

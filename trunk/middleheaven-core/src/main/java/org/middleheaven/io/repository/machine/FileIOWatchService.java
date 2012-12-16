@@ -25,7 +25,7 @@ import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
 
 /**
@@ -162,10 +162,10 @@ public class FileIOWatchService implements WatchService {
 
 				this.folder = folder;
 
-				folder.forEach(new Walker<ManagedFile>(){
+				folder.forEach(new Block<ManagedFile>(){
 
 					@Override
-					public void doWith(ManagedFile file) {
+					public void apply(ManagedFile file) {
 						oldFiles.add(file);
 					}
 
@@ -188,10 +188,10 @@ public class FileIOWatchService implements WatchService {
 					final Set<ManagedFile> allFiles = new HashSet<ManagedFile>();
 					final Set<ManagedFile> newFiles = new HashSet<ManagedFile>();
 
-					folder.forEach(new Walker<ManagedFile>(){
+					folder.forEach(new Block<ManagedFile>(){
 
 						@Override
-						public void doWith(ManagedFile object) {
+						public void apply(ManagedFile object) {
 							newFiles.add(object);
 							allFiles.add(object);
 						}
@@ -253,10 +253,10 @@ public class FileIOWatchService implements WatchService {
 
 					// iterate all files 
 
-					folder.forEach(new Walker<ManagedFile>(){
+					folder.forEach(new Block<ManagedFile>(){
 
 						@Override
-						public void doWith(ManagedFile file) {
+						public void apply(ManagedFile file) {
 							events.add(new SimpleWatchEvent(file ,StandardWatchEvent.ENTRY_CREATED));
 						}
 

@@ -5,16 +5,19 @@ package org.middleheaven.io.repository;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.Enumerable;
-import org.middleheaven.util.collections.Walkable;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.collections.Pair;
+import org.middleheaven.util.function.BinaryOperator;
+import org.middleheaven.util.function.Block;
+import org.middleheaven.util.function.Mapper;
+import org.middleheaven.util.function.Predicate;
 
 /**
  * 
@@ -30,21 +33,21 @@ class ManagedFileDecorator implements ManagedFile {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void forEach(Walker<ManagedFile> walker) {
+	public void forEach(Block<ManagedFile> walker) {
 		original.forEach(walker);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void forEachRecursive(Walker<ManagedFile> walker) {
+	public void forEachRecursive(Block<ManagedFile> walker) {
 		original.forEachRecursive(walker);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void forEachParent(Walker<ManagedFile> walker) {
+	public void forEachParent(Block<ManagedFile> walker) {
 		original.forEachParent(walker);
 	}
 
@@ -198,32 +201,9 @@ class ManagedFileDecorator implements ManagedFile {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Enumerable<ManagedFile> children() {
-		return original.children();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void copyTo(ContentSource other) throws ManagedIOException {
 		original.copyTo(other);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Walkable<ManagedFile> filter(Predicate<ManagedFile> predicate) {
-		return original.filter(predicate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <C> Walkable<C> map(Classifier<C, ManagedFile> classifier) {
-		return original.map(classifier);
 	}
 
 	/**
@@ -241,7 +221,150 @@ class ManagedFileDecorator implements ManagedFile {
 	public void deleteTree() {
 		original.deleteTree();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Iterator<ManagedFile> iterator() {
+		return original.iterator();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <U> Enumerable<U> cast(Class<U> newType) {
+		return original.cast(newType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int size() {
+		return original.size();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isEmpty() {
+		return original.isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public ManagedFile getFirst() {
+		return original.getFirst();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Enumerable<ManagedFile> sort(Comparator<ManagedFile> comparable) {
+		return original.sort(comparable);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Enumerable<ManagedFile> sort() {
+		return original.sort();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Enumerable<ManagedFile> reject(Predicate<ManagedFile> predicate) {
+		return original.reject(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int count(ManagedFile object) {
+		return original.count(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int count(Predicate<ManagedFile> predicate) {
+		return original.count(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean every(Predicate<ManagedFile> predicate) {
+		return original.every(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean any(Predicate<ManagedFile> predicate) {
+		return original.any(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public ManagedFile find(Predicate<ManagedFile> predicate) {
+		return original.find(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Enumerable<ManagedFile> filter(Predicate<ManagedFile> predicate) {
+		return original.filter(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <C> Enumerable<C> map(Mapper<C, ManagedFile> mapper) {
+		return original.map(mapper);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <C> Enumerable<C> mapAll(Mapper<Enumerable<C>, ManagedFile> mapper) {
+		return original.mapAll(mapper);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public ManagedFile reduce(ManagedFile seed,
+			BinaryOperator<ManagedFile> operator) {
+		return original.reduce(seed, operator);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <C> C mapReduce(C seed, Mapper<Enumerable<C>, ManagedFile> mapper,
+			BinaryOperator<C> operator) {
+		return original.mapReduce(seed, mapper, operator);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <C, P extends Pair<C, Enumerable<ManagedFile>>> Enumerable<P> groupBy(
+			Mapper<C, ManagedFile> classifier) {
+		return original.groupBy(classifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String join(String separator) {
+		return original.join(separator);
+	}
+
 	
 	
 }

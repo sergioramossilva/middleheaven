@@ -1,7 +1,6 @@
 package org.middleheaven.io.repository.empty;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.middleheaven.io.ManagedIOException;
@@ -14,9 +13,6 @@ import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.MediaManagedFileContent;
 import org.middleheaven.io.repository.RepositoryNotWritableException;
 import org.middleheaven.io.repository.watch.WatchService;
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.Predicate;
-import org.middleheaven.util.collections.Walkable;
 
 public class EmptyFileRepository implements ManagedFileRepository {
 

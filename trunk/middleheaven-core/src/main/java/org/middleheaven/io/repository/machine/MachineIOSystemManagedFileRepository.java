@@ -14,9 +14,9 @@ import org.middleheaven.io.repository.ManagedFilePath;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.watch.WatchService;
 import org.middleheaven.util.StringUtils;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.TransformedCollection;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * 
@@ -197,12 +197,12 @@ class MachineIOSystemManagedFileRepository extends AbstractManagedRepository imp
 			File[] children = File.listRoots();
 
 			if (children == null){ // not a folder
-				return CollectionUtils.emptyCollection();
+				return Collections.emptySet();
 			} else {
-				return TransformedCollection.transform(Arrays.asList(children), new Classifier<ManagedFilePath , File> (){
+				return TransformedCollection.transform(Arrays.asList(children), new Mapper<ManagedFilePath , File> (){
 
 					@Override
-					public ManagedFilePath classify(File obj) {
+					public ManagedFilePath apply(File obj) {
 						return pathForFile(obj);
 					}
 

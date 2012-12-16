@@ -2,6 +2,7 @@ package org.middleheaven.io.repository;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import org.middleheaven.io.IOTransport;
@@ -9,13 +10,14 @@ import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.watch.WatchEvent.Kind;
 import org.middleheaven.io.repository.watch.WatchEventChannel;
 import org.middleheaven.io.repository.watch.WatchService;
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.AbstractEnumerableAdapter;
 import org.middleheaven.util.collections.Enumerable;
-import org.middleheaven.util.collections.IterableWalkable;
-import org.middleheaven.util.collections.Walkable;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.collections.IterableEnumerable;
+import org.middleheaven.util.collections.Pair;
+import org.middleheaven.util.function.BinaryOperator;
+import org.middleheaven.util.function.Block;
+import org.middleheaven.util.function.Mapper;
+import org.middleheaven.util.function.Predicate;
 
 /**
  * Default implementation of a {@link ManagedFile} usefull for extention.
@@ -218,26 +220,26 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	}
 
 	@Override
-	public void forEachParent(Walker<ManagedFile> walker) {
+	public void forEachParent(Block<ManagedFile> walker) {
 		if(this.getParent()!=null){
-			walker.doWith(this.getParent());
+			walker.apply(this.getParent());
 			this.getParent().forEachParent(walker);
 		}
 	}
 
 	@Override
-	public void forEachRecursive(Walker<ManagedFile> walker) {
+	public void forEachRecursive(Block<ManagedFile> walker) {
 		for (ManagedFile file  : this.childrenIterable()){
-			walker.doWith(file);
+			walker.apply(file);
 			file.forEachRecursive(walker);
 		}
 	}
 
 
 	@Override
-	public void forEach(Walker<ManagedFile> walker) {
+	public void forEach(Block<ManagedFile> walker) {
 		for (ManagedFile file  : this.childrenIterable()){
-			walker.doWith(file);
+			walker.apply(file);
 		}
 	}
 
@@ -245,8 +247,8 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Walkable<ManagedFile> filter(Predicate<ManagedFile> predicate) {
-		return new IterableWalkable<ManagedFile>(this.childrenIterable()).filter(predicate);
+	public Enumerable<ManagedFile> filter(Predicate<ManagedFile> predicate) {
+		return new IterableEnumerable<ManagedFile>(this.childrenIterable()).filter(predicate);
 	}
 
 
@@ -254,8 +256,8 @@ public abstract class AbstractManagedFile implements ManagedFile {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public <C> Walkable<C> map(Classifier<C, ManagedFile> classifier) {
-		return new IterableWalkable<ManagedFile>(this.childrenIterable()).map(classifier);
+	public <C> Enumerable<C> map(Mapper<C, ManagedFile> classifier) {
+		return new IterableEnumerable<ManagedFile>(this.childrenIterable()).map(classifier);
 	}
 
 
@@ -306,6 +308,164 @@ public abstract class AbstractManagedFile implements ManagedFile {
 			return childrenIterable().iterator();
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public ManagedFile getFirst() {
+			return this.isEmpty() ? null : this.iterator().next();
+		}
+
 
 	}
+	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <U> Enumerable<U> cast(Class<U> newType) {
+		return new ManagedFileEnumerable().cast(newType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int size() {
+		return childrenCount();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isEmpty() {
+		return childrenCount() == 0;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ManagedFile getFirst() {
+		return this.childrenCount() == 0 ? null : this.childrenIterable().iterator().next();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Enumerable<ManagedFile> sort(Comparator<ManagedFile> comparable) {
+		return new ManagedFileEnumerable().sort(comparable);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Enumerable<ManagedFile> sort() {
+		return new ManagedFileEnumerable().sort();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Enumerable<ManagedFile> reject(Predicate<ManagedFile> predicate) {
+		return new ManagedFileEnumerable().reject(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int count(ManagedFile object) {
+		return new ManagedFileEnumerable().count(object);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int count(Predicate<ManagedFile> predicate) {
+		return new ManagedFileEnumerable().count(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean every(Predicate<ManagedFile> predicate) {
+		return new ManagedFileEnumerable().every(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean any(Predicate<ManagedFile> predicate) {
+		return new ManagedFileEnumerable().any(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ManagedFile find(Predicate<ManagedFile> predicate) {
+		return new ManagedFileEnumerable().find(predicate);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> Enumerable<C> mapAll(Mapper<Enumerable<C>, ManagedFile> mapper) {
+		return new ManagedFileEnumerable().mapAll(mapper);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ManagedFile reduce(ManagedFile seed,
+			BinaryOperator<ManagedFile> operator) {
+		return new ManagedFileEnumerable().reduce(seed, operator);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C> C mapReduce(C seed, Mapper<Enumerable<C>, ManagedFile> mapper,
+			BinaryOperator<C> operator) {
+		return new ManagedFileEnumerable().mapReduce(seed, mapper, operator);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public <C, P extends Pair<C, Enumerable<ManagedFile>>> Enumerable<P> groupBy(
+			Mapper<C, ManagedFile> classifier) {
+		return new ManagedFileEnumerable().groupBy(classifier);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String join(String separator) {
+		throw new UnsupportedOperationException("Not implememented yet");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Iterator<ManagedFile> iterator() {
+		throw new UnsupportedOperationException("Not implememented yet");
+	}
+
+
 }
