@@ -7,7 +7,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Iterator;
 
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.persistance.model.DataColumnsModel;
 import org.middleheaven.persistance.model.DataSetModel;
@@ -90,7 +90,7 @@ public class ResultSetMetaDataDataColumnsModel implements DataColumnsModel {
 						}
 						
 						@Override
-						public ColumnType getType() {
+						public ColumnValueType getType() {
 							try {
 								return dialect.typeFromNative(metaData.getColumnType(column)) ;
 							} catch (SQLException e) {

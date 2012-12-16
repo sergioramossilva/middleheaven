@@ -18,7 +18,7 @@ public class DataColumnModelBean implements DataColumnModel {
 	private String indexGroup;
 	private String uniqueGroup;
 	private String primaryKeyGroup;
-	private ColumnType type;
+	private ColumnValueType type;
 	private boolean version;
 	
 	public DataColumnModelBean(){}
@@ -116,7 +116,7 @@ public class DataColumnModelBean implements DataColumnModel {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ColumnType getType() {
+	public ColumnValueType getType() {
 		return this.type;
 	}
 
@@ -193,10 +193,10 @@ public class DataColumnModelBean implements DataColumnModel {
 	}
 
 	/**
-	 * Atributes {@link ColumnType}.
+	 * Atributes {@link ColumnValueType}.
 	 * @param type the type to set
 	 */
-	public void setType(ColumnType type) {
+	public void setType(ColumnValueType type) {
 		this.type = type;
 	}
 

@@ -30,7 +30,7 @@ public class DataServiceActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(DataService.class));
+		specs.add(ServiceSpecification.forService(DataService.class));
 	}
 
 	/**

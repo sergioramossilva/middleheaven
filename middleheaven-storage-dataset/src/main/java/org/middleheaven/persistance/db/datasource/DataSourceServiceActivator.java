@@ -18,7 +18,8 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.Logger;
 import org.middleheaven.namedirectory.NameDirectoryService;
 import org.middleheaven.namedirectory.NameObjectEntry;
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.function.Block;
+import org.middleheaven.util.function.Predicate;
 
 /**
  * If a {@link NameDirectoryService} import all {@link DataSource} present at <code>java:/comp/env/jdbc/</code>.
@@ -47,7 +48,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(NameDirectoryService.class, true));
+		specs.add(ServiceSpecification.forService(NameDirectoryService.class, true));
 
 
 	}
@@ -57,13 +58,11 @@ public class DataSourceServiceActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(DataSourceService.class));
+		specs.add(ServiceSpecification.forService(DataSourceService.class));
 	}
 	
 	@Override
-	public void activate(ServiceContext serviceContext ) {
-
-
+	public void activate(final ServiceContext serviceContext ) {
 
 		NameDirectoryService nameDirectoryService = serviceContext.getService(NameDirectoryService.class);
 
@@ -85,19 +84,20 @@ public class DataSourceServiceActivator extends ServiceActivator {
 			// look for the datasource mapping file
 			ManagedFile folder =  serviceContext.getService(FileContextService.class).getFileContext().getAppConfigRepository();
 
-			Collection<? extends ManagedFile> configurations = folder.children().findAll(new Predicate<ManagedFile>(){
+			folder.filter(new Predicate<ManagedFile>(){
 
 				@Override
-				public Boolean classify(ManagedFile file) {
+				public Boolean apply(ManagedFile file) {
 					return file.getPath().getFileName().endsWith("-ds.properties");
 				}
 
+			}).forEach(new Block<ManagedFile>(){
 
-			});
+				@Override
+				public void apply(ManagedFile file) {
+					
+					NameDirectoryService nameDirectoryService = serviceContext.getService(NameDirectoryService.class);
 
-
-			if (!configurations.isEmpty()){
-				for (ManagedFile file : configurations){
 					Properties connectionParams = new Properties();
 					try {
 						connectionParams.load(file.getContent().getInputStream());
@@ -113,7 +113,7 @@ public class DataSourceServiceActivator extends ServiceActivator {
 							if ("jndi".equals(protocol)){
 								if (nameDirectoryService == null){
 									Logger.onBookFor(this.getClass()).warn("DataSource configuration uses a Name and Directory location, but a Name Directory Service was not found");
-									continue;
+									return;
 								}
 								provider = NameDirectoryLookupDSProvider.provider(nameDirectoryService , connectionParams);
 							} else {
@@ -130,8 +130,11 @@ public class DataSourceServiceActivator extends ServiceActivator {
 						throw new AtivationException(e);
 					} 
 				}
+				
+				
+			});
 
-			}
+			
 
 		}
 

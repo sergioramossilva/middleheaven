@@ -31,7 +31,7 @@ public interface DataColumnModel {
 	
 	public boolean isInUniqueGroup();
 	
-	public ColumnType getType();
+	public ColumnValueType getType();
 
 	public boolean isVersion();
 

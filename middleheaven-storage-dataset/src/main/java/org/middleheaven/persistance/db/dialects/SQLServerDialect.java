@@ -17,7 +17,7 @@ import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
 import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableDataBaseModel;
 import org.middleheaven.persistance.db.metamodel.TableBasedSequence;
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 
 /**
  * Dialect for Microsoft SQL Server.
@@ -35,8 +35,8 @@ public class SQLServerDialect extends SequenceNotSupportedDBDialect{
 	public void extendsDatabaseModel (EditableDataBaseModel dbModel){
 		// add sequences control table
 		EditableDBTableModel sequencesTable = new EditableDBTableModel(SEQUENCES_TABLE_NAME);
-		sequencesTable.addColumn(new EditableColumnModel("name",ColumnType.TEXT));
-		sequencesTable.addColumn(new EditableColumnModel("lastUsed",ColumnType.INTEGER));
+		sequencesTable.addColumn(new EditableColumnModel("name",ColumnValueType.TEXT));
+		sequencesTable.addColumn(new EditableColumnModel("lastUsed",ColumnValueType.INTEGER));
 
 		dbModel.addDataBaseObjectModel(sequencesTable);
 	}

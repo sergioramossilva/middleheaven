@@ -35,7 +35,7 @@ import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
 import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableDataBaseModel;
 import org.middleheaven.persistance.db.metamodel.SequenceModel;
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.criteria.CriterionOperator;
 
@@ -121,7 +121,7 @@ public class Oracle10gDialect extends SequenceSupportedDBDialect{
 						try{
 							while (columns.next()) {
 
-								ColumnType type = this.typeFromNative(columns.getInt(5));
+								ColumnValueType type = this.typeFromNative(columns.getInt(5));
 								EditableColumnModel col = new EditableColumnModel(columns.getString(4), type);
 								if (type.isTextual()){
 									col.setSize(columns.getInt(7));

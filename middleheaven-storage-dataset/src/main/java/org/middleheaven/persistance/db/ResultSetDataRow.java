@@ -12,8 +12,8 @@ import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.persistance.model.DataColumnsModel;
 import org.middleheaven.util.QualifiedName;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.TransformedIterator;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * 
@@ -36,10 +36,10 @@ final class ResultSetDataRow implements DataRow{
 
 	@Override
 	public Iterator<DataColumn> iterator() {
-		return TransformedIterator.transform(model.iterator(), new Classifier<DataColumn, DataColumnModel>(){
+		return TransformedIterator.transform(model.iterator(), new Mapper<DataColumn, DataColumnModel>(){
 
 			@Override
-			public DataColumn classify(DataColumnModel next) {
+			public DataColumn apply(DataColumnModel next) {
 				return getColumn(next.getName());
 			}
 			

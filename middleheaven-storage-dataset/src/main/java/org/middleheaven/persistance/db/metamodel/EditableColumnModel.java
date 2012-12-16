@@ -1,28 +1,29 @@
 package org.middleheaven.persistance.db.metamodel;
 
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.QualifiedName;
 
 public class EditableColumnModel implements DBColumnModel {
 
 	private String name;
-	private ColumnType type;
+	private ColumnValueType type;
 	
+
 	private boolean version = false;
 	private boolean indexed = false;
 	private boolean unique = false;
 	private boolean nullable = true;
-	private boolean key = false;
-	private int size = -1;
-	private int precision = -1;
+	private int size = 0;
+	private int precision = 0;
 	
 	DBTableModel tableModel;
 
 	
 	private String uniqueGroup;
+	private boolean key;
 
-	public EditableColumnModel(String name, ColumnType type) {
+	public EditableColumnModel(String name, ColumnValueType type) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -36,12 +37,11 @@ public class EditableColumnModel implements DBColumnModel {
 		this.uniqueGroup = cm.getUniqueGroupName();
 		this.indexed = cm.isIndexed();
 		this.key = cm.isKey();
-		this.name = cm.getSimpleName();
+		this.name = cm.getLogicName();
 		this.nullable = cm.isNullable();
 		this.size = cm.getSize();
 		this.precision = cm.getPrecision();
 		this.type = cm.getType();
-		this.tableModel = cm.getTableModel();
 		this.version = cm.isVersion();
 		
 	}
@@ -51,7 +51,7 @@ public class EditableColumnModel implements DBColumnModel {
 	}
 
 	public void setSize(int size){
-		this.size =  size;
+		this.size = size;
 	}
 
 	public boolean isIndexed() {
@@ -70,19 +70,19 @@ public class EditableColumnModel implements DBColumnModel {
 		this.unique = unique;
 	}
 
-	public String getSimpleName() {
+	public String getLogicName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setLogicName(String name) {
 		this.name = name;
 	}
 
-	public ColumnType getType() {
+	public ColumnValueType getType() {
 		return type;
 	}
 
-	public void setType(ColumnType type) {
+	public void setType(ColumnValueType type) {
 		this.type = type;
 	}
 
@@ -129,7 +129,7 @@ public class EditableColumnModel implements DBColumnModel {
 	}
 	
 	public String toString(){
-		return this.getTableModel().getName() + "." + this.name;
+		return tableModel.getName() + "." + this.name;
 	}
 
 

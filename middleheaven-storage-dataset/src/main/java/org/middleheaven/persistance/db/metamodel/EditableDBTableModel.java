@@ -41,7 +41,7 @@ public class EditableDBTableModel implements DataBaseObjectModel, DBTableModel {
 		super();
 		
 		for (DBColumnModel cm : other){
-			this.addColumn(cm);
+			this.addColumn(new EditableColumnModel(cm));
 		}
 		
 	}
@@ -51,20 +51,18 @@ public class EditableDBTableModel implements DataBaseObjectModel, DBTableModel {
 		this.keyGroup.setName("keyGroup");
 	}
 	
-	public void addColumn(DBColumnModel columnModel) {
-		if (columnModel.getSimpleName() == null){
+	public void addColumn(EditableColumnModel columnModel) {
+		if (columnModel.getLogicName() == null){
 			throw new IllegalArgumentException("Column name cannot be null");
 		}
 		
-		final EditableColumnModel editableColumnModel = new EditableColumnModel(columnModel);
-	
-		columns.put ( columnModel.getSimpleName() , editableColumnModel);
-		
-		if( columnModel.getTableModel()== null){
-			columnModel.setTableModel(this);
-			
+		if (columnModel.getTableModel() != null && columnModel.getTableModel() != this) {
+			throw new IllegalStateException("Column already belongs to a table ");
 		}
-		
+		columnModel.setTableModel(this);
+
+		columns.put ( columnModel.getLogicName() , columnModel);
+	
 		if(columnModel.isKey()) {
 			addKeyColumn(columnModel);
 		}
@@ -75,6 +73,7 @@ public class EditableDBTableModel implements DataBaseObjectModel, DBTableModel {
 			
 		}
 		
+
 	}
 	
 	private void addKeyColumn(DBColumnModel fm) {
@@ -142,14 +141,13 @@ public class EditableDBTableModel implements DataBaseObjectModel, DBTableModel {
 		for (DBColumnModel c : this.columns.values()){
 			// find a match in this columns set 
 			for (Entry<String, EditableColumnModel> entry : other.columns.entrySet()){
-				// musta do a case insensitive search
-				if (entry.getKey().equalsIgnoreCase(c.getSimpleName())){ 
+				// must do a case insensitive search
+				if (entry.getKey().equalsIgnoreCase(c.getLogicName())){ 
 					continue outter;
 				}
 			}
 			// no match found
-			DBColumnModel nc = c.duplicate();
-			nc.setTableModel(this);
+			EditableColumnModel nc = new EditableColumnModel(c);
 			res.addColumn(nc);
 			
 		}
@@ -205,7 +203,7 @@ public class EditableDBTableModel implements DataBaseObjectModel, DBTableModel {
 	 */
 	@Override
 	public Enumerable<DBColumnModel> columns() {
-		return CollectionUtils.enhance(CollectionUtils.secureCoerce(this.columns.values(), DBColumnModel.class));
+		return CollectionUtils.asEnumerable(CollectionUtils.secureCoerce(this.columns.values(), DBColumnModel.class));
 				
 				
 	}

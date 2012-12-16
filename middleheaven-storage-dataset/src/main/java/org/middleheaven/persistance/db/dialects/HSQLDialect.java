@@ -30,7 +30,7 @@ import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
 import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableDataBaseModel;
 import org.middleheaven.persistance.db.metamodel.SequenceModel;
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 import org.middleheaven.util.QualifiedName;
 
 /**
@@ -276,7 +276,7 @@ public class HSQLDialect extends SequenceSupportedDBDialect{
 					ResultSet columns = psColumns.executeQuery();
 					while (columns.next()) {
 
-						ColumnType type = this.typeFromNative(columns.getInt(2));
+						ColumnValueType type = this.typeFromNative(columns.getInt(2));
 						EditableColumnModel col = new EditableColumnModel(columns.getString(1).toLowerCase(), type);
 						if (type.isTextual()){
 							col.setSize(columns.getInt(3));
