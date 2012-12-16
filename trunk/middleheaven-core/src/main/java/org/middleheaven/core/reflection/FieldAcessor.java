@@ -2,6 +2,8 @@ package org.middleheaven.core.reflection;
 
 import java.lang.annotation.Annotation;
 
+import org.middleheaven.util.function.Maybe;
+
 public interface FieldAcessor {
 
 	public Object getValue(Object target) throws ReflectionException;
@@ -16,7 +18,7 @@ public interface FieldAcessor {
 
 	public <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass);
 
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass);
+	public <A extends Annotation> Maybe<A> getAnnotation(Class<A> annotationClass);
 
 	public boolean isReadable();
 	

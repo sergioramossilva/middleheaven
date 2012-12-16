@@ -8,7 +8,8 @@ import java.util.Set;
 import org.middleheaven.core.reflection.FieldAcessor;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Maybe;
 
 public class FieldIntrospector extends Introspector implements FieldAcessor {
 
@@ -59,11 +60,11 @@ public class FieldIntrospector extends Introspector implements FieldAcessor {
 		return field.isAnnotationPresent(annotationClass);
 	}
 
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		return field.getAnnotation(annotationClass);
+	public <A extends Annotation> Maybe<A> getAnnotation(Class<A> annotationClass) {
+		return Maybe.of(field.getAnnotation(annotationClass));
 	}
 
-	public EnhancedCollection<Annotation> getAnnotatedAnnotations(Class<? extends Annotation>  metaAnnotation) {
+	public Enumerable<Annotation> getAnnotatedAnnotations(Class<? extends Annotation>  metaAnnotation) {
 		Set<Annotation> result = new HashSet<Annotation>(); 
 
 		Annotation[] all = field.getDeclaredAnnotations();
@@ -73,7 +74,7 @@ public class FieldIntrospector extends Introspector implements FieldAcessor {
 			}
 		}
 		
-		return CollectionUtils.enhance(result);
+		return CollectionUtils.asEnumerable(result);
 	}
 
 	/**

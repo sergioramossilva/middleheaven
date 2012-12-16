@@ -30,6 +30,8 @@ import org.middleheaven.core.services.Service;
 import org.middleheaven.core.services.ServiceActivator;
 import org.middleheaven.core.services.ServiceBuilder;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.core.services.ServiceNotAvailableException;
+import org.middleheaven.core.services.ServiceProvider;
 import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.core.wiring.BindConfiguration;
 import org.middleheaven.core.wiring.Binder;
@@ -47,7 +49,7 @@ import org.middleheaven.logging.BroadcastLoggingService;
 import org.middleheaven.logging.LogServiceDelegatorLogger;
 import org.middleheaven.logging.Logger;
 import org.middleheaven.logging.LoggingService;
-import org.middleheaven.util.StopWatch;
+import org.middleheaven.quantity.time.clocks.StopWatch;
 import org.middleheaven.util.StringUtils;
 
 /**
@@ -87,6 +89,7 @@ public abstract class AbstractBootstrap {
 
 		serviceRegistryContext = RegistryServiceContext.getInstance();
 		
+		
 		// prepare properties.
 		this.propertyManagers.addFirst(new SytemEnvPropertyManager());
 		this.propertyManagers.addFirst(new SytemPropertyManager());
@@ -96,6 +99,8 @@ public abstract class AbstractBootstrap {
 		this.wiringService = new StandardWiringService(this.propertyManagers, this.serviceRegistryContext);
 
 	}
+	
+	
 
 	protected WiringService getWiringService() {
 		return this.wiringService;
@@ -267,6 +272,18 @@ public abstract class AbstractBootstrap {
 						.getService(FileContextService.class);
 			}
 
+			@Override
+			public BootstrapContext requireService(ServiceSpecification spec) throws ServiceNotAvailableException {
+				internalRequireService(spec, services, null);
+				return this;
+			}
+
+			@Override
+			public BootstrapContext requireService(ServiceSpecification spec, ServiceProvider provider) {
+				internalRequireService(spec, services, provider);
+				return this;
+			}
+
 		};
 
 		doBeforeStart(context);
@@ -353,6 +370,44 @@ public abstract class AbstractBootstrap {
 
 	}
 
+	
+	private void internalRequireService(ServiceSpecification spec, Collection<Service> servicePool, ServiceProvider provider){
+		
+		if (specIsIn(spec, servicePool)){
+			return;
+		}
+		
+		// check for native provider
+		Service service = null;
+		try {
+		    service = this.getContainer().provideService(spec);
+		
+		} catch (ServiceNotAvailableException e){
+			// log ?
+		}
+		
+		if (service == null && provider != null ){
+			service = provider.provide(spec);
+		}
+		
+		if (service == null){
+			throw new ServiceNotAvailableException(spec.getServiceContractType().getName());
+		}
+		
+		servicePool.add(service);
+	}
+	
+	
+	private boolean specIsIn(ServiceSpecification spec, Collection<Service> servicePool){
+		
+		for (Service s : servicePool){
+			if (s.getServiceSpecification().matches(spec)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * activate all collected services
 	 * 
@@ -431,8 +486,6 @@ public abstract class AbstractBootstrap {
 			}
 
 		};
-
-		
 
 		for (Service s : services) {
 			for (ServiceSpecification ss : s.getDependencies()) {

@@ -25,8 +25,8 @@ import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.ReflectionException;
 import org.middleheaven.core.reflection.ReflectionStrategy;
 import org.middleheaven.core.reflection.WrapperProxy;
-import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Predicate;
 
 class Reflector {
 
@@ -526,7 +526,7 @@ class Reflector {
 
 		if (filter!=null){
 			for (Iterator<Method> it = result.iterator();it.hasNext(); ){
-				if (!filter.classify(it.next())){
+				if (!filter.apply(it.next())){
 					it.remove();
 				}
 			}

@@ -8,8 +8,8 @@ import java.util.Iterator;
 import org.middleheaven.core.reflection.ClassSet;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.reflection.inspection.PackageIntrospector;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.TransformedIterator;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * 
@@ -81,10 +81,10 @@ public class ClassSetWiringBundle implements WiringItemBundle {
 	@Override
 	public Iterator<WiringItem> iterator() {
 		
-		return TransformedIterator.transform(contextClasses.iterator(), new Classifier<WiringItem, Class<?>>(){
+		return TransformedIterator.transform(contextClasses.iterator(), new Mapper<WiringItem, Class<?>>(){
 
 			@Override
-			public WiringItem classify(Class<?> obj) {
+			public WiringItem apply(Class<?> obj) {
 				return new TypeWiringItem(obj);
 			}
 			

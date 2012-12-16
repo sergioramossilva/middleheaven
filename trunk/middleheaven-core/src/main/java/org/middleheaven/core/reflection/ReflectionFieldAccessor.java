@@ -3,6 +3,8 @@ package org.middleheaven.core.reflection;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
+import org.middleheaven.util.function.Maybe;
+
 
 public  class ReflectionFieldAccessor implements FieldAcessor{
 
@@ -82,8 +84,8 @@ public  class ReflectionFieldAccessor implements FieldAcessor{
 		return (field!=null && field.isAnnotationPresent(annotationClass));
 	}
 
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		return field.getAnnotation(annotationClass);
+	public <A extends Annotation> Maybe<A> getAnnotation(Class<A> annotationClass) {
+		return Maybe.of(field.getAnnotation(annotationClass));
 	}
 
 	/**

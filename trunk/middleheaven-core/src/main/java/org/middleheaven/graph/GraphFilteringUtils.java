@@ -3,7 +3,7 @@ package org.middleheaven.graph;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.graph.Graph.Edge;
 import org.middleheaven.graph.Graph.Vertex;
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.function.Predicate;
 
 /**
  * 
@@ -32,7 +32,7 @@ public final class GraphFilteringUtils {
 			Vertex<V,E> s = edge.getSourceVertex();
 			Vertex<V,E> t = edge.getTargetVertex();
 			
-			if ((verticesClassifier.classify(s.getObject()) || verticesClassifier.classify(t.getObject())) && edgeClassifier.classify(edge.getObject())){
+			if ((verticesClassifier.apply(s.getObject()) || verticesClassifier.apply(t.getObject())) && edgeClassifier.apply(edge.getObject())){
 				targetGraph.addEdge(edge.getObject(), s.getObject(), t.getObject(), edge.getCost());
 			}
 		}
@@ -44,7 +44,7 @@ public final class GraphFilteringUtils {
 		return filter(sourceGraph, verticesClassifier, new Predicate<E>(){
 
 			@Override
-			public Boolean classify(E obj) {
+			public Boolean apply(E obj) {
 				return Boolean.TRUE;
 			}});
 	}

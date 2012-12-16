@@ -9,7 +9,8 @@ import java.util.Set;
 import org.middleheaven.core.reflection.IllegalAccessReflectionException;
 import org.middleheaven.core.reflection.InvocationTargetReflectionException;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Maybe;
 
 public class MethodIntrospector extends Introspector{
 
@@ -28,8 +29,8 @@ public class MethodIntrospector extends Introspector{
 	}
 
 	@Override
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		return method.getAnnotation(annotationClass);
+	public <A extends Annotation> Maybe<A> getAnnotation(Class<A> annotationClass) {
+		return Maybe.of(method.getAnnotation(annotationClass));
 	}
 
 	@Override
@@ -42,7 +43,7 @@ public class MethodIntrospector extends Introspector{
 		return method.isBridge();
 	}
 	
-	public EnhancedCollection<Annotation> getAnnotatedAnnotations(Class<? extends Annotation>  metaAnnotation) {
+	public Enumerable<Annotation> getAnnotatedAnnotations(Class<? extends Annotation>  metaAnnotation) {
 		Set<Annotation> result = new HashSet<Annotation>(); 
 
 		Annotation[] all = method.getDeclaredAnnotations();
@@ -52,7 +53,7 @@ public class MethodIntrospector extends Introspector{
 			}
 		}
 		
-		return CollectionUtils.enhance(result);
+		return CollectionUtils.asEnumerable(result);
 	}
 	
 	public <R> R invoke(Class<R> returnType,Object target, Object ... params) {

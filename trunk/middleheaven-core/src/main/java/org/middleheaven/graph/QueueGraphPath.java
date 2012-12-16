@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import org.middleheaven.graph.Graph.Edge;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.TransformedCollection;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * 
@@ -40,10 +40,10 @@ public class QueueGraphPath<E, V> implements GraphPath<E, V> {
 
 	@Override
 	public Collection<E> getEdges() {
-		return Collections.unmodifiableCollection(TransformedCollection.transform(queue, new Classifier<E, Edge<V,E>>(){
+		return Collections.unmodifiableCollection(TransformedCollection.transform(queue, new Mapper<E, Edge<V,E>>(){
 
 			@Override
-			public E classify(Edge<V, E> obj) {
+			public E apply(Edge<V, E> obj) {
 				return obj.getObject();
 			}
 

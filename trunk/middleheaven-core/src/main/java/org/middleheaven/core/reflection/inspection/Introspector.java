@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import org.middleheaven.util.function.Maybe;
+
 
 
 /**
@@ -37,5 +39,5 @@ public abstract class Introspector {
 	
 	public abstract <A extends Annotation> boolean isAnnotadedWith(Class<A> annotationClass);
 
-	public abstract <A extends Annotation> A getAnnotation(Class<A> annotationClass);
+	public abstract <A extends Annotation> Maybe<A> getAnnotation(Class<A> annotationClass);
 }

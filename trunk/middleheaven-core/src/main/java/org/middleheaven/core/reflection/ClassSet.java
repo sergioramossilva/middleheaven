@@ -23,7 +23,7 @@ public final class ClassSet implements Iterable<Class<?>>{
 	 * @return <code>this</code> object
 	 */
 	public ClassSet add(Package thePackage){
-		types.addAll(Introspector.of(thePackage).getClasses());
+		Introspector.of(thePackage).getClasses().into(types);
 
 		return this;
 	}

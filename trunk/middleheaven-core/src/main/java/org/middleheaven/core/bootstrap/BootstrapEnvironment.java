@@ -4,7 +4,8 @@
  */
 package org.middleheaven.core.bootstrap;
 
-import org.middleheaven.application.ApplicationModulesResolver;
+import org.middleheaven.core.services.Service;
+import org.middleheaven.core.services.ServiceSpecification;
 import org.middleheaven.io.repository.ManagedFileRepositoryProvider;
 
 
@@ -33,10 +34,12 @@ public interface BootstrapEnvironment  {
     public void start();
     public void stop();
 
-	/**
-	 * @return
-	 */
-	public ApplicationModulesResolver getApplicationModulesResolver();
-    
+//	/**
+//	 * @return
+//	 */
+//	public ApplicationModulesResolver getApplicationModulesResolver();
+//    
+	
+	public Service provideService(ServiceSpecification spec);
 
 }

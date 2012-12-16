@@ -7,9 +7,9 @@ import java.util.Comparator;
 import org.middleheaven.core.reflection.MemberAccess;
 import org.middleheaven.util.classification.LogicComposedClassifier;
 import org.middleheaven.util.classification.LogicOperator;
-import org.middleheaven.util.classification.Predicate;
-import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Block;
+import org.middleheaven.util.function.Predicate;
 
 public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 
@@ -27,19 +27,19 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 	}
 	
 	public M retrive(){
-		return retriveAll().isEmpty() ? null : retriveAll().iterator().next();
+		return retriveAll().isEmpty() ? null : retriveAll().getFirst();
 	}
 
 
-	public void each(Walker<M> walker){
-		retriveAll().forEach(walker);
+	public void each(Block<M> block){
+		retriveAll().forEach(block);
 	}
 	
 	protected void addNameFilter(final String name){
 		logicClassifier.add(new Predicate<M>(){
 
 			@Override
-			public Boolean classify(M obj) {
+			public Boolean apply(M obj) {
 				return getName(obj).equalsIgnoreCase(name);
 			}
 			
@@ -52,7 +52,7 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 		logicClassifier.add(new Predicate<M>(){
 
 			@Override
-			public Boolean classify(M obj) {
+			public Boolean apply(M obj) {
 				boolean result = false;
 				for (MemberAccess a : acesses){
 					result = result | a.is(getModifiers(obj));
@@ -67,7 +67,7 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 		logicClassifier.add(new Predicate<M>(){
 
 			@Override
-			public Boolean classify(M obj) {
+			public Boolean apply(M obj) {
 				if (Modifier.isStatic(getModifiers(obj))){
 					return allowStatic;
 				}
@@ -84,7 +84,7 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 		logicClassifier.add(new Predicate<M>(){
 			
 			@Override
-			public Boolean classify(M c) {
+			public Boolean apply(M c) {
 				for (Class<? extends Annotation> a : annotations){
 					if (isAnnotationPresent(c,a)){
 						return true;
@@ -96,11 +96,11 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 		});
 	}
 	
-	public EnhancedCollection<M> retriveAll(){
-		EnhancedCollection<M> result = getAllMembersInType(builder.type);
+	public Enumerable<M> retriveAll(){
+		Enumerable<M> result = getAllMembersInType(builder.type);
 		
 		if(logicClassifier!=null){
-			result = result.findAll(logicClassifier);
+			result = result.filter(logicClassifier);
 		} 
 		
 		if (comparator!=null){
@@ -110,5 +110,5 @@ public abstract class MemberIntrospectionCriteriaBuilder<T, M> {
 		return result;
 	}
 
-	protected abstract EnhancedCollection<M> getAllMembersInType(Class<T> type);
+	protected abstract Enumerable<M> getAllMembersInType(Class<T> type);
 }

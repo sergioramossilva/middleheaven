@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,8 +24,8 @@ import org.middleheaven.core.reflection.MemberAccess;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Block;
 
 
 /**
@@ -143,7 +142,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 		// find publish points
 
 
-		Collection<Method> methods =  introspector.inspect().methods().notInheritFromObject().beingStatic(false).searchHierarchy().retriveAll();
+		Enumerable<Method> methods =  introspector.inspect().methods().notInheritFromObject().beingStatic(false).searchHierarchy().retriveAll();
 
 		for (Method method : methods){
 
@@ -229,7 +228,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 
 			// read @Factory
 
-			Collection<Method> candidates = introspector.inspect().methods().beingStatic(true).annotatedWith(Factory.class).retriveAll();
+			Enumerable<Method> candidates = introspector.inspect().methods().beingStatic(true).annotatedWith(Factory.class).retriveAll();
 
 			if (candidates.isEmpty()) {
 				readConstructorProducingPoint(type, model, introspector);
@@ -243,20 +242,20 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 		// injection points
 
 		introspector.inspect().fields().beingStatic(false).searchHierarchy().annotatedWith(annotations).retriveAll()
-		.forEach(new Walker<Field>(){
+		.forEach(new Block<Field>(){
 
 			@Override
-			public void doWith(Field f) {
+			public void apply(Field f) {
 				model.addAfterWiringPoint(new FieldAfterWiringPoint(f,readParamsSpecification(f)));
 			}
 
 		} );
 
 		introspector.inspect().methods().beingStatic(false).searchHierarchy().annotatedWith(annotations).retriveAll()
-		.forEach(new Walker<Method>(){
+		.forEach(new Block<Method>(){
 
 			@Override
-			public void doWith(Method method) {
+			public void apply(Method method) {
 				model.addAfterWiringPoint(new MethodAfterWiringPoint(method, null, readParamsSpecification(method)));
 			}
 
@@ -301,7 +300,7 @@ public class DefaultWiringModelParser extends AbstractAnnotationBasedWiringModel
 	private <T> void readConstructorProducingPoint(Class<T> type,
 			final BeanDependencyModel model, ClassIntrospector<T> introspector) {
 		// constructor
-		EnhancedCollection<Constructor<T>> constructors = introspector.inspect()
+		Enumerable<Constructor<T>> constructors = introspector.inspect()
 				.constructors().withAccess(MemberAccess.PUBLIC).annotathedWith(annotations).retriveAll();
 
 		if (constructors.isEmpty()){
