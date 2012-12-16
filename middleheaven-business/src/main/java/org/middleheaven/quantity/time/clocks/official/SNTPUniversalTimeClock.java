@@ -34,11 +34,11 @@ public final class SNTPUniversalTimeClock extends WrappedClock {
 	}
 	
 	public static SNTPUniversalTimeClock forServer(String ntpServerAddress)throws UnknownHostException{
-		return new SNTPUniversalTimeClock(new MachineClock(),InetAddress.getByName(ntpServerAddress));
+		return new SNTPUniversalTimeClock(MachineClock.getInstance(),InetAddress.getByName(ntpServerAddress));
 	}
 	
 	public static SNTPUniversalTimeClock forServer(InetAddress ntpServerAddress) {
-		return new SNTPUniversalTimeClock(new MachineClock(),ntpServerAddress);
+		return new SNTPUniversalTimeClock(MachineClock.getInstance(),ntpServerAddress);
 	}
 	
 	private SNTPUniversalTimeClock(Clock reference,InetAddress ntpServerAddress){
