@@ -14,10 +14,10 @@ import org.middleheaven.domain.model.EntityFieldModel;
 import org.middleheaven.domain.model.EntityModel;
 import org.middleheaven.domain.query.Query;
 import org.middleheaven.domain.query.QueryExecuter;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.Walker;
 import org.middleheaven.util.criteria.ReadStrategy;
+import org.middleheaven.util.function.Block;
+import org.middleheaven.util.function.Mapper;
 import org.middleheaven.util.identity.Identity;
 
 
@@ -198,17 +198,17 @@ final class EntityInstanceStoreManager implements DomainStoreManager {
 		flatten(p,all);
 
 
-		CollectionUtils.enhance(all).collect(new Classifier<StoreAction, EntityInstance>(){
+		CollectionUtils.asEnumerable(all).map(new Mapper<StoreAction, EntityInstance>(){
 
 			@Override
-			public StoreAction classify(EntityInstance s) {
+			public StoreAction apply(EntityInstance s) {
 				return assignAction(s);
 			}
 
-		}).forEach(new Walker<StoreAction>(){
+		}).forEach(new Block<StoreAction>(){
 
 			@Override
-			public void doWith(StoreAction action) {
+			public void apply(StoreAction action) {
 				unit.addAction(action);
 			}
 

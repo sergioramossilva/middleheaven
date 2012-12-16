@@ -12,13 +12,12 @@ import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.domain.store.EntityInstance;
 import org.middleheaven.domain.store.EntityManagerProxyHandler;
 import org.middleheaven.domain.store.MetaBeanEntityInstance;
-import org.middleheaven.model.annotations.mapping.DatasetInheritance;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.DataStoreSchemaName;
 import org.middleheaven.persistance.HashDataRow;
 import org.middleheaven.persistance.SimpleDataColumn;
 import org.middleheaven.persistance.model.DataColumnModel;
-import org.middleheaven.storage.types.EntityInstanceTypeMapper;
+import org.middleheaven.storage.annotations.DatasetInheritance;
 
 /**
  * 
@@ -78,7 +77,7 @@ class EditableEntityModelDataSetMapping implements EntityModelDataSetMapping {
 	 */
 	@Override
 	public boolean isSingleDataSetInheritance() {
-		return this.inherintance == DatasetInheritance.ONE_TABLE_FOR_ALL || this.inherintance == DatasetInheritance.NO_INHERITANCE;
+		return this.inherintance == DatasetInheritance.ONE_DATASET_FOR_ALL || this.inherintance == DatasetInheritance.NO_INHERITANCE;
 	}
 
 

@@ -11,4 +11,5 @@ public interface ReferenceDataTypeModel extends DataTypeModel{
 	public MetaClass getAggregationType();
 	public MetaClass getTargetFieldType();
 	
+	public DataType getTargetFieldDataType();
 }

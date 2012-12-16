@@ -1,6 +1,7 @@
 package org.middleheaven.domain.model;
 
 import org.middleheaven.core.reflection.metaclass.MetaClass;
+import org.middleheaven.model.annotations.InheritanceStrategy;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.collections.Enumerable;
 
@@ -9,6 +10,21 @@ import org.middleheaven.util.collections.Enumerable;
  */
 public interface EntityModel  {
 
+	
+	public InheritanceStrategy getInheritanceStrategy();
+	
+	/**
+	 * A {@link FieldModel} that represents the inheritance discriminator value.
+	 * @return
+	 */
+	public FieldModel getDescriminatorFieldModel();
+	
+	/**
+	 * Returns the discriminator value correspondent to the given type
+	 * @param type
+	 * @return
+	 */
+	public Object getDescriminatorValue(Class<?> type);
 	
 	/**
 	 * 
@@ -57,4 +73,14 @@ public interface EntityModel  {
 	 * @return
 	 */
 	public boolean isIdentityAssigned();
+
+	/**
+	 * @return
+	 */
+	public boolean isInheritanceRoot();
+	
+	/**
+	 * @return
+	 */
+	public String getInheritanceRootEntityName();
 }

@@ -8,9 +8,9 @@ import org.middleheaven.core.reflection.metaclass.MetaBean;
 import org.middleheaven.domain.model.EntityFieldModel;
 import org.middleheaven.domain.model.EntityModel;
 import org.middleheaven.util.QualifiedName;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.TransformedEnumerable;
+import org.middleheaven.util.function.Mapper;
 import org.middleheaven.util.identity.Identity;
 
 /**
@@ -127,10 +127,10 @@ public final class MetaBeanEntityInstance implements EntityInstance {
 	public Enumerable<EntityInstanceField> getFields() {
 		return TransformedEnumerable.<EntityFieldModel,EntityInstanceField >transform(
 				model.fields(),
-				new Classifier<EntityInstanceField,EntityFieldModel>(){
+				new Mapper<EntityInstanceField,EntityFieldModel>(){
 
 					@Override
-					public EntityInstanceField classify(EntityFieldModel fieldModel) {
+					public EntityInstanceField apply(EntityFieldModel fieldModel) {
 						return getField(fieldModel.getName().getDesignation());
 					}
 					

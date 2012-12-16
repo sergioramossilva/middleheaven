@@ -8,7 +8,6 @@ import java.util.Collection;
 import org.middleheaven.domain.store.EntityInstance;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.DataStoreSchemaName;
-import org.middleheaven.storage.types.EntityInstanceTypeMapper;
 
 /**
  * 

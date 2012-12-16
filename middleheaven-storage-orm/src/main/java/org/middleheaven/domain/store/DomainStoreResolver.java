@@ -3,7 +3,6 @@
  */
 package org.middleheaven.domain.store;
 
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.core.wiring.ResolutionContext;
 import org.middleheaven.core.wiring.Resolver;
 import org.middleheaven.core.wiring.WiringQuery;
@@ -14,7 +13,11 @@ import org.middleheaven.core.wiring.WiringQuery;
 class DomainStoreResolver implements Resolver {
 
 	
-	public DomainStoreResolver(){}
+	private DomainStoreService domainStoreService;
+
+	public DomainStoreResolver(DomainStoreService domainStoreService){
+		this.domainStoreService = domainStoreService;
+	}
 	
 	@Override
 	public Object resolve(ResolutionContext context, WiringQuery query) {
@@ -24,21 +27,18 @@ class DomainStoreResolver implements Resolver {
 	}
 	
 	
-	public static class NamedEntityStore extends AbstractEntityStorageDecorator{
+	public class NamedEntityStore extends AbstractEntityStorageDecorator{
 		
 		private String name;
-		private DomainStoreService service;
-		
+
 		public NamedEntityStore(String name){
 			this.name = name;
-			service = ServiceRegistry.getService(DomainStoreService.class);
 		}
 		
 		@Override
 		protected DomainStore original() {
-			return (name==null) ? service.getStore() : service.getStore(name);	
+			return (name==null) ? domainStoreService.getStore() : domainStoreService.getStore(name);	
 		}
-		
-		
+
 	}
 }

@@ -12,7 +12,7 @@ public enum DataType {
 	
 	UNKONW,
 	LOGIC,
-	ENUM,
+	ENUM, // TODO substitute with status ?
 	STATUS,
 	TEXT,
 	MEMO,

@@ -8,13 +8,18 @@ import java.util.Date;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.PropertyAccessor;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.core.reflection.metaclass.MetaClass;
 import org.middleheaven.core.reflection.metaclass.ReflectionMetaClass;
 import org.middleheaven.logging.Logger;
+import org.middleheaven.model.annotations.Discriminator;
+import org.middleheaven.model.annotations.DiscriminatorValue;
 import org.middleheaven.model.annotations.EmailAddress;
 import org.middleheaven.model.annotations.Entity;
 import org.middleheaven.model.annotations.Id;
+import org.middleheaven.model.annotations.Inheritance;
+import org.middleheaven.model.annotations.InheritanceStrategy;
 import org.middleheaven.model.annotations.Length;
 import org.middleheaven.model.annotations.ManyToMany;
 import org.middleheaven.model.annotations.ManyToOne;
@@ -23,21 +28,24 @@ import org.middleheaven.model.annotations.NotNull;
 import org.middleheaven.model.annotations.OneToMany;
 import org.middleheaven.model.annotations.OneToOne;
 import org.middleheaven.model.annotations.Temporal;
-import org.middleheaven.model.annotations.Transient;
-import org.middleheaven.model.annotations.Unique;
 import org.middleheaven.model.annotations.Url;
 import org.middleheaven.model.annotations.Version;
+import org.middleheaven.persistance.db.mapping.IllegalModelStateException;
 import org.middleheaven.quantity.time.CalendarDate;
 import org.middleheaven.quantity.time.CalendarDateTime;
 import org.middleheaven.quantity.time.TimePoint;
+import org.middleheaven.storage.annotations.Transient;
+import org.middleheaven.storage.annotations.Unique;
 import org.middleheaven.util.QualifiedName;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Maybe;
 import org.middleheaven.util.identity.Identity;
 
 /**
  * Reader that relies on annotations within the class.
  * 
  */
-public class DefaultAnnotatedModelReader implements DomainModelReader {
+public class AnnotatedModelReader implements DomainModelReader {
 
 	
 	Logger logger = Logger.onBookFor(this.getClass());
@@ -46,7 +54,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 	 * 
 	 * Constructor.
 	 */
-	public DefaultAnnotatedModelReader (){}
+	public AnnotatedModelReader (){}
 	
 	
 	private boolean matchTypes(Class<?> candidate , Class<?> ... types){
@@ -67,8 +75,42 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 		}
 		
 		EditableDomainEntityModel em = context.getEditableModelOf(type);
+		
+		
+		final ClassIntrospector<?> classInstrospector = ClassIntrospector.of(type);
+		Maybe<Inheritance> maybeInherintance = classInstrospector.getAnnotation(Inheritance.class); // TODO can be found in super ?
 
-		Collection<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
+		EditableDomainEntityModel rootModel = em;
+		if (maybeInherintance.isAbsent()){
+			
+			// look in super
+			Maybe<Class> maybeRoot = classInstrospector.getRootParent();
+			
+			if (maybeRoot.isAbsent()){
+				em.setInheritanceStrategy(InheritanceStrategy.NO_INHERITANCE);
+			} else {
+				rootModel = context.getEditableModelOf(maybeRoot.get());
+				
+				rootModel.copyFieldTo(em);
+				em.setInheritanceStrategy(rootModel.getInheritanceStrategy());
+				em.setInheritanceRoot(rootModel.getEntityName());
+			}
+		} else {
+			em.setInheritanceStrategy(maybeInherintance.get().strategy());
+			em.setInheritanceRoot(rootModel.getEntityName());
+		}
+		
+		Maybe<DiscriminatorValue> maybeDiscriminatorValue = classInstrospector.getAnnotation(DiscriminatorValue.class);
+		
+		if ( maybeDiscriminatorValue.isAbsent()){
+			if (rootModel.getInheritanceStrategy().isSingleDataset()){
+				throw new IllegalModelStateException("Single dataset inherintance strategy must define a discriminator value for " + em.getEntityName());
+			}
+		} else {
+			rootModel.addDescriminatorValue(type, maybeDiscriminatorValue.get().value());
+		}
+		
+		Enumerable<PropertyAccessor> propertyAccessors = Introspector.of(type).inspect().properties().retriveAll();
 
 		if (propertyAccessors.isEmpty()){
 			throw new ModelingException("No public properties found for entity " + type.getName() + ".");
@@ -76,7 +118,9 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 			for (PropertyAccessor pa : propertyAccessors){
 
-				processField(pa,em, context);
+				if (!em.hasField(pa.getName())){
+					processField(pa,em, context);
+				}
 
 			}
 
@@ -123,13 +167,14 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 		fm.setVersion( pa.isAnnotadedWith(Version.class));
 		fm.setUnique( pa.isAnnotadedWith(Unique.class));
 		fm.setNullable(!pa.isAnnotadedWith(NotNull.class));
-
+		fm.setDiscriminator(!pa.isAnnotadedWith(Discriminator.class));
+		
 		Class<?> valueType = pa.getValueType();
 
 		fm.setValueType(valueType);
 
 		if(pa.isAnnotadedWith(Id.class)){
-			Id key = pa.getAnnotation(Id.class);
+			Id key = pa.getAnnotation(Id.class).get();
 
 			fm.setIdentity(true);
 			fm.setUnique(true);
@@ -140,16 +185,22 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 			
 			em.setIdentityType(resolveValidIdentityType(identityType));
 			
+			IdentityFieldDataTypeModel model = new IdentityFieldDataTypeModel(DataType.INTEGER); // derive from valueType or key type
+			
+			model.setIdentityType(key.type());
+			
+			fm.setDataTypeModel(model);
+			
 		} else if (pa.isAnnotadedWith(ManyToOne.class)){
 
-			ManyToOne ref = pa.getAnnotation(ManyToOne.class);
+			ManyToOne ref = pa.getAnnotation(ManyToOne.class).get();
 			String fieldName = ref.targetIdentityField();
 
 			mapAsManyToOne(fm,fieldName,valueType,builder);
 
 		} else if (pa.isAnnotadedWith(OneToOne.class)){
 			fm.setDataType(DataType.ONE_TO_ONE);
-			OneToOne ref = pa.getAnnotation(OneToOne.class);
+			OneToOne ref = pa.getAnnotation(OneToOne.class).get();
 			String fieldName = ref.targetIdentityField();
 
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ONE_TO_ONE);
@@ -171,7 +222,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 		} else if (pa.isAnnotadedWith(OneToMany.class)){
 			fm.setDataType( DataType.ONE_TO_MANY);
-			OneToMany ref = pa.getAnnotation(OneToMany.class);
+			OneToMany ref = pa.getAnnotation(OneToMany.class).get();
 
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ONE_TO_MANY);
 
@@ -184,7 +235,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 
 		} else if (pa.isAnnotadedWith(ManyToMany.class)){
 			fm.setDataType(DataType.MANY_TO_MANY);
-			ManyToMany ref = pa.getAnnotation(ManyToMany.class);
+			ManyToMany ref = pa.getAnnotation(ManyToMany.class).get();
 
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_MANY);
 
@@ -211,7 +262,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 					model.setMinLength(0);
 
 				} else if(pa.isAnnotadedWith(Length.class)){
-					Length ref = pa.getAnnotation(Length.class);
+					Length ref = pa.getAnnotation(Length.class).get();
 					model.setMaxLength(ref.max());
 					model.setMinLength(ref.min());
 				}
@@ -226,18 +277,22 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 					model.setUrl(true);
 				}
 
-			} else if (matchTypes(valueType,Integer.class ,int.class, Byte.class, byte.class, Short.class, short.class)  ){
+			} else if (matchTypes(valueType,Integer.class ,int.class, Byte.class, byte.class, Short.class, short.class, Long.class, long.class)  ){
+
 				fm.setDataType(DataType.INTEGER);
-			}  else if (matchTypes(valueType,CalendarDateTime.class)){
+				
+			} else if ( matchTypes(valueType,Double.class , double.class , Float.class , float.class, BigDecimal.class)){
+				fm.setDataType(DataType.DECIMAL);
+			} else if (matchTypes(valueType,CalendarDateTime.class)){
 				fm.setDataType(DataType.DATETIME);
 				if (pa.isAnnotadedWith(Temporal.class)){
-					fm.setDataType(pa.getAnnotation(Temporal.class).value());
+					fm.setDataType(pa.getAnnotation(Temporal.class).get().value());
 				} 
 			} else if (matchTypes(valueType,CalendarDate.class)){
 				fm.setDataType(DataType.DATE);
 			} else if (matchTypes(valueType, Date.class,Calendar.class)){
 				if (pa.isAnnotadedWith(Temporal.class)){
-					fm.setDataType(pa.getAnnotation(Temporal.class).value());
+					fm.setDataType(pa.getAnnotation(Temporal.class).get().value());
 				} else {
 					logger.warn(
 							" {0} is to a too generic timestamp type. Consider annotate property {1} with @Temporal or use an instance of {2}", 
@@ -249,8 +304,6 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 				}
 			} else if (matchTypes(valueType,Boolean.class,boolean.class)){
 				fm.setDataType(DataType.LOGIC);
-			} else if ( matchTypes(valueType,Double.class , double.class , Float.class , float.class, BigDecimal.class)){
-				fm.setDataType(DataType.DECIMAL);
 			} else if (matchTypes(valueType, Collection.class, Map.class)){
 				fm.setDataType( DataType.ONE_TO_MANY);
 			} else {
@@ -262,7 +315,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 		}
 
 	}
-
+	
 
 	private void mapAsManyToOne(EditableEntityFieldModel fm,String fieldName,Class<?> valueType , final EntityModelBuildContext builder ){
 
@@ -306,7 +359,7 @@ public class DefaultAnnotatedModelReader implements DomainModelReader {
 			identityType = idType;
 			if(identityType==null || Void.class.equals(identityType)){
 				throw new ModelingException("Illegal identity type for " 
-						+ fm.toString() 
+						+ fm.getName().getQualifier().toString() 
 						+ ".When using interfaces or abstract types as identity type you must specify a non interface, non abstract, class for identity");
 			}
 		}

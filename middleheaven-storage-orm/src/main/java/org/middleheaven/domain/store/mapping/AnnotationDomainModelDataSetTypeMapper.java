@@ -15,28 +15,26 @@ import org.middleheaven.core.reflection.inspection.Introspector;
 import org.middleheaven.domain.model.DomainModel;
 import org.middleheaven.domain.model.EntityFieldModel;
 import org.middleheaven.domain.model.EntityModel;
+import org.middleheaven.domain.model.IdentityFieldDataTypeModel;
 import org.middleheaven.model.annotations.Id;
 import org.middleheaven.model.annotations.NotNull;
-import org.middleheaven.model.annotations.Transient;
 import org.middleheaven.model.annotations.Version;
-import org.middleheaven.model.annotations.mapping.Column;
-import org.middleheaven.model.annotations.mapping.Columns;
-import org.middleheaven.model.annotations.mapping.Dataset;
-import org.middleheaven.model.annotations.mapping.DatasetInheritance;
-import org.middleheaven.model.annotations.mapping.Type;
 import org.middleheaven.persistance.DataStoreSchemaName;
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.persistance.model.DataColumnModelBean;
 import org.middleheaven.persistance.model.EditableDataSet;
 import org.middleheaven.storage.StorableEnum;
+import org.middleheaven.storage.annotations.Column;
+import org.middleheaven.storage.annotations.Columns;
+import org.middleheaven.storage.annotations.Dataset;
+import org.middleheaven.storage.annotations.Transient;
+import org.middleheaven.storage.annotations.Type;
 import org.middleheaven.storage.types.BooleanTypeMapper;
 import org.middleheaven.storage.types.CalendarDateTimeTypeMapper;
 import org.middleheaven.storage.types.CalendarDateTypeMapper;
 import org.middleheaven.storage.types.CurrencyTypeMapper;
-import org.middleheaven.storage.types.EntityFieldTypeMapper;
-import org.middleheaven.storage.types.EntityInstanceTypeMapper;
-import org.middleheaven.storage.types.EnumTypeMapper;
+import org.middleheaven.storage.types.DateTypeMapper;
 import org.middleheaven.storage.types.IdentityTypeMapper;
 import org.middleheaven.storage.types.MoneyTypeMapper;
 import org.middleheaven.storage.types.NumberTypeMapper;
@@ -44,13 +42,14 @@ import org.middleheaven.storage.types.RealTypeMapper;
 import org.middleheaven.storage.types.StringTypeMapper;
 import org.middleheaven.storage.types.TypeMapper;
 import org.middleheaven.util.QualifiedName;
+import org.middleheaven.util.function.Maybe;
 import org.middleheaven.util.identity.IntegerIdentity;
 import org.middleheaven.util.identity.LongIdentity;
 
 /**
  * 
  */
-public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMapper {
+public class AnnotationDomainModelDataSetTypeMapper implements DomainModelDataSetTypeMapper {
 
 	private final Map<String, TypeMapper> types = new HashMap<String, TypeMapper>();
 
@@ -65,15 +64,15 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	 * @param dataMapper 
 	 * @return
 	 */
-	public static AnnotationDomainModelDataSetMapper newInstance(DataStoreSchemaName dataStoreSchemaName, DomainModel domainModel ){
-		AnnotationDomainModelDataSetMapper mapper = new AnnotationDomainModelDataSetMapper(domainModel,dataStoreSchemaName);
+	public static AnnotationDomainModelDataSetTypeMapper newInstance(DataStoreSchemaName dataStoreSchemaName, DomainModel domainModel ){
+		AnnotationDomainModelDataSetTypeMapper mapper = new AnnotationDomainModelDataSetTypeMapper(domainModel,dataStoreSchemaName);
 
 		mapper.initialize();
 
 		return mapper;
 	}
 
-	private AnnotationDomainModelDataSetMapper(DomainModel domainModel, DataStoreSchemaName dataStoreSchemaName){
+	private AnnotationDomainModelDataSetTypeMapper(DomainModel domainModel, DataStoreSchemaName dataStoreSchemaName){
 		this.dataStoreSchemaName = dataStoreSchemaName;
 		this.domainModel = domainModel;
 
@@ -85,6 +84,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 		this.registerTypeMapper(new NumberTypeMapper(Byte.class));
 		this.registerTypeMapper(new BooleanTypeMapper());
 		this.registerTypeMapper(new StringTypeMapper());
+		this.registerTypeMapper(new DateTypeMapper());
 		this.registerTypeMapper(new CalendarDateTypeMapper());
 		this.registerTypeMapper(new CalendarDateTimeTypeMapper());
 		this.registerTypeMapper(new MoneyTypeMapper());
@@ -171,7 +171,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 
 		for (EntityFieldModel field : model.fields()){
 
-			if (!field.isTransient()){
+			if (!field.isTransient() && !field.getDataType().isToManyReference()){
 				try {
 					PropertyAccessor pa = model.getEntityClass().getPropertyAcessor(field.getName().getDesignation());
 
@@ -210,13 +210,13 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 
 		Column[] all;
 
-		Columns columns = pa.getAnnotation(Columns.class);
+		Maybe<Columns> maybeColumns = pa.getAnnotation(Columns.class);
 
-		if (columns == null){
+		if (maybeColumns.isAbsent()){
 
-			Column column = pa.getAnnotation(Column.class);
+			Maybe<Column> maybeColumn = pa.getAnnotation(Column.class);
 
-			if (column == null){
+			if (maybeColumn.isAbsent()){
 
 				if (pa.isAnnotadedWith(Transient.class)) {
 					all = new Column[0];
@@ -229,11 +229,11 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 				}
 
 			} else {
-				all = new Column[]{column};
+				all = new Column[]{maybeColumn.get()};
 			}
 
 		} else {
-			all = columns.columns();
+			all = maybeColumns.get().columns();
 		}
 
 		DataColumnModel[] columnModels = new DataColumnModel[all.length];
@@ -244,7 +244,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 
 			Column c = all[i];
 
-			cm.setName(QualifiedName.qualify(dsModel.getName(), c.name()));
+			cm.setName(QualifiedName.qualify(dsModel.getName(), c.hardName()));
 			cm.setDataSetModel(dsModel);
 			cm.setNullable(!pa.isAnnotadedWith(NotNull.class));
 			cm.setPrecision(c.precision());
@@ -285,7 +285,7 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 		column.setType(mapColumnTypeFromEntityField(field));
 		column.setVersion(field.isVersion());
 		column.setDataSetModel(dsModel);
-		
+
 		if (field.isIdentity()){
 			column.setPrimaryKeyGroup("key");
 		}
@@ -300,31 +300,31 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	 * @param dataType
 	 * @return
 	 */
-	private ColumnType mapColumnTypeFromEntityField(EntityFieldModel field) {
+	private ColumnValueType mapColumnTypeFromEntityField(EntityFieldModel field) {
 		switch (field.getDataType()){
 		case DATE:
-			return ColumnType.DATE;
+			return ColumnValueType.DATE;
 		case DATETIME:
-			return ColumnType.DATETIME;
+			return ColumnValueType.DATETIME;
 		case DECIMAL:
-			return ColumnType.DECIMAL;
+			return ColumnValueType.DECIMAL;
 		case STATUS:
 		case ENUM:
-			return ColumnType.SMALL_INTEGER;
+			return ColumnValueType.SMALL_INTEGER;
 		case INTEGER:
-			return ColumnType.INTEGER;
+			return ColumnValueType.INTEGER;
 		case LOGIC:
-			return ColumnType.LOGIC;
+			return ColumnValueType.LOGIC;
 		case TEXT:
-			return ColumnType.TEXT;
+			return ColumnValueType.TEXT;
 		case MEMO:
-			return ColumnType.CLOB;
+			return ColumnValueType.CLOB;
 		case TIME:
-			return ColumnType.TIME;
+			return ColumnValueType.TIME;
 		case MANY_TO_ONE:
 		case ONE_TO_ONE:
 			// TODO composed reference key
-			return ColumnType.INTEGER;
+			return ColumnValueType.INTEGER;
 		case ONE_TO_MANY:
 		case MANY_TO_MANY:
 		case UNKONW:
@@ -341,64 +341,66 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 	private TypeMapper readFieldTypeMapper(PropertyAccessor pa, EntityFieldModel field, Map<String, EntityModel> queue) {
 
 
-		Type tm = pa.getAnnotation(Type.class);
+		Maybe<Type> tm = pa.getAnnotation(Type.class);
 
-		if (tm == null){
+		if (!tm.isAbsent()){
+			return Introspector.of(tm.get().type()).newInstance();
+		}
 
-			if (domainModel.containsModelFor(pa.getValueType().getName())){
-				// it is an entity. return it typemapper
+		if (domainModel.containsModelFor(pa.getValueType().getName())){
+			// it is an entity. return it typemapper
 
-				EntityModelDataSetMapping map = this.mappings.get(pa.getValueType().getSimpleName().toLowerCase());
+			EntityModelDataSetMapping map = this.mappings.get(pa.getValueType().getSimpleName().toLowerCase());
 
-				if (map == null){
-					// recursive call
-					return processType(queue, pa.getValueType().getSimpleName());
-				} 
+			if (map == null){
+				// recursive call
+				return processType(queue, pa.getValueType().getSimpleName());
+			} 
 
-				return map.getTypeMapper();
+			return map.getTypeMapper();
 
+		} else if (pa.getValueType().isEnum()) {
+			if (StorableEnum.class.isAssignableFrom(pa.getValueType())){
+				return new EnumTypeMapper((Class<? extends StorableEnum>) pa.getValueType());
 			} else {
-				if (pa.getValueType().isEnum()) {
-					if (StorableEnum.class.isAssignableFrom(pa.getValueType())){
-						return new EnumTypeMapper((Class<? extends StorableEnum>) pa.getValueType());
-					} else {
-						throw new IllegalStateException("Cannot persist " + pa.getValueType().getName() + " as it is not a StorableEnum" );
-					}
+				throw new IllegalStateException("Cannot persist " + pa.getValueType().getName() + " as it is not a StorableEnum" );
+			}
+		} else {
 
-				} else {
+			String typeName;
 
-					String typeName;
-
-					final ClassIntrospector<?> introspector = Introspector.of(pa.getValueType());
-					if (introspector.isPrimitive()){
-						typeName = introspector.getPrimitiveWrapper().getName();
-					} else {
-						typeName = pa.getValueType().getName();
-					}
-
-					// search default
-					TypeMapper m = types.get(typeName);
-
-					if (m == null){
-
-						if (field.isIdentity()) {
-
-							Id id = pa.getAnnotation(Id.class);
-
-							return new IdentityTypeMapper(id.type());
-						}
-						throw new IllegalStateException("No TypeMapping found for class " + pa.getValueType().getName()); 
-					}
-
-					return m;
-				}
-
+			final ClassIntrospector<?> introspector = Introspector.of(pa.getValueType());
+			if (introspector.isPrimitive()){
+				typeName = introspector.getPrimitiveWrapper().getName();
+			} else {
+				typeName = pa.getValueType().getName();
 			}
 
+			// search default
+			TypeMapper m = types.get(typeName);
 
-		} else {
-			return Introspector.of(tm.type()).newInstance();
+			if (m == null){
+
+				if (field.isIdentity()) {
+
+					final Maybe<Id> maybetId = pa.getAnnotation(Id.class);
+
+					if (maybetId.isAbsent()){
+						return new IdentityTypeMapper( ((IdentityFieldDataTypeModel)field.getDataTypeModel()).getIdentityType() );
+					} else {
+						Id id = maybetId.get();
+
+						return new IdentityTypeMapper(id.type());
+					}
+
+				}
+				throw new IllegalStateException("No TypeMapping found for class " + pa.getValueType().getName()); 
+			}
+
+			return m;
 		}
+
+
 	}
 
 
@@ -412,15 +414,14 @@ public class AnnotationDomainModelDataSetMapper implements DomainModelDataSetMap
 
 		Dataset ds = model.getEntityClass().getAnnotation(Dataset.class);
 
-		if (ds == null || ds.name().length() == 0){
+		if (ds == null || ds.hardName().length() == 0){
 			mapping.setDataSetName(resolveDataSetNameFromEntity(model));
-			mapping.setInherintance(DatasetInheritance.NO_INHERITANCE);
 		} else {
-			mapping.setDataSetName(ds.name());
-			mapping.setInherintance(ds.inherintance());
+			mapping.setDataSetName(ds.hardName());
+			
 		}
 
-
+		//mapping.setInherintance(model.getInheritanceStrategy());
 
 	}
 

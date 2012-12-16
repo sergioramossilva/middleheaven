@@ -21,7 +21,7 @@ public abstract class AbstractEditableModelSet<M> implements ModelSet<M> {
 	 */
 	@Override
 	public <T extends M> Enumerable<T> models() {
-		return  (Enumerable<T>) CollectionUtils.enhance(models.values());
+		return  (Enumerable<T>) CollectionUtils.asEnumerable(models.values());
 	}
 
 	/**

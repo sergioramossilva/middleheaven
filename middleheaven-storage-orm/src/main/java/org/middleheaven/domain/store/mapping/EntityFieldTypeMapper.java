@@ -1,11 +1,12 @@
 /**
  * 
  */
-package org.middleheaven.storage.types;
+package org.middleheaven.domain.store.mapping;
 
 import org.middleheaven.domain.model.EntityFieldModel;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.model.DataColumnModel;
+import org.middleheaven.storage.types.TypeMapper;
 import org.middleheaven.util.QualifiedName;
 
 /**

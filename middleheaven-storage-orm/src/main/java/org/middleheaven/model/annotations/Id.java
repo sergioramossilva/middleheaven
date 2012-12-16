@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.middleheaven.util.identity.IntegerIdentity;
+
 /**
  * Marks a property as the entity's identifier.
  */
@@ -19,5 +21,5 @@ public @interface Id {
 	 * Is mandatory if the identity property resolves to an interface or abstract class.
 	 * @return the identity object class
 	 */
-	Class<?> type() default Void.class;
+	Class<?> type() default IntegerIdentity.class;
 }

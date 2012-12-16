@@ -10,13 +10,13 @@ import java.util.Date;
 
 import org.middleheaven.model.annotations.Id;
 import org.middleheaven.model.annotations.OneToMany;
-import org.middleheaven.model.annotations.Transient;
-import org.middleheaven.model.annotations.mapping.Column;
-import org.middleheaven.model.annotations.mapping.Dataset;
+import org.middleheaven.storage.annotations.Column;
+import org.middleheaven.storage.annotations.Dataset;
+import org.middleheaven.storage.annotations.Transient;
 import org.middleheaven.util.identity.Identity;
 import org.middleheaven.util.identity.IntegerIdentity;
 
-@Dataset(name="tablec")
+@Dataset(hardName="tablec")
 public class TestSubject {
 	
 	@Id(type=IntegerIdentity.class)
@@ -27,11 +27,11 @@ public class TestSubject {
 	@Transient
 	private String transientField;
 	
-	@Column(name="active")
+	@Column(hardName="active")
 	private boolean active;
 	private String name;
 	
-	@Column(name="birth")
+	@Column(hardName="birth")
 	private Date birthdate;
 
 	private int number;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.middleheaven.model.annotations.mapping;
+package org.middleheaven.model.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,16 +9,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.middleheaven.storage.types.TypeMapper;
 
 /**
- * 
+ * Marks the field that contains the descriminator value
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD , ElementType.FIELD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Documented
-public @interface Type {
+public @interface Discriminator {
 
-	
-	Class<TypeMapper> type ();
 }

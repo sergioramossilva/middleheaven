@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.middleheaven.model.annotations.mapping;
+package org.middleheaven.model.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,16 +9,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * Add dataset related information
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-public @interface Dataset {
+public @interface Inheritance {
 
-	String name() default "";
+	InheritanceStrategy strategy();
 	
-	DatasetInheritance inherintance() default DatasetInheritance.NO_INHERITANCE;
 }
