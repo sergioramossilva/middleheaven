@@ -3,13 +3,10 @@
  */
 package org.middleheaven.ui.web.vaadin;
 
-import java.util.List;
-
 import org.middleheaven.ui.UIActionHandler;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UISearch;
 import org.middleheaven.ui.UISearch.UISearchFilter;
-import org.middleheaven.ui.UITreeCriteria;
 import org.middleheaven.ui.components.UICommand;
 import org.middleheaven.ui.components.UIForm;
 import org.middleheaven.ui.events.UIActionEvent;
@@ -84,7 +81,7 @@ public class VaadinButton extends VaadinUIComponent implements UICommand{
 			for (UICommandModel commandModel  : getForm().getUIModel().getActions()){
 				
 				if (commandModel.getName().equals(uiModel.getName())){
-					this.setUIModel(commandModel);
+					this.model = commandModel;
 					break;
 				}
 			}
@@ -97,11 +94,13 @@ public class VaadinButton extends VaadinUIComponent implements UICommand{
 			public void buttonClick(ClickEvent event) {
 				
 		
-					UIActionEvent uiEvent = new UIActionEvent( getUIModel().getName(), VaadinButton.this);
+					final UICommandModel commandModel = getUIModel();
 					
-					for (UIActionHandler handler : getUIModel().getHandlers()){
+					UIActionEvent uiEvent = new UIActionEvent( commandModel.getName(), VaadinButton.this);
 					
-						handler.handleAction(uiEvent, getAttributeContext());
+					for (UIActionHandler handler : commandModel.getHandlers()){
+					
+						handler.handleAction(uiEvent);
 					}
 			
 				

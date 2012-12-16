@@ -39,6 +39,7 @@ public class VaddinFormRender extends AbstractVaadinRender {
 		
 		VaadinForm form = new VaadinForm();
 		form.setUIParent(parent);
+		form.setUIModel(component.getUIModel());
 		
 		for (UIComponent c : component.getChildrenComponents()){
 			
@@ -46,6 +47,8 @@ public class VaddinFormRender extends AbstractVaadinRender {
 				VaadinUIComponent v = (VaadinUIComponent) context.getRenderKit().renderComponent(context, form, c);
 				
 				form.getComponent().addComponent(v.getComponent());
+				
+				form.addComponent(v);
 			} else {
 				String name = ((UIFieldInputModel)c.getUIModel()).getName();
 				
@@ -57,6 +60,8 @@ public class VaddinFormRender extends AbstractVaadinRender {
 				h.addComponent(v.getComponent()); 
 				
 				form.getComponent().addComponent(h);
+				
+				form.addComponent(v);
 			}
 			
 		}

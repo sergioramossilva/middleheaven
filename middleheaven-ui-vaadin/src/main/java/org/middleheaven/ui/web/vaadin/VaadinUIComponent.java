@@ -3,13 +3,13 @@
  */
 package org.middleheaven.ui.web.vaadin;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.global.Culture;
 import org.middleheaven.global.LocalizationService;
 import org.middleheaven.global.text.TextLocalizable;
-import org.middleheaven.process.AttributeContext;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIDimension;
 import org.middleheaven.ui.UIDimensionUnit;
@@ -28,7 +28,7 @@ public abstract class VaadinUIComponent implements UIComponent {
 	
 	private Component component;
 	private String gid;
-	private UIModel model;
+	protected UIModel model;
 	private String family;
 	protected UIComponent parent;
 	private Class<? extends UIComponent> type;
@@ -53,9 +53,9 @@ public abstract class VaadinUIComponent implements UIComponent {
 		return app;
 	}
 	
-	public AttributeContext getAttributeContext(){
-		return  getApplication().getServletWebContext().getAttributes();
-	}
+//	public AttributeContext getAttributeContext(){
+//		return  getApplication().getServletWebContext().getAttributes();
+//	}
 	
 	public Culture getCulture(){
 		return  getApplication().getCulture();
@@ -271,7 +271,7 @@ public abstract class VaadinUIComponent implements UIComponent {
 	 */
 	@Override
 	public List<UIComponent> getChildrenComponents() {
-		throw new UnsupportedOperationException("Not implememented yet");
+	  return Collections.emptyList();
 	}
 
 	/**

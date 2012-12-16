@@ -5,7 +5,9 @@ package org.middleheaven.ui.web.vaadin;
 
 import org.middleheaven.ui.components.UITextField;
 
-import com.vaadin.ui.Component;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
+import com.vaadin.event.FieldEvents.TextChangeListener;
+import com.vaadin.ui.TextField;
 
 /**
  * 
@@ -18,8 +20,19 @@ public class VaadinTextInput extends VaadinFieldUIComponent implements UITextFie
 	 * @param component
 	 * @param type
 	 */
-	public VaadinTextInput(Component component) {
+	public VaadinTextInput(TextField component) {
 		super(component, UITextField.class);
+		
+		
+		component.addListener(new TextChangeListener(){
+
+			@Override
+			public void textChange(TextChangeEvent event) {
+				getUIModel().setValue(event.getText());
+			}
+			
+		});
+		
 	}
 
 	
