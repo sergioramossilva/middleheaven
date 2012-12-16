@@ -3,6 +3,7 @@ package org.middleheaven.sequence.service;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 
 import org.middleheaven.core.annotations.Service;
@@ -33,20 +34,19 @@ public class FileSequenceStorageActivator extends ServiceActivator  {
 
 	private SequenceStorageService sequenceStorageService;
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(BootstrapEnvironment.class));
+		specs.add(ServiceSpecification.forService(BootstrapEnvironment.class));
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(SequenceStorageService.class));
+		specs.add(ServiceSpecification.forService(SequenceStorageService.class));
 	}
 	
 	@Override
