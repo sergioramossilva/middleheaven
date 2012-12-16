@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.coersion.TypeCoercing;
 import org.middleheaven.util.collections.AbstractEnumerableAdapter;
 import org.middleheaven.util.collections.TransformedIterator;
+import org.middleheaven.util.function.Mapper;
 
 public class MapContext extends AbstractAttributeContext {
 
@@ -97,10 +97,10 @@ public class MapContext extends AbstractAttributeContext {
 		@Override
 		public Iterator<Attribute> iterator() {
 			
-			return TransformedIterator.transform(contextMap.get(scope).entrySet().iterator(), new Classifier<Attribute, Map.Entry<String, Object>>(){
+			return TransformedIterator.transform(contextMap.get(scope).entrySet().iterator(), new Mapper<Attribute, Map.Entry<String, Object>>(){
 
 				@Override
-				public Attribute classify(Entry<String, Object> next) {
+				public Attribute apply(Entry<String, Object> next) {
 					return new ObjectAttribute(next.getKey(), next.getValue());
 				}
 			
