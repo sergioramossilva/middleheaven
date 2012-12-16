@@ -13,7 +13,7 @@ public class ActivatorB extends ServiceActivator {
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(A.class));
+		specs.add(ServiceSpecification.forService(A.class));
 	}
 	
 	/**
@@ -21,7 +21,7 @@ public class ActivatorB extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(B.class));
+		specs.add(ServiceSpecification.forService(B.class));
 	}
 	
 	/**
