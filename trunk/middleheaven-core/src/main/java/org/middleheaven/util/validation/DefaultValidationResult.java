@@ -59,7 +59,7 @@ public class DefaultValidationResult implements ValidationResult{
 	@Override
 	public Iterator<InvalidationReason> iterator() {
 		// reason.values returns a list of list of reasons.
-		return new IteratorsIterator<InvalidationReason>(reasons.values());
+		return IteratorsIterator.aggregateIterables(reasons.values());
 	}
 
 

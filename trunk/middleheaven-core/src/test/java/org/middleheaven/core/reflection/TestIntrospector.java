@@ -9,14 +9,13 @@ import java.util.LinkedList;
 import org.junit.Test;
 import org.middleheaven.core.annotations.Wire;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
 
 
 public class TestIntrospector {
 
 	@Test
 	public void testPropertyAcessor(){
-		
 		
 		SomeBean sb = new SomeBean();
 		
@@ -54,7 +53,7 @@ public class TestIntrospector {
 	@Test
 	public void testAnnotationsInParents(){
 		
-		EnhancedCollection<Method> all = Introspector.of(SomeObject.class).inspect()
+		Enumerable<Method> all = Introspector.of(SomeObject.class).inspect()
 		.methods()
 		.notInheritFromObject()
 		.annotatedWith(Wire.class).retriveAll();

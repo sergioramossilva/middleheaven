@@ -10,7 +10,7 @@ import java.util.List;
  * 
  */
 public class SomeBean {
-
+	
 	private List list;
 
 	// to confuse inspector

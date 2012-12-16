@@ -16,7 +16,7 @@ import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ManagedFileRepository;
 import org.middleheaven.io.repository.machine.MachineFiles;
 import org.middleheaven.tool.test.MiddleHeavenTestCase;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
 
 public class ManagedIOTest extends MiddleHeavenTestCase {
@@ -66,10 +66,10 @@ public class ManagedIOTest extends MiddleHeavenTestCase {
 	    
 	    final AtomicInteger count = new  AtomicInteger();
 	    
-	    junitJar.forEach(new Walker<ManagedFile>(){
+	    junitJar.forEach(new Block<ManagedFile>(){
 
 			@Override
-			public void doWith(ManagedFile object) {
+			public void apply(ManagedFile object) {
 				count.incrementAndGet();
 			}
 	    	
