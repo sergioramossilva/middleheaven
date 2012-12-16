@@ -29,7 +29,7 @@ public class HttpClientServiceActivator extends ServiceActivator{
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(HttpClientService.class));
+		specs.add(ServiceSpecification.forService(HttpClientService.class));
 	}
 	
 	/**
