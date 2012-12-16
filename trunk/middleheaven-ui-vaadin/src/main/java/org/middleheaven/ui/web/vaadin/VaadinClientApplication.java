@@ -4,14 +4,16 @@
 package org.middleheaven.ui.web.vaadin;
 
 import java.net.URL;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.global.Culture;
 import org.middleheaven.process.web.server.ServletWebContext;
+import org.middleheaven.ui.SceneNavigator;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.UIModel;
@@ -33,12 +35,14 @@ public class VaadinClientApplication extends Application implements UIClient{
 	private String gid;
 	private UIClientModel model;
 	private String family;
-	private List<VaadinUIComponent> components = new CopyOnWriteArrayList<VaadinUIComponent>();
+	private Map <String, VaadinUIComponent> components = new LinkedHashMap<String,VaadinUIComponent>();
 	private ServletWebContext renderingContext;
+	private SceneNavigator navigator;
 
 	
-	public VaadinClientApplication (ServletWebContext renderingContext){
+	public VaadinClientApplication (ServletWebContext renderingContext, SceneNavigator navigator){
 		this.renderingContext = renderingContext;
+		this.navigator = navigator;
 	}
 	
     public void start(URL applicationUrl, Properties applicationProperties, ApplicationContext context) {
@@ -198,7 +202,7 @@ public class VaadinClientApplication extends Application implements UIClient{
 	 */
 	@Override
 	public List<UIComponent> getChildrenComponents() {
-		return Collections.<UIComponent>unmodifiableList(components);
+		return new ArrayList<UIComponent>(this.components.values());
 	}
 
 	/**
@@ -217,7 +221,7 @@ public class VaadinClientApplication extends Application implements UIClient{
 		
 		final VaadinUIComponent c = (VaadinUIComponent) component;
 		
-		components.add(c);
+		components.put(c.getGID(), c);
 		
 		Window window = (Window) c.getComponent();
 
@@ -262,7 +266,7 @@ public class VaadinClientApplication extends Application implements UIClient{
 	 */
 	@Override
 	public void setEnabled(boolean enabled) {
-		throw new UnsupportedOperationException("Not supported");
+		throw new UnsupportedOperationException("Read only property.");
 	}
 
 	/**
@@ -286,7 +290,15 @@ public class VaadinClientApplication extends Application implements UIClient{
 	 */
 	@Override
 	public UIComponent findContainedComponent(String componentID) {
-		throw new UnsupportedOperationException("Not implememented yet");
+		return components.get(componentID);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SceneNavigator getSceneNavigator() {
+		return navigator;
 	}
 
 

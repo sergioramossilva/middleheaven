@@ -25,8 +25,8 @@ public class VaadinClientRender extends UIRender {
 		
 		ServletWebContext scontext = context.getAttribute("mhRequestResponseWebContext", ServletWebContext.class);
 		
-		return new VaadinClientApplication(scontext);
-		
+		return new VaadinClientApplication(scontext, context.getRenderKit().getSceneNavigator());
+
 	}
 
 }

@@ -1,4 +1,5 @@
 package org.middleheaven.ui.web.vaadin;
+import org.middleheaven.ui.SceneNavigator;
 import org.middleheaven.ui.UIClient;
 import org.middleheaven.ui.UIComponent;
 import org.middleheaven.ui.components.UICommand;
@@ -13,7 +14,6 @@ import org.middleheaven.ui.components.UIView;
 import org.middleheaven.ui.components.UIWindow;
 import org.middleheaven.ui.rendering.AbstractRenderKit;
 import org.middleheaven.ui.rendering.RenderKit;
-import org.middleheaven.ui.rendering.SceneNavigator;
 import org.middleheaven.ui.rendering.UIUnitConverter;
 
 /**

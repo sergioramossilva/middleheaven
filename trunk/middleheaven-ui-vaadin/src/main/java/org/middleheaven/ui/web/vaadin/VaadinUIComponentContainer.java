@@ -5,7 +5,6 @@ package org.middleheaven.ui.web.vaadin;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.middleheaven.ui.UIComponent;
@@ -46,6 +45,10 @@ public abstract class VaadinUIComponentContainer extends VaadinUIComponent imple
 	}
 
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public ComponentContainer getComponent(){
 		return (ComponentContainer) super.getComponent();
 	}
@@ -64,10 +67,11 @@ public abstract class VaadinUIComponentContainer extends VaadinUIComponent imple
 	@Override
 	public void addComponent(UIComponent component) {
 		
-		if (component.isType(UILayout.class)){
-			this.setUIContainerLayout((UILayout) component);
+		if (component instanceof UILayout){
+			this.setUIContainerLayout(UILayout.class.cast(component));
+			this.components.add((VaadinUIComponent) component);
 		} else if ( this.layout == null){
-			VaadinUIComponent c = (VaadinUIComponent)component;
+			VaadinUIComponent c = VaadinUIComponent.class.cast(component);
 			this.addWrapperComponent(c);
 			this.getComponent().addComponent(c.getComponent());
 		} else {

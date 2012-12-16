@@ -5,7 +5,9 @@ package org.middleheaven.ui.web.vaadin;
 
 import org.middleheaven.ui.components.UISecretField;
 
-import com.vaadin.ui.Component;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
+import com.vaadin.event.FieldEvents.TextChangeListener;
+import com.vaadin.ui.PasswordField;
 
 /**
  * 
@@ -18,8 +20,17 @@ public class VaadinSecretInput extends VaadinFieldUIComponent implements UISecre
 	 * @param component
 	 * @param type
 	 */
-	public VaadinSecretInput(Component component) {
+	public VaadinSecretInput(PasswordField component) {
 		super(component, UISecretField.class);
+		
+		component.addListener(new TextChangeListener(){
+
+			@Override
+			public void textChange(TextChangeEvent event) {
+				getUIModel().setValue(event.getText());
+			}
+			
+		});
 	}
 
 
