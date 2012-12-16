@@ -20,7 +20,7 @@ public class AccessControlActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(AccessControlService.class));
+		specs.add(ServiceSpecification.forService(AccessControlService.class));
 	}
 	
 	/**
