@@ -63,7 +63,10 @@ public class DesktopBootstrap extends AbstractBootstrap {
 			public BootstrapEnvironment resolveEnvironment(
 					BootstrapContext context) {
 				
-				return new DesktopUIBootstrapEnvironment(new LogServiceDelegatorLogger(this.getClass().getName(), context.getLoggingService()));
+				return new DesktopUIBootstrapEnvironment(
+						new LogServiceDelegatorLogger(this.getClass().getName(), context.getLoggingService()),
+						DesktopBootstrap.this.getWiringService().getInstance(UIService.class)
+				);
 			}
 			
 		};

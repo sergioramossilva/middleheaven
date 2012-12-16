@@ -13,7 +13,7 @@ import org.middleheaven.ui.rendering.UIRender;
 /**
  * 
  */
-public class DesktopClientRender  extends UIRender{
+public class DesktopClientRender  extends UIRender {
 
 
 	private static final long serialVersionUID = -171038403911015067L;
