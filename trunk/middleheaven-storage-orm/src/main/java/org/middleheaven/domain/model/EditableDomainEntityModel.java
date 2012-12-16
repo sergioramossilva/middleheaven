@@ -1,6 +1,7 @@
 package org.middleheaven.domain.model;
 
 import org.middleheaven.core.reflection.metaclass.MetaClass;
+import org.middleheaven.model.annotations.InheritanceStrategy;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.collections.Enumerable;
 
@@ -22,7 +23,7 @@ public interface EditableDomainEntityModel extends EntityModel {
 	 */
 	public EditableEntityFieldModel identityFieldModel();
 
-	
+	public void setInheritanceStrategy(InheritanceStrategy strategy);
 	/**
 	 * 
 	 * @return all entity's field entity model.
@@ -40,5 +41,19 @@ public interface EditableDomainEntityModel extends EntityModel {
 	 */
 	public void addField(EditableEntityFieldModel fm);
 
+	public void addDescriminatorValue( Class<?> type , Object value);
+
+	/**
+	 * @param em
+	 */
+	public void copyFieldTo(EditableDomainEntityModel em);
+
+	/**
+	 * @param name
+	 * @return
+	 */
+	public boolean hasField(String name);
+	
+	public void setInheritanceRoot(String entityName);
 	
 }

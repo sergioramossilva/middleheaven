@@ -26,9 +26,9 @@ public interface EditableEntityFieldModel extends EntityFieldModel{
 	/**
 	 * @param annotadedWith
 	 */
-	public void setTransient(boolean annotadedWith);
+	public void setTransient(boolean isTransient);
 
 	
-	
+	public void setDiscriminator(boolean isDiscriminator);
 
 }

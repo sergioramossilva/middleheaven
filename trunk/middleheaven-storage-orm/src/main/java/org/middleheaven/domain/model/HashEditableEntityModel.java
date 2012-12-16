@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.middleheaven.core.reflection.metaclass.MetaClass;
+import org.middleheaven.model.annotations.InheritanceStrategy;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.Enumerable;
@@ -18,6 +19,10 @@ public final class HashEditableEntityModel implements EditableDomainEntityModel 
 	private EditableEntityFieldModel identityFieldModel;
 	private MetaClass identityType;
 	private boolean assigned = false;
+	private InheritanceStrategy inheritanceStrategy = InheritanceStrategy.NO_INHERITANCE;
+	private Map<String, Object> descriminatorValues = new HashMap<String, Object>();
+	private EditableEntityFieldModel discriminatorFieldModel;
+	private String inheritanceRootEntityName;
 	
 	/**
 	 * 
@@ -62,6 +67,9 @@ public final class HashEditableEntityModel implements EditableDomainEntityModel 
 	public void addField(EditableEntityFieldModel fieldModel) {
 		if (fieldModel.isIdentity()) {
 			this.identityFieldModel = fieldModel;
+		}
+		if (fieldModel.isDiscriminator()) {
+			this.discriminatorFieldModel = fieldModel;
 		}
 		this.fields.put(fieldModel.getName().getDesignation(), fieldModel);
 	}
@@ -123,7 +131,7 @@ public final class HashEditableEntityModel implements EditableDomainEntityModel 
 	 */
 	@Override
 	public Enumerable<? extends EditableEntityFieldModel> fields() {
-		return CollectionUtils.enhance(this.fields.values());
+		return CollectionUtils.asEnumerable(this.fields.values());
 	}
 
 
@@ -138,6 +146,90 @@ public final class HashEditableEntityModel implements EditableDomainEntityModel 
 	public void setIdentityAssigned(boolean assigned) {
 		this.assigned = assigned;
 	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public InheritanceStrategy getInheritanceStrategy() {
+		return this.inheritanceStrategy;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public FieldModel getDescriminatorFieldModel() {
+		return discriminatorFieldModel;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Object getDescriminatorValue(Class<?> type) {
+		return descriminatorValues.get(type.getName());
+	}
+
+	public void setInheritanceStrategy(InheritanceStrategy inheritanceStrategy){
+		this.inheritanceStrategy = inheritanceStrategy;
+	}
+	
+	public void addDescriminatorValue( Class<?> type , Object value){
+		descriminatorValues.put(type.getName(), value);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void copyFieldTo(EditableDomainEntityModel em) {
+		for (EditableEntityFieldModel fm : this.fields.values()){
+			em.addField(fm);
+		}
+		
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasField(String name) {
+		return fields.containsKey(name);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isInheritanceRoot() {
+		return this.getEntityName().equals(inheritanceRootEntityName);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setInheritanceRoot(String entityName) {
+		this.inheritanceRootEntityName = entityName;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getInheritanceRootEntityName() {
+		return this.inheritanceRootEntityName;
+	}
+
 
 
 

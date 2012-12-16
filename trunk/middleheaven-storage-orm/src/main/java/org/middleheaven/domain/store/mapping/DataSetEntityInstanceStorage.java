@@ -44,7 +44,6 @@ import org.middleheaven.persistance.criteria.building.RelationOperator;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.persistance.model.DataSetModel;
 import org.middleheaven.sequence.Sequence;
-import org.middleheaven.storage.types.EntityFieldTypeMapper;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.classification.LogicOperator;
 import org.middleheaven.util.criteria.Criterion;
@@ -64,7 +63,7 @@ public class DataSetEntityInstanceStorage extends AbstractEntityInstanceStorage 
 
 	private DataService dataPersistanceService;
 	private DomainModel domaiModel;
-	private DomainModelDataSetMapper mapper;
+	private DomainModelDataSetTypeMapper mapper;
 
 	/**
 	 * 
@@ -73,7 +72,7 @@ public class DataSetEntityInstanceStorage extends AbstractEntityInstanceStorage 
 	 * @param domainModel
 	 * @param mapper
 	 */
-	public DataSetEntityInstanceStorage (DataService dataPersistanceService , DomainModel domainModel, DomainModelDataSetMapper mapper){
+	public DataSetEntityInstanceStorage (DataService dataPersistanceService , DomainModel domainModel, DomainModelDataSetTypeMapper mapper){
 		this.dataPersistanceService = dataPersistanceService;
 		this.domaiModel = domainModel;
 		this.mapper = mapper;

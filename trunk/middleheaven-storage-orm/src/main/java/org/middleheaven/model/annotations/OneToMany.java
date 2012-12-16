@@ -7,14 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Documented
 public @interface OneToMany {
 
-	/**
-	 * 
-	 * @return end point entity class
-	 */
-	Class target();
+	Class<?> target();
 	
 }

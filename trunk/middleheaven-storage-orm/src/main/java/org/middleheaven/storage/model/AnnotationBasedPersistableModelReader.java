@@ -14,11 +14,13 @@ import org.middleheaven.model.annotations.ManyToOne;
 import org.middleheaven.model.annotations.NotNull;
 import org.middleheaven.model.annotations.OneToMany;
 import org.middleheaven.model.annotations.OneToOne;
-import org.middleheaven.model.annotations.Unique;
 import org.middleheaven.model.annotations.Version;
-import org.middleheaven.model.annotations.mapping.Dataset;
 import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
 import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
+import org.middleheaven.storage.annotations.Dataset;
+import org.middleheaven.storage.annotations.Unique;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Maybe;
 
 
 /**
@@ -39,15 +41,15 @@ public class AnnotationBasedPersistableModelReader implements
 		
 		ClassIntrospector<? extends Object> inspector = Introspector.of(type);
 		
-		Dataset table = inspector.getAnnotation(Dataset.class);
+		 Maybe<Dataset> maybeDataset = inspector.getAnnotation(Dataset.class);
 		
-		if (table != null) {
-			tableModel.setName(table.name());
-		} else {
+		if (maybeDataset.isAbsent()) {
 			tableModel.setName(type.getSimpleName());
+		} else {
+			tableModel.setName(maybeDataset.get().hardName());
 		}
 		
-		Collection<PropertyAccessor> propertyAccessors = inspector.inspect().properties().retriveAll();
+		Enumerable<PropertyAccessor> propertyAccessors = inspector.inspect().properties().retriveAll();
 
 		if (propertyAccessors.isEmpty()){
 			throw new ModelingException("No public properties found for entity " + type.getName() + ".");
@@ -72,14 +74,12 @@ public class AnnotationBasedPersistableModelReader implements
 		
 		EditableColumnModel fm = em.getColumnModel(pa.getName());
 		
-		em.addColumn(fm);
-		
 		//fm.setTransient(pa.isAnnotadedWith(Transient.class));
 		fm.setVersion( pa.isAnnotadedWith(Version.class));
 		fm.setUnique( pa.isAnnotadedWith(Unique.class));
 		
 		if (fm.isUnique()){
-			Unique unique = pa.getAnnotation(Unique.class);
+			Unique unique = pa.getAnnotation(Unique.class).get();
 			fm.setUniqueGroup(unique.group());
 			
 			
@@ -93,7 +93,7 @@ public class AnnotationBasedPersistableModelReader implements
 	//	fm.setValueType(valueType);
 
 		if(pa.isAnnotadedWith(Id.class)){
-			Id key = pa.getAnnotation(Id.class);
+			Id key = pa.getAnnotation(Id.class).get();
 
 			fm.setKey(true);
 			fm.setUnique(true);
@@ -105,14 +105,14 @@ public class AnnotationBasedPersistableModelReader implements
 			
 		} else if (pa.isAnnotadedWith(ManyToOne.class)){
 
-			ManyToOne ref = pa.getAnnotation(ManyToOne.class);
+			ManyToOne ref = pa.getAnnotation(ManyToOne.class).get();
 			String fieldName = ref.targetIdentityField();
 
 		//	mapAsManyToOne(fm,fieldName,valueType,builder);
 
 		} else if (pa.isAnnotadedWith(OneToOne.class)){
 		//	fm.setDataType(DataType.ONE_TO_ONE);
-			OneToOne ref = pa.getAnnotation(OneToOne.class);
+			OneToOne ref = pa.getAnnotation(OneToOne.class).get();
 			String fieldName = ref.targetIdentityField();
 
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ONE_TO_ONE);
@@ -134,7 +134,7 @@ public class AnnotationBasedPersistableModelReader implements
 
 		} else if (pa.isAnnotadedWith(OneToMany.class)){
 		//	fm.setDataType( DataType.ONE_TO_MANY);
-			OneToMany ref = pa.getAnnotation(OneToMany.class);
+			OneToMany ref = pa.getAnnotation(OneToMany.class).get();
 
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.ONE_TO_MANY);
 
@@ -147,7 +147,7 @@ public class AnnotationBasedPersistableModelReader implements
 
 		} else if (pa.isAnnotadedWith(ManyToMany.class)){
 		//	fm.setDataType(DataType.MANY_TO_MANY);
-			ManyToMany ref = pa.getAnnotation(ManyToMany.class);
+			ManyToMany ref = pa.getAnnotation(ManyToMany.class).get();
 
 			DefaultReferenceDataTypeModel model = new DefaultReferenceDataTypeModel(DataType.MANY_TO_MANY);
 

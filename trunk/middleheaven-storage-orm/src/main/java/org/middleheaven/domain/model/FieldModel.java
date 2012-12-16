@@ -1,11 +1,16 @@
-package org.middleheaven.model;
+package org.middleheaven.domain.model;
 
-import org.middleheaven.domain.model.DataType;
-import org.middleheaven.domain.model.DataTypeModel;
 import org.middleheaven.util.QualifiedName;
 
 public interface FieldModel {
 
+	/**
+	 * This is the discriminator field. Discriminator fields holded value allows to diferenciate 
+	 * between diferente classes in an single table inherintance strategy
+	 * @return <code>true</code> if this is a discriminator field;
+	 */
+	public boolean isDiscriminator();
+	
 	/**
 	 * This is a transient field. Transiente fields are not mapped to persistenace.
 	 * @return <code>true</code> if this is a transient field;

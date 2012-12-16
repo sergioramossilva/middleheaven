@@ -10,6 +10,7 @@ public class DefaultReferenceDataTypeModel implements ReferenceDataTypeModel {
 	private MetaClass targetType;
 	private MetaClass targetFieldType;
 	private MetaClass aggregationType;
+	private DataType targetFieldDataType;
 	
 	protected DefaultReferenceDataTypeModel() {
 		super();
@@ -72,5 +73,21 @@ public class DefaultReferenceDataTypeModel implements ReferenceDataTypeModel {
 	public void setTargetFieldType( MetaClass type) {
 		this.targetFieldType = type;
 	}
+
+	/**
+	 * @param dataType2
+	 */
+	public void setTargetFieldDataType(DataType dataType) {
+		this.targetFieldDataType = dataType;
+	}
+
+	/**
+	 * Obtains {@link DataType}.
+	 * @return the targetFieldDataType
+	 */
+	public DataType getTargetFieldDataType() {
+		return targetFieldDataType;
+	}
+	
 	
 }

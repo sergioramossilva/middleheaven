@@ -16,14 +16,14 @@ public class DomainStoreServiceActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(WiringService.class));
+		specs.add( ServiceSpecification.forService(WiringService.class));
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(DomainStoreService.class));
+		specs.add( ServiceSpecification.forService(DomainStoreService.class));
 	}
 	
 	/**

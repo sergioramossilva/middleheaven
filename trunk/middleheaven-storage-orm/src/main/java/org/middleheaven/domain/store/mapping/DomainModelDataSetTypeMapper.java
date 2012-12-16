@@ -4,14 +4,13 @@
 package org.middleheaven.domain.store.mapping;
 
 import org.middleheaven.domain.model.EntityModel;
-import org.middleheaven.storage.types.EntityFieldTypeMapper;
 import org.middleheaven.storage.types.TypeMapper;
 import org.middleheaven.util.QualifiedName;
 
 /**
  * 
  */
-public interface DomainModelDataSetMapper {
+public interface DomainModelDataSetTypeMapper {
 
 	/**
 	 * @param entityModel

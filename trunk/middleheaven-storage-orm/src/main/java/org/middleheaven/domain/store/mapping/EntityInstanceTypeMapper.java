@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.middleheaven.storage.types;
+package org.middleheaven.domain.store.mapping;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,6 +23,7 @@ import org.middleheaven.domain.store.MetaBeanEntityInstance;
 import org.middleheaven.domain.store.StorableState;
 import org.middleheaven.persistance.DataRow;
 import org.middleheaven.persistance.model.DataColumnModel;
+import org.middleheaven.storage.types.TypeMapper;
 import org.middleheaven.util.QualifiedName;
 
 /**

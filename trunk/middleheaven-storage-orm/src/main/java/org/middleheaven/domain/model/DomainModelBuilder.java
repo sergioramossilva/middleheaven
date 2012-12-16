@@ -1,6 +1,9 @@
 package org.middleheaven.domain.model;
 
+import java.util.LinkedList;
+
 import org.middleheaven.core.reflection.ClassSet;
+import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.metaclass.ReflectionMetaClass;
 import org.middleheaven.model.AbstractModelBuilder;
 import org.middleheaven.persistance.db.mapping.IllegalModelStateException;
@@ -12,19 +15,29 @@ public final class DomainModelBuilder extends AbstractModelBuilder<EntityModel, 
 
 
 	public DomainModelBuilder(){
-		addReader(new DefaultAnnotatedModelReader());
+		addReader(new AnnotatedModelReader());
 	}
 
 	public DomainModel build(ClassSet classes){
 		
 		final SimpleModelBuilder builder = new SimpleModelBuilder();
 
+		LinkedList<Class> stack = new LinkedList<Class>();
+		
 		for (Class c : classes){
 			if (isDomainAbstraction(c)){
-				reader().read(c, builder);
+				// inheritance needs to process the parent first
+				if (ClassIntrospector.of(c).getRootParent().isAbsent()){
+					stack.addFirst(c);
+				} else {
+					stack.addLast(c);
+				}
 			}
 		}
 		
+		for (Class c : stack){
+			reader().read(c, builder);
+		}
 		
 		DomainModel model =  builder.getModel();
 		
@@ -38,13 +51,13 @@ public final class DomainModelBuilder extends AbstractModelBuilder<EntityModel, 
 					EditableDomainEntityModel targetModel =  (EditableDomainEntityModel) model.getModelFor(typeModel.getTargetType().getName());
 
 					if (targetModel == null){
-						throw new IllegalModelStateException(fm.getValueType().getName() + " is not an entity");
+						throw new IllegalModelStateException("Reference type " + fm.getValueType().getName() + " for field " + fm.getName() +  " is not an entity");
 					}
 					String fieldName = targetModel.identityFieldModel().getName().getDesignation();
 					
 					typeModel.setTargetFieldName(fieldName);
 					typeModel.setTargetFieldType(targetModel.getIdentityType());
-
+					typeModel.setTargetFieldDataType(targetModel.identityFieldModel().getDataType());
 				}
 			}
 			
@@ -150,7 +163,7 @@ public final class DomainModelBuilder extends AbstractModelBuilder<EntityModel, 
 		return !c.isInterface();
 	}
 
-	private static class SimpleModelBuilder implements EntityModelBuildContext {
+	private class SimpleModelBuilder implements EntityModelBuildContext {
 
 		EditableDomainModel model = new EditableDomainModel();
 		
@@ -158,7 +171,7 @@ public final class DomainModelBuilder extends AbstractModelBuilder<EntityModel, 
 		public EditableDomainEntityModel getEditableModelOf(Class<?> type) {
 			EntityModel em = model.getModelFor(type.getName());
 			if (em == null){
-				em =  new HashEditableEntityModel(new ReflectionMetaClass(type));
+				em = new HashEditableEntityModel(new ReflectionMetaClass(type));
 				model.addModel(type.getName(), em);
 			}
 			return (EditableDomainEntityModel) em;

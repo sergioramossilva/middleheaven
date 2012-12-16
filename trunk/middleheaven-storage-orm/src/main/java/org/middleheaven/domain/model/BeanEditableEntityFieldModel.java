@@ -17,6 +17,7 @@ public class BeanEditableEntityFieldModel implements EditableEntityFieldModel {
 	private DataTypeModel dataTypeModel;
 	private String uniqueGroup;
 	private boolean isTransient;
+	private boolean isDiscriminator;
 
 	public BeanEditableEntityFieldModel(String entityName, String name) {
 		this.name = QualifiedName.qualify(entityName, name);
@@ -168,6 +169,23 @@ public class BeanEditableEntityFieldModel implements EditableEntityFieldModel {
 	public void setTransient(boolean isTransient) {
 		this.isTransient = isTransient;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isDiscriminator() {
+		return this.isDiscriminator;
+	}
+
+	/**
+	 * Atributes {@link boolean}.
+	 * @param isDiscriminator the isDiscriminator to set
+	 */
+	public void setDiscriminator(boolean isDiscriminator) {
+		this.isDiscriminator = isDiscriminator;
+	}
+	
 	
 	
 
