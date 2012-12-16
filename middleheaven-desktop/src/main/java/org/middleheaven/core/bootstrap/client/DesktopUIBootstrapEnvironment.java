@@ -1,7 +1,6 @@
 package org.middleheaven.core.bootstrap.client;
 
 import org.middleheaven.core.services.ServiceNotAvailableException;
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.logging.Logger;
 import org.middleheaven.process.MapContext;
 import org.middleheaven.ui.UIClient;
@@ -18,17 +17,18 @@ public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEn
 
 	RenderingContext renderedContext;
 	private Logger logger;
+	private UIService uiService;
 
-	public DesktopUIBootstrapEnvironment(Logger logger) {
+	public DesktopUIBootstrapEnvironment(Logger logger, UIService uiService) {
 		super();
 		this.logger = logger;
+		this.uiService = uiService;
 		this.renderedContext = new RenderingContext(new MapContext(), new SwingRenderKit());
 	}
 
 	public void start(){
 
 		try{
-			UIService uiService = ServiceRegistry.getService(UIService.class);
 			
 			UIClient client = uiService.getUIClientRendering(UIEnvironmentType.DESKTOP).getComponent();
 
@@ -55,8 +55,7 @@ public class DesktopUIBootstrapEnvironment extends AbstractStandaloneBootstrapEn
 	@Override
 	public void stop() {
 		try{
-			UIService uiService=ServiceRegistry.getService(UIService.class);
-			
+
 			UIClient client =  uiService.getUIClientRendering(UIEnvironmentType.DESKTOP).getComponent();
 			
 			final UIClientModel clientModel = client.getUIModel();
