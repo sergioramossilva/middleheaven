@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.AbstractManagedFile;
@@ -18,9 +19,9 @@ import org.middleheaven.io.repository.ManagedFileType;
 import org.middleheaven.io.repository.ModificationTracableManagedFile;
 import org.middleheaven.io.repository.empty.EmptyFileContent;
 import org.middleheaven.io.repository.watch.Watchable;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.collections.CollectionUtils;
 import org.middleheaven.util.collections.TransformedCollection;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * 
@@ -202,12 +203,12 @@ class FileIOManagedFileAdapter  extends AbstractManagedFile implements Watchable
 		File[] children = systemFile.getAbsoluteFile().listFiles();
 
 		if (children == null){ // not a folder
-			return CollectionUtils.emptyCollection();
+			return Collections.emptySet();
 		} else {
-			return TransformedCollection.transform(Arrays.asList(children), new Classifier<ManagedFile , File> (){
+			return TransformedCollection.transform(Arrays.asList(children), new Mapper<ManagedFile , File> (){
 
 				@Override
-				public ManagedFile classify(File obj) {
+				public ManagedFile apply(File obj) {
 					return repository.resolveFile(obj);
 				}
 

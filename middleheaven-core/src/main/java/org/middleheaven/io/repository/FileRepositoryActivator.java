@@ -28,7 +28,7 @@ public class FileRepositoryActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(FileRepositoryService.class));
+		specs.add(ServiceSpecification.forService(FileRepositoryService.class));
 	}
 	
 	/**

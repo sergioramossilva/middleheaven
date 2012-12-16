@@ -5,7 +5,7 @@ import java.net.URI;
 
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.util.collections.CollectionUtils;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
 
 /**
  * An abstract implementation of a {@link MediaManagedFile}.
@@ -55,8 +55,8 @@ public abstract class AbstractMediaManagedFile extends AbstractManagedFile imple
 	}
 	
 	@Override
-	public EnhancedCollection<ManagedFile> children() throws ManagedIOException {
-		return CollectionUtils.emptyCollection();
+	public Enumerable<ManagedFile> children() throws ManagedIOException {
+		return CollectionUtils.emptyEnumerable();
 	}
 
 	

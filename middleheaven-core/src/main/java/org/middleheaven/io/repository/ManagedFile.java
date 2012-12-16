@@ -10,13 +10,13 @@ import java.net.URI;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.watch.Watchable;
 import org.middleheaven.util.collections.Enumerable;
-import org.middleheaven.util.collections.TreeWalkable;
+import org.middleheaven.util.collections.TreeEnumerable;
 
 
 /**
  * A common abstract for all types of files : disk files, url addresses, uploaded files, email attachments, etc ...
  */
-public interface ManagedFile extends TreeWalkable<ManagedFile> , Watchable , ContentSource{
+public interface ManagedFile extends TreeEnumerable<ManagedFile> , Watchable , ContentSource, Enumerable<ManagedFile>{
 
 	
 	public ManagedFileRepository getRepository();
@@ -156,11 +156,6 @@ public interface ManagedFile extends TreeWalkable<ManagedFile> , Watchable , Con
      */
 	public boolean delete();
 
-
-	/**
-	 * @return
-	 */
-	public Enumerable<ManagedFile> children();
 
 	/**
 	 * Deletes all children files and folders, and all children in those folders.

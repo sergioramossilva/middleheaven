@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.middleheaven.io.ManagedIOException;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
 /**
  * {@link ManagedFile} decorator that provides text specific methods. Useful to handle text files.
@@ -60,7 +60,7 @@ public class TextFile extends ManagedFileDecorator {
 		}
 	}
 	
-	public void eachLine (Walker<String> walker){
+	public void eachLine (Block<String> walker){
 		BufferedReader reader = null;
 		try{
 
@@ -69,7 +69,7 @@ public class TextFile extends ManagedFileDecorator {
 		
 			String line;
 			while ((line = reader.readLine()) !=null){
-				walker.doWith(line);
+				walker.apply(line);
 			}
 
 		} catch (IOException e){
