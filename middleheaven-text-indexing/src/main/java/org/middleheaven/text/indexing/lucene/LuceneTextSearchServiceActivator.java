@@ -29,7 +29,7 @@ public class LuceneTextSearchServiceActivator extends ServiceActivator {
 	@Override
 	public void collectPublishedServicesSpecifications(
 			Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(TextIndexingService.class));
+		specs.add(ServiceSpecification.forService(TextIndexingService.class));
 	}
 
 	/**
