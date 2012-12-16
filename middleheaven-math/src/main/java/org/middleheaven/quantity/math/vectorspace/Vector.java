@@ -6,12 +6,12 @@ package org.middleheaven.quantity.math.vectorspace;
 import org.middleheaven.quantity.math.UnivariateFunction;
 import org.middleheaven.quantity.math.structure.FieldElement;
 import org.middleheaven.quantity.math.structure.GroupAdditiveElement;
-import org.middleheaven.util.collections.Walkable;
+import org.middleheaven.util.collections.Enumerable;
 
 /**
  * 
  */
-public interface Vector<F extends FieldElement<F>> extends  Walkable<F> , GroupAdditiveElement<Vector<F>>{
+public interface Vector<F extends FieldElement<F>> extends  Enumerable<F> , GroupAdditiveElement<Vector<F>>{
 	
 	public F get(int index);
 	

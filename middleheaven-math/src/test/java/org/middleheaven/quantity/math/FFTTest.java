@@ -8,7 +8,7 @@ import org.middleheaven.quantity.math.vectorspace.DenseVectorSpaceProvider;
 import org.middleheaven.quantity.math.vectorspace.Vector;
 import org.middleheaven.quantity.math.vectorspace.VectorSpace;
 import org.middleheaven.quantity.math.vectorspace.VectorSpaceProvider;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
 
 public class FFTTest {
@@ -147,10 +147,10 @@ public class FFTTest {
 		
 		Vector<Complex> diff = x.minus(z);
 
-		diff.forEach(new Walker<Complex>(){
+		diff.forEach(new Block<Complex>(){
 
 			@Override
-			public void doWith(Complex r) {
+			public void apply(Complex r) {
 				assertTrue("Real part" + r.toReal() + " is not less than 1E-15",  r.toReal().compareTo(epslon) <=0);
 				assertTrue("Imaginary part" + r.toImaginary() + " is not less than 1E-15",  r.toImaginary().compareTo(epslon) <=0);
 			}
