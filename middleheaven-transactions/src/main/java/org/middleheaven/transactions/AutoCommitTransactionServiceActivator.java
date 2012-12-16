@@ -2,6 +2,8 @@ package org.middleheaven.transactions;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.middleheaven.core.reflection.InterceptorProxyHandler;
 import org.middleheaven.core.reflection.MethodDelegator;
@@ -15,8 +17,8 @@ import org.middleheaven.core.wiring.InterceptorChain;
 import org.middleheaven.core.wiring.WiringConnector;
 import org.middleheaven.core.wiring.WiringInterceptor;
 import org.middleheaven.core.wiring.WiringService;
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.collections.EnhancedCollection;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Mapper;
 
 public class AutoCommitTransactionServiceActivator extends ServiceActivator {
 
@@ -34,7 +36,7 @@ public class AutoCommitTransactionServiceActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(TransactionService.class));
+		specs.add(ServiceSpecification.forService(TransactionService.class));
 	}
 
 	@Override
@@ -79,7 +81,7 @@ public class AutoCommitTransactionServiceActivator extends ServiceActivator {
 		@SuppressWarnings("unchecked")
 		public Object proxyfy (final Object original, Class<?> type){
 
-			EnhancedCollection<Method> all = Introspector.of(original.getClass()).inspect()
+			Enumerable<Method> all = Introspector.of(original.getClass()).inspect()
 					.methods()
 					.notInheritFromObject()
 					.annotatedWith(Transactional.class).retriveAll();
@@ -88,14 +90,14 @@ public class AutoCommitTransactionServiceActivator extends ServiceActivator {
 				return original;
 			} else {
 
-				final EnhancedCollection<String> names = all.collect(new Classifier<String,Method>(){
+				final Set<String> names = all.map(new Mapper<String,Method>(){
 
 					@Override
-					public String classify(Method obj) {
+					public String apply(Method obj) {
 						return obj.getName();
 					}
 
-				});
+				}).into(new HashSet<String>());
 
 				return Introspector.of(type).newProxyInstance(new InterceptorProxyHandler (original){
 
