@@ -27,7 +27,7 @@ public class AlarmClockScheduleWorkExecutionServiceActivator extends ServiceActi
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(AlarmClockScheduleWorkExecutionService.class));
+		specs.add(ServiceSpecification.forService(AlarmClockScheduleWorkExecutionService.class));
 	}
 	
 	/**
