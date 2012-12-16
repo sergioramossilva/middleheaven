@@ -4,12 +4,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
@@ -51,12 +50,12 @@ import org.middleheaven.persistance.db.metamodel.SequenceModel;
 import org.middleheaven.persistance.model.DataColumnModel;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.util.QualifiedName;
-import org.middleheaven.util.classification.Classifier;
 import org.middleheaven.util.classification.LogicOperator;
-import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.EnhancedMap;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.collections.Pair;
 import org.middleheaven.util.criteria.CriterionOperator;
+import org.middleheaven.util.function.Block;
+import org.middleheaven.util.function.Mapper;
 
 /**
  * A {@link DataStore} that reads data from a Relational Data Base Management System (RDBMS)
@@ -447,22 +446,19 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 						// create Indexes	
 						// Group columns into the indexes 
 
-						EnhancedMap<String,EnhancedCollection<DBColumnModel>> map = tm.columns().groupBy(new Classifier<String, DBColumnModel>(){
+						final List<DataBaseCommand> indexComands = new LinkedList<DataBaseCommand>();
+
+						tm.columns().groupBy(new Mapper<String, DBColumnModel>(){
 
 							@Override
-							public String classify(DBColumnModel obj) {
+							public String apply(DBColumnModel obj) {
 								return obj.getUniqueGroupName();
 							}
 
-						});
-
-						final List<DataBaseCommand> indexComands = new ArrayList<DataBaseCommand>(map.size());
-
-						map.forEach( new Walker<Map.Entry<String,EnhancedCollection<DBColumnModel>>>(){
+						}).forEach( new Block<Pair<String,Enumerable<DBColumnModel>>>(){
 
 							@Override
-							public void doWith(
-									Entry<String, EnhancedCollection<DBColumnModel>> entry) {
+							public void apply(Pair<String,Enumerable<DBColumnModel>> entry) {
 
 								indexComands.add(dialect.createCreateIndexCommand(entry.getValue() , true));
 
@@ -539,12 +535,12 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 	private class RDBMSDataSet implements DataSet {
 
 
-		private String name;
+		private String datasetName;
 		private DataStoreSchema schema;
 
-		public RDBMSDataSet (DataStoreSchema dataStoreSchema, String name){
+		public RDBMSDataSet (DataStoreSchema dataStoreSchema, String datasetName){
 			this.schema = dataStoreSchema;
-			this.name = name;
+			this.datasetName = datasetName;
 		}
 
 		/**
@@ -552,7 +548,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 		 */
 		@Override
 		public String getName() {
-			return name;
+			return datasetName;
 		}
 
 		/**
@@ -565,7 +561,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 				return;
 			}
 
-			DBTableModel model = mapper.getTableForDataSet(name);
+			DBTableModel model = mapper.getTableForDataSet(datasetName);
 
 			if (model != null) {
 				executeCommand(dialect.createInsertCommand(dataRows, model));
@@ -583,7 +579,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 				return;
 			}
 
-			DBTableModel model = mapper.getTableForDataSet(name);
+			DBTableModel model = mapper.getTableForDataSet(datasetName);
 
 			if (model != null) {
 
@@ -639,7 +635,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 		 */
 		@Override
 		public void delete(DataSetCriteria criteria) {
-			DBTableModel model = mapper.getTableForDataSet(name);
+			DBTableModel model = mapper.getTableForDataSet(datasetName);
 
 			if (model != null){
 				executeCommand(dialect.createDeleteCommand(criteria, model));
@@ -656,7 +652,7 @@ public class RDBMSDataStoreProvider implements DataStoreProvider  {
 				return;
 			}
 
-			DBTableModel model = mapper.getTableForDataSet(name);
+			DBTableModel model = mapper.getTableForDataSet(datasetName);
 
 			if (model != null) {
 				executeCommand(dialect.createUpdateCommand(dataRows, model));

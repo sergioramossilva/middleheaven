@@ -1,6 +1,6 @@
 package org.middleheaven.persistance.db.metamodel;
 
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 import org.middleheaven.util.QualifiedName;
 
 /**
@@ -8,7 +8,7 @@ import org.middleheaven.util.QualifiedName;
  */
 public interface DBColumnModel {
 
-	public String getSimpleName();
+	public String getLogicName();
 
 	public DBColumnModel duplicate();
 
@@ -32,7 +32,7 @@ public interface DBColumnModel {
 	public int getPrecision();
 
 
-	public ColumnType getType();
+	public ColumnValueType getType();
 
 	public DBTableModel getTableModel();
 

@@ -23,10 +23,11 @@ import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
 import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableDataBaseModel;
 import org.middleheaven.persistance.db.metamodel.SequenceModel;
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 import org.middleheaven.sequence.Sequence;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.StringUtils;
+import org.middleheaven.util.collections.Enumerable;
 
 public abstract class RDBMSDialect {
 
@@ -101,7 +102,7 @@ public abstract class RDBMSDialect {
 	}
 
 	protected void writeEditionHardname(Clause buffer ,DBColumnModel model){
-		writeEditionHardname(buffer, model.getTableModel().getName(), model.getSimpleName());
+		writeEditionHardname(buffer, model.getTableModel().getName(), model.getLogicName());
 	}
 
 	protected void writeEditionHardname(Clause buffer , String tableName, String columnName){
@@ -263,8 +264,8 @@ public abstract class RDBMSDialect {
 	public abstract Sequence<Long> getSequence(DataSource ds, String identifiableName);
 
 
-	protected boolean supportsIntervalOf(ColumnType dataType) {
-		return !dataType.isTextual() && !ColumnType.BLOB.equals(dataType);
+	protected boolean supportsIntervalOf(ColumnValueType dataType) {
+		return !dataType.isTextual() && !ColumnValueType.BLOB.equals(dataType);
 	}
 
 	/**
@@ -295,7 +296,7 @@ public abstract class RDBMSDialect {
 					try{
 						while (columns.next()) {
 
-							ColumnType type = this.typeFromNative(columns.getInt(5));
+							ColumnValueType type = this.typeFromNative(columns.getInt(5));
 							EditableColumnModel col = new EditableColumnModel(columns.getString(4), type);
 							if (type.isTextual()){
 								col.setSize(columns.getInt(7));
@@ -342,35 +343,35 @@ public abstract class RDBMSDialect {
 		return hardName.substring(4);
 	}
 
-	public ColumnType typeFromNative(int sqlType) {
+	public ColumnValueType typeFromNative(int sqlType) {
 		switch (sqlType){
 		case Types.INTEGER:
-			return ColumnType.INTEGER;
+			return ColumnValueType.INTEGER;
 		case Types.TINYINT:	
-			return ColumnType.SMALL_INTEGER;
+			return ColumnValueType.SMALL_INTEGER;
 		case Types.BIT:
 		case Types.BOOLEAN:
-			return ColumnType.LOGIC;
+			return ColumnValueType.LOGIC;
 		case Types.DATE:
-			return ColumnType.DATE;
+			return ColumnValueType.DATE;
 		case Types.TIME:
-			return ColumnType.TIME;
+			return ColumnValueType.TIME;
 		case Types.TIMESTAMP:
-			return ColumnType.DATETIME;
+			return ColumnValueType.DATETIME;
 		case Types.VARCHAR:
 		case Types.CHAR:
-			return ColumnType.TEXT;
+			return ColumnValueType.TEXT;
 		case Types.CLOB:
-			return ColumnType.MEMO;
+			return ColumnValueType.MEMO;
 		case Types.BLOB:
-			return ColumnType.BLOB;
+			return ColumnValueType.BLOB;
 		case Types.DECIMAL:
-			return ColumnType.DECIMAL;
+			return ColumnValueType.DECIMAL;
 		}
-		return ColumnType.TEXT;
+		return ColumnValueType.TEXT;
 	}
 	
-	public int typeToNative(ColumnType dataType) {
+	public int typeToNative(ColumnValueType dataType) {
 		
 
 			switch (dataType){
@@ -444,13 +445,13 @@ public abstract class RDBMSDialect {
 	 * @param indexIsUnique <code>true</code> if the index is unique. Use <code>false</code> to create a non-unique index for speeding proposes.
 	 * @return
 	 */
-	public EditionDataBaseCommand createCreateIndexCommand(Collection<DBColumnModel> indexComponents, boolean indexIsUnique){
+	public EditionDataBaseCommand createCreateIndexCommand(Enumerable<DBColumnModel> indexComponents, boolean indexIsUnique){
 
 		if (indexComponents.isEmpty()){
 			throw new IllegalModelStateException("Cannot create an index without components");
 		}
 
-		final String tableName = indexComponents.iterator().next().getTableModel().getName();
+		final String tableName = indexComponents.getFirst().getTableModel().getName();
 
 		StringBuilder sql = new StringBuilder("CREATE ");
 		StringBuilder def = new StringBuilder(" ");

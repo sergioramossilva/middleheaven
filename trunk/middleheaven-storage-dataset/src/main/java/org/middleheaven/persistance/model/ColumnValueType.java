@@ -3,11 +3,11 @@ package org.middleheaven.persistance.model;
 /**
  * The type of columns that can be used.
  */
-public enum ColumnType {
+public enum ColumnValueType {
 
 	/**A textual value.*/
 	TEXT,
-	/**A large (limitless) textual value.*/
+	/**  A limitless textual value **/
 	MEMO,
 	/**A large binary object value.*/
 	BLOB,
@@ -39,7 +39,7 @@ public enum ColumnType {
 	 * {@inheritDoc}
 	 */
 	public boolean isTextual() {
-		return this == TEXT || this == MEMO;
+		return this == TEXT || this == CLOB || this == MEMO;
 	}
 
 	/**

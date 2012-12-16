@@ -8,9 +8,10 @@ import org.middleheaven.persistance.db.metamodel.DBColumnModel;
 import org.middleheaven.persistance.db.metamodel.DBTableModel;
 import org.middleheaven.persistance.db.metamodel.EditableColumnModel;
 import org.middleheaven.persistance.db.metamodel.EditableDBTableModel;
-import org.middleheaven.persistance.model.ColumnType;
+import org.middleheaven.persistance.model.ColumnValueType;
 import org.middleheaven.util.QualifiedName;
 import org.middleheaven.util.StringUtils;
+import org.middleheaven.util.function.Maybe;
 
 public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 
@@ -19,7 +20,7 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 	private final Map<QualifiedName, QualifiedName> physicalToLogicColumnMappings = new  HashMap<QualifiedName, QualifiedName>();
 
 
-	protected abstract ColumnType mapType(String type);
+	protected abstract ColumnValueType mapType(String type);
 
 	protected ColumnTypeInfo getColumnTypeInfo(String type){
 		ColumnTypeInfo c = new ColumnTypeInfo();
@@ -91,7 +92,7 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 		
 
 
-	 protected class DataSetMapper {
+	 protected static class DataSetMapper {
 
 		 String name;
 		 String hardName;
@@ -141,7 +142,7 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 		  * {@inheritDoc}
 		  */
 		 @Override
-		 public String getSimpleName() {
+		 public String getLogicName() {
 			 return columnMapper.getHardName();
 		 }
 
@@ -221,7 +222,7 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 		  * {@inheritDoc}
 		  */
 		 @Override
-		 public ColumnType getType() {
+		 public ColumnValueType getType() {
 			 return mapType (columnMapper.getType());
 		 }
 
@@ -270,9 +271,11 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 		 public String getType() {
 			 return type;
 		 }
+		 
 		 public void setType(String type) {
 			 this.type = type;
 		 }
+		 
 		 public String getName() {
 			 return name;
 		 }
@@ -379,14 +382,14 @@ public abstract class AbstractDataBaseMapper implements DataBaseMapper {
 
 	 protected class ColumnTypeInfo {
 
-		 ColumnType type;
+		 ColumnValueType type;
 		 Integer size;
 		 Integer scale;
 
-		 public ColumnType getType() {
+		 public ColumnValueType getType() {
 			 return type;
 		 }
-		 public void setType(ColumnType type) {
+		 public void setType(ColumnValueType type) {
 			 this.type = type;
 		 }
 		 public Integer getSize() {

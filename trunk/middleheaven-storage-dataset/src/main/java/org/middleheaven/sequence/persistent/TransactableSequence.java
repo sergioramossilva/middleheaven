@@ -11,12 +11,10 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.middleheaven.core.services.ServiceRegistry;
 import org.middleheaven.sequence.AbstractStatePersistanteSequence;
 import org.middleheaven.sequence.SequenceState;
 import org.middleheaven.sequence.SequenceToken;
 import org.middleheaven.sequence.StateEditableSequence;
-import org.middleheaven.sequence.StatePersistentSequence;
 import org.middleheaven.transactions.TransactionService;
 import org.middleheaven.transactions.XAResourceAdapter;
 import org.middleheaven.util.Hash;
@@ -29,16 +27,14 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
 
 	private Object lastUsed;
 	private StateEditableSequence<T> baseSequence;
+	private  TransactionService service;
 	
     BlockingQueue<TransactableSequenceValue<T>> queue = new PriorityBlockingQueue<TransactableSequenceValue<T>>();
 
 
-    public static <K extends Comparable<? super K>> TransactableSequence<K> getSequence(String name,StatePersistentSequence<K> baseSequence){
-        return new TransactableSequence<K>(name,baseSequence);
-    }
-    
-	private TransactableSequence(String name,StateEditableSequence<T> sequence) {
+	TransactableSequence(String name,StateEditableSequence<T> sequence ,  TransactionService service) {
 		super(name);
+		this.service = service;
 		this.baseSequence = sequence;
 	}
     
@@ -59,8 +55,7 @@ public class TransactableSequence<T extends Comparable<? super T>> extends Abstr
         queue.add(sv);
         
         // enlist as XAResource 
-        TransactionService service = ServiceRegistry.getService(TransactionService.class);
-        service.enlistResource(sv); // occurs START
+         service.enlistResource(sv); // occurs START
       
         
         return sv;
