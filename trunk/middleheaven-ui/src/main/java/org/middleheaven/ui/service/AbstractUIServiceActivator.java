@@ -35,7 +35,7 @@ public abstract class AbstractUIServiceActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(UIService.class));
+		specs.add(ServiceSpecification.forService(UIService.class));
 	}
 	
 	@Override
