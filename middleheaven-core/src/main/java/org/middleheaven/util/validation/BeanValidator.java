@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.middleheaven.core.reflection.PropertyAccessor;
 import org.middleheaven.core.reflection.inspection.Introspector;
+import org.middleheaven.util.collections.Enumerable;
 
 /**
  * Validates a bean object using a {@code Validator} for each property of interest
@@ -55,7 +56,7 @@ public class BeanValidator<T> extends CompositeValidator<T> {
 	public final ValidationResult validate(T object) {
 		DefaultValidationResult result = new DefaultValidationResult();
 		
-		Collection<PropertyAccessor> properties = Introspector.of(object).introspectClass().inspect().properties().retriveAll();
+		Enumerable<PropertyAccessor> properties = Introspector.of(object).introspectClass().inspect().properties().retriveAll();
 		
 		for (Iterator<PropertyAccessor> it =  properties.iterator(); result.isStrictlyValid() && it.hasNext();){
 			final PropertyAccessor pa = it.next();
