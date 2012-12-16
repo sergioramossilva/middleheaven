@@ -17,6 +17,7 @@ import org.middleheaven.process.web.server.action.annotaions.Interceptable;
 import org.middleheaven.process.web.server.action.annotaions.Presenter;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.collections.Enumerable;
+import org.middleheaven.util.function.Maybe;
 import org.middleheaven.web.annotations.Path;
 import org.middleheaven.web.annotations.Paths;
 
@@ -154,10 +155,10 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 	private void setupInterceptors(URLMappingBuilder urlMappingBuilder,
 			ClassIntrospector<?> introspector) {
 
-		Interceptable interceptable = introspector.getAnnotation(Interceptable.class);
+		 Maybe<Interceptable> maybeInterceptable = introspector.getAnnotation(Interceptable.class);
 
-		if (interceptable != null){
-			for (Class<? extends ActionInterceptor> type : interceptable.value()){
+		if (!maybeInterceptable.isAbsent()){
+			for (Class<? extends ActionInterceptor> type : maybeInterceptable.get().value()){
 
 				final ActionInterceptor instance = this.wiringService.getInstance(type);
 				if (instance != null){
@@ -179,13 +180,10 @@ public class AnnotationDrivenWebCommandMappingService extends BuildableWebComman
 	 */
 	private String readPath(ClassIntrospector<?> introspector) {
 
-		Path path = introspector.getAnnotation(Path.class);
+		 Maybe<Path> maybePath = introspector.getAnnotation(Path.class);
+		 
+		return maybePath.isAbsent() ? "" : maybePath.get().value();
 
-		if ( path != null){
-			return path.value();
-		} else {
-			return "";
-		}
 
 	}
 
