@@ -187,5 +187,4 @@ public class UploadRootFolder extends AbstractManagedFile {
 		return files.size();
 	}
 
-
 }
