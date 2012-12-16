@@ -81,7 +81,7 @@ public class StaticClock extends Clock {
 	Map<Schedule, ClockTicked> timers = new  HashMap<Schedule, ClockTicked>();
 	
 	@Override
-	protected ClockTicked schedule(Schedule chronogram, Clock clock) {
+	protected ClockTicked schedule(Schedule chronogram) {
 		ClockTicked ticked = timers.get(chronogram);
 		if (ticked==null){
 			ticked =new ClockTicked();

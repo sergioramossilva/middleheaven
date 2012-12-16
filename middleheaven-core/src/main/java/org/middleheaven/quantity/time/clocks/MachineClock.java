@@ -25,9 +25,14 @@ import org.middleheaven.quantity.time.TimeZone;
  */
 public class MachineClock extends Clock {
 
-	
-	public MachineClock (){}
-	
+	private static MachineClock ME = new MachineClock();
+
+	public static MachineClock getInstance(){
+		return ME;
+	}
+
+	private MachineClock (){}
+
 	@Override
 	public TimeZone getTimeZone() {
 		return TimeZone.getDefault();
@@ -52,30 +57,28 @@ public class MachineClock extends Clock {
 
 
 	@Override
-	protected ClockTicked schedule(Schedule chronogram,Clock clock) {
+	protected synchronized ClockTicked schedule(Schedule chronogram) {
+
 		ClockTicked ticked = timers.get(chronogram);
 		if (ticked==null){
-			
-			synchronized (timers) {
-				// create only when first time is created
-				if (timer == null) {
-					timer = new Timer("Machine Clock Alert Timer");
-				}
-				
-				ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){
 
-					@Override
-					public void onBoostapEvent(BootstrapEvent event) {
-						if (timer != null){
-							timer.cancel();
-						}
-					}
-					
-				});
-				
+			// create only when first time is created
+			if (timer == null) {
+				timer = new Timer("Machine Clock Alert Timer");
 			}
-				
-			ticked =new TimerClockTicked(chronogram,clock);
+
+			ServiceRegistry.getService(BootstrapService.class).addListener(new BootstapListener(){
+
+				@Override
+				public void onBoostapEvent(BootstrapEvent event) {
+					if (timer != null){
+						timer.cancel();
+					}
+				}
+
+			});
+
+			ticked = new TimerClockTicked(chronogram, this);
 			timers.put(chronogram, ticked);
 		}
 		return ticked;
@@ -135,7 +138,7 @@ public class MachineClock extends Clock {
 						TimePoint.class,
 						this.translatingObject, 
 						new EpocTimePoint(this.scheduledExecutionTime())
-				);
+						);
 
 				if (chronogram.include(t)){
 					tick(t);

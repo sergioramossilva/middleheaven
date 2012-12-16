@@ -27,11 +27,15 @@ public abstract class Clock {
 	 */
 	public abstract TimeZone getTimeZone();
 	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public String toString(){
 		return getTime().toString();
 	}
 	
-	protected abstract ClockTicked schedule( Schedule schedule , Clock clock );
+	protected abstract ClockTicked schedule( Schedule schedule );
 	
    
 }
