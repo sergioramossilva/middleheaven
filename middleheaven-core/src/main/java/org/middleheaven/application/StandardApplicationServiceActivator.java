@@ -3,10 +3,7 @@
  */
 package org.middleheaven.application;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.middleheaven.core.bootstrap.BootstrapService;
 import org.middleheaven.core.bootstrap.FileContextService;
@@ -29,9 +26,9 @@ public class StandardApplicationServiceActivator extends ServiceActivator{
 	@Override
 	public void collectRequiredServicesSpecifications(
 			Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(BootstrapService.class));
-		specs.add(new ServiceSpecification(LoggingService.class));
-		specs.add(new ServiceSpecification(FileContextService.class));
+		specs.add( ServiceSpecification.forService(BootstrapService.class));
+		specs.add( ServiceSpecification.forService(LoggingService.class));
+		specs.add( ServiceSpecification.forService(FileContextService.class));
 		
 	}
 
@@ -42,7 +39,7 @@ public class StandardApplicationServiceActivator extends ServiceActivator{
 	@Override
 	public void collectPublishedServicesSpecifications(
 			Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(ApplicationService.class));
+		specs.add(ServiceSpecification.forService(ApplicationService.class));
 	}
 
 	

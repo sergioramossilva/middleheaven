@@ -17,6 +17,7 @@ import org.middleheaven.core.dependency.DependencyGraph;
 import org.middleheaven.core.dependency.DependencyGraphNode;
 import org.middleheaven.core.dependency.DependencyInicilizer;
 import org.middleheaven.core.services.ServiceContext;
+import org.middleheaven.events.EventListenersSet;
 import org.middleheaven.util.Version;
 
 /**
@@ -69,9 +70,9 @@ class ModularApplicationRegistry implements ApplicationRegistry {
 
 	private Map<String, ModuleVersion> modulesNamesMapping = new HashMap<String, ModuleVersion>();
 
-	private Set<ModuleListener> moduleListeners =  new CopyOnWriteArraySet<ModuleListener>();
-	private Set<ApplicationListener> listeners = new CopyOnWriteArraySet<ApplicationListener>();
-
+	private EventListenersSet<ModuleListener> moduleListeners =  EventListenersSet.newSet(ModuleListener.class);
+	private EventListenersSet<ApplicationListener> listeners =  EventListenersSet.newSet(ApplicationListener.class);
+	private EventListenersSet<ModuleDiscoveryListener> moduleDiscoveryListeners =  EventListenersSet.newSet(ModuleDiscoveryListener.class);
 
 
 	private Collection<Module> modules = new ArrayList<Module>(3);
@@ -106,16 +107,10 @@ class ModularApplicationRegistry implements ApplicationRegistry {
 	protected boolean setState(ApplicationCycleState phase){
 		if ( state.canChangeTo(phase)){
 			state = phase;
-			fireEvent(new ApplicationEvent(phase));
+			listeners.broadcastEvent().onApplicationCycleStateChanged(new ApplicationEvent(phase));
 			return true;
 		}
 		return false;
-	}
-
-	private void fireEvent (ApplicationEvent event){
-		for (ApplicationListener l: listeners){
-			l.onCycleStateChanged(event);
-		}
 	}
 
 	
@@ -124,7 +119,7 @@ class ModularApplicationRegistry implements ApplicationRegistry {
 	 */
 	@Override
 	public void addModuleListener(ModuleListener listener) {
-		this.moduleListeners.add(listener);
+		this.moduleListeners.addListener(listener);
 	}
 
 	/**
@@ -132,7 +127,7 @@ class ModularApplicationRegistry implements ApplicationRegistry {
 	 */
 	@Override
 	public void removeModuleListener(ModuleListener listener) {
-		throw new UnsupportedOperationException("Not implememented yet");
+		this.moduleListeners.removeListener(listener);
 	}
 	
 
@@ -143,7 +138,7 @@ class ModularApplicationRegistry implements ApplicationRegistry {
 	 */
 	@Override
 	public void addApplicationListener(ApplicationListener listener) {
-		throw new UnsupportedOperationException("Not implememented yet");
+		this.listeners.addListener(listener);
 	}
 
 	/**
@@ -151,7 +146,7 @@ class ModularApplicationRegistry implements ApplicationRegistry {
 	 */
 	@Override
 	public void removeApplicationListener(ApplicationListener listener) {
-		throw new UnsupportedOperationException("Not implememented yet");
+		this.listeners.removeListener(listener);
 	}
 
 
@@ -313,6 +308,23 @@ class ModularApplicationRegistry implements ApplicationRegistry {
 			throw new IllegalArgumentException("This module does not belong on this application ");
 		}
 		this.modules.add(module);
+		this.moduleDiscoveryListeners.broadcastEvent().onModuleDiscovered(new ModuleDiscoveryEvent(module.getModuleVersion()));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void addModuleDiscoveryListener(ModuleDiscoveryListener listener) {
+		this.moduleDiscoveryListeners.addListener(listener);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void removeModuleDiscoveryListener(ModuleDiscoveryListener listener) {
+		this.moduleDiscoveryListeners.removeListener(listener);
 	}
 
 
