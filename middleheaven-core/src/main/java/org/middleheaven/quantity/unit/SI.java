@@ -14,10 +14,10 @@ import org.middleheaven.quantity.measurables.Volume;
 import org.middleheaven.quantity.measure.Measurable;
 
 /**
- * The International Standard Unit System
+ * The International Standard Unit System.
  * 
  *
- * {@link http://physics.nist.gov/cuu/Units/}
+ * <a href="http://physics.nist.gov/cuu/Units/">http://physics.nist.gov/cuu/Units/</a>
  */
 public final class SI extends UnitSystem{
 
