@@ -37,8 +37,8 @@ import org.apache.lucene.util.ThreadInterruptedException;
 import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.io.repository.ModificationTracableManagedFile;
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.function.Mapper;
+import org.middleheaven.util.function.Predicate;
 
 /**
  * Implementation of a {@link Directory} by means of a managed file.
@@ -136,14 +136,14 @@ public abstract class ManagedFileDirectory extends Directory {
     Set<String> childrenNames = dir.filter(new Predicate<ManagedFile>(){
 
 		@Override
-		public Boolean classify(ManagedFile file) {
+		public Boolean apply(ManagedFile file) {
 			return file.getType().isFile();
 		}
     	
-    }).map(new Classifier<String, ManagedFile>(){
+    }).map(new Mapper<String, ManagedFile>(){
 
 		@Override
-		public String classify(ManagedFile obj) {
+		public String apply(ManagedFile obj) {
 			return obj.getPath().getFileName();
 		}
     	
