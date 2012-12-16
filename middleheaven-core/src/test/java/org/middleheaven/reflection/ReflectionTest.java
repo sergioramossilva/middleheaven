@@ -7,6 +7,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.middleheaven.core.reflection.ClassCastReflectionException;
@@ -15,8 +16,7 @@ import org.middleheaven.core.reflection.MethodDelegator;
 import org.middleheaven.core.reflection.ProxyHandler;
 import org.middleheaven.core.reflection.inspection.ClassIntrospector;
 import org.middleheaven.core.reflection.inspection.Introspector;
-import org.middleheaven.util.collections.EnhancedCollection;
-import org.middleheaven.util.collections.EnhancedList;
+import org.middleheaven.util.collections.Enumerable;
 
 
 public class ReflectionTest {
@@ -43,16 +43,18 @@ public class ReflectionTest {
 	@Test
 	public void testInstropection(){
 		
-		EnhancedList<Constructor<ArrayList>> c = Introspector.of(ArrayList.class)
+		List<Constructor<ArrayList>> c = new ArrayList<Constructor<ArrayList>>();
+		
+		 Introspector.of(ArrayList.class)
 		.inspect().constructors().sortedByQuantityOfParameters()
 		.withAccess(MemberAccess.PUBLIC)
-		.retriveAll().asList();
+		.retriveAll().into(c);
 		
 		assertEquals(3 , c.size());
 		assertTrue( c.get(0).getParameterTypes().length <= c.get(1).getParameterTypes().length);
 		assertTrue( c.get(1).getParameterTypes().length <= c.get(2).getParameterTypes().length);
 		
-		EnhancedCollection<Method> m = Introspector.of(ArrayList.class)
+		Enumerable<Method> m = Introspector.of(ArrayList.class)
 		.inspect().methods()
 		.notInheritFromObject()
 		.withAccess(MemberAccess.PUBLIC , MemberAccess.PROTECTED)

@@ -10,7 +10,10 @@ import java.util.List;
 
 import org.junit.Test;
 import org.middleheaven.util.collections.CollectionUtils;
+import org.middleheaven.util.collections.Enumerable;
 import org.middleheaven.util.collections.IteratorsIterator;
+import org.middleheaven.util.function.BinaryOperator;
+import org.middleheaven.util.function.Mapper;
 
 
 public class UtilsTest {
@@ -91,7 +94,7 @@ public class UtilsTest {
 		lists.add(a);
 		lists.add(b);
 		
-		IteratorsIterator<Integer>  it = new IteratorsIterator<Integer>(lists);
+		IteratorsIterator<Integer>  it =IteratorsIterator.aggregateIterables(lists);
 		
 		int count =0;
 		for (;it.hasNext();){
@@ -100,5 +103,49 @@ public class UtilsTest {
 		}
 		
 		assertEquals(7, count);
+		
+		
+		
+	}
+	
+	@Test
+	public void testMapAll(){
+		
+		List<Integer> a = new ArrayList<Integer>();
+		a.add(1);
+		a.add(2);
+		a.add(3);
+		
+		List<Integer> result = new ArrayList<Integer>();
+		
+		final Mapper<Enumerable<Integer>, Integer> mapper = new Mapper<Enumerable<Integer>, Integer>(){
+
+			@Override
+			public Enumerable<Integer> apply(Integer i) {
+				return CollectionUtils.asEnumerable(i , i * 10 , i *100);
+			}
+			
+		};
+		
+		CollectionUtils.asEnumerable(a).mapAll(mapper).into(result);
+		
+		assertEquals(9, result.size());
+		
+		final BinaryOperator<Integer> operator = new BinaryOperator<Integer>(){
+
+			@Override
+			public Integer apply(Integer a, Integer b) {
+				return a + b;
+			}
+			
+		};
+		
+		Integer total = CollectionUtils.asEnumerable(a).mapAll(mapper).reduce(0, operator);
+		
+		assertEquals(666, total);
+		
+		total = CollectionUtils.asEnumerable(a).mapReduce(0, mapper, operator);
+		
+		assertEquals(666, total);
 	}
 }
