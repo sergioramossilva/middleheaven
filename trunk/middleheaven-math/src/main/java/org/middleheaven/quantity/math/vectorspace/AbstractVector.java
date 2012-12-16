@@ -7,16 +7,11 @@ import org.middleheaven.quantity.math.Conjugatable;
 import org.middleheaven.quantity.math.UnivariateFunction;
 import org.middleheaven.quantity.math.structure.FieldElement;
 import org.middleheaven.quantity.math.structure.GroupAdditive;
-import org.middleheaven.util.Hash;
-import org.middleheaven.util.Hash.HashBuilder;
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.collections.AbstractEnumerable;
 import org.middleheaven.util.collections.IndexBasedIterator;
-import org.middleheaven.util.collections.IterableWalkable;
-import org.middleheaven.util.collections.Walkable;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
-public abstract class AbstractVector<F extends FieldElement<F>> implements Vector<F> , Conjugatable<Vector<F>> , Iterable<F>{
+public abstract class AbstractVector<F extends FieldElement<F>> extends AbstractEnumerable<F> implements Vector<F> , Conjugatable<Vector<F>> , Iterable<F>{
 	
 	
 	private final VectorSpace<Vector<F>, F > vectorSpace;
@@ -257,31 +252,16 @@ public abstract class AbstractVector<F extends FieldElement<F>> implements Vecto
 	}
 
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <C> Walkable<C> map(Classifier<C, F> classifier) {
-		return new IterableWalkable<F>(this).map(classifier);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Walkable<F> filter(Predicate<F> predicate) {
-		return new IterableWalkable<F>(this).filter(predicate);
-	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void forEach(Walker<F> walker) {
+	public void forEach(Block<F> walker) {
 		
 		if (this.size() != 0){
 			for (int i=0; i < this.size(); i++){
-				walker.doWith(this.get(i));
+				walker.apply(this.get(i));
 			}
 		}
 		

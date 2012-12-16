@@ -24,7 +24,7 @@ import org.middleheaven.mail.MailMessage;
 import org.middleheaven.mail.MailRecipientType;
 import org.middleheaven.mail.MailSendingService;
 import org.middleheaven.mail.MailTransmissionResult;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
 /**
  * Implementation of {@link MailSendingService} that uses standard JavaMail API
@@ -105,10 +105,10 @@ public abstract class AbstractMailSessionSendingService implements MailSendingSe
 		final ManagedFileRepository attachments = email.getAttachments();
 		ManagedFile root  = attachments.retrive(attachments.getRoots().iterator().next());
 
-		root.forEach(new Walker<ManagedFile>(){
+		root.forEach(new Block<ManagedFile>(){
 
 			@Override
-			public void doWith(ManagedFile attachment) {
+			public void apply(ManagedFile attachment) {
 				try{
 					MimeBodyPart part = new MimeBodyPart();
 					part.setDataHandler(new DataHandler(new ManagedFileDataSource((MediaManagedFile)attachment)));

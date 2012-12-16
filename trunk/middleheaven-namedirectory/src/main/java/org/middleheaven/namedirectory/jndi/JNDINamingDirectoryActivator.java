@@ -33,7 +33,7 @@ public class JNDINamingDirectoryActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(NameDirectoryService.class));
+		specs.add(ServiceSpecification.forService(NameDirectoryService.class));
 	}
 	
 	/**

@@ -23,7 +23,7 @@ import org.middleheaven.core.services.ServiceListener;
 import org.middleheaven.crypto.Base64CipherAlgorithm;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.logging.Logger;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
 
 
 public class LicenseServiceActivator extends ServiceActivator {
@@ -45,14 +45,14 @@ public class LicenseServiceActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(BootstrapService.class));
+		specs.add(ServiceSpecification.forService(BootstrapService.class));
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(LicenseService.class));
+		specs.add(ServiceSpecification.forService(LicenseService.class));
 	}
 	
 	@Override
@@ -64,10 +64,10 @@ public class LicenseServiceActivator extends ServiceActivator {
 		
 		final Collection<ManagedFile> licences = new HashSet<ManagedFile>();
 		
-		f.forEach(new Walker<ManagedFile>(){
+		f.forEach(new Block<ManagedFile>(){
 
 			@Override
-			public void doWith(ManagedFile file) {
+			public void apply(ManagedFile file) {
 				if (file.getPath().getFileNameExtension().equals(".lic")){
 					licences.add(file);
 				}
@@ -77,10 +77,10 @@ public class LicenseServiceActivator extends ServiceActivator {
 
 		
 		f = frs.getAppConfigRepository();
-		f.forEach(new Walker<ManagedFile>(){
+		f.forEach(new Block<ManagedFile>(){
 
 			@Override
-			public void doWith(ManagedFile file) {
+			public void apply(ManagedFile file) {
 				if (file.getPath().getFileNameExtension().equals(".lic")){
 					licences.add(file);
 				}
@@ -91,10 +91,10 @@ public class LicenseServiceActivator extends ServiceActivator {
 		// search certificates
 		final Collection<ManagedFile> certifcates = new HashSet<ManagedFile>();
 		
-		f.forEach(new Walker<ManagedFile>(){
+		f.forEach(new Block<ManagedFile>(){
 
 			@Override
-			public void doWith(ManagedFile file) {
+			public void apply(ManagedFile file) {
 				if (file.getPath().getFileNameExtension().equals(".cert")){
 					certifcates.add(file);
 				}

@@ -15,7 +15,7 @@ public class JavaMailActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectRequiredServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(NameDirectoryService.class, true));
+		specs.add(ServiceSpecification.forService(NameDirectoryService.class, true));
 	}
 	
 	/**
@@ -23,7 +23,7 @@ public class JavaMailActivator extends ServiceActivator {
 	 */
 	@Override
 	public void collectPublishedServicesSpecifications(Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(MailSendingService.class));
+		specs.add(ServiceSpecification.forService(MailSendingService.class));
 	}
 	
 	/**
