@@ -23,25 +23,25 @@ public final class RegistryServiceContext implements ServiceContext{
 
 	final Set<ServiceListener> serviceListeners = new CopyOnWriteArraySet<ServiceListener>();
 	final Map<String , Set<ServiceBinding>> registry = new HashMap<String , Set<ServiceBinding>>();
-	
+
 	final Map<ServiceKey, Object> proxies = new HashMap<ServiceKey, Object>();
 
 	private static final RegistryServiceContext ME = new RegistryServiceContext();
-	
+
 	/**
 	 * Returns an instance of the {@link RegistryServiceContext}. This instance
 	 * is particular to each class loader.
 	 * 
 	 * @return the instance of the {@link RegistryServiceContext}.
 	 */
-	 
+
 	public static RegistryServiceContext getInstance(){
 		if (ServiceRegistry.context == null){
 			ServiceRegistry.context = ME;
 		}
 		return ME;
 	}
-	
+
 	private RegistryServiceContext(){
 
 		/* should bing all to shared ?
@@ -103,12 +103,18 @@ public final class RegistryServiceContext implements ServiceContext{
 	@Override
 	public <T, I extends T> void register(final Class<T> serviceClass, final I implementation, Map<String, ? extends Object> properties) {
 
+		internalRegister(serviceClass, implementation, properties);
+
+	}
+
+	private void internalRegister(final Class<?> serviceClass,
+			final Object implementation, Map<String, ? extends Object> properties) {
 		if (properties == null){
 			properties = Collections.<String, Object>emptyMap();
 		}
 
 		// find current binding
-		ServiceBinding<T> binding = this.selectedServiceBinding(serviceClass, properties);
+		ServiceBinding binding = this.selectedServiceBinding(serviceClass, properties);
 
 		// if its a perfect match ( same service class, same parameters)
 		if(binding!=null && binding.match(properties) == 1){
@@ -119,7 +125,7 @@ public final class RegistryServiceContext implements ServiceContext{
 		} 
 
 		// init binding set for the service
-		ServiceBinding<T> b = new ServiceBinding<T>(properties,implementation,serviceClass);
+		ServiceBinding b = new ServiceBinding(properties,implementation,serviceClass);
 		Set<ServiceBinding> list = registry.get(serviceClass.getName());
 		if (list==null ){
 			list = new CopyOnWriteArraySet<ServiceBinding>();
@@ -138,10 +144,6 @@ public final class RegistryServiceContext implements ServiceContext{
 			list.remove(b);
 			throw e;
 		}
-
-
-
-
 	}
 
 	/**
@@ -364,7 +366,7 @@ public final class RegistryServiceContext implements ServiceContext{
 	@Override
 	public <T, I extends T> void unRegister(Class<T> serviceClass,
 			I implementation) {
-		 this.unRegister(serviceClass, implementation, null);
+		this.unRegister(serviceClass, implementation, null);
 	}
 
 	/**
@@ -374,23 +376,6 @@ public final class RegistryServiceContext implements ServiceContext{
 	public <T> T getService(Class<T> serviceClass) {
 		return this.getService(serviceClass, null);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

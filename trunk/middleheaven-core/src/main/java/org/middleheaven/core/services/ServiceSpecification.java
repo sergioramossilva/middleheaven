@@ -17,16 +17,20 @@ public final class ServiceSpecification {
 	private Map<String, Object> parameters;
 	private boolean optional;
 
-	public ServiceSpecification(Class<?> serviceContractType){
-		this(serviceContractType, Collections.<String,Object>emptyMap(), false);
+	
+	
+	
+	
+	public static ServiceSpecification forService(Class<?> serviceContractType){
+		return new ServiceSpecification(serviceContractType, Collections.<String,Object>emptyMap(), false);
 	}
 
-	public ServiceSpecification(Class<?> serviceContractType, boolean isOptional){
-		this(serviceContractType, Collections.<String,Object>emptyMap(), isOptional);
+	public static ServiceSpecification forService(Class<?> serviceContractType, boolean isOptional){
+		return new ServiceSpecification(serviceContractType, Collections.<String,Object>emptyMap(), isOptional);
 	}
 
-	public ServiceSpecification(Class<?> serviceContractType, Map<String, Object> parameters){
-		this(serviceContractType, parameters, false);
+	public static ServiceSpecification forService(Class<?> serviceContractType, Map<String, Object> parameters){
+		return new ServiceSpecification(serviceContractType, parameters, false);
 	}
 
 	private ServiceSpecification(Class<?> serviceContractType, Map<String, Object> parameters, boolean isOptional){
@@ -77,6 +81,19 @@ public final class ServiceSpecification {
 				&& CollectionUtils.equalContents(this.parameters , other.parameters);
 	}
 
+	public boolean matches (ServiceSpecification s){
+		if (this.parameters.size() < s.parameters.size()){
+			return false;
+		}
 
+		int count=0;
+		for (Map.Entry<String,? extends Object> entry : s.parameters.entrySet() ){
+			if (entry.getValue()!=null && entry.getValue().equals(this.parameters.get(entry.getKey()))){
+				count++;
+			}
+		}
+
+		return count > 0;
+	}
 
 }
