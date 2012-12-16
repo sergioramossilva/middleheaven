@@ -40,8 +40,8 @@ public abstract class WrappedClock extends Clock {
 	}
 	
 	@Override
-	protected ClockTicked schedule(Schedule schedule, Clock clock) {
-		return referenceClock.schedule(schedule, this);
+	protected ClockTicked schedule(Schedule schedule) {
+		return referenceClock.schedule(schedule);
 	}
 	
 	protected TimePoint calculateTimeFromReference(TimePoint referenceTime){

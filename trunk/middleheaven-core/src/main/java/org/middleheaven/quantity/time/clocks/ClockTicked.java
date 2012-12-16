@@ -22,6 +22,7 @@ public class ClockTicked {
 	}
 
 	public void tick(TimePoint point ) {
+		// TODO use agregate exception
 		RuntimeException firstException = null;
 		for (ClockTickListener c : listeners){
 			try{

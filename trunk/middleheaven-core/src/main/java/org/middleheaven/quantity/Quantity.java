@@ -19,6 +19,5 @@ public interface Quantity<E extends Measurable>{
 	 * @return this quantity unit
 	 */
 	public Unit<E> unit();
-	
-	
+
 }

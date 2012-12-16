@@ -19,11 +19,11 @@ public class AlarmClock extends WrappedClock {
 	}
 
 	public void addClockTickListener (ClockTickListener listener, Schedule schedule){
-		schedule(schedule,this).addClockTickListener(listener);
+		schedule(schedule).addClockTickListener(listener);
 	}
 	
 	public void removeClockTickListener (ClockTickListener listener,Schedule schedule){
-		schedule(schedule,this).removeClockTickListener(listener);
+		schedule(schedule).removeClockTickListener(listener);
 	}
 
 

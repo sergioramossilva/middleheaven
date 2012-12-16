@@ -11,7 +11,7 @@ public final class TimeContext {
 
 	
 	private static TimeContext current = new TimeContext(
-			new MachineClock(),
+			MachineClock.getInstance(),
 			new DefaultEphemerisModel(),
 			new JavaCalendarCronology(),
 			new JavaTimeZoneTable()

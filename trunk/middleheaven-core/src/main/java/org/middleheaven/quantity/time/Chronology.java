@@ -11,7 +11,7 @@ import org.middleheaven.quantity.time.clocks.MachineClock;
  */
 public abstract class Chronology {
 
-	protected Clock referenceClock = new MachineClock();
+	protected Clock referenceClock = MachineClock.getInstance();
 	
 	/**
 	 * Change the Reference {@link Clock}. By default the {@link Chronology} uses the {@link MachineClock}.
