@@ -5,7 +5,7 @@ package org.middleheaven.util.collections;
 
 import java.util.Iterator;
 
-import org.middleheaven.util.classification.Predicate;
+import org.middleheaven.util.function.Predicate;
 
 /**
  * 

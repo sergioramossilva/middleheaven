@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.middleheaven.util.function.Predicate;
+
 /**
  * Logic filter. Determines the acceptance of an object  by logically concatenate the results of filter terms
  * @author  Sergio M. M. Taborda
@@ -54,14 +56,14 @@ public class LogicComposedClassifier<T> implements Predicate<T>{
     }
     
     @Override
-    public Boolean classify(T object) {
+    public Boolean apply(T object) {
         if (filters.isEmpty()){
             return true;
         } else {
-            boolean accept = filters.get(0).classify(object);
+            boolean accept = filters.get(0).apply(object);
             int size = filters.size();
             for (int i = 1 ; !this.logicOperator.isBreakValue(accept) && i < size; i++){
-                accept = this.logicOperator.operate(accept, filters.get(i).classify(object));
+                accept = this.logicOperator.operate(accept, filters.get(i).apply(object));
             }
             return accept;
 

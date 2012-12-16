@@ -8,6 +8,10 @@ public class EnhancedArrayList<T> extends EncancedListAdapter<T>{
 	public EnhancedArrayList() {
 		super(new ArrayList<T>());
 	}
+	
+	public EnhancedArrayList(int size) {
+		super(new ArrayList<T>(size));
+	}
 
 	public EnhancedArrayList(Enumerable<? extends T> other) {
 		this(new ArrayList<T>());

@@ -10,18 +10,18 @@ import org.middleheaven.util.function.Mapper;
 /**
  * 
  */
-class TransformedIterable<T, C> implements Iterable<C> {
+public class TransformedEnumerableStream<C, T> extends AbstractEnumerable<C> {
 
-	private Iterable<T> iterable;
+	private Enumerable<T> enumerable;
 	private Mapper<C, T> classifier;
 
 	/**
 	 * Constructor.
-	 * @param iterable
+	 * @param enumerable
 	 * @param classifier
 	 */
-	public TransformedIterable(Iterable<T> iterable, Mapper<C, T> classifier) {
-		this.iterable = iterable;
+	public TransformedEnumerableStream(Enumerable<T> enumerable, Mapper<C, T> classifier) {
+		this.enumerable = enumerable;
 		this.classifier = classifier;
 	}
 
@@ -30,7 +30,9 @@ class TransformedIterable<T, C> implements Iterable<C> {
 	 */
 	@Override
 	public Iterator<C> iterator() {
-		return TransformedIterator.<C,T>transform(iterable.iterator(), classifier);
+		return  TransformedIterator.<C,T>transform(enumerable.iterator(), classifier);
 	}
+
+
 
 }

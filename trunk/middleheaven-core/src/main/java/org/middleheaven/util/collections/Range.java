@@ -1,22 +1,13 @@
 package org.middleheaven.util.collections;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 import org.middleheaven.quantity.math.structure.GroupAdditiveElement;
 import org.middleheaven.quantity.time.CalendarDate;
-import org.middleheaven.quantity.time.CalendarTime;
-import org.middleheaven.quantity.time.TimePoint;
 import org.middleheaven.util.Hash;
 import org.middleheaven.util.Incrementor;
-import org.middleheaven.util.StringUtils;
-import org.middleheaven.util.classification.Classifier;
-import org.middleheaven.util.classification.NegatedPredicate;
-import org.middleheaven.util.classification.Predicate;
 
 
 /**
@@ -27,7 +18,7 @@ import org.middleheaven.util.classification.Predicate;
  * @param <T> the type of the value in the range.
  * @param <I> type of the incremente. Normally is the same as T, but not allways( i.e. dates have increment as integers)
  */
-public class Range<T, I> implements Enumerable<T> , RandomEnumerable<T> {
+public class Range<T, I> extends AbstractEnumerable<T> implements RandomEnumerable<T> {
 
 	private final Comparator<? super T> comparator;
 	private final Incrementor<? super T, ? super I> incrementor;
@@ -250,25 +241,12 @@ public class Range<T, I> implements Enumerable<T> , RandomEnumerable<T> {
 		return (this.isEmpty() && other.isEmpty() ) || // both are empty or the limits are equal
 		( comparator.compare(start, other.start)==0 && comparator.compare(end, other.end)==0);
 	}
-	
-
 
 	@Override
 	public Iterator<T> iterator() {
 		return new RangeIterator(comparator,incrementor);
 	}
 
-	/**
-	 * Collects all the values in the {@link Range} into an {@link EnhancedList}.
-	 * @return a list with the values in the {@link Range}
-	 */
-	private EnhancedList<T> toList(){
-		List<T> list = new LinkedList<T>();
-		for (T i : this){
-			list.add(i);
-		}
-		return CollectionUtils.enhance(list);
-	}
 
 	private int size = -1;
 	
@@ -277,9 +255,14 @@ public class Range<T, I> implements Enumerable<T> , RandomEnumerable<T> {
 	 * {@inheritDoc}
 	 */
 	public int size(){
+		if (this.isEmpty()){
+			return 0;
+		}
+		
 		if(size>=0){
 			return size;
 		}
+		
 		size=0;
 		for (Iterator<T> it = this.iterator();it.hasNext();size++){
 			it.next();
@@ -332,7 +315,7 @@ public class Range<T, I> implements Enumerable<T> , RandomEnumerable<T> {
      * @return  a random list of elements based on the list that corresponds to this range.
      */
 	public T random() {
-		return this.toList().random();
+		return index(( int )( Math.random() * this.size()));
 	}
 
 	/**
@@ -341,95 +324,17 @@ public class Range<T, I> implements Enumerable<T> , RandomEnumerable<T> {
 	 * @return  a random list of elements based on the list that corresponds to this range.
 	 */
 	public T random(Random random) {
-		return this.toList().random(random);
+		return index(random.nextInt(this.size()));
 	}
 
-
-
-	@Override
-	public boolean any(Predicate<T> predicate) {
-		return this.toList().any(predicate);
-	}
-
-	@Override
-	public <C> EnhancedCollection<C> collect(Classifier<C, T> classifier) {
-		return this.toList().collect(classifier);
-	}
-
-	@Override
-	public int count(T object) {
-		return this.contains(object) ? 1 : 0;
-	}
-
-	@Override
-	public boolean every(Predicate<T> predicate) {
-		return this.toList().every(predicate);
-	}
-
-	@Override
-	public T find(Predicate<T> predicate) {
-		return this.toList().find(predicate);
-	}
-
-	@Override
-	public EnhancedCollection<T> findAll(Predicate<T> predicate) {
-		return this.toList().findAll(predicate);
-	}
-
-	@Override
-	public <C> EnhancedMap<C, EnhancedCollection<T>> groupBy(Classifier<C, T> classifier) {
-		return this.toList().groupBy(classifier);
-	}
-
-
-	@Override
-	public String join(String separator) {
-		return StringUtils.join(separator, this);
-	}
-
-	@Override
-	public EnhancedCollection<T> reject(Classifier<Boolean, T> classifier){
-		return findAll(new NegatedPredicate<T>(classifier));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Walkable<T> filter(Predicate<T> predicate) {
-		return new IterableWalkable<T>(this).filter(predicate);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <C> Walkable<C> map(Classifier<C, T> classifier) {
-		return new IterableWalkable<T>(this).map(classifier);
-	}
-
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void forEach(Walker<T> walker) {
-		for (T t : this){
-			walker.doWith(t);
+	private T index(int index){
+		
+		Iterator<T> it = this.iterator();
+		for (int i = 0; i < index; i++){
+			it.next();
 		}
-	}
-	
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public <L extends Collection<T>> L into(L collection) {
-		for (T t : this){
-			collection.add(t);
-		}
-		return collection;
+		
+		return it.hasNext() ? null : it.next();
 	}
 	
 	/**
@@ -498,6 +403,13 @@ public class Range<T, I> implements Enumerable<T> , RandomEnumerable<T> {
 		return "[" + start.toString() + " ; " +  end.toString() + "]";
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public T getFirst() {
+		 return this.start();
+	}
 
 
 
