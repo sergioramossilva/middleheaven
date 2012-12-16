@@ -3,6 +3,6 @@ package org.middleheaven.application;
 public interface ApplicationListener {
 
 	
-	public void onCycleStateChanged(ApplicationEvent event);
+	public void onApplicationCycleStateChanged(ApplicationEvent event);
 	
 }

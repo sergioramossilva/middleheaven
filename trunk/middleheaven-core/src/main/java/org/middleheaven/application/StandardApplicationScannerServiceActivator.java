@@ -25,9 +25,9 @@ public class StandardApplicationScannerServiceActivator extends
 	@Override
 	public void collectRequiredServicesSpecifications(
 			Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(BootstrapService.class));
-		specs.add(new ServiceSpecification(LoggingService.class));
-		specs.add(new ServiceSpecification(FileContextService.class));
+		specs.add(ServiceSpecification.forService(BootstrapService.class));
+		specs.add(ServiceSpecification.forService(LoggingService.class));
+		specs.add(ServiceSpecification.forService(FileContextService.class));
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class StandardApplicationScannerServiceActivator extends
 	@Override
 	public void collectPublishedServicesSpecifications(
 			Collection<ServiceSpecification> specs) {
-		specs.add(new ServiceSpecification(ApplicationScanningService.class));
+		specs.add(ServiceSpecification.forService(ApplicationScanningService.class));
 	}
 
 	/**

@@ -18,9 +18,9 @@ import org.middleheaven.io.ManagedIOException;
 import org.middleheaven.io.repository.ManagedFile;
 import org.middleheaven.util.StringUtils;
 import org.middleheaven.util.Version;
-import org.middleheaven.util.classification.Predicate;
 import org.middleheaven.util.collections.ParamsMap;
-import org.middleheaven.util.collections.Walker;
+import org.middleheaven.util.function.Block;
+import org.middleheaven.util.function.Predicate;
 
 /**
  * 
@@ -82,11 +82,11 @@ public class LibraryJarModuleScanner implements ModuleScanner {
 //			fileWatchChannelProcessor.start();
 //		}
 
-		libraryFolder.forEach(new Walker<ManagedFile>(){
+		libraryFolder.forEach(new Block<ManagedFile>(){
 
 			@Override
-			public void doWith(ManagedFile file) {
-				if (appModulesFilter.classify(file)){
+			public void apply(ManagedFile file) {
+				if (appModulesFilter.apply(file)){
 					applicationModuleFiles.add(file);
 				}
 			}
@@ -117,7 +117,7 @@ public class LibraryJarModuleScanner implements ModuleScanner {
 					.setParam("Application-Modules", at.getValue("Application-Modules"))
 					.setParam("Application-Module-Depends", at.getValue("Application-Module-Depends"))
 					;
-
+					
 					parseAttributes(map, cloader, modules);
 				}
 			}
@@ -182,7 +182,7 @@ public class LibraryJarModuleScanner implements ModuleScanner {
 	private static Predicate<ManagedFile> appModulesFilter =  new Predicate<ManagedFile>(){
 
 		@Override
-		public Boolean classify(ManagedFile file) {
+		public Boolean apply(ManagedFile file) {
 			if (file.getPath().getFileName().endsWith(".jar")){
 				JarInputStream jis;
 				try {

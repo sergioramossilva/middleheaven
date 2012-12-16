@@ -39,7 +39,10 @@ public interface ApplicationRegistry {
 	
 	public boolean isCompatibleModulePresent(ModuleVersion version);
 	
+	public void addModuleDiscoveryListener (ModuleDiscoveryListener listener);
 	
+	public void removeModuleDiscoveryListener (ModuleDiscoveryListener listener);
+
 	public void addModuleListener (ModuleListener listener);
 	
 	public void removeModuleListener (ModuleListener listener);
